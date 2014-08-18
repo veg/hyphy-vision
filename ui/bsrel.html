@@ -166,7 +166,8 @@
                                     <caption style = 'caption-side: bottom; text-align: left; margin-top:1em;'>
                                     <p class = "list-group-item-text text-muted">
                                     Total tree length under the branch-site model is <strong id = 'summary-tree-length'></strong>    
-                                    expected substitutions per nucleotide site       
+                                    expected substitutions per nucleotide site, and <strong id = 'summary-tree-length-mg94'></strong>    
+                                    under the MG94 model.
                                     </p>                
                                 </caption>                                  
                                 </table>                         
@@ -194,7 +195,9 @@
                                
                                <caption style = 'caption-side: bottom; text-align: left; margin-top:1em;'>
                                     <p class = "list-group-item-text text-muted">
-                                        The complete analysis took <strong id = 'summary_total_runtime'></strong> to finish.
+                                        The complete analysis took <strong id = 'summary-total-runtime'></strong> to finish, 
+                                        of which <strong id = 'summary-complexity-runtime'></strong> was taken by the complexity analysis, 
+                                        and <strong id = 'summary-testing-runtime'></strong> by selection testing.
                                     </p>                
                                 </caption>                   
                             </table>                            
@@ -780,7 +783,7 @@ function render_bs_rel (json) {
     
     // render summary data
     
-    var total_tree_length = for_branch_table.reduce (function (p,c) {return p+c[1];}, 0); 
+    var total_tree_length = json["fits"]["Full model"]["tree length"]; 
     
     for_branch_table = for_branch_table.sort (function (a,b) {return a[4]-b[4];});
     make_distro_plot (for_branch_table[0]);
@@ -803,7 +806,10 @@ function render_bs_rel (json) {
     d3.select ('#summary-method-name').text (json['version']);
     d3.select ('#summary-pmid').text ("PubMed ID " + json['PMID'])
                                .attr ("href", "http://www.ncbi.nlm.nih.gov/pubmed/" + json['PMID']);
-    d3.select ('#summary_total_runtime').text (format_run_time(json['time']));
+    d3.select ('#summary-total-runtime').text (format_run_time(json['timers']['overall']));
+    d3.select ('#summary-complexity-runtime').text (format_run_time(json['timers']['overall']));
+    d3.select ('#summary-complexity-runtime').text (format_run_time(json['timers']['Complexity analysis']));
+    d3.select ('#summary-testing-runtime').text (format_run_time(json['timers']['Testing']));
     d3.select ('#summary-total-branches').text (branch_count);
     d3.select ('#summary-tested-branches').text (tested_count);
     d3.select ('#summary-selected-branches').text (selected_count);
@@ -814,7 +820,7 @@ function render_bs_rel (json) {
         var access_key;
         if (k == 0) {
             access_key = 'MG94';
-            model_rows[k].push ('Branch-wise &omega; variation');
+            model_rows[k].push ('Branch-wise &omega; variation (MG94)');
         } else {
             access_key = 'Full model';
             model_rows[k].push ('Branch-site &omega; variation');        
@@ -832,7 +838,9 @@ function render_bs_rel (json) {
     model_rows.enter().append ("td");
     model_rows.html (function (d) {return d;});
     
-    d3.select ('#summary-tree-length').text (fit_format (total_tree_length));
+    d3.select ('#summary-tree-length').text (fit_format(json["fits"]["Full model"]["tree length"]));
+    d3.select ('#summary-tree-length-mg94').text (fit_format(json["fits"]["MG94"]["tree length"]));
+    
     
     var by_rate_class_count = {};
     tree.get_nodes().forEach (function (d) {
