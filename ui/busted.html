@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang = 'en'>
+
+<head>
+    <meta charset="utf-8">
+    <!-- Latest compiled and minified CSS -->
+    <script src="http://code.jquery.com/jquery.js"></script>
+
+    <link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+    <link href="//netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.css" rel="stylesheet">
+
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
+
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="http://netdna.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+
+    <!-- <meta name="viewport" content="width=device-width, initial-scale=1.0">-->
+
+    <script src="http://d3js.org/d3.v3.min.js"></script>
+    <script src="/hyphy-absrel/js/phylotree.js"></script>
+    
+    <title> BUSTED analysis result</title>
+
+    <link href="/hyphy-absrel/css/phylotree.css" rel="stylesheet">
+    <style>
+
+    .omega-bar line, .omega-bar path {
+      fill: none;
+      stroke: #000;
+      shape-rendering: crispEdges;
+    }
+
+     .omega-line {
+        stroke: #000;
+        stroke-width: 6px;
+    }
+
+    .axis path, .axis line {
+        fill: none;
+        stroke: #000;
+        shape-rendering: crispEdges;
+    }
+    
+    .axis-label {
+        font: 18px sans-serif;
+    }
+    
+    .axis text {
+        font: 12px sans-serif;
+    }
+
+    .weight-label {
+        font: 14px sans-serif;
+        text-anchor: middle;
+    }
+
+    .neutral-line {
+        stroke-dasharray: 2,10;
+        stroke: #000;
+        stroke-width: 1px;
+    }
+
+    .displacement-line {
+        fill: none;
+        stroke: #000;
+        opacity: 0.7;
+        stroke-width: 1.5px;
+    }
+
+
+
+    </style>
+</head>
+
+<body style = 'padding-top: 70px;'>
+
+<!--
+###############################################################################################################################
+-->
+
+<nav class="navbar navbar-default navbar-fixed-top" role="navigation">
+  <div class="container-fluid">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar-collapse-1">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="#">BUSTED results</a>
+    </div>
+
+
+    <!-- Collect the nav links, forms, and other content for toggling -->
+    <div class="collapse navbar-collapse" id = "navbar-collapse-1">
+
+      <ul class="nav nav-pills navbar-right" role="tablist" id = 'navigation_buttons'>
+           <li class="active"><a href="#summary_tab" role="tab" data-toggle="tab"><i class="fa fa-list" style = 'margin-right: 5px'></i>Summary</a></li>
+           <li><a href="#tree_tab" role="tab" data-toggle="tab"><i class="fa fa-tree" style = 'margin-right: 5px'></i> Tree</a></li>
+           <li><a href="#table_tab" role="tab" data-toggle="tab"><i class="fa fa-table" style = 'margin-right: 5px'></i> Table</a></li>
+      </ul>
+
+      <ul class="nav navbar-nav">
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown">Load file<b class="caret"></b></a>
+          <ul class="dropdown-menu">
+            <li><input type="file" id="json_file"></li>
+          </ul>
+        </li>
+         <li class="dropdown">
+          <a href="#" class="dropdown-toggle navbar-right" data-toggle="dropdown">Options<b class="caret"></b></a>
+          <ul class="dropdown-menu">
+            <li><a href="#" id = 'color_or_grey' data-color-mode = 'color'>Use grayscale</a></li>
+            <li><a href="#" id = 'show_color_bar' data-color-bar = 'on'>Hide &omega; color legend</a></li>
+            <li><a href="#" id = 'show_model' data-model = 'Full model'>Show MG94 tree</a></li>
+        </li>
+     </ul>
+     
+    
+    </div><!-- /.navbar-collapse -->
+  </div><!-- /.container-fluid -->
+</nav>
+
+<div class = 'container-fluid'>
+    <div class="tab-content">
+        <div class="tab-pane active" id = "summary_tab">
+            
+            <div class = "row" style = 'margin-top: 5px'>
+                <div class = "col-md-12">
+                    <ul class="list-group">
+                      <li class="list-group-item list-group-item-info">
+                        <h3 class="list-group-item-heading"><i class="fa fa-list" style = 'margin-right: 10px'>
+                        </i><span id = 'summary-method-name'>BUSTED</span> summary</h3>
+                            <p class = "list-group-item-text lead" style = "margin-top:0.5em; ">
+                                Evidence<sup>&dagger;</sup> of ?.
+                            </p>
+                            <p><small><sup>&dagger;</sup><abbr title = 'Likelihood Ratio Test'>LRT</abbr> p &le; 0.05, corrected for multiple testing.</small>                          
+                                <br><small>Please cite <a href = '#' id = 'summary-pmid'>PMID XXX</a> if you use this result in a publication, presentation, or other scientific work.</small>
+                             </p>
+                       </li>
+                    </ul>
+                </div>
+            </div>
+               <div class = "row">
+                    <div class = "col-md-6">
+                    <ul class="list-group">
+                      <li class="list-group-item">
+                        <h4 class="list-group-item-heading"><i class="fa fa-cubes" style = 'margin-right: 10px'>
+                        </i>Model fits</h4>
+                            <table class = "table table-hover table-condensed list-group-item-text" style = "margin-top:0.5em;">
+                                <thead>
+                                    <tr>
+                                        <th>Model</th>
+                                        <th><em> log </em>L</th>
+                                        <th><abbr title = "Number of estimated model parameters"># par.</abbr></th>
+                                        <th><abbr title = "Small Sample AIC">AIC<sub>c</sub></abbr></th>
+                                        <th>Time to fit</th>
+                                        <th>Total tree length</th>
+                                        <th>&omega;<sub>1</sub></th>
+                                        <th>&omega;<sub>2</sub></th>
+                                        <th>&omega;<sub>3</sub></th>
+                                   </tr>
+                                </thead>
+                               <tbody id = 'summary-model-table'>
+                                    
+                               </tbody>
+                             </table>                            
+                       </li>
+                    </ul>
+                </div>
+               </div>
+        </div>
+
+        <div class = 'tab-pane' id = "tree_tab">
+            <div class = 'row'>
+                    <div class = "col-md-4 col-md-offset-1">
+                           <div class="btn-group">
+                            <button type="button" class="btn btn-default btn-sm" id = "expand_spacing">
+                                <i class="fa fa-expand" ></i>
+                            </button>
+                             <button type="button" class="btn btn-default btn-sm" id = "compress_spacing">
+                                <i class="fa fa-compress" ></i>
+                            </button>
+                          </div>
+  
+                    </div>
+            </div>        
+            <div class = 'row'>
+                <div class = 'col-md-1'>
+                    <!--<div class = 'row'>
+                        <div class="btn-toolbar" role="toolbar">
+                          <div class="btn-group">
+                            <button type="button" class="btn btn-default btn-sm" id = "expand_spacing">
+                                <i class="fa fa-expand" ></i>
+                            </button>
+                             <button type="button" class="btn btn-default btn-sm" id = "compress_spacing">
+                                <i class="fa fa-compress" ></i>
+                            </button>
+                          </div>
+                       </div>
+                    </div>-->
+                     <div class = 'row'>
+                        <div id = 'color_legend'>
+                        </div>
+                    </div>
+                </div>
+                <div class = 'col-md-11'>
+                     <div class = 'row'>
+                            <div id = 'tree_container' class = 'tree-widget'>
+                            </div>
+                     </div>
+                        
+                  </div>
+            </div>
+        </div>
+
+        <div class = 'tab-pane' id = "table_tab"> 
+        
+                <div class = "row">
+                    <div class = "col-md-7">
+                            <table class = "table table-hover table-condensed" style = "margin-top:0.5em;">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th><abbr title = "Branch Length">B</abbr></th>
+                                    <th><abbr title = "Likelihood ratio test statistic">LRT</abbr></th>
+                                    <th>Test p-value</th>
+                                    <th>Uncorrected p-value</th>
+                                    <th>&omega; distribution over sites</th>
+                               </tr>
+                            </thead>       
+                               <tbody id = 'table-branch-table'>
+                                    
+                               </tbody>
+                                                    
+                            </table>                         
+                    </div>  
+                <div class = "col-md-5">
+                    <div class="panel panel-default">
+                      <div class="panel-heading" id = 'primary_omega_tag'></div>
+                      <div class="panel-body">
+                        <svg id = "primary_omega_plot"/> 
+                      </div>
+                    </div>                    
+                </div>
+                </div>          
+        </div>
+    </div>
+</div>
+
+<!--
+###############################################################################################################################
+-->
+
+<script src="/hyphy-absrel/js/busted.js"></script>
+
+</body>
+</html>
