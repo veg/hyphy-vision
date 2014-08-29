@@ -16,13 +16,10 @@ var width  = 800, //$(container_id).width(),
 var tree = d3.layout.phylotree("body")
     .size([height, width])
     .separation (function (a,b) {return 0;});
-    
     //.node_span (function (a) {if (a.children && a.children.length) return 1; return isNaN (parseFloat (a["attribute"]) * 100) ? 1 : parseFloat (a["attribute"]) * 100; });
 
 var container_id = '#tree_container';
 
-//window.setInterval (function () {});
-   
 var svg = d3.select(container_id).append("svg")
     .attr("width", width)
     .attr("height", height);
@@ -34,49 +31,46 @@ var omega_color = d3.scale.pow().exponent(scaling_exponent)
                     .range([ "#5e4fa2", "#3288bd", "#e6f598","#f46d43","#9e0142"])
                     .clamp(true);
     
-
 // *** HANDLERS ***
-
 $("#json_file").on ("change", function (e) {
-    var files = e.target.files; // FileList object
 
-    if (files.length == 1) {
-      var f = files[0];
-      var reader = new FileReader();
+  // FileList object
+  var files = e.target.files; 
+  if (files.length == 1) {
+    var f = files[0];
+    var reader = new FileReader();
+    reader.onload = (function(theFile) {
+      return function(e) {
+        analysis_data = JSON.parse (e.target.result);
+        render_bs_rel (analysis_data);
+      };
+    })(f);
+    reader.readAsText(f);
+  }
 
-      reader.onload = (function(theFile) {
-        return function(e) {
-            analysis_data = JSON.parse (e.target.result);
-            render_bs_rel (analysis_data);
-        };
-      })(f);
-
-      reader.readAsText(f);
-    }
 });
 
-
 $("#expand_spacing").on ("click", function (e) {
-    tree.spacing_x (tree.spacing_x() + 1).update(true);
+  tree.spacing_x (tree.spacing_x() + 1).update(true);
 });
 
 $("#compress_spacing").on ("click", function (e) {
-    tree.spacing_x (tree.spacing_x() - 1).update(true);
+  tree.spacing_x (tree.spacing_x() - 1).update(true);
 })
 
 $("#color_or_grey").on ("click", function (e) {
-     if ($(this).data ('color-mode') == 'gray') {
-        $(this).data ('color-mode', 'color');
-        d3.select (this).text ("Use grayscale");
-        omega_color.range([ "#5e4fa2", "#3288bd", "#e6f598","#f46d43","#9e0142"]);
-    } else {
-        $(this).data ('color-mode', 'gray');
-        d3.select (this).text ("Use color");
-        omega_color.range([ "#EEE", "#BBB","#999","#333","#000"]);    
-    }
-    branch_omegas = render_bs_rel_tree (analysis_data, which_model)[1];
-    tree.update ();
-    e.preventDefault();
+  if ($(this).data ('color-mode') == 'gray') {
+      $(this).data ('color-mode', 'color');
+      d3.select (this).text ("Use grayscale");
+      omega_color.range([ "#5e4fa2", "#3288bd", "#e6f598","#f46d43","#9e0142"]);
+  } else {
+      $(this).data ('color-mode', 'gray');
+      d3.select (this).text ("Use color");
+      omega_color.range(["#EEE", "#BBB","#999","#333","#000"]);    
+  }
+  branch_omegas = render_bs_rel_tree (analysis_data, which_model)[1];
+  tree.update ();
+  e.preventDefault();
 });
 
 $("#show_color_bar").on ("click", function (e) {
@@ -426,13 +420,13 @@ function render_bs_rel_tree (json, model_id) {
                 
 function render_bs_rel (json) {
 
-    function make_distro_plot (d) {
-                drawDistribution (d[0],
-                          rate_distro_by_branch [d[0]].map (function (r) {return r[0];}), 
-                          rate_distro_by_branch [d[0]].map (function (r) {return r[1];}), 
-                          {'log' : true, 'legend' : false, 'domain' : [0.00001,10], 'dimensions': {'width' : 400, 'height': 400}});
+    //function make_distro_plot(d) {
+    //            drawDistribution (d[0],
+    //                      rate_distro_by_branch [d[0]].map (function (r) {return r[0];}), 
+    //                      rate_distro_by_branch [d[0]].map (function (r) {return r[1];}), 
+    //                      {'log' : true, 'legend' : false, 'domain' : [0.00001,10], 'dimensions': {'width' : 400, 'height': 400}});
 
-    }
+    //}
 
     default_tree_settings();
     
@@ -484,31 +478,14 @@ function render_bs_rel (json) {
        branch_count+=1;
     }
     
-       
-    
-    render_color_scheme (color_legend_id);
+    //render_color_scheme (color_legend_id);
     
     // render summary data
     
-    var total_tree_length = json["fits"]["Unconstrained model"]["tree length"]; 
+    var total_tree_length =  d3.format("g")(json["fits"]["Unconstrained model"]["tree length"]); 
     
     for_branch_table = for_branch_table.sort (function (a,b) {return a[4]-b[4];});
-    make_distro_plot (for_branch_table[0]);
-
-    for_branch_table = d3.select ('#table-branch-table').selectAll ("tr").data (for_branch_table);
-    for_branch_table.enter().append ('tr');
-    for_branch_table.exit().remove();
-    for_branch_table.style ('font-weight', function (d) { return d[3] <= 0.05 ? 'bold' : 'normal';} );
-    for_branch_table.on ("click", function (d) {
-        make_distro_plot(d);
-    });
-    for_branch_table = for_branch_table.selectAll ("td").data (function (d) {return d;});
-    for_branch_table.enter().append ("td");
-    for_branch_table.html (function (d) {
-        if (typeof d == "number") {return branch_table_format (d);} 
-        return d;
-    });
-
+    //make_distro_plot (for_branch_table[0]);
 
     //d3.select ('#summary-method-name').text (json['version']);
     d3.select ('#summary-pmid').text ("PubMed ID " + json['PMID'])
@@ -533,7 +510,7 @@ function render_bs_rel (json) {
         model_rows[k].push (json['fits'][access_key]['parameters']);
         model_rows[k].push (fit_format(json['fits'][access_key]['AIC-c']));
         model_rows[k].push (format_run_time(json['fits'][access_key]['runtime']));
-        model_rows[k].push (json['fits'][access_key]['tree length']);
+        model_rows[k].push (fit_format(json['fits'][access_key]['tree length']));
         model_rows[k].push (d3.format("%")(json['fits'][access_key]['rate distributions']['FG'][0][1]));
         model_rows[k].push (d3.format("%")(json['fits'][access_key]['rate distributions']['FG'][1][1]));
         model_rows[k].push (d3.format("%")(json['fits'][access_key]['rate distributions']['FG'][2][1]));
@@ -569,14 +546,19 @@ function format_run_time (seconds) {
 function edge_colorizer (element, data) {
 
     var coloration = branch_omegas[data.target.name];
+
     if (coloration) {
-        if ('color' in coloration) {
-            element.style ('stroke', coloration['color']);
-        } else {
-            element.style ('stroke', 'url(#' + coloration['grad'] + ')');
-        }
-        $(element[0][0]).tooltip({'title' : coloration['tooltip'], 'html' : true, 'trigger' : 'hover', 'container' : 'body', 'placement' : 'auto'});
+
+      if ('color' in coloration) {
+        element.style ('stroke', coloration['color']);
+      } else {
+        element.style ('stroke', 'url(#' + coloration['grad'] + ')');
+      }
+
+      $(element[0][0]).tooltip({'title' : coloration['tooltip'], 'html' : true, 'trigger' : 'hover', 'container' : 'body', 'placement' : 'auto'});
+
    }
+
     element.style ('stroke-width', branch_p_values[data.target.name] <= alpha_level ? '12' : '5')
            .style ('stroke-linejoin', 'round')
            .style ('stroke-linecap', 'round');
@@ -584,9 +566,10 @@ function edge_colorizer (element, data) {
 }
 
 $( document ).ready( function () {
-    d3.json ("test-data/lysin.nex.BUSTED.json", function (json) {
-        analysis_data = json;
-        render_bs_rel (json);
-    });
+  d3.json ("test-data/lysin.nex.BUSTED.json", function (json) {
+    analysis_data = json;
+    render_bs_rel(json);
+    //render_table("#sites", json);
+    render_busted_histogram("#chart-id", json);
+  });
 });
-
