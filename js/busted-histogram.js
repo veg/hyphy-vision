@@ -1,3 +1,19 @@
+function exportCSVButton(data) {
+
+  data = d3.csv.format(data);
+  if (data != null) {
+    var pom = document.createElement('a');
+    pom.setAttribute('href', 'data:text/csv;charset=utf-8,' + encodeURIComponent(data));
+    pom.setAttribute('download', 'export.csv');
+    pom.className = 'btn btn-default btn-sm';
+    pom.innerHTML = '<span class="glyphicon glyphicon-floppy-save"></span> Download CSV';
+    $("body").append(pom);
+    pom.click();
+    pom.remove();
+  }
+
+}
+
 function siteList(div, test_set) {
 
   //var dimension_group = dimension.group().reduceCount();
@@ -34,7 +50,7 @@ function render_busted_histogram(c, json) {
 
   // Massage data for use with crossfilter
   var erc = json["evidence ratios"]["constrained"][0];
-  erc = erc.map(function(d) { return Math.log10(d)})
+  erc = erc.map(function(d) { return Math.log(d)})
 
   var test_set = json["test set"].split(",");
   var model_results = [];
@@ -47,15 +63,14 @@ function render_busted_histogram(c, json) {
       "unconstrained"       : json["profiles"]["unconstrained"][0][i],
       "constrained"         : json["profiles"]["constrained"][0][i],
       "optimized_null"      : json["profiles"]["optimized null"][0][i],
-      "er_constrained"      : Math.log10(json["evidence ratios"]["constrained"][0][i]),
-      "er_optimized_null"   : Math.log10(json["evidence ratios"]["optimized null"][0][i])
+      "er_constrained"      : Math.log(json["evidence ratios"]["constrained"][0][i]),
+      "er_optimized_null"   : Math.log(json["evidence ratios"]["optimized null"][0][i])
     })
 
   });
 
   var data = crossfilter(model_results);
   var site_index = data.dimension(function(d) { return d["site_index"]; });
-  var site_index_o = data.dimension(function(d) { return d["site_index"]; });
 
   var sitesByConstrained = site_index.group().reduce(
     function (p, v) {
@@ -73,19 +88,17 @@ function render_busted_histogram(c, json) {
     }
   );
 
-  var sitesByOptimizedNull = site_index_o.group().reduce(
+  var sitesByON = site_index.group().reduce(
     function (p, v) {
-      p.constrained_evidence += +v["er_constrained"];
       p.optimized_null_evidence += +v["er_optimized_null"];
       return p;
     },
     function (p, v) {
-      p.constrained_evidence -= +v["er_constrained"];
       p.optimized_null_evidence -= +v["er_optimized_null"];
       return p;
     },
     function () {
-      return { constrained_evidence : 0, optimized_null_evidence : 0 };
+      return { optimized_null_evidence : 0 };
     }
   );
 
@@ -93,18 +106,18 @@ function render_busted_histogram(c, json) {
   var composite = dc.compositeChart(c);
 
   composite
-      .width($(window).width())
-      .height(480)
+      .width(680)
+      .height(300)
       .dimension(site_index)
       .x(d3.scale.linear().domain([site_index.bottom(1)[0].site_index, site_index.top(1)[0].site_index]))
-      .yAxisLabel("The Y Axis")
-      .legend(dc.legend().x(80).y(20).itemHeight(13).gap(5))
+      .yAxisLabel("Ln Evidence Ratio")
+      .xAxisLabel("Site Location")
+      .legend(dc.legend().x(550).y(20).itemHeight(13).gap(5))
       .renderHorizontalGridLines(true)
       .compose([
         dc.lineChart(composite)
-          //.dimension(site_index)
-          //.colors('red')
-          .group(sitesByConstrained)
+          .group(sitesByConstrained, "Constrained")
+          .colors(d3.scale.ordinal().range(['green']))
           .valueAccessor(function(d) {
               return d.value.constrained_evidence;
           })
@@ -112,8 +125,7 @@ function render_busted_histogram(c, json) {
               return d.key;
           }), 
         dc.lineChart(composite)
-          //.dimension(site_index_o)
-          .group(sitesByConstrained)
+          .group(sitesByON, "Optimized Null")
           .valueAccessor(function(d) {
               return d.value.optimized_null_evidence;
           })
@@ -122,52 +134,10 @@ function render_busted_histogram(c, json) {
           })
           .colors(d3.scale.ordinal().range(['red']))
       ]);
-      //.brushOn(true);
 
-  //var constrained_chart = dc.lineChart(c);
+  composite.xAxis().ticks(site_index.top(1)[0].site_index);
 
-
-  //constrained_chart 
-  //  .width($(window).width()/2)
-  //  .height(300)
-  //  .margins({top: 10, right: 50, bottom: 30, left: 60})
-  //  .dimension(site_index)
-  //  .group(sitesByConstrained)
-  //  .valueAccessor(function(d) {
-  //      return d.value.constrained_evidence;
-  //  })
-  //  //.x(d3.scale.linear().domain([site_index.bottom(1)[0].site_index, site_index.top(1)[0].site_index]))
-  //  .x(d3.scale.linear())
-  //  .elasticX(true)
-  //  .keyAccessor(function(d) {
-  //      return d.key;
-  //  })
-  //  .renderHorizontalGridLines(true)
-  //  .elasticY(true)
-  //  .brushOn(true)
-  //  .title("Constrained Evidence Ratio")
-  //  .xAxis().ticks(5).tickFormat(d3.format("d"));
-
-  //optimized_null 
-  //  .width($(window).width()/2)
-  //  .height(300)
-  //  .margins({top: 10, right: 50, bottom: 30, left: 60})
-  //  .dimension(site_index_o)
-  //  .group(sitesByOptimizedNull)
-  //  .valueAccessor(function(d) {
-  //      return d.value.optimized_null_evidence;
-  //  })
-  //  //.x(d3.scale.linear().domain([site_index_o.bottom(1)[0].site_index, site_index_o.top(1)[0].site_index]))
-  //  .x(d3.scale.linear())
-  //  .elasticX(true)
-  //  .keyAccessor(function(d) {
-  //      return d.key;
-  //  })
-  //  .renderHorizontalGridLines(true)
-  //  .elasticY(true)
-  //  .brushOn(true)
-  //  .title("Constrained Evidence Ratio")
-  //  .xAxis().ticks(5).tickFormat(d3.format("d"));
+  var numberFormat = d3.format(".4f");
 
   // Render the table
   dc.dataTable(".dc-data-table")
@@ -184,32 +154,38 @@ function render_busted_histogram(c, json) {
               return d.site_index;
           },
           function (d) {
-              return d["unconstrained"];
+              return numberFormat(d["unconstrained"]);
           },
           function (d) {
-              return d["constrained"];
+              return numberFormat(d["constrained"]);
           },
           function (d) {
-              return d["optimized_null"];
+              return numberFormat(d["optimized_null"]);
           },
           function (d) {
-              return d["er_constrained"];
+              return numberFormat(d["er_constrained"]);
           },
           function (d) {
-              return d["er_optimized_null"];
+              return numberFormat(d["er_optimized_null"]);
           },
 
       ])
+
       // (optional) sort using the given field, :default = function(d){return d;}
       .sortBy(function (d) {
           return d.site_index;
       })
+
       // (optional) sort order, :default ascending
       .order(d3.ascending)
+
       // (optional) custom renderlet to post-process chart using D3
       .renderlet(function (table) {
           table.selectAll(".dc-table-group").classed("info", true);
       });
+
+      //$("#export-csv").on('click', exportCSVButton(site_index.top(Infinity)));
+      $("#export-csv").on('click', function(e) { exportCSVButton(site_index.top(Infinity)); } );
 
   dc.renderAll();
 
