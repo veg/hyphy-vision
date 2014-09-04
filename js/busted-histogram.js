@@ -1,25 +1,6 @@
-function exportCSVButton(data) {
 
-  data = d3.csv.format(data);
-  if (data != null) {
-    var pom = document.createElement('a');
-    pom.setAttribute('href', 'data:text/csv;charset=utf-8,' + encodeURIComponent(data));
-    pom.setAttribute('download', 'export.csv');
-    pom.className = 'btn btn-default btn-sm';
-    pom.innerHTML = '<span class="glyphicon glyphicon-floppy-save"></span> Download CSV';
-    $("body").append(pom);
-    pom.click();
-    pom.remove();
-  }
-
-}
 
 function siteList(div, test_set) {
-
-  //var dimension_group = dimension.group().reduceCount();
-  //var top_ten_values = dimension_group.top(10);
-  //var total = dimension.groupAll().reduceCount().value();
-  //console.log("lol");
 
   // Do not remove headers
   var trs = d3.select(div).selectAll("tr");
@@ -44,9 +25,6 @@ function siteList(div, test_set) {
 }
 
 function render_busted_histogram(c, json) {
-
-  //var constrained_chart = dc.lineChart(c);
-  //var optimized_null = dc.lineChart("#on-chart-id");
 
   // Massage data for use with crossfilter
   var erc = json["evidence ratios"]["constrained"][0];
@@ -106,13 +84,13 @@ function render_busted_histogram(c, json) {
   var composite = dc.compositeChart(c);
 
   composite
-      .width(680)
+      .width(1170)
       .height(300)
       .dimension(site_index)
       .x(d3.scale.linear().domain([site_index.bottom(1)[0].site_index, site_index.top(1)[0].site_index]))
       .yAxisLabel("Ln Evidence Ratio")
       .xAxisLabel("Site Location")
-      .legend(dc.legend().x(550).y(20).itemHeight(13).gap(5))
+      .legend(dc.legend().x(1020).y(20).itemHeight(13).gap(5))
       .renderHorizontalGridLines(true)
       .compose([
         dc.lineChart(composite)
@@ -184,9 +162,24 @@ function render_busted_histogram(c, json) {
           table.selectAll(".dc-table-group").classed("info", true);
       });
 
-      //$("#export-csv").on('click', exportCSVButton(site_index.top(Infinity)));
-      $("#export-csv").on('click', function(e) { exportCSVButton(site_index.top(Infinity)); } );
+  $("#export-csv").on('click', function(e) { exportCSVButton(site_index.top(Infinity)); } );
+
+  $("#export-chart-svg").on('click', function(e) { 
+    // class manipulation for the image to display correctly
+    $("#chart-id").find("svg")[0].setAttribute("class", "dc-chart");
+    saveImage("svg", "#chart-id"); 
+    $("#chart-id").find("svg")[0].setAttribute("class", "");
+  });
+
+  $("#export-chart-png").on('click', function(e) { 
+    // class manipulation for the image to display correctly
+    $("#chart-id").find("svg")[0].setAttribute("class", "dc-chart");
+    saveImage("png", "#chart-id"); 
+    $("#chart-id").find("svg")[0].setAttribute("class", "");
+  });
 
   dc.renderAll();
 
 }
+
+

@@ -1,4 +1,6 @@
-var width  = 800, //$(container_id).width(),
+var global_test_set;
+
+var width  = 600, //$(container_id).width(),
     height = 600, //$(container_id).height()
     color_scheme = d3.scale.category10(),
     branch_omegas = {},
@@ -10,7 +12,7 @@ var width  = 800, //$(container_id).width(),
     branch_table_format = d3.format (".4f"),
     analysis_data = null,
     render_color_bar = true,
-    which_model = "Unconstrained model",
+    which_model = "Constrained model",
     color_legend_id = 'color_legend';
 
 var tree = d3.layout.phylotree("body")
@@ -23,6 +25,7 @@ var container_id = '#tree_container';
 var svg = d3.select(container_id).append("svg")
     .attr("width", width)
     .attr("height", height);
+
         
 var scaling_exponent = 0.33;       
 
@@ -88,10 +91,10 @@ $("#show_color_bar").on ("click", function (e) {
 
 $("#show_model").on ("click", function (e) {
      if ($(this).data ('model') == 'Unconstrained') {
-        $(this).data ('model', 'Constrained model');
+        $(this).data ('model', 'Unconstrained model');
         d3.select (this).html ("Show Unconstrained model Model");
     } else {
-        $(this).data ('model', 'Unconstrained model');
+        $(this).data ('model', 'Constrained model');
         d3.select (this).html("Show Branch-site Model");
     }
     which_model = $(this).data ('model');
@@ -195,186 +198,16 @@ function render_color_scheme (svg_container) {
     }               
 }        
 
-
-
-function make_plot_data (omegas, weights) {
-    var data_to_plot = [],
-        norm  = weights.reduce (function (p, c) {return p + c;}, 0),
-        mean  = 0.;
-                
-    for (var i = 0; i < omegas.length; i++) {
-        if (omegas[i] == null || weights[i] == null) {
-            return;
-        }
-                    
-        var this_class = {'omega' : omegas[i], 'weight' : weights[i]/norm};
-        data_to_plot.push (this_class);
-    }
-    return data_to_plot;
-}
-    
-function drawDistribution (node_name, omegas, weights, settings) {
-	
-    var svg_id = settings["svg"] || "primary_omega_plot",
-        tag_id = settings["tag"] || "primary_omega_tag";
-        
-    var legend_id = settings["legend"] || null;
-    var do_log_plot = settings["log"] || false;
-    
-    var dimensions 	= settings["dimensions"] || {"width" : 600, "height" : 400};
-    
-    var margins     = {'left' : 50, 'right' : 15, 'bottom': 35, 'top' : 35},
-        plot_width  = dimensions["width"] - margins['left'] - margins['right'],
-        plot_height = dimensions["height"] - margins['top'] - margins['bottom'];
-                        
-    var k_p			= settings["k"] || null;
-    
-    
-    var domain		= settings["domain"] || d3.extent (omegas);
-                
-
-    var omega_scale = (do_log_plot ? d3.scale.log () : d3.scale.linear ())
-                      .range ([0, plot_width]).domain (domain).nice().clamp (true),
-        proportion_scale = d3.scale.linear().range ([plot_height, 0]).domain ([0,1]);
-        
-
-    
-    
-    // compute margins -- circle AREA is proportional to the relative weight
-    // maximum diameter is (height - text margin)
-    
-    
-    var data_to_plot = make_plot_data (omegas, weights);
-
-    d3.select ("#" + tag_id).text (node_name);
-
-    var svg = d3.select ("#" + svg_id).attr ("width", dimensions.width)
-                                      .attr ("height", dimensions.height),
-        plot = svg.selectAll (".container");
-        
-    if (plot.empty ()) {
-        plot = svg.append ("g").attr ("class", "container");
-    }
-    
-    
-    plot.attr ("transform", "translate(" +margins["left"] + " , " + margins["top"] + ")");
-    
-
-                        
-    var omega_lines = plot.selectAll (".omega-line").data (data_to_plot);
-    
-    omega_lines.enter().append ("line");
-    omega_lines.exit().remove();
-    omega_lines.transition().attr ("x1", function (d) {return omega_scale(d.omega);})
-                        .attr ("x2", function (d) {return omega_scale(d.omega);})
-                        .attr ("y1", function (d) {return proportion_scale(0);})
-                        .attr ("y2", function (d) {return proportion_scale(d.weight);})
-                        .style ("stroke", function (d) {return omega_color(d.omega);})
-                        .attr ("class", "omega-line");
-                                     
-    
-    var neutral_line = plot.selectAll (".neutral-line").data([1]);
-    neutral_line.enter (). append ("line"). attr ("class", "neutral-line");
-    neutral_line.exit().remove();
-    neutral_line.transition().attr ("x1", function (d) {return omega_scale(d);})
-                .attr ("x2", function (d) {return omega_scale(d);})
-                .attr ("y1", 0)
-                .attr ("y2", plot_height);
-
-
-
-    var xAxis = d3.svg.axis()
-        .scale(omega_scale)
-        .orient("bottom");
-    
-
-     
-    if (do_log_plot) {
-        xAxis.ticks(10, ".1r");
-    }
-    
-
-    var x_axis = svg.selectAll (".x.axis");
-    var x_label;
-    if (x_axis.empty()) {
-        x_axis =  svg.append("g")
-        .attr("class", "x axis");
-        
-        x_label = x_axis.append ("g").attr("class", "axis-label x-label");
-    } else {
-        x_label = x_axis.select (".axis-label.x-label");
-    }
-    
-    
-   
-    x_axis.attr("transform", "translate(" + margins["left"] + "," + (plot_height + margins["top"])  + ")")
-        .call(xAxis);    
-    x_label = x_label.attr("transform", "translate(" + plot_width + "," + margins["bottom"] + ")")
-              .selectAll("text").data(["\u03C9"]);
-    x_label.enter().append ("text");
-    x_label.text (function (d) {return d})
-            .style ("text-anchor", "end")
-            .attr ("dy", "0.0em");
-    
-    
-
-    var yAxis = d3.svg.axis()
-        .scale(proportion_scale)
-        .orient("left")
-        .ticks (10,".1p");
-
-    var y_axis = svg.selectAll (".y.axis");
-    var y_label;
-    if (y_axis.empty()) {
-        y_axis =  svg.append("g")
-        .attr("class", "y axis");
-        
-        y_label = y_axis.append ("g").attr("class", "axis-label y-label");
-    } else {
-        y_label = y_axis.select (".axis-label.y-label");
-    }
-    
-    
-   
-    y_axis.attr("transform", "translate(" + margins["left"] + "," + margins["top"]  + ")")
-        .call(yAxis);    
-    y_label = y_label.attr("transform", "translate(" + (-margins["left"]) + "," + 0 + ")")
-              .selectAll("text").data(["Proportion of sites"]);
-    y_label.enter().append ("text");
-    y_label.text (function (d) {return d})
-            .style ("text-anchor", "start")
-            .attr ("dy", "-1em")
-            
-}
-
-function create_gradient (svg_defs, grad_id, rateD, already_cumulative) {
-    var this_grad = svg_defs.append ("linearGradient")
-                                    .attr ("id", grad_id);
-                                    
-    var current_weight = 0;
-    rateD.forEach (function (d,i) {
-        if (d[1]) {
-            var new_weight = current_weight + d[1];
-            this_grad.append ("stop")
-                     .attr ("offset",  "" + current_weight * 100 + "%")
-                     .style ("stop-color", omega_color (d[0]));
-            this_grad.append ("stop")
-                     .attr ("offset",  "" + new_weight * 100 + "%")
-                     .style ("stop-color", omega_color (d[0]));
-            current_weight = new_weight;
-        }
-    });
-}
-  
 function render_bs_rel_tree (json, model_id) {
     tree(json["fits"][model_id]["tree string"]).svg(svg);
    
     var svg_defs = svg.selectAll ("defs");
+
     if (svg_defs.empty()) {
-        svg_defs = svg.append ("defs");
+      svg_defs = svg.append ("defs");
     }
+
     svg_defs.selectAll ("*").remove();
-    
     gradID = 0;
     var local_branch_omegas = {};
 
@@ -382,14 +215,16 @@ function render_bs_rel_tree (json, model_id) {
     
     for (var b in fitted_distributions) {       
        var rateD = fitted_distributions[b];
+
        if (rateD.length == 1) {
-            local_branch_omegas[b] = {'color': omega_color (rateD[0][0])};
+          local_branch_omegas[b] = {'color': omega_color (rateD[0][0])};
        } else {
-            gradID ++;
-            var grad_id = "branch_gradient_" + gradID;
-            create_gradient (svg_defs, grad_id, rateD);
-            local_branch_omegas[b] = {'grad' : grad_id};
+          gradID ++;
+          var grad_id = "branch_gradient_" + gradID;
+          //create_gradient (svg_defs, grad_id, rateD);
+          local_branch_omegas[b] = {'grad' : grad_id};
        }
+
        local_branch_omegas[b]['omegas'] = rateD;
        local_branch_omegas[b]['tooltip'] = "<b>" + b + "</b>";
        local_branch_omegas[b]['distro'] = "";
@@ -411,27 +246,52 @@ function render_bs_rel_tree (json, model_id) {
     tree.style_edges (function (element, data) {
         edge_colorizer (element, data);
     });
+
     branch_lengths = {};
     tree.get_nodes().forEach (function (d) {if (d.parent) {branch_lengths[d.name] = tree.branch_length()(d);}});
     
     return [branch_lengths, local_branch_omegas];
 }
 
+function add_dc_legend(svg) {
+
+  var dc_legend = svg.append("g")
+      .attr("class", "dc-legend")
+      .attr("transform", "translate(15,40)")
+
+      var fg_item = dc_legend.append("g")
+        .attr("class","dc-legend-item")
+        .attr("transform", "translate(0,0)")
+
+        fg_item.append("rect")
+          .attr("width", "13")
+          .attr("height", "13")
+          .attr("fill", "red")
+
+        fg_item.append("text")
+          .attr("x", "15")
+          .attr("y", "11")
+          .text("Foreground")
+
+      var bg_item = dc_legend.append("g")
+        .attr("class","dc-legend-item")
+        .attr("transform", "translate(0,18)")
+
+        bg_item.append("rect")
+          .attr("width", "13")
+          .attr("height", "13")
+          .attr("fill", "gray")
+
+        bg_item.append("text")
+          .attr("x", "15")
+          .attr("y", "11")
+          .text("Background")
+
+}
                 
 function render_bs_rel (json) {
 
-    //function make_distro_plot(d) {
-    //            drawDistribution (d[0],
-    //                      rate_distro_by_branch [d[0]].map (function (r) {return r[0];}), 
-    //                      rate_distro_by_branch [d[0]].map (function (r) {return r[1];}), 
-    //                      {'log' : true, 'legend' : false, 'domain' : [0.00001,10], 'dimensions': {'width' : 400, 'height': 400}});
-
-    //}
-
     default_tree_settings();
-    
-    
-    
     branch_p_values = {};
     
     var rate_distro_by_branch = {},
@@ -526,6 +386,15 @@ function render_bs_rel (json) {
     
     tree.layout();
 
+    $("#export-phylo-png").on('click', function(e) { 
+      saveImage("png", "#tree_container"); 
+    });
+
+    $("#export-phylo-svg").on('click', function(e) { 
+      saveImage("svg", "#tree_container"); 
+    });
+
+
 }
 
 function format_run_time (seconds) {
@@ -559,7 +428,17 @@ function edge_colorizer (element, data) {
 
    }
 
+    // Color the FG a different color
+    var is_foreground = false;
+
+    if(global_test_set.indexOf(data.target.name) != -1 &&
+       global_test_set.indexOf(data.source.name) != -1) {
+      is_foreground = true;
+    }
+
     element.style ('stroke-width', branch_p_values[data.target.name] <= alpha_level ? '12' : '5')
+           .style ('stroke', is_foreground ? 'red' : 'gray')
+           .style ('stroke-linejoin', 'round')
            .style ('stroke-linejoin', 'round')
            .style ('stroke-linecap', 'round');
     
@@ -567,9 +446,32 @@ function edge_colorizer (element, data) {
 
 $( document ).ready( function () {
   d3.json ("test-data/lysin.nex.BUSTED.json", function (json) {
-    analysis_data = json;
+    global_test_set = json["test set"].split(',');
     render_bs_rel(json);
-    //render_table("#sites", json);
     render_busted_histogram("#chart-id", json);
+    add_dc_legend(svg);
+
+    var fg_rate = json["fits"]["Constrained model"]["rate distributions"]["FG"]
+    var omegas  = fg_rate.map(function (r) {return r[0];})
+    var weights = fg_rate.map(function (r) {return r[1];})
+
+    var dsettings = {
+      'log'       : true, 
+      'legend'    : false, 
+      'domain'    : [0.00001,10], 
+      'dimensions': {'width' : 325, 'height' : 300}
+    }
+
+    drawDistribution("FG", omegas, weights, dsettings);
+
+    $("#export-dist-svg").on('click', function(e) { 
+      saveImage("svg", "#primary-omega-dist"); 
+    });
+
+    $("#export-dist-png").on('click', function(e) { 
+      saveImage("png", "#primary-omega-dist"); 
+    });
+
+
   });
 });
