@@ -1,0 +1,31 @@
+.axis path,
+.axis line {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
+
+.area {
+  fill: steelblue;
+}
+
+.site-table {
+ margin-top: 20px;
+}
+
+#chart-image {
+  display:none;
+}
+
+#chart-canvas {
+  display:none;
+}
+
+.btn-export {
+  margin: 5px;
+}
+
+.dist-export {
+  margin-left: 5px;
+}
+
