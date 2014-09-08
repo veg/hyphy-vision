@@ -113,7 +113,7 @@ function render_busted_histogram(c, json) {
           .colors(d3.scale.ordinal().range(['red']))
       ]);
 
-  composite.xAxis().ticks(site_index.top(1)[0].site_index);
+  composite.xAxis().ticks(50);
 
   var numberFormat = d3.format(".4f");
 

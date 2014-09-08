@@ -431,8 +431,7 @@ function edge_colorizer (element, data) {
     // Color the FG a different color
     var is_foreground = false;
 
-    if(global_test_set.indexOf(data.target.name) != -1 &&
-       global_test_set.indexOf(data.source.name) != -1) {
+    if(global_test_set.indexOf(data.target.name) != -1) {
       is_foreground = true;
     }
 
@@ -444,34 +443,57 @@ function edge_colorizer (element, data) {
     
 }
 
-$( document ).ready( function () {
-  d3.json ("test-data/lysin.nex.BUSTED.json", function (json) {
-    global_test_set = json["test set"].split(',');
-    render_bs_rel(json);
-    render_busted_histogram("#chart-id", json);
-    add_dc_legend(svg);
+function init(json) {
+  global_test_set = json["test set"].split(',');
+  render_bs_rel(json);
+  render_busted_histogram("#chart-id", json);
+  add_dc_legend(svg);
 
-    var fg_rate = json["fits"]["Constrained model"]["rate distributions"]["FG"]
-    var omegas  = fg_rate.map(function (r) {return r[0];})
-    var weights = fg_rate.map(function (r) {return r[1];})
+  var fg_rate = json["fits"]["Constrained model"]["rate distributions"]["FG"]
+  var omegas  = fg_rate.map(function (r) {return r[0];})
+  var weights = fg_rate.map(function (r) {return r[1];})
 
-    var dsettings = {
-      'log'       : true, 
-      'legend'    : false, 
-      'domain'    : [0.00001,10], 
-      'dimensions': {'width' : 325, 'height' : 300}
-    }
+  var dsettings = {
+    'log'       : true, 
+    'legend'    : false, 
+    'domain'    : [0.00001,10], 
+    'dimensions': {'width' : 325, 'height' : 300}
+  }
 
-    drawDistribution("FG", omegas, weights, dsettings);
+  drawDistribution("FG", omegas, weights, dsettings);
 
-    $("#export-dist-svg").on('click', function(e) { 
-      saveImage("svg", "#primary-omega-dist"); 
-    });
-
-    $("#export-dist-png").on('click', function(e) { 
-      saveImage("png", "#primary-omega-dist"); 
-    });
-
-
+  $("#export-dist-svg").on('click', function(e) { 
+    saveImage("svg", "#primary-omega-dist"); 
   });
+
+  $("#export-dist-png").on('click', function(e) { 
+    saveImage("png", "#primary-omega-dist"); 
+  });
+
+}
+
+
+$( document ).ready( function () {
+  d3.json ("test-data/RTIconCat.nex.BUSTED.json", function (json) {
+    init(json);
+  });
+
+  $("#json_file").on ("change", function (e) {
+      var files = e.target.files; // FileList object
+
+      if (files.length == 1) {
+        var f = files[0];
+        var reader = new FileReader();
+
+        reader.onload = (function(theFile) {
+          return function(e) {
+              analysis_data = JSON.parse (e.target.result);
+              init(analysis_data);
+          };
+        })(f);
+
+        reader.readAsText(f);
+      }
+  });
+
 });
