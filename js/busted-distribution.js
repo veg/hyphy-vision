@@ -39,6 +39,7 @@ function drawDistribution(node_name, omegas, weights, settings) {
       'bottom' : 35,
       'top'    : 35
     },
+
     plot_width = dimensions["width"] - margins['left'] - margins['right'],
     plot_height = dimensions["height"] - margins['top'] - margins['bottom'];
 
@@ -153,8 +154,6 @@ function drawDistribution(node_name, omegas, weights, settings) {
   } else {
     y_label = y_axis.select(".axis-label.y-label");
   }
-
-
 
   y_axis.attr("transform", "translate(" + margins["left"] + "," + margins["top"] + ")")
     .call(yAxis);

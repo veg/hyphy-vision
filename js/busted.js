@@ -447,16 +447,15 @@ function init(json) {
   global_test_set = json["test set"].split(',');
   render_bs_rel(json);
   render_busted_histogram("#chart-id", json);
-  add_dc_legend(svg);
 
-  var fg_rate = json["fits"]["Constrained model"]["rate distributions"]["FG"]
+  var fg_rate = json["fits"]["Unconstrained model"]["rate distributions"]["FG"]
   var omegas  = fg_rate.map(function (r) {return r[0];})
   var weights = fg_rate.map(function (r) {return r[1];})
 
   var dsettings = {
-    'log'       : true, 
-    'legend'    : false, 
-    'domain'    : [0.00001,10], 
+    'log'       : true,
+    'legend'    : false,
+    'domain'    : [0.00001, 20],
     'dimensions': {'width' : 325, 'height' : 300}
   }
 
@@ -476,6 +475,7 @@ function init(json) {
 $( document ).ready( function () {
   d3.json ("test-data/RTIconCat.nex.BUSTED.json", function (json) {
     init(json);
+    add_dc_legend(svg);
   });
 
   $("#json_file").on ("change", function (e) {
