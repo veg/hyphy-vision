@@ -1,1 +1,1 @@
-Currently viewable [here](http://datamonkey-dev:4000/hyphy-absrel/ui/busted.html)
+Currently viewable [here](http://hyphy.org/models/busted/ui/busted.html)
