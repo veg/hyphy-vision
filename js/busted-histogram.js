@@ -33,11 +33,11 @@ function render_busted_histogram(c, json) {
   var test_set = json["test set"].split(",");
   var model_results = [];
 
-  test_set.forEach(function(elem, i) { 
+  
 
+  erc.forEach(function(elem, i) { 
     model_results.push({
-      "name"                : elem,
-      "site_index"          : i,
+      "site_index"          : i + 1,
       "unconstrained"       : json["profiles"]["unconstrained"][0][i],
       "constrained"         : json["profiles"]["constrained"][0][i],
       "optimized_null"      : json["profiles"]["optimized null"][0][i],
@@ -87,7 +87,7 @@ function render_busted_histogram(c, json) {
       .width(1170)
       .height(300)
       .dimension(site_index)
-      .x(d3.scale.linear().domain([site_index.bottom(1)[0].site_index, site_index.top(1)[0].site_index]))
+      .x(d3.scale.linear().domain([1, erc.length]))
       .yAxisLabel("Ln Evidence Ratio")
       .xAxisLabel("Site Location")
       .legend(dc.legend().x(1020).y(20).itemHeight(13).gap(5))

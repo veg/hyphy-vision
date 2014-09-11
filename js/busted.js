@@ -348,32 +348,56 @@ function render_bs_rel (json) {
     //make_distro_plot (for_branch_table[0]);
 
     //d3.select ('#summary-method-name').text (json['version']);
+    d3.select ('#summary-test-result').text (json['test results']['p'] <= 0.05 ? "evidence" : "no evidence");
+    d3.select ('#summary-test-pvalue').text (branch_table_format(json['test results']['p']));
     d3.select ('#summary-pmid').text ("PubMed ID " + json['PMID'])
                                .attr ("href", "http://www.ncbi.nlm.nih.gov/pubmed/" + json['PMID']);
     d3.select ('#summary-total-runtime').text (format_run_time(json['timers']['overall']));
     d3.select ('#summary-total-branches').text (branch_count);
     d3.select ('#summary-tested-branches').text (tested_count);
     d3.select ('#summary-selected-branches').text (selected_count);
+    
+    has_background = json['background'];
         
     var model_rows = [[],[]];
     
-    for (k = 0; k < 2; k++)  {
-        var access_key;
+    if (has_background) {
+        model_rows.push ([]);
+    }
+    
+    for (k = 0; k < 2 + has_background; k++)  {
+        var access_key,
+            secondary_key,
+            only_distro = 0;
+            
         if (k == 0) {
             access_key = 'Unconstrained model';
+            secondary_key = 'FG';
             model_rows[k].push ('Unconstrained Model');
+            only_distro = 0;
         } else {
-            access_key = 'Constrained model';
-            model_rows[k].push ('Constrained Model');        
+            if (has_background && k == 1) {
+                model_rows[k].push ('(background branches)');
+                secondary_key = 'BG';
+                only_distro = 1;
+            } else {
+                access_key = 'Constrained model';
+                model_rows[k].push ('Constrained Model');                    
+                secondary_key = 'FG';
+                only_distro = 0;
+            }
         }
-        model_rows[k].push (fit_format(json['fits'][access_key]['log-likelihood']));
-        model_rows[k].push (json['fits'][access_key]['parameters']);
-        model_rows[k].push (fit_format(json['fits'][access_key]['AIC-c']));
-        model_rows[k].push (format_run_time(json['fits'][access_key]['runtime']));
-        model_rows[k].push (fit_format(json['fits'][access_key]['tree length']));
-        model_rows[k].push (d3.format("%")(json['fits'][access_key]['rate distributions']['FG'][0][1]));
-        model_rows[k].push (d3.format("%")(json['fits'][access_key]['rate distributions']['FG'][1][1]));
-        model_rows[k].push (d3.format("%")(json['fits'][access_key]['rate distributions']['FG'][2][1]));
+        
+            model_rows[k].push (only_distro ? '' : fit_format(json['fits'][access_key]['log-likelihood']));
+            model_rows[k].push (only_distro ? '' : json['fits'][access_key]['parameters']);
+            model_rows[k].push (only_distro ? '' : fit_format(json['fits'][access_key]['AIC-c']));
+            model_rows[k].push (only_distro ? '' : format_run_time(json['fits'][access_key]['runtime']));
+            model_rows[k].push (only_distro ? '' : fit_format(json['fits'][access_key]['tree length']));
+
+        for (j = 0; j < 3; j++) {
+         model_rows[k].push (   omega_format(json['fits'][access_key]['rate distributions'][secondary_key][j][0]) + " (" +
+                                prop_format(json['fits'][access_key]['rate distributions'][secondary_key][j][1]) + ")");
+        }
     }
                                
     model_rows = d3.select ('#summary-model-table').selectAll ("tr").data (model_rows);
