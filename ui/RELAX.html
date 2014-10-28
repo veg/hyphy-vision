@@ -23,67 +23,21 @@
     <title> RELAX analysis result</title>
 
     <link href="//octamonkey.ucsd.edu/css/phylotree.css" rel="stylesheet">
-    <style>
+    <link href="css/datamonkey.relax.css" rel="stylesheet">
 
-    .omega-bar line, .omega-bar path {
-      fill: none;
-      stroke: #000;
-      shape-rendering: crispEdges;
-    }
-
-     .omega-line {
-        stroke: #000;
-        stroke-width: 6px;
-    }
-
-	.omega-line-reference {
-		stroke: #000;
-		stroke-width: 6px;
-		opacity: 0.4;
-	}
-
-    .axis path, .axis line {
-        fill: none;
-        stroke: #000;
-        shape-rendering: crispEdges;
-    }
     
-    .axis-label {
-        font: 18px sans-serif;
-    }
-    
-    .axis text {
-        font: 12px sans-serif;
-    }
-
-    .weight-label {
-        font: 14px sans-serif;
-        text-anchor: middle;
-    }
-
-    .neutral-line {
-        stroke-dasharray: 2,10;
-        stroke: #000;
-        stroke-width: 1px;
-    }
-
-    .displacement-line {
-        fill: none;
-        stroke: #000;
-        opacity: 0.7;
-        stroke-width: 1.5px;
-    }
 
 
 
     </style>
 </head>
 
-<body style = 'padding-top: 70px;'>
-
 <!--
 ###############################################################################################################################
 -->
+
+<body style = 'padding-top: 70px;'>
+
 
 <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container-fluid">
@@ -95,7 +49,7 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="navbar-brand" href="#">RELAX results</a>
+      <a class="navbar-brand" href="#">datamonkey.relax results</a>
     </div>
 
 
@@ -103,7 +57,7 @@
     <div class="collapse navbar-collapse" id = "navbar-collapse-1">
 
       <ul class="nav nav-pills navbar-right" role="tablist" id = 'navigation_buttons'>
-           <li class="active"><a href="#summary_tab" role="tab" data-toggle="tab"><i class="fa fa-list" style = 'margin-right: 5px'></i>Summary</a></li>
+           <li class="active"><a href="#datamonkey-relax-summary-tab" role="tab" data-toggle="tab"><i class="fa fa-list" style = 'margin-right: 5px'></i>Summary</a></li>
            <li><a href="#tree_tab" role="tab" data-toggle="tab"><i class="fa fa-tree" style = 'margin-right: 5px'></i> Tree</a></li>
       </ul>
 
@@ -111,7 +65,7 @@
         <li class="dropdown">
           <a href="#" class="dropdown-toggle" data-toggle="dropdown">Load file<b class="caret"></b></a>
           <ul class="dropdown-menu">
-            <li><input type="file" id="json_file"></li>
+            <li><input type="file" id="datamonkey-relax-load-json"></li>
           </ul>
         </li>
      </ul>
@@ -128,14 +82,14 @@
     </div>
     
     <div class="tab-content">
-        <div class="tab-pane active" id = "summary_tab">
+        <div class="tab-pane active" id = "datamonkey-relax-summary-tab">
             
             <div class = "row" style = 'margin-top: 5px'>
                 <div class = "col-md-12">
                     <ul class="list-group">
                       <li class="list-group-item list-group-item-info">
                         <h3 class="list-group-item-heading"><i class="fa fa-list" style = 'margin-right: 10px'>
-                        </i><span id = 'summary-method-name'>RELAX(ed selection test)</span> summary</h3>
+                        </i><span id = 'summary-method-name'>datamonkey.relax(ed selection test)</span> summary</h3>
                             <p class = "list-group-item-text lead" style = "margin-top:0.5em; ">
                                 Test
                                 for selection <strong id = 'summary-direction'></strong> (<abbr title = "Relaxation coefficient">K</abbr> = <strong id = 'summary-K'></strong>)
@@ -175,10 +129,12 @@
 
           </div>
              <div class = "row">
+             
                   <div class = "col-lg-6">
                      <div class="panel panel-default" id = 'primary_omega_plot_container' style = 'display : none'>
                       <div class="panel-heading">
                         <h3 class="panel-title">&omega; distributions under the <strong>Alternative</strong> model</h3>
+                        <small>Test branches are shown in <span style = 'color: #d62728;'>red</span> and reference branches are shown in <span style = 'color:#1f77b4;'>blue</span></small>
                       </div>
                       <div class="panel-body">
                         <svg id = 'primary_omega_plot'/>
@@ -189,6 +145,7 @@
                      <div class="panel panel-default" id = 'secondary_omega_plot_container' style = 'display : none'>
                       <div class="panel-heading">
                         <h3 class="panel-title">&omega; distributions under the <strong>Partitioned Exploratory</strong> model</h3>
+                        <small>Test branches are shown in <span style = 'color: #d62728;'>red</span> and reference branches are shown in <span style = 'color:#1f77b4;'>blue</span></small>
                       </div>
                       <div class="panel-body">
                         <svg id = 'secondary_omega_plot'/>
@@ -201,8 +158,9 @@
 
         <div class = 'tab-pane' id = "tree_tab">
             <div class = 'row'>
-                    <div class = "col-md-4 col-md-offset-1" style = 'margin-bottom: 15px'>
-                            <div class="btn-group">
+                <div class = "cold-md-12">
+                    <div class="input-group input-group-sm">
+                          <div class="input-group-btn">
                             <button type="button" class="btn btn-default btn-sm" id = "expand_spacing" title = "Expand spacing">
                                 <i class="fa fa-expand" ></i>
                             </button>
@@ -218,9 +176,46 @@
                              <button type="button" class="btn btn-default btn-sm" id = "sort_original" title = "Restore original order">
                                 <i class="fa fa-sort" ></i>
                             </button>
-                          </div>  
+                          </div>
+ 
+                          <div class="input-group-btn">
+                            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">Model 
+                            <span class="caret"></span></button>
+                            <ul class="dropdown-menu" id = "datamonkey-relax-tree-model-list">
+                              <!-- <li><a href="#" class="_seq_predef" data-range="131,156">V1</a></li> -->
+                              
+                            </ul>
+                          </div>
+ 
+                          <input type="text" class="form-control disabled" id="datamonkey-relax-tree-model" disabled >
+
+                          <div class="input-group-btn">
+                            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">Highlight branch set 
+                            <span class="caret"></span></button>
+                            <ul class="dropdown-menu" id = "datamonkey-relax-tree-highlight-branches">
+                              <!-- <li><a href="#" class="_seq_predef" data-range="131,156">V1</a></li> -->
+                              
+                           </ul>
+                          </div>
+ 
+                          <input type="text" class="form-control disabled" id="datamonkey-relax-tree-highlight" disabled >
+                          
+                          <span class="input-group-addon">
+                            Use model branch lengths
+                            <input type="checkbox" id="datamonkey-relax-tree-branch-lengths" checked class = "datamonkey-relax-tree-trigger">
+                          </span>
+                          <span class="input-group-addon">
+                            Show fill legend
+                            <input type="checkbox" id="datamonkey-relax-tree-fill-legend" checked class = "datamonkey-relax-tree-trigger">
+                          </span>
+                          <span class="input-group-addon">
+                            Use color
+                            <input type="checkbox" id="datamonkey-relax-tree-fill-color" checked class = "datamonkey-relax-tree-trigger">
+                          </span>
+
                     </div>
-            </div>        
+                </div>
+            </div>
             <div class = 'row'>
                 <div class = 'col-md-1'>
                      <div class = 'row'>
@@ -245,647 +240,7 @@
 ###############################################################################################################################
 -->
 
-<script>
-
-var RELAX = {'omegaPlot' : {}}; //container
-                    
-var width  = 800, //$(container_id).width(),
-    height = 600, //$(container_id).height()
-    color_scheme = d3.scale.category10(),
-    alpha_level = 0.05,
-    omega_format = d3.format (".3r"),
-    prop_format = d3.format (".2p"),
-    fit_format = d3.format (".2f"),
-    p_value_format = d3.format (".4f"),
-    analysis_data = null,
-    render_color_bar = true,
-    which_model = "General Descriptive",
-    color_legend_id = 'color_legend';
-
-var tree = d3.layout.phylotree("body")
-    .size([height, width])
-    .separation (function (a,b) {return 0;});
-    
-    //.node_span (function (a) {if (a.children && a.children.length) return 1; return isNaN (parseFloat (a["attribute"]) * 100) ? 1 : parseFloat (a["attribute"]) * 100; });
-
-var container_id = '#tree_container';
-
-//window.setInterval (function () {});
-   
-var svg = d3.select(container_id).append("svg")
-    .attr("width", width)
-    .attr("height", height);
-        
-var scaling_exponent = 0.33;       
-
-var branch_color_gradient = d3.scale.pow().exponent(scaling_exponent)                    
-                    .domain([0, 0.25, 1, 5, 20])
-                    .range([ "#5e4fa2", "#3288bd", "#e6f598","#f46d43","#9e0142"])
-                    .clamp(true);
-
-var omega_color = d3.scale.pow().exponent(scaling_exponent)                    
-                    .domain([0, 0.25, 1, 5, 10])
-                    .range([ "#5e4fa2", "#3288bd", "#e6f598","#f46d43","#9e0142"])
-                    .clamp(true);
-
-var omega_distributions = {};
-    
-
-// *** HANDLERS ***
-
-$("#json_file").on ("change", function (e) {
-    var files = e.target.files; // FileList object
-
-    if (files.length == 1) {
-      var f = files[0];
-      var reader = new FileReader();
-
-      reader.onload = (function(theFile) {
-        return function(e) {
-            analysis_data = JSON.parse (e.target.result);
-
-            RELAX.render (analysis_data);
-        };
-      })(f);
-
-      reader.readAsText(f);
-    }
-});
-
-
-function sort_nodes (asc) {
-    tree.traverse_and_compute (function (n) {
-            var d = 1;
-            if (n.children && n.children.length) {
-                d += d3.max (n.children, function (d) { return d["count_depth"];});
-            }
-            n["count_depth"] = d;
-        }); 
-        tree.resort_children (function (a,b) {
-            return (a["count_depth"] - b["count_depth"]) * (asc ? 1 : -1);
-        });
-}
-
-$("#expand_spacing").on ("click", function (e) {
-    tree.spacing_x (tree.spacing_x() + 1).update(true);
-});
-
-$("#compress_spacing").on ("click", function (e) {
-    tree.spacing_x (tree.spacing_x() - 1).update(true);
-});
-
-$("#sort_original").on ("click", function (e) {
-    tree.resort_children (function (a,b) {
-        return a["original_child_order"] - b["original_child_order"];
-    });
-});
-
-$("#sort_ascending").on ("click", function (e) {
-    sort_nodes (true);
-});
-
-$("#sort_descending").on ("click", function (e) {
-    sort_nodes (false);
-});
-
-
-
-$("#color_or_grey").on ("click", function (e) {
-     if ($(this).data ('color-mode') == 'gray') {
-        $(this).data ('color-mode', 'color');
-        d3.select (this).text ("Use grayscale");
-        omega_color.range([ "#5e4fa2", "#3288bd", "#e6f598","#f46d43","#9e0142"]);
-    } else {
-        $(this).data ('color-mode', 'gray');
-        d3.select (this).text ("Use color");
-        omega_color.range([ "#EEE", "#BBB","#999","#333","#000"]);    
-    }
-    branch_omegas = render_relax_tree (analysis_data, which_model)[1];
-    tree.update ();
-    render_color_scheme (color_legend_id);
-    e.preventDefault();
-});
-
-$("#show_color_bar").on ("click", function (e) {
-     render_color_bar = !render_color_bar;
-     if ($(this).data ('color-bar') == 'on') {
-        $(this).data ('color-mode', 'off');
-        d3.select (this).html ("Show &omega; color legend");
-    } else {
-        $(this).data ('color-mode', 'on');
-        d3.select (this).html ("Hide &omega; color legend");
-    }
-    render_color_scheme (color_legend_id);
-    e.preventDefault();
-});
-
-$("#show_model").on ("click", function (e) {
-     if ($(this).data ('model') == 'MG94') {
-        $(this).data ('model', 'Full model');
-        d3.select (this).html ("Show MG94 Model");
-    } else {
-        $(this).data ('model', 'MG94');
-        d3.select (this).html ("Show Branch-site Model");
-    }
-    which_model = $(this).data ('model');
-    branch_omegas = render_relax_tree (analysis_data, which_model)[1];
-    tree.layout ();
-    e.preventDefault();
-});
-
-
-
-function default_tree_settings () {
-    tree.branch_length (null);
-    tree.branch_name (null);
-    tree.node_span ('equal');
-    tree.options ({'draw-size-bubbles' : false}, false);
-    tree.options ({'selectable' : false}, false);
-    tree.font_size (18);
-    tree.scale_bar_font_size (14);
-    tree.node_circle_size (6);
-    tree.spacing_x (35, true);
-    tree.branch_length (function (n) {return RELAX.branch_lengths [n.name] || 0;});
-    //tree.style_nodes (node_colorizer);
-    tree.style_edges (edge_colorizer);
-    //tree.selection_label (current_selection_name);
-}
-
-
-
-
-RELAX.render_color_scheme = function (svg_container, attr_name) {
-
-    var svg = d3.select ("#" + svg_container).selectAll ("svg").data ([omega_color.domain()]);
-    svg.enter().append ("svg");
-    svg.selectAll ("*").remove();
-   
-    if (render_color_bar &&  RELAX.branch_annotations) {
-        var bar_width  = 70,
-            bar_height = 300,
-            margins = {'bottom' : 30,
-                       'top'    : 15,
-                       'left'   : 40,
-                       'right'  : 2};
-                       
-        svg.attr ("width", bar_width)
-           .attr ("height", bar_height);
-       
-       
-    
-        this_grad = svg.append ("defs").append ("linearGradient")
-                    .attr ("id", "_omega_bar")
-                    .attr ("x1", "0%")
-                    .attr ("y1", "0%")
-                    .attr ("x2", "0%")
-                    .attr ("y2", "100%");
-       
-        var omega_scale = d3.scale.pow().exponent(scaling_exponent)                    
-                         .domain(d3.extent (omega_color.domain()))
-                         .range ([0,1]),
-            axis_scale = d3.scale.pow().exponent(scaling_exponent)                    
-                         .domain(d3.extent (omega_color.domain()))
-                         .range ([0,bar_height - margins['top']-margins['bottom']]);
-                     
-                    
-       omega_color.domain().forEach (function (d) { 
-        this_grad.append ("stop")
-                 .attr ("offset",  "" + omega_scale (d) * 100 + "%")
-                 .style ("stop-color", omega_color (d));
-       });
-   
-       var g_container = svg.append ("g").attr ("transform", "translate(" + margins["left"] + "," + margins["top"] + ")");
-   
-       g_container.append ("rect").attr ("x", 0)
-                          .attr ("width", bar_width - margins['left']-margins['right'])
-                          .attr ("y", 0)
-                          .attr ("height", bar_height - margins['top']-margins['bottom'])
-                          .style ("fill", "url(#_omega_bar)");
- 
-   
-        var draw_omega_bar  =  d3.svg.axis().scale(axis_scale)
-                                 .orient ("left")
-                                 .tickFormat (d3.format(".1r"))
-                                 .tickValues ([0,0.01,0.1,0.5,1,2,5,10]);
-                             
-        var scale_bar = g_container.append("g");
-        scale_bar.style ("font-size", "14")
-                       .attr  ("class", "omega-bar")
-                       .call (draw_omega_bar);
-                   
-        scale_bar.selectAll ("text")
-                       .style ("text-anchor", "right");
-                   
-        var x_label =_label = scale_bar.append ("g").attr("class", "omega-bar");
-        x_label = x_label.selectAll("text").data(attr_name);
-        x_label.enter().append ("text");
-        x_label.text (function (d) {return d})
-                .attr  ("transform", "translate(" + ( bar_width - margins['left']-margins['right'])*0.5 + "," + (bar_height - margins['bottom']) + ")")
-                .style ("text-anchor", "middle")
-                .style ("font-size", "18")
-                .attr ("dx", "0.0em")
-                .attr ("dy", "0.1em");
-    }               
-}        
-
-  
-RELAX.render_tree = function (json, model_id) {
-
-     //console.log (json["fits"]);
-    RELAX.branch_lengths = json["fits"][model_id]["branch-lengths"];
-    RELAX.branch_annotations = json["fits"][model_id]["branch-annotations"];
-    tree(json["tree"]).svg (svg).layout();
-
-    tree.style_edges (function (element, data) {
-        edge_colorizer (element, data);
-    });
-    
-    RELAX.render_color_scheme (color_legend_id, json["fits"][model_id]["annotation-tag"]);
-    
-   
-}
-
-function relax_render_error (e) {
-    d3.select ("#relax-error-text").text (e);
-    d3.select ("#relax-error").style ('display', 'block');
-}
-       
-
-                
-RELAX.render = function (json) {
-
-    try {
-        d3.select ('#summary-pmid').text ("PubMed ID " + json['PMID'])
-                                   .attr ("href", "http://www.ncbi.nlm.nih.gov/pubmed/" + json['PMID']);
-        
-        var relaxation_K = json["fits"]["Alternative"]["K"];
-        var p = json["relaxation-test"]["p"];
-        
-        d3.select ('#summary-direction').text (relaxation_K > 1 ? 'intensification' : 'relaxation');
-        d3.select ('#summary-evidence').text (p <= alpha_level ? 'significant' : 'not significant');
-        d3.select ('#summary-pvalue').text (p_value_format(p));
-        d3.select ('#summary-LRT').text (fit_format(json["relaxation-test"]["LR"]));
-        d3.select ('#summary-K').text (fit_format(relaxation_K));
-        
-        
-        var table_row_data = [];
-        
-        for (var m in json ["fits"]) {
-            var this_model_row = [],
-                this_model = json ["fits"][m];
-                
-           this_model_row = [this_model['display-order'],
-                              "",
-                              m, 
-                              fit_format(this_model['log-likelihood']),
-                              this_model['parameters'],
-                              fit_format(this_model['AIC-c']),
-                              format_run_time (this_model ['runtime']),
-                              fit_format(d3.values (this_model["branch-lengths"]).reduce (function (p, c) {return p + c;}, 0))
-                              ];
-                                  
-            omega_distributions [m] = {};
-            
-            var distributions = [];
-            for (var d in this_model["rate-distributions"]) {
-                var this_distro = this_model["rate-distributions"][d];
-                var this_distro_entry = [d, "", "", ""];
-                
-                omega_distributions [m][d] = this_distro.map (function (d) {return {'omega' : d[0], 'weight' : d[1]};});
-                    
-                for (var k = 0; k < this_distro.length; k++) {
-                    this_distro_entry[k+1] = (omega_format (this_distro[k][0]) + " (" + prop_format (this_distro[k][1]) + ")");
-                } 
-                distributions.push (this_distro_entry);
-            }
-            
-             
-            distributions.sort (function (a,b) {return a[0] < b[0] ? -1 : (a[0] == b[0] ? 0 : 1);});
-            this_model_row = this_model_row.concat ( distributions[0]);  
-            this_model_row [1] = distributions[0][0];
-            table_row_data.push (this_model_row);
-           
-            for (var d = 1; d < distributions.length; d++) {
-                var this_distro_entry = this_model_row.map (function (d,i) {if (i) return ""; return d;});
-                this_distro_entry[1] = distributions[d][0];
-                for (var k = this_distro_entry.length - 4; k < this_distro_entry.length; k++) {
-                    this_distro_entry[k] = distributions [d][k - this_distro_entry.length + 4];
-                }
-                table_row_data.push (this_distro_entry);
-            }
-                              
-        }
-
-        table_row_data.sort (function (a,b) {if (a[0] == b[0]) {return a[1] < b[1] ? -1 : (a[1] == b[1] ? 0 : 1);} return a[0]-b[0];});
-        table_row_data = table_row_data.map (function (r) {return r.slice(2);});
-        
-        model_rows = d3.select ('#summary-model-table').selectAll ("tr").data (table_row_data);
-        model_rows.enter().append ('tr');
-        model_rows.exit().remove ();
-        model_rows = model_rows.selectAll ("td").data (function (d) {return d;});
-        model_rows.enter().append ("td");
-        model_rows.html (function (d) {return d;});
-
-        try {
-            RELAX.omegaPlot (omega_distributions["Alternative"]["Reference"], omega_distributions["Alternative"]["Test"], {'svg' : 'primary_omega_plot'});
-            d3.select ('#primary_omega_plot_container').style ('display', 'block');
-        } catch (e) {
-            console.log (e);
-        }
-        
-        try {
-            RELAX.omegaPlot (omega_distributions["Partitioned Exploratory"]["Reference"], omega_distributions["Partitioned Exploratory"]["Test"], {'svg' : 'secondary_omega_plot'});
-             d3.select ('#secondary_omega_plot_container').style ('display', 'block');
-       } catch (e) {
-            console.log (e);
-        }
-
-        default_tree_settings();
-    
-        RELAX.partition = json["partition"]["RELAX.test"];
-        var tree_info = RELAX.render_tree (json, "General Descriptive");
-        
-        
-
-    }
-    catch (e) {
-        relax_render_error (e.message);
-    }
-
-}
-
-function format_run_time (seconds) {
-    var duration_string = "";
-    seconds = parseFloat (seconds);
-    var split_array = [Math.floor (seconds/(24*3600)) ,Math.floor (seconds/3600) % 24, Math.floor (seconds/60) % 60,seconds % 60],
-        quals = ["d.", "hrs.", "min.", "sec."];
-        
-    split_array.forEach (function (d,i) {
-        if (d) {
-            duration_string += " " + d + " " + quals[i];
-        }
-    });
-    
-    return duration_string;
-}
-
-function edge_colorizer (element, data) {
-
-    if (RELAX.branch_annotations) {
-        element.style ('stroke', branch_color_gradient (RELAX.branch_annotations[data.target.name] || 0));
-        $(element[0][0]).tooltip({'title' : omega_format(RELAX.branch_annotations[data.target.name]), 'html' : true, 'trigger' : 'hover', 'container' : 'body', 'placement' : 'auto'})
-    } 
-
-   
-   element.style ('stroke-width', RELAX.partition[data.target.name] ? '12' : '5')
-          .style ('stroke-linejoin', 'round')
-          .style ('stroke-linecap', 'round');
-    
-}
-
-/*
-Distribution plotters
-*/
-	
-	
-	RELAX.omegaPlot = function (data_to_plot, secondary_data, settings) {
-	
-        makeSpring = function (x1,x2,y1,y2,step,displacement) {
-                if (x1 == x2) {
-                    y1 = Math.min (y1,y2);
-                    return "M" + x1 + "," + (y1 - 40) + "v20";
-                }
-    
-    
-    
-                var spring_data = [],
-                    point       = [x1,y1],
-                    angle       = Math.atan2 (y2-y1,x2-x1);
-    
-                step        = [step*Math.cos (angle), step*Math.sin(angle)];
-                //spring_data.push (point);
-                k = 0;
-                while (x1 < x2 && point[0] < x2 - 15 || x1 > x2 && point[0] > x2 + 15) {
-                    point = point.map (function (d,i) {return d+step[i];});
-                    if (k % 2) {
-                        spring_data.push ([point[0], point[1] + displacement]);
-                    } else {
-                        spring_data.push ([point[0], point[1] - displacement]);
-                    }
-                    k++;
-                    if (k>100) {
-                        break;
-                    }
-                }
-                spring_data.pop();
-                spring_data.push ([x2,y2]);
-    
-                var line = d3.svg.line().interpolate("monotone");
-    
-                return line (spring_data);
-            }
-
-        var svg_id = settings["svg"] || "primary_omega_plot";
-		
-		var legend_id = settings["legend"] || null;
-		var do_log_plot = settings["log"] || true;
-		
-		var dimensions 	= settings["dimensions"] || {"width" : 600, "height" : 400};
-        
-        var margins     = {'left' : 50, 'right' : 15, 'bottom': 35, 'top' : 35},
-            plot_width  = dimensions["width"] - margins['left'] - margins['right'],
-            plot_height = dimensions["height"] - margins['top'] - margins['bottom'];
-                    		
-		var k_p			= settings["k"] || null;
-		
-		
-        var domain		= settings["domain"] || d3.extent (secondary_data ? secondary_data.map (function (d) {return d.omega;}).concat (data_to_plot.map (function (d) {return d.omega;})) : data_to_plot.map (function (d) {return d.omega;}));
-        domain [0] *= 0.5;					
-
-		var omega_scale = (do_log_plot ? d3.scale.log () : d3.scale.linear ())
-						  .range ([0, plot_width]).domain (domain).nice(),
-			proportion_scale = d3.scale.linear().range ([plot_height, 0]).domain ([-0.05,1]).clamp(true);
-			
-
-		
-		
-		// compute margins -- circle AREA is proportional to the relative weight
-		// maximum diameter is (height - text margin)
-		
-		
-
-		var svg = d3.select ("#" + svg_id).attr ("width", dimensions.width)
-										  .attr ("height", dimensions.height),
-			plot = svg.selectAll (".container");
-			
-	    svg.selectAll ("defs").remove();
-	    
-	    svg.append("defs").append("marker")
-          .attr("id", "arrowhead")
-          .attr("refX", 10) /*must be smarter way to calculate shift*/
-          .attr("refY", 4)
-          .attr("markerWidth",  10)
-          .attr("markerHeight", 8)
-          .attr("orient", "auto")
-          .attr("stroke", "#000")
-          .attr("fill", "#000")
-          .append("path")
-          .attr("d", "M 0,0 V8 L10,4 Z");
-			
-		if (plot.empty ()) {
-			plot = svg.append ("g").attr ("class", "container");
-		}
-		
-		
-		plot.attr ("transform", "translate(" +margins["left"] + " , " + margins["top"] + ")");
-		
-
-                            
-        var reference_omega_lines = plot.selectAll (".omega-line-reference" ),
-            displacement_lines    = plot.selectAll (".displacement-line");
-            
-        if (secondary_data) {
-        
-            var diffs = data_to_plot.map (function (d,i) {return {'x1' : d.omega ,
-                                                                  'x2' : secondary_data[i].omega,
-                                                                  'y1' : d.weight * 0.98,
-                                                                  'y2' : secondary_data[i].weight*0.98};});
-                                                                  
- 
-            displacement_lines = displacement_lines.data (diffs);
-            displacement_lines.enter().append ("path");
-            displacement_lines.exit().remove();
-            
-            /*displacement_lines.transition().attr ("x1", function (d) {return omega_scale(d.x1);})
-                                .attr ("x2", function (d) {return omega_scale(d.x2);})
-                                .attr ("y1", function (d) {return d.x1 == d.x2 ? proportion_scale(d3.max ([d.y1,d.y2]) + 0.1) : proportion_scale(d.y1*0.5);})
-                                .attr ("y2", function (d) {return d.x1 == d.x2 ? proportion_scale(d3.max ([d.y1,d.y2])) : proportion_scale(d.y2*0.5);})
-                                .attr("marker-end", "url(#arrowhead)")
-                                .attr ("class", "displacement-line");*/
-                                
-            displacement_lines.transition().attr ("d", function (d) {return makeSpring (omega_scale(d.x1), 
-                                                                                  omega_scale (d.x2), 
-                                                                                  proportion_scale (d.y1*0.5),
-                                                                                  proportion_scale (d.y2*0.5),
-                                                                                  5,
-                                                                                  5);})
-                                            .attr("marker-end", "url(#arrowhead)")
-                                            .attr ("class", "displacement-line");
-                                                                                
-       
-  		    reference_omega_lines = reference_omega_lines.data (data_to_plot);
-            reference_omega_lines.enter().append ("line");
-            reference_omega_lines.exit().remove();
-            reference_omega_lines.transition().attr ("x1", function (d) {return omega_scale(d.omega);})
-                                .attr ("x2", function (d) {return omega_scale(d.omega);})
-                                .attr ("y1", function (d) {return proportion_scale(-0.05);})
-                                .attr ("y2", function (d) {return proportion_scale(d.weight);})
-                                .style ("stroke", function (d) {return omega_color(d.omega);})
-                                .attr ("class", "omega-line-reference");
-                                
-            
-                                
-            
-            
-        } else {
-            reference_omega_lines.remove();
-            displacement_lines.remove();
-        }
-
-		var omega_lines = plot.selectAll (".omega-line").data (secondary_data ? secondary_data : data_to_plot);
-		
-		omega_lines.enter().append ("line");
-		omega_lines.exit().remove();
-		omega_lines.transition().attr ("x1", function (d) {return omega_scale(d.omega);})
-                            .attr ("x2", function (d) {return omega_scale(d.omega);})
-                            .attr ("y1", function (d) {return proportion_scale(-0.05);})
-                            .attr ("y2", function (d) {return proportion_scale(d.weight);})
-                            .style ("stroke", function (d) {return omega_color(d.omega);})
-                            .attr ("class", "omega-line");
-										 
-		
-		var neutral_line = plot.selectAll (".neutral-line").data([1]);
-		neutral_line.enter (). append ("line"). attr ("class", "neutral-line");
-		neutral_line.exit().remove();
-		neutral_line.transition().attr ("x1", function (d) {return omega_scale(d);})
-					.attr ("x2", function (d) {return omega_scale(d);})
-					.attr ("y1", 0)
-					.attr ("y2", plot_height);
-
-
-
-        var xAxis = d3.svg.axis()
-            .scale(omega_scale)
-            .orient("bottom");
-        
-
-         
-		if (do_log_plot) {
-		    xAxis.ticks(10, ".1r");
-		}
-        
-
-        var x_axis = svg.selectAll (".x.axis");
-        var x_label;
-        if (x_axis.empty()) {
-            x_axis =  svg.append("g")
-            .attr("class", "x axis");
-            
-            x_label = x_axis.append ("g").attr("class", "axis-label x-label");
-        } else {
-            x_label = x_axis.select (".axis-label.x-label");
-        }
-        
-        
-       
-        x_axis.attr("transform", "translate(" + margins["left"] + "," + (plot_height + margins["top"])  + ")")
-            .call(xAxis);    
-        x_label = x_label.attr("transform", "translate(" + plot_width + "," + margins["bottom"] + ")")
-                  .selectAll("text").data(["\u03C9"]);
-        x_label.enter().append ("text");
-        x_label.text (function (d) {return d})
-                .style ("text-anchor", "end")
-                .attr ("dy", "0.0em");
-        
-        
-
-        var yAxis = d3.svg.axis()
-            .scale(proportion_scale)
-            .orient("left")
-            .ticks (10,".1p");
-
-        var y_axis = svg.selectAll (".y.axis");
-        var y_label;
-        if (y_axis.empty()) {
-            y_axis =  svg.append("g")
-            .attr("class", "y axis");
-            
-            y_label = y_axis.append ("g").attr("class", "axis-label y-label");
-        } else {
-            y_label = y_axis.select (".axis-label.y-label");
-        }
-        
-        
-       
-        y_axis.attr("transform", "translate(" + margins["left"] + "," + margins["top"]  + ")")
-            .call(yAxis);    
-        y_label = y_label.attr("transform", "translate(" + (-margins["left"]) + "," + 0 + ")")
-                  .selectAll("text").data(["Proportion of sites"]);
-        y_label.enter().append ("text");
-        y_label.text (function (d) {return d})
-                .style ("text-anchor", "start")
-                .attr ("dy", "-1em")
-				
-	}
-
-$( document ).ready( function () {
-    d3.json ("test-data/test.json", function (json) {
-        analysis_data = json;
-        RELAX.render (json);
-    });
-});
-
-</script>
+<script src = "js/datamonkey.relax.js"></script>
 
 </body>
 </html>
