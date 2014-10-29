@@ -39,6 +39,12 @@ datamonkey.relax = function () {
 
 
     function set_handlers () {
+    
+        $("#datamonkey-relax-error-hide").on ("click", function (e) {
+            d3.select ("#datamonkey-relax-error").style ("display", "none");
+            e.preventDefault    ();
+        });
+    
         $("#datamonkey-relax-load-json").on ("change", function (e) {
             var files = e.target.files; // FileList object
 
@@ -252,8 +258,8 @@ render_tree = function (skip_render) {
 }
 
 function relax_render_error (e) {
-    d3.select ("#relax-error-text").text (e);
-    d3.select ("#relax-error").style ('display', 'block');
+    d3.select ("#datamonkey-relax-error-text").text (e);
+    d3.select ("#datamonkey-relax-error").style ('display', 'block');
 }
        
 
@@ -274,6 +280,7 @@ render = function (json) {
         d3.select ('#summary-LRT').text (fit_format(json["relaxation-test"]["LR"]));
         d3.select ('#summary-K').text (fit_format(relaxation_K));
         
+        d3.select ("#datamonkey-relax-error").style ('display', 'none');
         
         var table_row_data = [];
         var omega_distributions = {};
@@ -339,18 +346,22 @@ render = function (json) {
             omegaPlot (omega_distributions["Alternative"]["Reference"], omega_distributions["Alternative"]["Test"], {'svg' : 'primary_omega_plot'});
             d3.select ('#primary_omega_plot_container').style ('display', 'block');
         } catch (e) {
+            d3.select ('#primary_omega_plot_container').style ('display', 'none');
             console.log (e);
         }
         
         try {
             omegaPlot (omega_distributions["Partitioned Exploratory"]["Reference"], omega_distributions["Partitioned Exploratory"]["Test"], {'svg' : 'secondary_omega_plot'});
              d3.select ('#secondary_omega_plot_container').style ('display', 'block');
-       } catch (e) {
-            console.log (e);
+        } catch (e) {
+           d3.select ('#secondary_omega_plot_container').style ('display', 'none');
+           console.log (e);
         }
 
      
         settings['suppress-tree-render'] = true;
+
+        var def_displayed = false;
 
         var model_list = d3.select ("#datamonkey-relax-tree-model-list").selectAll ("li").data (d3.keys(json["fits"]).map(function (d) {return [d];}).sort());
         model_list.enter().append ("li");
@@ -358,7 +369,7 @@ render = function (json) {
         model_list = model_list.selectAll ("a").data (function (d) {return d;});
         model_list.enter ().append ("a");
         model_list.attr ("href", "#").on ("click", function (d,i) {d3.select ("#datamonkey-relax-tree-model").attr ("value", d); render_tree ();});
-        model_list.text (function (d) {if (d == "General Descriptive") {this.click();} return d;});
+        model_list.text (function (d) {if (d == "General Descriptive") {def_displayed = true; this.click();} if (!def_displayed && d == "Alternative") { def_displayed = true; this.click(); }return d;});
 
         var partition_list = d3.select ("#datamonkey-relax-tree-highlight-branches").selectAll ("li").data ([['None']].concat(d3.keys(json["partition"]).map(function (d) {return [d];}).sort()));
         partition_list.enter().append ("li");
