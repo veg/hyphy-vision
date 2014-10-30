@@ -25,7 +25,9 @@ function siteList(div, test_set) {
 }
 
 function render_busted_histogram(c, json) {
-
+  
+  var self = this;
+  
   // Massage data for use with crossfilter
   var erc = json["evidence ratios"]["constrained"][0];
   erc = erc.map(function(d) { return Math.log(d)})
@@ -79,7 +81,12 @@ function render_busted_histogram(c, json) {
       return { optimized_null_evidence : 0 };
     }
   );
-
+  
+  // Set up new crossfilter dimensions to slice the table by constrained or ON evidence ratio.
+  var er_constrained = data.dimension(function(d) { return d["er_constrained"]; });
+  var er_optimized_null = data.dimension(function(d) { return d["er_optimized_null"]; });
+  self.er_constrained = er_constrained
+  self.er_optimized_null = er_optimized_null
 
   var composite = dc.compositeChart(c);
 
@@ -176,6 +183,14 @@ function render_busted_histogram(c, json) {
     $("#chart-id").find("svg")[0].setAttribute("class", "dc-chart");
     saveImage("png", "#chart-id"); 
     $("#chart-id").find("svg")[0].setAttribute("class", "");
+  });
+  
+  $("#apply-thresholds").on('click', function(e) { 
+    var erConstrainedThreshold = document.getElementById("er-constrained-threshold").value;
+    var erOptimizedNullThreshold = document.getElementById("er-optimized-null-threshold").value;
+    self.er_constrained.filter(function(d) { return d >= erConstrainedThreshold; });
+    self.er_optimized_null.filter(function(d) { return d >= erOptimizedNullThreshold; });
+    dc.renderAll();
   });
 
   dc.renderAll();
