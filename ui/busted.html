@@ -175,9 +175,23 @@
 
             <div class="col-lg-12">
 
+              <form id="er-thresholds">
+                <div class="form-group">
+                  <label for="er-constrained-threshold">Constrained Evidence Ratio Threshold:</label>
+                  <input type="text" class="form-control" id="er-constrained-threshold" value="-Infinity">
+                </div>
+                <div class="form-group">
+                  <label for="er-optimized-null-threshold">Optimized Null Evidence Ratio Threshold:</label>
+                  <input type="text" class="form-control" id="er-optimized-null-threshold" value="-Infinity">
+                </div>
+              </form>
               <button id="export-csv" type="button" class="btn btn-default btn-sm pull-right btn-export">
                 <span class="glyphicon glyphicon-floppy-save"></span> Export Table to CSV
               </button>
+              <button id="apply-thresholds" type="button" class="btn btn-default btn-sm pull-right btn-export">
+                Apply Thresholds
+              </button>
+
 
               <table id="sites" class="table sites dc-data-table">
                 <thead>
