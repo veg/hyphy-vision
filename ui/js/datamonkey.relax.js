@@ -15,9 +15,11 @@ datamonkey.relax = function () {
         },              
         'suppress-tree-render' : false
     }; 
+
+    set_handlers();
                     
-    var width  = 800, //$(container_id).width(),
-        height = 600, //$(container_id).height()
+    var width  = 800,
+        height = 600,
         alpha_level = 0.05,
         omega_format = d3.format (".3r"),
         prop_format = d3.format (".2p"),
@@ -28,8 +30,6 @@ datamonkey.relax = function () {
     var tree = d3.layout.phylotree("body")
         .size([height, width])
         .separation (function (a,b) {return 0;});
-    
-        //.node_span (function (a) {if (a.children && a.children.length) return 1; return isNaN (parseFloat (a["attribute"]) * 100) ? 1 : parseFloat (a["attribute"]) * 100; });
    
     var svg = d3.select("#tree_container").append("svg")
         .attr("width", width)
@@ -56,7 +56,7 @@ datamonkey.relax = function () {
                 return function(e) {
                     analysis_data = JSON.parse (e.target.result);
 
-                    render (analysis_data);
+                    render(analysis_data);
                 };
               })(f);
 
@@ -352,7 +352,7 @@ render = function (json) {
         
         try {
             omegaPlot (omega_distributions["Partitioned Exploratory"]["Reference"], omega_distributions["Partitioned Exploratory"]["Test"], {'svg' : 'secondary_omega_plot'});
-             d3.select ('#secondary_omega_plot_container').style ('display', 'block');
+            d3.select ('#secondary_omega_plot_container').style ('display', 'block');
         } catch (e) {
            d3.select ('#secondary_omega_plot_container').style ('display', 'none');
            console.log (e);
@@ -660,13 +660,5 @@ Distribution plotters
 				
 	}
 
-    $( document ).ready( function () {
-        set_handlers();
-        d3.json ("test-data/test.json", function (json) {
-            analysis_data = json;
-            render (json);
-        });
-    });
 };
 
-datamonkey.relax();

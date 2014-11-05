@@ -23,7 +23,7 @@
     <title> RELAX analysis result</title>
 
     <link href="//octamonkey.ucsd.edu/css/phylotree.css" rel="stylesheet">
-    <link href="css/datamonkey.relax.css" rel="stylesheet">
+    <link href="/assets/lib/datamonkey/relax/ui/css/datamonkey.relax.css" rel="stylesheet">
 
     
 
@@ -228,7 +228,6 @@
                             <div id = 'tree_container' class = 'tree-widget'>
                             </div>
                      </div>
-                        
                   </div>
             </div>
         </div>
@@ -241,6 +240,15 @@
 -->
 
 <script src = "js/datamonkey.relax.js"></script>
+<script>
+  $( document ).ready( function () {
+      datamonkey.relax();
+      d3.json ("test-data/test.json", function (json) {
+          analysis_data = json;
+          render (json);
+      });
+  });
+</script>
 
 </body>
 </html>
