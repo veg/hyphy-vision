@@ -7,6 +7,6 @@
    "dependencies": {
      "underscore"    : "1.x",
      "d3"            : "*",
-     "git@github.com:veg/phylotree.js.git" : "*"
+     "phylotree"     : "git@github.com:veg/phylotree.js.git"
    }
 }
