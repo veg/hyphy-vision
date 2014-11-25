@@ -1,0 +1,12 @@
+{
+  "name": "datamonkey.relax",
+  "version": "0.1.0",
+  "main": "datamonkey.relax",
+  "keywords": ["phylogenetics", "phylogeny", "hyphy", "datamonkey", "relaxed selection"],
+  "ignore" : ["test-data", "README.md", "RELAX.html"]
+   "dependencies": {
+     "underscore"    : "1.x",
+     "d3"            : "*",
+     "git@github.com:veg/phylotree.js.gi" : "*"
+   }
+}

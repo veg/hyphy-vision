@@ -2,34 +2,31 @@
 <html lang = 'en'>
 
 <head>
-    <meta charset="utf-8">
-    <!-- Latest compiled and minified CSS -->
-    <script src="http://code.jquery.com/jquery.js"></script>
 
-    <link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
-    <link href="//netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.css" rel="stylesheet">
+  <meta charset="utf-8">
+  <!-- Latest compiled and minified CSS -->
+  <script src="//code.jquery.com/jquery.js"></script>
+  <script src="//underscorejs.org/underscore-min.js"></script>
 
-    <!-- Optional theme -->
-    <link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
+  <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+  <link href="//netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.css" rel="stylesheet">
 
-    <!-- Latest compiled and minified JavaScript -->
-    <script src="http://netdna.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+  <!-- Optional theme -->
+  <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
 
-    <!-- <meta name="viewport" content="width=device-width, initial-scale=1.0">-->
+  <!-- Latest compiled and minified JavaScript -->
+  <script src="//netdna.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
 
-    <script src="http://d3js.org/d3.v3.min.js"></script>
-    <script src="//octamonkey.ucsd.edu/js/phylotree.js"></script>
-    
-    <title> RELAX analysis result</title>
+  <!-- <meta name="viewport" content="width=device-width, initial-scale=1.0">-->
 
-    <link href="//octamonkey.ucsd.edu/css/phylotree.css" rel="stylesheet">
-    <link href="/assets/lib/datamonkey/relax/ui/css/datamonkey.relax.css" rel="stylesheet">
+  <script src="//d3js.org/d3.v3.min.js"></script>
+  <script src="//octamonkey.ucsd.edu/js/phylotree.js"></script>
+  
+  <title> RELAX analysis result</title>
 
-    
+  <link href="//octamonkey.ucsd.edu/css/phylotree.css" rel="stylesheet">
+  <link href="datamonkey.relax.css" rel="stylesheet">
 
-
-
-    </style>
 </head>
 
 <!--
@@ -37,7 +34,6 @@
 -->
 
 <body style = 'padding-top: 70px;'>
-
 
 <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container-fluid">
@@ -128,32 +124,33 @@
               </div>
 
           </div>
-             <div class = "row">
-             
-                  <div class = "col-lg-6">
-                     <div class="panel panel-default" id = 'primary_omega_plot_container' style = 'display : none'>
-                      <div class="panel-heading">
-                        <h3 class="panel-title">&omega; distributions under the <strong>Alternative</strong> model</h3>
-                        <small>Test branches are shown in <span style = 'color: #d62728;'>red</span> and reference branches are shown in <span style = 'color:#1f77b4;'>blue</span></small>
-                      </div>
-                      <div class="panel-body">
-                        <svg id = 'primary_omega_plot'/>
+             <div id="omega-plots" class="row">
+               <script type="text/template" class="omega-plots">
+                  {% _.each(rc, function(item, key) { %}
+                    <div class = "col-lg-6">
+                      <div class="panel panel-default" id='{{ item.key }}'>
+                        <div class="panel-heading">
+                          <h3 class="panel-title">&omega; distributions under the <strong>{{ item.label }}</strong> model</h3>
+                          <p>
+                            <small>Test branches are shown in <span class="datamonkey-blue">blue</span> and reference branches are shown in <span class=datamonkey-red>red</span></small>
+                          </p>
+                          <div class="btn-group">
+                            <button id="export-{{ item.key }}-svg" type="button" class="btn btn-default btn-sm">
+                              <span class="glyphicon glyphicon-floppy-save"></span> SVG
+                            </button>
+                            <button id="export-{{ item.key }}-png" type="button" class="btn btn-default btn-sm">
+                              <span class="glyphicon glyphicon-floppy-save"></span> PNG
+                            </button>
+                          </div>
+                        </div>
+                        <div class="panel-body">
+                          <svg id = {{ item.key }}-svg />
+                        </div>
                       </div>
                     </div>
-                  </div>
-                  <div class = "col-lg-6">
-                     <div class="panel panel-default" id = 'secondary_omega_plot_container' style = 'display : none'>
-                      <div class="panel-heading">
-                        <h3 class="panel-title">&omega; distributions under the <strong>Partitioned Exploratory</strong> model</h3>
-                        <small>Test branches are shown in <span style = 'color: #d62728;'>red</span> and reference branches are shown in <span style = 'color:#1f77b4;'>blue</span></small>
-                      </div>
-                      <div class="panel-body">
-                        <svg id = 'secondary_omega_plot'/>
-                      </div>
-                    </div>
-                  </div>
+                  {% }) %}
+                </script>
             </div>
-
         </div>
 
         <div class = 'tab-pane' id = "tree_tab">
@@ -239,7 +236,7 @@
 ###############################################################################################################################
 -->
 
-<script src = "js/datamonkey.relax.js"></script>
+<script src="datamonkey.relax.js"></script>
 <script>
   $( document ).ready( function () {
       datamonkey.relax();
