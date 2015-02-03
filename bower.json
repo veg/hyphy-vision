@@ -1,6 +1,6 @@
 {
   "name": "datamonkey.relax",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "main": "datamonkey.relax",
   "keywords": ["phylogenetics", "phylogeny", "hyphy", "datamonkey", "relaxed selection"],
   "ignore" : ["test-data", "README.md", "RELAX.html"],

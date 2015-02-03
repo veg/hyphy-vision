@@ -237,11 +237,14 @@ datamonkey.relax = function() {
                 var controller = d3.select("#" + k);
                 var controller_value = (controller.attr("value") || controller.property("checked"));
                 if (controller_value != settings["tree-options"][k][0]) {
+                    console.log(k);
+                    console.log(controller_value);
                     settings["tree-options"][k][0] = controller_value;
                     do_layout = do_layout || settings["tree-options"][k][1];
                 }
             }
 
+            //settings["tree-options"]["datamonkey-relax-tree-model"] = ["Partitioned MG94xREV", true]
             branch_lengths = settings["tree-options"]["datamonkey-relax-tree-branch-lengths"][0] ? analysis_data["fits"][settings["tree-options"]["datamonkey-relax-tree-model"][0]]["branch-lengths"] : null;
             branch_annotations = analysis_data["fits"][settings["tree-options"]["datamonkey-relax-tree-model"][0]]["branch-annotations"];
 
@@ -273,6 +276,7 @@ datamonkey.relax = function() {
     function relax_render_error(e) {
         d3.select("#datamonkey-relax-error-text").text(e);
         d3.select("#datamonkey-relax-error").style('display', 'block');
+        console.log(e);
     }
 
 
@@ -284,14 +288,14 @@ datamonkey.relax = function() {
             d3.select('#summary-pmid').text("PubMed ID " + json['PMID'])
                 .attr("href", "http://www.ncbi.nlm.nih.gov/pubmed/" + json['PMID']);
 
-            var relaxation_K = json["fits"]["Alternative"]["K"];
-            var p = json["relaxation-test"]["p"];
+            //var relaxation_K = json["fits"]["Alternative"]["K"];
+            //var p = json["relaxation-test"]["p"];
 
-            d3.select('#summary-direction').text(relaxation_K > 1 ? 'intensification' : 'relaxation');
-            d3.select('#summary-evidence').text(p <= alpha_level ? 'significant' : 'not significant');
-            d3.select('#summary-pvalue').text(p_value_format(p));
-            d3.select('#summary-LRT').text(fit_format(json["relaxation-test"]["LR"]));
-            d3.select('#summary-K').text(fit_format(relaxation_K));
+            //d3.select('#summary-direction').text(relaxation_K > 1 ? 'intensification' : 'relaxation');
+            //d3.select('#summary-evidence').text(p <= alpha_level ? 'significant' : 'not significant');
+            //d3.select('#summary-pvalue').text(p_value_format(p));
+            //d3.select('#summary-LRT').text(fit_format(json["relaxation-test"]["LR"]));
+            //d3.select('#summary-K').text(fit_format(relaxation_K));
 
             d3.select("#datamonkey-relax-error").style('display', 'none');
 
@@ -451,6 +455,11 @@ datamonkey.relax = function() {
                     def_displayed = true;
                     this.click();
                 }
+                if (!def_displayed && d == "Partitioned MG94xREV") {
+                    def_displayed = true;
+                    this.click();
+                }
+
                 return d;
             });
 
@@ -484,6 +493,7 @@ datamonkey.relax = function() {
 
         } catch (e) {
             relax_render_error(e.message);
+            console.log(e.message);
         }
 
     }
@@ -609,13 +619,8 @@ datamonkey.relax = function() {
             .range([0, plot_width]).domain(domain).nice(),
             proportion_scale = d3.scale.linear().range([plot_height, 0]).domain([-0.05, 1]).clamp(true);
 
-
-
-
         // compute margins -- circle AREA is proportional to the relative weight
         // maximum diameter is (height - text margin)
-
-
 
         var svg = d3.select("#" + svg_id).attr("width", dimensions.width)
             .attr("height", dimensions.height),
@@ -639,10 +644,7 @@ datamonkey.relax = function() {
             plot = svg.append("g").attr("class", "container");
         }
 
-
         plot.attr("transform", "translate(" + margins["left"] + " , " + margins["top"] + ")");
-
-
 
         var reference_omega_lines = plot.selectAll(".omega-line-reference"),
             displacement_lines = plot.selectAll(".displacement-line");
@@ -694,10 +696,6 @@ datamonkey.relax = function() {
                     return "#d62728";
                 })
                 .attr("class", "omega-line-reference");
-
-
-
-
 
         } else {
             reference_omega_lines.remove();
