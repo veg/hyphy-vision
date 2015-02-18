@@ -1,8 +1,8 @@
 {
-  "name"     : "hyphy-absrel",
+  "name"     : "hyphy.absrel",
   "version"  : "0.1.0",
   "main"     : "absrel.js",
-  "keywords" : ["phylogenetics", "phylogeny", "absrel"],
+  "keywords" : ["phylogenetics", "phylogeny", "branch-site model", "comparative sequence analysis", "absrel"],
   "ignore"   : ["test-data", "bsrel.html", "README.md"],
   "dependencies": {
     "underscore" : "1.x",
