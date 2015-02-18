@@ -14,7 +14,6 @@ datamonkey.absrel = function(analysis_data, container_id) {
       prop_format = d3.format (".2p"),
       fit_format = d3.format (".2f"),
       branch_table_format = d3.format (".4f"),
-      analysis_data = null,
       render_color_bar = true,
       which_model = "Full model",
       color_legend_id = 'color_legend';
@@ -363,8 +362,9 @@ datamonkey.absrel = function(analysis_data, container_id) {
       });
   }
     
-  function render_bs_rel_tree (json, model_id) {
-      tree(json["fits"][model_id]["tree string"]).svg (svg);
+  function render_bs_rel_tree(json, model_id) {
+
+      tree(json["fits"][model_id]["tree string"]).svg(svg);
      
       var svg_defs = svg.selectAll ("defs");
       if (svg_defs.empty()) {
@@ -378,7 +378,11 @@ datamonkey.absrel = function(analysis_data, container_id) {
       var fitted_distributions = json["fits"][model_id]["rate distributions"];
       
       for (var b in fitted_distributions) {       
-         var rateD = (JSON.parse(fitted_distributions[b]));
+         // Quick inf and nan quick fix 
+         fitted_distributions[b] = fitted_distributions[b].replace(/inf/g, '1e+9999');
+         fitted_distributions[b] = fitted_distributions[b].replace(/nan/g, 'null');
+
+         var rateD = JSON.parse(fitted_distributions[b]);
          if (rateD.length == 1) {
               local_branch_omegas[b] = {'color': omega_color (rateD[0][0])};
          } else {
@@ -417,11 +421,12 @@ datamonkey.absrel = function(analysis_data, container_id) {
   function render_bs_rel (json) {
 
       function make_distro_plot (d) {
+        if (Object.keys(rate_distro_by_branch).indexOf(d[0]) != -1) {
                   drawDistribution (d[0],
                             rate_distro_by_branch [d[0]].map (function (r) {return r[0];}), 
                             rate_distro_by_branch [d[0]].map (function (r) {return r[1];}), 
                             {'log' : true, 'legend' : false, 'domain' : [0.00001,10], 'dimensions': {'width' : 400, 'height': 400}});
-
+        }
       }
 
       default_tree_settings();
