@@ -380,6 +380,7 @@ datamonkey.absrel = function(analysis_data, container_id) {
       for (var b in fitted_distributions) {       
          // Quick inf and nan quick fix 
          fitted_distributions[b] = fitted_distributions[b].replace(/inf/g, '1e+9999');
+         fitted_distributions[b] = fitted_distributions[b].replace(/-nan/g, 'null');
          fitted_distributions[b] = fitted_distributions[b].replace(/nan/g, 'null');
 
          var rateD = JSON.parse(fitted_distributions[b]);
