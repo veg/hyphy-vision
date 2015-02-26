@@ -497,7 +497,7 @@ function init(json) {
 
 
 $( document ).ready( function () {
-  d3.json ("test-data/RTIconCat.nex.BUSTED.json", function (json) {
+  d3.json ("test-data/lysin.nex.BUSTED.json", function (json) {
     init(json);
     add_dc_legend(svg);
   });
