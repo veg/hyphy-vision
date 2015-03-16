@@ -364,7 +364,7 @@ function render_bs_rel (json) {
     if (has_background) {
         model_rows.push ([]);
     }
-    
+        
     for (k = 0; k < 2 + has_background; k++)  {
         var access_key,
             secondary_key,
@@ -382,6 +382,9 @@ function render_bs_rel (json) {
                 only_distro = 1;
             } else {
                 access_key = 'Constrained model';
+                 if (! (access_key in json['fits'])) {
+                    break;
+                }
                 model_rows[k].push ('Constrained Model');                    
                 secondary_key = 'FG';
                 only_distro = 0;
@@ -394,10 +397,10 @@ function render_bs_rel (json) {
             model_rows[k].push (only_distro ? '' : format_run_time(json['fits'][access_key]['runtime']));
             model_rows[k].push (only_distro ? '' : fit_format(json['fits'][access_key]['tree length']));
 
-        for (j = 0; j < 3; j++) {
-         model_rows[k].push (   omega_format(json['fits'][access_key]['rate distributions'][secondary_key][j][0]) + " (" +
-                                prop_format(json['fits'][access_key]['rate distributions'][secondary_key][j][1]) + ")");
-        }
+            for (j = 0; j < 3; j++) {
+             model_rows[k].push (   omega_format(json['fits'][access_key]['rate distributions'][secondary_key][j][0]) + " (" +
+                                    prop_format(json['fits'][access_key]['rate distributions'][secondary_key][j][1]) + ")");
+            }
     }
                                
     model_rows = d3.select ('#summary-model-table').selectAll ("tr").data (model_rows);

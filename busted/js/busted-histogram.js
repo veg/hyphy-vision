@@ -29,6 +29,22 @@ function render_busted_histogram(c, json) {
   var self = this;
   
   // Massage data for use with crossfilter
+    
+  if (d3.keys (json ["evidence ratios"]).length == 0) { // no evidence ratios computed
+    d3.selectAll (c).style ("display", "none");
+    d3.selectAll (".dc-data-table").style ("display", "none");
+    d3.selectAll ('[id^="export"]').style ("display", "none");
+    d3.selectAll ("#er-thresholds").style ("display", "none");
+    d3.selectAll ("#apply-thresholds").style ("display", "none");
+    return;
+  } else {
+    d3.selectAll (c).style ("display", "block");
+    d3.selectAll (".dc-data-table").style ("display", "table");
+    d3.selectAll ('[id^="export"]').style ("display", "block");
+    d3.selectAll ("#er-thresholds").style ("display", "block");
+    d3.selectAll ("#apply-thresholds").style ("display", "block");
+  }
+  
   var erc = json["evidence ratios"]["constrained"][0];
   erc = erc.map(function(d) { return Math.log(d)})
 
