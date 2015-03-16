@@ -13,7 +13,8 @@ datamonkey.relax = function() {
             'datamonkey-relax-tree-fill-legend': [true, false],
             'datamonkey-relax-tree-fill-color': [true, false]
         },
-        'suppress-tree-render': false
+        'suppress-tree-render': false,
+        'chart-append-html' : true
     };
 
     set_handlers();
@@ -237,8 +238,8 @@ datamonkey.relax = function() {
                 var controller = d3.select("#" + k);
                 var controller_value = (controller.attr("value") || controller.property("checked"));
                 if (controller_value != settings["tree-options"][k][0]) {
-                    console.log(k);
-                    console.log(controller_value);
+                    //console.log(k);
+                    //console.log(controller_value);
                     settings["tree-options"][k][0] = controller_value;
                     do_layout = do_layout || settings["tree-options"][k][1];
                 }
@@ -276,7 +277,7 @@ datamonkey.relax = function() {
     function relax_render_error(e) {
         d3.select("#datamonkey-relax-error-text").text(e);
         d3.select("#datamonkey-relax-error").style('display', 'block');
-        console.log(e);
+        //console.log(e);
     }
 
 
@@ -400,9 +401,12 @@ datamonkey.relax = function() {
 
             var distributions_to_chart = _.filter(omega_distributions, function(d) { return d.hasOwnProperty('Reference') });
             var omega_plot_html = omega_plot_template(distributions_to_chart);
+            
 
-
-            $("#omega-plots").append(omega_plot_html);
+            if (settings['chart-append-html']) {
+                $("#omega-plots").append(omega_plot_html);
+                settings['chart-append-html'] = false;
+            }
 
             // Replace with for loop
             _.each(distributions_to_chart, function(item, key) {
@@ -493,7 +497,7 @@ datamonkey.relax = function() {
 
         } catch (e) {
             relax_render_error(e.message);
-            console.log(e.message);
+            //console.log(e.message);
         }
 
     }
@@ -586,8 +590,15 @@ datamonkey.relax = function() {
 
         var svg_id = settings["svg"] || "primary_omega_plot";
 
-        var legend_id = settings["legend"] || null;
+        var legend_id   = settings["legend"] || null;
         var do_log_plot = settings["log"] || true;
+        var has_zeros   = false;
+        if (do_log_plot) {
+            has_zeros = data_to_plot.some (function (d) {return d.omega <= 0;});
+            if (secondary_data) {
+                has_zeros = has_zeros || data_to_plot.some (function (d) {return d.omega <= 0;});
+            }
+        }
 
         var dimensions = settings["dimensions"] || {
             "width": 600,
@@ -615,7 +626,7 @@ datamonkey.relax = function() {
         }));
         domain[0] *= 0.5;
 
-        var omega_scale = (do_log_plot ? d3.scale.log() : d3.scale.linear())
+        var omega_scale = (do_log_plot ? (has_zeros ? d3.scale.pow().exponent (0.2) : d3.scale.log()) : d3.scale.linear())
             .range([0, plot_width]).domain(domain).nice(),
             proportion_scale = d3.scale.linear().range([plot_height, 0]).domain([-0.05, 1]).clamp(true);
 
@@ -745,7 +756,7 @@ datamonkey.relax = function() {
 
 
         if (do_log_plot) {
-            xAxis.ticks(10, ".1r");
+            xAxis.ticks(10, has_zeros ? ".2r" : ".1r");
         }
 
 
