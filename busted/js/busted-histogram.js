@@ -1,35 +1,8 @@
+function busted_render_histogram(c, json) {
 
-
-function siteList(div, test_set) {
-
-  // Do not remove headers
-  var trs = d3.select(div).selectAll("tr");
-  trs[0].shift();
-  trs.remove();
-
-  var trs = d3.select(div).selectAll("tr");
-  trs[0].shift();
-
-  var tr = trs
-      .attr("class", "name")
-      .data(test_set)
-      .enter().append("tr");
-
-  var td = tr.append("td")
-        .text(function(d) { return d.name; });
-
-  var td = tr.append("td")
-        .text(function(d) { return d.constrained; });
-
-
-}
-
-function render_busted_histogram(c, json) {
-  
   var self = this;
-  
+
   // Massage data for use with crossfilter
-    
   if (d3.keys (json ["evidence ratios"]).length == 0) { // no evidence ratios computed
     d3.selectAll (c).style ("display", "none");
     d3.selectAll (".dc-data-table").style ("display", "none");
@@ -44,14 +17,12 @@ function render_busted_histogram(c, json) {
     d3.selectAll ("#er-thresholds").style ("display", "block");
     d3.selectAll ("#apply-thresholds").style ("display", "block");
   }
-  
+
   var erc = json["evidence ratios"]["constrained"][0];
   erc = erc.map(function(d) { return Math.log(d)})
 
   var test_set = json["test set"].split(",");
   var model_results = [];
-
-  
 
   erc.forEach(function(elem, i) { 
     model_results.push({
@@ -104,6 +75,7 @@ function render_busted_histogram(c, json) {
   self.er_constrained = er_constrained
   self.er_optimized_null = er_optimized_null
 
+
   var composite = dc.compositeChart(c);
 
   composite
@@ -111,7 +83,7 @@ function render_busted_histogram(c, json) {
       .height(300)
       .dimension(site_index)
       .x(d3.scale.linear().domain([1, erc.length]))
-      .yAxisLabel("Ln Evidence Ratio")
+      .yAxisLabel("2 * Ln Evidence Ratio")
       .xAxisLabel("Site Location")
       .legend(dc.legend().x(1020).y(20).itemHeight(13).gap(5))
       .renderHorizontalGridLines(true)
@@ -120,7 +92,7 @@ function render_busted_histogram(c, json) {
           .group(sitesByConstrained, "Constrained")
           .colors(d3.scale.ordinal().range(['green']))
           .valueAccessor(function(d) {
-              return d.value.constrained_evidence;
+              return 2 * d.value.constrained_evidence;
           })
           .keyAccessor(function(d) {
               return d.key;
@@ -128,7 +100,7 @@ function render_busted_histogram(c, json) {
         dc.lineChart(composite)
           .group(sitesByON, "Optimized Null")
           .valueAccessor(function(d) {
-              return d.value.optimized_null_evidence;
+              return 2 * d.value.optimized_null_evidence;
           })
           .keyAccessor(function(d) {
               return d.key;
@@ -185,22 +157,21 @@ function render_busted_histogram(c, json) {
           table.selectAll(".dc-table-group").classed("info", true);
       });
 
-  $("#export-csv").on('click', function(e) { exportCSVButton(site_index.top(Infinity)); } );
+  $("#export-csv").on('click', function(e) { datamonkey.export_csv_button(site_index.top(Infinity)); } );
 
   $("#export-chart-svg").on('click', function(e) { 
     // class manipulation for the image to display correctly
     $("#chart-id").find("svg")[0].setAttribute("class", "dc-chart");
-    saveImage("svg", "#chart-id"); 
+    datamonkey.save_image("svg", "#chart-id"); 
     $("#chart-id").find("svg")[0].setAttribute("class", "");
   });
 
   $("#export-chart-png").on('click', function(e) { 
     // class manipulation for the image to display correctly
     $("#chart-id").find("svg")[0].setAttribute("class", "dc-chart");
-    saveImage("png", "#chart-id"); 
+    datamonkey.save_image("png", "#chart-id"); 
     $("#chart-id").find("svg")[0].setAttribute("class", "");
   });
-  
   $("#apply-thresholds").on('click', function(e) { 
     var erConstrainedThreshold = document.getElementById("er-constrained-threshold").value;
     var erOptimizedNullThreshold = document.getElementById("er-optimized-null-threshold").value;
@@ -209,8 +180,9 @@ function render_busted_histogram(c, json) {
     dc.renderAll();
   });
 
+
   dc.renderAll();
 
 }
 
-
+datamonkey.busted.render_histogram = busted_render_histogram;
