@@ -170,7 +170,3 @@ datamonkey.status_check = function () {
   }
 }
 
-$( document ).ready( function () {
-  datamonkey.status_check();
-});
-
