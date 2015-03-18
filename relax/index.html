@@ -4,28 +4,29 @@
 <head>
 
   <meta charset="utf-8">
+
   <!-- Latest compiled and minified CSS -->
-  <script src="//code.jquery.com/jquery.js"></script>
-  <script src="//underscorejs.org/underscore-min.js"></script>
-
-  <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
-  <link href="//netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.css" rel="stylesheet">
-
+  <link rel="stylesheet" href="../vendor/bootstrap/dist/css/bootstrap.min.css">
+  <link href="../vendor/font-awesome/css/font-awesome.css" rel="stylesheet">
   <!-- Optional theme -->
-  <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
+  <link rel="stylesheet" href="../vendor/bootstrap/dist/css/bootstrap-theme.min.css">
+  <link href="../vendor/phylotree/phylotree.css" rel="stylesheet">
+  <link href="datamonkey.relax.css" rel="stylesheet">
 
-  <!-- Latest compiled and minified JavaScript -->
-  <script src="//netdna.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
 
   <!-- <meta name="viewport" content="width=device-width, initial-scale=1.0">-->
 
-  <script src="//d3js.org/d3.v3.min.js"></script>
-  <script src="//veg.github.io/phylotree.js/phylotree.js"></script>
+  <!-- Latest compiled and minified JavaScript -->
+  <script src="../vendor/jquery/dist/jquery.js"></script>
+  <script src="../vendor/bootstrap/dist/js/bootstrap.min.js"></script>
+  <script src="../vendor/underscore/underscore-min.js"></script>
+  <script src="../vendor/d3/d3.min.js"></script>
+  <script src="../vendor/phylotree/phylotree.js"></script>
+  <script src="../datamonkey/datamonkey.js"></script>
+  <script src="../datamonkey/helpers.js"></script>
+
   
   <title> RELAX analysis result</title>
-
-  <link href="//veg.github.io/phylotree.js/phylotree.css" rel="stylesheet">
-  <link href="datamonkey.relax.css" rel="stylesheet">
 
 </head>
 
@@ -36,6 +37,7 @@
 <body style = 'padding-top: 70px;'>
 
 <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
+
   <div class="container-fluid">
     <!-- Brand and toggle get grouped for better mobile display -->
     <div class="navbar-header">
@@ -232,11 +234,15 @@
     </div>
 </div>
 
+<img id="chart-image" />
+<canvas id="chart-canvas"></canvas>
+
 <!--
 ###############################################################################################################################
 -->
 
 <script src="datamonkey.relax.js"></script>
+
 <script>
   $( document ).ready( function () {
       datamonkey.relax();
@@ -244,6 +250,16 @@
           analysis_data = json;
           render (json);
       });
+
+      $("#export-phylo-svg").on('click', function(e) { 
+        datamonkey.save_image("svg", "#tree_container"); 
+      });
+
+      $("#export-phylo-png").on('click', function(e) { 
+        datamonkey.save_image("png", "#tree_container"); 
+      });
+
+
   });
 </script>
 
