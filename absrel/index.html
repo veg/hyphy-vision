@@ -246,8 +246,9 @@
 
       reader.onload = (function(theFile) {
         return function(e) {
+            var container_id = '#tree_container';
             analysis_data = JSON.parse (e.target.result);
-            datamonkey.absrel(analysis_data);
+            datamonkey.absrel(analysis_data, container_id);
         };
       })(f);
       reader.readAsText(f);

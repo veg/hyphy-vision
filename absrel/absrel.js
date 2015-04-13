@@ -22,6 +22,9 @@ datamonkey.absrel = function(analysis_data, container_id) {
       .size([height, width])
       .separation (function (a,b) {return 0;});
 
+  // Clear existing svgs
+  d3.select(container_id).select("svg").remove();
+
   var svg = d3.select(container_id).append("svg")
       .attr("width", width)
       .attr("height", height);
