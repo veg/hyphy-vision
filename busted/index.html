@@ -322,7 +322,11 @@ function init(json) {
 
   datamonkey.busted.render_summary(json);
   datamonkey.busted.render_histogram("#chart-id", json);
+  // delete existing tree
+  d3.select('#tree_container').select("svg").remove();
   datamonkey.busted.render_tree('#tree_container', "body", json);
+  var svg = d3.select('#tree_container').select("svg");
+  add_dc_legend(svg);
 
   var fg_rate = json["fits"]["Unconstrained model"]["rate distributions"]["FG"]
   var omegas  = fg_rate.map(function (r) {return r[0];})
@@ -348,21 +352,41 @@ function init(json) {
 
 }
 
+
 $( document ).ready( function () {
+
+  // *** HANDLERS ***
+  $("#json_file").on ("change", function (e) {
+    var files = e.target.files; // FileList object
+
+    if (files.length == 1) {
+      var f = files[0];
+      var reader = new FileReader();
+
+      reader.onload = (function(theFile) {
+        return function(e) {
+            var container_id = '#tree_container';
+            analysis_data = JSON.parse (e.target.result);
+            init(analysis_data);
+        };
+      })(f);
+      reader.readAsText(f);
+    }
+  });
+
 
   $(".content").addClass('hidden');
   d3.json ("test-data/lysin.nex.BUSTED.json", function (json) {
 
     init(json);
 
-    var svg = d3.select('#tree_container').select("svg");
-    add_dc_legend(svg);
     $(".loader").addClass('hidden');
     $(".content").removeClass('hidden');
 
   }); 
 
 });
+
 </script>
 
 </body>
