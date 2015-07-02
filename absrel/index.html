@@ -160,6 +160,20 @@
         </div>
 
         <div class = 'tab-pane' id = "tree_tab">
+
+            <div class='row export-save-row pull-right'>
+              <div class = "col-md-8">
+                <div class="input-group input-group-sm input-group-btn">
+                  <button id="export-phylo-svg" type="button" class="btn btn-default btn-sm">
+                    <span class="glyphicon glyphicon-floppy-save"></span> SVG
+                  </button>
+                  <button id="export-phylo-png" type="button" class="btn btn-default btn-sm">
+                    <span class="glyphicon glyphicon-floppy-save"></span> PNG
+                  </button>
+                </div>
+              </div>
+            </div>
+
             <div class = 'row'>
                     <div class = "col-md-4 col-md-offset-1">
                            <div class="btn-group">
@@ -173,6 +187,8 @@
   
                     </div>
             </div>        
+
+
             <div class = 'row'>
                 <div class = 'col-md-1'>
                     <!--<div class = 'row'>
@@ -231,6 +247,9 @@
         </div>
     </div>
 </div>
+
+<img id="chart-image" />
+<canvas id="chart-canvas"></canvas>
 
 <script src="absrel.js"></script>
 
