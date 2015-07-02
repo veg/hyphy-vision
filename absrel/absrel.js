@@ -597,13 +597,6 @@ datamonkey.absrel = function(analysis_data, container_id) {
 
   render_bs_rel(analysis_data);
 
-  $("#export-phylo-svg").on('click', function(e) {                                                                                                                                                                                                                                           
-    datamonkey.save_image("svg", "#tree_container");                                                                                                                                                                                                                                         
-  });                                                                                                                                                                                                                                                                                        
-                                                                                                                                                                                                                                                                                             
-  $("#export-phylo-png").on('click', function(e) {                                                                                                                                                                                                                                           
-    datamonkey.save_image("png", "#tree_container");                                                                                                                                                                                                                                         
-  });   
 
 
 }

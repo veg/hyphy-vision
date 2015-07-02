@@ -1,6 +1,9 @@
 var root = this;
 
-datamonkey = function() {};
+if (!datamonkey) {
+  datamonkey = function() {};
+}
+
 datamonkey.busted = function () {};
 
 if (typeof exports !== 'undefined') {
