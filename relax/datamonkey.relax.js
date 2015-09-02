@@ -170,7 +170,8 @@ datamonkey.relax = function() {
             return undefined;
         });
         tree.style_edges(edge_colorizer);
-        tree.spacing_x(35, true);
+        tree.style_nodes(node_colorizer);
+        tree.spacing_x(30, true);
     }
 
 
@@ -561,10 +562,14 @@ datamonkey.relax = function() {
         }
 
 
-        element.style('stroke-width', (partition && partition[data.target.name]) ? '12' : '5')
+        element.style('stroke-width', (partition && partition[data.target.name]) ? '8' : '4')
             .style('stroke-linejoin', 'round')
             .style('stroke-linecap', 'round');
 
+    }
+    
+    function node_colorizer(element, data) {   
+        element.style('font-weight', (partition && partition[data.name]) ? 'bold' : 'normal');
     }
 
     /* Distribution plotters */
