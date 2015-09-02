@@ -7,6 +7,10 @@ datamonkey.relax = function() {
     settings = {
         'omegaPlot': {},
         'tree-options': {
+            /* value arrays have the following meaning
+                [0] - the value of the attribute
+                [1] - does the change in attribute value trigger tree re-layout?
+            */
             'datamonkey-relax-tree-model': [null, true],
             'datamonkey-relax-tree-highlight': [null, false],
             'datamonkey-relax-tree-branch-lengths': [true, true],
@@ -26,7 +30,9 @@ datamonkey.relax = function() {
         prop_format = d3.format(".2p"),
         fit_format = d3.format(".2f"),
         p_value_format = d3.format(".4f"),
-        analysis_data = null;
+        analysis_data = null,
+        branch_annotations = [],
+        branch_lengths = [];
 
     var tree = d3.layout.phylotree("body")
         .size([height, width])
@@ -43,6 +49,28 @@ datamonkey.relax = function() {
 
     function set_handlers() {
 
+          $ ("[data-direction]").on ("click", function (e) {
+                var which_function = $(this).data ("direction") == 'vertical' ? tree.spacing_x : tree.spacing_y;
+                which_function (which_function () + (+ $(this).data ("amount"))).update();
+            }); 
+
+
+            $(".phylotree-layout-mode").on ("change", function (e) {
+                if ($(this).is(':checked')) {
+                    if (tree.radial () != ($(this).data ("mode") == "radial")) {
+                        tree.radial (!tree.radial ()).placenodes().update ();
+                    }
+                }
+            });
+
+            $(".phylotree-align-toggler").on ("change", function (e) {
+                if ($(this).is(':checked')) {
+                    if (tree.align_tips ($(this).data ("align") == "right")) {
+                        tree.placenodes().update ();
+                    }
+                }
+            });
+    
         $("#datamonkey-relax-error-hide").on("click", function(e) {
             d3.select("#datamonkey-relax-error").style("display", "none");
             e.preventDefault();
@@ -59,7 +87,6 @@ datamonkey.relax = function() {
                 reader.onload = (function(theFile) {
                     return function(e) {
                         analysis_data = JSON.parse(e.target.result);
-
                         render(analysis_data);
                     };
 
@@ -135,7 +162,7 @@ datamonkey.relax = function() {
         }, false);
         tree.font_size(18);
         tree.scale_bar_font_size(14);
-        tree.node_circle_size(6);
+        tree.node_circle_size(0);
         tree.branch_length(function(n) {
             if (branch_lengths) {
                 return branch_lengths[n.name] || 0;
@@ -235,25 +262,23 @@ datamonkey.relax = function() {
             var do_layout = false;
 
             for (var k in settings["tree-options"]) {
-                var controller = d3.select("#" + k);
-                var controller_value = (controller.attr("value") || controller.property("checked"));
+                var controller = d3.select("#" + k),
+                    controller_value = (controller.attr("value") || controller.property("checked"));
+                    
                 if (controller_value != settings["tree-options"][k][0]) {
-                    //console.log(k);
-                    //console.log(controller_value);
                     settings["tree-options"][k][0] = controller_value;
                     do_layout = do_layout || settings["tree-options"][k][1];
                 }
             }
+            
 
-            //settings["tree-options"]["datamonkey-relax-tree-model"] = ["Partitioned MG94xREV", true]
-            branch_lengths = settings["tree-options"]["datamonkey-relax-tree-branch-lengths"][0] ? analysis_data["fits"][settings["tree-options"]["datamonkey-relax-tree-model"][0]]["branch-lengths"] : null;
-            branch_annotations = analysis_data["fits"][settings["tree-options"]["datamonkey-relax-tree-model"][0]]["branch-annotations"];
-
+            var which_model = settings["tree-options"]["datamonkey-relax-tree-model"][0];
+            
+            branch_lengths     = settings["tree-options"]["datamonkey-relax-tree-branch-lengths"][0] ? analysis_data["fits"][which_model]["branch-lengths"] : null;
+            branch_annotations = analysis_data["fits"][which_model]["branch-annotations"];
+            
+ 
             partition = (settings["tree-options"]["datamonkey-relax-tree-highlight"] ? analysis_data["partition"][settings["tree-options"]["datamonkey-relax-tree-highlight"][0]] : null) || null;
-
-            tree.style_edges(function(element, data) {
-                edge_colorizer(element, data);
-            });
 
 
             omega_color = d3.scale.pow().exponent(scaling_exponent)
@@ -262,13 +287,13 @@ datamonkey.relax = function() {
                 .clamp(true);
 
 
-            render_color_scheme("color_legend", analysis_data["fits"][settings["tree-options"]["datamonkey-relax-tree-model"][0]]["annotation-tag"], !(settings["tree-options"]["datamonkey-relax-tree-fill-legend"][0]));
+            render_color_scheme("color_legend", analysis_data["fits"][which_model]["annotation-tag"], !(settings["tree-options"]["datamonkey-relax-tree-fill-legend"][0]));
 
             if (!skip_render) {
                 if (do_layout) {
                     tree.update_layout();
                 }
-                tree.update(true);
+                d3_phylotree_trigger_refresh (tree);
             }
 
         }
@@ -391,6 +416,7 @@ datamonkey.relax = function() {
             var omega_plot_template = _.template(
               $("script.omega-plots").html()
             );
+            
 
             // Filter omega_distributions that have Test and Reference
 
