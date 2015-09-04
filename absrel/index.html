@@ -58,7 +58,7 @@
 
                 <ul class="nav navbar-nav">
                     <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Load file<b class="caret"></b></a>
+                        <a href="#" class="dropdown-toggle" id = "datamonkey-absrel-toggle-here" data-toggle="dropdown">Load file<b class="caret"></b></a>
                         <ul class="dropdown-menu">
                             <li>
                                 <input type="file" id="datamonkey-absrel-json-file">
@@ -303,7 +303,7 @@
         
             var bsrel_app = datamonkey.absrel ();
 
-            $("#datamonkey-absrel-json-file").on("change", function(e) {
+            $("#datamonkey-absrel-json-file").on("change", function(e) {            
                 var files = e.target.files; // FileList object
 
                 if (files.length == 1) {
@@ -316,11 +316,11 @@
                         };
                     })(f);
                     reader.readAsText(f);
-                }
+               }
                 
-                $(this).parent().dropdown("toggle");
-                
-                //e.preventDefault();
+                //console.log ($(this).parent(), $(this).parent().parent());
+                $("#datamonkey-absrel-toggle-here").dropdown("toggle");
+                e.preventDefault();
             });
 
         

@@ -381,6 +381,8 @@ datamonkey.absrel = function() {
                 element.style('stroke', 'url(#' + coloration['grad'] + ')');
                 if (self.tree.radial()) {
                     d3.select('#' + coloration['grad']).attr("gradientTransform", "rotate(" + data.target.angle + ")");
+                } else {
+                    d3.select('#' + coloration['grad']).attr("gradientTransform", null);
                 }
             }
             $(element[0][0]).tooltip({
