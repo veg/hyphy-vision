@@ -28,7 +28,7 @@ datamonkey.absrel = function() {
         });
 
     self.analysis_data = null;
-    
+
     self.svg = d3.select("#" + container_id).append("svg").attr("width", width)
         .attr("height", height);
 
@@ -177,6 +177,17 @@ datamonkey.absrel = function() {
                 .attr("dx", "0.0em")
                 .attr("dy", "0.1em");
         }
+    }
+
+    function render_error(e) {
+        $("#datamonkey-absrel-error-hide").on("click", function(e) {
+            d3.select("#datamonkey-absrel-error").style("display", "none");
+            e.preventDefault();
+        });
+
+        d3.select("#datamonkey-absrel-error-text").text(e);
+        d3.select("#datamonkey-absrel-error").style('display', 'block');
+        //console.log(e);
     }
 
     function make_plot_data(omegas, weights) {
@@ -366,10 +377,10 @@ datamonkey.absrel = function() {
         if (coloration) {
             if ('color' in coloration) {
                 element.style('stroke', coloration['color']);
-            } else {            
+            } else {
                 element.style('stroke', 'url(#' + coloration['grad'] + ')');
                 if (self.tree.radial()) {
-                    d3.select ('#' + coloration['grad']).attr ("gradientTransform", "rotate(" + data.target.angle + ")");
+                    d3.select('#' + coloration['grad']).attr("gradientTransform", "rotate(" + data.target.angle + ")");
                 }
             }
             $(element[0][0]).tooltip({
@@ -471,192 +482,199 @@ datamonkey.absrel = function() {
         return [branch_lengths, local_branch_omegas];
     }
 
-    var render_bs_rel = function (json) {
+    var render_bs_rel = function(json) {
 
-        self.analysis_data = json;
+        try {
+            d3.select("#datamonkey-absrel-error").style('display', 'none');
 
-        function make_distro_plot(d) {
-            if (Object.keys(rate_distro_by_branch).indexOf(d[0]) != -1) {
-                drawDistribution(d[0],
-                    rate_distro_by_branch[d[0]].map(function(r) {
-                        return r[0];
-                    }),
-                    rate_distro_by_branch[d[0]].map(function(r) {
-                        return r[1];
-                    }), {
-                        'log': true,
-                        'legend': false,
-                        'domain': [0.00001, 10],
-                        'dimensions': {
-                            'width': 400,
-                            'height': 400
-                        }
-                    });
-            }
-        }
+            self.analysis_data = json;
 
-        default_tree_settings();
-
-
-
-        branch_p_values = {};
-
-        var rate_distro_by_branch = {},
-            branch_count = 0,
-            selected_count = 0,
-            tested_count = 0;
-
-        var for_branch_table = [];
-
-        var tree_info = render_bs_rel_tree(json, "Full model");
-
-        var branch_lengths = tree_info[0],
-            tested_branches = {};
-
-        branch_omegas = tree_info[1];
-
-        for (var p in json["test results"]) {
-            branch_p_values[p] = json["test results"][p]["p"];
-            if (branch_p_values[p] <= 0.05) {
-                selected_count++;
-            }
-            if (json["test results"][p]["tested"] > 0) {
-                tested_branches[p] = true;
-                tested_count += 1;
-            }
-        }
-
-        var fitted_distributions = json["fits"]["Full model"]["rate distributions"];
-
-        for (var b in fitted_distributions) {
-            for_branch_table.push([b + (tested_branches[b] ? "" : " (not tested)"), branch_lengths[b], 0, 0, 0]);
-            try {
-                for_branch_table[branch_count][2] = json["test results"][b]["LRT"];
-                for_branch_table[branch_count][3] = json["test results"][b]["p"];
-                for_branch_table[branch_count][4] = json["test results"][b]["uncorrected p"];
-            } catch (e) {}
-
-            var rateD = (JSON.parse(fitted_distributions[b]));
-            rate_distro_by_branch[b] = rateD;
-            for_branch_table[branch_count].push(branch_omegas[b]['distro']);
-            branch_count += 1;
-        }
-
-
-
-        render_color_scheme(color_legend_id);
-
-        // render summary data
-
-        var total_tree_length = json["fits"]["Full model"]["tree length"];
-
-        for_branch_table = for_branch_table.sort(function(a, b) {
-            return a[4] - b[4];
-        });
-        make_distro_plot(for_branch_table[0]);
-
-        for_branch_table = d3.select('#table-branch-table').selectAll("tr").data(for_branch_table);
-        for_branch_table.enter().append('tr');
-        for_branch_table.exit().remove();
-        for_branch_table.style('font-weight', function(d) {
-            return d[3] <= 0.05 ? 'bold' : 'normal';
-        });
-        for_branch_table.on("click", function(d) {
-            make_distro_plot(d);
-        });
-        for_branch_table = for_branch_table.selectAll("td").data(function(d) {
-            return d;
-        });
-        for_branch_table.enter().append("td");
-        for_branch_table.html(function(d) {
-            if (typeof d == "number") {
-                return branch_table_format(d);
-            }
-            return d;
-        });
-
-
-        d3.select('#summary-method-name').text(json['version']);
-        d3.select('#summary-pmid').text("PubMed ID " + json['PMID'])
-            .attr("href", "http://www.ncbi.nlm.nih.gov/pubmed/" + json['PMID']);
-        d3.select('#summary-total-runtime').text(format_run_time(json['timers']['overall']));
-        d3.select('#summary-complexity-runtime').text(format_run_time(json['timers']['overall']));
-        d3.select('#summary-complexity-runtime').text(format_run_time(json['timers']['Complexity analysis']));
-        d3.select('#summary-testing-runtime').text(format_run_time(json['timers']['Testing']));
-        d3.select('#summary-total-branches').text(branch_count);
-        d3.select('#summary-tested-branches').text(tested_count);
-        d3.select('#summary-selected-branches').text(selected_count);
-
-        var model_rows = [
-            [],
-            []
-        ];
-
-        for (k = 0; k < 2; k++) {
-            var access_key;
-            if (k == 0) {
-                access_key = 'MG94';
-                model_rows[k].push('Branch-wise &omega; variation (MG94)');
-            } else {
-                access_key = 'Full model';
-                model_rows[k].push('Branch-site &omega; variation');
-            }
-            model_rows[k].push(fit_format(json['fits'][access_key]['log-likelihood']));
-            model_rows[k].push(json['fits'][access_key]['parameters']);
-            model_rows[k].push(fit_format(json['fits'][access_key]['AIC-c']));
-            model_rows[k].push(format_run_time(json['fits'][access_key]['runtime']));
-        }
-
-        model_rows = d3.select('#summary-model-table').selectAll("tr").data(model_rows);
-        model_rows.enter().append('tr');
-        model_rows.exit().remove();
-        model_rows = model_rows.selectAll("td").data(function(d) {
-            return d;
-        });
-        model_rows.enter().append("td");
-        model_rows.html(function(d) {
-            return d;
-        });
-
-        d3.select('#summary-tree-length').text(fit_format(json["fits"]["Full model"]["tree length"]));
-        d3.select('#summary-tree-length-mg94').text(fit_format(json["fits"]["MG94"]["tree length"]));
-
-
-        var by_rate_class_count = {};
-        self.tree.get_nodes().forEach(function(d) {
-            if (d.parent) {
-                var rc = rate_distro_by_branch[d.name].length;
-                if (!(rc in by_rate_class_count)) {
-                    by_rate_class_count[rc] = [rc, 0, 0, 0];
-                }
-                by_rate_class_count[rc][1]++;
-                by_rate_class_count[rc][2] += self.tree.branch_length()(d);
-                if (json["test results"][d.name]["p"] <= 0.05) {
-                    by_rate_class_count[rc][3]++;
+            function make_distro_plot(d) {
+                if (Object.keys(rate_distro_by_branch).indexOf(d[0]) != -1) {
+                    drawDistribution(d[0],
+                        rate_distro_by_branch[d[0]].map(function(r) {
+                            return r[0];
+                        }),
+                        rate_distro_by_branch[d[0]].map(function(r) {
+                            return r[1];
+                        }), {
+                            'log': true,
+                            'legend': false,
+                            'domain': [0.00001, 10],
+                            'dimensions': {
+                                'width': 400,
+                                'height': 400
+                            }
+                        });
                 }
             }
-        });
-        var by_rate_class_count_array = [];
-        for (k in by_rate_class_count) {
-            d = by_rate_class_count[k];
-            by_rate_class_count_array.push([d[0], d[1], prop_format(d[1] / branch_count), prop_format(d[2] / total_tree_length), d[3]]);
-        };
 
-        by_rate_class_count_array = by_rate_class_count_array.sort(function(a, b) {
-            return a[0] - b[0];
-        });
-        by_rate_class_count_array = d3.select('#summary-tree-table').selectAll("tr").data(by_rate_class_count_array);
-        by_rate_class_count_array.enter().append('tr');
-        by_rate_class_count_array.exit().remove();
-        by_rate_class_count_array = by_rate_class_count_array.selectAll("td").data(function(d) {
-            return d;
-        });
-        by_rate_class_count_array.enter().append("td");
-        by_rate_class_count_array.html(function(d) {
-            return d;
-        });
+            default_tree_settings();
 
-        self.tree.layout();
+
+
+            branch_p_values = {};
+
+            var rate_distro_by_branch = {},
+                branch_count = 0,
+                selected_count = 0,
+                tested_count = 0;
+
+            var for_branch_table = [];
+
+            var tree_info = render_bs_rel_tree(json, "Full model");
+
+            var branch_lengths = tree_info[0],
+                tested_branches = {};
+
+            branch_omegas = tree_info[1];
+
+            for (var p in json["test results"]) {
+                branch_p_values[p] = json["test results"][p]["p"];
+                if (branch_p_values[p] <= 0.05) {
+                    selected_count++;
+                }
+                if (json["test results"][p]["tested"] > 0) {
+                    tested_branches[p] = true;
+                    tested_count += 1;
+                }
+            }
+
+            var fitted_distributions = json["fits"]["Full model"]["rate distributions"];
+
+            for (var b in fitted_distributions) {
+                for_branch_table.push([b + (tested_branches[b] ? "" : " (not tested)"), branch_lengths[b], 0, 0, 0]);
+                try {
+                    for_branch_table[branch_count][2] = json["test results"][b]["LRT"];
+                    for_branch_table[branch_count][3] = json["test results"][b]["p"];
+                    for_branch_table[branch_count][4] = json["test results"][b]["uncorrected p"];
+                } catch (e) {}
+
+                var rateD = (JSON.parse(fitted_distributions[b]));
+                rate_distro_by_branch[b] = rateD;
+                for_branch_table[branch_count].push(branch_omegas[b]['distro']);
+                branch_count += 1;
+            }
+
+
+
+            render_color_scheme(color_legend_id);
+
+            // render summary data
+
+            var total_tree_length = json["fits"]["Full model"]["tree length"];
+
+            for_branch_table = for_branch_table.sort(function(a, b) {
+                return a[4] - b[4];
+            });
+            make_distro_plot(for_branch_table[0]);
+
+            for_branch_table = d3.select('#table-branch-table').selectAll("tr").data(for_branch_table);
+            for_branch_table.enter().append('tr');
+            for_branch_table.exit().remove();
+            for_branch_table.style('font-weight', function(d) {
+                return d[3] <= 0.05 ? 'bold' : 'normal';
+            });
+            for_branch_table.on("click", function(d) {
+                make_distro_plot(d);
+            });
+            for_branch_table = for_branch_table.selectAll("td").data(function(d) {
+                return d;
+            });
+            for_branch_table.enter().append("td");
+            for_branch_table.html(function(d) {
+                if (typeof d == "number") {
+                    return branch_table_format(d);
+                }
+                return d;
+            });
+
+
+            d3.select('#summary-method-name').text(json['version']);
+            d3.select('#summary-pmid').text("PubMed ID " + json['PMID'])
+                .attr("href", "http://www.ncbi.nlm.nih.gov/pubmed/" + json['PMID']);
+            d3.select('#summary-total-runtime').text(format_run_time(json['timers']['overall']));
+            d3.select('#summary-complexity-runtime').text(format_run_time(json['timers']['overall']));
+            d3.select('#summary-complexity-runtime').text(format_run_time(json['timers']['Complexity analysis']));
+            d3.select('#summary-testing-runtime').text(format_run_time(json['timers']['Testing']));
+            d3.select('#summary-total-branches').text(branch_count);
+            d3.select('#summary-tested-branches').text(tested_count);
+            d3.select('#summary-selected-branches').text(selected_count);
+
+            var model_rows = [
+                [],
+                []
+            ];
+
+            for (k = 0; k < 2; k++) {
+                var access_key;
+                if (k == 0) {
+                    access_key = 'MG94';
+                    model_rows[k].push('Branch-wise &omega; variation (MG94)');
+                } else {
+                    access_key = 'Full model';
+                    model_rows[k].push('Branch-site &omega; variation');
+                }
+                model_rows[k].push(fit_format(json['fits'][access_key]['log-likelihood']));
+                model_rows[k].push(json['fits'][access_key]['parameters']);
+                model_rows[k].push(fit_format(json['fits'][access_key]['AIC-c']));
+                model_rows[k].push(format_run_time(json['fits'][access_key]['runtime']));
+            }
+
+            model_rows = d3.select('#summary-model-table').selectAll("tr").data(model_rows);
+            model_rows.enter().append('tr');
+            model_rows.exit().remove();
+            model_rows = model_rows.selectAll("td").data(function(d) {
+                return d;
+            });
+            model_rows.enter().append("td");
+            model_rows.html(function(d) {
+                return d;
+            });
+
+            d3.select('#summary-tree-length').text(fit_format(json["fits"]["Full model"]["tree length"]));
+            d3.select('#summary-tree-length-mg94').text(fit_format(json["fits"]["MG94"]["tree length"]));
+
+
+            var by_rate_class_count = {};
+            self.tree.get_nodes().forEach(function(d) {
+                if (d.parent) {
+                    var rc = rate_distro_by_branch[d.name].length;
+                    if (!(rc in by_rate_class_count)) {
+                        by_rate_class_count[rc] = [rc, 0, 0, 0];
+                    }
+                    by_rate_class_count[rc][1]++;
+                    by_rate_class_count[rc][2] += self.tree.branch_length()(d);
+                    if (json["test results"][d.name]["p"] <= 0.05) {
+                        by_rate_class_count[rc][3]++;
+                    }
+                }
+            });
+            var by_rate_class_count_array = [];
+            for (k in by_rate_class_count) {
+                d = by_rate_class_count[k];
+                by_rate_class_count_array.push([d[0], d[1], prop_format(d[1] / branch_count), prop_format(d[2] / total_tree_length), d[3]]);
+            };
+
+            by_rate_class_count_array = by_rate_class_count_array.sort(function(a, b) {
+                return a[0] - b[0];
+            });
+            by_rate_class_count_array = d3.select('#summary-tree-table').selectAll("tr").data(by_rate_class_count_array);
+            by_rate_class_count_array.enter().append('tr');
+            by_rate_class_count_array.exit().remove();
+            by_rate_class_count_array = by_rate_class_count_array.selectAll("td").data(function(d) {
+                return d;
+            });
+            by_rate_class_count_array.enter().append("td");
+            by_rate_class_count_array.html(function(d) {
+                return d;
+            });
+
+            self.tree.layout();
+
+        } catch (e) {
+            render_error(e.message);
+        }
 
     }
 
@@ -675,7 +693,7 @@ datamonkey.absrel = function() {
         return duration_string;
     }
 
-    
+
 
     return render_bs_rel;
 
