@@ -7,6 +7,10 @@ datamonkey.relax = function() {
     settings = {
         'omegaPlot': {},
         'tree-options': {
+            /* value arrays have the following meaning
+                [0] - the value of the attribute
+                [1] - does the change in attribute value trigger tree re-layout?
+            */
             'datamonkey-relax-tree-model': [null, true],
             'datamonkey-relax-tree-highlight': [null, false],
             'datamonkey-relax-tree-branch-lengths': [true, true],
@@ -17,7 +21,6 @@ datamonkey.relax = function() {
         'chart-append-html' : true
     };
 
-    set_handlers();
 
     var width = 800,
         height = 600,
@@ -26,13 +29,18 @@ datamonkey.relax = function() {
         prop_format = d3.format(".2p"),
         fit_format = d3.format(".2f"),
         p_value_format = d3.format(".4f"),
-        analysis_data = null;
+        analysis_data = null,
+        branch_annotations = [],
+        branch_lengths = [];
 
     var tree = d3.layout.phylotree("body")
         .size([height, width])
         .separation(function(a, b) {
             return 0;
         });
+
+    set_handlers      ();
+    set_tree_handlers (tree);
 
     var svg = d3.select("#tree_container").append("svg")
         .attr("width", width)
@@ -43,6 +51,8 @@ datamonkey.relax = function() {
 
     function set_handlers() {
 
+          
+    
         $("#datamonkey-relax-error-hide").on("click", function(e) {
             d3.select("#datamonkey-relax-error").style("display", "none");
             e.preventDefault();
@@ -59,7 +69,6 @@ datamonkey.relax = function() {
                 reader.onload = (function(theFile) {
                     return function(e) {
                         analysis_data = JSON.parse(e.target.result);
-
                         render(analysis_data);
                     };
 
@@ -70,56 +79,9 @@ datamonkey.relax = function() {
 
             e.preventDefault();
         });
-
-
-        $("#expand_spacing").on("click", function(e) {
-            tree.spacing_x(tree.spacing_x() + 1).update(true);
-            e.preventDefault();
-        });
-
-        $("#compress_spacing").on("click", function(e) {
-            tree.spacing_x(tree.spacing_x() - 1).update(true);
-            e.preventDefault();
-        });
-
-        $("#sort_original").on("click", function(e) {
-            tree.resort_children(function(a, b) {
-                return a["original_child_order"] - b["original_child_order"];
-            });
-
-            e.preventDefault();
-
-        });
-
-        $("#sort_ascending").on("click", function(e) {
-            sort_nodes(true);
-            e.preventDefault();
-        });
-
-        $("#sort_descending").on("click", function(e) {
-            sort_nodes(false);
-            e.preventDefault();
-        });
-
-
+        
         $(".datamonkey-relax-tree-trigger").on("click", function(e) {
             render_tree();
-        });
-    }
-
-
-    function sort_nodes(asc) {
-        tree.traverse_and_compute(function(n) {
-            var d = 1;
-            if (n.children && n.children.length) {
-                d += d3.max(n.children, function(d) {
-                    return d["count_depth"];
-                });
-            }
-            n["count_depth"] = d;
-        });
-        tree.resort_children(function(a, b) {
-            return (a["count_depth"] - b["count_depth"]) * (asc ? 1 : -1);
         });
     }
 
@@ -128,14 +90,12 @@ datamonkey.relax = function() {
         tree.branch_name(null);
         tree.node_span('equal');
         tree.options({
-            'draw-size-bubbles': false
-        }, false);
-        tree.options({
+            'draw-size-bubbles': false,
             'selectable': false
         }, false);
         tree.font_size(18);
         tree.scale_bar_font_size(14);
-        tree.node_circle_size(6);
+        tree.node_circle_size(0);
         tree.branch_length(function(n) {
             if (branch_lengths) {
                 return branch_lengths[n.name] || 0;
@@ -143,14 +103,12 @@ datamonkey.relax = function() {
             return undefined;
         });
         tree.style_edges(edge_colorizer);
-        tree.spacing_x(35, true);
+        tree.style_nodes(node_colorizer);
+        tree.spacing_x(30, true);
     }
 
 
     render_color_scheme = function(svg_container, attr_name, do_not_render) {
-
-
-
         var svg = d3.select("#" + svg_container).selectAll("svg").data([omega_color.domain()]);
         svg.enter().append("svg");
         svg.selectAll("*").remove();
@@ -235,25 +193,23 @@ datamonkey.relax = function() {
             var do_layout = false;
 
             for (var k in settings["tree-options"]) {
-                var controller = d3.select("#" + k);
-                var controller_value = (controller.attr("value") || controller.property("checked"));
+                var controller = d3.select("#" + k),
+                    controller_value = (controller.attr("value") || controller.property("checked"));
+                    
                 if (controller_value != settings["tree-options"][k][0]) {
-                    //console.log(k);
-                    //console.log(controller_value);
                     settings["tree-options"][k][0] = controller_value;
                     do_layout = do_layout || settings["tree-options"][k][1];
                 }
             }
+            
 
-            //settings["tree-options"]["datamonkey-relax-tree-model"] = ["Partitioned MG94xREV", true]
-            branch_lengths = settings["tree-options"]["datamonkey-relax-tree-branch-lengths"][0] ? analysis_data["fits"][settings["tree-options"]["datamonkey-relax-tree-model"][0]]["branch-lengths"] : null;
-            branch_annotations = analysis_data["fits"][settings["tree-options"]["datamonkey-relax-tree-model"][0]]["branch-annotations"];
-
+            var which_model = settings["tree-options"]["datamonkey-relax-tree-model"][0];
+            
+            branch_lengths     = settings["tree-options"]["datamonkey-relax-tree-branch-lengths"][0] ? analysis_data["fits"][which_model]["branch-lengths"] : null;
+            branch_annotations = analysis_data["fits"][which_model]["branch-annotations"];
+            
+ 
             partition = (settings["tree-options"]["datamonkey-relax-tree-highlight"] ? analysis_data["partition"][settings["tree-options"]["datamonkey-relax-tree-highlight"][0]] : null) || null;
-
-            tree.style_edges(function(element, data) {
-                edge_colorizer(element, data);
-            });
 
 
             omega_color = d3.scale.pow().exponent(scaling_exponent)
@@ -262,13 +218,13 @@ datamonkey.relax = function() {
                 .clamp(true);
 
 
-            render_color_scheme("color_legend", analysis_data["fits"][settings["tree-options"]["datamonkey-relax-tree-model"][0]]["annotation-tag"], !(settings["tree-options"]["datamonkey-relax-tree-fill-legend"][0]));
+            render_color_scheme("color_legend", analysis_data["fits"][which_model]["annotation-tag"], !(settings["tree-options"]["datamonkey-relax-tree-fill-legend"][0]));
 
             if (!skip_render) {
                 if (do_layout) {
                     tree.update_layout();
                 }
-                tree.update(true);
+                d3_phylotree_trigger_refresh (tree);
             }
 
         }
@@ -391,6 +347,7 @@ datamonkey.relax = function() {
             var omega_plot_template = _.template(
               $("script.omega-plots").html()
             );
+            
 
             // Filter omega_distributions that have Test and Reference
 
@@ -535,10 +492,18 @@ datamonkey.relax = function() {
         }
 
 
-        element.style('stroke-width', (partition && partition[data.target.name]) ? '12' : '5')
+        element.style('stroke-width', (partition && partition[data.target.name]) ? '8' : '4')
             .style('stroke-linejoin', 'round')
             .style('stroke-linecap', 'round');
 
+    }
+    
+    function node_colorizer(element, data) {  
+        if (partition) { 
+            element.style('opacity', (partition && partition[data.name]) ? '1' : '0.25');
+        } else {
+            element.style('opacity', '1');        
+        }
     }
 
     /* Distribution plotters */
