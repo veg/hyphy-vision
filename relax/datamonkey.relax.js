@@ -21,7 +21,6 @@ datamonkey.relax = function() {
         'chart-append-html' : true
     };
 
-    set_handlers();
 
     var width = 800,
         height = 600,
@@ -40,6 +39,9 @@ datamonkey.relax = function() {
             return 0;
         });
 
+    set_handlers      ();
+    set_tree_handlers (tree);
+
     var svg = d3.select("#tree_container").append("svg")
         .attr("width", width)
         .attr("height", height);
@@ -49,27 +51,7 @@ datamonkey.relax = function() {
 
     function set_handlers() {
 
-          $ ("[data-direction]").on ("click", function (e) {
-                var which_function = $(this).data ("direction") == 'vertical' ? tree.spacing_x : tree.spacing_y;
-                which_function (which_function () + (+ $(this).data ("amount"))).update();
-            }); 
-
-
-            $(".phylotree-layout-mode").on ("change", function (e) {
-                if ($(this).is(':checked')) {
-                    if (tree.radial () != ($(this).data ("mode") == "radial")) {
-                        tree.radial (!tree.radial ()).placenodes().update ();
-                    }
-                }
-            });
-
-            $(".phylotree-align-toggler").on ("change", function (e) {
-                if ($(this).is(':checked')) {
-                    if (tree.align_tips ($(this).data ("align") == "right")) {
-                        tree.placenodes().update ();
-                    }
-                }
-            });
+          
     
         $("#datamonkey-relax-error-hide").on("click", function(e) {
             d3.select("#datamonkey-relax-error").style("display", "none");
@@ -97,56 +79,9 @@ datamonkey.relax = function() {
 
             e.preventDefault();
         });
-
-
-        $("#expand_spacing").on("click", function(e) {
-            tree.spacing_x(tree.spacing_x() + 1).update(true);
-            e.preventDefault();
-        });
-
-        $("#compress_spacing").on("click", function(e) {
-            tree.spacing_x(tree.spacing_x() - 1).update(true);
-            e.preventDefault();
-        });
-
-        $("#sort_original").on("click", function(e) {
-            tree.resort_children(function(a, b) {
-                return a["original_child_order"] - b["original_child_order"];
-            });
-
-            e.preventDefault();
-
-        });
-
-        $("#sort_ascending").on("click", function(e) {
-            sort_nodes(true);
-            e.preventDefault();
-        });
-
-        $("#sort_descending").on("click", function(e) {
-            sort_nodes(false);
-            e.preventDefault();
-        });
-
-
+        
         $(".datamonkey-relax-tree-trigger").on("click", function(e) {
             render_tree();
-        });
-    }
-
-
-    function sort_nodes(asc) {
-        tree.traverse_and_compute(function(n) {
-            var d = 1;
-            if (n.children && n.children.length) {
-                d += d3.max(n.children, function(d) {
-                    return d["count_depth"];
-                });
-            }
-            n["count_depth"] = d;
-        });
-        tree.resort_children(function(a, b) {
-            return (a["count_depth"] - b["count_depth"]) * (asc ? 1 : -1);
         });
     }
 
@@ -155,9 +90,7 @@ datamonkey.relax = function() {
         tree.branch_name(null);
         tree.node_span('equal');
         tree.options({
-            'draw-size-bubbles': false
-        }, false);
-        tree.options({
+            'draw-size-bubbles': false,
             'selectable': false
         }, false);
         tree.font_size(18);
@@ -176,9 +109,6 @@ datamonkey.relax = function() {
 
 
     render_color_scheme = function(svg_container, attr_name, do_not_render) {
-
-
-
         var svg = d3.select("#" + svg_container).selectAll("svg").data([omega_color.domain()]);
         svg.enter().append("svg");
         svg.selectAll("*").remove();
@@ -568,8 +498,12 @@ datamonkey.relax = function() {
 
     }
     
-    function node_colorizer(element, data) {   
-        element.style('font-weight', (partition && partition[data.name]) ? 'bold' : 'normal');
+    function node_colorizer(element, data) {  
+        if (partition) { 
+            element.style('opacity', (partition && partition[data.name]) ? '1' : '0.25');
+        } else {
+            element.style('opacity', '1');        
+        }
     }
 
     /* Distribution plotters */
