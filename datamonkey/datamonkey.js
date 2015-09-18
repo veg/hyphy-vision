@@ -4,7 +4,7 @@ var datamonkey = function () {};
 
 if (typeof exports !== 'undefined') {
   if (typeof module !== 'undefined' && module.exports) {
-    exports = module.exports = datamonkey;
+    exports = module.exports = Datamonkey;
   }
   exports.datamonkey = datamonkey;
 } else {
@@ -79,7 +79,6 @@ datamonkey.save_image = function(type, container) {
   var convert_svg_to_png = function(image_string) {
 
     var image = document.getElementById("chart-image");
-    image.src = image_string;
 
     image.onload = function() {
       var canvas = document.getElementById("chart-canvas");
@@ -89,8 +88,8 @@ datamonkey.save_image = function(type, container) {
       context.fillStyle = "#FFFFFF";
       context.fillRect(0,0,image.width,image.height);
       context.drawImage(image, 0, 0);
-      var img = canvas.toDataURL("image/png");
 
+      var img = canvas.toDataURL("image/png");
       var pom = document.createElement('a');
       pom.setAttribute('download', 'image.png');
       pom.href = canvas.toDataURL("image/png");     
@@ -99,8 +98,9 @@ datamonkey.save_image = function(type, container) {
       pom.remove();
     }
 
-  }
+    image.src = image_string;
 
+  }
 
   var svg = $(container).find("svg")[0];
   if (!svg) {
@@ -139,7 +139,7 @@ datamonkey.save_image = function(type, container) {
   var image_string = 'data:image/svg+xml;base66,' + encodeURIComponent(to_download);
 
   if(type == "png") {
-    convert_svg_to_png(image_string)
+    convert_svg_to_png(image_string);
   } else {
     var pom = document.createElement('a');
     pom.setAttribute('download', 'image.svg');
@@ -148,6 +148,29 @@ datamonkey.save_image = function(type, container) {
     pom.click();
     pom.remove();
   }
+
+}
+
+datamonkey.jobQueue = function(container) {
+
+  // Load template
+  _.templateSettings = {
+    evaluate    : /\{\%(.+?)\%\}/g,
+    interpolate : /\{\{(.+?)\}\}/g,
+    variable    : "rc"
+  };
+
+  d3.json( '/jobqueue', function(data) {
+
+    var job_queue = _.template(
+      $("script.job-queue").html()
+    );
+
+    var job_queue_html = job_queue(data);
+    $("#job-queue-panel").find('table').remove();
+    $(container).append(job_queue_html);
+
+  });
 
 }
 
@@ -169,4 +192,49 @@ datamonkey.status_check = function () {
     });
   }
 }
+
+datamonkey.validate_date = function () {
+
+  // Check that it is not empty
+  if($(this).val().length == 0) {
+    $(this).next('.help-block').remove();
+    $(this).parent().removeClass('has-success');
+    $(this).parent().addClass('has-error');
+
+    jQuery('<span/>', {
+          class: 'help-block',
+          text : 'Field is empty'
+      }).insertAfter($(this));
+
+  } else if(isNaN(Date.parse($(this).val()))) {
+    $(this).next('.help-block').remove();
+    $(this).parent().removeClass('has-success');
+    $(this).parent().addClass('has-error');
+
+    jQuery('<span/>', {
+          class: 'help-block',
+          text : 'Date format should be in the format YYYY-mm-dd'
+      }).insertAfter($(this));
+
+  } else {
+    $(this).parent().removeClass('has-error');
+    $(this).parent().addClass('has-success');
+    $(this).next('.help-block').remove();
+  }
+
+}
+
+$( document ).ready( function () {
+  $(function () {$('[data-toggle="tooltip"]').tooltip()});
+  $('#datamonkey-header').collapse ();
+  
+  var initial_padding = $("body").css("padding-top");
+  
+  $("#collapse_nav_bar").on ("click", function (e) {
+    $('#datamonkey-header').collapse ('toggle');
+    $(this).find ("i").toggleClass ("fa-times-circle fa-eye");
+    var new_padding =  $("body").css("padding-top") == initial_padding ? "5px" : initial_padding;
+    d3.select ("body").transition ().style ("padding-top", new_padding);
+  });
+});
 
