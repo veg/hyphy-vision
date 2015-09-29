@@ -1,6 +1,6 @@
 {
   "name": "hyphy-vision",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "main": "hyphy-vision",
   "keywords": ["phylogenetics", "phylogeny", "hyphy", "datamonkey", "relaxed selection", "relax", "absrel", "bsrel", "busted", "random effects branch-site modeling"],
   "ignore" : ["test-data", "README.md", "RELAX.html"],
