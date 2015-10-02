@@ -21,9 +21,7 @@
     <script src="../vendor/bootstrap/dist/js/bootstrap.min.js"></script>
     <script src="../vendor/d3/d3.min.js"></script>
     <script src="../vendor/phylotree/phylotree.js"></script>
-    <script src="../datamonkey/datamonkey.js"></script>
-    <script src="../datamonkey/helpers.js"></script>
-    <script src="../datamonkey/shared-tree.js"></script>
+    <script src="../hyphy-vision.js"></script>
 
 </head>
 
@@ -164,6 +162,7 @@
                 </div>
             </div>
 
+
             <div class='tab-pane' id="tree_tab">
                 <div class='row'>
                     <div class="col-md-4">
@@ -236,18 +235,6 @@
 
                 <div class='row'>
                     <div class='col-md-1'>
-                        <!--<div class = 'row'>
-                        <div class="btn-toolbar" role="toolbar">
-                          <div class="btn-group">
-                            <button type="button" class="btn btn-default btn-sm" id = "expand_spacing">
-                                <i class="fa fa-expand" ></i>
-                            </button>
-                             <button type="button" class="btn btn-default btn-sm" id = "compress_spacing">
-                                <i class="fa fa-compress" ></i>
-                            </button>
-                          </div>
-                       </div>
-                    </div>-->
                         <div class='row'>
                             <div id='color_legend'>
                             </div>
@@ -293,43 +280,48 @@
         </div>
     </div>
 
-    <script src="absrel.js"></script>
 
     <script>
-        // *** HANDLERS ***
         
 
         $(document).ready(function() {
-        
-            var bsrel_app = datamonkey.absrel ();
 
-            $("#datamonkey-absrel-json-file").on("change", function(e) {            
-                var files = e.target.files; // FileList object
+           var bsrel_app = datamonkey.absrel();
 
-                if (files.length == 1) {
-                    var f = files[0];
-                    var reader = new FileReader();
+           $("#datamonkey-absrel-json-file").on("change", function(e) {
+               var files = e.target.files; // FileList object
 
-                    reader.onload = (function(theFile) {
-                        return function(e) {
-                            bsrel_app(JSON.parse(e.target.result));
-                        };
-                    })(f);
-                    reader.readAsText(f);
+               if (files.length == 1) {
+                   var f = files[0];
+                   var reader = new FileReader();
+
+                   reader.onload = (function(theFile) {
+                       return function(e) {
+                           bsrel_app(JSON.parse(e.target.result));
+                       };
+                   })(f);
+                   reader.readAsText(f);
                }
-                
-                //console.log ($(this).parent(), $(this).parent().parent());
-                $("#datamonkey-absrel-toggle-here").dropdown("toggle");
-                e.preventDefault();
-            });
 
-        
-            d3.json("test-data/test.json", function(json) {
-                bsrel_app(json);
-            });
-        });
+               $("#datamonkey-absrel-toggle-here").dropdown("toggle");
+               e.preventDefault();
+           });
+
+           $("#export-phylo-svg").on('click', function(e) {
+               datamonkey.save_image("svg", "#tree_container");
+           });
+
+           $("#export-phylo-png").on('click', function(e) {
+               datamonkey.save_image("png", "#tree_container");
+           });
+
+
+           d3.json("test-data/test.json", function(json) {
+               bsrel_app(json);
+           });
+       });
+               
     </script>
-
 </body>
 
 </html>
