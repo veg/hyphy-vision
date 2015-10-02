@@ -40,3 +40,11 @@
     opacity: 0.7;
     stroke-width: 1.5px;
 }
+
+#chart-image {
+  display : none;
+}
+
+#chart-canvas {
+  display : none;
+}
