@@ -9,7 +9,7 @@
     "url": "git://github.com/veg/hyphy-vision.git"
   },
   "main": "hyphy-vision.js",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "devDependencies": {
     "eslint": "0.21.x",
     "uglify-js": "2.4.x"
