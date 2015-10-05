@@ -145,13 +145,13 @@ function busted_render_tree(container_id, container, json) {
                                
           var scale_bar = g_container.append("g");
           scale_bar.style ("font-size", "14")
-                         .attr  ("class", "omega-bar")
+                         .attr  ("class", "hyphy-omega-bar")
                          .call (draw_omega_bar);
                      
           scale_bar.selectAll ("text")
                          .style ("text-anchor", "right");
                      
-          var x_label =_label = scale_bar.append ("g").attr("class", "omega-bar");
+          var x_label =_label = scale_bar.append ("g").attr("class", "hyphy-omega-bar");
           x_label = x_label.selectAll("text").data(["\u03C9"]);
           x_label.enter().append ("text");
           x_label.text (function (d) {return d})

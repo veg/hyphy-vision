@@ -8,7 +8,6 @@ gulp.task('scripts', function() {
       "datamonkey/datamonkey.js",
       "datamonkey/*.js",
       "busted/busted.js",
-      "hivtrace/hivtrace.js",
       "**/*.js"
     ]))
     .pipe(concat('hyphy-vision.js'))

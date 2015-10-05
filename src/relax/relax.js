@@ -165,13 +165,13 @@ datamonkey.relax = function() {
 
             var scale_bar = g_container.append("g");
             scale_bar.style("font-size", "14")
-                .attr("class", "omega-bar")
+                .attr("class", "hyphy-omega-bar")
                 .call(draw_omega_bar);
 
             scale_bar.selectAll("text")
                 .style("text-anchor", "right");
 
-            var x_label = _label = scale_bar.append("g").attr("class", "omega-bar");
+            var x_label = _label = scale_bar.append("g").attr("class", "hyphy-omega-bar");
             x_label = x_label.selectAll("text").data([attr_name]);
             x_label.enter().append("text");
             x_label.text(function(d) {
@@ -345,7 +345,7 @@ datamonkey.relax = function() {
             };
 
             var omega_plot_template = _.template(
-              $("script.omega-plots").html()
+              $("script.hyphy-omega-plots").html()
             );
             
 
@@ -361,7 +361,7 @@ datamonkey.relax = function() {
             
 
             if (settings['chart-append-html']) {
-                $("#omega-plots").append(omega_plot_html);
+                $("#hyphy-omega-plots").append(omega_plot_html);
                 settings['chart-append-html'] = false;
             }
 
@@ -622,8 +622,8 @@ datamonkey.relax = function() {
 
         plot.attr("transform", "translate(" + margins["left"] + " , " + margins["top"] + ")");
 
-        var reference_omega_lines = plot.selectAll(".omega-line-reference"),
-            displacement_lines = plot.selectAll(".displacement-line");
+        var reference_omega_lines = plot.selectAll(".hyphy-omega-line-reference"),
+            displacement_lines = plot.selectAll(".hyphy-displacement-line");
 
         if (secondary_data) {
 
@@ -650,7 +650,7 @@ datamonkey.relax = function() {
                     5);
             })
                 .attr("marker-end", "url(#arrowhead)")
-                .attr("class", "displacement-line");
+                .attr("class", "hyphy-displacement-line");
 
 
             reference_omega_lines = reference_omega_lines.data(data_to_plot);
@@ -671,14 +671,14 @@ datamonkey.relax = function() {
                 .style("stroke", function(d) {
                     return "#d62728";
                 })
-                .attr("class", "omega-line-reference");
+                .attr("class", "hyphy-omega-line-reference");
 
         } else {
             reference_omega_lines.remove();
             displacement_lines.remove();
         }
 
-        var omega_lines = plot.selectAll(".omega-line").data(secondary_data ? secondary_data : data_to_plot);
+        var omega_lines = plot.selectAll(".hyphy-omega-line").data(secondary_data ? secondary_data : data_to_plot);
 
         omega_lines.enter().append("line");
         omega_lines.exit().remove();
@@ -697,11 +697,11 @@ datamonkey.relax = function() {
             .style("stroke", function(d) {
               return "#1f77b4";
             })
-            .attr("class", "omega-line");
+            .attr("class", "hyphy-omega-line");
 
 
-        var neutral_line = plot.selectAll(".neutral-line").data([1]);
-        neutral_line.enter().append("line").attr("class", "neutral-line");
+        var neutral_line = plot.selectAll(".hyphy-neutral-line").data([1]);
+        neutral_line.enter().append("line").attr("class", "hyphy-neutral-line");
         neutral_line.exit().remove();
         neutral_line.transition().attr("x1", function(d) {
             return omega_scale(d);
@@ -729,9 +729,9 @@ datamonkey.relax = function() {
         var x_label;
         if (x_axis.empty()) {
             x_axis = svg.append("g")
-                .attr("class", "x axis");
+                .attr("class", "x hyphy-axis");
 
-            x_label = x_axis.append("g").attr("class", "axis-label x-label");
+            x_label = x_axis.append("g").attr("class", "hyphy-axis-label x-label");
         } else {
             x_label = x_axis.select(".axis-label.x-label");
         }
@@ -756,15 +756,15 @@ datamonkey.relax = function() {
             .orient("left")
             .ticks(10, ".1p");
 
-        var y_axis = svg.selectAll(".y.axis");
+        var y_axis = svg.selectAll(".y.hyphy-axis");
         var y_label;
         if (y_axis.empty()) {
             y_axis = svg.append("g")
-                .attr("class", "y axis");
+                .attr("class", "y hyphy-axis");
 
-            y_label = y_axis.append("g").attr("class", "axis-label y-label");
+            y_label = y_axis.append("g").attr("class", "hyphy-axis-label y-label");
         } else {
-            y_label = y_axis.select(".axis-label.y-label");
+            y_label = y_axis.select(".hyphy-axis-label.y-label");
         }
 
 

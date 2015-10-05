@@ -74,7 +74,7 @@ function busted_draw_distribution(node_name, omegas, weights, settings) {
                       .clamp(true);
 
 
-  var omega_lines = plot.selectAll(".omega-line").data(data_to_plot);
+  var omega_lines = plot.selectAll(".hyphy-omega-line").data(data_to_plot);
   omega_lines.enter().append("line");
   omega_lines.exit().remove();
   omega_lines.transition().attr("x1", function(d) {
@@ -92,10 +92,10 @@ function busted_draw_distribution(node_name, omegas, weights, settings) {
   .style("stroke", function(d) {
     return omega_color(d.omega);
   })
-  .attr("class", "omega-line");
+  .attr("class", "hyphy-omega-line");
 
-  var neutral_line = plot.selectAll(".neutral-line").data([1]);
-  neutral_line.enter().append("line").attr("class", "neutral-line");
+  var neutral_line = plot.selectAll(".hyphy-neutral-line").data([1]);
+  neutral_line.enter().append("line").attr("class", "hyphy-neutral-line");
   neutral_line.exit().remove();
   neutral_line.transition().attr("x1", function(d) {
     return omega_scale(d);
@@ -119,15 +119,15 @@ function busted_draw_distribution(node_name, omegas, weights, settings) {
   }
 
 
-  var x_axis = svg.selectAll(".x.axis");
+  var x_axis = svg.selectAll(".x.hyphy-axis");
   var x_label;
   if (x_axis.empty()) {
     x_axis = svg.append("g")
-      .attr("class", "x axis");
+      .attr("class", "x hyphy-axis");
 
-    x_label = x_axis.append("g").attr("class", "axis-label x-label");
+    x_label = x_axis.append("g").attr("class", "hyphy-axis-label x-label");
   } else {
-    x_label = x_axis.select(".axis-label.x-label");
+    x_label = x_axis.select(".hyphy-axis-label.x-label");
   }
 
 
@@ -150,15 +150,15 @@ function busted_draw_distribution(node_name, omegas, weights, settings) {
     .orient("left")
     .ticks(10, ".1p");
 
-  var y_axis = svg.selectAll(".y.axis");
+  var y_axis = svg.selectAll(".y.hyphy-axis");
   var y_label;
   if (y_axis.empty()) {
     y_axis = svg.append("g")
-      .attr("class", "y axis");
+      .attr("class", "y hyphy-axis");
 
-    y_label = y_axis.append("g").attr("class", "axis-label y-label");
+    y_label = y_axis.append("g").attr("class", "hyphy-axis-label y-label");
   } else {
-    y_label = y_axis.select(".axis-label.y-label");
+    y_label = y_axis.select(".hyphy-axis-label.y-label");
   }
 
   y_axis.attr("transform", "translate(" + margins["left"] + "," + margins["top"] + ")")

@@ -5,16 +5,12 @@
     <meta charset="utf-8">
 
     <link rel="stylesheet" href="../vendor/bootstrap/dist/css/bootstrap.min.css">
-    <link href="../vendor/font-awesome/css/font-awesome.css" rel="stylesheet">
-
-    <!-- Optional theme -->
+    <link rel="stylesheet" href="../vendor/font-awesome/css/font-awesome.css">
     <link rel="stylesheet" href="../vendor/bootstrap/dist/css/bootstrap-theme.min.css">
 
-    <!-- <meta name="viewport" content="width=device-width, initial-scale=1.0">-->
-    <title> aBS-REL analysis result</title>
-    <link href="../vendor/phylotree/phylotree.css" rel="stylesheet">
-    <link href="absrel.css" rel="stylesheet">
-    <link href="../datamonkey/datamonkey.css" rel="stylesheet">
+    <title>aBS-REL analysis result</title>
+    <link rel="stylesheet" href="../vendor/phylotree/phylotree.css">
+    <link rel="stylesheet" href="../hyphy-vision.css">
 
     <!-- Latest compiled and minified JavaScript -->
     <script src="../vendor/jquery/dist/jquery.js"></script>
@@ -26,10 +22,6 @@
 </head>
 
 <body style='padding-top: 70px;'>
-
-    <!--
-###############################################################################################################################
--->
 
     <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
         <div class="container-fluid">
@@ -314,7 +306,6 @@
            $("#export-phylo-png").on('click', function(e) {
                datamonkey.save_image("png", "#tree_container");
            });
-
 
            d3.json("test-data/test.json", function(json) {
                bsrel_app(json);

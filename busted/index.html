@@ -6,15 +6,11 @@
 
   <!-- Latest compiled and minified CSS -->
   <link rel="stylesheet" href="../vendor/bootstrap/dist/css/bootstrap.min.css">
-  <link href="../vendor/font-awesome/css/font-awesome.css" rel="stylesheet">
-  <link rel="stylesheet" href="../vendor/dcjs/dc.css">
-
-  <!-- Optional theme -->
   <link rel="stylesheet" href="../vendor/bootstrap/dist/css/bootstrap-theme.min.css">
-
-  <!-- <meta name="viewport" content="width=device-width, initial-scale=1.0">-->
-  <link href="../vendor/phylotree/phylotree.css" rel="stylesheet">
-  <link href="./busted.css" rel="stylesheet">
+  <link rel="stylesheet" href="../vendor/font-awesome/css/font-awesome.css">
+  <link rel="stylesheet" href="../vendor/dcjs/dc.css">
+  <link rel="stylesheet" href="../vendor/phylotree/phylotree.css">
+  <link rel="stylesheet" href="../hyphy-vision.css">
 
   <!-- Latest compiled and minified JavaScript -->
   <script src="../vendor/jquery/dist/jquery.js"></script>
@@ -27,51 +23,6 @@
 
   <title> BUSTED analysis result</title>
 
-
-  <style>
-    .omega-bar line, .omega-bar path {
-      fill: none;
-      stroke: #000;
-      shape-rendering: crispEdges;
-    }
-
-    .omega-line {
-      stroke: #000;
-      stroke-width: 6px;
-    }
-
-    .axis path, .axis line {
-      fill: none;
-      stroke: #000;
-      shape-rendering: crispEdges;
-    }
-    
-    .axis-label {
-      font: 18px sans-serif;
-    }
-    
-    .axis text {
-      font: 12px sans-serif;
-    }
-
-    .weight-label {
-      font: 14px sans-serif;
-      text-anchor: middle;
-    }
-
-    .neutral-line {
-      stroke-dasharray: 2,10;
-      stroke: #000;
-      stroke-width: 1px;
-    }
-
-    .displacement-line {
-      fill: none;
-      stroke: #000;
-      opacity: 0.7;
-      stroke-width: 1.5px;
-    }
-  </style>
 </head>
 
 <body style = 'padding-top: 70px;'>
@@ -165,7 +116,7 @@
             <span class="glyphicon glyphicon-floppy-save"></span> Export Chart to PNG
           </button>
 
-          <div class='row site-table'>
+          <div class='row hyphy-busted-site-table'>
             <div id="chart-id" class="col-lg-12">
               <strong>Model Evidence Ratios Per Site</strong>
               <div class="clearfix"></div>
@@ -187,10 +138,10 @@
                   <input type="text" class="form-control" id="er-optimized-null-threshold" value="-Infinity">
                 </div>
               </form>
-              <button id="export-csv" type="button" class="btn btn-default btn-sm pull-right btn-export">
+              <button id="export-csv" type="button" class="btn btn-default btn-sm pull-right hyphy-busted-btn-export">
                 <span class="glyphicon glyphicon-floppy-save"></span> Export Table to CSV
               </button>
-              <button id="apply-thresholds" type="button" class="btn btn-default btn-sm pull-right btn-export">
+              <button id="apply-thresholds" type="button" class="btn btn-default btn-sm pull-right hyphy-busted-btn-export">
                 Apply Thresholds
               </button>
 
@@ -262,8 +213,8 @@
     </div>
 </div>
 
-<img id="chart-image" />
-<canvas id="chart-canvas"></canvas>
+<img id="hyphy-chart-image" />
+<canvas id="hyphy-chart-canvas"></canvas>
 
 <!--
 ###############################################################################################################################

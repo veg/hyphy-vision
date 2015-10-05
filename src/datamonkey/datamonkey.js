@@ -78,17 +78,17 @@ datamonkey.save_image = function(type, container) {
 
   var convert_svg_to_png = function(image_string) {
 
-    var image = document.getElementById("chart-image");
+    var image = document.getElementById("hyphy-chart-image");
 
     image.onload = function() {
-      var canvas = document.getElementById("chart-canvas");
+
+      var canvas = document.getElementById("hyphy-chart-canvas");
       canvas.width = image.width;
       canvas.height = image.height;
       var context = canvas.getContext("2d");
       context.fillStyle = "#FFFFFF";
       context.fillRect(0,0,image.width,image.height);
       context.drawImage(image, 0, 0);
-
       var img = canvas.toDataURL("image/png");
       var pom = document.createElement('a');
       pom.setAttribute('download', 'image.png');
@@ -96,6 +96,7 @@ datamonkey.save_image = function(type, container) {
       $("body").append(pom);
       pom.click();
       pom.remove();
+
     }
 
     image.src = image_string;
