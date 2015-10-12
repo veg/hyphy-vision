@@ -1,6 +1,7 @@
-var gulp = require('gulp');
-var concat = require('gulp-concat');
-var order = require('gulp-order');
+var gulp = require('gulp'),
+    concat = require('gulp-concat'),
+    order = require('gulp-order'),
+    watch = require('gulp-watch');
 
 gulp.task('scripts', function() {
     return gulp.src(['src/**/*.js'])
@@ -12,4 +13,10 @@ gulp.task('scripts', function() {
     ]))
     .pipe(concat('hyphy-vision.js'))
     .pipe(gulp.dest('./'));
+});
+
+gulp.task('watch', function () {
+    watch('src/**/*', function () {
+        gulp.start('scripts');
+    }); 
 });
