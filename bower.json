@@ -12,6 +12,6 @@
      "crossfilter"   : "1.x",
      "dcjs"          : "1.x",
      "jquery"        : "1.x",
-     "phylotree"     : "git@github.com:veg/phylotree.js.git"
+     "phylotree"     : "git@github.com:stevenweaver/phylotree.js.git#834e0a034a8e547ebb33f67689ce579f62052459"
   }
 }
