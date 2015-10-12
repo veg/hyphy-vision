@@ -27,6 +27,8 @@ datamonkey.absrel = function() {
             return 0;
         });
 
+    tree = self.tree;
+
     self.analysis_data = null;
 
     self.svg = d3.select("#" + container_id).append("svg").attr("width", width)
@@ -59,9 +61,7 @@ datamonkey.absrel = function() {
     });
 
     $(".tree-tab-btn").on('click', function(e) {
-      render_bs_rel_tree(self.analysis_data, "Full model");
-      self.tree.update();
-      self.tree.layout();
+      self.tree.placenodes().update();
     });
 
     $("#datamonkey-absrel-show-color-bar").on("click", function(e) {
@@ -480,6 +480,7 @@ datamonkey.absrel = function() {
         self.tree.style_edges(function(element, data) {
             edge_colorizer(element, data);
         });
+
         branch_lengths = {};
         self.tree.get_nodes().forEach(function(d) {
             if (d.parent) {

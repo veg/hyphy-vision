@@ -83,6 +83,11 @@ datamonkey.relax = function() {
         $(".datamonkey-relax-tree-trigger").on("click", function(e) {
             render_tree();
         });
+
+        $(".tree-tab-btn").on('click', function(e) {
+          tree.placenodes().update();
+        });
+
     }
 
 
@@ -91,7 +96,8 @@ datamonkey.relax = function() {
         tree.node_span('equal');
         tree.options({
             'draw-size-bubbles': false,
-            'selectable': false
+            'selectable': false,
+            'left-right-spacing': 'fit-to-size'
         }, false);
         tree.font_size(18);
         tree.scale_bar_font_size(14);

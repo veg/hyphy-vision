@@ -2,7 +2,18 @@
   "name": "hyphy-vision",
   "description": "HyPhy's visual interface",
   "homepage": "http://hyphy.org",
-  "keywords": ["phylogenetics", "phylogeny", "hyphy", "datamonkey", "relaxed selection", "relax", "absrel", "bsrel", "busted", "random effects branch-site modeling"],
+  "keywords": [
+    "phylogenetics",
+    "phylogeny",
+    "hyphy",
+    "datamonkey",
+    "relaxed selection",
+    "relax",
+    "absrel",
+    "bsrel",
+    "busted",
+    "random effects branch-site modeling"
+  ],
   "author": "Sergei Pond <spond@ucsd.edu>",
   "repository": {
     "type": "git",
@@ -12,6 +23,7 @@
   "version": "0.1.2",
   "devDependencies": {
     "eslint": "0.21.x",
+    "gulp-watch": "^4.3.5",
     "uglify-js": "2.4.x"
   },
   "scripts": {
@@ -25,4 +37,3 @@
     "hyphy-vision-min.map"
   ]
 }
-
