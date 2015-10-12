@@ -42,7 +42,7 @@
 
                 <ul class="nav nav-pills navbar-right" role="tablist" id='navigation_buttons'>
                     <li class="active"><a href="#summary_tab" role="tab" data-toggle="tab"><i class="fa fa-list" style = 'margin-right: 5px'></i>Summary</a></li>
-                    <li><a href="#tree_tab" role="tab" data-toggle="tab"><i class="fa fa-tree" style = 'margin-right: 5px'></i> Tree</a></li>
+                    <li><a class="tree-tab-btn" href="#tree_tab" role="tab" data-toggle="tab"><i class="fa fa-tree" style = 'margin-right: 5px'></i> Tree</a></li>
                     <li><a href="#table_tab" role="tab" data-toggle="tab"><i class="fa fa-table" style = 'margin-right: 5px'></i> Table</a></li>
                 </ul>
 
@@ -161,6 +161,9 @@
                         <div class="input-group input-group-sm">
 
                             <div class="input-group-btn">
+                                <button id="export-phylo-png" type="button" class="btn btn-default btn-sm" data-direction="vertical" data-amount="1" title="Expand vertical spacing">
+                                    <i class="fa fa-image"></i>
+                                </button>
                                 <button type="button" class="btn btn-default btn-sm" data-direction="vertical" data-amount="1" title="Expand vertical spacing">
                                     <i class="fa fa-arrows-v"></i>
                                 </button>
@@ -260,6 +263,17 @@
                         </table>
                     </div>
                     <div class="col-md-5">
+                        <div class="btn group pull-right">
+                          <button id="export-chart-svg" type="button" class="btn btn-default btn-sm pull-right btn-export">
+                            <span class="glyphicon glyphicon-floppy-save"></span> Export Chart to SVG
+                          </button>
+
+                          <button id="export-chart-png" type="button" class="btn btn-default btn-sm pull-right btn-export">
+                            <span class="glyphicon glyphicon-floppy-save"></span> Export Chart to PNG
+                          </button>
+                        </div>
+
+
                         <div class="panel panel-default">
                             <div class="panel-heading" id='primary_omega_tag'></div>
                             <div class="panel-body">
@@ -272,13 +286,16 @@
         </div>
     </div>
 
+    <img id="hyphy-chart-image" />
+    <canvas id="hyphy-chart-canvas"></canvas>
+
 
     <script>
         
 
         $(document).ready(function() {
 
-           var bsrel_app = datamonkey.absrel();
+           bsrel_app = datamonkey.absrel();
 
            $("#datamonkey-absrel-json-file").on("change", function(e) {
                var files = e.target.files; // FileList object
@@ -306,6 +323,16 @@
            $("#export-phylo-png").on('click', function(e) {
                datamonkey.save_image("png", "#tree_container");
            });
+
+           $("#export-chart-svg").on('click', function(e) {
+               datamonkey.save_image("svg", "#primary_omega_plot");
+           });
+
+           $("#export-chart-png").on('click', function(e) {
+               datamonkey.save_image("png", "#primary_omega_plot");
+           });
+
+
 
            d3.json("test-data/test.json", function(json) {
                bsrel_app(json);
