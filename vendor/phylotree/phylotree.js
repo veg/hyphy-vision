@@ -7,6 +7,7 @@ d3.layout.phylotree = function(container) {
     var self = new Object,
         d3_hierarchy = d3.layout.hierarchy().sort(null).value(null),
         size = [1, 1],
+        phylo_attr = [1, 1],
         newick_string = null,
         separation = function(_node, _previos) {
             return 0;
@@ -39,6 +40,7 @@ d3.layout.phylotree = function(container) {
         scale_attribute = "y_scaled",
         needs_redraw = true,
         svg = null,
+
         options = {
             'layout': 'left-to-right',
             'branches': 'step',
@@ -96,7 +98,6 @@ d3.layout.phylotree = function(container) {
         font_size = 12,
         scale_bar_font_size = 12,
         offsets = [0, font_size],
-
 
         draw_line = d3.svg.line()
         .x(function(d) {
@@ -590,13 +591,21 @@ d3.layout.phylotree = function(container) {
     }
 
     phylotree.size = function(attr) {
-        if (!arguments.length) return size;
+        if (arguments.length) {
+          phylo_attr = attr;
+        }
+
         if (options['top-bottom-spacing'] != 'fixed-step') {
-            size[0] = attr[0];
+            size[0] = phylo_attr[0];
         }
         if (options['left-right-spacing'] != 'fixed-step') {
-            size[1] = attr[1];
+            size[1] = phylo_attr[1];
         }
+
+        if (!arguments.length) {
+          return size;
+        }
+
         return phylotree;
     };
 
@@ -630,7 +639,6 @@ d3.layout.phylotree = function(container) {
             n.collapsed = true;
         }
     }
-
 
     phylotree.separation = function(attr) {
         if (!arguments.length) return separation;
@@ -1577,6 +1585,7 @@ d3.layout.phylotree = function(container) {
     }
 
     phylotree.update = function(transitions) {
+
         if (!phylotree.svg)
             return phylotree;
 

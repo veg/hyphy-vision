@@ -1,7 +1,9 @@
 {
   "name": "phylotree",
-  "version": "0.1.2",
-  "main": "phylotree.js",
+  "main": [
+    "phylotree.js",
+    "phylotree.css"
+  ],
   "keywords": [
     "phylogenetics",
     "phylogeny",
@@ -19,14 +21,13 @@
     "d3": "3.x",
     "jquery": "1.x"
   },
-  "homepage": "https://github.com/veg/phylotree.js",
-  "_release": "0.1.2",
+  "homepage": "https://github.com/stevenweaver/phylotree.js",
+  "_release": "834e0a034a",
   "_resolution": {
-    "type": "version",
-    "tag": "v0.1.2",
-    "commit": "74ad35aae3ce64e2b49c922e401c05addb7391ed"
+    "type": "commit",
+    "commit": "834e0a034a8e547ebb33f67689ce579f62052459"
   },
-  "_source": "git@github.com:veg/phylotree.js.git",
-  "_target": "*",
-  "_originalSource": "git@github.com:veg/phylotree.js.git"
+  "_source": "git@github.com:stevenweaver/phylotree.js.git",
+  "_target": "834e0a034a8e547ebb33f67689ce579f62052459",
+  "_originalSource": "git@github.com:stevenweaver/phylotree.js.git"
 }
