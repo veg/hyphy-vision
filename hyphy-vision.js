@@ -951,6 +951,12 @@ datamonkey.absrel = function() {
         render_color_scheme(color_legend_id);
     });
 
+    $(".tree-tab-btn").on('click', function(e) {
+      render_bs_rel_tree(self.analysis_data, "Full model");
+      self.tree.update();
+      self.tree.layout();
+    });
+
     $("#datamonkey-absrel-show-color-bar").on("click", function(e) {
         render_color_bar = !render_color_bar;
         if ($(self).data('color-bar') == 'on') {
@@ -982,8 +988,9 @@ datamonkey.absrel = function() {
         self.tree.options({
             'draw-size-bubbles': false,
             'selectable': false,
-            'transitions': false
-        }, false);
+            'transitions': false,
+            'left-right-spacing': 'fit-to-size'
+        }, true);
         self.tree.font_size(18);
         self.tree.scale_bar_font_size(14);
         self.tree.node_circle_size(0);
@@ -1404,8 +1411,6 @@ datamonkey.absrel = function() {
             }
 
             default_tree_settings();
-
-
 
             branch_p_values = {};
 
