@@ -20,3 +20,7 @@ gulp.task('watch', function () {
         gulp.start('scripts');
     }); 
 });
+
+gulp.task('default', function () {
+    gulp.start('scripts');
+});
