@@ -118,31 +118,6 @@
 
                 </div>
                 <div id="hyphy-omega-plots" class="row">
-                    <script type="text/template" class="hyphy-omega-plots">
-                        {% _.each(rc, function(item, key) { %}
-                        <div class="col-lg-6">
-                            <div class="panel panel-default" id='{{ item.key }}'>
-                                <div class="panel-heading">
-                                    <h3 class="panel-title">&omega; distributions under the <strong>{{ item.label }}</strong> model</h3>
-                                    <p>
-                                        <small>Test branches are shown in <span class="hyphy-blue">blue</span> and reference branches are shown in <span class="hyphy-red">red</span></small>
-                                    </p>
-                                    <div class="btn-group">
-                                        <button id="export-{{item.key}}-svg" type="button" class="btn btn-default btn-sm">
-                                            <span class="glyphicon glyphicon-floppy-save"></span> SVG
-                                        </button>
-                                        <button id="export-{{item.key}}-png" type="button" class="btn btn-default btn-sm">
-                                            <span class="glyphicon glyphicon-floppy-save"></span> PNG
-                                        </button>
-                                    </div>
-                                </div>
-                                <div class="panel-body">
-                                    <svg id={{item.key}}-svg />
-                                </div>
-                            </div>
-                        </div>
-                        {% }) %}
-                    </script>
                 </div>
             </div>
 

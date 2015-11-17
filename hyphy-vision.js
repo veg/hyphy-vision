@@ -2718,57 +2718,45 @@ datamonkey.relax = function() {
                 return d;
             });
 
-            _.templateSettings = {
-              evaluate:    /\{\%(.+?)\%\}/g,
-              interpolate: /\{\{(.+?)\}\}/g,
-              variable    : "rc"
-            };
-
-            var omega_plot_template = _.template(
-              $("script.hyphy-omega-plots").html()
-            );
-            
-
             // Filter omega_distributions that have Test and Reference
+            //_.map(omega_distributions, function(item,key) { 
+            //  item.key   = key.toLowerCase().replace(/ /g, '-'); 
+            //  item.label = key; 
+            //});
 
-            _.map(omega_distributions, function(item,key) { 
-              item.key   = key.toLowerCase().replace(/ /g, '-'); 
-              item.label = key; 
-            });
-
-            var distributions_to_chart = _.filter(omega_distributions, function(d) { return d.hasOwnProperty('Reference') });
-            var omega_plot_html = omega_plot_template(distributions_to_chart);
+            //var distributions_to_chart = _.filter(omega_distributions, function(d) { return d.hasOwnProperty('Reference') });
+            //var omega_plot_html = omega_plot_template(distributions_to_chart);
             
 
-            if (settings['chart-append-html']) {
-                $("#hyphy-omega-plots").append(omega_plot_html);
-                settings['chart-append-html'] = false;
-            }
+            //if (settings['chart-append-html']) {
+            //    $("#hyphy-omega-plots").append(omega_plot_html);
+            //    settings['chart-append-html'] = false;
+            //}
 
             // Replace with for loop
-            _.each(distributions_to_chart, function(item, key) {
+            //_.each(distributions_to_chart, function(item, key) {
 
-              var svg_element =  item.key + '-svg';
-              var container_element =  '#' + item.key;
-              var export_svg =  '#export-' + item.key + '-svg';
-              var export_png =  '#export-' + item.key + '-png';
+            //  var svg_element =  item.key + '-svg';
+            //  var container_element =  '#' + item.key;
+            //  var export_svg =  '#export-' + item.key + '-svg';
+            //  var export_png =  '#export-' + item.key + '-png';
 
-              if(item.hasOwnProperty('Reference')) {
+            //  if(item.hasOwnProperty('Reference')) {
 
-                omegaPlot(item["Reference"], item["Test"], {'svg' : svg_element });
-                d3.select(container_element).style ('display', 'block');
+            //    omegaPlot(item["Reference"], item["Test"], {'svg' : svg_element });
+            //    d3.select(container_element).style ('display', 'block');
 
-                // TODO: Make this a data-bind
-                $(export_svg).on('click', function(e) { 
-                  datamonkey.save_image("svg", '#' + svg_element); 
-                });
+            //    // TODO: Make this a data-bind
+            //    $(export_svg).on('click', function(e) { 
+            //      datamonkey.save_image("svg", '#' + svg_element); 
+            //    });
 
-                $(export_png).on('click', function(e) { 
-                  datamonkey.save_image("png", '#' + svg_element); 
-                });
-              }
+            //    $(export_png).on('click', function(e) { 
+            //      datamonkey.save_image("png", '#' + svg_element); 
+            //    });
+            //  }
 
-            });
+            //});
 
             settings['suppress-tree-render'] = true;
 

@@ -1,7 +1,8 @@
 var gulp = require('gulp'),
     concat = require('gulp-concat'),
     order = require('gulp-order'),
-    watch = require('gulp-watch');
+    watch = require('gulp-watch'),
+    react = require('gulp-react');
 
 gulp.task('scripts', function() {
     return gulp.src(['src/**/*.js'])
@@ -15,12 +16,20 @@ gulp.task('scripts', function() {
     .pipe(gulp.dest('./'));
 });
 
+gulp.task('react', function () {
+    return gulp.src('./src/jsx/react/results.jsx')
+        .pipe(react())
+        .pipe(gulp.dest('./src/relax/results.js'));
+});
+
+gulp.task('build', ['scripts', 'react']);
+
 gulp.task('watch', function () {
     watch('src/**/*', function () {
-        gulp.start('scripts');
+        gulp.start('build');
     }); 
 });
 
 gulp.task('default', function () {
-    gulp.start('scripts');
+    gulp.start('build');
 });
