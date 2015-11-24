@@ -17,9 +17,9 @@ gulp.task('scripts', function() {
 });
 
 gulp.task('react', function () {
-    return gulp.src('./src/jsx/relax/results.jsx')
+    return gulp.src('./src/jsx/relax/omega_plots.jsx')
         .pipe(react())
-        .pipe(gulp.dest('./src/relax/results.js'));
+        .pipe(gulp.dest('./'));
 });
 
 gulp.task('build', ['scripts', 'react']);
