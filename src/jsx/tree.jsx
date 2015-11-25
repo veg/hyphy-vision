@@ -23,11 +23,26 @@ var Tree = React.createClass({
 
   initialize : function() {
 
+    this.settings = this.props.settings;
+
+    var json =  this.props.json;
+    var analysis_data = json;
+    var self = this;
+
+    var width = 800,
+        height = 600,
+        alpha_level = 0.05,
+        branch_annotations = [],
+        branch_lengths = [];
+
     var tree = d3.layout.phylotree("body")
         .size([height, width])
         .separation(function(a, b) {
             return 0;
         });
+
+
+    var scaling_exponent = 0.33;
 
     set_handlers      ();
     set_tree_handlers (tree);
@@ -36,7 +51,6 @@ var Tree = React.createClass({
         .attr("width", width)
         .attr("height", height);
 
-    var scaling_exponent = 0.33;
 
     function set_handlers() {
     
@@ -68,7 +82,7 @@ var Tree = React.createClass({
         });
         
         $(".datamonkey-relax-tree-trigger").on("click", function(e) {
-            render_tree();
+            self.renderTree();
         });
 
         $(".tree-tab-btn").on('click', function(e) {
@@ -95,8 +109,9 @@ var Tree = React.createClass({
             }
             return undefined;
         });
-        tree.style_edges(edge_colorizer);
-        tree.style_nodes(node_colorizer);
+
+        tree.style_edges(this.edgeColorizer);
+        tree.style_nodes(this.nodeColorizer);
         tree.spacing_x(30, true);
     }
 
@@ -118,8 +133,6 @@ var Tree = React.createClass({
 
             svg.attr("width", bar_width)
                 .attr("height", bar_height);
-
-
 
             this_grad = svg.append("defs").append("linearGradient")
                 .attr("id", "_omega_bar")
@@ -179,54 +192,75 @@ var Tree = React.createClass({
     }
 
 
-    render_tree = function(skip_render) {
 
-        if (!settings['suppress-tree-render']) {
+    this.settings['suppress-tree-render'] = true;
 
-            var do_layout = false;
+    var def_displayed = false;
 
-            for (var k in settings["tree-options"]) {
-                var controller = d3.select("#" + k),
-                    controller_value = (controller.attr("value") || controller.property("checked"));
-                    
-                if (controller_value != settings["tree-options"][k][0]) {
-                    settings["tree-options"][k][0] = controller_value;
-                    do_layout = do_layout || settings["tree-options"][k][1];
-                }
-            }
-            
-
-            var which_model = settings["tree-options"]["datamonkey-relax-tree-model"][0];
-            
-            branch_lengths     = settings["tree-options"]["datamonkey-relax-tree-branch-lengths"][0] ? analysis_data["fits"][which_model]["branch-lengths"] : null;
-            branch_annotations = analysis_data["fits"][which_model]["branch-annotations"];
-            
- 
-            partition = (settings["tree-options"]["datamonkey-relax-tree-highlight"] ? analysis_data["partition"][settings["tree-options"]["datamonkey-relax-tree-highlight"][0]] : null) || null;
-
-
-            omega_color = d3.scale.pow().exponent(scaling_exponent)
-                .domain([0, 0.25, 1, 5, 10])
-                .range(settings["tree-options"]["datamonkey-relax-tree-fill-color"][0] ? ["#5e4fa2", "#3288bd", "#e6f598", "#f46d43", "#9e0142"] : ["#DDDDDD", "#AAAAAA", "#888888", "#444444", "#000000"])
-                .clamp(true);
-
-
-            render_color_scheme("color_legend", analysis_data["fits"][which_model]["annotation-tag"], !(settings["tree-options"]["datamonkey-relax-tree-fill-legend"][0]));
-
-            if (!skip_render) {
-                if (do_layout) {
-                    tree.update_layout();
-                }
-                d3_phylotree_trigger_refresh (tree);
-            }
-
+    var model_list = d3.select("#datamonkey-relax-tree-model-list").selectAll("li").data(d3.keys(json["fits"]).map(function(d) {
+        return [d];
+    }).sort());
+    model_list.enter().append("li");
+    model_list.exit().remove();
+    model_list = model_list.selectAll("a").data(function(d) {
+        return d;
+    });
+    model_list.enter().append("a");
+    model_list.attr("href", "#").on("click", function(d, i) {
+        d3.select("#datamonkey-relax-tree-model").attr("value", d);
+        self.renderTree();
+    });
+    model_list.text(function(d) {
+        if (d == "General Descriptive") {
+            def_displayed = true;
+            this.click();
         }
-    }
+        if (!def_displayed && d == "Alternative") {
+            def_displayed = true;
+            this.click();
+        }
+        if (!def_displayed && d == "Partitioned MG94xREV") {
+            def_displayed = true;
+            this.click();
+        }
+
+        return d;
+    });
+
+    var partition_list = d3.select("#datamonkey-relax-tree-highlight-branches").selectAll("li").data([
+        ['None']
+    ].concat(d3.keys(json["partition"]).map(function(d) {
+        return [d];
+    }).sort()));
+
+    partition_list.enter().append("li");
+    partition_list.exit().remove();
+    partition_list = partition_list.selectAll("a").data(function(d) {
+        return d;
+    });
+
+    partition_list.enter().append("a");
+    partition_list.attr("href", "#").on("click", function(d, i) {
+        d3.select("#datamonkey-relax-tree-highlight").attr("value", d);
+        self.renderTree();
+    });
+
+    partition_list.text(function(d) {
+        if (d == "RELAX.test") {
+            this.click();
+        }
+        return d;
+    });
+
+    this.settings['suppress-tree-render'] = false;
+    self.renderTree(true);
+    default_tree_settings();
+    tree(analysis_data["tree"]).svg(svg);
+    tree.layout();
 
   },
 
   edgeColorizer : function(element, data) {
-
     if (branch_annotations) {
         element.style('stroke', omega_color(branch_annotations[data.target.name]) || null);
         $(element[0][0]).tooltip('destroy');
@@ -257,75 +291,52 @@ var Tree = React.createClass({
     }
   },
 
-  oldrender : function() {
+  renderTree : function(skip_render) {
 
-    settings['suppress-tree-render'] = true;
+      var analysis_data = this.props.json;
+      var scaling_exponent = 0.33;
 
-    var def_displayed = false;
+      if (!this.settings['suppress-tree-render']) {
 
-    var model_list = d3.select("#datamonkey-relax-tree-model-list").selectAll("li").data(d3.keys(json["fits"]).map(function(d) {
-        return [d];
-    }).sort());
-    model_list.enter().append("li");
-    model_list.exit().remove();
-    model_list = model_list.selectAll("a").data(function(d) {
-        return d;
-    });
-    model_list.enter().append("a");
-    model_list.attr("href", "#").on("click", function(d, i) {
-        d3.select("#datamonkey-relax-tree-model").attr("value", d);
-        render_tree();
-    });
-    model_list.text(function(d) {
-        if (d == "General Descriptive") {
-            def_displayed = true;
-            this.click();
-        }
-        if (!def_displayed && d == "Alternative") {
-            def_displayed = true;
-            this.click();
-        }
-        if (!def_displayed && d == "Partitioned MG94xREV") {
-            def_displayed = true;
-            this.click();
-        }
+          var do_layout = false;
 
-        return d;
-    });
+          for (var k in this.settings["tree-options"]) {
+              var controller = d3.select("#" + k),
+                  controller_value = (controller.attr("value") || controller.property("checked"));
+                  
+              if (controller_value != this.settings["tree-options"][k][0]) {
+                  this.settings["tree-options"][k][0] = controller_value;
+                  do_layout = do_layout || this.settings["tree-options"][k][1];
+              }
+          }
+          
 
+          var which_model = this.settings["tree-options"]["datamonkey-relax-tree-model"][0];
+          
+          branch_lengths = this.settings["tree-options"]["datamonkey-relax-tree-branch-lengths"][0] ? analysis_data["fits"][which_model]["branch-lengths"] : null;
+          branch_annotations = analysis_data["fits"][which_model]["branch-annotations"];
+          
+          partition = (this.settings["tree-options"]["datamonkey-relax-tree-highlight"] ? analysis_data["partition"][this.settings["tree-options"]["datamonkey-relax-tree-highlight"][0]] : null) || null;
 
+          omega_color = d3.scale.pow().exponent(scaling_exponent)
+              .domain([0, 0.25, 1, 5, 10])
+              .range(this.settings["tree-options"]["datamonkey-relax-tree-fill-color"][0] ? ["#5e4fa2", "#3288bd", "#e6f598", "#f46d43", "#9e0142"] : ["#DDDDDD", "#AAAAAA", "#888888", "#444444", "#000000"])
+              .clamp(true);
 
-    var partition_list = d3.select("#datamonkey-relax-tree-highlight-branches").selectAll("li").data([
-        ['None']
-    ].concat(d3.keys(json["partition"]).map(function(d) {
-        return [d];
-    }).sort()));
-    partition_list.enter().append("li");
-    partition_list.exit().remove();
-    partition_list = partition_list.selectAll("a").data(function(d) {
-        return d;
-    });
-    partition_list.enter().append("a");
-    partition_list.attr("href", "#").on("click", function(d, i) {
-        d3.select("#datamonkey-relax-tree-highlight").attr("value", d);
-        render_tree();
-    });
-    partition_list.text(function(d) {
-        if (d == "RELAX.test") {
-            this.click();
-        }
-        return d;
-    });
+          render_color_scheme("color_legend", analysis_data["fits"][which_model]["annotation-tag"], !(this.settings["tree-options"]["datamonkey-relax-tree-fill-legend"][0]));
 
-    settings['suppress-tree-render'] = false;
-    render_tree(true);
-    default_tree_settings();
-    tree(analysis_data["tree"]).svg(svg);
-    tree.layout();
+          if (!skip_render) {
+              if (do_layout) {
+                  tree.update_layout();
+              }
+              d3_phylotree_trigger_refresh (tree);
+          }
 
+      }
   },
 
   componentDidMount: function() {
+    this.initialize();
   },
 
   render: function() {
