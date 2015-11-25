@@ -1,3 +1,4 @@
+// TODO: Write documentation
 var ModelFits = React.createClass({
 
   getInitialState: function() {
@@ -51,7 +52,6 @@ var ModelFits = React.createClass({
         var distributions = [];
 
         for (var d in this_model["rate-distributions"]) {
-
             var this_distro = this_model["rate-distributions"][d];
             var this_distro_entry = [d, "", "", ""];
 

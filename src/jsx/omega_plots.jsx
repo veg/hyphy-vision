@@ -1,4 +1,4 @@
-/* Distribution plotters */
+// TODO: Write documentation
 var OmegaPlot = React.createClass({
 
   getDefaultProps : function() {
@@ -361,11 +361,43 @@ var OmegaPlot = React.createClass({
 });
 
 var OmegaPlotGrid = React.createClass({
+
   getInitialState: function() {
-    return {omega_distributions: this.props.omega_distributions};
+    return {omega_distributions: this.getDistributions(this.props.json)};
   },
   componentDidMount: function() {
   },
+  getDistributions : function(json) {
+
+    var omega_distributions = {};
+    for (var m in json["fits"]) {
+        var this_model = json["fits"][m];
+        omega_distributions[m] = {};
+        var distributions = [];
+        for (var d in this_model["rate-distributions"]) {
+            var this_distro = this_model["rate-distributions"][d];
+            var this_distro_entry = [d, "", "", ""];
+            omega_distributions[m][d] = this_distro.map(function(d) {
+                return {
+                    'omega': d[0],
+                    'weight': d[1]
+                };
+            });
+        }
+    }
+
+    _.each(omega_distributions, function(item,key) { 
+      item.key   = key.toLowerCase().replace(/ /g, '-'); 
+      item.label = key; 
+    });
+
+    var omega_distributions = _.filter(omega_distributions, function(item) {
+      return _.isObject(item["Reference"]);
+    });
+
+    return omega_distributions;
+  },
+
   render: function() {
 
     var OmegaPlots = _.map(this.state.omega_distributions, function(item, key) {
@@ -401,9 +433,9 @@ var OmegaPlotGrid = React.createClass({
 
 // Will need to make a call to this
 // omega distributions
-function render_omega_plot(omega_distributions) {
+function render_omega_plot(json) {
   React.render(
-    <OmegaPlotGrid omega_distributions={omega_distributions} />,
+    <OmegaPlotGrid json={json} />,
     document.getElementById("hyphy-omega-plots")
   );
 }

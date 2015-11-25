@@ -2,6 +2,7 @@ var gulp = require('gulp'),
     concat = require('gulp-concat'),
     order = require('gulp-order'),
     watch = require('gulp-watch'),
+    sourcemaps = require('gulp-sourcemaps'),
     react = require('gulp-react');
 
 gulp.task('scripts', function() {
@@ -12,12 +13,14 @@ gulp.task('scripts', function() {
       "busted/busted.js",
       "**/*.js"
     ]))
-    .pipe(concat('hyphy-vision.js'))
+    .pipe(sourcemaps.init())
+      .pipe(concat('hyphy-vision.js'))
+      .pipe(sourcemaps.write('./'))
     .pipe(gulp.dest('./'));
 });
 
 gulp.task('react', function () {
-    return gulp.src('./src/jsx/relax/omega_plots.jsx')
+    return gulp.src('./src/jsx/*.jsx')
         .pipe(react())
         .pipe(gulp.dest('./'));
 });
