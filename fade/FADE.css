@@ -1,0 +1,124 @@
+.axis path,
+.axis line {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
+
+g {
+  font: 10px sans-serif;
+}
+
+.dot1 {
+  stroke: #000;
+}
+.dot2 {
+  stroke: #000;
+}
+.dot3 {
+  stroke: #000;
+}
+.dot4 {
+  stroke: #000;
+}
+.dot5 {
+  stroke: #000;
+}
+.dot6 {
+  stroke: #000;
+}
+.dot7 {
+  stroke: #000;
+}
+.dot8 {
+  stroke: #000;
+}
+.dot9 {
+  stroke: #000;
+}
+.dot10 {
+  stroke: #000;
+}
+.dot11 {
+  stroke: #000;
+}
+.dot12 {
+  stroke: #000;
+}
+.dot13 {
+  stroke: #000;
+}
+.dot14 {
+  stroke: #000;
+}
+.dot15 {
+  stroke: #000;
+}
+.dot16 {
+  stroke: #000;
+}
+.dot17 {
+  stroke: #000;
+}
+.dot18 {
+  stroke: #000;
+}
+.dot19 {
+  stroke: #000;
+}
+.dot20 {
+  stroke: #000;
+}
+
+circle.property1 {
+  fill: #fff;
+  stroke: #000;
+}
+
+line.sep_line {
+  fill: #fff;
+  stroke: #000;
+  stroke-width: 2;
+}
+
+circle.property2 {
+  fill: #fff;
+  stroke: #FF0000;
+}
+
+circle.property3 {
+  fill: #fff;
+  stroke: #FF7400;
+}
+
+circle.property4 {
+  fill: #fff;
+  stroke: #009999;
+}
+
+circle.property5 {
+  fill: #fff;
+  stroke: #00CC00;
+}
+
+.rule line {
+  stroke: #eee;
+  shape-rendering: crispEdges;
+}
+
+.rule line.axis {
+  stroke: #000;
+}
+
+.grid .tick {
+    stroke: lightgrey;
+    opacity: 0.7;
+}
+.grid path {
+      stroke-width: 0;
+}
+
+.exch_rate {
+  fill: #fff;
+  stroke: #ccc;
+}

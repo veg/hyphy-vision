@@ -51,8 +51,6 @@ datamonkey.relax = function() {
 
     function set_handlers() {
 
-          
-    
         $("#datamonkey-relax-error-hide").on("click", function(e) {
             d3.select("#datamonkey-relax-error").style("display", "none");
             e.preventDefault();
