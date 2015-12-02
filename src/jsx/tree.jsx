@@ -21,6 +21,84 @@ var Tree = React.createClass({
       return duration_string;
   },
 
+  renderColorScheme : function(svg_container, attr_name, do_not_render) {
+
+    var self = this;
+
+    var svg = d3.select("#" + svg_container).selectAll("svg").data([self.omega_color.domain()]);
+    svg.enter().append("svg");
+    svg.selectAll("*").remove();
+
+    if (this.branch_annotations && !do_not_render) {
+        var bar_width = 70,
+            bar_height = 300,
+            margins = {
+                'bottom': 30,
+                'top': 15,
+                'left': 40,
+                'right': 2
+            };
+
+        svg.attr("width", bar_width)
+            .attr("height", bar_height);
+
+        this_grad = svg.append("defs").append("linearGradient")
+            .attr("id", "_omega_bar")
+            .attr("x1", "0%")
+            .attr("y1", "0%")
+            .attr("x2", "0%")
+            .attr("y2", "100%");
+
+        var omega_scale = d3.scale.pow().exponent(this.scaling_exponent)
+            .domain(d3.extent(self.omega_color.domain()))
+            .range([0, 1]),
+            axis_scale = d3.scale.pow().exponent(this.scaling_exponent)
+            .domain(d3.extent(self.omega_color.domain()))
+            .range([0, bar_height - margins['top'] - margins['bottom']]);
+
+
+        self.omega_color.domain().forEach(function(d) {
+            this_grad.append("stop")
+                .attr("offset", "" + omega_scale(d) * 100 + "%")
+                .style("stop-color", self.omega_color(d));
+        });
+
+        var g_container = svg.append("g").attr("transform", "translate(" + margins["left"] + "," + margins["top"] + ")");
+
+        g_container.append("rect").attr("x", 0)
+            .attr("width", bar_width - margins['left'] - margins['right'])
+            .attr("y", 0)
+            .attr("height", bar_height - margins['top'] - margins['bottom'])
+            .style("fill", "url(#_omega_bar)");
+
+
+        var draw_omega_bar = d3.svg.axis().scale(axis_scale)
+            .orient("left")
+            .tickFormat(d3.format(".1r"))
+            .tickValues([0, 0.01, 0.1, 0.5, 1, 2, 5, 10]);
+
+        var scale_bar = g_container.append("g");
+        scale_bar.style("font-size", "14")
+            .attr("class", "hyphy-omega-bar")
+            .call(draw_omega_bar);
+
+        scale_bar.selectAll("text")
+            .style("text-anchor", "right");
+
+        var x_label = _label = scale_bar.append("g").attr("class", "hyphy-omega-bar");
+        x_label = x_label.selectAll("text").data([attr_name]);
+        x_label.enter().append("text");
+        x_label.text(function(d) {
+            return $('<textarea />').html(d).text();
+        })
+            .attr("transform", "translate(" + (bar_width - margins['left'] - margins['right']) * 0.5 + "," + (bar_height - margins['bottom']) + ")")
+            .style("text-anchor", "middle")
+            .style("font-size", "18")
+            .attr("dx", "0.0em")
+            .attr("dy", "0.1em");
+    }
+  },
+
   initialize : function() {
 
     this.settings = this.props.settings;
@@ -32,7 +110,6 @@ var Tree = React.createClass({
     var width = 800,
         height = 600,
         alpha_level = 0.05,
-        branch_annotations = [],
         branch_lengths = [];
 
     var tree = d3.layout.phylotree("body")
@@ -41,8 +118,9 @@ var Tree = React.createClass({
             return 0;
         });
 
+    this.scaling_exponent = 0.33;
 
-    var scaling_exponent = 0.33;
+    this.branch_annotations = [];
 
     set_handlers      ();
     set_tree_handlers (tree);
@@ -105,7 +183,7 @@ var Tree = React.createClass({
         tree.node_circle_size(0);
         tree.branch_length(function(n) {
             if (branch_lengths) {
-                return branch_lengths[n.name] || 0;
+                return self.branch_lengths[n.name] || 0;
             }
             return undefined;
         });
@@ -114,83 +192,6 @@ var Tree = React.createClass({
         tree.style_nodes(this.nodeColorizer);
         tree.spacing_x(30, true);
     }
-
-
-    render_color_scheme = function(svg_container, attr_name, do_not_render) {
-        var svg = d3.select("#" + svg_container).selectAll("svg").data([omega_color.domain()]);
-        svg.enter().append("svg");
-        svg.selectAll("*").remove();
-
-        if (branch_annotations && !do_not_render) {
-            var bar_width = 70,
-                bar_height = 300,
-                margins = {
-                    'bottom': 30,
-                    'top': 15,
-                    'left': 40,
-                    'right': 2
-                };
-
-            svg.attr("width", bar_width)
-                .attr("height", bar_height);
-
-            this_grad = svg.append("defs").append("linearGradient")
-                .attr("id", "_omega_bar")
-                .attr("x1", "0%")
-                .attr("y1", "0%")
-                .attr("x2", "0%")
-                .attr("y2", "100%");
-
-            var omega_scale = d3.scale.pow().exponent(scaling_exponent)
-                .domain(d3.extent(omega_color.domain()))
-                .range([0, 1]),
-                axis_scale = d3.scale.pow().exponent(scaling_exponent)
-                .domain(d3.extent(omega_color.domain()))
-                .range([0, bar_height - margins['top'] - margins['bottom']]);
-
-
-            omega_color.domain().forEach(function(d) {
-                this_grad.append("stop")
-                    .attr("offset", "" + omega_scale(d) * 100 + "%")
-                    .style("stop-color", omega_color(d));
-            });
-
-            var g_container = svg.append("g").attr("transform", "translate(" + margins["left"] + "," + margins["top"] + ")");
-
-            g_container.append("rect").attr("x", 0)
-                .attr("width", bar_width - margins['left'] - margins['right'])
-                .attr("y", 0)
-                .attr("height", bar_height - margins['top'] - margins['bottom'])
-                .style("fill", "url(#_omega_bar)");
-
-
-            var draw_omega_bar = d3.svg.axis().scale(axis_scale)
-                .orient("left")
-                .tickFormat(d3.format(".1r"))
-                .tickValues([0, 0.01, 0.1, 0.5, 1, 2, 5, 10]);
-
-            var scale_bar = g_container.append("g");
-            scale_bar.style("font-size", "14")
-                .attr("class", "hyphy-omega-bar")
-                .call(draw_omega_bar);
-
-            scale_bar.selectAll("text")
-                .style("text-anchor", "right");
-
-            var x_label = _label = scale_bar.append("g").attr("class", "hyphy-omega-bar");
-            x_label = x_label.selectAll("text").data([attr_name]);
-            x_label.enter().append("text");
-            x_label.text(function(d) {
-                return $('<textarea />').html(d).text();
-            })
-                .attr("transform", "translate(" + (bar_width - margins['left'] - margins['right']) * 0.5 + "," + (bar_height - margins['bottom']) + ")")
-                .style("text-anchor", "middle")
-                .style("font-size", "18")
-                .attr("dx", "0.0em")
-                .attr("dy", "0.1em");
-        }
-    }
-
 
 
     this.settings['suppress-tree-render'] = true;
@@ -261,11 +262,11 @@ var Tree = React.createClass({
   },
 
   edgeColorizer : function(element, data) {
-    if (branch_annotations) {
-        element.style('stroke', omega_color(branch_annotations[data.target.name]) || null);
+    if (this.branch_annotations) {
+        element.style('stroke', self.omega_color(this.branch_annotations[data.target.name]) || null);
         $(element[0][0]).tooltip('destroy');
         $(element[0][0]).tooltip({
-            'title': omega_format(branch_annotations[data.target.name]),
+            'title': omega_format(this.branch_annotations[data.target.name]),
             'html': true,
             'trigger': 'hover',
             'container': 'body',
@@ -294,7 +295,6 @@ var Tree = React.createClass({
   renderTree : function(skip_render) {
 
       var analysis_data = this.props.json;
-      var scaling_exponent = 0.33;
 
       if (!this.settings['suppress-tree-render']) {
 
@@ -312,18 +312,16 @@ var Tree = React.createClass({
           
 
           var which_model = this.settings["tree-options"]["datamonkey-relax-tree-model"][0];
-          
-          branch_lengths = this.settings["tree-options"]["datamonkey-relax-tree-branch-lengths"][0] ? analysis_data["fits"][which_model]["branch-lengths"] : null;
-          branch_annotations = analysis_data["fits"][which_model]["branch-annotations"];
-          
-          partition = (this.settings["tree-options"]["datamonkey-relax-tree-highlight"] ? analysis_data["partition"][this.settings["tree-options"]["datamonkey-relax-tree-highlight"][0]] : null) || null;
+          this.branch_lengths = this.settings["tree-options"]["datamonkey-relax-tree-branch-lengths"][0] ? analysis_data["fits"][which_model]["branch-lengths"] : null;
+          this.branch_annotations = analysis_data["fits"][which_model]["branch-annotations"];
+          this.partition = (this.settings["tree-options"]["datamonkey-relax-tree-highlight"] ? analysis_data["partition"][this.settings["tree-options"]["datamonkey-relax-tree-highlight"][0]] : null) || null;
 
-          omega_color = d3.scale.pow().exponent(scaling_exponent)
+          this.omega_color = d3.scale.pow().exponent(this.scaling_exponent)
               .domain([0, 0.25, 1, 5, 10])
               .range(this.settings["tree-options"]["datamonkey-relax-tree-fill-color"][0] ? ["#5e4fa2", "#3288bd", "#e6f598", "#f46d43", "#9e0142"] : ["#DDDDDD", "#AAAAAA", "#888888", "#444444", "#000000"])
               .clamp(true);
 
-          render_color_scheme("color_legend", analysis_data["fits"][which_model]["annotation-tag"], !(this.settings["tree-options"]["datamonkey-relax-tree-fill-legend"][0]));
+          this.renderColorScheme("color_legend", analysis_data["fits"][which_model]["annotation-tag"], !(this.settings["tree-options"]["datamonkey-relax-tree-fill-legend"][0]));
 
           if (!skip_render) {
               if (do_layout) {

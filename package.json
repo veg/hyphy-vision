@@ -25,6 +25,7 @@
     "eslint": "0.21.x",
     "gulp-react": "^3.1.0",
     "gulp-watch": "^4.3.5",
+    "gulp-sourcemaps": "x.x.x",
     "uglify-js": "2.4.x"
   },
   "scripts": {
