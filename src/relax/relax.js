@@ -2,25 +2,6 @@ if (!datamonkey) {
     var datamonkey = {};
 }
 
-datamonkey.relax = function() {
-
-    //// Summary
-    //analysis_data = json;
-    //d3.select('#summary-pmid').text("PubMed ID " + json['PMID'])
-    //    .attr("href", "http://www.ncbi.nlm.nih.gov/pubmed/" + json['PMID']);
-
-    //var relaxation_K = json["fits"]["Alternative"]["K"];
-    //var p = json["relaxation-test"]["p"];
-
-    //d3.select('#summary-direction').text(relaxation_K > 1 ? 'intensification' : 'relaxation');
-    //d3.select('#summary-evidence').text(p <= alpha_level ? 'significant' : 'not significant');
-    //d3.select('#summary-pvalue').text(p_value_format(p));
-    //d3.select('#summary-LRT').text(fit_format(json["relaxation-test"]["LR"]));
-    //d3.select('#summary-K').text(fit_format(relaxation_K));
-    //d3.select("#datamonkey-relax-error").style('display', 'none');
-
-};
-
 function getDistributions(json) {
 
   var omega_distributions = {};

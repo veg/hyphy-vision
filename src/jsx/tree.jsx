@@ -78,6 +78,7 @@ var Tree = React.createClass({
             .tickValues([0, 0.01, 0.1, 0.5, 1, 2, 5, 10]);
 
         var scale_bar = g_container.append("g");
+
         scale_bar.style("font-size", "14")
             .attr("class", "hyphy-omega-bar")
             .call(draw_omega_bar);
@@ -102,6 +103,7 @@ var Tree = React.createClass({
   initialize : function() {
 
     this.settings = this.props.settings;
+    $("#datamonkey-relax-tree-branch-lengths").click();
 
     var json =  this.props.json;
     var analysis_data = json;
@@ -112,23 +114,26 @@ var Tree = React.createClass({
         alpha_level = 0.05,
         branch_lengths = [];
 
-    var tree = d3.layout.phylotree("body")
+    this.omega_format = d3.format(".3r");
+    this.prop_format = d3.format(".2p");
+    this.fit_format = d3.format(".2f");
+    this.p_value_format = d3.format(".4f");
+
+    this.tree = d3.layout.phylotree("body")
         .size([height, width])
         .separation(function(a, b) {
             return 0;
         });
 
     this.scaling_exponent = 0.33;
-
     this.branch_annotations = [];
 
-    set_handlers      ();
-    set_tree_handlers (tree);
+    set_handlers();
+    set_tree_handlers(this.tree);
 
     var svg = d3.select("#tree_container").append("svg")
         .attr("width", width)
         .attr("height", height);
-
 
     function set_handlers() {
     
@@ -155,63 +160,48 @@ var Tree = React.createClass({
 
                 reader.readAsText(f);
             }
-
             e.preventDefault();
         });
         
         $(".datamonkey-relax-tree-trigger").on("click", function(e) {
-            self.renderTree();
+          self.renderTree();
         });
 
         $(".tree-tab-btn").on('click', function(e) {
-          tree.placenodes().update();
+          self.tree.placenodes().update();
+        });
+
+        $("#export-phylo-svg").on('click', function(e) {
+            datamonkey.save_image("svg", "#tree_container");
+        });
+
+        $("#export-phylo-png").on('click', function(e) {
+            datamonkey.save_image("png", "#tree_container");
         });
 
     }
-
-
-    function default_tree_settings() {
-        tree.branch_name(null);
-        tree.node_span('equal');
-        tree.options({
-            'draw-size-bubbles': false,
-            'selectable': false,
-            'left-right-spacing': 'fit-to-size'
-        }, false);
-        tree.font_size(18);
-        tree.scale_bar_font_size(14);
-        tree.node_circle_size(0);
-        tree.branch_length(function(n) {
-            if (branch_lengths) {
-                return self.branch_lengths[n.name] || 0;
-            }
-            return undefined;
-        });
-
-        tree.style_edges(this.edgeColorizer);
-        tree.style_nodes(this.nodeColorizer);
-        tree.spacing_x(30, true);
-    }
-
 
     this.settings['suppress-tree-render'] = true;
-
     var def_displayed = false;
 
     var model_list = d3.select("#datamonkey-relax-tree-model-list").selectAll("li").data(d3.keys(json["fits"]).map(function(d) {
         return [d];
     }).sort());
+
     model_list.enter().append("li");
     model_list.exit().remove();
     model_list = model_list.selectAll("a").data(function(d) {
         return d;
     });
+
     model_list.enter().append("a");
     model_list.attr("href", "#").on("click", function(d, i) {
         d3.select("#datamonkey-relax-tree-model").attr("value", d);
         self.renderTree();
     });
+
     model_list.text(function(d) {
+
         if (d == "General Descriptive") {
             def_displayed = true;
             this.click();
@@ -255,18 +245,44 @@ var Tree = React.createClass({
 
     this.settings['suppress-tree-render'] = false;
     self.renderTree(true);
-    default_tree_settings();
-    tree(analysis_data["tree"]).svg(svg);
-    tree.layout();
+
+    //default_tree_settings();
+    this.tree.branch_name(null);
+    this.tree.node_span('equal');
+    this.tree.options({
+        'draw-size-bubbles': false,
+        'selectable': false,
+        'left-right-spacing': 'fit-to-size'
+    }, false);
+
+    this.tree.font_size(18);
+    this.tree.scale_bar_font_size(14);
+    this.tree.node_circle_size(0);
+    this.tree.branch_length(function(n) {
+        if (self.branch_lengths) {
+            return self.branch_lengths[n.name] || 0;
+        }
+        return undefined;
+    });
+
+    this.tree.style_edges(this.edgeColorizer);
+    this.tree.style_nodes(this.nodeColorizer);
+    this.tree.spacing_x(30, true);
+    this.tree(analysis_data["tree"]).svg(svg);
+    this.tree.layout();
+
 
   },
 
   edgeColorizer : function(element, data) {
+
+    var self = this;
+
     if (this.branch_annotations) {
         element.style('stroke', self.omega_color(this.branch_annotations[data.target.name]) || null);
         $(element[0][0]).tooltip('destroy');
         $(element[0][0]).tooltip({
-            'title': omega_format(this.branch_annotations[data.target.name]),
+            'title': self.omega_format(this.branch_annotations[data.target.name]),
             'html': true,
             'trigger': 'hover',
             'container': 'body',
@@ -277,18 +293,17 @@ var Tree = React.createClass({
         $(element[0][0]).tooltip('destroy');
     }
 
-
-    element.style('stroke-width', (partition && partition[data.target.name]) ? '8' : '4')
+    element.style('stroke-width', (this.partition && this.partition[data.target.name]) ? '8' : '4')
         .style('stroke-linejoin', 'round')
         .style('stroke-linecap', 'round');
 
   },
 
   nodeColorizer : function(element, data) {
-    if (partition) { 
-        element.style('opacity', (partition && partition[data.name]) ? '1' : '0.25');
+    if (this.partition) { 
+      element.style('opacity', (this.partition && this.partition[data.name]) ? '1' : '0.25');
     } else {
-        element.style('opacity', '1');        
+      element.style('opacity', '1');        
     }
   },
 
@@ -310,26 +325,26 @@ var Tree = React.createClass({
               }
           }
           
-
           var which_model = this.settings["tree-options"]["datamonkey-relax-tree-model"][0];
+
           this.branch_lengths = this.settings["tree-options"]["datamonkey-relax-tree-branch-lengths"][0] ? analysis_data["fits"][which_model]["branch-lengths"] : null;
+
           this.branch_annotations = analysis_data["fits"][which_model]["branch-annotations"];
           this.partition = (this.settings["tree-options"]["datamonkey-relax-tree-highlight"] ? analysis_data["partition"][this.settings["tree-options"]["datamonkey-relax-tree-highlight"][0]] : null) || null;
 
           this.omega_color = d3.scale.pow().exponent(this.scaling_exponent)
               .domain([0, 0.25, 1, 5, 10])
-              .range(this.settings["tree-options"]["datamonkey-relax-tree-fill-color"][0] ? ["#5e4fa2", "#3288bd", "#e6f598", "#f46d43", "#9e0142"] : ["#DDDDDD", "#AAAAAA", "#888888", "#444444", "#000000"])
+              .range(this.settings["tree-options"]["datamonkey-relax-tree-fill-color"][0] ? ["#DDDDDD", "#AAAAAA", "#888888", "#444444", "#000000"] : ["#5e4fa2", "#3288bd", "#e6f598", "#f46d43", "#9e0142"])
               .clamp(true);
 
-          this.renderColorScheme("color_legend", analysis_data["fits"][which_model]["annotation-tag"], !(this.settings["tree-options"]["datamonkey-relax-tree-fill-legend"][0]));
+          this.renderColorScheme("color_legend", analysis_data["fits"][which_model]["annotation-tag"], (this.settings["tree-options"]["datamonkey-relax-tree-fill-legend"][0]));
 
           if (!skip_render) {
               if (do_layout) {
-                  tree.update_layout();
+                  this.tree.update_layout();
               }
-              d3_phylotree_trigger_refresh (tree);
+              d3_phylotree_trigger_refresh(this.tree);
           }
-
       }
   },
 
@@ -338,13 +353,14 @@ var Tree = React.createClass({
   },
 
   render: function() {
+
     return (
         <div>
           <div className='row'>
               <div className="cold-md-12">
                   <div className="input-group input-group-sm">
                       <div className="input-group-btn">
-                          <button id="export-phylo-png" type="button" className="btn btn-default btn-sm" data-direction="vertical" data-amount="1" title="Expand vertical spacing">
+                          <button id="export-phylo-png" type="button" className="btn btn-default btn-sm" title="Save Image">
                               <i className="fa fa-image"></i>
                           </button>
                           <button type="button" className="btn btn-default btn-sm" data-direction="vertical" data-amount="1" title="Expand vertical spacing">
@@ -407,17 +423,20 @@ var Tree = React.createClass({
                       <input type="text" className="form-control disabled" id="datamonkey-relax-tree-highlight" disabled></input>
 
                       <span className="input-group-addon">
-                                  Use model branch lengths
-                                  <input type="checkbox" id="datamonkey-relax-tree-branch-lengths" checked className = "datamonkey-relax-tree-trigger"></input>
-                                </span>
+                        Use model branch lengths
+                        <input type="checkbox" id="datamonkey-relax-tree-branch-lengths" className = "datamonkey-relax-tree-trigger"></input>
+                      </span>
+
                       <span className="input-group-addon">
-                                  Show fill legend
-                                  <input type="checkbox" id="datamonkey-relax-tree-fill-legend" checked className = "datamonkey-relax-tree-trigger"></input>
-                                </span>
+                        Hide legend
+                        <input type="checkbox" id="datamonkey-relax-tree-fill-legend" className = "datamonkey-relax-tree-trigger"></input>
+                      </span>
+
                       <span className="input-group-addon">
-                                  Use color
-                                  <input type="checkbox" id="datamonkey-relax-tree-fill-color" checked className = "datamonkey-relax-tree-trigger"></input>
-                                </span>
+                        Grayscale 
+                        <input type="checkbox" id="datamonkey-relax-tree-fill-color" className="datamonkey-relax-tree-trigger"></input>
+                      </span>
+
                   </div>
               </div>
           </div>
