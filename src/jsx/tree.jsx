@@ -387,19 +387,19 @@ var Tree = React.createClass({
                       </div>
                       <div className="input-group-btn" data-toggle="buttons">
                           <label className="btn btn-default active btn-sm">
-                              <input type="radio" name="options" className="phylotree-layout-mode" data-mode="linear" autocomplete="off" checked="" title="Layout left-to-right"></input>Linear
+                              <input type="radio" name="options" className="phylotree-layout-mode" data-mode="linear" autoComplete="off" checked="" title="Layout left-to-right"></input>Linear
                           </label>
                           <label className="btn btn-default  btn-sm">
-                              <input type="radio" name="options" className="phylotree-layout-mode" data-mode="radial" autocomplete="off" title="Layout radially"></input> Radial
+                              <input type="radio" name="options" className="phylotree-layout-mode" data-mode="radial" autoComplete="off" title="Layout radially"></input> Radial
                           </label>
                       </div>
                       <div className="input-group-btn" data-toggle="buttons">
                         <label className="btn btn-default active btn-sm">
-                          <input type="radio" className="phylotree-align-toggler" data-align="left" name="options-align" autocomplete="off" checked="" title="Align tips labels to branches"></input> 
+                          <input type="radio" className="phylotree-align-toggler" data-align="left" name="options-align" autoComplete="off" checked="" title="Align tips labels to branches"></input> 
                               <i className="fa fa-align-left"></i>
                         </label>
                         <label className="btn btn-default btn-sm">
-                         <input type="radio" className="phylotree-align-toggler" data-align="right" name="options-align" autocomplete="off" title="Align tips labels to the edge of the plot"></input> 
+                         <input type="radio" className="phylotree-align-toggler" data-align="right" name="options-align" autoComplete="off" title="Align tips labels to the edge of the plot"></input> 
                               <i className="fa fa-align-right"></i>
                         </label>
                       </div>
