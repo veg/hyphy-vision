@@ -13,8 +13,24 @@ datamonkey.fade = function(json) {
   ['Site','Alanine','Cysteine','Aspartic acid','Glutamic acid','Phenylalanine','Glycine','Histidine','Isoleucine','Lysine','Leucine','Methionine', 'Asparagine','Proline','Glutamine','Arginine','Serine','Threonine','Valine', 'Tryptophan','Tyrosin']
   ];
 
-  var fade_results = json['fade_results'];
-  var data_summary = json['data_summary'];
+  var fade_results = json['results']["FADE"];
+  //var data_summary = json['data_summary'];
+
+
+  //Data summary
+  //    40 sequences with 1 partitions. - SEQUENCES
+  //    These sequences have not been screened for recombination. Selection analyses of alignments with recombinants in them using a single tree may generate misleading results. -- ???
+  //Partition 1
+  //    0.92 subs/ aminoacid site -- fadeResults["TREE_LENGTHS"]
+  //    "0": "" + (1+(_treeDesc["RIGHT"])[_k-1] - (_treeDesc["LEFT"])[_k-1])*_factor + " `_data`s",
+  //    "1" : Format(treeLengthArray[_k-1]*_factor,5,2) + " subs/ `_data`  site"
+  //    325 aminoacids -- Partition information (from MSA)
+  //FADE analysis settings
+  //    Dayhoff [model frequencies] baseline model fitted -- MODEL_INFO
+  //    15 (site-to-site rate variation) x 15 (rate bias parameter) points, spaced over [ 0.00, 30.00] x [ 0.00, 30.00] -- GRID_DESCRIPTION
+  //    Directional model applied to 77 branches -- BRANCHES_TESTED
+
+
 
   var dict_to_array = function(dict) {
           ar = []
@@ -68,7 +84,7 @@ datamonkey.fade = function(json) {
 
 
   var initial_display = function() {
-      load_data_summary ("summary_div", data_summary);
+      //load_data_summary ("summary_div", data_summary);
       $('#filter_on_pvalue').trigger ('submit');
       $('#property_plot_collapse').on('show', function () {
           plot_property_graphs("property_plot_svg",fade_results); //Using a matrix from html

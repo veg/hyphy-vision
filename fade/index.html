@@ -14,7 +14,9 @@
     <script src='http://d3js.org/d3.v3.min.js'></script>
     <script src='http://code.jquery.com/jquery.js'></script>
     <script src='http://www.datamonkey.org/css/bootstrap/js/bootstrap.js'></script>
+    <script src="../vendor/react/react-with-addons.js"></script>
     <script src="../hyphy-vision.js"></script>
+    <script src="../fade_summary.js"></script>
     <link REL=STYLESHEET TYPE='text/css' media='screen' href='FADE.css'>
   </head>
 
@@ -115,11 +117,7 @@
               </a>
             </div>
             <div id='collapseOne' class='accordion-body collapse in'>
-              <div class='accordion-inner'>            
-                <dl class='dl-horizontal' id = 'summary_div'>
-            
-                </dl>
-               </div>
+              <div class='accordion-inner' id='summary-div'></div>
             </div>
           </div>
          </div>
@@ -240,5 +238,6 @@
   var cutoff = 0.9;
   d3.json("test.json", function (json) {
     datamonkey.fade(json);
+    render_fade_summary(json['results'], json['msa']);
   }); 
 </script>
