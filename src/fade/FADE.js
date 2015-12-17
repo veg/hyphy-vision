@@ -69,9 +69,7 @@ datamonkey.fade = function(json) {
   var initial_display = function() {
       //load_data_summary ("summary_div", data_summary);
       $('#filter_on_pvalue').trigger ('submit');
-      $('#property_plot_collapse').on('show', function () {
-          plot_property_graphs("property_plot_svg",fade_results); //Using a matrix from html
-      });
+      plot_property_graphs("property_plot_svg",fade_results); //Using a matrix from html
   }
 
   var set_handlers = function (file_id) {
@@ -208,7 +206,7 @@ datamonkey.fade = function(json) {
           y.domain ([0,1]);
 
           svg.append("g")
-                .attr("class", "x axis")
+                .attr("class", "x hyphy-axis")
                 .attr("transform", "translate(0," + height + ")")
                 .call(xAxis)
               .append("text")
@@ -234,7 +232,7 @@ datamonkey.fade = function(json) {
                   );
           
           svg.append("g")
-                .attr("class", "y axis")
+                .attr("class", "y hyphy-axis")
                 .call(yAxis)
               .append("text")
                 //.attr("class", "label")
@@ -245,7 +243,7 @@ datamonkey.fade = function(json) {
                 .text("P(Bias>1)");  
 
           var y2= svg.append("g")
-                .attr("class", "y axis")
+                .attr("class", "y hyphy-axis")
                 .attr("transform", "translate("+width+",0)")
                 .call(yAxis2.tickFormat (""));
                 
