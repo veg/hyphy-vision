@@ -112,11 +112,11 @@
 
         $(document).ready(function() {
                    
-            datamonkey.relax();
+            //datamonkey.relax();
             
             d3.json("test-data/test.json", function(json) {
                 //render(json);
-                omega_distributions = getDistributions(json);
+                //omega_distributions = getDistributions(json);
                 render_omega_plot(json);
                 render_model_fits(json);
                 render_tree(json);
@@ -133,10 +133,6 @@
         });
 
     </script>
-
-    <script src="../omega_plots.js"></script>
-    <script src="../model_fits.js"></script>
-    <script src="../tree.js"></script>
 
 </body>
 

@@ -6,7 +6,7 @@ var gulp = require('gulp'),
     react = require('gulp-react');
 
 gulp.task('scripts', function() {
-    return gulp.src(['src/**/*.js'])
+    return gulp.src(['src/**/*.js', 'jsx-compiled/*.js'])
     .pipe(order([
       "datamonkey/datamonkey.js",
       "datamonkey/*.js",
@@ -22,10 +22,10 @@ gulp.task('scripts', function() {
 gulp.task('react', function () {
     return gulp.src('./src/jsx/*.jsx')
         .pipe(react())
-        .pipe(gulp.dest('./'));
+        .pipe(gulp.dest('./jsx-compiled/'));
 });
 
-gulp.task('build', ['scripts', 'react']);
+gulp.task('build', ['react', 'scripts']);
 
 gulp.task('watch', function () {
     watch('src/**/*', function () {
