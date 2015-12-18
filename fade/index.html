@@ -1,0 +1,242 @@
+<!DOCTYPE HTML>
+<html>
+
+  <head>
+    <meta http-equiv='Content-Style-Type' content='text/css'>
+    <meta http-equiv='Content-Type' content='text/html; charset=ISO-8859-1'>
+    <meta NAME='description' CONTENT='.'> 
+    <title>
+      FADE analysis results
+    </title>
+    <link rel=STYLESHEET type='text/css' href='/2007/styles.css'>
+    <link rel=STYLESHEET type='text/css' href='http://www.datamonkey.org/css/bootstrap/css/bootstrap.css' media='screen'>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+    <script src='http://d3js.org/d3.v3.min.js'></script>
+    <script src='http://code.jquery.com/jquery.js'></script>
+    <script src='http://www.datamonkey.org/css/bootstrap/js/bootstrap.js'></script>
+    <script src="../vendor/react/react-with-addons.js"></script>
+    <script src="../hyphy-vision.js"></script>
+    <link REL=STYLESHEET TYPE='text/css' media='screen' href='FADE.css'>
+  </head>
+
+<div class='container'>
+<div class='navbar navbar-static-top'>
+  <div class='navbar-inner'>
+    <ul class='nav'>
+
+        <a class='brand small' href='/' >Datamonkey.org</a>
+        <li class = 'dropdown'>
+            <a class='dropdown-toggle' data-toggle='dropdown' data-target = '#' href='/' >Analyses<b class='caret'></b></a> 
+            <ul  class='dropdown-menu'>
+              <li>
+                <a href = '/dataupload.php'>Analyze your data</a>
+              </li>
+              <li>
+                <a href = '/help/index.php'>Help</a>
+              </li>
+              <li>
+                <a href = '/help/citations.php'>Citations</a>
+              </li>
+              <li>
+                <a href = '/cgi-bin/datamonkey/mpiJobStatus.pl'>Job Queue</a>
+              </li>
+              <li>
+                <a href = '/2007/usage.php'>Statistics</a>
+              </li>
+            </ul>
+        </li>
+
+        <li class = 'divider-vertical'/>
+        <li class = 'dropdown' id = 'job_links'>
+            <a  href = '#' class='dropdown-toggle' data-toggle='dropdown'>upload.272990165327880.1<b class='caret'></b></a> 
+            <ul  class='dropdown-menu'>
+              <li>
+                <a href = '/cgi-bin/datamonkey/jobStatus.pl?file=upload.272990165327880.1'>Information/Other analyses</a>
+              </li>
+<li class='dropdown-submenu'>
+                    <a tabindex='-1' href='#'>FADE results as a .csv file</a>
+                    <ul class='dropdown-menu'><li>
+                    <a href = 'http://www.datamonkey.org/cgi-bin/datamonkey/wrapHyPhyBF.pl?file=fade_csv&mode=1&arguments=upload.272990165327880.1-A'>Results for target A</a>
+                     </li><li>
+                    <a href = 'http://www.datamonkey.org/cgi-bin/datamonkey/wrapHyPhyBF.pl?file=fade_csv&mode=1&arguments=upload.272990165327880.1-C'>Results for target C</a>
+                     </li><li>
+                    <a href = 'http://www.datamonkey.org/cgi-bin/datamonkey/wrapHyPhyBF.pl?file=fade_csv&mode=1&arguments=upload.272990165327880.1-D'>Results for target D</a>
+                     </li><li>
+                    <a href = 'http://www.datamonkey.org/cgi-bin/datamonkey/wrapHyPhyBF.pl?file=fade_csv&mode=1&arguments=upload.272990165327880.1-E'>Results for target E</a>
+                     </li><li>
+                    <a href = 'http://www.datamonkey.org/cgi-bin/datamonkey/wrapHyPhyBF.pl?file=fade_csv&mode=1&arguments=upload.272990165327880.1-F'>Results for target F</a>
+                     </li><li>
+                    <a href = 'http://www.datamonkey.org/cgi-bin/datamonkey/wrapHyPhyBF.pl?file=fade_csv&mode=1&arguments=upload.272990165327880.1-G'>Results for target G</a>
+                     </li><li>
+                    <a href = 'http://www.datamonkey.org/cgi-bin/datamonkey/wrapHyPhyBF.pl?file=fade_csv&mode=1&arguments=upload.272990165327880.1-H'>Results for target H</a>
+                     </li><li>
+                    <a href = 'http://www.datamonkey.org/cgi-bin/datamonkey/wrapHyPhyBF.pl?file=fade_csv&mode=1&arguments=upload.272990165327880.1-I'>Results for target I</a>
+                     </li><li>
+                    <a href = 'http://www.datamonkey.org/cgi-bin/datamonkey/wrapHyPhyBF.pl?file=fade_csv&mode=1&arguments=upload.272990165327880.1-K'>Results for target K</a>
+                     </li><li>
+                    <a href = 'http://www.datamonkey.org/cgi-bin/datamonkey/wrapHyPhyBF.pl?file=fade_csv&mode=1&arguments=upload.272990165327880.1-L'>Results for target L</a>
+                     </li><li>
+                    <a href = 'http://www.datamonkey.org/cgi-bin/datamonkey/wrapHyPhyBF.pl?file=fade_csv&mode=1&arguments=upload.272990165327880.1-M'>Results for target M</a>
+                     </li><li>
+                    <a href = 'http://www.datamonkey.org/cgi-bin/datamonkey/wrapHyPhyBF.pl?file=fade_csv&mode=1&arguments=upload.272990165327880.1-N'>Results for target N</a>
+                     </li><li>
+                    <a href = 'http://www.datamonkey.org/cgi-bin/datamonkey/wrapHyPhyBF.pl?file=fade_csv&mode=1&arguments=upload.272990165327880.1-P'>Results for target P</a>
+                     </li><li>
+                    <a href = 'http://www.datamonkey.org/cgi-bin/datamonkey/wrapHyPhyBF.pl?file=fade_csv&mode=1&arguments=upload.272990165327880.1-Q'>Results for target Q</a>
+                     </li><li>
+                    <a href = 'http://www.datamonkey.org/cgi-bin/datamonkey/wrapHyPhyBF.pl?file=fade_csv&mode=1&arguments=upload.272990165327880.1-R'>Results for target R</a>
+                     </li><li>
+                    <a href = 'http://www.datamonkey.org/cgi-bin/datamonkey/wrapHyPhyBF.pl?file=fade_csv&mode=1&arguments=upload.272990165327880.1-S'>Results for target S</a>
+                     </li><li>
+                    <a href = 'http://www.datamonkey.org/cgi-bin/datamonkey/wrapHyPhyBF.pl?file=fade_csv&mode=1&arguments=upload.272990165327880.1-T'>Results for target T</a>
+                     </li><li>
+                    <a href = 'http://www.datamonkey.org/cgi-bin/datamonkey/wrapHyPhyBF.pl?file=fade_csv&mode=1&arguments=upload.272990165327880.1-V'>Results for target V</a>
+                     </li><li>
+                    <a href = 'http://www.datamonkey.org/cgi-bin/datamonkey/wrapHyPhyBF.pl?file=fade_csv&mode=1&arguments=upload.272990165327880.1-W'>Results for target W</a>
+                     </li><li>
+                    <a href = 'http://www.datamonkey.org/cgi-bin/datamonkey/wrapHyPhyBF.pl?file=fade_csv&mode=1&arguments=upload.272990165327880.1-Y'>Results for target Y</a>
+                     </li>    
+                    </ul>
+                  </li>
+            </ul>
+        </li>
+    </ul>
+ </div>
+</div>
+<div class='page-header'>
+    <h2>FADE analysis results</h2>
+</div>
+    <div class = 'row'>
+        <div class = 'span11'>
+        <div class='accordion' id='data_info_box'>
+          <div class='accordion-group'>
+            <div class='accordion-heading'>
+              <a class='accordion-toggle label label-info' data-toggle='collapse' data-parent='#data_info_box' href='#collapseOne'>
+                Analysis overview
+              </a>
+            </div>
+            <div id='collapseOne' class='accordion-body collapse in'>
+              <div class='accordion-inner' id='summary-div'></div>
+            </div>
+          </div>
+         </div>
+
+        <div class='accordion' id='property_plot'>
+          <div class='accordion-group'>
+            <div class='accordion-heading'>
+              <a class='accordion-toggle label label-info' data-toggle='collapse' data-parent='#property_plot' href='#property_plot_collapse'>
+                Property importance plot
+              </a>
+            </div>
+            <div id='property_plot_collapse' class='accordion-body collapse out'>
+              <div class='accordion-inner'>            
+                <svg id = 'property_plot_svg'>
+                </svg>
+          <div class='btn-group' data-toggle='buttons-checkbox' id = 'property_selector' >
+                    <button type='button' class='btn btn-small active' data-property-id = '1' id = 'show_property1'>A</button>
+                    <button type='button' class='btn btn-small' data-property-id = '2' id = 'show_property2'>C</button>
+                    <button type='button' class='btn btn-small' data-property-id = '3' id = 'show_property3'>D</button>
+                    <button type='button' class='btn btn-small' data-property-id = '4' id = 'show_property4'>E</button>
+                    <button type='button' class='btn btn-small' data-property-id = '5' id = 'show_property5'>F</button>
+          <button type='button' class='btn btn-small' data-property-id = '6' id = 'show_property6'>G</button>
+                    <button type='button' class='btn btn-small' data-property-id = '7' id = 'show_property7'>H</button>
+                    <button type='button' class='btn btn-small' data-property-id = '8' id = 'show_property8'>I</button>
+                    <button type='button' class='btn btn-small' data-property-id = '9' id = 'show_property9'>K</button>
+                    <button type='button' class='btn btn-small' data-property-id = '10' id = 'show_property10'>L</button>
+          <button type='button' class='btn btn-small' data-property-id = '11' id = 'show_property11'>M</button>
+                    <button type='button' class='btn btn-small' data-property-id = '12' id = 'show_property12'>N</button>
+                    <button type='button' class='btn btn-small' data-property-id = '13' id = 'show_property13'>P</button>
+                    <button type='button' class='btn btn-small' data-property-id = '14' id = 'show_property14'>Q</button>
+                    <button type='button' class='btn btn-small' data-property-id = '15' id = 'show_property15'>R</button>
+          <button type='button' class='btn btn-small' data-property-id = '16' id = 'show_property16'>S</button>
+                    <button type='button' class='btn btn-small' data-property-id = '17' id = 'show_property17'>T</button>
+                    <button type='button' class='btn btn-small' data-property-id = '18' id = 'show_property18'>V</button>
+                    <button type='button' class='btn btn-small' data-property-id = '19' id = 'show_property19'>W</button>
+                    <button type='button' class='btn btn-small' data-property-id = '20' id = 'show_property20'>Y</button>
+                </div>
+               </div>
+            </div>
+          </div>
+         </div>
+                 
+         <div class='accordion' id='property_table'>
+          <div class='accordion-group'>
+            <div class='accordion-heading'>
+              <a class='accordion-toggle label label-info' data-toggle='collapse' data-parent='#property_plot' href='#property_table_collapse'>
+                Site-by-site analysis of directional evolution.
+              </a>
+            </div>
+            <div id='property_table_collapse' class='accordion-body collapse in'>
+              <div class='accordion-inner'>            
+                <table id = 'prime_table' class = 'table table-condensed'>
+                <caption id = 'total_sites_found'>
+                    <small>
+                       <span class='badge'></span> sites found: 
+             <span class='badge badge-important'></span> amino acid targets.
+                    </small>                
+                    </caption>
+                <thead>
+        
+                </thead>
+                <tbody>
+        
+                </tbody>
+                </table>
+               </div>
+            </div>
+          </div>
+         </div>
+           
+        </div>
+        <div class = 'span1'>
+            <form class='form-inline affix' id = 'filter_on_pvalue'>
+              <div class='input-append input-prepend'>
+                <div class='btn-group'>
+                    <button class='btn dropdown-toggle' data-toggle='dropdown' id = 'pq_selector'>
+                      Posterior
+                      <span class='caret'></span>
+                    </button>
+                    <ul class='dropdown-menu'>
+                        <li><a href='#' id='set-p-value'>Posterior</a></li>
+                        <li><a href='#' id='set-q-value'>BF</a></li>
+                    </ul>
+                  </div>
+                <input class = 'input-mini' id = 'pvalue' type='text' value = '0.9'>
+                <button type='submit' class='btn btn-info' >Filter</button>
+              </div>
+             
+                
+            </form>  
+        </div>
+
+        <div id='site_rate_display' class='modal hide fade' tabindex='-1' role='dialog' aria-labelledby='myModalLabel' aria-hidden='true'>
+          <div class='modal-header'>
+            <button type='button' class='close' data-dismiss='modal' aria-hidden='true'></button>
+            <h3 id='site_rate_display_header'></h3>
+          </div>
+          <div class='modal-body'>
+            <div class='container' id= 'site_info'>
+                 <table id = 'site_info_table' class = 'table table-condensed'>
+                 <thead>
+        
+                </thead>
+                <tbody>
+        
+                </tbody>
+                </table>
+           </div>         
+            </div>
+         <div class='modal-footer'>
+            <button class='btn' data-dismiss='modal' aria-hidden='true'>Close</button>
+          </div>
+          </div>
+
+    </div>
+
+<script>
+  var cutoff = 0.9;
+  d3.json("test.json", function (json) {
+    datamonkey.fade(json);
+    render_fade_summary(json['results'], json['msa']);
+  }); 
+</script>
