@@ -68,71 +68,37 @@
         </div>
 
         <div class="tab-content">
-            <div class="tab-pane active" id="datamonkey-relax-summary-tab">
-
-                <div class="row" style='margin-top: 5px'>
-                    <div class="col-md-12">
-                        <ul class="list-group">
-                            <li class="list-group-item list-group-item-info">
-                                <h3 class="list-group-item-heading">
-                                  <i class="fa fa-list" style = 'margin-right: 10px'></i>
-                                  <span id = 'summary-method-name'>RELAX(ed selection test)</span> summary
-                                </h3>
-                                <p class="list-group-item-text lead" style="margin-top:0.5em; ">
-                                  Test for selection <strong id='summary-direction'></strong> 
-                                  (<abbr title="Relaxation coefficient">K</abbr> = <strong id='summary-K'></strong>) was <strong id='summary-evidence'> </strong> 
-                                  (p = <strong id='summary-pvalue'></strong>, <abbr title="Likelihood ratio statistic">LR</abbr> = <strong id='summary-LRT'> </strong>)
-                                </p>
-                                <p>
-                                  <small>Please cite <a href = '#' id = 'summary-pmid'>PMID XXX</a> if you use this result in a publication, presentation, or other scientific work.</small>
-                                </p>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-
-                <div id="hyphy-model-fits" class="row"></div>
-                <div id="hyphy-omega-plots" class="row"></div>
-            </div>
-
-             <div class='tab-pane' id="tree-tab">
-            </div>
+           <div class="tab-pane active" id="datamonkey-relax-summary-tab">
+               <div id="hyphy-relax-summary" class="row" style='margin-top: 5px'></div>
+               <div id="hyphy-model-fits" class="row"></div>
+               <div id="hyphy-omega-plots" class="row"></div>
+           </div>
+           <div class='tab-pane' id="tree-tab"></div>
         </div>
     </div>
 
     <img id="hyphy-chart-image" />
     <canvas id="hyphy-chart-canvas"></canvas>
 
-    <!--
-###############################################################################################################################
--->
-
+    <!-- END HTML -->
 
     <script>
 
         $(document).ready(function() {
-                   
-            //datamonkey.relax();
-            
             d3.json("test-data/test.json", function(json) {
-                //render(json);
-                //omega_distributions = getDistributions(json);
+                render_summary(json);
                 render_omega_plot(json);
                 render_model_fits(json);
                 render_tree(json);
            });
-
-            $("#export-phylo-svg").on('click', function(e) {
-                datamonkey.save_image("svg", "#tree_container");
-            });
-
-            $("#export-phylo-png").on('click', function(e) {
-                datamonkey.save_image("png", "#tree_container");
-            });
-
         });
 
     </script>
+
+    <script src="../summary.js"></script>
+    <script src="../omega_plots.js"></script>
+    <script src="../model_fits.js"></script>
+    <script src="../tree.js"></script>
 
 </body>
 

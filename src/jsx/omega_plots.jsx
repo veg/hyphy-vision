@@ -340,7 +340,7 @@ var OmegaPlot = React.createClass({
               <div className="panel-heading">
                   <h3 className="panel-title">&omega; distributions under the <strong>{ this.props.omegas.label }</strong> model</h3>
                   <p>
-                      <small>Test branches are shown in <span className="hyphy-blue">blue</span> and reference branches are shown in <span class="hyphy-red">red</span></small>
+                      <small>Test branches are shown in <span className="hyphy-blue">blue</span> and reference branches are shown in <span className="hyphy-red">red</span></small>
                   </p>
                   <div className="btn-group">
                       <button id={ this.save_svg_id } type="button" className="btn btn-default btn-sm">
