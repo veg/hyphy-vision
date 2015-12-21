@@ -3010,6 +3010,14 @@ function render_model_fits(json) {
   );
 }
 
+// Will need to make a call to this
+// omega distributions
+function rerender_model_fits(json) {
+  $("#hyphy-model-fits").empty();
+  render_model_fits(json);
+
+}
+
 
 // TODO: Write documentation
 var OmegaPlot = React.createClass({displayName: "OmegaPlot",
@@ -3453,6 +3461,11 @@ function render_omega_plot(json) {
   );
 }
 
+function rerender_omega_plot(json) {
+  $("#hyphy-omega-plots").empty();
+  render_omega_plot(json);
+}
+
 
 var Summary = React.createClass({displayName: "Summary",
 
@@ -3520,13 +3533,16 @@ var Summary = React.createClass({displayName: "Summary",
 
 });
 
-// Will need to make a call to this
-// omega distributions
 function render_summary(json) {
   React.render(
     React.createElement(Summary, {json: json}),
     document.getElementById("hyphy-relax-summary")
   );
+}
+
+function rerender_summary(json) {
+  $("#hyphy-relax-summary").empty();
+  render_summary(json);
 }
 
 // TODO : Write documentation
@@ -3673,27 +3689,6 @@ var Tree = React.createClass({displayName: "Tree",
             e.preventDefault();
         });
 
-        $("#datamonkey-relax-load-json").on("change", function(e) {
-            // FileList object
-            var files = e.target.files; 
-
-            if (files.length == 1) {
-                var f = files[0];
-                var reader = new FileReader();
-
-                reader.onload = (function(theFile) {
-                    return function(e) {
-                        analysis_data = JSON.parse(e.target.result);
-                        render(analysis_data);
-                    };
-
-                })(f);
-
-                reader.readAsText(f);
-            }
-            e.preventDefault();
-        });
-        
         $(".datamonkey-relax-tree-trigger").on("click", function(e) {
           self.renderTree();
         });
@@ -4018,5 +4013,11 @@ function render_tree(json) {
   );
 
 }
+
+function rerender_tree(json) {
+  $("#tree-tab").empty();
+  render_tree(json);
+}
+
 
 //# sourceMappingURL=hyphy-vision.js.map

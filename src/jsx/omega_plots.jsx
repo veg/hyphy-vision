@@ -440,3 +440,8 @@ function render_omega_plot(json) {
   );
 }
 
+function rerender_omega_plot(json) {
+  $("#hyphy-omega-plots").empty();
+  render_omega_plot(json);
+}
+

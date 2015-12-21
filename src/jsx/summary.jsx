@@ -64,11 +64,14 @@ var Summary = React.createClass({
 
 });
 
-// Will need to make a call to this
-// omega distributions
 function render_summary(json) {
   React.render(
     <Summary json={json} />,
     document.getElementById("hyphy-relax-summary")
   );
+}
+
+function rerender_summary(json) {
+  $("#hyphy-relax-summary").empty();
+  render_summary(json);
 }

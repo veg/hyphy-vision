@@ -160,3 +160,11 @@ function render_model_fits(json) {
   );
 }
 
+// Will need to make a call to this
+// omega distributions
+function rerender_model_fits(json) {
+  $("#hyphy-model-fits").empty();
+  render_model_fits(json);
+
+}
+
