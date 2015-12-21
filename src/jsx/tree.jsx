@@ -142,27 +142,6 @@ var Tree = React.createClass({
             e.preventDefault();
         });
 
-        $("#datamonkey-relax-load-json").on("change", function(e) {
-            // FileList object
-            var files = e.target.files; 
-
-            if (files.length == 1) {
-                var f = files[0];
-                var reader = new FileReader();
-
-                reader.onload = (function(theFile) {
-                    return function(e) {
-                        analysis_data = JSON.parse(e.target.result);
-                        render(analysis_data);
-                    };
-
-                })(f);
-
-                reader.readAsText(f);
-            }
-            e.preventDefault();
-        });
-        
         $(".datamonkey-relax-tree-trigger").on("click", function(e) {
           self.renderTree();
         });
@@ -487,3 +466,9 @@ function render_tree(json) {
   );
 
 }
+
+function rerender_tree(json) {
+  $("#tree-tab").empty();
+  render_tree(json);
+}
+
