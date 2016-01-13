@@ -105,7 +105,7 @@
                 reader.onload = (function(theFile) {
                     return function(e) {
                         json = JSON.parse(e.target.result);
-                        render_summary(json);
+                        rerender_summary(json);
                         rerender_omega_plot(json);
                         rerender_model_fits(json);
                         rerender_tree(json);
