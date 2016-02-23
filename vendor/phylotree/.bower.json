@@ -1,0 +1,33 @@
+{
+  "name": "phylotree",
+  "main": [
+    "phylotree.js",
+    "phylotree.css"
+  ],
+  "keywords": [
+    "phylogenetics",
+    "phylogeny",
+    "d3",
+    "branching",
+    "tree"
+  ],
+  "ignore": [
+    "index.html"
+  ],
+  "dependencies": {
+    "underscore": "1.x",
+    "font-awesome": "4.x",
+    "bootstrap": "3.x",
+    "d3": "3.x",
+    "jquery": "1.x"
+  },
+  "homepage": "https://github.com/stevenweaver/phylotree.js",
+  "_release": "834e0a034a",
+  "_resolution": {
+    "type": "commit",
+    "commit": "834e0a034a8e547ebb33f67689ce579f62052459"
+  },
+  "_source": "git@github.com:stevenweaver/phylotree.js.git",
+  "_target": "834e0a034a8e547ebb33f67689ce579f62052459",
+  "_originalSource": "git@github.com:stevenweaver/phylotree.js.git"
+}
