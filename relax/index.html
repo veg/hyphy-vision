@@ -84,12 +84,34 @@
 
     <script>
 
+        var model_fits_id = "#hyphy-model-fits";
+        var omega_plots_id = "#hyphy-omega-plots";
+        var summary_id = "#hyphy-relax-summary";
+        var tree_id = "#tree-tab";
+
+        var tree_settings = {
+            'omegaPlot': {},
+            'tree-options': {
+                /* value arrays have the following meaning
+                    [0] - the value of the attribute
+                    [1] - does the change in attribute value trigger tree re-layout?
+                */
+                'hyphy-tree-model': [null, true],
+                'hyphy-tree-highlight': [null, false],
+                'hyphy-tree-branch-lengths': [true, true],
+                'hyphy-tree-fill-legend': [true, false],
+                'hyphy-tree-fill-color': [true, false]
+            },
+            'suppress-tree-render': false,
+            'chart-append-html' : true
+        };
+
         $(document).ready(function() {
             d3.json("test-data/test.json", function(json) {
-                render_summary(json);
-                render_omega_plot(json);
-                render_model_fits(json);
-                render_tree(json);
+                render_summary(json, summary_id);
+                render_omega_plot(json, omega_plots_id);
+                render_model_fits(json, model_fits_id);
+                render_tree(json, tree_id, tree_settings);
            });
         });
 
@@ -105,10 +127,10 @@
                 reader.onload = (function(theFile) {
                     return function(e) {
                         json = JSON.parse(e.target.result);
-                        rerender_summary(json);
-                        rerender_omega_plot(json);
-                        rerender_model_fits(json);
-                        rerender_tree(json);
+                        rerender_summary(json, summary_id);
+                        rerender_omega_plot(json, omega_plots_id);
+                        rerender_model_fits(json, model_fits_id);
+                        rerender_tree(json, tree_id, tree_settings);
                     };
 
                 })(f);

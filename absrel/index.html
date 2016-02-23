@@ -5,18 +5,19 @@
     <meta charset="utf-8">
 
     <link rel="stylesheet" href="../vendor/bootstrap/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="../vendor/font-awesome/css/font-awesome.css">
     <link rel="stylesheet" href="../vendor/bootstrap/dist/css/bootstrap-theme.min.css">
-
-    <title>aBS-REL analysis result</title>
+    <link rel="stylesheet" href="../vendor/font-awesome/css/font-awesome.css">
     <link rel="stylesheet" href="../vendor/phylotree/phylotree.css">
-    <link rel="stylesheet" href="../hyphy-vision.css">
+    <link href="../hyphy-vision.css" rel="stylesheet">
 
-    <!-- Latest compiled and minified JavaScript -->
+    <!-- <meta name="viewport" content="width=device-width, initial-scale=1.0">-->
     <script src="../vendor/jquery/dist/jquery.js"></script>
     <script src="../vendor/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script src="../vendor/underscore/underscore-min.js"></script>
     <script src="../vendor/d3/d3.min.js"></script>
     <script src="../vendor/phylotree/phylotree.js"></script>
+    <script src="../vendor/react/react-with-addons.js"></script>
+
     <script src="../hyphy-vision.js"></script>
 
 </head>
@@ -41,8 +42,8 @@
             <div class="collapse navbar-collapse" id="navbar-collapse-1">
 
                 <ul class="nav nav-pills navbar-right" role="tablist" id='navigation_buttons'>
-                    <li class="active"><a href="#summary_tab" role="tab" data-toggle="tab"><i class="fa fa-list" style = 'margin-right: 5px'></i>Summary</a></li>
-                    <li><a class="tree-tab-btn" href="#tree_tab" role="tab" data-toggle="tab"><i class="fa fa-tree" style = 'margin-right: 5px'></i> Tree</a></li>
+                    <li class="active"><a href="#summary-tab" role="tab" data-toggle="tab"><i class="fa fa-list" style = 'margin-right: 5px'></i>Summary</a></li>
+                    <li><a class="tree-tab-btn" href="#tree-tab" role="tab" data-toggle="tab"><i class="fa fa-tree" style = 'margin-right: 5px'></i> Tree</a></li>
                     <li><a href="#table_tab" role="tab" data-toggle="tab"><i class="fa fa-table" style = 'margin-right: 5px'></i> Table</a></li>
                 </ul>
 
@@ -72,7 +73,7 @@
         </div>
 
         <div class="tab-content">
-            <div class="tab-pane active" id="summary_tab">
+            <div class="tab-pane active" id="summary-tab">
 
                 <div class="row" style='margin-top: 5px'>
                     <div class="col-md-12">
@@ -154,96 +155,7 @@
                 </div>
             </div>
 
-
-            <div class='tab-pane' id="tree_tab">
-                <div class='row'>
-                    <div class="col-md-4">
-                        <div class="input-group input-group-sm">
-
-                            <div class="input-group-btn">
-                                <button id="export-phylo-png" type="button" class="btn btn-default btn-sm" data-direction="vertical" data-amount="1" title="Expand vertical spacing">
-                                    <i class="fa fa-image"></i>
-                                </button>
-                                <button type="button" class="btn btn-default btn-sm" data-direction="vertical" data-amount="1" title="Expand vertical spacing">
-                                    <i class="fa fa-arrows-v"></i>
-                                </button>
-                                <button type="button" class="btn btn-default btn-sm" data-direction="vertical" data-amount="-1" title="Compress vertical spacing">
-                                    <i class="fa  fa-compress fa-rotate-135"></i>
-                                </button>
-                                <button type="button" class="btn btn-default btn-sm" data-direction="horizontal" data-amount="1" title="Expand horizonal spacing">
-                                    <i class="fa fa-arrows-h"></i>
-                                </button>
-                                <button type="button" class="btn btn-default btn-sm" data-direction="horizontal" data-amount="-1" title="Compress horizonal spacing">
-                                    <i class="fa  fa-compress fa-rotate-45"></i>
-                                </button>
-                                <button type="button" class="btn btn-default btn-sm" id="sort_ascending" title="Sort deepest clades to the bototm">
-                                    <i class="fa fa-sort-amount-asc"></i>
-                                </button>
-                                <button type="button" class="btn btn-default btn-sm" id="sort_descending" title="Sort deepsest clades to the top">
-                                    <i class="fa fa-sort-amount-desc"></i>
-                                </button>
-                                <button type="button" class="btn btn-default btn-sm" id="sort_original" title="Restore original order">
-                                    <i class="fa fa-sort"></i>
-                                </button>
-                            </div>
-
-                            <div class="input-group-btn" data-toggle="buttons">
-                                <label class="btn btn-default active btn-sm">
-                                    <input type="radio" name="options" class="phylotree-layout-mode" data-mode="linear" autocomplete="off" checked="" title="Layout left-to-right"> Linear
-                                </label>
-                                <label class="btn btn-default  btn-sm">
-                                    <input type="radio" name="options" class="phylotree-layout-mode" data-mode="radial" autocomplete="off" title="Layout radially"> Radial
-                                </label>
-                            </div>
-
-                            <div class="input-group-btn" data-toggle="buttons">
-                                <label class="btn btn-default active btn-sm">
-                                    <input type="radio" class="phylotree-align-toggler" data-align="left" name="options-align" autocomplete="off" checked="" title="Align tips labels to branches">
-                                    <i class="fa fa-align-left"></i>
-
-
-                                </label>
-                                <label class="btn btn-default btn-sm">
-                                    <input type="radio" class="phylotree-align-toggler" data-align="right" name="options-align" autocomplete="off" title="Align tips labels to the edge of the plot">
-                                    <i class="fa fa-align-right"></i>
-
-                                </label>
-                            </div>
-
-
-                            <span class="input-group-addon">
-                                        Use colors
-                                        <input type="checkbox" id="datamonkey-absrel-color-or-grey" data-color-mode = 'color' checked/>
-                                      </span>
-                            <span class="input-group-addon">
-                                        Show fill legend
-                                        <input type="checkbox" id="datamonkey-absrel-show-color-bar" checked data-show-color-bar = 'on'/>
-                                      </span>
-                            <span class="input-group-addon">
-                                        Show MG94 tree
-                                        <input type="checkbox" id="datamonkey-absrel-show-model" data-model = 'Full model'/>
-                                      </span>
-
-                        </div>
-                    </div>
-                </div>
-
-                <div class='row'>
-                    <div class='col-md-1'>
-                        <div class='row'>
-                            <div id='color_legend'>
-                            </div>
-                        </div>
-                    </div>
-                    <div class='col-md-11'>
-                        <div class='row'>
-                            <div id='tree_container' class='tree-widget'>
-                            </div>
-                        </div>
-
-                    </div>
-                </div>
-            </div>
+            <div class='tab-pane' id="tree-tab"></div>
 
             <div class='tab-pane' id="table_tab">
                 <div class="row">
@@ -291,11 +203,159 @@
 
 
     <script>
-        
+
+
+        var edgeColorizer = function(element, data) {
+
+            var self = this;
+
+            var svg = $(element[0]).closest("svg");
+            var svg_defs = d3.select(svg.get(0)).selectAll("defs");
+
+            if (svg_defs.empty()) {
+              svg_defs = svg.append("defs");
+            }   
+
+            var scaling_exponent = 0.33,
+                omega_format = d3.format(".3r"),
+                prop_format = d3.format(".2p"),
+                fit_format = d3.format(".2f"),
+                p_value_format = d3.format(".4f");
+
+            self.omega_color = d3.scale.pow().exponent(scaling_exponent)
+                .domain([0, 0.25, 1, 5, 10])
+                .range(
+                  self.options()["color-fill"]
+                    ? ["#DDDDDD", "#AAAAAA", "#888888", "#444444", "#000000"] 
+                    : ["#5e4fa2", "#3288bd", "#e6f598", "#f46d43", "#9e0142"])
+                .clamp(true);
+
+
+            var createBranchGradient = function(node) {
+
+                function generateGradient(svg_defs, grad_id, annotations, already_cumulative) {
+
+                    //d3.select("#tree_container").select("svg").select("defs").selectAll("linearGradient").remove();
+
+                    var current_weight = 0;
+                    var this_grad = svg_defs.append("linearGradient")
+                        .attr("id", grad_id);
+
+                    annotations.forEach(function(d, i) {
+
+                        if (d.prop) {
+                            var new_weight = current_weight + d.prop;
+                            this_grad.append("stop")
+                                .attr("offset", "" + current_weight * 100 + "%")
+                                .style("stop-color", self.omega_color(d.omega));
+                            this_grad.append("stop")
+                                .attr("offset", "" + new_weight * 100 + "%")
+                                .style("stop-color", self.omega_color(d.omega));
+                            current_weight = new_weight;
+                        }
+                    });
+                }
+
+                // Create svg definitions
+                if(self.gradient_count == undefined) {
+                  self.gradient_count = 0;
+                }
+
+                if(node.annotations) { 
+
+                  if (node.annotations.length == 1) {
+                    node['color'] = self.omega_color(node.annotations[0]["omega"]);
+                  } else {
+                    self.gradient_count++;
+                    var grad_id = "branch_gradient_" + self.gradient_count;
+                    generateGradient(svg_defs, grad_id, node.annotations.omegas);
+                    node['grad'] = grad_id;
+                  }
+
+                }
+            }
+
+            var annotations = data.target.annotations,
+                alpha_level = 0.05,
+                tooltip = "<b>" + data.target.name + "</b>",
+                reference_omega_weight =  prop_format(0),
+                distro = '';
+
+            if (annotations) {
+
+                reference_omega_weight = annotations.omegas[0].prop;
+ 
+                annotations.omegas.forEach(function(d, i) {
+
+                    var omega_value = d.omega > 1e20 ? "&infin;" : omega_format(d.omega),
+                        omega_weight = prop_format(d.prop);
+
+                    tooltip += "<br/>&omega;<sub>" + (i + 1) + "</sub> = " + omega_value +
+                        " (" + omega_weight + ")";
+
+                    if (i) {
+                      distro += "<br/>";
+                    }
+
+                    distro += "&omega;<sub>" + (i + 1) + "</sub> = " + omega_value +
+                        " (" + omega_weight + ")";
+
+
+                });
+
+                tooltip += "<br/><i>p = " + omega_format(annotations["p"]) + "</i>";
+
+                $(element[0][0]).tooltip({
+                    'title': tooltip,
+                    'html': true,
+                    'trigger': 'hover',
+                    'container': 'body',
+                    'placement': 'auto'
+                });
+
+
+                createBranchGradient(data.target);
+
+                if(data.target.grad) {
+                  element.style('stroke', 'url(#' + data.target.grad + ')');
+                } else {
+                  element.style('stroke', data.target.color);
+                }
+
+                element.style('stroke-width', annotations["p"] <= alpha_level ? '12' : '5')
+                    .style('stroke-linejoin', 'round')
+                    .style('stroke-linecap', 'round');
+
+          }
+
+        }
+
+        var model_fits_id = "#hyphy-model-fits";
+        var omega_plots_id = "#hyphy-omega-plots";
+        var summary_id = "#hyphy-relax-summary";
+        var tree_id = "#tree-tab";
+
+        var tree_settings = {
+            'omegaPlot': {},
+            'tree-options': {
+                /* value arrays have the following meaning
+                    [0] - the value of the attribute
+                    [1] - does the change in attribute value trigger tree re-layout?
+                */
+                'hyphy-tree-model': ['Full model', true],
+                'hyphy-tree-highlight': [null, false],
+                'hyphy-tree-branch-lengths': [true, true],
+                'hyphy-tree-hide-legend': [false, true],
+                'hyphy-tree-fill-color': [true, true]
+            },
+            'suppress-tree-render': false,
+            'chart-append-html' : true,
+            'edgeColorizer' : edgeColorizer
+        };
 
         $(document).ready(function() {
 
-           bsrel_app = datamonkey.absrel();
+
 
            $("#datamonkey-absrel-json-file").on("change", function(e) {
                var files = e.target.files; // FileList object
@@ -332,10 +392,21 @@
                datamonkey.save_image("png", "#primary_omega_plot");
            });
 
-
-
            d3.json("test-data/test.json", function(json) {
-               bsrel_app(json);
+
+              var branch_annotations = json["fits"]["Full model"]["branch-annotations"];
+              
+              // Iterate over objects
+              branch_annotations = _.mapObject(branch_annotations, function(val, key) {
+                var vals = JSON.parse(val);
+                var omegas = {"omegas" : _.map(vals, function(d) { return _.object(["omega","prop"], d)})};
+                var test_results = json["test results"][key];
+                _.extend(test_results, omegas);
+                return test_results;
+              });
+
+              render_tree(json, tree_id, tree_settings, branch_annotations);
+
            });
        });
                

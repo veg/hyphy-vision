@@ -20,7 +20,7 @@ gulp.task('scripts', function() {
 });
 
 gulp.task('react', function () {
-    return gulp.src('./src/jsx/*.jsx')
+    return gulp.src(['src/jsx/*.jsx', 'src/jsx/components/*.jsx'])
         .pipe(react())
         .pipe(gulp.dest('./jsx-compiled/'));
 });
@@ -28,7 +28,7 @@ gulp.task('react', function () {
 gulp.task('build', ['react', 'scripts']);
 
 gulp.task('watch', function () {
-    watch('src/**/*', function () {
+    watch(['src/**/*', 'src/jsx/components/*'], function () {
         gulp.start('build');
     }); 
 });
