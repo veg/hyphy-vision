@@ -92,66 +92,8 @@
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-md-6">
-                        <ul class="list-group">
-                            <li class="list-group-item">
-                                <h4 class="list-group-item-heading"><i class="fa fa-tree" style = 'margin-right: 10px'>
-                            </i>Tree</h4>
-                                <table class="table table-hover table-condensed list-group-item-text" style="margin-top:0.5em;">
-                                    <thead>
-                                        <tr>
-                                            <th>&omega; rate
-                                                <br>classes</th>
-                                            <th># of
-                                                <br>branches</th>
-                                            <th>% of
-                                                <br>branches</th>
-                                            <th>% of tree
-                                                <br>length</th>
-                                            <th># under
-                                                <br>selection</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id='summary-tree-table'>
-
-                                    </tbody>
-                                    <caption style='caption-side: bottom; text-align: left; margin-top:1em;'>
-                                        <p class="list-group-item-text text-muted">
-                                            Total tree length under the branch-site model is <strong id='summary-tree-length'></strong> expected substitutions per nucleotide site, and <strong id='summary-tree-length-mg94'></strong> under the MG94 model.
-                                        </p>
-                                    </caption>
-                                </table>
-                            </li>
-                        </ul>
-                    </div>
-                    <div class="col-md-6">
-                        <ul class="list-group">
-                            <li class="list-group-item">
-                                <h4 class="list-group-item-heading"><i class="fa fa-cubes" style = 'margin-right: 10px'>
-                        </i>Model fits</h4>
-                                <table class="table table-hover table-condensed list-group-item-text" style="margin-top:0.5em;">
-                                    <thead>
-                                        <tr>
-                                            <th>Model</th>
-                                            <th><em> log </em>L</th>
-                                            <th><abbr title="Number of estimated model parameters"># par.</abbr></th>
-                                            <th><abbr title="Small Sample AIC">AIC<sub>c</sub></abbr></th>
-                                            <th>Time to fit</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id='summary-model-table'>
-
-                                    </tbody>
-
-                                    <caption style='caption-side: bottom; text-align: left; margin-top:1em;'>
-                                        <p class="list-group-item-text text-muted">
-                                            The complete analysis took <strong id='summary-total-runtime'></strong> to finish, of which <strong id='summary-complexity-runtime'></strong> was taken by the complexity analysis, and <strong id='summary-testing-runtime'></strong> by selection testing.
-                                        </p>
-                                    </caption>
-                                </table>
-                            </li>
-                        </ul>
-                    </div>
+                    <div id="hyphy-tree-summary" class="col-md-6"></div>
+                    <div id="hyphy-model-fits" class="col-md-6"></div>
                 </div>
             </div>
 
@@ -235,8 +177,6 @@
 
                 function generateGradient(svg_defs, grad_id, annotations, already_cumulative) {
 
-                    //d3.select("#tree_container").select("svg").select("defs").selectAll("linearGradient").remove();
-
                     var current_weight = 0;
                     var this_grad = svg_defs.append("linearGradient")
                         .attr("id", grad_id);
@@ -312,7 +252,6 @@
                     'container': 'body',
                     'placement': 'auto'
                 });
-
 
                 createBranchGradient(data.target);
 
@@ -394,18 +333,36 @@
 
            d3.json("test-data/test.json", function(json) {
 
-              var branch_annotations = json["fits"]["Full model"]["branch-annotations"];
-              
-              // Iterate over objects
-              branch_annotations = _.mapObject(branch_annotations, function(val, key) {
-                var vals = JSON.parse(val);
-                var omegas = {"omegas" : _.map(vals, function(d) { return _.object(["omega","prop"], d)})};
-                var test_results = json["test results"][key];
-                _.extend(test_results, omegas);
-                return test_results;
-              });
+              var formatBranchAnnotations = function(key) {
 
-              render_tree(json, tree_id, tree_settings, branch_annotations);
+                var initial_branch_annotations = json["fits"][key]["branch-annotations"];
+                
+                // Iterate over objects
+                branch_annotations = _.mapObject(initial_branch_annotations, function(val, key) {
+                  var vals = JSON.parse(val);
+                  var omegas = {"omegas" : _.map(vals, function(d) { return _.object(["omega","prop"], d)})};
+                  var test_results = _.clone(json["test results"][key]);
+                  _.extend(test_results, omegas);
+                  return test_results;
+                });
+
+                return branch_annotations;
+
+              }
+
+
+              var model_fits_id = "#hyphy-model-fits";
+
+              json["fits"]["MG94"]["branch-annotations"] = formatBranchAnnotations("MG94");
+              json["fits"]["Full model"]["branch-annotations"] = formatBranchAnnotations("Full model");
+              
+              // return tree
+              render_tree(json, tree_id, tree_settings);
+
+              render_model_fits(json, "#hyphy-model-fits");
+
+              // We will need to have two trees, unfortunately
+              render_tree_summary(json, "#hyphy-tree-summary");
 
            });
        });

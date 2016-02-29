@@ -1293,65 +1293,6 @@ datamonkey.busted.render_summary = busted_render_summary;
 
 //}
 
-//function createGradientIDs () {
-
-//    gradID = 0;
-
-//    var local_branch_omegas = {};
-
-//    var fitted_distributions = json["fits"][model_id]["rate distributions"];
-
-//    for (var b in fitted_distributions) {
-
-//        var rateD = JSON.parse(fitted_distributions[b]);
-//        if (rateD.length == 1) {
-//            local_branch_omegas[b] = {
-//                'color': omega_color(rateD[0][0])
-//            };
-//        } else {
-//            gradID++;
-//            var grad_id = "branch_gradient_" + gradID;
-//            create_gradient(svg_defs, grad_id, rateD);
-//            local_branch_omegas[b] = {
-//                'grad': grad_id
-//            };
-//        }
-
-//        local_branch_omegas[b]['omegas'] = rateD;
-//        local_branch_omegas[b]['tooltip'] = "<b>" + b + "</b>";
-//        local_branch_omegas[b]['distro'] = "";
-
-//        rateD.forEach(function(d, i) {
-//            var omega_value = d[0] > 1e20 ? "&infin;" : omega_format(d[0]),
-//                omega_weight = prop_format(d[1]);
-
-//            local_branch_omegas[b]['tooltip'] += "<br/>&omega;<sub>" + (i + 1) + "</sub> = " + omega_value +
-//                " (" + omega_weight + ")";
-//            if (i) {
-//                local_branch_omegas[b]['distro'] += "<br/>";
-//            }
-//            local_branch_omegas[b]['distro'] += "&omega;<sub>" + (i + 1) + "</sub> = " + omega_value +
-//                " (" + omega_weight + ")";
-//        });
-//        local_branch_omegas[b]['tooltip'] += "<br/><i>p = " + omega_format(json["test results"][b]["p"]) + "</i>";
-//    }
-
-//    self.tree.style_edges(function(element, data) {
-//        edge_colorizer(element, data);
-//    });
-
-//    branch_lengths = {};
-
-//    self.tree.get_nodes().forEach(function(d) {
-//        if (d.parent) {
-//            branch_lengths[d.name] = self.tree.branch_length()(d);
-//        }
-//    });
-
-//    return [branch_lengths, local_branch_omegas];
-
-//}
-
 function busted_draw_distribution(node_name, omegas, weights, settings) {
 
   var make_plot_data = function(omegas, weights) {
@@ -2605,10 +2546,12 @@ datamonkey.fade = function(json) {
 var ModelFits = React.createClass({displayName: "ModelFits",
 
   getInitialState: function() {
-    return { table_row_data: this.getModelRows() };
+    var table_row_data = this.getModelRows();
+    var table_columns = this.getModelColumns(table_row_data);
+    return { table_row_data: table_row_data, table_columns: table_columns};
   },
 
-  format_run_time : function(seconds) {
+  formatRuntime : function(seconds) {
       var duration_string = "";
       seconds = parseFloat(seconds);
       var split_array = [Math.floor(seconds / (24 * 3600)), Math.floor(seconds / 3600) % 24, Math.floor(seconds / 60) % 60, seconds % 60],
@@ -2623,82 +2566,124 @@ var ModelFits = React.createClass({displayName: "ModelFits",
       return duration_string;
   },
 
+  getLogLikelihood : function(this_model) {
+    return d3.format(".2f")(this_model['log-likelihood']);
+  },
+
+  getAIC : function(this_model) {
+    return d3.format(".2f")(this_model['AIC-c']);
+  },
+
+  getNumParameters : function(this_model) {
+    return this_model['parameters'];
+  },
+
+  getBranchLengths : function(this_model) {
+    return d3.format(".2f")(d3.values(this_model["branch-lengths"]).reduce(function(p, c) {
+        return p + c;
+    }, 0))
+  },
+
+  getRuntime : function(this_model) {
+    //return this.formatRuntime(this_model['runtime']);
+    return this.formatRuntime(this_model['runtime']);
+  },
+
+  getDistributions : function(m, this_model) {
+
+    var omega_distributions = {};
+    omega_distributions[m] = {};
+
+    var distributions = [];
+
+    for (var d in this_model["rate-distributions"]) {
+
+      var this_distro = this_model["rate-distributions"][d];
+      var this_distro_entry = [d, "", "", ""];
+
+      omega_distributions[m][d] = this_distro.map(function(d) {
+          return {
+            'omega': d[0],
+            'weight': d[1]
+          };
+      });
+
+      for (var k = 0; k < this_distro.length; k++) {
+          this_distro_entry[k + 1] = (omega_format(this_distro[k][0]) + " (" + prop_format(this_distro[k][1]) + ")");
+      }
+
+      distributions.push(this_distro_entry);
+    }
+
+    distributions.sort(function(a, b) {
+        return a[0] < b[0] ? -1 : (a[0] == b[0] ? 0 : 1);
+    });
+
+    return distributions;
+
+  },
+
   getModelRows : function() {
 
     var json = this.props.json;
     var table_row_data = [];
-    var omega_distributions = {};
-    var fit_format = d3.format(".2f");
     var omega_format = d3.format(".3r");
     var prop_format = d3.format(".2p");
     var p_value_format = d3.format(".4f");
 
     for (var m in json["fits"]) {
 
-        var this_model_row = [],
-            this_model = json["fits"][m];
+      var this_model_row = [],
+          this_model = json["fits"][m];
 
-        this_model_row = [
-            this_model['display-order'],
-            "",
-            m,
-            fit_format(this_model['log-likelihood']),
-            this_model['parameters'],
-            fit_format(this_model['AIC-c']),
-            this.format_run_time(this_model['runtime']),
-            fit_format(d3.values(this_model["branch-lengths"]).reduce(function(p, c) {
-                return p + c;
-            }, 0))
-        ];
+      this_model_row = [
+          this_model['display-order'],
+          "",
+          m,
+          this.getLogLikelihood(this_model),
+          this.getNumParameters(this_model),
+          this.getAIC(this_model),
+          this.getRuntime(this_model),
+          this.getBranchLengths(this_model)
+      ];
 
-        omega_distributions[m] = {};
-        var distributions = [];
 
-        for (var d in this_model["rate-distributions"]) {
-            var this_distro = this_model["rate-distributions"][d];
-            var this_distro_entry = [d, "", "", ""];
+      // TODO: clean this up
+      var distributions = this.getDistributions(m, this_model);
 
-            omega_distributions[m][d] = this_distro.map(function(d) {
-                return {
-                    'omega': d[0],
-                    'weight': d[1]
-                };
-            });
-
-            for (var k = 0; k < this_distro.length; k++) {
-                this_distro_entry[k + 1] = (omega_format(this_distro[k][0]) + " (" + prop_format(this_distro[k][1]) + ")");
-            }
-
-            distributions.push(this_distro_entry);
-        }
-
-        distributions.sort(function(a, b) {
-            return a[0] < b[0] ? -1 : (a[0] == b[0] ? 0 : 1);
-        });
+      if(distributions.length) {
 
         this_model_row = this_model_row.concat(distributions[0]);
         this_model_row[1] = distributions[0][0];
+
         table_row_data.push(this_model_row);
 
         for (var d = 1; d < distributions.length; d++) {
-            var this_distro_entry = this_model_row.map(function(d, i) {
-                if (i) return "";
-                return d;
-            });
-            this_distro_entry[1] = distributions[d][0];
-            for (var k = this_distro_entry.length - 4; k < this_distro_entry.length; k++) {
-                this_distro_entry[k] = distributions[d][k - this_distro_entry.length + 4];
-            }
-            table_row_data.push(this_distro_entry);
+          var this_distro_entry = this_model_row.map(function(d, i) {
+              if (i) return "";
+              return d;
+          });
+
+          this_distro_entry[1] = distributions[d][0];
+
+          for (var k = this_distro_entry.length - 4; k < this_distro_entry.length; k++) {
+            this_distro_entry[k] = distributions[d][k - this_distro_entry.length + 4];
+          }
+
+          table_row_data.push(this_distro_entry);
+
         }
+      } else {
+        table_row_data.push(this_model_row);
+      }
 
     }
 
     table_row_data.sort(function(a, b) {
-        if (a[0] == b[0]) {
-            return a[1] < b[1] ? -1 : (a[1] == b[1] ? 0 : 1);
-        }
-        return a[0] - b[0];
+      if (a[0] == b[0]) {
+          return a[1] < b[1] ? -1 : (a[1] == b[1] ? 0 : 1);
+      }
+      return a[0] - b[0];
     });
 
     table_row_data = table_row_data.map(function(r) {
@@ -2709,8 +2694,55 @@ var ModelFits = React.createClass({displayName: "ModelFits",
 
   },
 
+  getModelColumns : function(table_row_data) {
+
+    var model_header = '<th>Model</th>',
+        logl_header = '<th><em> log </em>L</th>',
+        num_params_header = '<th><abbr title="Number of estimated model parameters"># par.</abbr></th>',
+        aic_header = '<th><abbr title="Small Sample AIC">AIC<sub>c</sub></abbr></th>',
+        runtime_header = '<th>Time to fit</th>',
+        branch_lengths_header = '<th><abbr title="Total tree length, expected substitutions/site">L<sub>tree</sub></abbr></th>',
+        branch_set_header = '<th>Branch set</th>',
+        omega_1_header = '<th>&omega;<sub>1</sub></th>',
+        omega_2_header = '<th>&omega;<sub>2</sub></th>',
+        omega_3_header = '<th>&omega;<sub>3</sub></th>';
+
+    // inspect table_row_data and return header
+    all_columns = [ 
+                    model_header,
+                    logl_header, 
+                    num_params_header, 
+                    aic_header, 
+                    runtime_header, 
+                    branch_lengths_header,  
+                    branch_set_header,
+                    omega_1_header,
+                    omega_2_header,
+                    omega_3_header
+                  ];
+
+    // validate each table row with its associated header
+
+    // trim columns to length of table_row_data
+    column_headers = _.take(all_columns, table_row_data[0].length)
+
+    // remove all columns that have 0, null, or undefined rows
+    items = d3.transpose(table_row_data);
+    
+
+    return column_headers;
+  },
+
   componentDidMount: function() {
-    model_rows = d3.select('#summary-model-table').selectAll("tr").data(this.state.table_row_data);
+
+    var model_columns = d3.select('#summary-model-header1');
+    model_columns = model_columns.selectAll("th").data(this.state.table_columns);
+    model_columns.enter().append("th");
+    model_columns.html(function(d) {
+        return d;
+    });
+
+    var model_rows = d3.select('#summary-model-table').selectAll("tr").data(this.state.table_row_data);
     model_rows.enter().append('tr');
     model_rows.exit().remove();
     model_rows = model_rows.selectAll("td").data(function(d) {
@@ -2730,20 +2762,7 @@ var ModelFits = React.createClass({displayName: "ModelFits",
             React.createElement("li", {className: "list-group-item"}, 
               React.createElement("h4", {className: "list-group-item-heading"}, React.createElement("i", {className: "fa fa-cubes", styleFormat: "margin-right: 10px"}), "Model fits"), 
                React.createElement("table", {className: "table table-hover table-condensed list-group-item-text", styleFormat: "margin-top:0.5em;"}, 
-                  React.createElement("thead", null, 
-                      React.createElement("tr", {id: "summary-model-header1"}, 
-                        React.createElement("th", null, "Model"), 
-                        React.createElement("th", null, React.createElement("em", null, " log "), "L"), 
-                        React.createElement("th", null, React.createElement("abbr", {title: "Number of estimated model parameters"}, "# par.")), 
-                        React.createElement("th", null, React.createElement("abbr", {title: "Small Sample AIC"}, "AIC", React.createElement("sub", null, "c"))), 
-                        React.createElement("th", null, "Time to fit"), 
-                        React.createElement("th", null, React.createElement("abbr", {title: "Total tree length, expected substitutions/site"}, "L", React.createElement("sub", null, "tree"))), 
-                        React.createElement("th", null, "Branch set"), 
-                        React.createElement("th", null, "ω", React.createElement("sub", null, "1")), 
-                        React.createElement("th", null, "ω", React.createElement("sub", null, "2")), 
-                        React.createElement("th", null, "ω", React.createElement("sub", null, "3"))
-                      )
-                  ), 
+                  React.createElement("thead", {id: "summary-model-header1"}), 
                   React.createElement("tbody", {id: "summary-model-table"})
                )
             )
@@ -3298,6 +3317,205 @@ function rerender_summary(json) {
   render_summary(json);
 }
 
+// TODO: Write documentation
+var TreeSummary = React.createClass({displayName: "TreeSummary",
+
+  getInitialState: function() {
+
+    var table_row_data = this.getSummaryRows(),
+        table_columns = this.getTreeSummaryColumns(table_row_data);
+
+    return { 
+              table_row_data: table_row_data, 
+              table_columns: table_columns
+           };
+  },
+
+  getRateClasses : function(branch_annotations) {
+
+    // Get count of all rate classes
+    var all_branches = _.values(branch_annotations);
+
+    return _.countBy(all_branches, function(branch) {
+      return branch.omegas.length;
+    });
+
+  },
+
+  getBranchProportion : function(rate_classes) {
+    var sum = _.reduce(_.values(rate_classes), function(memo, num) { return memo + num; });
+    return _.mapObject(rate_classes, function(val, key) { return d3.format(".2p")(val/sum) } );
+  },
+
+  getBranchLengthProportion : function(rate_classes, branch_annotations, total_branch_length) {
+
+    var self = this;
+
+    // get branch lengths of each rate distribution
+    //return prop_format(d[2] / total_tree_length
+
+    // Get count of all rate classes
+    var branch_lengths = _.mapObject(rate_classes, function(d) { return 0}); 
+
+    for (var key in branch_annotations) {
+      var node = self.tree.get_node_by_name(key);
+      branch_lengths[branch_annotations[key].omegas.length] += self.tree.branch_length()(node);
+    };
+
+    return _.mapObject(branch_lengths, function(val, key) { return d3.format(".2p")(val/total_branch_length) } );
+
+  },
+
+  getNumUnderSelection : function(rate_classes, branch_annotations, test_results) {
+
+    var num_under_selection = _.mapObject(rate_classes, function(d) { return 0}); 
+
+    for (var key in branch_annotations) {
+      num_under_selection[branch_annotations[key].omegas.length] += test_results[key]["p"] <= 0.05;
+    };
+
+    return num_under_selection;
+
+  },
+
+  getSummaryRows : function() {
+    var self = this;
+
+    // Will need to create a tree for each fits
+    var analysis_data = this.props.json;
+    
+    // Create an array of phylotrees from fits
+    var trees = _.map(analysis_data["fits"], function(d) { return d3.layout.phylotree("body")(d["tree string"]) });
+    var tree = trees[0];
+
+    self.tree = tree;
+    
+
+    var tree_length = analysis_data["fits"]["Full model"]["tree length"];
+    var branch_annotations = analysis_data["fits"]["Full model"]["branch-annotations"];
+    var test_results = analysis_data["test results"];
+
+    var rate_classes = this.getRateClasses(branch_annotations);
+    var proportions = this.getBranchProportion(rate_classes);
+    var length_proportions = this.getBranchLengthProportion(rate_classes, branch_annotations, tree_length);
+    var num_under_selection = this.getNumUnderSelection(rate_classes, branch_annotations, test_results);
+
+    // zip objects into matrix
+    var keys = _.keys(rate_classes);
+    var summary_rows = _.zip(
+      keys
+      ,_.values(rate_classes)
+      ,_.values(proportions)
+      ,_.values(length_proportions)
+      ,_.values(num_under_selection)
+    )
+
+    summary_rows.sort(function(a, b) {
+      if (a[0] == b[0]) {
+          return a[1] < b[1] ? -1 : (a[1] == b[1] ? 0 : 1);
+      }
+      return a[0] - b[0];
+    });
+
+    return summary_rows;
+
+  },
+
+  getTreeSummaryColumns : function(table_row_data) {
+
+    var omega_header = '<th>ω rate<br>classes</th>',
+        branch_num_header = '<th># of <br>branches</th>',
+        branch_prop_header = '<th>% of <br>branches</th>',
+        branch_prop_length_header = '<th>% of tree <br>length</th>',
+        under_selection_header = '<th># under <br>selection</th>';
+
+
+    // inspect table_row_data and return header
+    var all_columns = [ 
+                    omega_header,
+                    branch_num_header, 
+                    branch_prop_header, 
+                    branch_prop_length_header, 
+                    under_selection_header
+                  ];
+
+    // validate each table row with its associated header
+
+    // trim columns to length of table_row_data
+    column_headers = _.take(all_columns, table_row_data[0].length)
+
+    return column_headers;
+  },
+
+  componentDidMount: function() {
+
+    var tree_summary_columns = d3.select('#summary-tree-header');
+
+    tree_summary_columns = tree_summary_columns.selectAll("th").data(this.state.table_columns);
+    tree_summary_columns.enter().append("th");
+    tree_summary_columns.html(function(d) {
+        return d;
+    });
+
+    var tree_summary_rows = d3.select('#summary-tree-table').selectAll("tr").data(this.state.table_row_data);
+    tree_summary_rows.enter().append('tr');
+    tree_summary_rows.exit().remove();
+    tree_summary_rows = tree_summary_rows.selectAll("td").data(function(d) {
+        return d;
+    });
+
+    tree_summary_rows.enter().append("td");
+    tree_summary_rows.html(function(d) {
+        return d;
+    });
+
+  },
+
+  render: function() {
+
+    return (
+        React.createElement("ul", {className: "list-group"}, 
+            React.createElement("li", {className: "list-group-item"}, 
+              React.createElement("h4", {className: "list-group-item-heading"}, React.createElement("i", {className: "fa fa-tree"}), "Tree"), 
+              React.createElement("table", {className: "table table-hover table-condensed list-group-item-text"}, 
+                React.createElement("thead", {id: "summary-tree-header"}), 
+                React.createElement("tbody", {id: "summary-tree-table"})
+              )
+            )
+        )
+      )
+  }
+
+});
+
+//TODO
+//<caption>
+//<p className="list-group-item-text text-muted">
+//    Total tree length under the branch-site model is <strong id="summary-tree-length">2.30</strong> expected substitutions per nucleotide site, and <strong id="summary-tree-length-mg94">1.74</strong> under the MG94 model.
+//</p>
+//</caption>
+
+
+// Will need to make a call to this
+// omega distributions
+function render_tree_summary(json, element) {
+
+  React.render(
+    React.createElement(TreeSummary, {json: json}),
+    $(element)[0]
+  );
+
+}
+
+// Will need to make a call to this
+// omega distributions
+function rerender_tree_summary(tree, element) {
+  $(element).empty();
+  render_tree_summary(tree, element);
+}
+
+
+
 // TODO : Write documentation
 var Tree = React.createClass({displayName: "Tree",
 
@@ -3348,22 +3566,22 @@ var Tree = React.createClass({displayName: "Tree",
   },
 
   assignBranchAnnotations : function() {
-    this.tree.assign_attributes(this.branch_annotations);
+    this.tree.assign_attributes(this.props.json["fits"][this.which_model]["branch-annotations"]);
   },
 
   renderLegendColorScheme : function(svg_container, attr_name, do_not_render) {
 
     var self = this;
+    var branch_annotations = this.props.json["fits"][this.which_model]["branch-annotations"];
 
     var svg = d3.select("#" + svg_container).selectAll("svg").data([self.omega_color.domain()]);
-    svg.enter().append("svg");
+    svg.enter().append("g");
     svg.selectAll("*").remove();
 
     // clear existing linearGradients
     d3.select("#tree_container").select("svg").select("defs").selectAll("linearGradient").remove();
 
-
-    if (this.branch_annotations && !do_not_render) {
+    if (branch_annotations && !do_not_render) {
         var bar_width = 70,
             bar_height = 300,
             margins = {
@@ -3397,7 +3615,9 @@ var Tree = React.createClass({displayName: "Tree",
                 .style("stop-color", self.omega_color(d));
         });
 
-        var g_container = svg.append("g").attr("transform", "translate(" + margins["left"] + "," + margins["top"] + ")");
+        var g_container = svg.append("g")
+              .attr("id", "color-legend")
+              .attr("transform", "translate(" + margins["left"] + "," + margins["top"] + ")");
 
         g_container.append("rect").attr("x", 0)
             .attr("width", bar_width - margins['left'] - margins['right'])
@@ -3566,10 +3786,12 @@ var Tree = React.createClass({displayName: "Tree",
     });
 
     model_list.enter().append("a");
+
     model_list.attr("href", "#").on("click", function(d, i) {
         d3.select("#hyphy-tree-model").attr("value", d);
         self.renderTree();
     });
+
 
     model_list.text(function(d) {
 
@@ -3577,15 +3799,23 @@ var Tree = React.createClass({displayName: "Tree",
             def_displayed = true;
             this.click();
         }
+
         if (!def_displayed && d == "Alternative") {
             def_displayed = true;
             this.click();
         }
+
         if (!def_displayed && d == "Partitioned MG94xREV") {
             def_displayed = true;
             this.click();
         }
+
         if (!def_displayed && d == "MG94") {
+            def_displayed = true;
+            this.click();
+        }
+
+        if (!def_displayed && d == "Full model") {
             def_displayed = true;
             this.click();
         }
@@ -3593,7 +3823,6 @@ var Tree = React.createClass({displayName: "Tree",
         return d;
 
     });
-
 
     this.settings['suppress-tree-render'] = false;
 
@@ -3607,21 +3836,35 @@ var Tree = React.createClass({displayName: "Tree",
     $("#hyphy-tree-branch-lengths").click();
 
     this.scaling_exponent = 0.33;
-
-
-    var json =  this.props.json;
-
-    this.branch_annotations = this.props.branch_annotations;
-
     this.omega_format = d3.format(".3r");
     this.prop_format = d3.format(".2p");
     this.fit_format = d3.format(".2f");
     this.p_value_format = d3.format(".4f");
 
+    var json =  this.props.json;
     var analysis_data = json;
 
-    var width = 800,
-        height = 600,
+    this.width = 800;
+    this.height = 600;
+
+    this.which_model = this.settings["tree-options"]["hyphy-tree-model"][0];
+
+    this.setHandlers();
+    this.setModelList();
+    this.setPartitionList();
+    this.initializeTree();
+
+
+
+  },
+
+  initializeTree : function() {
+
+    var self = this;
+    var analysis_data = self.props.json;
+
+    var width = this.width,
+        height = this.height,
         alpha_level = 0.05,
         branch_lengths = [];
 
@@ -3631,17 +3874,14 @@ var Tree = React.createClass({displayName: "Tree",
             return 0;
         });
 
-    this.which_model = this.settings["tree-options"]["hyphy-tree-model"][0];
-
-    this.setHandlers();
     this.setTreeHandlers();
 
-    var svg = d3.select("#tree_container").append("svg")
+    // clear any existing svg
+    d3.select("#tree_container").html("");
+
+    this.svg = d3.select("#tree_container").append("svg")
         .attr("width", width)
         .attr("height", height);
-
-    this.setModelList();
-    this.setPartitionList();
 
     this.tree.branch_name(null);
     this.tree.node_span('equal');
@@ -3649,31 +3889,22 @@ var Tree = React.createClass({displayName: "Tree",
         'draw-size-bubbles': false,
         'selectable': false,
         'left-right-spacing': 'fit-to-size',
+        'left-offset': 100,
         'color-fill': this.settings["tree-options"]["hyphy-tree-fill-color"][0]
     }, false);
 
-    if(_.findKey(analysis_data, "tree")) {
-      this.tree(analysis_data["tree"]).svg(svg);
-    } else {
-      this.tree(analysis_data["fits"][this.which_model]["tree string"]).svg(svg);
-    }
-
-    this.branch_lengths = this.getBranchLengths();
-
-    this.tree.font_size(18);
-    this.tree.scale_bar_font_size(14);
-    this.tree.node_circle_size(0);
-
-    this.tree.branch_length(function(n) {
-        if (self.branch_lengths) {
-            return self.branch_lengths[n.name] || 0;
-        }
-        return undefined;
-    });
-
-    self.renderTree(true);
 
     this.assignBranchAnnotations();
+    self.renderTree(true);
+
+    // Render the appropriate color
+    self.omega_color = d3.scale.pow().exponent(this.scaling_exponent)
+        .domain([0, 0.25, 1, 5, 10])
+        .range(this.settings["tree-options"]["hyphy-tree-fill-color"][0] ? ["#DDDDDD", "#AAAAAA", "#888888", "#444444", "#000000"] : ["#5e4fa2", "#3288bd", "#e6f598", "#f46d43", "#9e0142"])
+        .clamp(true);
+
+    this.renderLegendColorScheme("tree_container", analysis_data["fits"][this.which_model]["annotation-tag"]);
+
 
     if(this.settings.edgeColorizer) {
       this.edgeColorizer = this.settings.edgeColorizer;
@@ -3684,6 +3915,8 @@ var Tree = React.createClass({displayName: "Tree",
     this.tree.style_nodes(this.nodeColorizer);
 
     this.tree.spacing_x(30, true);
+    this.tree.layout();
+    this.tree.placenodes().update();
     this.tree.layout();
 
   },
@@ -3725,6 +3958,7 @@ var Tree = React.createClass({displayName: "Tree",
 
       var self = this;
       var analysis_data = this.props.json;
+      var svg = self.svg;
 
       if (!this.settings['suppress-tree-render']) {
 
@@ -3739,6 +3973,35 @@ var Tree = React.createClass({displayName: "Tree",
                   do_layout = do_layout || this.settings["tree-options"][k][1];
               }
           }
+
+          // Update which_model
+          if(self.which_model != this.settings["tree-options"]["hyphy-tree-model"][0]) {
+            self.which_model = this.settings["tree-options"]["hyphy-tree-model"][0]; 
+            self.initializeTree();
+            return;
+          }
+
+
+          if(_.findKey(analysis_data, "tree")) {
+            this.tree(analysis_data["tree"]).svg(svg);
+          } else {
+            this.tree(analysis_data["fits"][self.which_model]["tree string"]).svg(svg);
+          }
+
+          this.branch_lengths = this.getBranchLengths();
+
+          this.tree.font_size(18);
+          this.tree.scale_bar_font_size(14);
+          this.tree.node_circle_size(0);
+
+          this.tree.branch_length(function(n) {
+              if (self.branch_lengths) {
+                  return self.branch_lengths[n.name] || 0;
+              }
+              return undefined;
+          });
+
+          this.assignBranchAnnotations();
           
           if(_.findKey(analysis_data, "partition")) {
             this.partition = (this.settings["tree-options"]["hyphy-tree-highlight"] ? analysis_data["partition"][this.settings["tree-options"]["hyphy-tree-highlight"][0]] : null) || null;
@@ -3746,20 +4009,12 @@ var Tree = React.createClass({displayName: "Tree",
             this.partition = null;
           }
 
+
           // TODO: Should be a prop. Hide or show legend.
           if(!this.settings["tree-options"]["hyphy-tree-hide-legend"][0]) {
-
-            d3.select("#color_legend").style("visibility", "visible");
-
-            // Render the appropriate color
-            self.omega_color = d3.scale.pow().exponent(this.scaling_exponent)
-                .domain([0, 0.25, 1, 5, 10])
-                .range(this.settings["tree-options"]["hyphy-tree-fill-color"][0] ? ["#DDDDDD", "#AAAAAA", "#888888", "#444444", "#000000"] : ["#5e4fa2", "#3288bd", "#e6f598", "#f46d43", "#9e0142"])
-                .clamp(true);
-
-            this.renderLegendColorScheme("color_legend", analysis_data["fits"][this.which_model]["annotation-tag"]);
+            d3.select("#color-legend").style("visibility", "visible");
           } else {
-            d3.select("#color_legend").style("visibility", "hidden");
+            d3.select("#color-legend").style("visibility", "hidden");
           }
 
           //set phylotree appropriate color-fill
@@ -3873,12 +4128,7 @@ var Tree = React.createClass({displayName: "Tree",
           ), 
 
           React.createElement("div", {className: "row"}, 
-              React.createElement("div", {className: "col-md-1"}, 
-                  React.createElement("div", {className: "row"}, 
-                      React.createElement("div", {id: "color_legend"})
-                  )
-              ), 
-              React.createElement("div", {className: "col-md-11"}, 
+              React.createElement("div", {className: "col-md-12"}, 
                   React.createElement("div", {className: "row"}, 
                       React.createElement("div", {id: "tree_container", className: "tree-widget"})
                   )
@@ -3891,18 +4141,21 @@ var Tree = React.createClass({displayName: "Tree",
 
 });
 
-function render_tree(json, element, settings, branch_annotations) {
+function render_tree(json, element, settings) {
 
-  React.render (
-    React.createElement(Tree, {json: json, settings: settings, branch_annotations: branch_annotations}),
+  return React.render (
+    React.createElement(Tree, {json: json, settings: settings}),
     $(element)[0]
   );
+
 
 }
 
 function rerender_tree(json, element, settings) {
+
   $(element).empty();
-  render_tree(json, settings);
+  return render_tree(json, settings);
+
 }
 
 
