@@ -101,21 +101,7 @@
 
             <div class='tab-pane' id="table_tab">
                 <div class="row">
-                    <div class="col-md-7">
-                        <table class="table table-hover table-condensed" style="margin-top:0.5em;">
-                            <thead>
-                                <tr>
-                                    <th>Name</th>
-                                    <th><abbr title="Branch Length">B</abbr></th>
-                                    <th><abbr title="Likelihood ratio test statistic">LRT</abbr></th>
-                                    <th>Test p-value</th>
-                                    <th>Uncorrected p-value</th>
-                                    <th>&omega; distribution over sites</th>
-                                </tr>
-                            </thead>
-                            <tbody id='table-branch-table'></tbody>
-                        </table>
-                    </div>
+                    <div id="hyphy-branch-table" class="col-md-7"></div>
                     <div class="col-md-5">
                         <div class="btn group pull-right">
                           <button id="export-chart-svg" type="button" class="btn btn-default btn-sm pull-right btn-export">
@@ -357,12 +343,15 @@
               json["fits"]["Full model"]["branch-annotations"] = formatBranchAnnotations("Full model");
               
               // return tree
-              render_tree(json, tree_id, tree_settings);
+              var tree_component = render_tree(json, tree_id, tree_settings);
 
               render_model_fits(json, "#hyphy-model-fits");
 
               // We will need to have two trees, unfortunately
               render_tree_summary(json, "#hyphy-tree-summary");
+
+              var test_results = json["test results"]; 
+              render_branch_table(tree_component.tree, test_results, json["fits"]["Full model"]["branch-annotations"], "#hyphy-branch-table");
 
            });
        });
