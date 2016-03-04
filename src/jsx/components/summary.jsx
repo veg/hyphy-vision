@@ -25,7 +25,6 @@ var Summary = React.createClass({
   fit_format : d3.format(".2f"),
 
   componentDidMount: function() {
-    console.log(this.props.json);
     this.setState({
       p : this.props.json["relaxation-test"]["p"],
       direction : this.props.json["fits"]["Alternative"]["K"] > 1 ? 'intensification' : 'relaxation',

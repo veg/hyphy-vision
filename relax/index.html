@@ -109,9 +109,9 @@
         $(document).ready(function() {
             d3.json("test-data/test.json", function(json) {
                 render_summary(json, summary_id);
-                render_omega_plot(json, omega_plots_id);
-                render_model_fits(json, model_fits_id);
-                render_tree(json, tree_id, tree_settings);
+                render_omega_plots(json, omega_plots_id);
+                //render_model_fits(json, model_fits_id);
+                //render_tree(json, tree_id, tree_settings);
            });
         });
 
@@ -128,9 +128,9 @@
                     return function(e) {
                         json = JSON.parse(e.target.result);
                         rerender_summary(json, summary_id);
-                        rerender_omega_plot(json, omega_plots_id);
-                        rerender_model_fits(json, model_fits_id);
-                        rerender_tree(json, tree_id, tree_settings);
+                        rerender_omega_plots(json, omega_plots_id);
+                        //rerender_model_fits(json, model_fits_id);
+                        //rerender_tree(json, tree_id, tree_settings);
                     };
 
                 })(f);

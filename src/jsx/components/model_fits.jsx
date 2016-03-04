@@ -1,4 +1,3 @@
-// TODO: Write documentation
 var ModelFits = React.createClass({
 
   getInitialState: function() {

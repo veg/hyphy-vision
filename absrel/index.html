@@ -25,6 +25,7 @@
 <body style='padding-top: 70px;'>
 
     <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
+
         <div class="container-fluid">
             <!-- Brand and toggle get grouped for better mobile display -->
             <div class="navbar-header">
@@ -74,23 +75,9 @@
 
         <div class="tab-content">
             <div class="tab-pane active" id="summary-tab">
-
-                <div class="row" style='margin-top: 5px'>
-                    <div class="col-md-12">
-                        <ul class="list-group">
-                            <li class="list-group-item list-group-item-info">
-                                <h3 class="list-group-item-heading"><i class="fa fa-list" style = 'margin-right: 10px'>
-                        </i><span id = 'summary-method-name'>Adaptive branch site REL</span> summary</h3>
-                                <p class="list-group-item-text lead" style="margin-top:0.5em; ">
-                                    Evidence<sup>&dagger;</sup> of episodic diversifying selection was found on <strong id='summary-selected-branches'></strong> out of <span id='summary-tested-branches'></span> tested branches (<span id='summary-total-branches'></span> total branches).
-                                </p>
-                                <p><small><sup>&dagger;</sup><abbr title = 'Likelihood Ratio Test'>LRT</abbr> p &le; 0.05, corrected for multiple testing.</small>
-                                    <br><small>Please cite <a href = '#' id = 'summary-pmid'>PMID XXX</a> if you use this result in a publication, presentation, or other scientific work.</small>
-                                </p>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
+                <div class="row">
+                  <div id="summary-div" class="col-md-12"></div>
+                </div> 
                 <div class="row">
                     <div id="hyphy-tree-summary" class="col-md-6"></div>
                     <div id="hyphy-model-fits" class="col-md-6"></div>
@@ -99,30 +86,7 @@
 
             <div class='tab-pane' id="tree-tab"></div>
 
-            <div class='tab-pane' id="table_tab">
-                <div class="row">
-                    <div id="hyphy-branch-table" class="col-md-7"></div>
-                    <div class="col-md-5">
-                        <div class="btn group pull-right">
-                          <button id="export-chart-svg" type="button" class="btn btn-default btn-sm pull-right btn-export">
-                            <span class="glyphicon glyphicon-floppy-save"></span> Export Chart to SVG
-                          </button>
-
-                          <button id="export-chart-png" type="button" class="btn btn-default btn-sm pull-right btn-export">
-                            <span class="glyphicon glyphicon-floppy-save"></span> Export Chart to PNG
-                          </button>
-                        </div>
-
-
-                        <div class="panel panel-default">
-                            <div class="panel-heading" id='primary_omega_tag'></div>
-                            <div class="panel-body">
-                                <svg id="primary_omega_plot" />
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <div class='tab-pane' id="table_tab"></div>
         </div>
     </div>
 
@@ -351,7 +315,13 @@
               render_tree_summary(json, "#hyphy-tree-summary");
 
               var test_results = json["test results"]; 
-              render_branch_table(tree_component.tree, test_results, json["fits"]["Full model"]["branch-annotations"], "#hyphy-branch-table");
+              render_branch_table(tree_component.tree, test_results, json["fits"]["Full model"]["branch-annotations"], "#table_tab");
+
+
+              var summary_element = "summary-div";
+              var pmid = json["PMID"]; 
+
+              render_absrel_summary(test_results, pmid, summary_element);
 
            });
        });

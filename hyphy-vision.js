@@ -891,415 +891,180 @@ function busted_render_summary(json) {
 datamonkey.busted.render_summary = busted_render_summary;
 
 
-//if (!datamonkey) {
-//    var datamonkey = new Object;
-//}
-
-//datamonkey.absrel = function() {
-
-//    //var width = 800, //$(container_id).width(),
-//    //    height = 600, //$(container_id).height()
-//    //    color_scheme = d3.scale.category10(),
-//    //    branch_omegas = {},
-//    //    branch_p_values = {},
-//    //    alpha_level = 0.05,
-//    //    omega_format = d3.format(".3r"),
-//    //    prop_format = d3.format(".2p"),
-//    //    fit_format = d3.format(".2f"),
-//    //    branch_table_format = d3.format(".4f"),
-//    //    render_color_bar = true,
-//    //    which_model = "Full model",
-//    //    color_legend_id = 'color_legend',
-//    //    self = this,
-//    //    container_id = 'tree_container';
-
-
-//    self.tree = d3.layout.phylotree("body")
-//        .size([height, width])
-//        .separation(function(a, b) {
-//            return 0;
-//        });
-
-//    tree = self.tree;
-
-//    self.analysis_data = null;
-
-//    self.svg = d3.select("#" + container_id).append("svg").attr("width", width)
-//        .attr("height", height);
-
-//    var scaling_exponent = 0.33;
-
-//    var omega_color = d3.scale.pow().exponent(scaling_exponent)
-//        .domain([0, 0.25, 1, 5, 10])
-//        .range(["#5e4fa2", "#3288bd", "#e6f598", "#f46d43", "#9e0142"])
-//        .clamp(true);
-
-
-//    // *** PHYLOTREE HANDLERS ***
-
-//    set_tree_handlers(self.tree);
-
-
-//    $("#datamonkey-absrel-color-or-grey").on("click", function(e) {
-//        if ($(self).data('color-mode') == 'gray') {
-//            $(self).data('color-mode', 'color');
-//            omega_color.range(["#5e4fa2", "#3288bd", "#e6f598", "#f46d43", "#9e0142"]);
-//        } else {
-//            $(self).data('color-mode', 'gray');
-//            omega_color.range(["#EEE", "#BBB", "#999", "#333", "#000"]);
-//        }
-//        branch_omegas = render_bs_rel_tree(self.analysis_data, which_model)[1];
-//        self.tree.update();
-//        render_color_scheme(color_legend_id);
-//    });
-
-//    $(".tree-tab-btn").on('click', function(e) {
-//      //self.tree.placenodes().update();
-//    });
-
-//    $("#datamonkey-absrel-show-color-bar").on("click", function(e) {
-//        render_color_bar = !render_color_bar;
-//        if ($(self).data('color-bar') == 'on') {
-//            $(self).data('color-mode', 'off');
-//        } else {
-//            $(self).data('color-mode', 'on');
-//        }
-//        render_color_scheme(color_legend_id);
-//    });
-
-
-
-//    // *** MODEL HANDLERS ***
-//    $("#datamonkey-absrel-show-model").on("click", function(e) {
-//        if ($(self).data('model') == 'MG94') {
-//            $(self).data('model', 'Full model');
-//        } else {
-//            $(self).data('model', 'MG94');
-//        }
-//        which_model = $(self).data('model');
-//        branch_omegas = render_bs_rel_tree(self.analysis_data, which_model)[1];
-//        self.tree.layout();
-//    });
-
-//    function default_tree_settings() {
-//        self.tree.branch_length(null);
-//        self.tree.branch_name(null);
-//        self.tree.node_span('equal');
-//        self.tree.options({
-//            'draw-size-bubbles': false,
-//            'selectable': false,
-//            'transitions': false,
-//            'left-right-spacing': 'fit-to-size'
-//        }, true);
-//        self.tree.font_size(18);
-//        self.tree.scale_bar_font_size(14);
-//        self.tree.node_circle_size(0);
-//        self.tree.spacing_x(35, true);
-
-//        //self.tree.style_nodes (node_colorizer);
-//        self.tree.style_edges(edge_colorizer);
-//        //self.tree.selection_label (current_selection_name);
-//    }
-
-
-//    function create_gradient(svg_defs, grad_id, rateD, already_cumulative) {
-//        var this_grad = svg_defs.append("linearGradient")
-//            .attr("id", grad_id);
-//        var current_weight = 0;
-//        rateD.forEach(function(d, i) {
-//            if (d[1]) {
-//                var new_weight = current_weight + d[1];
-//                this_grad.append("stop")
-//                    .attr("offset", "" + current_weight * 100 + "%")
-//                    .style("stop-color", omega_color(d[0]));
-//                this_grad.append("stop")
-//                    .attr("offset", "" + new_weight * 100 + "%")
-//                    .style("stop-color", omega_color(d[0]));
-//                current_weight = new_weight;
-//            }
-//        });
-//    }
-
-//    function render_bs_rel_tree (json, model_id) {
-
-//        gradID = 0;
-//        var local_branch_omegas = {};
-
-//        var fitted_distributions = json["fits"][model_id]["rate distributions"];
-
-//        for (var b in fitted_distributions) {
-//            // Quick inf and nan quick fix 
-//            fitted_distributions[b] = fitted_distributions[b].replace(/inf/g, '1e+9999');
-//            fitted_distributions[b] = fitted_distributions[b].replace(/-nan/g, 'null');
-//            fitted_distributions[b] = fitted_distributions[b].replace(/nan/g, 'null');
-
-//            var rateD = JSON.parse(fitted_distributions[b]);
-//            if (rateD.length == 1) {
-//                local_branch_omegas[b] = {
-//                    'color': omega_color(rateD[0][0])
-//                };
-//            } else {
-//                gradID++;
-//                var grad_id = "branch_gradient_" + gradID;
-//                create_gradient(svg_defs, grad_id, rateD);
-//                local_branch_omegas[b] = {
-//                    'grad': grad_id
-//                };
-//            }
-//            local_branch_omegas[b]['omegas'] = rateD;
-//            local_branch_omegas[b]['tooltip'] = "<b>" + b + "</b>";
-//            local_branch_omegas[b]['distro'] = "";
-//            rateD.forEach(function(d, i) {
-//                var omega_value = d[0] > 1e20 ? "&infin;" : omega_format(d[0]),
-//                    omega_weight = prop_format(d[1]);
-
-//                local_branch_omegas[b]['tooltip'] += "<br/>&omega;<sub>" + (i + 1) + "</sub> = " + omega_value +
-//                    " (" + omega_weight + ")";
-//                if (i) {
-//                    local_branch_omegas[b]['distro'] += "<br/>";
-//                }
-//                local_branch_omegas[b]['distro'] += "&omega;<sub>" + (i + 1) + "</sub> = " + omega_value +
-//                    " (" + omega_weight + ")";
-//            });
-//            local_branch_omegas[b]['tooltip'] += "<br/><i>p = " + omega_format(json["test results"][b]["p"]) + "</i>";
-//        }
-
-//        self.tree.style_edges(function(element, data) {
-//            edge_colorizer(element, data);
-//        });
-
-//        branch_lengths = {};
-//        self.tree.get_nodes().forEach(function(d) {
-//            if (d.parent) {
-//                branch_lengths[d.name] = self.tree.branch_length()(d);
-//            }
-//        });
-
-//        return [branch_lengths, local_branch_omegas];
-//    }
-
-//    var render_bs_rel = function(json) {
-
-//        try {
-//            d3.select("#datamonkey-absrel-error").style('display', 'none');
-
-//            self.analysis_data = json;
-
-//            function make_distro_plot(d) {
-//                if (Object.keys(rate_distro_by_branch).indexOf(d[0]) != -1) {
-//                    drawDistribution(d[0],
-//                        rate_distro_by_branch[d[0]].map(function(r) {
-//                            return r[0];
-//                        }),
-//                        rate_distro_by_branch[d[0]].map(function(r) {
-//                            return r[1];
-//                        }), {
-//                            'log': true,
-//                            'legend': false,
-//                            'domain': [0.00001, 10],
-//                            'dimensions': {
-//                                'width': 400,
-//                                'height': 400
-//                            }
-//                        });
-//                }
-//            }
-
-//            default_tree_settings();
-
-//            branch_p_values = {};
-
-//            var rate_distro_by_branch = {},
-//                branch_count = 0,
-//                selected_count = 0,
-//                tested_count = 0;
-
-//            var for_branch_table = [];
-
-//            var tree_info = render_bs_rel_tree(json, "Full model");
-
-//            var branch_lengths = tree_info[0],
-//                tested_branches = {};
-
-//            branch_omegas = tree_info[1];
-
-//            for (var p in json["test results"]) {
-//                branch_p_values[p] = json["test results"][p]["p"];
-//                if (branch_p_values[p] <= 0.05) {
-//                    selected_count++;
-//                }
-//                if (json["test results"][p]["tested"] > 0) {
-//                    tested_branches[p] = true;
-//                    tested_count += 1;
-//                }
-//            }
-
-//            var fitted_distributions = json["fits"]["Full model"]["rate distributions"];
-
-//            for (var b in fitted_distributions) {
-//                for_branch_table.push([b + (tested_branches[b] ? "" : " (not tested)"), branch_lengths[b], 0, 0, 0]);
-//                try {
-//                    for_branch_table[branch_count][2] = json["test results"][b]["LRT"];
-//                    for_branch_table[branch_count][3] = json["test results"][b]["p"];
-//                    for_branch_table[branch_count][4] = json["test results"][b]["uncorrected p"];
-//                } catch (e) {}
-
-//                var rateD = (JSON.parse(fitted_distributions[b]));
-//                rate_distro_by_branch[b] = rateD;
-//                for_branch_table[branch_count].push(branch_omegas[b]['distro']);
-//                branch_count += 1;
-//            }
-
-
-
-//            render_color_scheme(color_legend_id);
-
-//            // render summary data
-
-//            var total_tree_length = json["fits"]["Full model"]["tree length"];
-
-//            for_branch_table = for_branch_table.sort(function(a, b) {
-//                return a[4] - b[4];
-//            });
-//            make_distro_plot(for_branch_table[0]);
-
-//            for_branch_table = d3.select('#table-branch-table').selectAll("tr").data(for_branch_table);
-//            for_branch_table.enter().append('tr');
-//            for_branch_table.exit().remove();
-//            for_branch_table.style('font-weight', function(d) {
-//                return d[3] <= 0.05 ? 'bold' : 'normal';
-//            });
-//            for_branch_table.on("click", function(d) {
-//                make_distro_plot(d);
-//            });
-//            for_branch_table = for_branch_table.selectAll("td").data(function(d) {
-//                return d;
-//            });
-//            for_branch_table.enter().append("td");
-//            for_branch_table.html(function(d) {
-//                if (typeof d == "number") {
-//                    return branch_table_format(d);
-//                }
-//                return d;
-//            });
-
-
-//            d3.select('#summary-method-name').text(json['version']);
-//            d3.select('#summary-pmid').text("PubMed ID " + json['PMID'])
-//                .attr("href", "http://www.ncbi.nlm.nih.gov/pubmed/" + json['PMID']);
-//            d3.select('#summary-total-runtime').text(format_run_time(json['timers']['overall']));
-//            d3.select('#summary-complexity-runtime').text(format_run_time(json['timers']['overall']));
-//            d3.select('#summary-complexity-runtime').text(format_run_time(json['timers']['Complexity analysis']));
-//            d3.select('#summary-testing-runtime').text(format_run_time(json['timers']['Testing']));
-//            d3.select('#summary-total-branches').text(branch_count);
-//            d3.select('#summary-tested-branches').text(tested_count);
-//            d3.select('#summary-selected-branches').text(selected_count);
-
-//            var model_rows = [
-//                [],
-//                []
-//            ];
-
-//            for (k = 0; k < 2; k++) {
-//                var access_key;
-//                if (k == 0) {
-//                    access_key = 'MG94';
-//                    model_rows[k].push('Branch-wise &omega; variation (MG94)');
-//                } else {
-//                    access_key = 'Full model';
-//                    model_rows[k].push('Branch-site &omega; variation');
-//                }
-//                model_rows[k].push(fit_format(json['fits'][access_key]['log-likelihood']));
-//                model_rows[k].push(json['fits'][access_key]['parameters']);
-//                model_rows[k].push(fit_format(json['fits'][access_key]['AIC-c']));
-//                model_rows[k].push(format_run_time(json['fits'][access_key]['runtime']));
-//            }
-
-//            model_rows = d3.select('#summary-model-table').selectAll("tr").data(model_rows);
-//            model_rows.enter().append('tr');
-//            model_rows.exit().remove();
-//            model_rows = model_rows.selectAll("td").data(function(d) {
-//                return d;
-//            });
-//            model_rows.enter().append("td");
-//            model_rows.html(function(d) {
-//                return d;
-//            });
-
-//            d3.select('#summary-tree-length').text(fit_format(json["fits"]["Full model"]["tree length"]));
-//            d3.select('#summary-tree-length-mg94').text(fit_format(json["fits"]["MG94"]["tree length"]));
-
-
-//            var by_rate_class_count = {};
-//            self.tree.get_nodes().forEach(function(d) {
-//                if (d.parent) {
-//                    var rc = rate_distro_by_branch[d.name].length;
-//                    if (!(rc in by_rate_class_count)) {
-//                        by_rate_class_count[rc] = [rc, 0, 0, 0];
-//                    }
-//                    by_rate_class_count[rc][1]++;
-//                    by_rate_class_count[rc][2] += self.tree.branch_length()(d);
-//                    if (json["test results"][d.name]["p"] <= 0.05) {
-//                        by_rate_class_count[rc][3]++;
-//                    }
-//                }
-//            });
-//            var by_rate_class_count_array = [];
-//            for (k in by_rate_class_count) {
-//                d = by_rate_class_count[k];
-//                by_rate_class_count_array.push([d[0], d[1], prop_format(d[1] / branch_count), prop_format(d[2] / total_tree_length), d[3]]);
-//            };
-
-//            by_rate_class_count_array = by_rate_class_count_array.sort(function(a, b) {
-//                return a[0] - b[0];
-//            });
-//            by_rate_class_count_array = d3.select('#summary-tree-table').selectAll("tr").data(by_rate_class_count_array);
-//            by_rate_class_count_array.enter().append('tr');
-//            by_rate_class_count_array.exit().remove();
-//            by_rate_class_count_array = by_rate_class_count_array.selectAll("td").data(function(d) {
-//                return d;
-//            });
-//            by_rate_class_count_array.enter().append("td");
-//            by_rate_class_count_array.html(function(d) {
-//                return d;
-//            });
-
-//            self.tree.layout();
-
-//        } catch (e) {
-//            render_error(e.message);
-//        }
-
-//    }
-
-//    function format_run_time(seconds) {
-//        var duration_string = "";
-//        seconds = parseFloat(seconds);
-//        var split_array = [Math.floor(seconds / (24 * 3600)), Math.floor(seconds / 3600) % 24, Math.floor(seconds / 60) % 60, seconds % 60],
-//            quals = ["d.", "hrs.", "min.", "sec."];
-
-//        split_array.forEach(function(d, i) {
-//            if (d) {
-//                duration_string += " " + d + " " + quals[i];
-//            }
-//        });
-
-//        return duration_string;
-//    }
-
-
-
-//    return render_bs_rel;
-
-//}
+var BSRELSummary = React.createClass({displayName: "BSRELSummary",
+
+  float_format : d3.format(".2f"),
+
+  countBranchesTested: function(branches_tested) {
+    if(branches_tested) {
+      return branches_tested.split(';').length;
+    } else {
+      return 0;
+    }
+  },
+
+  getBranchesWithEvidence : function() {
+    var self = this;
+    return _.filter(self.props.test_results, function(d) { return d.p <= .05 }).length;
+  },
+
+  getTestBranches : function() {
+    var self = this;
+    return _.filter(self.props.test_results, function(d) { return d.tested > 0 }).length;
+  },
+
+  getTotalBranches : function() {
+    var self = this;
+    return _.keys(self.props.test_results).length;
+  },
+
+  getInitialState: function() {
+
+    return { 
+              branches_with_evidence : this.getBranchesWithEvidence(), 
+              test_branches : this.getTestBranches(),
+              total_branches : this.getTotalBranches()
+           };
+  },
+
+
+  componentWillMount: function() {
+
+  },
+
+  render: function() {
+
+    var self = this;
+
+    return (
+          React.createElement("ul", {className: "list-group"}, 
+              React.createElement("li", {className: "list-group-item list-group-item-info"}, 
+                  React.createElement("h3", {className: "list-group-item-heading"}, 
+                    React.createElement("i", {className: "fa fa-list"}), 
+                    React.createElement("span", {id: "summary-method-name"}, "Adaptive branch site REL"), " summary"
+                  ), 
+                  React.createElement("p", {className: "list-group-item-text lead"}, 
+                    "Evidence", React.createElement("sup", null, "†"), " of episodic diversifying selection was found on",  
+                      React.createElement("strong", null, " ", self.state.branches_with_evidence), " out of",  
+                      React.createElement("span", null, " ", self.state.test_branches), " tested branches" + ' ' + 
+                      "(", React.createElement("span", null, self.state.total_branches), " total branches)."
+                  ), 
+                  React.createElement("p", null, 
+                    React.createElement("small", null, 
+                      React.createElement("sup", null, "†"), React.createElement("abbr", {title: "Likelihood Ratio Test"}, "LRT"), " p ≤ 0.05, corrected for multiple testing."
+                    )
+                  ), 
+                  React.createElement("p", null, 
+                    React.createElement("small", null, 
+                      "Please cite ", React.createElement("a", {href: "#", id: "summary-pmid"}, "PMID ", self.props.pmid), " if you use this result in a publication, presentation, or other scientific work."
+                    )
+                  )
+              )
+          )
+        )
+  }
+
+});
+
+// Will need to make a call to this
+// omega distributions
+function render_absrel_summary(test_results, pmid, element) {
+  console.log(pmid);
+  React.render(
+    React.createElement(BSRELSummary, {test_results: test_results, pmid: pmid}),
+    document.getElementById(element)
+  );
+}
+
+
+var BSREL = React.createClass({displayName: "BSREL",
+
+  float_format : d3.format(".2f"),
+
+  countBranchesTested: function(branches_tested) {
+    if(branches_tested) {
+      return branches_tested.split(';').length;
+    } else {
+      return 0;
+    }
+  },
+
+  getInitialState: function() {
+
+    return { 
+              branches_with_evidence : this.getBranchesWithEvidence(), 
+              test_branches : this.getTestBranches(),
+              total_branches : this.getTotalBranches()
+           };
+  },
+
+
+  componentWillMount: function() {
+
+  },
+
+  render: function() {
+
+    var self = this;
+
+    return (
+        React.createElement("div", {class: "tab-content"}, 
+            React.createElement("div", {class: "tab-pane active", id: "summary-tab"}, 
+                React.createElement("div", {class: "row"}, 
+                  React.createElement("div", {id: "summary-div", class: "col-md-12"})
+                ), 
+                React.createElement("div", {class: "row"}, 
+                    React.createElement("div", {id: "hyphy-tree-summary", class: "col-md-6"}), 
+                    React.createElement("div", {id: "hyphy-model-fits", class: "col-md-6"})
+                )
+            ), 
+
+            React.createElement("div", {class: "tab-pane", id: "tree-tab"}), 
+            React.createElement("div", {class: "tab-pane", id: "table_tab"})
+
+        )
+        )
+  }
+
+});
+
+// Will need to make a call to this
+// omega distributions
+function render_absrel(json, element) {
+  React.render(
+    React.createElement(BSREL, {json: json}),
+    document.getElementById(element)
+  );
+}
 
 // TODO: Write documentation
 var BranchTable = React.createClass({displayName: "BranchTable",
 
   getInitialState: function() {
+
     var table_row_data = this.getBranchRows();
     var table_columns = this.getBranchColumns(table_row_data);
-    return { table_row_data: table_row_data, table_columns: table_columns};
+    var initial_model_name = _.take(_.keys(this.props.annotations));
+    var initial_omegas = this.props.annotations[initial_model_name]["omegas"];
+
+    var distro_settings = {
+      dimensions : { width : 600, height : 400 },
+      margins : { 'left': 50, 'right': 15, 'bottom': 35, 'top': 35 },
+      legend: false,
+      domain : [0.00001, 10],
+      do_log_plot : true,
+      k_p : null,
+      plot : null,
+      svg_id : "prop-chart"
+    };
+
+    return { 
+             table_row_data : table_row_data, 
+             table_columns : table_columns,
+             current_model_name : initial_model_name,
+             current_omegas : initial_omegas,
+             distro_settings : distro_settings
+           };
   },
 
   getBranchLength : function(m) {
@@ -1376,11 +1141,43 @@ var BranchTable = React.createClass({displayName: "BranchTable",
       if (a[0] == b[0]) {
           return a[1] < b[1] ? -1 : (a[1] == b[1] ? 0 : 1);
       }
-      return a[0] - b[0];
+      return a[3] - b[3];
 
     });
 
     return table_row_data;
+
+  },
+
+  setEvents : function() {
+
+    var self = this;
+    var branch_table = d3.select('#table-branch-table').selectAll("tr");
+
+    branch_table.on("mouseover", function(d) {
+      var label = d[0];
+      self.setState({
+                      current_model_name : label, 
+                      current_omegas : self.props.annotations[label]["omegas"]
+                    });
+    });
+
+  },
+
+  createDistroChart : function() {
+
+    var self = this;
+
+    this.settings = {
+      dimensions : { width : 600, height : 400 },
+      margins : { 'left': 50, 'right': 15, 'bottom': 35, 'top': 35 },
+      has_zeros : true,
+      legend_id : null,
+      do_log_plot : true,
+      k_p : null,
+      plot : null,
+      svg_id : "prop-chart"
+    };
 
   },
 
@@ -1428,6 +1225,10 @@ var BranchTable = React.createClass({displayName: "BranchTable",
     var branch_rows = d3.select('#table-branch-table').selectAll("tr").data(this.state.table_row_data);
     branch_rows.enter().append('tr');
     branch_rows.exit().remove();
+    branch_rows.style('font-weight', function(d) {
+        return d[3] <= 0.05 ? 'bold' : 'normal';
+    });
+
     branch_rows = branch_rows.selectAll("td").data(function(d) {
         return d;
     });
@@ -1436,17 +1237,30 @@ var BranchTable = React.createClass({displayName: "BranchTable",
         return d;
     });
 
+    this.createDistroChart();
+    this.setEvents();
+
   },
 
   render: function() {
 
+    var self = this;
+
     return (
-        React.createElement("div", {className: "col-md-7"}, 
-            React.createElement("table", {className: "table table-hover table-condensed"}, 
-                React.createElement("thead", {id: "table-branch-header"}), 
-                React.createElement("tbody", {id: "table-branch-table"})
-            )
+        React.createElement("div", {className: "row"}, 
+          React.createElement("div", {id: "hyphy-branch-table", className: "col-md-7"}, 
+              React.createElement("table", {className: "table table-hover table-condensed"}, 
+                  React.createElement("thead", {id: "table-branch-header"}), 
+                  React.createElement("tbody", {id: "table-branch-table"})
+              )
+          ), 
+
+          React.createElement("div", {id: "primary-omega-tag", className: "col-md-5"}, 
+            React.createElement(PropChart, {name: self.state.current_model_name, omegas: self.state.current_omegas, 
+             settings: self.state.distro_settings})
+          )
         )
+
       )
   }
 
@@ -2718,7 +2532,6 @@ datamonkey.fade = function(json) {
 
 }
 
-// TODO: Write documentation
 var ModelFits = React.createClass({displayName: "ModelFits",
 
   getInitialState: function() {
@@ -3335,10 +3148,12 @@ var OmegaPlotGrid = React.createClass({displayName: "OmegaPlotGrid",
     return {omega_distributions: this.getDistributions(this.props.json)};
   },
   componentDidMount: function() {
+
   },
   getDistributions : function(json) {
 
     var omega_distributions = {};
+
     for (var m in json["fits"]) {
         var this_model = json["fits"][m];
         omega_distributions[m] = {};
@@ -3400,18 +3215,317 @@ var OmegaPlotGrid = React.createClass({displayName: "OmegaPlotGrid",
 
 });
 
-// Will need to make a call to this
+
+function render_omega_plot(model_name, omegas, settings) {
+  React.render(
+    React.createElement(OmegaPlot, {name: model_name, omegas: omegas, settings: settings}),
+    document.getElementById("hyphy-omega-plots")
+  );
+}
+
 // omega distributions
-function render_omega_plot(json) {
+function render_omega_plots(json) {
   React.render(
     React.createElement(OmegaPlotGrid, {json: json}),
     document.getElementById("hyphy-omega-plots")
   );
 }
 
-function rerender_omega_plot(json) {
+function rerender_omega_plots(json) {
   $("#hyphy-omega-plots").empty();
-  render_omega_plot(json);
+  render_omega_plots(json);
+}
+
+
+var PropChart = React.createClass({displayName: "PropChart",
+
+  getDefaultProps : function() {
+    return {
+      svg_id : null,
+      dimensions : { width : 600, height : 400 },
+      margins : { 'left': 50, 'right': 15, 'bottom': 35, 'top': 35 },
+      has_zeros : false,
+      legend_id : null,
+      do_log_plot : true,
+      k_p : null,
+      plot : null,
+    };
+
+  },
+
+  getInitialState: function() {
+    return { 
+             model_name : this.props.name, 
+             omegas : this.props.omegas,
+             settings : this.props.settings,
+           };
+  },
+
+  setEvents : function() {
+    var self = this;
+
+    d3.select("#" + this.save_svg_id).on('click', function(e) {
+      datamonkey.save_image("svg", "#" + self.svg_id);
+    });
+
+    d3.select("#" + this.save_png_id).on('click', function(e) {
+      datamonkey.save_image("png", "#" + self.svg_id);
+    });
+  },
+
+  initialize : function() {
+
+    // loop through omega lines and plot them
+
+    // clear svg
+    d3.select("#prop-chart").html("");
+
+    this.data_to_plot = this.state.omegas;
+    //var secondary_data = this.props.omegas["Test"];
+
+    // Set props from settings
+    this.props.svg_id = this.props.settings.svg_id;
+    this.props.dimensions = this.props.settings.dimensions || this.props.dimensions;
+    this.props.legend_id = this.props.settings.legend || this.props.legend_id;
+    this.props.do_log_plot = this.props.settings.log || this.props.do_log_plot;
+    this.props.k_p = this.props.settings.k || this.props.k_p;
+
+    var dimensions = this.props.dimensions;
+    var margins = this.props.margins;
+
+    if (this.props.do_log_plot) {
+      this.props.has_zeros = this.data_to_plot.some(function(d) { return d.omega <= 0; });
+    }
+
+    this.plot_width = dimensions["width"] - margins['left'] - margins['right'],
+    this.plot_height = dimensions["height"] - margins['top'] - margins['bottom'];
+
+    var domain = this.state.settings["domain"];
+
+    this.omega_scale = (this.props.settings.do_log_plot 
+        ? (this.props.settings.has_zeros 
+        ? d3.scale.pow().exponent (0.2) : d3.scale.log()) : d3.scale.linear())
+        .range([0, this.plot_width]).domain(domain).nice();
+
+    this.proportion_scale = d3.scale.linear().range([this.plot_height, 0]).domain([-0.05, 1]).clamp(true);
+
+    // compute margins -- circle AREA is proportional to the relative weight
+    // maximum diameter is (height - text margin)
+    this.svg = d3.select("#" + this.props.settings.svg_id).attr("width", dimensions.width).attr("height", dimensions.height);
+    this.plot = this.svg.selectAll(".container");
+
+    this.svg.selectAll("defs").remove();
+    this.svg.append("defs").append("marker")
+        .attr("id", "arrowhead")
+        .attr("refX", 10) /*must be smarter way to calculate shift*/
+        .attr("refY", 4)
+        .attr("markerWidth", 10)
+        .attr("markerHeight", 8)
+        .attr("orient", "auto")
+        .attr("stroke", "#000")
+        .attr("fill", "#000")
+        .append("path")
+        .attr("d", "M 0,0 V8 L10,4 Z");
+
+    if (this.plot.empty()) {
+      this.plot = this.svg.append("g").attr("class", "container");
+    }
+
+    this.plot.attr("transform", "translate(" + this.props.margins["left"] + " , " + this.props.margins["top"] + ")");
+    this.reference_omega_lines = this.plot.selectAll(".hyphy-omega-line-reference"),
+    this.displacement_lines = this.plot.selectAll(".hyphy-displacement-line");
+
+    this.createNeutralLine();
+    this.createXAxis();
+    this.createYAxis();
+    this.setEvents();
+    this.createOmegaLine(this.state.omegas);
+    //_.map(this.props.omegas, function(d) { return this.createOmegaLine(d["omega"],d["prop"]); });
+    
+
+  },
+
+  createOmegaLine : function(omegas) {
+
+    var data_to_plot = this.data_to_plot;
+    var self = this;
+
+    // generate color wheel from omegas
+    var colores_g = _.shuffle([ "#1f77b4"
+      ,"#ff7f0e"
+      ,"#2ca02c"
+      ,"#d62728"
+      ,"#9467bd"
+      ,"#8c564b"
+      ,"#e377c2"
+      ,"#7f7f7f"
+      ,"#bcbd22"
+      ,"#17becf"
+    ]);
+
+
+    // ** Omega Line (Red) ** //
+    var omega_lines = this.plot.selectAll(".hyphy-omega-line").data(omegas);
+    omega_lines.enter().append("line");
+    omega_lines.exit().remove();
+
+    omega_lines.transition().attr("x1", function(d) {
+        return self.omega_scale(d.omega);
+    })
+        .attr("x2", function(d) {
+            return self.omega_scale(d.omega);
+        })
+        .attr("y1", function(d) {
+            return self.proportion_scale(-0.05);
+        })
+        .attr("y2", function(d) {
+            return self.proportion_scale(d.prop);
+        })
+        .style("stroke", function(d) {
+          color = _.take(colores_g);
+          colores_g = _.rest(colores_g);
+          return color;
+        })
+        .attr("class", "hyphy-omega-line");
+  },
+
+  createNeutralLine : function() {
+    var self = this;
+
+    // ** Neutral Line (Blue) ** //
+    var neutral_line = this.plot.selectAll(".hyphy-neutral-line").data([1]);
+    neutral_line.enter().append("line").attr("class", "hyphy-neutral-line");
+    neutral_line.exit().remove();
+    neutral_line.transition().attr("x1", function(d) {
+        return self.omega_scale(d);
+    }).attr("x2", function(d) {
+          return self.omega_scale(d);
+      })
+      .attr("y1", 0)
+      .attr("y2", this.plot_height);
+
+  },
+  createXAxis : function() {
+
+    // *** X-AXIS *** //
+    var xAxis = d3.svg.axis()
+        .scale(this.omega_scale)
+        .orient("bottom");
+
+    if (this.props.do_log_plot) {
+        xAxis.ticks(10, this.props.has_zeros ? ".2r" : ".1r");
+    }
+
+    var x_axis = this.svg.selectAll(".x.axis");
+    var x_label;
+
+    if (x_axis.empty()) {
+        x_axis = this.svg.append("g")
+            .attr("class", "x hyphy-axis");
+
+        x_label = x_axis.append("g").attr("class", "hyphy-axis-label x-label");
+    } else {
+        x_label = x_axis.select(".axis-label.x-label");
+    }
+
+    x_axis.attr("transform", "translate(" + this.props.margins["left"] + "," + (this.plot_height + this.props.margins["top"]) + ")")
+        .call(xAxis);
+    x_label = x_label.attr("transform", "translate(" + this.plot_width + "," + this.props.margins["bottom"] + ")")
+        .selectAll("text").data(["\u03C9"]);
+    x_label.enter().append("text");
+    x_label.text(function(d) {
+        return d
+    }).style("text-anchor", "end")
+      .attr("dy", "0.0em");
+
+  },
+  createYAxis : function() {
+
+    // *** Y-AXIS *** //
+    var yAxis = d3.svg.axis()
+        .scale(this.proportion_scale)
+        .orient("left")
+        .ticks(10, ".1p");
+
+    var y_axis = this.svg.selectAll(".y.hyphy-axis");
+    var y_label;
+
+    if (y_axis.empty()) {
+        y_axis = this.svg.append("g")
+            .attr("class", "y hyphy-axis");
+        y_label = y_axis.append("g").attr("class", "hyphy-axis-label y-label");
+    } else {
+        y_label = y_axis.select(".hyphy-axis-label.y-label");
+    }
+    y_axis.attr("transform", "translate(" + this.props.margins["left"] + "," + this.props.margins["top"] + ")")
+        .call(yAxis);
+    y_label = y_label.attr("transform", "translate(" + (-this.props.margins["left"]) + "," + 0 + ")")
+        .selectAll("text").data(["Proportion of sites"]);
+    y_label.enter().append("text");
+    y_label.text(function(d) {
+        return d
+    }).style("text-anchor", "start")
+      .attr("dy", "-1em")
+
+  },
+
+  componentDidMount: function() {
+    this.initialize();
+  },
+
+  componentWillReceiveProps: function(nextProps) {
+
+    this.setState({
+                    model_name : nextProps.name, 
+                    omegas : nextProps.omegas
+                  });
+
+  },
+
+  componentDidUpdate : function() {
+    this.initialize();
+  },
+
+  render: function() {
+
+    this.svg_id = this.props.settings.svg_id;
+    this.save_svg_id = "export-" + this.svg_id + "-svg";
+    this.save_png_id = "export-" + this.svg_id + "-png";
+
+    return (
+        React.createElement("div", {className: "panel panel-default", id:  this.state.model_name}, 
+            React.createElement("div", {className: "panel-heading"}, 
+                React.createElement("h3", {className: "panel-title"}, React.createElement("strong", null,  this.state.model_name)), 
+                React.createElement("p", null, "ω distribution"), 
+                React.createElement("div", {className: "btn-group"}, 
+                    React.createElement("button", {id:  this.save_svg_id, type: "button", className: "btn btn-default btn-sm"}, 
+                        React.createElement("span", {className: "glyphicon glyphicon-floppy-save"}), " SVG"
+                    ), 
+                    React.createElement("button", {id:  this.save_png_id, type: "button", className: "btn btn-default btn-sm"}, 
+                        React.createElement("span", {className: "glyphicon glyphicon-floppy-save"}), " PNG"
+                    )
+                )
+            ), 
+            React.createElement("div", {className: "panel-body"}, 
+                React.createElement("svg", {id:  this.svg_id})
+            )
+        )
+    );
+  }
+});
+
+function render_prop_chart(model_name, omegas, settings) {
+  return React.render(
+    React.createElement(PropChart, {name: model_name, omegas: omegas, settings: settings}),
+    document.getElementById("primary-omega-tag")
+  );
+}
+
+function rerender_prop_chart(model_name, omeags, settings) {
+
+  $("#primary-omega-tag").empty();
+  return render_prop_chart(model_name, omeags, settings);
+
 }
 
 
@@ -3442,7 +3556,6 @@ var Summary = React.createClass({displayName: "Summary",
   fit_format : d3.format(".2f"),
 
   componentDidMount: function() {
-    console.log(this.props.json);
     this.setState({
       p : this.props.json["relaxation-test"]["p"],
       direction : this.props.json["fits"]["Alternative"]["K"] > 1 ? 'intensification' : 'relaxation',
