@@ -1,14 +1,19 @@
 var ModelFits = React.createClass({
 
   getInitialState: function() {
-    var table_row_data = this.getModelRows();
-    var table_columns = this.getModelColumns(table_row_data);
-    return { table_row_data: table_row_data, table_columns: table_columns};
+    var table_row_data = this.getModelRows(this.props.json),
+        table_columns = this.getModelColumns(table_row_data);
+
+    return { 
+             table_row_data: table_row_data, 
+             table_columns: table_columns
+           };
   },
 
   formatRuntime : function(seconds) {
-      var duration_string = "";
-      seconds = parseFloat(seconds);
+      var duration_string = "",
+          seconds = parseFloat(seconds);
+
       var split_array = [Math.floor(seconds / (24 * 3600)), Math.floor(seconds / 3600) % 24, Math.floor(seconds / 60) % 60, seconds % 60],
           quals = ["d.", "hrs.", "min.", "sec."];
 
@@ -57,14 +62,14 @@ var ModelFits = React.createClass({
       var this_distro_entry = [d, "", "", ""];
 
       omega_distributions[m][d] = this_distro.map(function(d) {
-          return {
-            'omega': d[0],
-            'weight': d[1]
-          };
+        return {
+          'omega': d[0],
+          'weight': d[1]
+        };
       });
 
       for (var k = 0; k < this_distro.length; k++) {
-          this_distro_entry[k + 1] = (omega_format(this_distro[k][0]) + " (" + prop_format(this_distro[k][1]) + ")");
+        this_distro_entry[k + 1] = (omega_format(this_distro[k][0]) + " (" + prop_format(this_distro[k][1]) + ")");
       }
 
       distributions.push(this_distro_entry);
@@ -78,9 +83,12 @@ var ModelFits = React.createClass({
 
   },
 
-  getModelRows : function() {
+  getModelRows : function(json) {
 
-    var json = this.props.json;
+    if(!json) {
+      return [];
+    }
+
     var table_row_data = [];
     var omega_format = d3.format(".3r");
     var prop_format = d3.format(".2p");
@@ -177,6 +185,9 @@ var ModelFits = React.createClass({
                   ];
 
     // validate each table row with its associated header
+    if(table_row_data.length == 0) {
+      return [];
+    }
 
     // trim columns to length of table_row_data
     column_headers = _.take(all_columns, table_row_data[0].length)
@@ -188,7 +199,7 @@ var ModelFits = React.createClass({
     return column_headers;
   },
 
-  componentDidMount: function() {
+  componentDidUpdate : function() {
 
     var model_columns = d3.select('#summary-model-header1');
     model_columns = model_columns.selectAll("th").data(this.state.table_columns);
@@ -207,6 +218,18 @@ var ModelFits = React.createClass({
     model_rows.html(function(d) {
         return d;
     });
+
+  },
+
+  componentWillReceiveProps: function(nextProps) {
+
+    var table_row_data = this.getModelRows(nextProps.json),
+        table_columns = this.getModelColumns(table_row_data);
+
+    this.setState({
+             table_row_data: table_row_data, 
+             table_columns: table_columns
+           });
   },
 
   render: function() {

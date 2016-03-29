@@ -3,39 +3,54 @@ var BSRELSummary = React.createClass({
   float_format : d3.format(".2f"),
 
   countBranchesTested: function(branches_tested) {
+
     if(branches_tested) {
       return branches_tested.split(';').length;
     } else {
       return 0;
     }
+
   },
 
-  getBranchesWithEvidence : function() {
+  getBranchesWithEvidence : function(test_results) {
+
     var self = this;
-    return _.filter(self.props.test_results, function(d) { return d.p <= .05 }).length;
+    return _.filter(test_results, function(d) { return d.p <= .05 }).length;
+
   },
 
-  getTestBranches : function() {
+  getTestBranches : function(test_results) {
+
     var self = this;
-    return _.filter(self.props.test_results, function(d) { return d.tested > 0 }).length;
+    return _.filter(test_results, function(d) { return d.tested > 0 }).length;
+
   },
 
-  getTotalBranches : function() {
+  getTotalBranches : function(test_results) {
+
     var self = this;
-    return _.keys(self.props.test_results).length;
+    return _.keys(test_results).length;
+
   },
 
   getInitialState: function() {
 
+    var self = this;
+
     return { 
-              branches_with_evidence : this.getBranchesWithEvidence(), 
-              test_branches : this.getTestBranches(),
-              total_branches : this.getTotalBranches()
+              branches_with_evidence : this.getBranchesWithEvidence(self.props.test_results), 
+              test_branches : this.getTestBranches(self.props.test_results),
+              total_branches : this.getTotalBranches(self.props.test_results)
            };
   },
 
+  componentWillReceiveProps: function(nextProps) {
 
-  componentWillMount: function() {
+    this.setState({
+                    branches_with_evidence : this.getBranchesWithEvidence(nextProps.test_results), 
+                    test_branches : this.getTestBranches(nextProps.test_results),
+                    total_branches : this.getTotalBranches(nextProps.test_results)
+                  });
 
   },
 
@@ -76,7 +91,6 @@ var BSRELSummary = React.createClass({
 // Will need to make a call to this
 // omega distributions
 function render_absrel_summary(test_results, pmid, element) {
-  console.log(pmid);
   React.render(
     <BSRELSummary test_results={test_results} pmid={pmid} />,
     document.getElementById(element)

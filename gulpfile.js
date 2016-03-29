@@ -8,6 +8,9 @@ var gulp = require('gulp'),
 gulp.task('scripts', function() {
     return gulp.src(['src/**/*.js', 'jsx-compiled/*.js'])
     .pipe(order([
+      "jsx-compiled/tree.js",
+      "jsx-compiled/tree_summary.js",
+      "jsx-compiled/absrel.js",
       "datamonkey/datamonkey.js",
       "datamonkey/*.js",
       "busted/busted.js",

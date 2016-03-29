@@ -1,9 +1,10 @@
-// TODO : Write documentation
 var Tree = React.createClass({
 
   getInitialState: function() {
-    //return { table_row_data: this.getModelRows() };
-    return null;
+    return { 
+              json : this.props.json,
+              settings : this.props.settings
+           };
   },
 
   sortNodes : function(asc) {
@@ -29,8 +30,13 @@ var Tree = React.createClass({
   getBranchLengths : function() {
 
       var self = this;
+
+      if(!this.state.json) {
+        return [];
+      }
+
       var branch_lengths = self.settings["tree-options"]["hyphy-tree-branch-lengths"][0] 
-                           ? this.props.json["fits"][this.which_model]["branch-lengths"] : null;
+                           ? this.state.json["fits"][this.which_model]["branch-lengths"] : null;
 
       if(!branch_lengths) {
 
@@ -48,13 +54,15 @@ var Tree = React.createClass({
   },
 
   assignBranchAnnotations : function() {
-    this.tree.assign_attributes(this.props.json["fits"][this.which_model]["branch-annotations"]);
+    if(this.state.json) {
+      this.tree.assign_attributes(this.state.json["fits"][this.which_model]["branch-annotations"]);
+    }
   },
 
   renderLegendColorScheme : function(svg_container, attr_name, do_not_render) {
 
     var self = this;
-    var branch_annotations = this.props.json["fits"][this.which_model]["branch-annotations"];
+    var branch_annotations = this.state.json["fits"][this.which_model]["branch-annotations"];
 
     var svg = d3.select("#" + svg_container).selectAll("svg").data([self.omega_color.domain()]);
     svg.enter().append("g");
@@ -254,10 +262,15 @@ var Tree = React.createClass({
 
     var self = this;
 
-    this.settings['suppress-tree-render'] = true;
+    if(!this.state.json) {
+      return [];
+    }
+
+    this.state.settings['suppress-tree-render'] = true;
+
     var def_displayed = false;
 
-    var model_list = d3.select("#hyphy-tree-model-list").selectAll("li").data(d3.keys(this.props.json["fits"]).map(function(d) {
+    var model_list = d3.select("#hyphy-tree-model-list").selectAll("li").data(d3.keys(this.state.json["fits"]).map(function(d) {
         return [d];
     }).sort());
 
@@ -315,6 +328,15 @@ var Tree = React.createClass({
     var self = this;
 
     this.settings = this.props.settings;
+
+    if(!this.settings) {
+      return null;
+    }
+
+    if(!this.state.json) {
+      return null;
+    }
+
     $("#hyphy-tree-branch-lengths").click();
 
     this.scaling_exponent = 0.33;
@@ -323,7 +345,7 @@ var Tree = React.createClass({
     this.fit_format = d3.format(".2f");
     this.p_value_format = d3.format(".4f");
 
-    var json =  this.props.json;
+    var json =  this.state.json;
     var analysis_data = json;
 
     this.width = 800;
@@ -336,14 +358,13 @@ var Tree = React.createClass({
     this.setPartitionList();
     this.initializeTree();
 
-
-
   },
 
   initializeTree : function() {
 
     var self = this;
-    var analysis_data = self.props.json;
+
+    var analysis_data = self.state.json;
 
     var width = this.width,
         height = this.height,
@@ -377,6 +398,7 @@ var Tree = React.createClass({
 
 
     this.assignBranchAnnotations();
+
     self.renderTree(true);
 
     // Render the appropriate color
@@ -439,7 +461,7 @@ var Tree = React.createClass({
   renderTree : function(skip_render) {
 
       var self = this;
-      var analysis_data = this.props.json;
+      var analysis_data = this.state.json;
       var svg = self.svg;
 
       if (!this.settings['suppress-tree-render']) {
@@ -516,6 +538,19 @@ var Tree = React.createClass({
   },
 
   componentDidMount: function() {
+    this.initialize();
+  },
+
+  componentWillReceiveProps: function(nextProps) {
+
+    this.setState({
+                    json : nextProps.json,
+                    settings : nextProps.settings
+                  });
+
+  },
+
+  componentDidUpdate : function() {
     this.initialize();
   },
 

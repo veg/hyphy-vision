@@ -36,13 +36,10 @@ var PropChart = React.createClass({
 
   initialize : function() {
 
-    // loop through omega lines and plot them
-
     // clear svg
     d3.select("#prop-chart").html("");
 
     this.data_to_plot = this.state.omegas;
-    //var secondary_data = this.props.omegas["Test"];
 
     // Set props from settings
     this.props.svg_id = this.props.settings.svg_id;
@@ -231,7 +228,9 @@ var PropChart = React.createClass({
   },
 
   componentDidMount: function() {
-    this.initialize();
+    try {
+      this.initialize();
+    } catch(e) {};
   },
 
   componentWillReceiveProps: function(nextProps) {
@@ -244,7 +243,11 @@ var PropChart = React.createClass({
   },
 
   componentDidUpdate : function() {
-    this.initialize();
+
+    try {
+      this.initialize();
+    } catch(e) {};
+
   },
 
   render: function() {

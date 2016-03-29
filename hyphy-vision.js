@@ -896,39 +896,54 @@ var BSRELSummary = React.createClass({displayName: "BSRELSummary",
   float_format : d3.format(".2f"),
 
   countBranchesTested: function(branches_tested) {
+
     if(branches_tested) {
       return branches_tested.split(';').length;
     } else {
       return 0;
     }
+
   },
 
-  getBranchesWithEvidence : function() {
+  getBranchesWithEvidence : function(test_results) {
+
     var self = this;
-    return _.filter(self.props.test_results, function(d) { return d.p <= .05 }).length;
+    return _.filter(test_results, function(d) { return d.p <= .05 }).length;
+
   },
 
-  getTestBranches : function() {
+  getTestBranches : function(test_results) {
+
     var self = this;
-    return _.filter(self.props.test_results, function(d) { return d.tested > 0 }).length;
+    return _.filter(test_results, function(d) { return d.tested > 0 }).length;
+
   },
 
-  getTotalBranches : function() {
+  getTotalBranches : function(test_results) {
+
     var self = this;
-    return _.keys(self.props.test_results).length;
+    return _.keys(test_results).length;
+
   },
 
   getInitialState: function() {
 
+    var self = this;
+
     return { 
-              branches_with_evidence : this.getBranchesWithEvidence(), 
-              test_branches : this.getTestBranches(),
-              total_branches : this.getTotalBranches()
+              branches_with_evidence : this.getBranchesWithEvidence(self.props.test_results), 
+              test_branches : this.getTestBranches(self.props.test_results),
+              total_branches : this.getTotalBranches(self.props.test_results)
            };
   },
 
+  componentWillReceiveProps: function(nextProps) {
 
-  componentWillMount: function() {
+    this.setState({
+                    branches_with_evidence : this.getBranchesWithEvidence(nextProps.test_results), 
+                    test_branches : this.getTestBranches(nextProps.test_results),
+                    total_branches : this.getTotalBranches(nextProps.test_results)
+                  });
 
   },
 
@@ -969,7 +984,6 @@ var BSRELSummary = React.createClass({displayName: "BSRELSummary",
 // Will need to make a call to this
 // omega distributions
 function render_absrel_summary(test_results, pmid, element) {
-  console.log(pmid);
   React.render(
     React.createElement(BSRELSummary, {test_results: test_results, pmid: pmid}),
     document.getElementById(element)
@@ -981,25 +995,273 @@ var BSREL = React.createClass({displayName: "BSREL",
 
   float_format : d3.format(".2f"),
 
-  countBranchesTested: function(branches_tested) {
-    if(branches_tested) {
-      return branches_tested.split(';').length;
-    } else {
-      return 0;
-    }
+  loadFromServer : function() {
+
+    var self = this;
+    d3.json(this.props.url, function(data) {
+
+      data["fits"]["MG94"]["branch-annotations"] = self.formatBranchAnnotations(data, "MG94");
+      data["fits"]["Full model"]["branch-annotations"] = self.formatBranchAnnotations(data, "Full model");
+
+      var annotations = data["fits"]["Full model"]["branch-annotations"],
+          json = data,
+          pmid = data["PMID"],
+          test_results = data["test results"];
+
+      self.setState({
+                      annotations : annotations,
+                      json : json,
+                      pmid : pmid,
+                      test_results : test_results
+                    });
+
+    });
+
+  },
+
+  getDefaultProps: function() {
+    var edgeColorizer = function (element, data) {
+
+        var self = this;
+
+        var svg = $(element[0]).closest("svg");
+        var svg_defs = d3.select(svg.get(0)).selectAll("defs");
+
+        if (svg_defs.empty()) {
+          svg_defs = svg.append("defs");
+        }   
+
+        var scaling_exponent = 0.33,
+            omega_format = d3.format(".3r"),
+            prop_format = d3.format(".2p"),
+            fit_format = d3.format(".2f"),
+            p_value_format = d3.format(".4f");
+
+        self.omega_color = d3.scale.pow().exponent(scaling_exponent)
+            .domain([0, 0.25, 1, 5, 10])
+            .range(
+              self.options()["color-fill"]
+                ? ["#DDDDDD", "#AAAAAA", "#888888", "#444444", "#000000"] 
+                : ["#5e4fa2", "#3288bd", "#e6f598", "#f46d43", "#9e0142"])
+            .clamp(true);
+
+
+        var createBranchGradient = function(node) {
+
+            function generateGradient(svg_defs, grad_id, annotations, already_cumulative) {
+
+                var current_weight = 0;
+                var this_grad = svg_defs.append("linearGradient")
+                    .attr("id", grad_id);
+
+                annotations.forEach(function(d, i) {
+
+                    if (d.prop) {
+                        var new_weight = current_weight + d.prop;
+                        this_grad.append("stop")
+                            .attr("offset", "" + current_weight * 100 + "%")
+                            .style("stop-color", self.omega_color(d.omega));
+                        this_grad.append("stop")
+                            .attr("offset", "" + new_weight * 100 + "%")
+                            .style("stop-color", self.omega_color(d.omega));
+                        current_weight = new_weight;
+                    }
+                });
+            }
+
+            // Create svg definitions
+            if(self.gradient_count == undefined) {
+              self.gradient_count = 0;
+            }
+
+            if(node.annotations) { 
+
+              if (node.annotations.length == 1) {
+                node['color'] = self.omega_color(node.annotations[0]["omega"]);
+              } else {
+                self.gradient_count++;
+                var grad_id = "branch_gradient_" + self.gradient_count;
+                generateGradient(svg_defs, grad_id, node.annotations.omegas);
+                node['grad'] = grad_id;
+              }
+
+            }
+        }
+
+        var annotations = data.target.annotations,
+            alpha_level = 0.05,
+            tooltip = "<b>" + data.target.name + "</b>",
+            reference_omega_weight =  prop_format(0),
+            distro = '';
+
+        if (annotations) {
+
+            reference_omega_weight = annotations.omegas[0].prop;
+
+            annotations.omegas.forEach(function(d, i) {
+
+                var omega_value = d.omega > 1e20 ? "&infin;" : omega_format(d.omega),
+                    omega_weight = prop_format(d.prop);
+
+                tooltip += "<br/>&omega;<sub>" + (i + 1) + "</sub> = " + omega_value +
+                    " (" + omega_weight + ")";
+
+                if (i) {
+                  distro += "<br/>";
+                }
+
+                distro += "&omega;<sub>" + (i + 1) + "</sub> = " + omega_value +
+                    " (" + omega_weight + ")";
+
+
+            });
+
+            tooltip += "<br/><i>p = " + omega_format(annotations["p"]) + "</i>";
+
+            $(element[0][0]).tooltip({
+                'title': tooltip,
+                'html': true,
+                'trigger': 'hover',
+                'container': 'body',
+                'placement': 'auto'
+            });
+
+            createBranchGradient(data.target);
+
+            if(data.target.grad) {
+              element.style('stroke', 'url(#' + data.target.grad + ')');
+            } else {
+              element.style('stroke', data.target.color);
+            }
+
+            element.style('stroke-width', annotations["p"] <= alpha_level ? '12' : '5')
+                .style('stroke-linejoin', 'round')
+                .style('stroke-linecap', 'round');
+
+      }
+
+    };
+
+    return {
+      edgeColorizer : edgeColorizer
+    };
   },
 
   getInitialState: function() {
 
+    var tree_settings = {
+        'omegaPlot': {},
+        'tree-options': {
+            /* value arrays have the following meaning
+                [0] - the value of the attribute
+                [1] - does the change in attribute value trigger tree re-layout?
+            */
+            'hyphy-tree-model': ['Full model', true],
+            'hyphy-tree-highlight': [null, false],
+            'hyphy-tree-branch-lengths': [true, true],
+            'hyphy-tree-hide-legend': [false, true],
+            'hyphy-tree-fill-color': [true, true]
+        },
+        'suppress-tree-render': false,
+        'chart-append-html' : true,
+        'edgeColorizer' : this.props.edgeColorizer
+    };
+
+
+
     return { 
-              branches_with_evidence : this.getBranchesWithEvidence(), 
-              test_branches : this.getTestBranches(),
-              total_branches : this.getTotalBranches()
+              annotations : null,
+              json : null,
+              pmid : null,
+              settings : tree_settings,
+              test_results : null,
+              tree : null,
            };
+
+  },
+
+  componentWillMount: function() {
+    this.loadFromServer();
+    this.setEvents();
   },
 
 
-  componentWillMount: function() {
+  setEvents : function() {
+
+    var self = this;
+
+    $("#datamonkey-absrel-json-file").on("change", function(e) {
+        var files = e.target.files; // FileList object
+
+        if (files.length == 1) {
+            var f = files[0];
+            var reader = new FileReader();
+
+            reader.onload = (function(theFile) {
+                return function(e) {
+                  var data = JSON.parse(this.result);
+                  data["fits"]["MG94"]["branch-annotations"] = self.formatBranchAnnotations(data, "MG94");
+                  data["fits"]["Full model"]["branch-annotations"] = self.formatBranchAnnotations(data, "Full model");
+
+                  var annotations = data["fits"]["Full model"]["branch-annotations"],
+                      json = data,
+                      pmid = data["PMID"],
+                      test_results = data["test results"];
+
+                  self.setState({
+                                  annotations : annotations,
+                                  json : json,
+                                  pmid : pmid,
+                                  test_results : test_results
+                                });
+
+                };
+            })(f);
+            reader.readAsText(f);
+        }
+
+        $("#datamonkey-absrel-toggle-here").dropdown("toggle");
+        e.preventDefault();
+    });
+
+
+  },
+
+  formatBranchAnnotations : function(json, key) {
+
+    var initial_branch_annotations = json["fits"][key]["branch-annotations"];
+
+    if(!initial_branch_annotations) {
+      initial_branch_annotations = json["fits"][key]["rate distributions"];
+    }
+
+    // Iterate over objects
+    branch_annotations = _.mapObject(initial_branch_annotations, function(val, key) {
+
+      var vals = [];
+        try {
+          vals = JSON.parse(val);
+        } catch (e) {
+          vals = val;
+        }
+
+      var omegas = {"omegas" : _.map(vals, function(d) { return _.object(["omega","prop"], d)})};
+      var test_results = _.clone(json["test results"][key]);
+      _.extend(test_results, omegas);
+      return test_results;
+
+    });
+
+    return branch_annotations;
+
+  },
+
+  initialize : function() {
+
+    var model_fits_id = "#hyphy-model-fits",
+        omega_plots_id = "#hyphy-omega-plots",
+        summary_id = "#hyphy-relax-summary",
+        tree_id = "#tree-tab";
 
   },
 
@@ -1008,19 +1270,36 @@ var BSREL = React.createClass({displayName: "BSREL",
     var self = this;
 
     return (
-        React.createElement("div", {class: "tab-content"}, 
-            React.createElement("div", {class: "tab-pane active", id: "summary-tab"}, 
-                React.createElement("div", {class: "row"}, 
-                  React.createElement("div", {id: "summary-div", class: "col-md-12"})
+        React.createElement("div", {className: "tab-content"}, 
+            React.createElement("div", {className: "tab-pane active", id: "summary-tab"}, 
+
+                React.createElement("div", {className: "row"}, 
+                  React.createElement("div", {id: "summary-div", className: "col-md-12"}, 
+                    React.createElement(BSRELSummary, {test_results: self.state.test_results, 
+                                  pmid: self.state.pmid})
+                  )
                 ), 
-                React.createElement("div", {class: "row"}, 
-                    React.createElement("div", {id: "hyphy-tree-summary", class: "col-md-6"}), 
-                    React.createElement("div", {id: "hyphy-model-fits", class: "col-md-6"})
+
+                React.createElement("div", {className: "row"}, 
+                    React.createElement("div", {id: "hyphy-tree-summary", className: "col-md-6"}, 
+                      React.createElement(TreeSummary, {json: self.state.json})
+                    ), 
+                    React.createElement("div", {id: "hyphy-model-fits", className: "col-md-6"}, 
+                      React.createElement(ModelFits, {json: self.state.json})
+                    )
                 )
             ), 
 
-            React.createElement("div", {class: "tab-pane", id: "tree-tab"}), 
-            React.createElement("div", {class: "tab-pane", id: "table_tab"})
+            React.createElement("div", {className: "tab-pane", id: "tree-tab"}, 
+              React.createElement(Tree, {json: self.state.json, 
+                    settings: self.state.settings})
+            ), 
+
+            React.createElement("div", {className: "tab-pane", id: "table_tab"}, 
+              React.createElement(BranchTable, {tree: self.state.tree, 
+                           test_results: self.state.test_results, 
+                           annotations: self.state.annotations})
+            )
 
         )
         )
@@ -1028,24 +1307,28 @@ var BSREL = React.createClass({displayName: "BSREL",
 
 });
 
+
+
 // Will need to make a call to this
 // omega distributions
-function render_absrel(json, element) {
+function render_absrel(url, element) {
   React.render(
-    React.createElement(BSREL, {json: json}),
+    React.createElement(BSREL, {url: url}),
     document.getElementById(element)
   );
 }
 
-// TODO: Write documentation
 var BranchTable = React.createClass({displayName: "BranchTable",
 
   getInitialState: function() {
 
-    var table_row_data = this.getBranchRows();
-    var table_columns = this.getBranchColumns(table_row_data);
-    var initial_model_name = _.take(_.keys(this.props.annotations));
-    var initial_omegas = this.props.annotations[initial_model_name]["omegas"];
+    // add the following
+    var table_row_data = this.getBranchRows(this.props.tree, this.props.test_results, this.props.annotations),
+        table_columns = this.getBranchColumns(table_row_data),
+        initial_model_name = _.take(_.keys(this.props.annotations)),
+        initial_omegas = this.props.annotations ? 
+                         this.props.annotations[initial_model_name]["omegas"] : 
+                         null;
 
     var distro_settings = {
       dimensions : { width : 600, height : 400 },
@@ -1059,6 +1342,9 @@ var BranchTable = React.createClass({displayName: "BranchTable",
     };
 
     return { 
+             tree : this.props.tree,
+             test_results : this.props.test_results,
+             annotations : this.props.annotations,
              table_row_data : table_row_data, 
              table_columns : table_columns,
              current_model_name : initial_model_name,
@@ -1068,7 +1354,12 @@ var BranchTable = React.createClass({displayName: "BranchTable",
   },
 
   getBranchLength : function(m) {
-    return d3.format(".4f")(this.tree.get_node_by_name(m).attribute);
+
+    if(!this.state.tree) {
+      return '';
+    }
+
+    return d3.format(".4f")(this.state.tree.get_node_by_name(m).attribute);
   },
 
   getLRT : function(branch) {
@@ -1090,6 +1381,10 @@ var BranchTable = React.createClass({displayName: "BranchTable",
 
   getOmegaDistribution : function(m, annotations) {
 
+    if(!annotations) {
+      return '';
+    }
+
     var omega_string = "";
 
     for(var i in annotations[m]["omegas"]) {
@@ -1105,18 +1400,13 @@ var BranchTable = React.createClass({displayName: "BranchTable",
 
   },
 
-
-  getBranchRows : function() {
+  getBranchRows : function(tree, test_results, annotations) {
 
     var self = this;
 
-    self.tree = this.props.tree;
-    var test_results = this.props.test_results;
-    var annotations = this.props.annotations;
-
-    var table_row_data = [];
-    var omega_format = d3.format(".3r");
-    var prop_format = d3.format(".2p");
+    var table_row_data = [],
+        omega_format = d3.format(".3r"),
+        prop_format = d3.format(".2p");
 
     for (var m in test_results) {
 
@@ -1141,6 +1431,7 @@ var BranchTable = React.createClass({displayName: "BranchTable",
       if (a[0] == b[0]) {
           return a[1] < b[1] ? -1 : (a[1] == b[1] ? 0 : 1);
       }
+
       return a[3] - b[3];
 
     });
@@ -1152,15 +1443,18 @@ var BranchTable = React.createClass({displayName: "BranchTable",
   setEvents : function() {
 
     var self = this;
-    var branch_table = d3.select('#table-branch-table').selectAll("tr");
 
-    branch_table.on("mouseover", function(d) {
-      var label = d[0];
-      self.setState({
-                      current_model_name : label, 
-                      current_omegas : self.props.annotations[label]["omegas"]
-                    });
-    });
+    if(self.state.annotations) {
+      var branch_table = d3.select('#table-branch-table').selectAll("tr");
+
+      branch_table.on("mouseover", function(d) {
+        var label = d[0];
+        self.setState({
+                        current_model_name : label, 
+                        current_omegas : self.state.annotations[label]["omegas"]
+                      });
+      });
+    }
 
   },
 
@@ -1182,6 +1476,10 @@ var BranchTable = React.createClass({displayName: "BranchTable",
   },
 
   getBranchColumns : function(table_row_data) {
+
+    if(table_row_data.length <= 0) {
+      return null;
+    }
 
     var name_header = '<th>Name</th>',
         length_header = '<th><abbr title="Branch Length">B</abbr></th>',
@@ -1213,16 +1511,55 @@ var BranchTable = React.createClass({displayName: "BranchTable",
 
   },
 
-  componentDidMount: function() {
+  componentWillReceiveProps: function(nextProps) {
+
+    var table_row_data = this.getBranchRows(nextProps.tree, 
+                                            nextProps.test_results, 
+                                            nextProps.annotations),
+        table_columns = this.getBranchColumns(table_row_data),
+        initial_model_name = _.take(_.keys(nextProps.annotations)),
+        initial_omegas = nextProps.annotations ? 
+                         nextProps.annotations[initial_model_name]["omegas"] : 
+                         null;
+
+    var distro_settings = {
+      dimensions : { width : 600, height : 400 },
+      margins : { 'left': 50, 'right': 15, 'bottom': 35, 'top': 35 },
+      legend: false,
+      domain : [0.00001, 10],
+      do_log_plot : true,
+      k_p : null,
+      plot : null,
+      svg_id : "prop-chart"
+    };
+
+    if(nextProps.test_results && nextProps.annotations) {
+      this.setState({ 
+               tree : nextProps.tree,
+               test_results : nextProps.test_results,
+               annotations : nextProps.annotations,
+               table_row_data : table_row_data, 
+               table_columns : table_columns,
+               current_model_name : initial_model_name,
+               current_omegas : initial_omegas,
+               distro_settings : distro_settings
+             });
+    }
+
+  },
+
+  componentDidUpdate : function() {
 
     var branch_columns = d3.select('#table-branch-header');
     branch_columns = branch_columns.selectAll("th").data(this.state.table_columns);
     branch_columns.enter().append("th");
+
     branch_columns.html(function(d) {
         return d;
     });
 
     var branch_rows = d3.select('#table-branch-table').selectAll("tr").data(this.state.table_row_data);
+
     branch_rows.enter().append('tr');
     branch_rows.exit().remove();
     branch_rows.style('font-weight', function(d) {
@@ -2535,14 +2872,19 @@ datamonkey.fade = function(json) {
 var ModelFits = React.createClass({displayName: "ModelFits",
 
   getInitialState: function() {
-    var table_row_data = this.getModelRows();
-    var table_columns = this.getModelColumns(table_row_data);
-    return { table_row_data: table_row_data, table_columns: table_columns};
+    var table_row_data = this.getModelRows(this.props.json),
+        table_columns = this.getModelColumns(table_row_data);
+
+    return { 
+             table_row_data: table_row_data, 
+             table_columns: table_columns
+           };
   },
 
   formatRuntime : function(seconds) {
-      var duration_string = "";
-      seconds = parseFloat(seconds);
+      var duration_string = "",
+          seconds = parseFloat(seconds);
+
       var split_array = [Math.floor(seconds / (24 * 3600)), Math.floor(seconds / 3600) % 24, Math.floor(seconds / 60) % 60, seconds % 60],
           quals = ["d.", "hrs.", "min.", "sec."];
 
@@ -2591,14 +2933,14 @@ var ModelFits = React.createClass({displayName: "ModelFits",
       var this_distro_entry = [d, "", "", ""];
 
       omega_distributions[m][d] = this_distro.map(function(d) {
-          return {
-            'omega': d[0],
-            'weight': d[1]
-          };
+        return {
+          'omega': d[0],
+          'weight': d[1]
+        };
       });
 
       for (var k = 0; k < this_distro.length; k++) {
-          this_distro_entry[k + 1] = (omega_format(this_distro[k][0]) + " (" + prop_format(this_distro[k][1]) + ")");
+        this_distro_entry[k + 1] = (omega_format(this_distro[k][0]) + " (" + prop_format(this_distro[k][1]) + ")");
       }
 
       distributions.push(this_distro_entry);
@@ -2612,9 +2954,12 @@ var ModelFits = React.createClass({displayName: "ModelFits",
 
   },
 
-  getModelRows : function() {
+  getModelRows : function(json) {
 
-    var json = this.props.json;
+    if(!json) {
+      return [];
+    }
+
     var table_row_data = [];
     var omega_format = d3.format(".3r");
     var prop_format = d3.format(".2p");
@@ -2711,6 +3056,9 @@ var ModelFits = React.createClass({displayName: "ModelFits",
                   ];
 
     // validate each table row with its associated header
+    if(table_row_data.length == 0) {
+      return [];
+    }
 
     // trim columns to length of table_row_data
     column_headers = _.take(all_columns, table_row_data[0].length)
@@ -2722,7 +3070,7 @@ var ModelFits = React.createClass({displayName: "ModelFits",
     return column_headers;
   },
 
-  componentDidMount: function() {
+  componentDidUpdate : function() {
 
     var model_columns = d3.select('#summary-model-header1');
     model_columns = model_columns.selectAll("th").data(this.state.table_columns);
@@ -2741,6 +3089,18 @@ var ModelFits = React.createClass({displayName: "ModelFits",
     model_rows.html(function(d) {
         return d;
     });
+
+  },
+
+  componentWillReceiveProps: function(nextProps) {
+
+    var table_row_data = this.getModelRows(nextProps.json),
+        table_columns = this.getModelColumns(table_row_data);
+
+    this.setState({
+             table_row_data: table_row_data, 
+             table_columns: table_columns
+           });
   },
 
   render: function() {
@@ -3275,13 +3635,10 @@ var PropChart = React.createClass({displayName: "PropChart",
 
   initialize : function() {
 
-    // loop through omega lines and plot them
-
     // clear svg
     d3.select("#prop-chart").html("");
 
     this.data_to_plot = this.state.omegas;
-    //var secondary_data = this.props.omegas["Test"];
 
     // Set props from settings
     this.props.svg_id = this.props.settings.svg_id;
@@ -3470,7 +3827,9 @@ var PropChart = React.createClass({displayName: "PropChart",
   },
 
   componentDidMount: function() {
-    this.initialize();
+    try {
+      this.initialize();
+    } catch(e) {};
   },
 
   componentWillReceiveProps: function(nextProps) {
@@ -3483,7 +3842,11 @@ var PropChart = React.createClass({displayName: "PropChart",
   },
 
   componentDidUpdate : function() {
-    this.initialize();
+
+    try {
+      this.initialize();
+    } catch(e) {};
+
   },
 
   render: function() {
@@ -3529,89 +3892,12 @@ function rerender_prop_chart(model_name, omeags, settings) {
 }
 
 
-var Summary = React.createClass({displayName: "Summary",
 
-  getDefaultProps : function() {
-    return {
-     alpha_level : 0.05
-    };
-
-  },
-
-  getInitialState: function() {
-    return {
-      p : null,
-      direction : 'unknown',
-      evidence : 'unknown',
-      pvalue : null,
-      lrt : null,
-      summary_k : 'unknown',
-      pmid_text : "PubMed ID : Unknown",
-      pmid_href : "#",
-      relaxation_K : "unknown"
-    };
-  },
-
-  p_value_format : d3.format(".4f"),
-  fit_format : d3.format(".2f"),
-
-  componentDidMount: function() {
-    this.setState({
-      p : this.props.json["relaxation-test"]["p"],
-      direction : this.props.json["fits"]["Alternative"]["K"] > 1 ? 'intensification' : 'relaxation',
-      evidence : this.state.p <= this.props.alpha_level ? 'significant' : 'not significant',
-      pvalue : this.p_value_format(this.state.p),
-      lrt : this.fit_format(this.props.json["relaxation-test"]["LR"]),
-      summary_k : this.fit_format(this.props.json["fits"]["Alternative"]["K"]),
-      pmid_text : "PubMed ID " + this.props.json['PMID'],
-      pmid_href : "http://www.ncbi.nlm.nih.gov/pubmed/" + this.props.json['PMID']
-    });
-  },
-
-  render: function() {
-
-    return (
-        React.createElement("div", {className: "col-md-12"}, 
-            React.createElement("ul", {className: "list-group"}, 
-                React.createElement("li", {className: "list-group-item list-group-item-info"}, 
-                    React.createElement("h3", {className: "list-group-item-heading"}, 
-                      React.createElement("i", {className: "fa fa-list", styleFormat: "margin-right: 10px"}), 
-                      React.createElement("span", {id: "summary-method-name"}, "RELAX(ed selection test)"), " summary"
-                    ), 
-                    React.createElement("p", {className: "list-group-item-text lead", styleFormat: "margin-top:0.5em; "}, 
-                      "Test for selection ", React.createElement("strong", {id: "summary-direction"}, this.state.direction), 
-                      "(", React.createElement("abbr", {title: "Relaxation coefficient"}, "K"), " = ", React.createElement("strong", {id: "summary-K"}, this.state.summary_k), ") was ", React.createElement("strong", {id: "summary-evidence"}, this.state.evidence), 
-                      "(p = ", React.createElement("strong", {id: "summary-pvalue"}, this.state.p), ", ", React.createElement("abbr", {title: "Likelihood ratio statistic"}, "LR"), " = ", React.createElement("strong", {id: "summary-LRT"}, this.state.lrt), ")"
-                    ), 
-                    React.createElement("p", null, 
-                      React.createElement("small", null, "Please cite ", React.createElement("a", {href: this.state.pmid_href, id: "summary-pmid"}, this.state.pmid_text), " if you use this result in a publication, presentation, or other scientific work.")
-                    )
-                )
-            )
-          )
-        )
-  }
-
-});
-
-function render_summary(json) {
-  React.render(
-    React.createElement(Summary, {json: json}),
-    document.getElementById("hyphy-relax-summary")
-  );
-}
-
-function rerender_summary(json) {
-  $("#hyphy-relax-summary").empty();
-  render_summary(json);
-}
-
-// TODO: Write documentation
 var TreeSummary = React.createClass({displayName: "TreeSummary",
 
   getInitialState: function() {
 
-    var table_row_data = this.getSummaryRows(),
+    var table_row_data = this.getSummaryRows(this.props.json),
         table_columns = this.getTreeSummaryColumns(table_row_data);
 
     return { 
@@ -3667,12 +3953,17 @@ var TreeSummary = React.createClass({displayName: "TreeSummary",
 
   },
 
-  getSummaryRows : function() {
+  getSummaryRows : function(json) {
+
     var self = this;
 
     // Will need to create a tree for each fits
-    var analysis_data = this.props.json;
-    
+    var analysis_data = json;
+
+    if(!analysis_data) {
+      return [];
+    }
+
     // Create an array of phylotrees from fits
     var trees = _.map(analysis_data["fits"], function(d) { return d3.layout.phylotree("body")(d["tree string"]) });
     var tree = trees[0];
@@ -3680,17 +3971,19 @@ var TreeSummary = React.createClass({displayName: "TreeSummary",
     self.tree = tree;
     
 
+    //TODO : Do not hard code model here
     var tree_length = analysis_data["fits"]["Full model"]["tree length"];
     var branch_annotations = analysis_data["fits"]["Full model"]["branch-annotations"];
     var test_results = analysis_data["test results"];
 
-    var rate_classes = this.getRateClasses(branch_annotations);
-    var proportions = this.getBranchProportion(rate_classes);
-    var length_proportions = this.getBranchLengthProportion(rate_classes, branch_annotations, tree_length);
-    var num_under_selection = this.getNumUnderSelection(rate_classes, branch_annotations, test_results);
+    var rate_classes = this.getRateClasses(branch_annotations),
+        proportions = this.getBranchProportion(rate_classes),
+        length_proportions = this.getBranchLengthProportion(rate_classes, branch_annotations, tree_length),
+        num_under_selection = this.getNumUnderSelection(rate_classes, branch_annotations, test_results);
 
     // zip objects into matrix
     var keys = _.keys(rate_classes);
+
     var summary_rows = _.zip(
       keys
       ,_.values(rate_classes)
@@ -3729,6 +4022,9 @@ var TreeSummary = React.createClass({displayName: "TreeSummary",
                   ];
 
     // validate each table row with its associated header
+    if(table_row_data.length == 0) {
+      return [];
+    }
 
     // trim columns to length of table_row_data
     column_headers = _.take(all_columns, table_row_data[0].length)
@@ -3736,7 +4032,21 @@ var TreeSummary = React.createClass({displayName: "TreeSummary",
     return column_headers;
   },
 
-  componentDidMount: function() {
+  componentWillReceiveProps: function(nextProps) {
+
+    var table_row_data = this.getSummaryRows(nextProps.json),
+        table_columns = this.getTreeSummaryColumns(table_row_data);
+
+    this.setState({
+                    table_row_data: table_row_data, 
+                    table_columns: table_columns
+                  });
+
+  },
+
+  componentDidUpdate : function() {
+
+    d3.select('#summary-tree-header').empty();
 
     var tree_summary_columns = d3.select('#summary-tree-header');
 
@@ -3758,7 +4068,9 @@ var TreeSummary = React.createClass({displayName: "TreeSummary",
         return d;
     });
 
+
   },
+
 
   render: function() {
 
@@ -3788,12 +4100,10 @@ var TreeSummary = React.createClass({displayName: "TreeSummary",
 // Will need to make a call to this
 // omega distributions
 function render_tree_summary(json, element) {
-
   React.render(
     React.createElement(TreeSummary, {json: json}),
     $(element)[0]
   );
-
 }
 
 // Will need to make a call to this
@@ -3805,12 +4115,13 @@ function rerender_tree_summary(tree, element) {
 
 
 
-// TODO : Write documentation
 var Tree = React.createClass({displayName: "Tree",
 
   getInitialState: function() {
-    //return { table_row_data: this.getModelRows() };
-    return null;
+    return { 
+              json : this.props.json,
+              settings : this.props.settings
+           };
   },
 
   sortNodes : function(asc) {
@@ -3836,8 +4147,13 @@ var Tree = React.createClass({displayName: "Tree",
   getBranchLengths : function() {
 
       var self = this;
+
+      if(!this.state.json) {
+        return [];
+      }
+
       var branch_lengths = self.settings["tree-options"]["hyphy-tree-branch-lengths"][0] 
-                           ? this.props.json["fits"][this.which_model]["branch-lengths"] : null;
+                           ? this.state.json["fits"][this.which_model]["branch-lengths"] : null;
 
       if(!branch_lengths) {
 
@@ -3855,13 +4171,15 @@ var Tree = React.createClass({displayName: "Tree",
   },
 
   assignBranchAnnotations : function() {
-    this.tree.assign_attributes(this.props.json["fits"][this.which_model]["branch-annotations"]);
+    if(this.state.json) {
+      this.tree.assign_attributes(this.state.json["fits"][this.which_model]["branch-annotations"]);
+    }
   },
 
   renderLegendColorScheme : function(svg_container, attr_name, do_not_render) {
 
     var self = this;
-    var branch_annotations = this.props.json["fits"][this.which_model]["branch-annotations"];
+    var branch_annotations = this.state.json["fits"][this.which_model]["branch-annotations"];
 
     var svg = d3.select("#" + svg_container).selectAll("svg").data([self.omega_color.domain()]);
     svg.enter().append("g");
@@ -4061,10 +4379,15 @@ var Tree = React.createClass({displayName: "Tree",
 
     var self = this;
 
-    this.settings['suppress-tree-render'] = true;
+    if(!this.state.json) {
+      return [];
+    }
+
+    this.state.settings['suppress-tree-render'] = true;
+
     var def_displayed = false;
 
-    var model_list = d3.select("#hyphy-tree-model-list").selectAll("li").data(d3.keys(this.props.json["fits"]).map(function(d) {
+    var model_list = d3.select("#hyphy-tree-model-list").selectAll("li").data(d3.keys(this.state.json["fits"]).map(function(d) {
         return [d];
     }).sort());
 
@@ -4122,6 +4445,15 @@ var Tree = React.createClass({displayName: "Tree",
     var self = this;
 
     this.settings = this.props.settings;
+
+    if(!this.settings) {
+      return null;
+    }
+
+    if(!this.state.json) {
+      return null;
+    }
+
     $("#hyphy-tree-branch-lengths").click();
 
     this.scaling_exponent = 0.33;
@@ -4130,7 +4462,7 @@ var Tree = React.createClass({displayName: "Tree",
     this.fit_format = d3.format(".2f");
     this.p_value_format = d3.format(".4f");
 
-    var json =  this.props.json;
+    var json =  this.state.json;
     var analysis_data = json;
 
     this.width = 800;
@@ -4143,14 +4475,13 @@ var Tree = React.createClass({displayName: "Tree",
     this.setPartitionList();
     this.initializeTree();
 
-
-
   },
 
   initializeTree : function() {
 
     var self = this;
-    var analysis_data = self.props.json;
+
+    var analysis_data = self.state.json;
 
     var width = this.width,
         height = this.height,
@@ -4184,6 +4515,7 @@ var Tree = React.createClass({displayName: "Tree",
 
 
     this.assignBranchAnnotations();
+
     self.renderTree(true);
 
     // Render the appropriate color
@@ -4246,7 +4578,7 @@ var Tree = React.createClass({displayName: "Tree",
   renderTree : function(skip_render) {
 
       var self = this;
-      var analysis_data = this.props.json;
+      var analysis_data = this.state.json;
       var svg = self.svg;
 
       if (!this.settings['suppress-tree-render']) {
@@ -4323,6 +4655,19 @@ var Tree = React.createClass({displayName: "Tree",
   },
 
   componentDidMount: function() {
+    this.initialize();
+  },
+
+  componentWillReceiveProps: function(nextProps) {
+
+    this.setState({
+                    json : nextProps.json,
+                    settings : nextProps.settings
+                  });
+
+  },
+
+  componentDidUpdate : function() {
     this.initialize();
   },
 

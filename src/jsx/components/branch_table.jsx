@@ -1,12 +1,14 @@
-// TODO: Write documentation
 var BranchTable = React.createClass({
 
   getInitialState: function() {
 
-    var table_row_data = this.getBranchRows();
-    var table_columns = this.getBranchColumns(table_row_data);
-    var initial_model_name = _.take(_.keys(this.props.annotations));
-    var initial_omegas = this.props.annotations[initial_model_name]["omegas"];
+    // add the following
+    var table_row_data = this.getBranchRows(this.props.tree, this.props.test_results, this.props.annotations),
+        table_columns = this.getBranchColumns(table_row_data),
+        initial_model_name = _.take(_.keys(this.props.annotations)),
+        initial_omegas = this.props.annotations ? 
+                         this.props.annotations[initial_model_name]["omegas"] : 
+                         null;
 
     var distro_settings = {
       dimensions : { width : 600, height : 400 },
@@ -20,6 +22,9 @@ var BranchTable = React.createClass({
     };
 
     return { 
+             tree : this.props.tree,
+             test_results : this.props.test_results,
+             annotations : this.props.annotations,
              table_row_data : table_row_data, 
              table_columns : table_columns,
              current_model_name : initial_model_name,
@@ -29,7 +34,12 @@ var BranchTable = React.createClass({
   },
 
   getBranchLength : function(m) {
-    return d3.format(".4f")(this.tree.get_node_by_name(m).attribute);
+
+    if(!this.state.tree) {
+      return '';
+    }
+
+    return d3.format(".4f")(this.state.tree.get_node_by_name(m).attribute);
   },
 
   getLRT : function(branch) {
@@ -51,6 +61,10 @@ var BranchTable = React.createClass({
 
   getOmegaDistribution : function(m, annotations) {
 
+    if(!annotations) {
+      return '';
+    }
+
     var omega_string = "";
 
     for(var i in annotations[m]["omegas"]) {
@@ -66,18 +80,13 @@ var BranchTable = React.createClass({
 
   },
 
-
-  getBranchRows : function() {
+  getBranchRows : function(tree, test_results, annotations) {
 
     var self = this;
 
-    self.tree = this.props.tree;
-    var test_results = this.props.test_results;
-    var annotations = this.props.annotations;
-
-    var table_row_data = [];
-    var omega_format = d3.format(".3r");
-    var prop_format = d3.format(".2p");
+    var table_row_data = [],
+        omega_format = d3.format(".3r"),
+        prop_format = d3.format(".2p");
 
     for (var m in test_results) {
 
@@ -102,6 +111,7 @@ var BranchTable = React.createClass({
       if (a[0] == b[0]) {
           return a[1] < b[1] ? -1 : (a[1] == b[1] ? 0 : 1);
       }
+
       return a[3] - b[3];
 
     });
@@ -113,15 +123,18 @@ var BranchTable = React.createClass({
   setEvents : function() {
 
     var self = this;
-    var branch_table = d3.select('#table-branch-table').selectAll("tr");
 
-    branch_table.on("mouseover", function(d) {
-      var label = d[0];
-      self.setState({
-                      current_model_name : label, 
-                      current_omegas : self.props.annotations[label]["omegas"]
-                    });
-    });
+    if(self.state.annotations) {
+      var branch_table = d3.select('#table-branch-table').selectAll("tr");
+
+      branch_table.on("mouseover", function(d) {
+        var label = d[0];
+        self.setState({
+                        current_model_name : label, 
+                        current_omegas : self.state.annotations[label]["omegas"]
+                      });
+      });
+    }
 
   },
 
@@ -143,6 +156,10 @@ var BranchTable = React.createClass({
   },
 
   getBranchColumns : function(table_row_data) {
+
+    if(table_row_data.length <= 0) {
+      return null;
+    }
 
     var name_header = '<th>Name</th>',
         length_header = '<th><abbr title="Branch Length">B</abbr></th>',
@@ -174,16 +191,55 @@ var BranchTable = React.createClass({
 
   },
 
-  componentDidMount: function() {
+  componentWillReceiveProps: function(nextProps) {
+
+    var table_row_data = this.getBranchRows(nextProps.tree, 
+                                            nextProps.test_results, 
+                                            nextProps.annotations),
+        table_columns = this.getBranchColumns(table_row_data),
+        initial_model_name = _.take(_.keys(nextProps.annotations)),
+        initial_omegas = nextProps.annotations ? 
+                         nextProps.annotations[initial_model_name]["omegas"] : 
+                         null;
+
+    var distro_settings = {
+      dimensions : { width : 600, height : 400 },
+      margins : { 'left': 50, 'right': 15, 'bottom': 35, 'top': 35 },
+      legend: false,
+      domain : [0.00001, 10],
+      do_log_plot : true,
+      k_p : null,
+      plot : null,
+      svg_id : "prop-chart"
+    };
+
+    if(nextProps.test_results && nextProps.annotations) {
+      this.setState({ 
+               tree : nextProps.tree,
+               test_results : nextProps.test_results,
+               annotations : nextProps.annotations,
+               table_row_data : table_row_data, 
+               table_columns : table_columns,
+               current_model_name : initial_model_name,
+               current_omegas : initial_omegas,
+               distro_settings : distro_settings
+             });
+    }
+
+  },
+
+  componentDidUpdate : function() {
 
     var branch_columns = d3.select('#table-branch-header');
     branch_columns = branch_columns.selectAll("th").data(this.state.table_columns);
     branch_columns.enter().append("th");
+
     branch_columns.html(function(d) {
         return d;
     });
 
     var branch_rows = d3.select('#table-branch-table').selectAll("tr").data(this.state.table_row_data);
+
     branch_rows.enter().append('tr');
     branch_rows.exit().remove();
     branch_rows.style('font-weight', function(d) {
