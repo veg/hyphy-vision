@@ -2929,6 +2929,11 @@ var ModelFits = React.createClass({displayName: "ModelFits",
     var omega_distributions = {};
     omega_distributions[m] = {};
 
+    var omega_format = d3.format(".3r"),
+        prop_format = d3.format(".2p"),
+        p_value_format = d3.format(".4f");
+
+
     var distributions = [];
 
     for (var d in this_model["rate-distributions"]) {
@@ -3144,7 +3149,6 @@ function rerender_model_fits(json, element) {
 }
 
 
-// TODO: Write documentation
 var OmegaPlot = React.createClass({displayName: "OmegaPlot",
 
   getDefaultProps : function() {
@@ -3162,7 +3166,10 @@ var OmegaPlot = React.createClass({displayName: "OmegaPlot",
   },
 
   getInitialState: function() {
-    return null;
+    return {
+      svg_id : null,
+    };
+
   },
 
   setEvents : function() {
@@ -3514,9 +3521,14 @@ var OmegaPlotGrid = React.createClass({displayName: "OmegaPlotGrid",
   componentDidMount: function() {
 
   },
+
   getDistributions : function(json) {
 
     var omega_distributions = {};
+
+    if(!json) {
+      return null;
+    }
 
     for (var m in json["fits"]) {
         var this_model = json["fits"][m];
@@ -3578,28 +3590,6 @@ var OmegaPlotGrid = React.createClass({displayName: "OmegaPlotGrid",
   }
 
 });
-
-
-function render_omega_plot(model_name, omegas, settings) {
-  React.render(
-    React.createElement(OmegaPlot, {name: model_name, omegas: omegas, settings: settings}),
-    document.getElementById("hyphy-omega-plots")
-  );
-}
-
-// omega distributions
-function render_omega_plots(json) {
-  React.render(
-    React.createElement(OmegaPlotGrid, {json: json}),
-    document.getElementById("hyphy-omega-plots")
-  );
-}
-
-function rerender_omega_plots(json) {
-  $("#hyphy-omega-plots").empty();
-  render_omega_plots(json);
-}
-
 
 var PropChart = React.createClass({displayName: "PropChart",
 
@@ -3894,6 +3884,231 @@ function rerender_prop_chart(model_name, omeags, settings) {
   return render_prop_chart(model_name, omeags, settings);
 
 }
+
+
+var RELAX = React.createClass({displayName: "RELAX",
+
+  float_format : d3.format(".2f"),
+
+  loadFromServer : function() {
+
+    var self = this;
+    d3.json(this.props.url, function(data) {
+
+      //data["fits"]["Partitioned MG94xREV"]["branch-annotations"] = self.formatBranchAnnotations(data, "Partitioned MG94xREV");
+      //data["fits"]["General Descriptive"]["branch-annotations"] = self.formatBranchAnnotations(data, "General Descriptive");
+      //data["fits"]["Null"]["branch-annotations"] = self.formatBranchAnnotations(data, "Null");
+      //data["fits"]["Alternative"]["branch-annotations"] = self.formatBranchAnnotations(data, "Alternative");
+      //data["fits"]["Partitioned Exploratory"]["branch-annotations"] = self.formatBranchAnnotations(data, "Partitioned Exploratory");
+
+      var annotations = data["fits"]["Partitioned MG94xREV"]["branch-annotations"],
+          json = data,
+          pmid = data["PMID"],
+          test_results = data["relaxation_test"];
+
+      self.setState({
+                      annotations : annotations,
+                      json : json,
+                      pmid : pmid,
+                      test_results : test_results
+                    });
+
+    });
+
+  },
+
+  getDefaultProps: function() {
+
+    var edgeColorizer = function(element, data) {
+
+      var self = this;
+
+      if (this.branch_annotations) {
+          element.style('stroke', self.omega_color(this.branch_annotations[data.target.name]) || null);
+          $(element[0][0]).tooltip('destroy');
+          $(element[0][0]).tooltip({
+              'title': self.omega_format(this.branch_annotations[data.target.name]),
+              'html': true,
+              'trigger': 'hover',
+              'container': 'body',
+              'placement': 'auto'
+          })
+      } else {
+          element.style('stroke', null);
+          $(element[0][0]).tooltip('destroy');
+      }
+
+      element.style('stroke-width', (this.partition && this.partition[data.target.name]) ? '8' : '4')
+          .style('stroke-linejoin', 'round')
+          .style('stroke-linecap', 'round');
+
+    }
+
+    return {
+      edgeColorizer : edgeColorizer
+    };
+
+
+  },
+
+  getInitialState: function() {
+
+        var model_fits_id = "#hyphy-model-fits",
+            omega_plots_id = "#hyphy-omega-plots",
+            summary_id = "#hyphy-relax-summary",
+            tree_id = "#tree-tab";
+
+        var tree_settings = {
+            'omegaPlot': {},
+            'tree-options': {
+                /* value arrays have the following meaning
+                    [0] - the value of the attribute
+                    [1] - does the change in attribute value trigger tree re-layout?
+                */
+                'hyphy-tree-model': ["Partitioned MG94xREV", true],
+                'hyphy-tree-highlight': [null, false],
+                'hyphy-tree-branch-lengths': [true, true],
+                'hyphy-tree-hide-legend': [true, false],
+                'hyphy-tree-fill-color': [true, false]
+            },
+            'suppress-tree-render': false,
+            'chart-append-html' : true,
+            'edgeColorizer' : this.props.edgeColorizer
+        };
+
+    return { 
+              annotations : null,
+              json : null,
+              pmid : null,
+              settings : tree_settings,
+              test_results : null,
+              tree : null,
+           };
+
+  },
+
+  componentWillMount: function() {
+    this.loadFromServer();
+    this.setEvents();
+  },
+
+  setEvents : function() {
+
+    var self = this;
+
+    $("#datamonkey-absrel-json-file").on("change", function(e) {
+        var files = e.target.files; // FileList object
+
+        if (files.length == 1) {
+            var f = files[0];
+            var reader = new FileReader();
+
+            reader.onload = (function(theFile) {
+                return function(e) {
+                  var data = JSON.parse(this.result);
+                  data["fits"]["MG94"]["branch-annotations"] = self.formatBranchAnnotations(data, "MG94");
+                  data["fits"]["Full model"]["branch-annotations"] = self.formatBranchAnnotations(data, "Full model");
+
+                  var annotations = data["fits"]["Full model"]["branch-annotations"],
+                      json = data,
+                      pmid = data["PMID"],
+                      test_results = data["test results"];
+
+                  self.setState({
+                                  annotations : annotations,
+                                  json : json,
+                                  pmid : pmid,
+                                  test_results : test_results
+                                });
+
+                };
+            })(f);
+            reader.readAsText(f);
+        }
+
+        $("#datamonkey-absrel-toggle-here").dropdown("toggle");
+        e.preventDefault();
+    });
+
+
+  },
+
+  formatBranchAnnotations : function(json, key) {
+
+    var initial_branch_annotations = json["fits"][key]["branch-annotations"];
+
+    if(!initial_branch_annotations) {
+      initial_branch_annotations = json["fits"][key]["rate distributions"];
+    }
+
+    // Iterate over objects
+    branch_annotations = _.mapObject(initial_branch_annotations, function(val, key) {
+
+      var vals = [];
+        try {
+          vals = JSON.parse(val);
+        } catch (e) {
+          vals = val;
+        }
+
+      var omegas = {"omegas" : _.map(vals, function(d) { return _.object(["omega","prop"], d)})};
+      return omegas;
+
+    });
+
+    return branch_annotations;
+
+  },
+
+  initialize : function() {
+
+    var model_fits_id = "#hyphy-model-fits",
+        omega_plots_id = "#hyphy-omega-plots",
+        summary_id = "#hyphy-relax-summary",
+        tree_id = "#tree-tab";
+
+  },
+
+  render: function() {
+
+    var self = this;
+
+    return (
+      React.createElement("div", {className: "tab-content"}, 
+         React.createElement("div", {className: "tab-pane active", id: "datamonkey-relax-summary-tab"}, 
+             React.createElement("div", {id: "hyphy-relax-summary", className: "row"}
+             ), 
+             React.createElement("div", {id: "hyphy-model-fits", className: "row"}, 
+               React.createElement(ModelFits, {json: self.state.json})
+             ), 
+             React.createElement("div", {id: "hyphy-omega-plots", className: "row"}, 
+               React.createElement(OmegaPlotGrid, {json: self.state.json})
+             )
+         ), 
+         React.createElement("div", {className: "tab-pane", id: "tree-tab"}, 
+           React.createElement(Tree, {json: self.state.json, 
+                 settings: self.state.settings})
+         )
+      )
+    )
+  }
+});
+
+
+
+// Will need to make a call to this
+// omega distributions
+function render_relax(url, element) {
+  React.render(
+    React.createElement(RELAX, {url: url}),
+    document.getElementById(element)
+  );
+}
+
+               //<RELAXSummary test_results={self.state.test_results} 
+               //              pmid={self.state.pmid} />
+           //<Tree json={self.state.json} 
+           //      settings={self.state.settings} />
 
 
 var Summary = React.createClass({displayName: "Summary",
@@ -4666,6 +4881,9 @@ var Tree = React.createClass({displayName: "Tree",
           var do_layout = false;
 
           for (var k in this.settings["tree-options"]) {
+
+              //TODO : Check to make sure settings has a matching field
+
               var controller = d3.select("#" + k),
                   controller_value = (controller.attr("value") || controller.property("checked"));
                   
@@ -4675,6 +4893,7 @@ var Tree = React.createClass({displayName: "Tree",
               }
           }
 
+
           // Update which_model
           if(self.which_model != this.settings["tree-options"]["hyphy-tree-model"][0]) {
             self.which_model = this.settings["tree-options"]["hyphy-tree-model"][0]; 
@@ -4683,7 +4902,7 @@ var Tree = React.createClass({displayName: "Tree",
           }
 
 
-          if(_.findKey(analysis_data, "tree")) {
+          if(_.indexOf(_.keys(analysis_data), "tree") > -1) {
             this.tree(analysis_data["tree"]).svg(svg);
           } else {
             this.tree(analysis_data["fits"][self.which_model]["tree string"]).svg(svg);

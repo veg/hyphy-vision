@@ -1,4 +1,3 @@
-// TODO: Write documentation
 var OmegaPlot = React.createClass({
 
   getDefaultProps : function() {
@@ -16,7 +15,10 @@ var OmegaPlot = React.createClass({
   },
 
   getInitialState: function() {
-    return null;
+    return {
+      svg_id : null,
+    };
+
   },
 
   setEvents : function() {
@@ -368,9 +370,14 @@ var OmegaPlotGrid = React.createClass({
   componentDidMount: function() {
 
   },
+
   getDistributions : function(json) {
 
     var omega_distributions = {};
+
+    if(!json) {
+      return null;
+    }
 
     for (var m in json["fits"]) {
         var this_model = json["fits"][m];
@@ -432,25 +439,3 @@ var OmegaPlotGrid = React.createClass({
   }
 
 });
-
-
-function render_omega_plot(model_name, omegas, settings) {
-  React.render(
-    <OmegaPlot name={model_name} omegas={omegas} settings={settings} />,
-    document.getElementById("hyphy-omega-plots")
-  );
-}
-
-// omega distributions
-function render_omega_plots(json) {
-  React.render(
-    <OmegaPlotGrid json={json} />,
-    document.getElementById("hyphy-omega-plots")
-  );
-}
-
-function rerender_omega_plots(json) {
-  $("#hyphy-omega-plots").empty();
-  render_omega_plots(json);
-}
-

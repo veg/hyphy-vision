@@ -469,6 +469,9 @@ var Tree = React.createClass({
           var do_layout = false;
 
           for (var k in this.settings["tree-options"]) {
+
+              //TODO : Check to make sure settings has a matching field
+
               var controller = d3.select("#" + k),
                   controller_value = (controller.attr("value") || controller.property("checked"));
                   
@@ -478,6 +481,7 @@ var Tree = React.createClass({
               }
           }
 
+
           // Update which_model
           if(self.which_model != this.settings["tree-options"]["hyphy-tree-model"][0]) {
             self.which_model = this.settings["tree-options"]["hyphy-tree-model"][0]; 
@@ -486,7 +490,7 @@ var Tree = React.createClass({
           }
 
 
-          if(_.findKey(analysis_data, "tree")) {
+          if(_.indexOf(_.keys(analysis_data), "tree") > -1) {
             this.tree(analysis_data["tree"]).svg(svg);
           } else {
             this.tree(analysis_data["fits"][self.which_model]["tree string"]).svg(svg);

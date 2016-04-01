@@ -67,80 +67,18 @@
             <strong>Error!</strong> <span id='datamonkey-relax-error-text'></span>
         </div>
 
-        <div class="tab-content">
-           <div class="tab-pane active" id="datamonkey-relax-summary-tab">
-               <div id="hyphy-relax-summary" class="row" style='margin-top: 5px'></div>
-               <div id="hyphy-model-fits" class="row"></div>
-               <div id="hyphy-omega-plots" class="row"></div>
-           </div>
-           <div class='tab-pane' id="tree-tab"></div>
-        </div>
+        <div id="relax-content"></div>
+
     </div>
 
     <img id="hyphy-chart-image" />
     <canvas id="hyphy-chart-canvas"></canvas>
 
     <!-- END HTML -->
-
     <script>
-
-        var model_fits_id = "#hyphy-model-fits";
-        var omega_plots_id = "#hyphy-omega-plots";
-        var summary_id = "#hyphy-relax-summary";
-        var tree_id = "#tree-tab";
-
-        var tree_settings = {
-            'omegaPlot': {},
-            'tree-options': {
-                /* value arrays have the following meaning
-                    [0] - the value of the attribute
-                    [1] - does the change in attribute value trigger tree re-layout?
-                */
-                'hyphy-tree-model': [null, true],
-                'hyphy-tree-highlight': [null, false],
-                'hyphy-tree-branch-lengths': [true, true],
-                'hyphy-tree-fill-legend': [true, false],
-                'hyphy-tree-fill-color': [true, false]
-            },
-            'suppress-tree-render': false,
-            'chart-append-html' : true
-        };
-
-        $(document).ready(function() {
-            d3.json("test-data/test.json", function(json) {
-                render_summary(json, summary_id);
-                render_omega_plots(json, omega_plots_id);
-                //render_model_fits(json, model_fits_id);
-                //render_tree(json, tree_id, tree_settings);
-           });
-        });
-
-
-        $("#datamonkey-relax-load-json").on("change", function(e) {
-            // FileList object
-            var files = e.target.files; 
-
-            if (files.length == 1) {
-                var f = files[0];
-                var reader = new FileReader();
-
-                reader.onload = (function(theFile) {
-                    return function(e) {
-                        json = JSON.parse(e.target.result);
-                        rerender_summary(json, summary_id);
-                        rerender_omega_plots(json, omega_plots_id);
-                        //rerender_model_fits(json, model_fits_id);
-                        //rerender_tree(json, tree_id, tree_settings);
-                    };
-
-                })(f);
-
-                reader.readAsText(f);
-            }
-
-            e.preventDefault();
-        });
-
+      $(document).ready(function() {
+        render_relax("test-data/test.json", "relax-content");
+      });
     </script>
 
 </body>

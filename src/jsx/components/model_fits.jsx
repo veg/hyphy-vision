@@ -54,6 +54,11 @@ var ModelFits = React.createClass({
     var omega_distributions = {};
     omega_distributions[m] = {};
 
+    var omega_format = d3.format(".3r"),
+        prop_format = d3.format(".2p"),
+        p_value_format = d3.format(".4f");
+
+
     var distributions = [];
 
     for (var d in this_model["rate-distributions"]) {
