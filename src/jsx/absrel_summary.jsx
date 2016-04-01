@@ -78,7 +78,7 @@ var BSRELSummary = React.createClass({
                   </p>
                   <p>
                     <small>
-                      Please cite <a href="#" id="summary-pmid">PMID {self.props.pmid}</a> if you use this result in a publication, presentation, or other scientific work.
+                      Please cite <a href="http://www.ncbi.nlm.nih.gov/pubmed/25697341" id="summary-pmid" target="_blank">PMID 25697341</a> if you use this result in a publication, presentation, or other scientific work.
                     </small>
                   </p>
               </li>

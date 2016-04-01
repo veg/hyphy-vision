@@ -27,16 +27,20 @@ var BSREL = React.createClass({
   },
 
   getDefaultProps: function() {
+
     var edgeColorizer = function (element, data) {
 
         var self = this;
 
-        var svg = $(element[0]).closest("svg");
-        var svg_defs = d3.select(svg.get(0)).selectAll("defs");
+        var svg = d3.select("#tree_container svg"),
+            svg_defs = d3.select(".phylotree-definitions");
 
         if (svg_defs.empty()) {
-          svg_defs = svg.append("defs");
+          svg_defs = svg.append("defs")
+                      .attr("class", "phylotree-definitions")
         }   
+
+        // clear existing linearGradients
 
         var scaling_exponent = 0.33,
             omega_format = d3.format(".3r"),
@@ -48,8 +52,8 @@ var BSREL = React.createClass({
             .domain([0, 0.25, 1, 5, 10])
             .range(
               self.options()["color-fill"]
-                ? ["#DDDDDD", "#AAAAAA", "#888888", "#444444", "#000000"] 
-                : ["#5e4fa2", "#3288bd", "#e6f598", "#f46d43", "#9e0142"])
+                ? ["#DDDDDD", "#AAAAAA", "#888888", "#444444", "#000000"]
+                : ["#6e4fa2", "#3288bd", "#e6f598", "#f46d43", "#9e0142"])
             .clamp(true);
 
 
@@ -167,7 +171,7 @@ var BSREL = React.createClass({
             'hyphy-tree-highlight': [null, false],
             'hyphy-tree-branch-lengths': [true, true],
             'hyphy-tree-hide-legend': [false, true],
-            'hyphy-tree-fill-color': [true, true]
+            'hyphy-tree-fill-color': [false, true]
         },
         'suppress-tree-render': false,
         'chart-append-html' : true,

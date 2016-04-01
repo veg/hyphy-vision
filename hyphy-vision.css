@@ -107,4 +107,6 @@
   color: #d62728;
 }
 
-
+#table-branch-table tr{
+  cursor : pointer;
+}

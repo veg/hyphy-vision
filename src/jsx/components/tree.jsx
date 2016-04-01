@@ -62,14 +62,14 @@ var Tree = React.createClass({
   renderLegendColorScheme : function(svg_container, attr_name, do_not_render) {
 
     var self = this;
+
     var branch_annotations = this.state.json["fits"][this.which_model]["branch-annotations"];
 
-    var svg = d3.select("#" + svg_container).selectAll("svg").data([self.omega_color.domain()]);
-    svg.enter().append("g");
-    svg.selectAll("*").remove();
+    var svg = self.svg;
 
     // clear existing linearGradients
-    d3.select("#tree_container").select("svg").select("defs").selectAll("linearGradient").remove();
+    d3.selectAll(".legend-definitions").selectAll("linearGradient").remove();
+    d3.selectAll("#color-legend").remove();
 
     if (branch_annotations && !do_not_render) {
         var bar_width = 70,
@@ -81,15 +81,14 @@ var Tree = React.createClass({
                 'right': 2
             };
 
-        svg.attr("width", bar_width)
-            .attr("height", bar_height);
-
-        this_grad = svg.append("defs").append("linearGradient")
-            .attr("id", "_omega_bar")
-            .attr("x1", "0%")
-            .attr("y1", "0%")
-            .attr("x2", "0%")
-            .attr("y2", "100%");
+        this_grad = svg.append("defs")
+            .attr("class", "legend-definitions")
+            .append("linearGradient")
+              .attr("id", "_omega_bar")
+              .attr("x1", "0%")
+              .attr("y1", "0%")
+              .attr("x2", "0%")
+              .attr("y2", "100%");
 
         var omega_scale = d3.scale.pow().exponent(this.scaling_exponent)
             .domain(d3.extent(self.omega_color.domain()))
@@ -154,7 +153,9 @@ var Tree = React.createClass({
       });
 
       $(".hyphy-tree-trigger").on("click", function(e) {
+
         self.renderTree();
+
       });
 
       $(".tree-tab-btn").on('click', function(e) {
@@ -283,8 +284,8 @@ var Tree = React.createClass({
     model_list.enter().append("a");
 
     model_list.attr("href", "#").on("click", function(d, i) {
-        d3.select("#hyphy-tree-model").attr("value", d);
-        self.renderTree();
+      d3.select("#hyphy-tree-model").attr("value", d);
+      self.renderTree();
     });
 
 
@@ -327,7 +328,7 @@ var Tree = React.createClass({
 
     var self = this;
 
-    this.settings = this.props.settings;
+    this.settings = this.state.settings;
 
     if(!this.settings) {
       return null;
@@ -396,18 +397,17 @@ var Tree = React.createClass({
         'color-fill': this.settings["tree-options"]["hyphy-tree-fill-color"][0]
     }, false);
 
-
     this.assignBranchAnnotations();
 
-    self.renderTree(true);
-
-    // Render the appropriate color
     self.omega_color = d3.scale.pow().exponent(this.scaling_exponent)
         .domain([0, 0.25, 1, 5, 10])
-        .range(this.settings["tree-options"]["hyphy-tree-fill-color"][0] ? ["#DDDDDD", "#AAAAAA", "#888888", "#444444", "#000000"] : ["#5e4fa2", "#3288bd", "#e6f598", "#f46d43", "#9e0142"])
+        .range(this.settings["tree-options"]["hyphy-tree-fill-color"][0] 
+                    ? ["#DDDDDD", "#AAAAAA", "#888888", "#444444", "#000000"] 
+                    :  ["#5e4fa2", "#3288bd", "#e6f598", "#f46d43", "#9e0142"]) 
         .clamp(true);
 
-    this.renderLegendColorScheme("tree_container", analysis_data["fits"][this.which_model]["annotation-tag"]);
+    self.renderTree();
+    self.renderLegendColorScheme("tree_container", analysis_data["fits"][this.which_model]["annotation-tag"]);
 
 
     if(this.settings.edgeColorizer) {
@@ -513,20 +513,27 @@ var Tree = React.createClass({
             this.partition = null;
           }
 
+          self.omega_color = d3.scale.pow().exponent(self.scaling_exponent)
+              .domain([0, 0.25, 1, 5, 10])
+              .range(self.settings["tree-options"]["hyphy-tree-fill-color"][0] 
+                     ? ["#DDDDDD", "#AAAAAA", "#888888", "#444444", "#000000"]
+                     : ["#5e4fa2", "#3288bd", "#e6f598", "#f46d43", "#9e0142"])
+              .clamp(true);
+
+          self.tree.options({
+              'color-fill': self.settings["tree-options"]["hyphy-tree-fill-color"][0]
+          }, false);
+
+
+          d3.select(".phylotree-definitions").selectAll("linearGradient").remove();
 
           // TODO: Should be a prop. Hide or show legend.
           if(!this.settings["tree-options"]["hyphy-tree-hide-legend"][0]) {
             d3.select("#color-legend").style("visibility", "visible");
+            self.renderLegendColorScheme("tree_container", self.state.json["fits"][self.which_model]["annotation-tag"]);
           } else {
             d3.select("#color-legend").style("visibility", "hidden");
           }
-
-          //set phylotree appropriate color-fill
-          this.tree.options({
-              'color-fill': this.settings["tree-options"]["hyphy-tree-fill-color"][0]
-          }, false);
-
-
 
           if (!skip_render) {
               if (do_layout) {
@@ -534,6 +541,7 @@ var Tree = React.createClass({
               }
               d3_phylotree_trigger_refresh(this.tree);
           }
+
       }
   },
 

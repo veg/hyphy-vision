@@ -127,7 +127,7 @@ var BranchTable = React.createClass({
     if(self.state.annotations) {
       var branch_table = d3.select('#table-branch-table').selectAll("tr");
 
-      branch_table.on("mouseover", function(d) {
+      branch_table.on("click", function(d) {
         var label = d[0];
         self.setState({
                         current_model_name : label, 

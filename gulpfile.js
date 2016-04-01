@@ -5,7 +5,7 @@ var gulp = require('gulp'),
     sourcemaps = require('gulp-sourcemaps'),
     react = require('gulp-react');
 
-gulp.task('scripts', function() {
+gulp.task('scripts', ['react'], function() {
     return gulp.src(['src/**/*.js', 'jsx-compiled/*.js'])
     .pipe(order([
       "jsx-compiled/tree.js",

@@ -971,7 +971,7 @@ var BSRELSummary = React.createClass({displayName: "BSRELSummary",
                   ), 
                   React.createElement("p", null, 
                     React.createElement("small", null, 
-                      "Please cite ", React.createElement("a", {href: "#", id: "summary-pmid"}, "PMID ", self.props.pmid), " if you use this result in a publication, presentation, or other scientific work."
+                      "Please cite ", React.createElement("a", {href: "http://www.ncbi.nlm.nih.gov/pubmed/25697341", id: "summary-pmid", target: "_blank"}, "PMID 25697341"), " if you use this result in a publication, presentation, or other scientific work."
                     )
                   )
               )
@@ -1020,16 +1020,20 @@ var BSREL = React.createClass({displayName: "BSREL",
   },
 
   getDefaultProps: function() {
+
     var edgeColorizer = function (element, data) {
 
         var self = this;
 
-        var svg = $(element[0]).closest("svg");
-        var svg_defs = d3.select(svg.get(0)).selectAll("defs");
+        var svg = d3.select("#tree_container svg"),
+            svg_defs = d3.select(".phylotree-definitions");
 
         if (svg_defs.empty()) {
-          svg_defs = svg.append("defs");
+          svg_defs = svg.append("defs")
+                      .attr("class", "phylotree-definitions")
         }   
+
+        // clear existing linearGradients
 
         var scaling_exponent = 0.33,
             omega_format = d3.format(".3r"),
@@ -1041,8 +1045,8 @@ var BSREL = React.createClass({displayName: "BSREL",
             .domain([0, 0.25, 1, 5, 10])
             .range(
               self.options()["color-fill"]
-                ? ["#DDDDDD", "#AAAAAA", "#888888", "#444444", "#000000"] 
-                : ["#5e4fa2", "#3288bd", "#e6f598", "#f46d43", "#9e0142"])
+                ? ["#DDDDDD", "#AAAAAA", "#888888", "#444444", "#000000"]
+                : ["#6e4fa2", "#3288bd", "#e6f598", "#f46d43", "#9e0142"])
             .clamp(true);
 
 
@@ -1160,7 +1164,7 @@ var BSREL = React.createClass({displayName: "BSREL",
             'hyphy-tree-highlight': [null, false],
             'hyphy-tree-branch-lengths': [true, true],
             'hyphy-tree-hide-legend': [false, true],
-            'hyphy-tree-fill-color': [true, true]
+            'hyphy-tree-fill-color': [false, true]
         },
         'suppress-tree-render': false,
         'chart-append-html' : true,
@@ -1447,7 +1451,7 @@ var BranchTable = React.createClass({displayName: "BranchTable",
     if(self.state.annotations) {
       var branch_table = d3.select('#table-branch-table').selectAll("tr");
 
-      branch_table.on("mouseover", function(d) {
+      branch_table.on("click", function(d) {
         var label = d[0];
         self.setState({
                         current_model_name : label, 
@@ -3892,6 +3896,82 @@ function rerender_prop_chart(model_name, omeags, settings) {
 }
 
 
+var Summary = React.createClass({displayName: "Summary",
+
+  getDefaultProps : function() {
+    return {
+     alpha_level : 0.05
+    };
+
+  },
+
+  getInitialState: function() {
+    return {
+      p : null,
+      direction : 'unknown',
+      evidence : 'unknown',
+      pvalue : null,
+      lrt : null,
+      summary_k : 'unknown',
+      pmid_text : "PubMed ID : Unknown",
+      pmid_href : "#",
+      relaxation_K : "unknown"
+    };
+  },
+
+  p_value_format : d3.format(".4f"),
+  fit_format : d3.format(".2f"),
+
+  componentDidMount: function() {
+    this.setState({
+      p : this.props.json["relaxation-test"]["p"],
+      direction : this.props.json["fits"]["Alternative"]["K"] > 1 ? 'intensification' : 'relaxation',
+      evidence : this.state.p <= this.props.alpha_level ? 'significant' : 'not significant',
+      pvalue : this.p_value_format(this.state.p),
+      lrt : this.fit_format(this.props.json["relaxation-test"]["LR"]),
+      summary_k : this.fit_format(this.props.json["fits"]["Alternative"]["K"]),
+      pmid_text : "PubMed ID " + this.props.json['PMID'],
+      pmid_href : "http://www.ncbi.nlm.nih.gov/pubmed/" + this.props.json['PMID']
+    });
+  },
+
+  render: function() {
+
+    return (
+        React.createElement("div", {className: "col-md-12"}, 
+            React.createElement("ul", {className: "list-group"}, 
+                React.createElement("li", {className: "list-group-item list-group-item-info"}, 
+                    React.createElement("h3", {className: "list-group-item-heading"}, 
+                      React.createElement("i", {className: "fa fa-list", styleFormat: "margin-right: 10px"}), 
+                      React.createElement("span", {id: "summary-method-name"}, "RELAX(ed selection test)"), " summary"
+                    ), 
+                    React.createElement("p", {className: "list-group-item-text lead", styleFormat: "margin-top:0.5em; "}, 
+                      "Test for selection ", React.createElement("strong", {id: "summary-direction"}, this.state.direction), 
+                      "(", React.createElement("abbr", {title: "Relaxation coefficient"}, "K"), " = ", React.createElement("strong", {id: "summary-K"}, this.state.summary_k), ") was ", React.createElement("strong", {id: "summary-evidence"}, this.state.evidence), 
+                      "(p = ", React.createElement("strong", {id: "summary-pvalue"}, this.state.p), ", ", React.createElement("abbr", {title: "Likelihood ratio statistic"}, "LR"), " = ", React.createElement("strong", {id: "summary-LRT"}, this.state.lrt), ")"
+                    ), 
+                    React.createElement("p", null, 
+                      React.createElement("small", null, "Please cite ", React.createElement("a", {href: this.state.pmid_href, id: "summary-pmid"}, this.state.pmid_text), " if you use this result in a publication, presentation, or other scientific work.")
+                    )
+                )
+            )
+          )
+        )
+  }
+
+});
+
+function render_summary(json) {
+  React.render(
+    React.createElement(Summary, {json: json}),
+    document.getElementById("hyphy-relax-summary")
+  );
+}
+
+function rerender_summary(json) {
+  $("#hyphy-relax-summary").empty();
+  render_summary(json);
+}
 
 var TreeSummary = React.createClass({displayName: "TreeSummary",
 
@@ -4179,14 +4259,14 @@ var Tree = React.createClass({displayName: "Tree",
   renderLegendColorScheme : function(svg_container, attr_name, do_not_render) {
 
     var self = this;
+
     var branch_annotations = this.state.json["fits"][this.which_model]["branch-annotations"];
 
-    var svg = d3.select("#" + svg_container).selectAll("svg").data([self.omega_color.domain()]);
-    svg.enter().append("g");
-    svg.selectAll("*").remove();
+    var svg = self.svg;
 
     // clear existing linearGradients
-    d3.select("#tree_container").select("svg").select("defs").selectAll("linearGradient").remove();
+    d3.selectAll(".legend-definitions").selectAll("linearGradient").remove();
+    d3.selectAll("#color-legend").remove();
 
     if (branch_annotations && !do_not_render) {
         var bar_width = 70,
@@ -4198,15 +4278,14 @@ var Tree = React.createClass({displayName: "Tree",
                 'right': 2
             };
 
-        svg.attr("width", bar_width)
-            .attr("height", bar_height);
-
-        this_grad = svg.append("defs").append("linearGradient")
-            .attr("id", "_omega_bar")
-            .attr("x1", "0%")
-            .attr("y1", "0%")
-            .attr("x2", "0%")
-            .attr("y2", "100%");
+        this_grad = svg.append("defs")
+            .attr("class", "legend-definitions")
+            .append("linearGradient")
+              .attr("id", "_omega_bar")
+              .attr("x1", "0%")
+              .attr("y1", "0%")
+              .attr("x2", "0%")
+              .attr("y2", "100%");
 
         var omega_scale = d3.scale.pow().exponent(this.scaling_exponent)
             .domain(d3.extent(self.omega_color.domain()))
@@ -4271,7 +4350,9 @@ var Tree = React.createClass({displayName: "Tree",
       });
 
       $(".hyphy-tree-trigger").on("click", function(e) {
+
         self.renderTree();
+
       });
 
       $(".tree-tab-btn").on('click', function(e) {
@@ -4400,8 +4481,8 @@ var Tree = React.createClass({displayName: "Tree",
     model_list.enter().append("a");
 
     model_list.attr("href", "#").on("click", function(d, i) {
-        d3.select("#hyphy-tree-model").attr("value", d);
-        self.renderTree();
+      d3.select("#hyphy-tree-model").attr("value", d);
+      self.renderTree();
     });
 
 
@@ -4444,7 +4525,7 @@ var Tree = React.createClass({displayName: "Tree",
 
     var self = this;
 
-    this.settings = this.props.settings;
+    this.settings = this.state.settings;
 
     if(!this.settings) {
       return null;
@@ -4513,18 +4594,17 @@ var Tree = React.createClass({displayName: "Tree",
         'color-fill': this.settings["tree-options"]["hyphy-tree-fill-color"][0]
     }, false);
 
-
     this.assignBranchAnnotations();
 
-    self.renderTree(true);
-
-    // Render the appropriate color
     self.omega_color = d3.scale.pow().exponent(this.scaling_exponent)
         .domain([0, 0.25, 1, 5, 10])
-        .range(this.settings["tree-options"]["hyphy-tree-fill-color"][0] ? ["#DDDDDD", "#AAAAAA", "#888888", "#444444", "#000000"] : ["#5e4fa2", "#3288bd", "#e6f598", "#f46d43", "#9e0142"])
+        .range(this.settings["tree-options"]["hyphy-tree-fill-color"][0] 
+                    ? ["#DDDDDD", "#AAAAAA", "#888888", "#444444", "#000000"] 
+                    :  ["#5e4fa2", "#3288bd", "#e6f598", "#f46d43", "#9e0142"]) 
         .clamp(true);
 
-    this.renderLegendColorScheme("tree_container", analysis_data["fits"][this.which_model]["annotation-tag"]);
+    self.renderTree();
+    self.renderLegendColorScheme("tree_container", analysis_data["fits"][this.which_model]["annotation-tag"]);
 
 
     if(this.settings.edgeColorizer) {
@@ -4630,20 +4710,27 @@ var Tree = React.createClass({displayName: "Tree",
             this.partition = null;
           }
 
+          self.omega_color = d3.scale.pow().exponent(self.scaling_exponent)
+              .domain([0, 0.25, 1, 5, 10])
+              .range(self.settings["tree-options"]["hyphy-tree-fill-color"][0] 
+                     ? ["#DDDDDD", "#AAAAAA", "#888888", "#444444", "#000000"]
+                     : ["#5e4fa2", "#3288bd", "#e6f598", "#f46d43", "#9e0142"])
+              .clamp(true);
+
+          self.tree.options({
+              'color-fill': self.settings["tree-options"]["hyphy-tree-fill-color"][0]
+          }, false);
+
+
+          d3.select(".phylotree-definitions").selectAll("linearGradient").remove();
 
           // TODO: Should be a prop. Hide or show legend.
           if(!this.settings["tree-options"]["hyphy-tree-hide-legend"][0]) {
             d3.select("#color-legend").style("visibility", "visible");
+            self.renderLegendColorScheme("tree_container", self.state.json["fits"][self.which_model]["annotation-tag"]);
           } else {
             d3.select("#color-legend").style("visibility", "hidden");
           }
-
-          //set phylotree appropriate color-fill
-          this.tree.options({
-              'color-fill': this.settings["tree-options"]["hyphy-tree-fill-color"][0]
-          }, false);
-
-
 
           if (!skip_render) {
               if (do_layout) {
@@ -4651,6 +4738,7 @@ var Tree = React.createClass({displayName: "Tree",
               }
               d3_phylotree_trigger_refresh(this.tree);
           }
+
       }
   },
 
