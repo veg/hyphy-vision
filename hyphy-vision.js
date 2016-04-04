@@ -1149,6 +1149,7 @@ var BSREL = React.createClass({displayName: "BSREL",
     return {
       edgeColorizer : edgeColorizer
     };
+
   },
 
   getInitialState: function() {
@@ -2930,7 +2931,7 @@ var ModelFits = React.createClass({displayName: "ModelFits",
     omega_distributions[m] = {};
 
     var omega_format = d3.format(".3r"),
-        prop_format = d3.format(".2p"),
+        prop_format = d3.format(".2p");
         p_value_format = d3.format(".4f");
 
 
@@ -3165,13 +3166,6 @@ var OmegaPlot = React.createClass({displayName: "OmegaPlot",
 
   },
 
-  getInitialState: function() {
-    return {
-      svg_id : null,
-    };
-
-  },
-
   setEvents : function() {
     var self = this;
 
@@ -3186,12 +3180,12 @@ var OmegaPlot = React.createClass({displayName: "OmegaPlot",
 
   initialize : function() {
 
-    if(!this.props.omegas["Reference"]) {
+    if(!this.state.omegas || !this.state.omegas["Reference"]) {
       return;
     }
 
-    var data_to_plot = this.props.omegas["Reference"];
-    var secondary_data = this.props.omegas["Test"];
+    var data_to_plot = this.state.omegas["Reference"];
+    var secondary_data = this.state.omegas["Test"];
 
     // Set props from settings
     this.props.svg_id = this.props.settings.svg_id;
@@ -3308,8 +3302,8 @@ var OmegaPlot = React.createClass({displayName: "OmegaPlot",
   createDisplacementLine : function() {
 
     var self = this;
-    var data_to_plot = this.props.omegas["Reference"];
-    var secondary_data = this.props.omegas["Test"];
+    var data_to_plot = this.state.omegas["Reference"];
+    var secondary_data = this.state.omegas["Test"];
 
     if(secondary_data) {
         var diffs = data_to_plot.map(function(d, i) {
@@ -3338,8 +3332,8 @@ var OmegaPlot = React.createClass({displayName: "OmegaPlot",
   },
   createReferenceLine : function () {
 
-    var data_to_plot = this.props.omegas["Reference"];
-    var secondary_data = this.props.omegas["Test"];
+    var data_to_plot = this.state.omegas["Reference"];
+    var secondary_data = this.state.omegas["Test"];
     var self = this;
 
     if(secondary_data) {
@@ -3371,8 +3365,8 @@ var OmegaPlot = React.createClass({displayName: "OmegaPlot",
   },
   createOmegaLine : function() {
 
-    var data_to_plot = this.props.omegas["Reference"];
-    var secondary_data = this.props.omegas["Test"];
+    var data_to_plot = this.state.omegas["Reference"];
+    var secondary_data = this.state.omegas["Test"];
     var self = this;
 
     // ** Omega Line (Red) ** //
@@ -3475,23 +3469,44 @@ var OmegaPlot = React.createClass({displayName: "OmegaPlot",
       .attr("dy", "-1em")
 
   },
+
   getInitialState: function() {
-    return {settings: []};
+    return { 
+              omegas : this.props.omegas,
+              settings : this.props.settings
+           };
   },
+
+  componentWillReceiveProps: function(nextProps) {
+
+    this.setState({
+             omegas : nextProps.omegas 
+           });
+  },
+
+  componentDidUpdate : function() {
+    this.initialize();
+  },
+
   componentDidMount: function() {
     this.initialize();
   },
+
   render: function() {
 
-    this.svg_id = this.props.omegas.key + "-svg";
-    this.save_svg_id = "export-" + this.props.omegas.key + "-svg";
-    this.save_png_id = "export-" + this.props.omegas.key + "-png";
+    var key = this.props.omegas.key,
+        label = this.props.omegas.label;
+
+    this.svg_id = key + "-svg";
+    this.save_svg_id = "export-" + key + "-svg";
+    this.save_png_id = "export-" + key + "-png";
+    
 
     return (
       React.createElement("div", {className: "col-lg-6"}, 
-          React.createElement("div", {className: "panel panel-default", id:  this.props.omegas.key}, 
+          React.createElement("div", {className: "panel panel-default", id:  key }, 
               React.createElement("div", {className: "panel-heading"}, 
-                  React.createElement("h3", {className: "panel-title"}, "ω distributions under the ", React.createElement("strong", null,  this.props.omegas.label), " model"), 
+                  React.createElement("h3", {className: "panel-title"}, "ω distributions under the ", React.createElement("strong", null,  label ), " model"), 
                   React.createElement("p", null, 
                       React.createElement("small", null, "Test branches are shown in ", React.createElement("span", {className: "hyphy-blue"}, "blue"), " and reference branches are shown in ", React.createElement("span", {className: "hyphy-red"}, "red"))
                   ), 
@@ -3516,9 +3531,14 @@ var OmegaPlot = React.createClass({displayName: "OmegaPlot",
 var OmegaPlotGrid = React.createClass({displayName: "OmegaPlotGrid",
 
   getInitialState: function() {
-    return {omega_distributions: this.getDistributions(this.props.json)};
+    return { omega_distributions: this.getDistributions(this.props.json) };
   },
-  componentDidMount: function() {
+
+  componentWillReceiveProps : function(nextProps) {
+
+    this.setState({ 
+      omega_distributions: this.getDistributions(nextProps.json) 
+    });
 
   },
 
@@ -3527,7 +3547,7 @@ var OmegaPlotGrid = React.createClass({displayName: "OmegaPlotGrid",
     var omega_distributions = {};
 
     if(!json) {
-      return null;
+      return [];
     }
 
     for (var m in json["fits"]) {
@@ -3895,11 +3915,11 @@ var RELAX = React.createClass({displayName: "RELAX",
     var self = this;
     d3.json(this.props.url, function(data) {
 
-      //data["fits"]["Partitioned MG94xREV"]["branch-annotations"] = self.formatBranchAnnotations(data, "Partitioned MG94xREV");
-      //data["fits"]["General Descriptive"]["branch-annotations"] = self.formatBranchAnnotations(data, "General Descriptive");
-      //data["fits"]["Null"]["branch-annotations"] = self.formatBranchAnnotations(data, "Null");
-      //data["fits"]["Alternative"]["branch-annotations"] = self.formatBranchAnnotations(data, "Alternative");
-      //data["fits"]["Partitioned Exploratory"]["branch-annotations"] = self.formatBranchAnnotations(data, "Partitioned Exploratory");
+      data["fits"]["Partitioned MG94xREV"]["branch-annotations"] = self.formatBranchAnnotations(data, "Partitioned MG94xREV");
+      data["fits"]["General Descriptive"]["branch-annotations"] = self.formatBranchAnnotations(data, "General Descriptive");
+      data["fits"]["Null"]["branch-annotations"] = self.formatBranchAnnotations(data, "Null");
+      data["fits"]["Alternative"]["branch-annotations"] = self.formatBranchAnnotations(data, "Alternative");
+      data["fits"]["Partitioned Exploratory"]["branch-annotations"] = self.formatBranchAnnotations(data, "Partitioned Exploratory");
 
       var annotations = data["fits"]["Partitioned MG94xREV"]["branch-annotations"],
           json = data,
@@ -3921,13 +3941,24 @@ var RELAX = React.createClass({displayName: "RELAX",
 
     var edgeColorizer = function(element, data) {
 
-      var self = this;
+      var self = this,
+          scaling_exponent = 0.33,
+          omega_format = d3.format(".3r");
 
-      if (this.branch_annotations) {
-          element.style('stroke', self.omega_color(this.branch_annotations[data.target.name]) || null);
+      var omega_color = d3.scale.pow().exponent(scaling_exponent)
+          .domain([0, 0.25, 1, 5, 10])
+          .range(
+            self.options()["color-fill"]
+              ? ["#DDDDDD", "#AAAAAA", "#888888", "#444444", "#000000"]
+              : ["#6e4fa2", "#3288bd", "#e6f598", "#f46d43", "#9e0142"])
+          .clamp(true);
+
+
+      if (data.target.annotations) {
+          element.style('stroke', omega_color(data.target.annotations.length) || null);
           $(element[0][0]).tooltip('destroy');
           $(element[0][0]).tooltip({
-              'title': self.omega_format(this.branch_annotations[data.target.name]),
+              'title': omega_format(data.target.annotations.length),
               'html': true,
               'trigger': 'hover',
               'container': 'body',
@@ -3938,9 +3969,15 @@ var RELAX = React.createClass({displayName: "RELAX",
           $(element[0][0]).tooltip('destroy');
       }
 
-      element.style('stroke-width', (this.partition && this.partition[data.target.name]) ? '8' : '4')
-          .style('stroke-linejoin', 'round')
-          .style('stroke-linecap', 'round');
+      var selected_partition = $("#hyphy-tree-highlight").attr("value");
+      
+      if(selected_partition && this.get_partitions()) {
+        var partitions = this.get_partitions()[selected_partition];
+
+        element.style('stroke-width', (partitions && partitions[data.target.name]) ? '8' : '4')
+            .style('stroke-linejoin', 'round')
+            .style('stroke-linecap', 'round');
+      }
 
     }
 
@@ -3966,7 +4003,7 @@ var RELAX = React.createClass({displayName: "RELAX",
                     [1] - does the change in attribute value trigger tree re-layout?
                 */
                 'hyphy-tree-model': ["Partitioned MG94xREV", true],
-                'hyphy-tree-highlight': [null, false],
+                'hyphy-tree-highlight': ["RELAX.test", false],
                 'hyphy-tree-branch-lengths': [true, true],
                 'hyphy-tree-hide-legend': [true, false],
                 'hyphy-tree-fill-color': [true, false]
@@ -3996,7 +4033,7 @@ var RELAX = React.createClass({displayName: "RELAX",
 
     var self = this;
 
-    $("#datamonkey-absrel-json-file").on("change", function(e) {
+    $("#datamonkey-relax-load-json").on("change", function(e) {
         var files = e.target.files; // FileList object
 
         if (files.length == 1) {
@@ -4004,24 +4041,27 @@ var RELAX = React.createClass({displayName: "RELAX",
             var reader = new FileReader();
 
             reader.onload = (function(theFile) {
-                return function(e) {
-                  var data = JSON.parse(this.result);
-                  data["fits"]["MG94"]["branch-annotations"] = self.formatBranchAnnotations(data, "MG94");
-                  data["fits"]["Full model"]["branch-annotations"] = self.formatBranchAnnotations(data, "Full model");
+              return function(e) {
+                var data = JSON.parse(this.result);
+                data["fits"]["Partitioned MG94xREV"]["branch-annotations"] = self.formatBranchAnnotations(data, "Partitioned MG94xREV");
+                data["fits"]["General Descriptive"]["branch-annotations"] = self.formatBranchAnnotations(data, "General Descriptive");
+                data["fits"]["Null"]["branch-annotations"] = self.formatBranchAnnotations(data, "Null");
+                data["fits"]["Alternative"]["branch-annotations"] = self.formatBranchAnnotations(data, "Alternative");
+                data["fits"]["Partitioned Exploratory"]["branch-annotations"] = self.formatBranchAnnotations(data, "Partitioned Exploratory");
 
-                  var annotations = data["fits"]["Full model"]["branch-annotations"],
-                      json = data,
-                      pmid = data["PMID"],
-                      test_results = data["test results"];
+                var annotations = data["fits"]["Partitioned MG94xREV"]["branch-annotations"],
+                    json = data,
+                    pmid = data["PMID"],
+                    test_results = data["relaxation_test"];
 
-                  self.setState({
-                                  annotations : annotations,
-                                  json : json,
-                                  pmid : pmid,
-                                  test_results : test_results
-                                });
+                self.setState({
+                                annotations : annotations,
+                                json : json,
+                                pmid : pmid,
+                                test_results : test_results
+                              });
+              }
 
-                };
             })(f);
             reader.readAsText(f);
         }
@@ -4043,31 +4083,14 @@ var RELAX = React.createClass({displayName: "RELAX",
 
     // Iterate over objects
     branch_annotations = _.mapObject(initial_branch_annotations, function(val, key) {
-
-      var vals = [];
-        try {
-          vals = JSON.parse(val);
-        } catch (e) {
-          vals = val;
-        }
-
-      var omegas = {"omegas" : _.map(vals, function(d) { return _.object(["omega","prop"], d)})};
-      return omegas;
-
+      return {"length" : val};
     });
 
     return branch_annotations;
 
   },
 
-  initialize : function() {
-
-    var model_fits_id = "#hyphy-model-fits",
-        omega_plots_id = "#hyphy-omega-plots",
-        summary_id = "#hyphy-relax-summary",
-        tree_id = "#tree-tab";
-
-  },
+  initialize : function() {},
 
   render: function() {
 
@@ -4644,6 +4667,9 @@ var Tree = React.createClass({displayName: "Tree",
       return;
     }
 
+    // set tree partitions
+    self.tree.set_partitions(self.props.json["partition"]);
+
     var partition_list = d3.select("#hyphy-tree-highlight-branches").selectAll("li").data([
         ['None']
     ].concat(d3.keys(self.props.json["partition"]).map(function(d) {
@@ -4662,6 +4688,7 @@ var Tree = React.createClass({displayName: "Tree",
         self.renderTree();
     });
 
+    // set default to passed setting
     partition_list.text(function(d) {
         if (d == "RELAX.test") {
             this.click();
@@ -4768,8 +4795,8 @@ var Tree = React.createClass({displayName: "Tree",
 
     this.setHandlers();
     this.setModelList();
-    this.setPartitionList();
     this.initializeTree();
+    this.setPartitionList();
 
   },
 
@@ -4784,11 +4811,13 @@ var Tree = React.createClass({displayName: "Tree",
         alpha_level = 0.05,
         branch_lengths = [];
 
-    this.tree = d3.layout.phylotree("body")
-        .size([height, width])
-        .separation(function(a, b) {
-            return 0;
-        });
+    if(!this.tree) {
+      this.tree = d3.layout.phylotree("body")
+          .size([height, width])
+          .separation(function(a, b) {
+              return 0;
+          });
+    }
 
     this.setTreeHandlers();
 
@@ -4835,39 +4864,6 @@ var Tree = React.createClass({displayName: "Tree",
     this.tree.placenodes().update();
     this.tree.layout();
 
-  },
-
-  edgeColorizer : function(element, data) {
-
-    var self = this;
-
-    if (data.target.annotations) {
-      element.style('stroke', self.omega_color(data.target.annotations.omega) || null);
-      $(element[0][0]).tooltip('destroy');
-      $(element[0][0]).tooltip({
-          'title': self.omega_format(data.target.annotations.omega),
-          'html': true,
-          'trigger': 'hover',
-          'container': 'body',
-          'placement': 'auto'
-      })
-    } else {
-      element.style('stroke', null);
-      $(element[0][0]).tooltip('destroy');
-    }
-
-    element.style('stroke-width', (this.partition && this.partition[data.target.name]) ? '8' : '4')
-        .style('stroke-linejoin', 'round')
-        .style('stroke-linecap', 'round');
-
-  },
-
-  nodeColorizer : function(element, data) {
-    if (this.partition) { 
-      element.style('opacity', (this.partition && this.partition[data.name]) ? '1' : '0.25');
-    } else {
-      element.style('opacity', '1');        
-    }
   },
 
   renderTree : function(skip_render) {
@@ -4924,7 +4920,9 @@ var Tree = React.createClass({displayName: "Tree",
           this.assignBranchAnnotations();
           
           if(_.findKey(analysis_data, "partition")) {
-            this.partition = (this.settings["tree-options"]["hyphy-tree-highlight"] ? analysis_data["partition"][this.settings["tree-options"]["hyphy-tree-highlight"][0]] : null) || null;
+            this.partition = (this.settings["tree-options"]["hyphy-tree-highlight"] 
+                              ? analysis_data["partition"][this.settings["tree-options"]["hyphy-tree-highlight"][0]] 
+                              : null) || null;
           } else {
             this.partition = null;
           }

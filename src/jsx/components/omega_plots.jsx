@@ -14,13 +14,6 @@ var OmegaPlot = React.createClass({
 
   },
 
-  getInitialState: function() {
-    return {
-      svg_id : null,
-    };
-
-  },
-
   setEvents : function() {
     var self = this;
 
@@ -35,12 +28,12 @@ var OmegaPlot = React.createClass({
 
   initialize : function() {
 
-    if(!this.props.omegas["Reference"]) {
+    if(!this.state.omegas || !this.state.omegas["Reference"]) {
       return;
     }
 
-    var data_to_plot = this.props.omegas["Reference"];
-    var secondary_data = this.props.omegas["Test"];
+    var data_to_plot = this.state.omegas["Reference"];
+    var secondary_data = this.state.omegas["Test"];
 
     // Set props from settings
     this.props.svg_id = this.props.settings.svg_id;
@@ -157,8 +150,8 @@ var OmegaPlot = React.createClass({
   createDisplacementLine : function() {
 
     var self = this;
-    var data_to_plot = this.props.omegas["Reference"];
-    var secondary_data = this.props.omegas["Test"];
+    var data_to_plot = this.state.omegas["Reference"];
+    var secondary_data = this.state.omegas["Test"];
 
     if(secondary_data) {
         var diffs = data_to_plot.map(function(d, i) {
@@ -187,8 +180,8 @@ var OmegaPlot = React.createClass({
   },
   createReferenceLine : function () {
 
-    var data_to_plot = this.props.omegas["Reference"];
-    var secondary_data = this.props.omegas["Test"];
+    var data_to_plot = this.state.omegas["Reference"];
+    var secondary_data = this.state.omegas["Test"];
     var self = this;
 
     if(secondary_data) {
@@ -220,8 +213,8 @@ var OmegaPlot = React.createClass({
   },
   createOmegaLine : function() {
 
-    var data_to_plot = this.props.omegas["Reference"];
-    var secondary_data = this.props.omegas["Test"];
+    var data_to_plot = this.state.omegas["Reference"];
+    var secondary_data = this.state.omegas["Test"];
     var self = this;
 
     // ** Omega Line (Red) ** //
@@ -324,23 +317,44 @@ var OmegaPlot = React.createClass({
       .attr("dy", "-1em")
 
   },
+
   getInitialState: function() {
-    return {settings: []};
+    return { 
+              omegas : this.props.omegas,
+              settings : this.props.settings
+           };
   },
+
+  componentWillReceiveProps: function(nextProps) {
+
+    this.setState({
+             omegas : nextProps.omegas 
+           });
+  },
+
+  componentDidUpdate : function() {
+    this.initialize();
+  },
+
   componentDidMount: function() {
     this.initialize();
   },
+
   render: function() {
 
-    this.svg_id = this.props.omegas.key + "-svg";
-    this.save_svg_id = "export-" + this.props.omegas.key + "-svg";
-    this.save_png_id = "export-" + this.props.omegas.key + "-png";
+    var key = this.props.omegas.key,
+        label = this.props.omegas.label;
+
+    this.svg_id = key + "-svg";
+    this.save_svg_id = "export-" + key + "-svg";
+    this.save_png_id = "export-" + key + "-png";
+    
 
     return (
       <div className="col-lg-6">
-          <div className="panel panel-default" id={ this.props.omegas.key }>
+          <div className="panel panel-default" id={ key }>
               <div className="panel-heading">
-                  <h3 className="panel-title">&omega; distributions under the <strong>{ this.props.omegas.label }</strong> model</h3>
+                  <h3 className="panel-title">&omega; distributions under the <strong>{ label }</strong> model</h3>
                   <p>
                       <small>Test branches are shown in <span className="hyphy-blue">blue</span> and reference branches are shown in <span className="hyphy-red">red</span></small>
                   </p>
@@ -365,9 +379,14 @@ var OmegaPlot = React.createClass({
 var OmegaPlotGrid = React.createClass({
 
   getInitialState: function() {
-    return {omega_distributions: this.getDistributions(this.props.json)};
+    return { omega_distributions: this.getDistributions(this.props.json) };
   },
-  componentDidMount: function() {
+
+  componentWillReceiveProps : function(nextProps) {
+
+    this.setState({ 
+      omega_distributions: this.getDistributions(nextProps.json) 
+    });
 
   },
 
@@ -376,7 +395,7 @@ var OmegaPlotGrid = React.createClass({
     var omega_distributions = {};
 
     if(!json) {
-      return null;
+      return [];
     }
 
     for (var m in json["fits"]) {

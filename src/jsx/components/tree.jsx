@@ -232,6 +232,9 @@ var Tree = React.createClass({
       return;
     }
 
+    // set tree partitions
+    self.tree.set_partitions(self.props.json["partition"]);
+
     var partition_list = d3.select("#hyphy-tree-highlight-branches").selectAll("li").data([
         ['None']
     ].concat(d3.keys(self.props.json["partition"]).map(function(d) {
@@ -250,6 +253,7 @@ var Tree = React.createClass({
         self.renderTree();
     });
 
+    // set default to passed setting
     partition_list.text(function(d) {
         if (d == "RELAX.test") {
             this.click();
@@ -356,8 +360,8 @@ var Tree = React.createClass({
 
     this.setHandlers();
     this.setModelList();
-    this.setPartitionList();
     this.initializeTree();
+    this.setPartitionList();
 
   },
 
@@ -372,11 +376,13 @@ var Tree = React.createClass({
         alpha_level = 0.05,
         branch_lengths = [];
 
-    this.tree = d3.layout.phylotree("body")
-        .size([height, width])
-        .separation(function(a, b) {
-            return 0;
-        });
+    if(!this.tree) {
+      this.tree = d3.layout.phylotree("body")
+          .size([height, width])
+          .separation(function(a, b) {
+              return 0;
+          });
+    }
 
     this.setTreeHandlers();
 
@@ -423,39 +429,6 @@ var Tree = React.createClass({
     this.tree.placenodes().update();
     this.tree.layout();
 
-  },
-
-  edgeColorizer : function(element, data) {
-
-    var self = this;
-
-    if (data.target.annotations) {
-      element.style('stroke', self.omega_color(data.target.annotations.omega) || null);
-      $(element[0][0]).tooltip('destroy');
-      $(element[0][0]).tooltip({
-          'title': self.omega_format(data.target.annotations.omega),
-          'html': true,
-          'trigger': 'hover',
-          'container': 'body',
-          'placement': 'auto'
-      })
-    } else {
-      element.style('stroke', null);
-      $(element[0][0]).tooltip('destroy');
-    }
-
-    element.style('stroke-width', (this.partition && this.partition[data.target.name]) ? '8' : '4')
-        .style('stroke-linejoin', 'round')
-        .style('stroke-linecap', 'round');
-
-  },
-
-  nodeColorizer : function(element, data) {
-    if (this.partition) { 
-      element.style('opacity', (this.partition && this.partition[data.name]) ? '1' : '0.25');
-    } else {
-      element.style('opacity', '1');        
-    }
   },
 
   renderTree : function(skip_render) {
@@ -512,7 +485,9 @@ var Tree = React.createClass({
           this.assignBranchAnnotations();
           
           if(_.findKey(analysis_data, "partition")) {
-            this.partition = (this.settings["tree-options"]["hyphy-tree-highlight"] ? analysis_data["partition"][this.settings["tree-options"]["hyphy-tree-highlight"][0]] : null) || null;
+            this.partition = (this.settings["tree-options"]["hyphy-tree-highlight"] 
+                              ? analysis_data["partition"][this.settings["tree-options"]["hyphy-tree-highlight"][0]] 
+                              : null) || null;
           } else {
             this.partition = null;
           }

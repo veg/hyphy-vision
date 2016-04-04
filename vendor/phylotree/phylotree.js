@@ -89,6 +89,7 @@ d3.layout.phylotree = function(container) {
 
         nodes = [],
         links = [],
+        partitions = [],
         x_coord = function(d) {
             return d.y
         },
@@ -132,7 +133,7 @@ d3.layout.phylotree = function(container) {
         right_most_leaf = 0,
         label_width = 0,
         radial_center = 0,
-        radius = 0,
+        radius = 1,
         radius_pad_for_bubbles = 0,
         radial_mapper = function(r, a) {
             return {
@@ -2084,6 +2085,14 @@ d3.layout.phylotree = function(container) {
         }
       });
 
+    }
+
+    phylotree.set_partitions = function(partitions) {
+      this.partitions = partitions;
+    }
+
+    phylotree.get_partitions = function(attributes) {
+      return this.partitions;
     }
 
     d3.rebind(phylotree, d3_hierarchy, "sort", "children", "value");

@@ -156,6 +156,7 @@ var BSREL = React.createClass({
     return {
       edgeColorizer : edgeColorizer
     };
+
   },
 
   getInitialState: function() {
