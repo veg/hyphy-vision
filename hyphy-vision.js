@@ -3909,6 +3909,8 @@ function rerender_prop_chart(model_name, omeags, settings) {
 var RELAX = React.createClass({displayName: "RELAX",
 
   float_format : d3.format(".2f"),
+  p_value_format : d3.format(".4f"),
+  fit_format : d3.format(".2f"),
 
   loadFromServer : function() {
 
@@ -3926,11 +3928,28 @@ var RELAX = React.createClass({displayName: "RELAX",
           pmid = data["PMID"],
           test_results = data["relaxation_test"];
 
+      var p = data["relaxation-test"]["p"],
+          direction = data["fits"]["Alternative"]["K"] > 1 ? 'intensification' : 'relaxation',
+          evidence = p <= self.props.alpha_level ? 'significant' : 'not significant',
+          pvalue = self.p_value_format(p),
+          lrt = self.fit_format(data["relaxation-test"]["LR"]),
+          summary_k = self.fit_format(data["fits"]["Alternative"]["K"]),
+          pmid_text = "PubMed ID " + pmid,
+          pmid_href = "http://www.ncbi.nlm.nih.gov/pubmed/" + pmid;
+
       self.setState({
                       annotations : annotations,
                       json : json,
                       pmid : pmid,
-                      test_results : test_results
+                      test_results : test_results,
+                      p : p,
+                      direction : direction,
+                      evidence : evidence,
+                      pvalue : pvalue,
+                      lrt : lrt,
+                      summary_k : summary_k,
+                      pmid_text : pmid_text,
+                      pmid_href : pmid_href
                     });
 
     });
@@ -3982,7 +4001,8 @@ var RELAX = React.createClass({displayName: "RELAX",
     }
 
     return {
-      edgeColorizer : edgeColorizer
+      edgeColorizer : edgeColorizer,
+      alpha_level : 0.05
     };
 
 
@@ -4020,6 +4040,15 @@ var RELAX = React.createClass({displayName: "RELAX",
               settings : tree_settings,
               test_results : null,
               tree : null,
+              p : null,
+              direction : 'unknown',
+              evidence : 'unknown',
+              pvalue : null,
+              lrt : null,
+              summary_k : 'unknown',
+              pmid_text : "PubMed ID : Unknown",
+              pmid_href : "#",
+              relaxation_K : "unknown"
            };
 
   },
@@ -4054,11 +4083,29 @@ var RELAX = React.createClass({displayName: "RELAX",
                     pmid = data["PMID"],
                     test_results = data["relaxation_test"];
 
+                var p = data["relaxation-test"]["p"],
+                    direction = data["fits"]["Alternative"]["K"] > 1 ? 'intensification' : 'relaxation',
+                    evidence = p <= self.props.alpha_level ? 'significant' : 'not significant',
+                    pvalue = self.p_value_format(p),
+                    lrt = self.fit_format(data["relaxation-test"]["LR"]),
+                    summary_k = self.fit_format(data["fits"]["Alternative"]["K"]),
+                    pmid_text = "PubMed ID " + pmid,
+                    pmid_href = "http://www.ncbi.nlm.nih.gov/pubmed/" + pmid;
+
+
                 self.setState({
                                 annotations : annotations,
                                 json : json,
                                 pmid : pmid,
-                                test_results : test_results
+                                test_results : test_results,
+                                p : p,
+                                direction : direction,
+                                evidence : evidence,
+                                pvalue : pvalue,
+                                lrt : lrt,
+                                summary_k : summary_k,
+                                pmid_text : pmid_text,
+                                pmid_href : pmid_href
                               });
               }
 
@@ -4099,7 +4146,25 @@ var RELAX = React.createClass({displayName: "RELAX",
     return (
       React.createElement("div", {className: "tab-content"}, 
          React.createElement("div", {className: "tab-pane active", id: "datamonkey-relax-summary-tab"}, 
-             React.createElement("div", {id: "hyphy-relax-summary", className: "row"}
+             React.createElement("div", {id: "hyphy-relax-summary", className: "row"}, 
+              React.createElement("div", {className: "col-md-12"}, 
+                  React.createElement("ul", {className: "list-group"}, 
+                      React.createElement("li", {className: "list-group-item list-group-item-info"}, 
+                          React.createElement("h3", {className: "list-group-item-heading"}, 
+                            React.createElement("i", {className: "fa fa-list", styleFormat: "margin-right: 10px"}), 
+                            React.createElement("span", {id: "summary-method-name"}, "RELAX(ed selection test)"), " summary"
+                          ), 
+                          React.createElement("p", {className: "list-group-item-text lead", styleFormat: "margin-top:0.5em; "}, 
+                            "Test for selection ", React.createElement("strong", {id: "summary-direction"}, this.state.direction), 
+                            "(", React.createElement("abbr", {title: "Relaxation coefficient"}, "K"), " = ", React.createElement("strong", {id: "summary-K"}, this.state.summary_k), ") was ", React.createElement("strong", {id: "summary-evidence"}, this.state.evidence), 
+                            "(p = ", React.createElement("strong", {id: "summary-pvalue"}, this.state.p), ", ", React.createElement("abbr", {title: "Likelihood ratio statistic"}, "LR"), " = ", React.createElement("strong", {id: "summary-LRT"}, this.state.lrt), ")"
+                          ), 
+                          React.createElement("p", null, 
+                            React.createElement("small", null, "Please cite ", React.createElement("a", {href: this.state.pmid_href, id: "summary-pmid"}, this.state.pmid_text), " if you use this result in a publication, presentation, or other scientific work.")
+                          )
+                      )
+                  )
+                )
              ), 
              React.createElement("div", {id: "hyphy-model-fits", className: "row"}, 
                React.createElement(ModelFits, {json: self.state.json})
@@ -4127,11 +4192,6 @@ function render_relax(url, element) {
     document.getElementById(element)
   );
 }
-
-               //<RELAXSummary test_results={self.state.test_results} 
-               //              pmid={self.state.pmid} />
-           //<Tree json={self.state.json} 
-           //      settings={self.state.settings} />
 
 
 var Summary = React.createClass({displayName: "Summary",
