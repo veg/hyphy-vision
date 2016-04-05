@@ -1,6 +1,8 @@
 var RELAX = React.createClass({
 
   float_format : d3.format(".2f"),
+  p_value_format : d3.format(".4f"),
+  fit_format : d3.format(".2f"),
 
   loadFromServer : function() {
 
@@ -18,11 +20,28 @@ var RELAX = React.createClass({
           pmid = data["PMID"],
           test_results = data["relaxation_test"];
 
+      var p = data["relaxation-test"]["p"],
+          direction = data["fits"]["Alternative"]["K"] > 1 ? 'intensification' : 'relaxation',
+          evidence = p <= self.props.alpha_level ? 'significant' : 'not significant',
+          pvalue = self.p_value_format(p),
+          lrt = self.fit_format(data["relaxation-test"]["LR"]),
+          summary_k = self.fit_format(data["fits"]["Alternative"]["K"]),
+          pmid_text = "PubMed ID " + pmid,
+          pmid_href = "http://www.ncbi.nlm.nih.gov/pubmed/" + pmid;
+
       self.setState({
                       annotations : annotations,
                       json : json,
                       pmid : pmid,
-                      test_results : test_results
+                      test_results : test_results,
+                      p : p,
+                      direction : direction,
+                      evidence : evidence,
+                      pvalue : pvalue,
+                      lrt : lrt,
+                      summary_k : summary_k,
+                      pmid_text : pmid_text,
+                      pmid_href : pmid_href
                     });
 
     });
@@ -74,7 +93,8 @@ var RELAX = React.createClass({
     }
 
     return {
-      edgeColorizer : edgeColorizer
+      edgeColorizer : edgeColorizer,
+      alpha_level : 0.05
     };
 
 
@@ -112,6 +132,15 @@ var RELAX = React.createClass({
               settings : tree_settings,
               test_results : null,
               tree : null,
+              p : null,
+              direction : 'unknown',
+              evidence : 'unknown',
+              pvalue : null,
+              lrt : null,
+              summary_k : 'unknown',
+              pmid_text : "PubMed ID : Unknown",
+              pmid_href : "#",
+              relaxation_K : "unknown"
            };
 
   },
@@ -146,11 +175,29 @@ var RELAX = React.createClass({
                     pmid = data["PMID"],
                     test_results = data["relaxation_test"];
 
+                var p = data["relaxation-test"]["p"],
+                    direction = data["fits"]["Alternative"]["K"] > 1 ? 'intensification' : 'relaxation',
+                    evidence = p <= self.props.alpha_level ? 'significant' : 'not significant',
+                    pvalue = self.p_value_format(p),
+                    lrt = self.fit_format(data["relaxation-test"]["LR"]),
+                    summary_k = self.fit_format(data["fits"]["Alternative"]["K"]),
+                    pmid_text = "PubMed ID " + pmid,
+                    pmid_href = "http://www.ncbi.nlm.nih.gov/pubmed/" + pmid;
+
+
                 self.setState({
                                 annotations : annotations,
                                 json : json,
                                 pmid : pmid,
-                                test_results : test_results
+                                test_results : test_results,
+                                p : p,
+                                direction : direction,
+                                evidence : evidence,
+                                pvalue : pvalue,
+                                lrt : lrt,
+                                summary_k : summary_k,
+                                pmid_text : pmid_text,
+                                pmid_href : pmid_href
                               });
               }
 
@@ -192,6 +239,24 @@ var RELAX = React.createClass({
       <div className="tab-content">
          <div className="tab-pane active" id="datamonkey-relax-summary-tab">
              <div id="hyphy-relax-summary" className="row">
+              <div className="col-md-12">
+                  <ul className="list-group">
+                      <li className="list-group-item list-group-item-info">
+                          <h3 className="list-group-item-heading">
+                            <i className="fa fa-list" styleFormat='margin-right: 10px'></i>
+                            <span id='summary-method-name'>RELAX(ed selection test)</span> summary
+                          </h3>
+                          <p className="list-group-item-text lead" styleFormat="margin-top:0.5em; ">
+                            Test for selection <strong id='summary-direction'>{this.state.direction}</strong> 
+                            (<abbr title="Relaxation coefficient">K</abbr> = <strong id='summary-K'>{this.state.summary_k}</strong>) was <strong id='summary-evidence'>{this.state.evidence}</strong> 
+                            (p = <strong id='summary-pvalue'>{this.state.p}</strong>, <abbr title="Likelihood ratio statistic">LR</abbr> = <strong id='summary-LRT'>{this.state.lrt}</strong>)
+                          </p>
+                          <p>
+                            <small>Please cite <a href={this.state.pmid_href} id='summary-pmid'>{this.state.pmid_text}</a> if you use this result in a publication, presentation, or other scientific work.</small>
+                          </p>
+                      </li>
+                  </ul>
+                </div>
              </div>
              <div id="hyphy-model-fits" className="row">
                <ModelFits json={self.state.json} />
@@ -219,9 +284,4 @@ function render_relax(url, element) {
     document.getElementById(element)
   );
 }
-
-               //<RELAXSummary test_results={self.state.test_results} 
-               //              pmid={self.state.pmid} />
-           //<Tree json={self.state.json} 
-           //      settings={self.state.settings} />
 
