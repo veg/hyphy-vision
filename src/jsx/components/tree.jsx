@@ -54,9 +54,61 @@ var Tree = React.createClass({
   },
 
   assignBranchAnnotations : function() {
-    if(this.state.json) {
+    if(this.state.json && this.state.json["fits"][this.which_model]) {
       this.tree.assign_attributes(this.state.json["fits"][this.which_model]["branch-annotations"]);
     }
+  },
+
+  renderDiscreteLegendColorScheme : function(svg_container) {
+
+    var self = this,
+        svg = self.svg;
+
+    var color_fill = self.settings["tree-options"]["hyphy-tree-fill-color"][0] ? "black" : "red";
+
+    var margins = {
+            'bottom': 30,
+            'top': 15,
+            'left': 40,
+            'right': 2
+        };
+
+
+    d3.selectAll("#color-legend").remove();
+
+    var dc_legend = svg.append("g")
+          .attr("id", "color-legend")
+          .attr("class", "dc-legend")
+          .attr("transform", "translate(" + margins["left"] + "," + margins["top"] + ")");
+
+    var fg_item = dc_legend.append("g")
+      .attr("class","dc-legend-item")
+      .attr("transform", "translate(0,0)")
+
+      fg_item.append("rect")
+        .attr("width", "13")
+        .attr("height", "13")
+        .attr("fill", color_fill)
+
+      fg_item.append("text")
+        .attr("x", "15")
+        .attr("y", "11")
+        .text("Foreground")
+
+    var bg_item = dc_legend.append("g")
+      .attr("class","dc-legend-item")
+      .attr("transform", "translate(0,18)")
+
+      bg_item.append("rect")
+        .attr("width", "13")
+        .attr("height", "13")
+        .attr("fill", "gray")
+
+      bg_item.append("text")
+        .attr("x", "15")
+        .attr("y", "11")
+        .text("Background")
+
   },
 
   renderLegendColorScheme : function(svg_container, attr_name, do_not_render) {
@@ -357,6 +409,7 @@ var Tree = React.createClass({
     this.height = 600;
 
     this.which_model = this.settings["tree-options"]["hyphy-tree-model"][0];
+    this.legend_type = this.settings["hyphy-tree-legend-type"];
 
     this.setHandlers();
     this.setModelList();
@@ -413,7 +466,12 @@ var Tree = React.createClass({
         .clamp(true);
 
     self.renderTree();
-    self.renderLegendColorScheme("tree_container", analysis_data["fits"][this.which_model]["annotation-tag"]);
+
+    if (self.legend_type == 'discrete') {
+      self.renderDiscreteLegendColorScheme("tree_container");
+    } else {
+      self.renderLegendColorScheme("tree_container", analysis_data["fits"][this.which_model]["annotation-tag"]);
+    }
 
 
     if(this.settings.edgeColorizer) {
@@ -444,13 +502,24 @@ var Tree = React.createClass({
           for (var k in this.settings["tree-options"]) {
 
               //TODO : Check to make sure settings has a matching field
+              if(k == 'hyphy-tree-model') {
 
-              var controller = d3.select("#" + k),
-                  controller_value = (controller.attr("value") || controller.property("checked"));
-                  
-              if (controller_value != this.settings["tree-options"][k][0]) {
-                  this.settings["tree-options"][k][0] = controller_value;
-                  do_layout = do_layout || this.settings["tree-options"][k][1];
+                var controller = d3.select("#" + k),
+                    controller_value = (controller.attr("value") || controller.property("checked"));
+                    
+                if (controller_value != this.settings["tree-options"][k][0] && controller_value != false) {
+                    this.settings["tree-options"][k][0] = controller_value;
+                    do_layout = do_layout || this.settings["tree-options"][k][1];
+                }
+
+              } else {
+                var controller = d3.select("#" + k),
+                    controller_value = (controller.attr("value") || controller.property("checked"));
+                    
+                if (controller_value != this.settings["tree-options"][k][0]) {
+                    this.settings["tree-options"][k][0] = controller_value;
+                    do_layout = do_layout || this.settings["tree-options"][k][1];
+                }
               }
           }
 
@@ -461,7 +530,6 @@ var Tree = React.createClass({
             self.initializeTree();
             return;
           }
-
 
           if(_.indexOf(_.keys(analysis_data), "tree") > -1) {
             this.tree(analysis_data["tree"]).svg(svg);
@@ -509,7 +577,13 @@ var Tree = React.createClass({
           // TODO: Should be a prop. Hide or show legend.
           if(!this.settings["tree-options"]["hyphy-tree-hide-legend"][0]) {
             d3.select("#color-legend").style("visibility", "visible");
-            self.renderLegendColorScheme("tree_container", self.state.json["fits"][self.which_model]["annotation-tag"]);
+            
+            if(self.legend_type) {
+              self.renderDiscreteLegendColorScheme("tree_container");
+            } else {
+              self.renderLegendColorScheme("tree_container", self.state.json["fits"][self.which_model]["annotation-tag"]);
+            }
+
           } else {
             d3.select("#color-legend").style("visibility", "hidden");
           }

@@ -249,6 +249,7 @@ var BranchTable = React.createClass({
     branch_rows = branch_rows.selectAll("td").data(function(d) {
         return d;
     });
+
     branch_rows.enter().append("td");
     branch_rows.html(function(d) {
         return d;

@@ -197,7 +197,6 @@ var BSREL = React.createClass({
     this.setEvents();
   },
 
-
   setEvents : function() {
 
     var self = this;
