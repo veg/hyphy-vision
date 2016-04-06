@@ -13,6 +13,6 @@
      "dcjs"          : "1.x",
      "jquery"        : "1.x",
      "react"         : "0.14.x",
-     "phylotree"     : "git@github.com:stevenweaver/phylotree.js.git#834e0a034a8e547ebb33f67689ce579f62052459"
+     "phylotree"     : "git@github.com:veg/phylotree.js.git#v0.1.4"
   }
 }
