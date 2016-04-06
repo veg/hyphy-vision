@@ -7,6 +7,7 @@ var RELAX = React.createClass({
   loadFromServer : function() {
 
     var self = this;
+
     d3.json(this.props.url, function(data) {
 
       data["fits"]["Partitioned MG94xREV"]["branch-annotations"] = self.formatBranchAnnotations(data, "Partitioned MG94xREV");
@@ -163,6 +164,7 @@ var RELAX = React.createClass({
 
             reader.onload = (function(theFile) {
               return function(e) {
+
                 var data = JSON.parse(this.result);
                 data["fits"]["Partitioned MG94xREV"]["branch-annotations"] = self.formatBranchAnnotations(data, "Partitioned MG94xREV");
                 data["fits"]["General Descriptive"]["branch-annotations"] = self.formatBranchAnnotations(data, "General Descriptive");
@@ -273,7 +275,6 @@ var RELAX = React.createClass({
     )
   }
 });
-
 
 
 // Will need to make a call to this

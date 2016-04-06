@@ -39,9 +39,15 @@ var ModelFits = React.createClass({
   },
 
   getBranchLengths : function(this_model) {
-    return d3.format(".2f")(d3.values(this_model["branch-lengths"]).reduce(function(p, c) {
-        return p + c;
-    }, 0))
+
+    if(this_model["tree length"]) {
+      return d3.format(".2f")(this_model["tree length"]); 
+    } else {
+      return d3.format(".2f")(d3.values(this_model["branch-lengths"]).reduce(function(p, c) {
+          return p + c;
+      }, 0))
+    }
+
   },
 
   getRuntime : function(this_model) {

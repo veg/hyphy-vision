@@ -1190,7 +1190,6 @@ var BSREL = React.createClass({displayName: "BSREL",
     this.setEvents();
   },
 
-
   setEvents : function() {
 
     var self = this;
@@ -1574,6 +1573,7 @@ var BranchTable = React.createClass({displayName: "BranchTable",
     branch_rows = branch_rows.selectAll("td").data(function(d) {
         return d;
     });
+
     branch_rows.enter().append("td");
     branch_rows.html(function(d) {
         return d;
@@ -1625,183 +1625,355 @@ function rerender_branch_table(tree, test_results, annotations, element) {
 }
 
 
-function busted_draw_distribution(node_name, omegas, weights, settings) {
+var BUSTED = React.createClass({displayName: "BUSTED",
 
-  var make_plot_data = function(omegas, weights) {
+  float_format : d3.format(".2f"),
+  p_value_format : d3.format(".4f"),
+  fit_format : d3.format(".2f"),
 
-    var data_to_plot = [],
-        norm  = weights.reduce (function (p, c) {return p + c;}, 0),
-        mean  = 0.;
-                
-    for (var i = 0; i < omegas.length; i++) {
+  loadFromServer : function() {
 
-      if (omegas[i] == null || weights[i] == null) {
-          return;
-      }
+    var self = this;
+    d3.json(this.props.url, function(data) {
 
-      var this_class = {'omega' : omegas[i], 'weight' : weights[i]/norm};
-      data_to_plot.push (this_class);
+      data["fits"]["Unconstrained model"]["branch-annotations"] = self.formatBranchAnnotations(data, "Unconstrained model");
+      data["fits"]["Constrained model"]["branch-annotations"] = self.formatBranchAnnotations(data, "Constrained model");
 
+      // rename rate distributions
+      data["fits"]["Unconstrained model"]["rate-distributions"] = data["fits"]["Unconstrained model"]["rate distributions"]
+      data["fits"]["Constrained model"]["rate-distributions"] = data["fits"]["Constrained model"]["rate distributions"]
+
+      var json = data,
+          pmid = "25701167",
+          pmid_text = "PubMed ID " + pmid,
+          pmid_href = "http://www.ncbi.nlm.nih.gov/pubmed/" + pmid,
+          p = json["test results"]["p"],
+          test_result = p <= 0.05 ? "evidence" : "no evidence";
+
+      var fg_rate = json["fits"]["Unconstrained model"]["rate distributions"]["FG"];
+      var mapped_omegas = {"omegas" : _.map(fg_rate, function(d) { return _.object(["omega","prop"], d)})};
+
+      self.setState({
+                      p : p,
+                      test_result : test_result,
+                      json : json,
+                      omegas : mapped_omegas["omegas"],
+                      pmid_text : pmid_text,
+                      pmid_href : pmid_href
+                    });
+
+    });
+
+  },
+
+  getDefaultProps: function() {
+
+    var edgeColorizer = function(element, data) {
+
+      var is_foreground = data.target.annotations.is_foreground,
+          color_fill = this.options()["color-fill"] ? "black" : "red";
+
+      element.style ('stroke', is_foreground ? color_fill : 'gray')
+             .style ('stroke-linejoin', 'round')
+             .style ('stroke-linejoin', 'round')
+             .style ('stroke-linecap', 'round');
+      
     }
 
-    return data_to_plot;
 
+    var tree_settings = {
+        'omegaPlot': {},
+        'tree-options': {
+            /* value arrays have the following meaning
+                [0] - the value of the attribute
+                [1] - does the change in attribute value trigger tree re-layout?
+            */
+            'hyphy-tree-model': ["Unconstrained model", true],
+            'hyphy-tree-highlight': ["RELAX.test", false],
+            'hyphy-tree-branch-lengths': [true, true],
+            'hyphy-tree-hide-legend': [true, false],
+            'hyphy-tree-fill-color': [true, false]
+        },
+        'hyphy-tree-legend-type': 'discrete',
+        'suppress-tree-render': false,
+        'chart-append-html' : true,
+        'edgeColorizer' : edgeColorizer
+    };
+
+
+    var distro_settings = {
+      dimensions : { width : 600, height : 400 },
+      margins : { 'left': 50, 'right': 15, 'bottom': 35, 'top': 35 },
+      legend: false,
+      domain : [0.00001, 100],
+      do_log_plot : true,
+      k_p : null,
+      plot : null,
+      svg_id : "prop-chart"
+    };
+
+    return {
+      distro_settings : distro_settings,
+      tree_settings : tree_settings,
+      constrained_threshold : "Infinity",
+      null_threshold : "-Infinity",
+      model_name : "FG"
+    }
+
+  },
+
+  getInitialState: function() {
+    return {
+      p : null,
+      test_result : null,
+      json : null,
+      omegas : null,
+      pmid_text : null,
+      pmid_href : null
+    }
+
+  },
+
+  setEvents : function() {
+
+    var self = this;
+
+    $("#json_file").on("change", function(e) {
+        var files = e.target.files; // FileList object
+        if (files.length == 1) {
+            var f = files[0];
+            var reader = new FileReader();
+            reader.onload = (function(theFile) {
+              return function(e) {
+
+                var data = JSON.parse(this.result);
+                data["fits"]["Unconstrained model"]["branch-annotations"] = self.formatBranchAnnotations(data, "Unconstrained model");
+                data["fits"]["Constrained model"]["branch-annotations"] = self.formatBranchAnnotations(data, "Constrained model");
+
+                // rename rate distributions
+                data["fits"]["Unconstrained model"]["rate-distributions"] = data["fits"]["Unconstrained model"]["rate distributions"]
+                data["fits"]["Constrained model"]["rate-distributions"] = data["fits"]["Constrained model"]["rate distributions"]
+
+                var json = data,
+                    pmid = "25701167",
+                    pmid_text = "PubMed ID " + pmid,
+                    pmid_href = "http://www.ncbi.nlm.nih.gov/pubmed/" + pmid,
+                    p = json["test results"]["p"],
+                    test_result = p <= 0.05 ? "evidence" : "no evidence";
+
+                var fg_rate = json["fits"]["Unconstrained model"]["rate distributions"]["FG"];
+                var mapped_omegas = {"omegas" : _.map(fg_rate, function(d) { return _.object(["omega","prop"], d)})};
+
+                self.setState({
+                                p : p,
+                                test_result : test_result,
+                                json : json,
+                                omegas : mapped_omegas["omegas"],
+                                pmid_text : pmid_text,
+                                pmid_href : pmid_href
+                              });
+
+              }
+            })(f);
+            reader.readAsText(f);
+        }
+        $("#datamonkey-absrel-toggle-here").dropdown("toggle");
+        e.preventDefault();
+    });
+
+
+  },
+
+  formatBranchAnnotations : function(json, key) {
+
+    // attach is_foreground to branch annotations
+    var foreground = json["test set"].split(",");
+
+    var tree = d3.layout.phylotree(),
+        nodes = tree(json["fits"][key]["tree string"]).get_nodes(),
+        node_names = _.map(nodes, function(d) { return d.name});
+    
+    // Iterate over objects
+    branch_annotations = _.object(node_names, 
+                           _.map(node_names, function(d) {
+                             return { is_foreground : _.indexOf(foreground, d) > -1 }
+                             })
+                          );
+
+    return branch_annotations;
+
+  },
+
+  initialize : function() {
+
+    var json = this.state.json;
+
+    if(!json) {
+      return;
+    }
+
+    datamonkey.busted.render_histogram("#chart-id", json);
+
+    // delete existing tree
+    d3.select('#tree_container').select("svg").remove();
+
+    //datamonkey.busted.render_tree('#tree_container', "body", json);
+    //var svg = d3.select('#tree_container').select("svg");
+    //add_dc_legend(svg);
+
+    var fg_rate = json["fits"]["Unconstrained model"]["rate distributions"]["FG"],
+        omegas  = fg_rate.map(function (r) {return r[0];}),
+        weights = fg_rate.map(function (r) {return r[1];});
+
+    var dsettings = { 
+      'log'       : true,
+      'legend'    : false,
+      'domain'    : [0.00001, 20],
+      'dimensions': {'width' : 325, 'height' : 300}
+    }
+
+    //datamonkey.busted.draw_distribution("FG", omegas, weights, dsettings);
+
+
+    $("#export-dist-svg").on('click', function(e) { 
+      datamonkey.save_image("svg", "#primary-omega-dist"); 
+    }); 
+
+    $("#export-dist-png").on('click', function(e) { 
+      datamonkey.save_image("png", "#primary-omega-dist"); 
+    }); 
+
+
+  },
+
+  componentWillMount: function() {
+    this.loadFromServer();
+    this.setEvents();
+  },
+
+  render: function() {
+
+    var self = this;
+    self.initialize();
+
+    return (
+
+      React.createElement("div", {className: "tab-content"}, 
+        React.createElement("div", {className: "tab-pane active", id: "summary_tab"}, 
+          React.createElement("div", {className: "row", styleName: "margin-top: 5px"}, 
+            React.createElement("div", {className: "col-md-12"}, 
+              React.createElement("ul", {className: "list-group"}, 
+              React.createElement("li", {className: "list-group-item list-group-item-info"}, 
+                React.createElement("h3", {className: "list-group-item-heading"}, 
+                  React.createElement("i", {className: "fa fa-list", styleName: "margin-right: 10px"}), 
+                  React.createElement("span", {id: "summary-method-name"}, "BUSTED"), " summary"), 
+                  "There is ", React.createElement("strong", null, this.state.test_result), " of episodic diversifying selection, with LRT p-value of ", this.state.p, ".", 
+                  React.createElement("p", null, 
+                    React.createElement("small", null, "Please cite ", React.createElement("a", {href: this.state.pmid_href, id: "summary-pmid"}, this.state.pmid_text), " if you use this result in a publication, presentation, or other scientific work.")
+                  )
+               )
+              )
+            )
+          ), 
+
+           React.createElement("div", {className: "row"}, 
+              React.createElement("div", {id: "hyphy-model-fits", className: "col-lg-12"}, 
+                React.createElement(ModelFits, {json: self.state.json})
+              )
+          ), 
+
+          React.createElement("button", {id: "export-chart-svg", type: "button", className: "btn btn-default btn-sm pull-right btn-export"}, 
+            React.createElement("span", {className: "glyphicon glyphicon-floppy-save"}), " Export Chart to SVG"
+          ), 
+
+          React.createElement("button", {id: "export-chart-png", type: "button", className: "btn btn-default btn-sm pull-right btn-export"}, 
+            React.createElement("span", {className: "glyphicon glyphicon-floppy-save"}), " Export Chart to PNG"
+          ), 
+
+          React.createElement("div", {className: "row hyphy-busted-site-table"}, 
+            React.createElement("div", {id: "chart-id", className: "col-lg-8"}, 
+              React.createElement("strong", null, "Model Evidence Ratios Per Site"), 
+              React.createElement("div", {className: "clearfix"})
+            )
+          ), 
+
+
+          React.createElement("div", {className: "row site-table"}, 
+
+            React.createElement("div", {className: "col-lg-12"}, 
+
+              React.createElement("form", {id: "er-thresholds"}, 
+                React.createElement("div", {className: "form-group"}, 
+                  React.createElement("label", {for: "er-constrained-threshold"}, "Constrained Evidence Ratio Threshold:"), 
+                  React.createElement("input", {type: "text", className: "form-control", id: "er-constrained-threshold", defaultValue: this.props.constrained_threshold}
+                  )
+                ), 
+                React.createElement("div", {className: "form-group"}, 
+                  React.createElement("label", {for: "er-optimized-null-threshold"}, "Optimized Null Evidence Ratio Threshold:"), 
+                  React.createElement("input", {type: "text", className: "form-control", id: "er-optimized-null-threshold", defaultValue: this.props.null_threshold}
+                  )
+                )
+              ), 
+
+              React.createElement("button", {id: "export-csv", type: "button", className: "btn btn-default btn-sm pull-right hyphy-busted-btn-export"}, 
+                React.createElement("span", {className: "glyphicon glyphicon-floppy-save"}), " Export Table to CSV"
+              ), 
+
+              React.createElement("button", {id: "apply-thresholds", type: "button", className: "btn btn-default btn-sm pull-right hyphy-busted-btn-export"}, 
+                "Apply Thresholds"
+              ), 
+
+
+              React.createElement("table", {id: "sites", className: "table sites dc-data-table"}, 
+                React.createElement("thead", null, 
+                  React.createElement("tr", {className: "header"}, 
+                    React.createElement("th", null, "Site Index"), 
+                    React.createElement("th", null, "Unconstrained Likelihood"), 
+                    React.createElement("th", null, "Constrained Likelihood"), 
+                    React.createElement("th", null, "Optimized Null Likelihood"), 
+                    React.createElement("th", null, "Constrained Evidence Ratio"), 
+                    React.createElement("th", null, "Optimized Null Evidence Ratio")
+                  )
+                )
+              )
+            )
+          )
+
+        ), 
+
+        React.createElement("div", {className: "tab-pane", id: "tree_tab"}, 
+
+          React.createElement("div", {className: "col-md-6"}, 
+            React.createElement(Tree, {json: self.state.json, 
+                 settings: self.props.tree_settings})
+          ), 
+
+          React.createElement("div", {className: "col-lg-6"}, 
+            React.createElement("div", {id: "primary-omega-dist", className: "panel-body"}, 
+              React.createElement(PropChart, {name: self.props.model_name, omegas: self.state.omegas, 
+               settings: self.props.distro_settings})
+            )
+          )
+
+
+
+        )
+      )
+    )
   }
-
-
-  var svg_id = settings["svg"] || "primary-omega-plot",
-      tag_id = settings["tag"] || "primary-omega-tag";
-
-  var legend_id   = settings["legend"] || null;
-  var do_log_plot = settings["log"]    || false;
-
-  var dimensions = settings["dimensions"] || {
-    "width"  : 300,
-    "height" : 200
-  };
-
-  var margins = {
-      'left'   : 50,
-      'right'  : 15,
-      'bottom' : 35,
-      'top'    : 35
-    },
-
-    plot_width = dimensions["width"] - margins['left'] - margins['right'],
-    plot_height = dimensions["height"] - margins['top'] - margins['bottom'];
-
-  var k_p = settings["k"] || null;
-  var domain = settings["domain"] || d3.extent(omegas);
-
-  var omega_scale = (do_log_plot ? d3.scale.log() : d3.scale.linear())
-    .range([0, plot_width]).domain(domain).nice().clamp(true),
-    proportion_scale = d3.scale.linear().range([plot_height, 0]).domain([0, 1]);
-
-  // compute margins -- circle AREA is proportional to the relative weight
-  // maximum diameter is (height - text margin)
-  var data_to_plot = make_plot_data(omegas, weights);
-
-  d3.select("#" + tag_id).text(node_name);
-
-  var svg = d3.select("#" + svg_id).attr("width", dimensions.width)
-    .attr("height", dimensions.height),
-    plot = svg.selectAll(".container");
-
-  if (plot.empty()) {
-    plot = svg.append("g").attr("class", "container");
-  }
-
-
-  plot.attr("transform", "translate(" + margins["left"] + " , " + margins["top"] + ")");
-
-  var scaling_exponent = 0.33;       
-  var omega_color = d3.scale.pow().exponent(scaling_exponent)                    
-                      .domain([0, 0.25, 1, 5, 10])
-                      .range([ "#5e4fa2", "#3288bd", "#e6f598","#f46d43","#9e0142"])
-                      .clamp(true);
-
-
-  var omega_lines = plot.selectAll(".hyphy-omega-line").data(data_to_plot);
-  omega_lines.enter().append("line");
-  omega_lines.exit().remove();
-  omega_lines.transition().attr("x1", function(d) {
-    return omega_scale(d.omega);
-  })
-  .attr("x2", function(d) {
-    return omega_scale(d.omega);
-  })
-  .attr("y1", function(d) {
-    return proportion_scale(0);
-  })
-  .attr("y2", function(d) {
-    return proportion_scale(d.weight);
-  })
-  .style("stroke", function(d) {
-    return omega_color(d.omega);
-  })
-  .attr("class", "hyphy-omega-line");
-
-  var neutral_line = plot.selectAll(".hyphy-neutral-line").data([1]);
-  neutral_line.enter().append("line").attr("class", "hyphy-neutral-line");
-  neutral_line.exit().remove();
-  neutral_line.transition().attr("x1", function(d) {
-    return omega_scale(d);
-  })
-    .attr("x2", function(d) {
-      return omega_scale(d);
-    })
-    .attr("y1", 0)
-    .attr("y2", plot_height);
+});
 
 
 
-  var xAxis = d3.svg.axis()
-    .scale(omega_scale)
-    .orient("bottom");
-
-
-
-  if (do_log_plot) {
-    xAxis.ticks(10, ".1r");
-  }
-
-
-  var x_axis = svg.selectAll(".x.hyphy-axis");
-  var x_label;
-  if (x_axis.empty()) {
-    x_axis = svg.append("g")
-      .attr("class", "x hyphy-axis");
-
-    x_label = x_axis.append("g").attr("class", "hyphy-axis-label x-label");
-  } else {
-    x_label = x_axis.select(".hyphy-axis-label.x-label");
-  }
-
-
-
-  x_axis.attr("transform", "translate(" + margins["left"] + "," + (plot_height + margins["top"]) + ")")
-    .call(xAxis);
-  x_label = x_label.attr("transform", "translate(" + plot_width + "," + margins["bottom"] + ")")
-    .selectAll("text").data(["\u03C9"]);
-  x_label.enter().append("text");
-  x_label.text(function(d) {
-    return d
-  })
-    .style("text-anchor", "end")
-    .attr("dy", "0.0em");
-
-
-
-  var yAxis = d3.svg.axis()
-    .scale(proportion_scale)
-    .orient("left")
-    .ticks(10, ".1p");
-
-  var y_axis = svg.selectAll(".y.hyphy-axis");
-  var y_label;
-  if (y_axis.empty()) {
-    y_axis = svg.append("g")
-      .attr("class", "y hyphy-axis");
-
-    y_label = y_axis.append("g").attr("class", "hyphy-axis-label y-label");
-  } else {
-    y_label = y_axis.select(".hyphy-axis-label.y-label");
-  }
-
-  y_axis.attr("transform", "translate(" + margins["left"] + "," + margins["top"] + ")")
-    .call(yAxis);
-  y_label = y_label.attr("transform", "translate(" + (-margins["left"]) + "," + 0 + ")")
-    .selectAll("text").data(["Proportion of sites"]);
-  y_label.enter().append("text");
-  y_label.text(function(d) {
-    return d
-  })
-    .style("text-anchor", "start")
-    .attr("dy", "-1em")
-
+// Will need to make a call to this
+// omega distributions
+function render_busted(url, element) {
+  React.render(
+    React.createElement(BUSTED, {url: url}),
+    document.getElementById(element)
+  );
 }
 
-datamonkey.busted.draw_distribution = busted_draw_distribution;
 
 function busted_render_histogram(c, json) {
 
@@ -1811,14 +1983,14 @@ function busted_render_histogram(c, json) {
   if (d3.keys (json ["evidence ratios"]).length == 0) { // no evidence ratios computed
     d3.selectAll (c).style ("display", "none");
     d3.selectAll (".dc-data-table").style ("display", "none");
-    d3.selectAll ('[id^="export"]').style ("display", "none");
+    //d3.selectAll ('[id^="export"]').style ("display", "none");
     d3.selectAll ("#er-thresholds").style ("display", "none");
     d3.selectAll ("#apply-thresholds").style ("display", "none");
     return;
   } else {
     d3.selectAll (c).style ("display", "block");
     d3.selectAll (".dc-data-table").style ("display", "table");
-    d3.selectAll ('[id^="export"]').style ("display", "block");
+    //d3.selectAll ('[id^="export"]').style ("display", "block");
     d3.selectAll ("#er-thresholds").style ("display", "block");
     d3.selectAll ("#apply-thresholds").style ("display", "block");
   }
@@ -1884,13 +2056,13 @@ function busted_render_histogram(c, json) {
   var composite = dc.compositeChart(c);
 
   composite
-      .width(1170)
+      .width($(window).width())
       .height(300)
       .dimension(site_index)
       .x(d3.scale.linear().domain([1, erc.length]))
       .yAxisLabel("2 * Ln Evidence Ratio")
       .xAxisLabel("Site Location")
-      .legend(dc.legend().x(1020).y(20).itemHeight(13).gap(5))
+      .legend(dc.legend().x($(window).width() - 150).y(20).itemHeight(13).gap(5))
       .renderHorizontalGridLines(true)
       .compose([
         dc.lineChart(composite)
@@ -1991,284 +2163,6 @@ function busted_render_histogram(c, json) {
 }
 
 datamonkey.busted.render_histogram = busted_render_histogram;
-
-function busted_render_tree(container_id, container, json) {
-
-  var width  = 600,
-      height = 600,
-      color_scheme = d3.scale.category10(),
-      branch_omegas = {},
-      branch_p_values = {},
-      alpha_level = 0.05,
-      omega_format = d3.format (".3r"),
-      prop_format = d3.format (".2p"),
-      branch_table_format = d3.format (".4f"),
-      analysis_data = null,
-      render_color_bar = true,
-      which_model = "Constrained model",
-      color_legend_id = 'color_legend';
-
-  var tree = d3.layout.phylotree(container)
-      .size([height, width])
-      .separation (function (a,b) {return 0;});
-
-
-  var svg = d3.select(container_id).append("svg")
-      .attr("width", width)
-      .attr("height", height);
-
-  var scaling_exponent = 0.33;       
-
-  var omega_color = d3.scale.pow().exponent(scaling_exponent)                    
-                      .domain([0, 0.25, 1, 5, 10])
-                      .range([ "#5e4fa2", "#3288bd", "#e6f598","#f46d43","#9e0142"])
-                      .clamp(true);
-
-
-  $("#expand_spacing").on("click", function (e) {
-    tree.spacing_x(tree.spacing_x() + 1).update(true);
-  });
-
-  $("#compress_spacing").on ("click", function (e) {
-    tree.spacing_x(tree.spacing_x() - 1).update(true);
-  })
-
-  $("#color_or_grey").on("click", function (e) {
-
-    if ($(this).data ('color-mode') == 'gray') {
-      $(this).data ('color-mode', 'color');
-      d3.select (this).text ("Use grayscale");
-      omega_color.range([ "#5e4fa2", "#3288bd", "#e6f598","#f46d43","#9e0142"]);
-    } else {
-      $(this).data ('color-mode', 'gray');
-      d3.select (this).text ("Use color");
-      omega_color.range(["#EEE", "#BBB","#999","#333","#000"]);    
-    }
-
-    branch_omegas = render_bs_rel_tree(analysis_data, which_model)[1];
-
-    tree.update();
-    e.preventDefault();
-
-  });
-
-  $("#show_color_bar").on("click", function (e) {
-
-     render_color_bar = !render_color_bar;
-
-     if ($(this).data ('color-bar') == 'on') {
-        $(this).data ('color-mode', 'off');
-        d3.select (this).html ("Show &omega; color legend");
-    } else {
-        $(this).data ('color-mode', 'on');
-        d3.select (this).html ("Hide &omega; color legend");
-    }
-
-    render_color_scheme(color_legend_id);
-    e.preventDefault();
-
-  });
-
-  $("#show_model").on ("click", function (e) {
-     if ($(this).data ('model') == 'Unconstrained') {
-        $(this).data ('model', 'Unconstrained model');
-        d3.select (this).html ("Show Unconstrained model Model");
-    } else {
-        $(this).data ('model', 'Constrained model');
-        d3.select (this).html("Show Branch-site Model");
-    }
-    which_model = $(this).data ('model');
-    branch_omegas = render_bs_rel_tree(analysis_data, which_model)[1];
-    tree.layout();
-    e.preventDefault();
-  });
-
-  function render_color_scheme(svg_container) {
-      console.log(omega_color);
-      var svg = d3.select ("#" + svg_container).selectAll ("svg").data ([omega_color.domain()]);
-      svg.enter().append ("svg");
-      svg.selectAll ("*").remove();
-     
-      if (render_color_bar) {
-          var bar_width  = 70,
-              bar_height = 300,
-              margins = {'bottom' : 30,
-                         'top'    : 15,
-                         'left'   : 40,
-                         'right'  : 2};
-                         
-          svg.attr ("width", bar_width)
-             .attr ("height", bar_height);
-         
-         
-      
-          this_grad = svg.append ("defs").append ("linearGradient")
-                      .attr ("id", "_omega_bar")
-                      .attr ("x1", "0%")
-                      .attr ("y1", "0%")
-                      .attr ("x2", "0%")
-                      .attr ("y2", "100%");
-         
-          var omega_scale = d3.scale.pow().exponent(scaling_exponent)                    
-                           .domain(d3.extent (omega_color.domain()))
-                           .range ([0,1]),
-              axis_scale = d3.scale.pow().exponent(scaling_exponent)                    
-                           .domain(d3.extent (omega_color.domain()))
-                           .range ([0,bar_height - margins['top']-margins['bottom']]);
-                       
-                      
-         omega_color.domain().forEach (function (d) { 
-          this_grad.append ("stop")
-                   .attr ("offset",  "" + omega_scale (d) * 100 + "%")
-                   .style ("stop-color", omega_color (d));
-         });
-     
-         var g_container = svg.append ("g").attr ("transform", "translate(" + margins["left"] + "," + margins["top"] + ")");
-     
-         g_container.append ("rect").attr ("x", 0)
-                            .attr ("width", bar_width - margins['left']-margins['right'])
-                            .attr ("y", 0)
-                            .attr ("height", bar_height - margins['top']-margins['bottom'])
-                            .style ("fill", "url(#_omega_bar)");
-   
-     
-          var draw_omega_bar  =  d3.svg.axis().scale(axis_scale)
-                                   .orient ("left")
-                                   .tickFormat (d3.format(".1r"))
-                                   .tickValues ([0,0.01,0.1,0.5,1,2,5,10]);
-                               
-          var scale_bar = g_container.append("g");
-          scale_bar.style ("font-size", "14")
-                         .attr  ("class", "hyphy-omega-bar")
-                         .call (draw_omega_bar);
-                     
-          scale_bar.selectAll ("text")
-                         .style ("text-anchor", "right");
-                     
-          var x_label =_label = scale_bar.append ("g").attr("class", "hyphy-omega-bar");
-          x_label = x_label.selectAll("text").data(["\u03C9"]);
-          x_label.enter().append ("text");
-          x_label.text (function (d) {return d})
-                  .attr  ("transform", "translate(" + ( bar_width - margins['left']-margins['right'])*0.5 + "," + (bar_height - margins['bottom']) + ")")
-                  .style ("text-anchor", "middle")
-                  .style ("font-size", "18")
-                  .attr ("dx", "0.0em")
-                  .attr ("dy", "0.1em");
-      }               
-  }        
-
-  function render_bs_rel_tree(json, model_id) {
-
-    tree(json["fits"][model_id]["tree string"]).svg(svg);
-   
-    var svg_defs = svg.selectAll ("defs");
-
-    if (svg_defs.empty()) {
-      svg_defs = svg.append ("defs");
-    }
-
-    svg_defs.selectAll ("*").remove();
-    gradID = 0;
-
-    var local_branch_omegas = {};
-    var fitted_distributions = json["fits"][model_id]["rate distributions"];
-    
-    for (var b in fitted_distributions) {       
-
-       var rateD = fitted_distributions[b];
-
-       if (rateD.length == 1) {
-          local_branch_omegas[b] = {'color': omega_color (rateD[0][0])};
-       } else {
-          gradID ++;
-          var grad_id = "branch_gradient_" + gradID;
-          //create_gradient (svg_defs, grad_id, rateD);
-          local_branch_omegas[b] = {'grad' : grad_id};
-       }
-
-       local_branch_omegas[b]['omegas'] = rateD;
-       local_branch_omegas[b]['tooltip'] = "<b>" + b + "</b>";
-       local_branch_omegas[b]['distro'] = "";
-
-       rateD.forEach (function (d,i) {
-           var omega_value = d[0] > 1e20 ? "&infin;" : omega_format (d[0]),
-               omega_weight = prop_format (d[1]);
-       
-           local_branch_omegas[b]['tooltip'] += "<br/>&omega;<sub>" + (i+1) + "</sub> = " + omega_value + 
-                                          " (" + omega_weight + ")";
-           if (i) {
-               local_branch_omegas[b]['distro'] += "<br/>";
-           }                               
-           local_branch_omegas[b]['distro'] += "&omega;<sub>" + (i+1) + "</sub> = " + omega_value + 
-                                           " (" + omega_weight + ")";
-        });
-        local_branch_omegas[b]['tooltip'] += "<br/><i>p = " + omega_format (json["test results"]["p"]) + "</i>";
-    }    
-    
-    tree.style_edges(function (element, data) {
-      edge_colorizer (element, data);
-    });
-
-    branch_lengths = {};
-    tree.get_nodes().forEach(function (d) {if (d.parent) {branch_lengths[d.name] = tree.branch_length()(d);}});
-    tree.layout();
-    return [branch_lengths, local_branch_omegas];
-  }
-
-
-  function edge_colorizer(element, data) {
-
-    var coloration = branch_omegas[data.target.name];
-    if (coloration) {
-      if ('color' in coloration) {
-        element.style ('stroke', coloration['color']);
-      } else {
-        element.style ('stroke', 'url(#' + coloration['grad'] + ')');
-      }
-
-      $(element[0][0]).tooltip({'title' : coloration['tooltip'], 'html' : true, 'trigger' : 'hover', 'container' : 'body', 'placement' : 'auto'});
-
-    }
-
-    // Color the FG a different color
-    var is_foreground = false;
-
-    if(global_test_set.indexOf(data.target.name) != -1) {
-      is_foreground = true;
-    }
-
-    element.style ('stroke-width', branch_p_values[data.target.name] <= alpha_level ? '12' : '5')
-           .style ('stroke', is_foreground ? 'red' : 'gray')
-           .style ('stroke-linejoin', 'round')
-           .style ('stroke-linejoin', 'round')
-           .style ('stroke-linecap', 'round');
-    
-  }
-
-  $("#export-phylo-png").on('click', function(e) { 
-    datamonkey.save_image("png", "#tree_container"); 
-  });
-
-  $("#export-phylo-svg").on('click', function(e) { 
-    datamonkey.save_image("svg", "#tree_container"); 
-  });
-
-  tree.branch_length(null);
-  tree.branch_name(null);
-  tree.node_span ('equal');
-  tree.options ({'draw-size-bubbles' : false}, false);
-  tree.options ({'selectable' : false}, false);
-  tree.font_size (18);
-  tree.scale_bar_font_size (14);
-  tree.node_circle_size (6);
-  tree.spacing_x (35, true);
-  tree.style_edges(edge_colorizer);
-
-  render_bs_rel_tree(json, "Unconstrained model");
-
-}
-
-datamonkey.busted.render_tree = busted_render_tree;
 
 function getStyles(doc) {
 
@@ -2915,9 +2809,15 @@ var ModelFits = React.createClass({displayName: "ModelFits",
   },
 
   getBranchLengths : function(this_model) {
-    return d3.format(".2f")(d3.values(this_model["branch-lengths"]).reduce(function(p, c) {
-        return p + c;
-    }, 0))
+
+    if(this_model["tree length"]) {
+      return d3.format(".2f")(this_model["tree length"]); 
+    } else {
+      return d3.format(".2f")(d3.values(this_model["branch-lengths"]).reduce(function(p, c) {
+          return p + c;
+      }, 0))
+    }
+
   },
 
   getRuntime : function(this_model) {
@@ -3915,6 +3815,7 @@ var RELAX = React.createClass({displayName: "RELAX",
   loadFromServer : function() {
 
     var self = this;
+
     d3.json(this.props.url, function(data) {
 
       data["fits"]["Partitioned MG94xREV"]["branch-annotations"] = self.formatBranchAnnotations(data, "Partitioned MG94xREV");
@@ -4071,6 +3972,7 @@ var RELAX = React.createClass({displayName: "RELAX",
 
             reader.onload = (function(theFile) {
               return function(e) {
+
                 var data = JSON.parse(this.result);
                 data["fits"]["Partitioned MG94xREV"]["branch-annotations"] = self.formatBranchAnnotations(data, "Partitioned MG94xREV");
                 data["fits"]["General Descriptive"]["branch-annotations"] = self.formatBranchAnnotations(data, "General Descriptive");
@@ -4181,7 +4083,6 @@ var RELAX = React.createClass({displayName: "RELAX",
     )
   }
 });
-
 
 
 // Will need to make a call to this
@@ -4549,9 +4450,61 @@ var Tree = React.createClass({displayName: "Tree",
   },
 
   assignBranchAnnotations : function() {
-    if(this.state.json) {
+    if(this.state.json && this.state.json["fits"][this.which_model]) {
       this.tree.assign_attributes(this.state.json["fits"][this.which_model]["branch-annotations"]);
     }
+  },
+
+  renderDiscreteLegendColorScheme : function(svg_container) {
+
+    var self = this,
+        svg = self.svg;
+
+    var color_fill = self.settings["tree-options"]["hyphy-tree-fill-color"][0] ? "black" : "red";
+
+    var margins = {
+            'bottom': 30,
+            'top': 15,
+            'left': 40,
+            'right': 2
+        };
+
+
+    d3.selectAll("#color-legend").remove();
+
+    var dc_legend = svg.append("g")
+          .attr("id", "color-legend")
+          .attr("class", "dc-legend")
+          .attr("transform", "translate(" + margins["left"] + "," + margins["top"] + ")");
+
+    var fg_item = dc_legend.append("g")
+      .attr("class","dc-legend-item")
+      .attr("transform", "translate(0,0)")
+
+      fg_item.append("rect")
+        .attr("width", "13")
+        .attr("height", "13")
+        .attr("fill", color_fill)
+
+      fg_item.append("text")
+        .attr("x", "15")
+        .attr("y", "11")
+        .text("Foreground")
+
+    var bg_item = dc_legend.append("g")
+      .attr("class","dc-legend-item")
+      .attr("transform", "translate(0,18)")
+
+      bg_item.append("rect")
+        .attr("width", "13")
+        .attr("height", "13")
+        .attr("fill", "gray")
+
+      bg_item.append("text")
+        .attr("x", "15")
+        .attr("y", "11")
+        .text("Background")
+
   },
 
   renderLegendColorScheme : function(svg_container, attr_name, do_not_render) {
@@ -4852,6 +4805,7 @@ var Tree = React.createClass({displayName: "Tree",
     this.height = 600;
 
     this.which_model = this.settings["tree-options"]["hyphy-tree-model"][0];
+    this.legend_type = this.settings["hyphy-tree-legend-type"];
 
     this.setHandlers();
     this.setModelList();
@@ -4908,7 +4862,12 @@ var Tree = React.createClass({displayName: "Tree",
         .clamp(true);
 
     self.renderTree();
-    self.renderLegendColorScheme("tree_container", analysis_data["fits"][this.which_model]["annotation-tag"]);
+
+    if (self.legend_type == 'discrete') {
+      self.renderDiscreteLegendColorScheme("tree_container");
+    } else {
+      self.renderLegendColorScheme("tree_container", analysis_data["fits"][this.which_model]["annotation-tag"]);
+    }
 
 
     if(this.settings.edgeColorizer) {
@@ -4939,13 +4898,24 @@ var Tree = React.createClass({displayName: "Tree",
           for (var k in this.settings["tree-options"]) {
 
               //TODO : Check to make sure settings has a matching field
+              if(k == 'hyphy-tree-model') {
 
-              var controller = d3.select("#" + k),
-                  controller_value = (controller.attr("value") || controller.property("checked"));
-                  
-              if (controller_value != this.settings["tree-options"][k][0]) {
-                  this.settings["tree-options"][k][0] = controller_value;
-                  do_layout = do_layout || this.settings["tree-options"][k][1];
+                var controller = d3.select("#" + k),
+                    controller_value = (controller.attr("value") || controller.property("checked"));
+                    
+                if (controller_value != this.settings["tree-options"][k][0] && controller_value != false) {
+                    this.settings["tree-options"][k][0] = controller_value;
+                    do_layout = do_layout || this.settings["tree-options"][k][1];
+                }
+
+              } else {
+                var controller = d3.select("#" + k),
+                    controller_value = (controller.attr("value") || controller.property("checked"));
+                    
+                if (controller_value != this.settings["tree-options"][k][0]) {
+                    this.settings["tree-options"][k][0] = controller_value;
+                    do_layout = do_layout || this.settings["tree-options"][k][1];
+                }
               }
           }
 
@@ -4956,7 +4926,6 @@ var Tree = React.createClass({displayName: "Tree",
             self.initializeTree();
             return;
           }
-
 
           if(_.indexOf(_.keys(analysis_data), "tree") > -1) {
             this.tree(analysis_data["tree"]).svg(svg);
@@ -5004,7 +4973,13 @@ var Tree = React.createClass({displayName: "Tree",
           // TODO: Should be a prop. Hide or show legend.
           if(!this.settings["tree-options"]["hyphy-tree-hide-legend"][0]) {
             d3.select("#color-legend").style("visibility", "visible");
-            self.renderLegendColorScheme("tree_container", self.state.json["fits"][self.which_model]["annotation-tag"]);
+            
+            if(self.legend_type) {
+              self.renderDiscreteLegendColorScheme("tree_container");
+            } else {
+              self.renderLegendColorScheme("tree_container", self.state.json["fits"][self.which_model]["annotation-tag"]);
+            }
+
           } else {
             d3.select("#color-legend").style("visibility", "hidden");
           }
