@@ -1943,12 +1943,12 @@ var BUSTED = React.createClass({displayName: "BUSTED",
 
         React.createElement("div", {className: "tab-pane", id: "tree_tab"}, 
 
-          React.createElement("div", {className: "col-md-6"}, 
+          React.createElement("div", {className: "col-md-12"}, 
             React.createElement(Tree, {json: self.state.json, 
                  settings: self.props.tree_settings})
           ), 
 
-          React.createElement("div", {className: "col-lg-6"}, 
+          React.createElement("div", {className: "col-md-12"}, 
             React.createElement("div", {id: "primary-omega-dist", className: "panel-body"}, 
               React.createElement(PropChart, {name: self.props.model_name, omegas: self.state.omegas, 
                settings: self.props.distro_settings})
