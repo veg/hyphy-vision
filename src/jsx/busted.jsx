@@ -320,12 +320,12 @@ var BUSTED = React.createClass({
 
         <div className="tab-pane" id="tree_tab">
 
-          <div className="col-md-6">
+          <div className="col-md-12">
             <Tree json={self.state.json} 
                  settings={self.props.tree_settings} />
           </div>
 
-          <div className="col-lg-6">
+          <div className="col-md-12">
             <div id="primary-omega-dist" className="panel-body">
               <PropChart name={self.props.model_name} omegas={self.state.omegas} 
                settings={self.props.distro_settings} />
