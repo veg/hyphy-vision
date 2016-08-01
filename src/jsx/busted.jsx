@@ -13,8 +13,12 @@ var BUSTED = React.createClass({
       data["fits"]["Constrained model"]["branch-annotations"] = self.formatBranchAnnotations(data, "Constrained model");
 
       // rename rate distributions
-      data["fits"]["Unconstrained model"]["rate-distributions"] = data["fits"]["Unconstrained model"]["rate distributions"]
-      data["fits"]["Constrained model"]["rate-distributions"] = data["fits"]["Constrained model"]["rate distributions"]
+      data["fits"]["Unconstrained model"]["rate-distributions"] = data["fits"]["Unconstrained model"]["rate distributions"];
+      data["fits"]["Constrained model"]["rate-distributions"] = data["fits"]["Constrained model"]["rate distributions"];
+
+      // set display order
+      data["fits"]["Unconstrained model"]["display-order"] = 0;
+      data["fits"]["Constrained model"]["display-order"] = 1;
 
       var json = data,
           pmid = "25701167",
@@ -316,12 +320,12 @@ var BUSTED = React.createClass({
 
         <div className="tab-pane" id="tree_tab">
 
-          <div className="col-md-6">
+          <div className="col-md-12">
             <Tree json={self.state.json} 
                  settings={self.props.tree_settings} />
           </div>
 
-          <div className="col-lg-6">
+          <div className="col-md-12">
             <div id="primary-omega-dist" className="panel-body">
               <PropChart name={self.props.model_name} omegas={self.state.omegas} 
                settings={self.props.distro_settings} />

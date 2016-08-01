@@ -1640,8 +1640,12 @@ var BUSTED = React.createClass({displayName: "BUSTED",
       data["fits"]["Constrained model"]["branch-annotations"] = self.formatBranchAnnotations(data, "Constrained model");
 
       // rename rate distributions
-      data["fits"]["Unconstrained model"]["rate-distributions"] = data["fits"]["Unconstrained model"]["rate distributions"]
-      data["fits"]["Constrained model"]["rate-distributions"] = data["fits"]["Constrained model"]["rate distributions"]
+      data["fits"]["Unconstrained model"]["rate-distributions"] = data["fits"]["Unconstrained model"]["rate distributions"];
+      data["fits"]["Constrained model"]["rate-distributions"] = data["fits"]["Constrained model"]["rate distributions"];
+
+      // set display order
+      data["fits"]["Unconstrained model"]["display-order"] = 0;
+      data["fits"]["Constrained model"]["display-order"] = 1;
 
       var json = data,
           pmid = "25701167",
@@ -1943,12 +1947,12 @@ var BUSTED = React.createClass({displayName: "BUSTED",
 
         React.createElement("div", {className: "tab-pane", id: "tree_tab"}, 
 
-          React.createElement("div", {className: "col-md-6"}, 
+          React.createElement("div", {className: "col-md-12"}, 
             React.createElement(Tree, {json: self.state.json, 
                  settings: self.props.tree_settings})
           ), 
 
-          React.createElement("div", {className: "col-lg-6"}, 
+          React.createElement("div", {className: "col-md-12"}, 
             React.createElement("div", {id: "primary-omega-dist", className: "panel-body"}, 
               React.createElement(PropChart, {name: self.props.model_name, omegas: self.state.omegas, 
                settings: self.props.distro_settings})
@@ -2892,7 +2896,6 @@ var ModelFits = React.createClass({displayName: "ModelFits",
       ];
 
 
-      // TODO: clean this up
       var distributions = this.getDistributions(m, this_model);
 
       if(distributions.length) {
@@ -2903,6 +2906,7 @@ var ModelFits = React.createClass({displayName: "ModelFits",
         table_row_data.push(this_model_row);
 
         for (var d = 1; d < distributions.length; d++) {
+
           var this_distro_entry = this_model_row.map(function(d, i) {
               if (i) return "";
               return d;
@@ -2933,6 +2937,8 @@ var ModelFits = React.createClass({displayName: "ModelFits",
     table_row_data = table_row_data.map(function(r) {
         return r.slice(2);
     });
+
+    console.log(table_row_data);
 
     return table_row_data;
 
@@ -2975,7 +2981,6 @@ var ModelFits = React.createClass({displayName: "ModelFits",
 
     // remove all columns that have 0, null, or undefined rows
     items = d3.transpose(table_row_data);
-    
 
     return column_headers;
   },
