@@ -164,8 +164,6 @@ var ModelFits = React.createClass({
         return r.slice(2);
     });
 
-    console.log(table_row_data);
-
     return table_row_data;
 
   },

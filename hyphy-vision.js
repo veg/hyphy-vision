@@ -2938,8 +2938,6 @@ var ModelFits = React.createClass({displayName: "ModelFits",
         return r.slice(2);
     });
 
-    console.log(table_row_data);
-
     return table_row_data;
 
   },
