@@ -122,7 +122,6 @@ var ModelFits = React.createClass({
       ];
 
 
-      // TODO: clean this up
       var distributions = this.getDistributions(m, this_model);
 
       if(distributions.length) {
@@ -133,6 +132,7 @@ var ModelFits = React.createClass({
         table_row_data.push(this_model_row);
 
         for (var d = 1; d < distributions.length; d++) {
+
           var this_distro_entry = this_model_row.map(function(d, i) {
               if (i) return "";
               return d;
@@ -205,7 +205,6 @@ var ModelFits = React.createClass({
 
     // remove all columns that have 0, null, or undefined rows
     items = d3.transpose(table_row_data);
-    
 
     return column_headers;
   },

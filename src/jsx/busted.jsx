@@ -13,8 +13,12 @@ var BUSTED = React.createClass({
       data["fits"]["Constrained model"]["branch-annotations"] = self.formatBranchAnnotations(data, "Constrained model");
 
       // rename rate distributions
-      data["fits"]["Unconstrained model"]["rate-distributions"] = data["fits"]["Unconstrained model"]["rate distributions"]
-      data["fits"]["Constrained model"]["rate-distributions"] = data["fits"]["Constrained model"]["rate distributions"]
+      data["fits"]["Unconstrained model"]["rate-distributions"] = data["fits"]["Unconstrained model"]["rate distributions"];
+      data["fits"]["Constrained model"]["rate-distributions"] = data["fits"]["Constrained model"]["rate distributions"];
+
+      // set display order
+      data["fits"]["Unconstrained model"]["display-order"] = 0;
+      data["fits"]["Constrained model"]["display-order"] = 1;
 
       var json = data,
           pmid = "25701167",
