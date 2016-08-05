@@ -33,7 +33,7 @@ gulp.task('build', ['react', 'scripts']);
 gulp.task('watch', function () {
     watch(['src/**/*', 'src/jsx/components/*'], function () {
         gulp.start('build');
-    }); 
+    });
 });
 
 gulp.task('default', function () {

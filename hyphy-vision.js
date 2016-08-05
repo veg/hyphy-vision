@@ -516,7 +516,7 @@ function datamonkey_convert_svg_to_png(image_string) {
 
     var pom = document.createElement('a');
     pom.setAttribute('download', 'phylotree.png');
-    pom.href = canvas.toDataURL("image/png");     
+    pom.href = canvas.toDataURL("image/png");
     $("body").append(pom);
     pom.click();
     pom.remove();
@@ -538,7 +538,7 @@ function datamonkey_save_newick_tree(type) {
   svg.setAttribute("version", "1.1");
 
   var defsEl = document.createElement("defs");
-  svg.insertBefore(defsEl, svg.firstChild); 
+  svg.insertBefore(defsEl, svg.firstChild);
 
   var styleEl = document.createElement("style")
   defsEl.appendChild(styleEl);
@@ -613,25 +613,25 @@ function datamonkey_describe_vector (vector, as_list) {
              'Q1' : d3.quantile (vector, 0.25),
              'Q3' : d3.quantile (vector, 0.75),
              'mean': d3.mean (vector)};
-             
+
     if (as_list) {
-        
+
         d = "<pre>Range  :" + d['min'] + "-" + d['max'] + "\n"
             +    "IQR    :" + d['Q1'] + "-" + d['Q3'] + "\n"
             +    "Mean   :" + d['mean'] + "\n"
             +    "Median :" + d['median'] + "\n"
             + "</pre>";
-        
-        /*d =   
-        "<dl class = 'dl-horizontal'>" + 
-        "<dt>Range</dt><dd>" + d['min'] + "-" + d['max'] + "</dd>" + 
+
+        /*d =
+        "<dl class = 'dl-horizontal'>" +
+        "<dt>Range</dt><dd>" + d['min'] + "-" + d['max'] + "</dd>" +
         "<dt>IQR</dt><dd>" + d['Q1'] + "-" + d['Q3'] +  "</dd>" +
         "<dt>Mean</dt><dd>" + d['mean'] +  "</dd>" +
         "<dt>Median</dt><dd>" + d['median'] + "</dd></dl>";*/
     }
-    
+
     return d;
-    
+
 }
 
 function datamonkey_export_handler (data, filename, mimeType) {
@@ -639,9 +639,9 @@ function datamonkey_export_handler (data, filename, mimeType) {
     link.attr('download', filename || "download.tsv")
         .attr('href', 'data:' + (mimeType || 'text/plain')  +  ';charset=utf-8,' + encodeURIComponent(data))
         .click()
-        .detach(); 
+        .detach();
 }
-    
+
 
 function datamonkey_table_to_text (table_id, sep) {
     sep = sep || "\t";
@@ -649,7 +649,7 @@ function datamonkey_table_to_text (table_id, sep) {
     d3.select (table_id + " thead").selectAll ("th").each (function () {header_row.push (d3.select(this).text())});
     var data_rows = [];
     d3.select (table_id + " tbody").selectAll ("tr").each (function (d,i) {data_rows.push ([]); d3.select (this).selectAll ("td").each (function () {data_rows[i].push (d3.select(this).text())})});
-    
+
     return header_row.join (sep) + "\n" +
            data_rows.map (function (d) {return d.join (sep);}).join ("\n");
 }
@@ -662,6 +662,30 @@ function datamonkey_capitalize(s) {
   }
 }
 
+function datamonkey_count_partitions (json) {
+    try {
+      return _.keys (json).length;
+    } catch (e) {
+        // ignore errors
+    }
+    return 0;
+}
+
+function datamonkey_sum (object, accessor) {
+    accessor = accessor || function (value) {return value;};
+    return _.reduce (object, function (sum, value, index) {return sum + accessor (value, index);},0);
+}
+
+function datamonkey_count_sites_from_partitions (json) {
+    try {
+        return datamonkey_sum (json ["partitions"], function (value) {return value["coverage"][0].length;});
+    } catch (e) {
+        // ignore errors
+    }
+    return 0;
+}
+
+
 datamonkey.helpers = new Object;
 datamonkey.helpers.save_newick_to_file = datamonkey_save_newick_to_file;
 datamonkey.helpers.convert_svg_to_png = datamonkey_convert_svg_to_png;
@@ -671,6 +695,9 @@ datamonkey.helpers.describe_vector = datamonkey_describe_vector;
 datamonkey.helpers.table_to_text = datamonkey_table_to_text;
 datamonkey.helpers.export_handler = datamonkey_export_handler;
 datamonkey.helpers.capitalize = datamonkey_capitalize;
+datamonkey.helpers.countPartitionsJSON = datamonkey_count_partitions;
+datamonkey.helpers.countSitesFromPartitionsJSON = datamonkey_count_sites_from_partitions;
+datamonkey.helpers.sum = datamonkey_sum;
 
 function set_tree_handlers(tree_object) {
     $("[data-direction]").on("click", function(e) {
@@ -891,106 +918,6 @@ function busted_render_summary(json) {
 datamonkey.busted.render_summary = busted_render_summary;
 
 
-var BSRELSummary = React.createClass({displayName: "BSRELSummary",
-
-  float_format : d3.format(".2f"),
-
-  countBranchesTested: function(branches_tested) {
-
-    if(branches_tested) {
-      return branches_tested.split(';').length;
-    } else {
-      return 0;
-    }
-
-  },
-
-  getBranchesWithEvidence : function(test_results) {
-
-    var self = this;
-    return _.filter(test_results, function(d) { return d.p <= .05 }).length;
-
-  },
-
-  getTestBranches : function(test_results) {
-
-    var self = this;
-    return _.filter(test_results, function(d) { return d.tested > 0 }).length;
-
-  },
-
-  getTotalBranches : function(test_results) {
-
-    var self = this;
-    return _.keys(test_results).length;
-
-  },
-
-  getInitialState: function() {
-
-    var self = this;
-
-    return { 
-              branches_with_evidence : this.getBranchesWithEvidence(self.props.test_results), 
-              test_branches : this.getTestBranches(self.props.test_results),
-              total_branches : this.getTotalBranches(self.props.test_results)
-           };
-  },
-
-  componentWillReceiveProps: function(nextProps) {
-
-    this.setState({
-                    branches_with_evidence : this.getBranchesWithEvidence(nextProps.test_results), 
-                    test_branches : this.getTestBranches(nextProps.test_results),
-                    total_branches : this.getTotalBranches(nextProps.test_results)
-                  });
-
-  },
-
-  render: function() {
-
-    var self = this;
-
-    return (
-          React.createElement("ul", {className: "list-group"}, 
-              React.createElement("li", {className: "list-group-item list-group-item-info"}, 
-                  React.createElement("h3", {className: "list-group-item-heading"}, 
-                    React.createElement("i", {className: "fa fa-list"}), 
-                    React.createElement("span", {id: "summary-method-name"}, "Adaptive branch site REL"), " summary"
-                  ), 
-                  React.createElement("p", {className: "list-group-item-text lead"}, 
-                    "Evidence", React.createElement("sup", null, "†"), " of episodic diversifying selection was found on",  
-                      React.createElement("strong", null, " ", self.state.branches_with_evidence), " out of",  
-                      React.createElement("span", null, " ", self.state.test_branches), " tested branches" + ' ' + 
-                      "(", React.createElement("span", null, self.state.total_branches), " total branches)."
-                  ), 
-                  React.createElement("p", null, 
-                    React.createElement("small", null, 
-                      React.createElement("sup", null, "†"), React.createElement("abbr", {title: "Likelihood Ratio Test"}, "LRT"), " p ≤ 0.05, corrected for multiple testing."
-                    )
-                  ), 
-                  React.createElement("p", null, 
-                    React.createElement("small", null, 
-                      "Please cite ", React.createElement("a", {href: "http://www.ncbi.nlm.nih.gov/pubmed/25697341", id: "summary-pmid", target: "_blank"}, "PMID 25697341"), " if you use this result in a publication, presentation, or other scientific work."
-                    )
-                  )
-              )
-          )
-        )
-  }
-
-});
-
-// Will need to make a call to this
-// omega distributions
-function render_absrel_summary(test_results, pmid, element) {
-  React.render(
-    React.createElement(BSRELSummary, {test_results: test_results, pmid: pmid}),
-    document.getElementById(element)
-  );
-}
-
-
 var BSREL = React.createClass({displayName: "BSREL",
 
   float_format : d3.format(".2f"),
@@ -1031,11 +958,11 @@ var BSREL = React.createClass({displayName: "BSREL",
         if (svg_defs.empty()) {
           svg_defs = svg.append("defs")
                       .attr("class", "phylotree-definitions")
-        }   
+        }
 
         // clear existing linearGradients
 
-        var scaling_exponent = 0.33,
+        var scaling_exponent = 1./3,
             omega_format = d3.format(".3r"),
             prop_format = d3.format(".2p"),
             fit_format = d3.format(".2f"),
@@ -1078,7 +1005,7 @@ var BSREL = React.createClass({displayName: "BSREL",
               self.gradient_count = 0;
             }
 
-            if(node.annotations) { 
+            if(node.annotations) {
 
               if (node.annotations.length == 1) {
                 node['color'] = self.omega_color(node.annotations[0]["omega"]);
@@ -1174,7 +1101,7 @@ var BSREL = React.createClass({displayName: "BSREL",
 
 
 
-    return { 
+    return {
               annotations : null,
               json : null,
               pmid : null,
@@ -1321,6 +1248,106 @@ function render_absrel(url, element) {
     document.getElementById(element)
   );
 }
+
+var BSRELSummary = React.createClass({displayName: "BSRELSummary",
+
+  float_format : d3.format(".2f"),
+
+  countBranchesTested: function(branches_tested) {
+
+    if(branches_tested) {
+      return branches_tested.split(';').length;
+    } else {
+      return 0;
+    }
+
+  },
+
+  getBranchesWithEvidence : function(test_results) {
+
+    var self = this;
+    return _.filter(test_results, function(d) { return d.p <= .05 }).length;
+
+  },
+
+  getTestBranches : function(test_results) {
+
+    var self = this;
+    return _.filter(test_results, function(d) { return d.tested > 0 }).length;
+
+  },
+
+  getTotalBranches : function(test_results) {
+
+    var self = this;
+    return _.keys(test_results).length;
+
+  },
+
+  getInitialState: function() {
+
+    var self = this;
+
+    return { 
+              branches_with_evidence : this.getBranchesWithEvidence(self.props.test_results), 
+              test_branches : this.getTestBranches(self.props.test_results),
+              total_branches : this.getTotalBranches(self.props.test_results)
+           };
+  },
+
+  componentWillReceiveProps: function(nextProps) {
+
+    this.setState({
+                    branches_with_evidence : this.getBranchesWithEvidence(nextProps.test_results), 
+                    test_branches : this.getTestBranches(nextProps.test_results),
+                    total_branches : this.getTotalBranches(nextProps.test_results)
+                  });
+
+  },
+
+  render: function() {
+
+    var self = this;
+
+    return (
+          React.createElement("ul", {className: "list-group"}, 
+              React.createElement("li", {className: "list-group-item list-group-item-info"}, 
+                  React.createElement("h3", {className: "list-group-item-heading"}, 
+                    React.createElement("i", {className: "fa fa-list"}), 
+                    React.createElement("span", {id: "summary-method-name"}, "Adaptive branch site REL"), " summary"
+                  ), 
+                  React.createElement("p", {className: "list-group-item-text lead"}, 
+                    "Evidence", React.createElement("sup", null, "†"), " of episodic diversifying selection was found on",  
+                      React.createElement("strong", null, " ", self.state.branches_with_evidence), " out of",  
+                      React.createElement("span", null, " ", self.state.test_branches), " tested branches" + ' ' + 
+                      "(", React.createElement("span", null, self.state.total_branches), " total branches)."
+                  ), 
+                  React.createElement("p", null, 
+                    React.createElement("small", null, 
+                      React.createElement("sup", null, "†"), React.createElement("abbr", {title: "Likelihood Ratio Test"}, "LRT"), " p ≤ 0.05, corrected for multiple testing."
+                    )
+                  ), 
+                  React.createElement("p", null, 
+                    React.createElement("small", null, 
+                      "Please cite ", React.createElement("a", {href: "http://www.ncbi.nlm.nih.gov/pubmed/25697341", id: "summary-pmid", target: "_blank"}, "PMID 25697341"), " if you use this result in a publication, presentation, or other scientific work."
+                    )
+                  )
+              )
+          )
+        )
+  }
+
+});
+
+// Will need to make a call to this
+// omega distributions
+function render_absrel_summary(test_results, pmid, element) {
+  React.render(
+    React.createElement(BSRELSummary, {test_results: test_results, pmid: pmid}),
+    document.getElementById(element)
+  );
+}
+
 
 var BranchTable = React.createClass({displayName: "BranchTable",
 
@@ -2292,68 +2319,6 @@ function saveImage(type, container) {
 
 }
 
-var FadeSummary = React.createClass({displayName: "FadeSummary",
-
-  float_format : d3.format(".2f"),
-
-  countBranchesTested: function(branches_tested) {
-    if(branches_tested) {
-      return branches_tested.split(';').length;
-    } else {
-      return 0;
-    }
-  },
-
-  getDefaultProps : function() {
-    return {
-     subs : []
-    };
-
-  },
-
-  componentDidMount: function() {
-
-    this.setProps({
-       alpha_level : 0.05,
-       sequences : this.props.msa.sequences,
-       subs : this.props.fade_results["TREE_LENGTHS"][0],
-       sites : this.props.msa.sites,
-       model : this.props.fade_results["MODEL_INFO"],
-       grid_desc : this.props.fade_results["GRID_DESCRIPTION"],
-       branches_tested : this.props.fade_results["BRANCHES_TESTED"]
-    });
-
-  },
-
-  render: function() {
-
-    var self = this;
-
-    return (
-          React.createElement("dl", {className: "dl-horizontal"}, 
-            React.createElement("dt", null, "Data summary"), 
-            React.createElement("dd", null, this.props.sequences, " sequences with ", this.props.partitions, " partitions."), React.createElement("dd", null, 
-            React.createElement("div", {className: "alert"}, "These sequences have not been screened for recombination. Selection analyses of alignments with recombinants in them using a single tree may generate ", React.createElement("u", null, "misleading"), " results.")), 
-            this.props.msa.partition_info.map(function(partition, index) {
-              return (React.createElement("div", null, React.createElement("dt", null, "Partition ", partition["partition"]), React.createElement("dd", null, " ", self.float_format(self.props.subs[index]), " subs/ aminoacid  site"), React.createElement("dd", null, partition["endcodon"] - partition["startcodon"], " aminoacids")))
-            }), 
-            React.createElement("dt", null, "Settings"), React.createElement("dd", null, this.props.model), React.createElement("dd", null, this.props.grid_desc), 
-            React.createElement("dd", null, "Directional model applied to ", self.countBranchesTested(this.props.branches_tested), " branches")
-          )
-        )
-  }
-
-});
-
-// Will need to make a call to this
-// omega distributions
-function render_fade_summary(json, msa) {
-  React.render(
-    React.createElement(FadeSummary, {fade_results: json, msa: msa}),
-    document.getElementById("summary-div")
-  );
-}
-
 if (!datamonkey) {
     var datamonkey = {};
 }
@@ -2766,6 +2731,68 @@ datamonkey.fade = function(json) {
   set_handlers('test');
   initial_display();
 
+}
+
+var FadeSummary = React.createClass({displayName: "FadeSummary",
+
+  float_format : d3.format(".2f"),
+
+  countBranchesTested: function(branches_tested) {
+    if(branches_tested) {
+      return branches_tested.split(';').length;
+    } else {
+      return 0;
+    }
+  },
+
+  getDefaultProps : function() {
+    return {
+     subs : []
+    };
+
+  },
+
+  componentDidMount: function() {
+
+    this.setProps({
+       alpha_level : 0.05,
+       sequences : this.props.msa.sequences,
+       subs : this.props.fade_results["TREE_LENGTHS"][0],
+       sites : this.props.msa.sites,
+       model : this.props.fade_results["MODEL_INFO"],
+       grid_desc : this.props.fade_results["GRID_DESCRIPTION"],
+       branches_tested : this.props.fade_results["BRANCHES_TESTED"]
+    });
+
+  },
+
+  render: function() {
+
+    var self = this;
+
+    return (
+          React.createElement("dl", {className: "dl-horizontal"}, 
+            React.createElement("dt", null, "Data summary"), 
+            React.createElement("dd", null, this.props.sequences, " sequences with ", this.props.partitions, " partitions."), React.createElement("dd", null, 
+            React.createElement("div", {className: "alert"}, "These sequences have not been screened for recombination. Selection analyses of alignments with recombinants in them using a single tree may generate ", React.createElement("u", null, "misleading"), " results.")), 
+            this.props.msa.partition_info.map(function(partition, index) {
+              return (React.createElement("div", null, React.createElement("dt", null, "Partition ", partition["partition"]), React.createElement("dd", null, " ", self.float_format(self.props.subs[index]), " subs/ aminoacid  site"), React.createElement("dd", null, partition["endcodon"] - partition["startcodon"], " aminoacids")))
+            }), 
+            React.createElement("dt", null, "Settings"), React.createElement("dd", null, this.props.model), React.createElement("dd", null, this.props.grid_desc), 
+            React.createElement("dd", null, "Directional model applied to ", self.countBranchesTested(this.props.branches_tested), " branches")
+          )
+        )
+  }
+
+});
+
+// Will need to make a call to this
+// omega distributions
+function render_fade_summary(json, msa) {
+  React.render(
+    React.createElement(FadeSummary, {fade_results: json, msa: msa}),
+    document.getElementById("summary-div")
+  );
 }
 
 var ModelFits = React.createClass({displayName: "ModelFits",
@@ -4095,6 +4122,942 @@ function render_relax(url, element) {
 }
 
 
+var DatamonkeyTableRow = React.createClass ({displayName: "DatamonkeyTableRow",
+/**
+    A single table row
+
+    *rowData* is an array of cells
+        each cell can be one of
+            1. string: simply render the text as shown
+            2. object: a polymorphic case; can be rendered directly (if the object is a valid react.js element)
+               or via a transformation of the value associated with the key 'value'
+
+               supported keys
+                2.1. 'value' : the value to use to generate cell context
+                2.2. 'format' : the function (returning something react.js can render directly) that will be called
+                to transform 'value' into the object to be rendered
+                2.3. 'span' : colSpan attribute
+                2.4. 'style': CSS style attributes (JSX specification, i.e. {margin-top: '1em'} and not a string)
+                2.5. 'classes': CSS classes to apply to the cell
+                2.6. 'abbr': wrap cell value in <abbr> tags
+
+            3. array: directly render array elements in the cell (must be renderable to react.js; note that plain
+            text elements will be wrapped in "span" which is not allowed to nest in <th/td>
+
+
+    *header* is a bool indicating whether the header is a header row (th cells) or a regular row (td cells)
+*/
+
+    propTypes: {
+     rowData: React.PropTypes.arrayOf (React.PropTypes.oneOfType ([React.PropTypes.string,React.PropTypes.number,React.PropTypes.object,React.PropTypes.array])).isRequired,
+     header:  React.PropTypes.bool,
+    },
+
+    render: function () {
+        return (
+            React.createElement("tr", null, 
+            
+                this.props.rowData.map (_.bind(function (cell, index) {
+
+                        var value = _.has (cell, "value") ? cell.value : cell;
+
+                        if (_.isArray (value)) {
+                            return value;
+                        }
+
+                        if (_.isObject (value)) {
+                            if (!React.isValidElement (value)) {
+                                return null;
+                            }
+                        } else {
+                            value = _.has (cell, "format") ? cell.format (value) : value;
+                        }
+
+                        if (_.has (cell, "abbr")) {
+                            value = (
+                                React.createElement("abbr", {title: cell.abbr}, value)
+                            );
+                        }
+
+                        var cellProps = {key: index};
+
+                        if (_.has (cell, "span")) {
+                            cellProps["colSpan"] = cell.span;
+                        }
+
+                        if (_.has (cell, "style")) {
+                            cellProps["style"] = cell.style;
+                        }
+
+                        if (_.has (cell, "classes")) {
+                            cellProps["className"] = cell.classes;
+                        }
+
+
+                        return React.createElement (this.props.header ? "th" : "td" ,
+                                                    cellProps,
+                                                    value);
+
+
+                    },this))
+            
+            )
+        );
+    }
+});
+
+var DatamonkeyTable = React.createClass ({displayName: "DatamonkeyTable",
+/**
+    A table composed of rows
+        *headerData* -- an array of cells (see DatamonkeyTableRow) to render as the header
+        *bodyData* -- an array of arrays of cells (rows) to render
+        *classes* -- CSS classes to apply to the table element
+*/
+
+    propTypes: {
+        headerData: React.PropTypes.array,
+        bodyData: React.PropTypes.arrayOf (React.PropTypes.array),
+    },
+
+    getDefaultProps : function () {
+        return {classes : "table table-condensed table-hover"};
+    },
+
+    render: function () {
+        const children = [];
+
+        if (this.props.headerData) {
+            if (_.isArray (this.props.headerData[0])) { // multiple rows
+                 children.push ((
+                    React.createElement("thead", {key: 0}, 
+                        
+                            _.map (this.props.headerData, function (row, index) {
+                                return (
+                                    React.createElement(DatamonkeyTableRow, {rowData: row, header: true, key: index})
+                                );
+                            })
+                        
+                    )
+                ));
+            }
+            else {
+                children.push ((
+                    React.createElement("thead", {key: 0}, 
+                        React.createElement(DatamonkeyTableRow, {rowData: this.props.headerData, header: true})
+                    )
+                ));
+            }
+        }
+
+        children.push (React.createElement ("tbody", {key : 1},
+             _.map (this.props.bodyData, _.bind(function (componentData, index) {
+                            return (
+                                React.createElement(DatamonkeyTableRow, {rowData: componentData, key: index, header: false})
+                            );
+                        }, this))));
+
+
+        return React.createElement ("table", {className: this.props.classes}, children);
+    }
+});
+
+
+var DatamonkeyRateDistributionTable = React.createClass ({displayName: "DatamonkeyRateDistributionTable",
+
+  /** render a rate distribution table from JSON formatted like this
+  {
+       "non-synonymous/synonymous rate ratio for *background*":[ // name of distribution
+        [0.1701428265961598, 1] // distribution points (rate, weight)
+        ],
+       "non-synonymous/synonymous rate ratio for *test*":[
+        [0.1452686330406915, 1]
+        ]
+  }
+
+  */
+
+  propTypes: {
+    distribution: React.PropTypes.object.isRequired,
+  },
+
+  dm_formatterRate : d3.format (".3r"),
+  dm_formatterProp : d3.format (".3p"),
+
+  dm_createDistributionTable: function (jsonRates) {
+    var rowData = [];
+    var self = this;
+    _.each (jsonRates, function (value, key) {
+        rowData.push ([{value: key, span: 3, classes: "info"}]);
+        _.each (value, function (rate, index) {
+            rowData.push ([{value: rate[1], format: self.dm_formatterProp}, '@', {value: rate[0], format: self.dm_formatterRate}]);
+        })
+    });
+    return rowData;
+  },
+
+  render: function () {
+    return (
+        (React.createElement(DatamonkeyTable, {bodyData: this.dm_createDistributionTable(this.props.distribution), classes: "table table-condensed"}))
+    );
+  },
+
+});
+
+var DatamonkeyPartitionTable = React.createClass({displayName: "DatamonkeyPartitionTable",
+
+   dm_formatterFloat : d3.format (".3r"),
+   dm_formatterProp : d3.format (".3p"),
+
+   propTypes: {
+        trees: React.PropTypes.object.isRequired,
+        partitions: React.PropTypes.object.isRequired,
+        branchAttributes: React.PropTypes.object.isRequired,
+        siteResults: React.PropTypes.object.isRequired,
+        accessorNegative: React.PropTypes.func.isRequired,
+        accessorPositive: React.PropTypes.func.isRequired,
+        pValue: React.PropTypes.number.isRequired,
+    },
+
+    dm_computePartitionInformation: function (trees, partitions, attributes, pValue) {
+
+        var partitionKeys = _.sortBy (_.keys (partitions), function (v) {return v;}),
+            matchingKey = null,
+            self = this;
+
+        var extractBranchLength = this.props.extractOn || _.find (attributes.attributes, function (value, key) {matchingKey = key; return value["attribute type"] == "branch length";});
+        if (matchingKey) {
+            extractBranchLength = matchingKey;
+        }
+
+        return _.map (partitionKeys, function (key, index) {
+            var treeBranches = trees.tested[key],
+                tested = {};
+
+
+            _.each (treeBranches, function (value, key) { if (value == "test") tested[key] = 1;});
+
+            var testedLength = extractBranchLength ? datamonkey.helpers.sum (attributes[key], function (v, k) { if  (tested[k.toUpperCase()]) {return v[extractBranchLength]} return 0;}) : 0;
+            var totalLength =  extractBranchLength ? datamonkey.helpers.sum (attributes[key], function (v) { return v[extractBranchLength] || 0;}) : 0; // || 0 is to resolve root node missing length
+
+
+            return _.map ([index+1, // 1-based partition index
+                    partitions[key].coverage[0].length, // number of sites in the partition
+                    _.size(tested), // tested branches
+                    _.keys (treeBranches).length, // total branches
+                    testedLength,
+                    testedLength / totalLength,
+                    totalLength,
+                    _.filter (self.props.accessorPositive (self.props.siteResults, key), function (p) {return p <= pValue;}).length,
+                    _.filter (self.props.accessorNegative (self.props.siteResults, key), function (p) {return p <= pValue;}).length,
+
+                   ], function (cell, index) {
+                        if (index > 1) {
+                            var attributedCell = {value : cell,
+                                                  style : {textAlign: 'center'}};
+
+                            if (index == 4 || index == 6) {
+                                _.extend (attributedCell, {'format': self.dm_formatterFloat});
+                            }
+                            if (index == 5) {
+                                _.extend (attributedCell, {'format': self.dm_formatterProp});
+                            }
+
+                            return attributedCell;
+                        }
+                        return cell;
+                   });
+        });
+
+    },
+
+    dm_makeHeaderRow : function (pValue) {
+        return [
+                    _.map(["Partition", "Sites", "Branches", "Branch Length", "Selected at p" + String.fromCharCode(parseInt("2264",16)) + pValue], function (d,i) {
+                        return _.extend ({value:d, style: {borderBottom: 0, textAlign: (i>1 ? 'center' : 'left')}}, i>1 ? {'span' : i == 3 ? 3 : 2} : {});
+                    }),
+                    _.map (
+                        ["", "", "Tested", "Total", "Tested", "% of total", "Total", "Positive", "Negative"], function (d,i) {
+                            return {value: d, style: {borderTop : 0, textAlign: (i>1 ? 'center' : 'left')}};
+                        })
+               ];
+    },
+
+    getInitialState: function() {
+        return {
+            header: this.dm_makeHeaderRow (this.props.pValue),
+            rows: this.dm_computePartitionInformation (this.props.trees, this.props.partitions, this.props.branchAttributes),
+        }
+    },
+
+    componentWillReceiveProps: function (nextProps) {
+        this.setState ({
+            header: this.dm_makeHeaderRow (nextProps.pValue),
+            rows: this.dm_computePartitionInformation (nextProps.trees, nextProps.partitions, nextProps.branchAttributes, nextProps.pValue),
+        });
+    },
+
+    render: function() {
+        return (React.createElement(DatamonkeyTable, {headerData: this.state.header, bodyData: this.state.rows}));
+    }
+});
+
+var DatamonkeyModelTable = React.createClass({displayName: "DatamonkeyModelTable",
+
+  /** render a model fit table from a JSON object with entries like this
+
+
+        "Global MG94xREV":{ // model name
+             "log likelihood":-5453.527975908821,
+             "parameters":131,
+             "AIC-c":11172.05569160427,
+             "rate distributions":{
+               "non-synonymous/synonymous rate ratio for *background*":[
+                [0.1701428265961598, 1]
+                ],
+               "non-synonymous/synonymous rate ratio for *test*":[
+                [0.1452686330406915, 1]
+                ]
+              },
+             "display order":0
+            }
+
+    dm_supportedColumns controls which keys from model specification will be consumed;
+        * 'value' is the cell specification to be consumed by DatamonkeyTableRow
+        * 'order' is the column order in the resulting table (relative; doesn't have to be sequential)
+        * 'display_format' is a formatting function for cell entries
+        * 'transform' is a data trasformation function for cell entries
+
+  */
+
+  dm_numberFormatter: d3.format (".2f"),
+
+  dm_supportedColumns : {'log likelihood' :
+                                {order: 2,
+                                 value: {"value" : "log L", "abbr" : "log likelihood" },
+                                 display_format : d3.format (".2f")},
+                         'parameters'     :
+                                {order: 3,
+                                 value: "Parameters"},
+                         'AIC-c'  :
+                                {order: 1,
+                                 value: {value : React.createElement ('span', null, ['AIC', (React.createElement("sub", {key: "0"}, "C"))]),
+                                         abbr : "Small-sample corrected Akaike Information Score"},
+                                 display_format : d3.format (".2f")},
+                         'rate distributions' :
+                                {order: 4,
+                                 value: "Rate distributions",
+                                 transform: function (value) {
+                                    return React.createElement (DatamonkeyRateDistributionTable, {distribution:value});
+                                }},
+                         },
+
+
+
+
+  propTypes: {
+    fits: React.PropTypes.object.isRequired,
+  },
+
+  getDefaultProps: function() {
+    return {
+        orderOn : "display order",
+    };
+  },
+
+  dm_extractFitsTable : function (jsonTable) {
+     var modelList = [];
+     var columnMap = null;
+     var columnMapIterator = [];
+     var valueFormat = {};
+     var valueTransform = {};
+     var rowData   = [];
+     var self = this;
+
+     _.each (jsonTable, function (value, key) {
+        if (!columnMap) {
+            columnMap = {};
+            _.each (value, function (cellValue, cellName) {
+               if (self.dm_supportedColumns [cellName]) {
+                    columnMap[cellName] = self.dm_supportedColumns [cellName];
+                    columnMapIterator[columnMap[cellName].order] = cellName;
+                    valueFormat [cellName] =  self.dm_supportedColumns [cellName]["display_format"];
+                    if (_.isFunction (self.dm_supportedColumns [cellName]["transform"])) {
+                        valueTransform [cellName] = self.dm_supportedColumns [cellName]["transform"];
+                    }
+               }
+            });
+            columnMapIterator = _.filter (columnMapIterator, function (v) {return v;})
+        }
+
+
+        var thisRow = [{value: key, style: {fontVariant: "small-caps" }}];
+
+        _.each (columnMapIterator, function (tag) {
+
+            var myValue = valueTransform [tag] ?  valueTransform [tag] (value[tag]) : value [tag];
+
+
+            if (valueFormat[tag]) {
+                thisRow.push ({'value' : myValue, 'format' : valueFormat[tag]});
+            } else {
+                thisRow.push(myValue);
+            }
+        });
+
+        rowData.push ([thisRow, _.isNumber (value [self.props.orderOn]) ? value [self.props.orderOn] : rowData.length]);
+
+       });
+
+
+
+       return {'data' : _.map (_.sortBy (rowData, function (value) { return value[1]; }), function (r) {return r[0];}),
+               'columns' : _.map (columnMapIterator, function (tag) {
+        return columnMap[tag].value;
+     }) };
+  },
+
+  dm_makeHeaderRow : function (columnMap) {
+    var headerRow = ['Model'];
+    _.each(columnMap, function (v) {headerRow.push(v);});
+    return headerRow;
+  },
+
+  getInitialState: function () {
+
+    var tableInfo = this.dm_extractFitsTable (this.props.fits);
+
+    return {
+                header:     this.dm_makeHeaderRow     (tableInfo.columns),
+                rows:       tableInfo.data,
+                caption:    null,
+           };
+  },
+
+
+  render: function() {
+        return (React.createElement(DatamonkeyTable, {headerData: this.state.header, bodyData: this.state.rows}));
+  },
+});
+
+var DatamonkeyTimersTable = React.createClass({displayName: "DatamonkeyTimersTable",
+
+  dm_percentageFormatter: d3.format (".2%"),
+
+  propTypes: {
+    timers: React.PropTypes.object.isRequired,
+  },
+
+  dm_formatSeconds: function (seconds) {
+
+    var fields = [ ~~ (seconds / 3600),
+                ~~ ( (seconds % 3600) / 60),
+                seconds % 60];
+
+
+    return _.map (fields, function (d) { return d < 10 ? "0" + d : "" + d}).join (':') ;
+  },
+
+  dm_extractTimerTable : function (jsonTable) {
+     var totalTime = 0.,
+        formattedRows = _.map (jsonTable, _.bind ( function (value, key) {
+        if (this.props.totalTime) {
+            if (key == this.props.totalTime) {
+                totalTime = value['timer'];
+            }
+        } else {
+            totalTime += value['timer'];
+        }
+        return [key, value['timer'], value['order']];
+     }, this));
+
+
+     formattedRows = _.sortBy (formattedRows, function (row) {
+        return row[2];
+     });
+
+     formattedRows = _.map (formattedRows, _.bind (function (row) {
+        var fraction = null;
+        if (this.props.totalTime === null || this.props.totalTime != row[0]) {
+            row[2] = {"value" : row[1]/totalTime, "format": this.dm_percentageFormatter};
+        } else {
+            row[2] = "";
+        }
+        row[1] = this.dm_formatSeconds (row[1]);
+        return row;
+     }, this));
+
+     return formattedRows;
+  },
+
+  dm_makeHeaderRow : function () {
+    return ['Task', 'Time', '%'];
+  },
+
+  getInitialState: function () {
+
+    return {
+                header:     this.dm_makeHeaderRow (),
+                rows:       this.dm_extractTimerTable (this.props.timers),
+                caption:    null,
+           };
+  },
+
+
+  render: function() {
+        return (React.createElement(DatamonkeyTable, {headerData: this.state.header, bodyData: this.state.rows}));
+  },
+});
+
+
+
+
+
+var SLAC = React.createClass({displayName: "SLAC",
+
+  float_format : d3.format(".2f"),
+
+  dm_loadFromServer : function() {
+  /* 20160721 SLKP: prefixing all custom (i.e. not defined by REACT) with dm_
+     to make it easier to recognize scoping immediately */
+
+    var self = this;
+
+    d3.json(self.props.url, function(request_error, data) {
+
+        if (!data) {
+            var error_message_text = request_error.status == 404 ? self.props.url + " could not be loaded" : request_error.statusText;
+            self.setState ({error_message: error_message_text});
+        } else {
+            self.dm_initializeFromJSON (data);
+        }
+    });
+
+  },
+
+
+  dm_initializeFromJSON: function (data) {
+      this.setState ({ analysis_results : data});
+  },
+
+  getDefaultProps: function() {
+    /* default properties for the component */
+
+    return {
+        url : "#"
+    };
+
+  },
+
+  getInitialState: function() {
+
+    return {
+              analysis_results : null,
+              error_message: null,
+              pValue : 0.1,
+           };
+
+  },
+
+  componentWillMount: function() {
+
+    this.dm_loadFromServer();
+    this.dm_setEvents();
+  },
+
+  dm_setEvents : function() {
+
+    var self = this;
+
+    $("#datamonkey-json-file").on("change", function(e) {
+
+        var files = e.target.files; // FileList object
+
+        if (files.length == 1) {
+            var f = files[0];
+            var reader = new FileReader();
+
+
+
+            reader.onload = (function(theFile) {
+                return function(e) {
+                  try {
+                    self.dm_initializeFromJSON (JSON.parse(this.result));
+                  }
+                  catch (error) {
+                    self.setState ({error_message : error.toString()});
+                  }
+                }
+            })(f);
+
+            reader.readAsText(f);
+        }
+
+        $("#datamonkey-json-file-toggle").dropdown("toggle");
+    });
+
+
+  },
+
+  formatBranchAnnotations : function(json, key) {
+
+    var initial_branch_annotations = json["fits"][key]["branch-annotations"];
+
+    if(!initial_branch_annotations) {
+      initial_branch_annotations = json["fits"][key]["rate distributions"];
+    }
+
+    // Iterate over objects
+    branch_annotations = _.mapObject(initial_branch_annotations, function(val, key) {
+
+      var vals = [];
+        try {
+          vals = JSON.parse(val);
+        } catch (e) {
+          vals = val;
+        }
+
+      var omegas = {"omegas" : _.map(vals, function(d) { return _.object(["omega","prop"], d)})};
+      var test_results = _.clone(json["test results"][key]);
+      _.extend(test_results, omegas);
+      return test_results;
+
+    });
+
+    return branch_annotations;
+
+  },
+
+  dm_adjustPvalue : function (event) {
+    this.setState ({pValue: parseFloat(event.target.value)});
+  },
+
+  render: function() {
+
+    var self = this;
+
+    if (self.state.error_message) {
+        return (
+            React.createElement("div", {id: "datamonkey-error", className: "alert alert-danger alert-dismissible", role: "alert"}, 
+                React.createElement("button", {type: "button", className: "close", "data-dismiss": "alert", "aria-label": "Close"}, React.createElement("span", {"aria-hidden": "true"}, "×")), 
+                React.createElement("strong", null, self.state.error_message), " ", React.createElement("span", {id: "datamonkey-error-text"})
+            )
+        );
+    }
+
+    if (self.state.analysis_results) {
+
+        return (
+           React.createElement("div", {className: "tab-content"}, 
+                React.createElement("div", {className: "tab-pane active", id: "summary-tab"}, 
+
+                    React.createElement("div", {className: "row"}, 
+                        React.createElement("div", {id: "summary-div", className: "col-md-12"}, 
+                            React.createElement(SLACBanner, {analysis_results: self.state.analysis_results, pValue: self.state.pValue, pAdjuster: _.bind (self.dm_adjustPvalue, self)})
+                        )
+                    ), 
+
+                    React.createElement("div", {className: "row hidden-print"}, 
+                        React.createElement("div", {id: "datamonkey-slac-tree-summary", className: "col-lg-4 col-md-6 col-sm-12"}, 
+                             React.createElement("div", {className: "panel panel-default"}, 
+                                React.createElement("div", {className: "panel-heading"}, 
+                                    React.createElement("h3", {className: "panel-title"}, 
+                                        React.createElement("i", {className: "fa fa-puzzle-piece"}), " Partition information"
+                                     )
+                                ), 
+                                React.createElement("div", {className: "panel-body"}, 
+                                    React.createElement("small", null, 
+                                        React.createElement(DatamonkeyPartitionTable, {
+                                            pValue: self.state.pValue, 
+                                            trees: self.state.analysis_results.trees, 
+                                            partitions: self.state.analysis_results.partitions, 
+                                            branchAttributes: self.state.analysis_results['branch attributes'], 
+                                            siteResults: self.state.analysis_results.MLE, 
+                                            accessorPositive: function (json, partition) {return _.map (json["content"][partition]["by-site"]["AVERAGED"], function (v) {return v[8];});}, 
+                                            accessorNegative: function (json, partition) {return _.map (json["content"][partition]["by-site"]["AVERAGED"], function (v) {return v[9];});}}
+                                        )
+                                    )
+                                )
+                            )
+                       ), 
+                        React.createElement("div", {id: "datamonkey-slac-model-fits", className: "col-lg-5 col-md-6 col-sm-12"}, 
+                             React.createElement("div", {className: "panel panel-default"}, 
+                                React.createElement("div", {className: "panel-heading"}, 
+                                    React.createElement("h3", {className: "panel-title"}, 
+                                        React.createElement("i", {className: "fa fa-table"}), " Model fits"
+                                     )
+                                ), 
+                                React.createElement("div", {className: "panel-body"}, 
+                                    React.createElement("small", null, 
+                                        React.createElement(DatamonkeyModelTable, {fits: self.state.analysis_results.fits})
+                                    )
+                                )
+                            )
+                        ), 
+                        React.createElement("div", {id: "datamonkey-slac-timers", className: "col-lg-3 col-md-3 col-sm-12"}, 
+                             React.createElement("div", {className: "panel panel-default"}, 
+                                React.createElement("div", {className: "panel-heading"}, 
+                                    React.createElement("h3", {className: "panel-title"}, 
+                                        React.createElement("i", {className: "fa fa-clock-o"}), " Execution time"
+                                     )
+                                ), 
+                                React.createElement("div", {className: "panel-body"}, 
+                                    React.createElement("small", null, 
+                                        React.createElement(DatamonkeyTimersTable, {timers: self.state.analysis_results.timers, totalTime: "Total time"})
+                                    )
+                                )
+                            )
+                        )
+                    ), 
+
+                    /*<div className="row visible-print-block">
+                        <div id="datamonkey-slac-tree-summary" className="col-md-12">
+                             <div className = "panel panel-info">
+                                <div className="panel-heading">
+                                    <h5 className="list-group-item-heading">
+                                        <i className="fa fa-puzzle-piece"></i> Partition information
+                                     </h5>
+                                </div>
+                                <div className="panel-body">
+                                    <small>
+                                    </small>
+                                </div>
+                            </div>
+                       </div>
+                        <div id="datamonkey-slac-model-fits" className="col-md-12">
+                            <div className = "panel panel-info">
+                                <div className="panel-heading">
+                                    <h5 className="list-group-item-heading">
+                                        <i className="fa fa-table"></i> Model fits
+                                     </h5>
+                                </div>
+                                <div className="panel-body">
+                                    <small>
+                                        {<DatamonkeyModelTable fits={self.state.analysis_results.fits}/>}
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="datamonkey-slac-timers" className="col-md-12">
+                            <div className = "panel panel-info">
+                                <div className="panel-heading">
+                                    <h5 className="list-group-item-heading">
+                                        <i className="fa fa-clock-o"></i> Execution time
+                                     </h5>
+                                </div>
+                                <div className="panel-body">
+                                    <small>
+                                        <DatamonkeyTimersTable timers={self.state.analysis_results.timers} totalTime={"Total time"} />
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>*/
+
+
+                    React.createElement("div", {className: "tab-pane", id: "tree-tab"}
+                        /*
+                        <Tree json={self.state.json} settings={self.state.settings} /> */
+                    ), 
+
+                    React.createElement("div", {className: "tab-pane", id: "table_tab"}
+                        /*
+                        <BranchTable tree={self.state.tree} test_results={self.state.test_results} annotations={self.state.annotations} /> */
+                    )
+
+                )
+            )
+        );
+        }
+    return null;
+  }
+
+});
+
+
+
+// Will need to make a call to this
+// omega distributions
+function render_slac(url, element) {
+  ReactDOM.render(
+    React.createElement(SLAC, {url: url}),
+    document.getElementById(element)
+  );
+}
+
+var SLACBanner = React.createClass({displayName: "SLACBanner",
+
+  dm_countPartitons : function (json) {
+    return datamonkey.helpers.countPartitionsJSON (json);
+  },
+
+  dm_countSites : function (json, cutoff) {
+    cutoff = cutoff || 0.1;
+
+    var result = { all : 0,
+                   positive: 0,
+                   negative : 0};
+
+    result.all       = datamonkey.helpers.countSitesFromPartitionsJSON (json);
+
+    result.positive = datamonkey.helpers.sum (
+                            json["MLE"]["content"],
+                            function (partition) {
+                                return _.reduce (partition["by-site"]["RESOLVED"], function (sum, row)
+                                    {return sum + (row[8] <= cutoff ? 1 : 0);}, 0);
+                            }
+                       );
+
+    result.negative = datamonkey.helpers.sum (
+                            json["MLE"]["content"],
+                            function (partition) {
+                                return _.reduce (partition["by-site"]["RESOLVED"], function (sum, row)
+                                    {return sum + (row[9] <= cutoff ? 1 : 0);}, 0);
+                            }
+                       );
+
+    return result;
+  },
+
+
+
+  getInitialState: function() {
+
+    return {
+              partitions:  this.dm_countPartitons(this.props.analysis_results),
+              sites: this.dm_countSites (this.props.analysis_results),
+           };
+  },
+
+  componentWillReceiveProps: function(nextProps) {
+
+    this.setState({
+                    partitions : this.dm_countPartitons(nextProps.analysis_results),
+                    sites : this.dm_countSites (nextProps.analysis_results),
+                  });
+
+  },
+
+  render: function() {
+
+        return (
+              React.createElement("ul", {className: "list-group"}, 
+                  React.createElement("li", {className: "list-group-item list-group-item-info"}, 
+                      React.createElement("h3", {className: "list-group-item-heading"}, 
+                        React.createElement("i", {className: "fa fa-line-chart"}), " ", React.createElement("abbr", {title: "Single Likelihood Ancestor Counting"}, "SLAC"), " analysis summary"
+                      ), 
+                      React.createElement("p", {className: "list-group-item-text lead"}, 
+                          "Evidence", React.createElement("sup", null, "†"), " of pervasive ", React.createElement("span", {className: "hyphy-red"}, "diversifying"), " / ", React.createElement("span", {className: "hyphy-navy"}, "purifying"), " selection was found at", 
+                          React.createElement("strong", {className: "hyphy-red"}, " ", this.state.sites.positive), " / ", React.createElement("strong", {className: "hyphy-navy"}, this.state.sites.negative), " sites" + ' ' +
+                          "among ", this.state.sites.all, " tested sites", 
+                          React.createElement("span", null, " ", this.state.partitions > 1 ? "(" + this.state.partitions + " partitions)" : "")
+                      ), 
+                      React.createElement("p", null, 
+                        React.createElement("small", null, 
+                          React.createElement("sup", null, "†"), "Extended binomial test, p ≤ 0.1, ", React.createElement("emph", null, "not"), " corrected for multiple testing; ambiguous characters resolved to maximize matches."
+                        )
+                      ), 
+                      React.createElement("p", null, 
+                        React.createElement("small", null, 
+                            React.createElement("i", {className: "fa fa-exclamation-circle"}), " Please cite ", React.createElement("a", {href: "http://www.ncbi.nlm.nih.gov/pubmed/15703242", target: "_blank"}, "PMID 15703242"), " if you use this result in a publication, presentation, or other scientific work."
+                        )
+                      )
+                  )
+              )
+            );
+
+  }
+});
+
+
+
+
+var SLACBanner = React.createClass({displayName: "SLACBanner",
+
+  dm_countSites : function (json, cutoff) {
+    cutoff = cutoff || this.props.pValue;
+
+    var result = { all : 0,
+                   positive: 0,
+                   negative : 0};
+
+    result.all       = datamonkey.helpers.countSitesFromPartitionsJSON (json);
+
+    result.positive = datamonkey.helpers.sum (
+                            json["MLE"]["content"],
+                            function (partition) {
+                                return _.reduce (partition["by-site"]["RESOLVED"], function (sum, row)
+                                    {return sum + (row[8] <= cutoff ? 1 : 0);}, 0);
+                            }
+                       );
+
+    result.negative = datamonkey.helpers.sum (
+                            json["MLE"]["content"],
+                            function (partition) {
+                                return _.reduce (partition["by-site"]["RESOLVED"], function (sum, row)
+                                    {return sum + (row[9] <= cutoff ? 1 : 0);}, 0);
+                            }
+                       );
+
+    return result;
+  },
+
+
+  dm_computeState: function (state) {
+    return {
+              sites: this.dm_countSites (state),
+           }
+  },
+
+  dm_formatP: d3.format (".3f"),
+
+  getInitialState: function() {
+    return this.dm_computeState (this.props.analysis_results);
+  },
+
+  componentWillReceiveProps: function(nextProps) {
+    this.setState(this.dm_computeState (nextProps.analysis_results));
+  },
+
+  render: function() {
+
+        return (
+              React.createElement("div", {className: "panel panel-primary"}, 
+                  React.createElement("div", {className: "panel-heading"}, 
+                      React.createElement("h3", {className: "panel-title"}, 
+                        React.createElement("abbr", {title: "Single Likelihood Ancestor Counting"}, "SLAC"), " analysis summary"
+                      )
+                  ), 
+                  React.createElement("div", {className: "panel-body"}, 
+                      React.createElement("span", {className: "lead"}, 
+                          "Evidence", React.createElement("sup", null, "†"), " of pervasive ", React.createElement("span", {className: "hyphy-red"}, "diversifying"), " / ", React.createElement("span", {className: "hyphy-navy"}, "purifying"), " selection was found at", 
+                          React.createElement("strong", {className: "hyphy-red"}, " ", this.state.sites.positive), " / ", React.createElement("strong", {className: "hyphy-navy"}, this.state.sites.negative), " sites" + ' ' +
+                          "among ", this.state.sites.all, " tested sites"
+
+                      ), 
+                      React.createElement("div", {style: {marginBottom: '0em'}}, 
+                        React.createElement("small", null, 
+                          React.createElement("sup", null, "†"), "Extended binomial test, p ≤ ", this.dm_formatP(this.props.pValue), 
+                          React.createElement("div", {className: "dropdown hidden-print", style: {display: 'inline'}}, 
+                            React.createElement("button", {id: "dm.pvalue.slider", type: "button", className: "btn btn-xs dropdown-toggle", "data-toggle": "dropdown", "aria-haspopup": "true", "aria-expanded": "false"}, 
+                            React.createElement("span", {className: "caret"})), 
+                            React.createElement("ul", {className: "dropdown-menu", "aria-labelledby": "dm.pvalue.slider"}, 
+                              React.createElement("li", null, React.createElement("a", {href: "#"}, React.createElement("input", {type: "range", min: "0", max: "1", value: this.props.pValue, step: "0.01", onChange: this.props.pAdjuster})))
+                            )
+                           ), 
+                          React.createElement("emph", null, " not"), " corrected for multiple testing; ambiguous characters resolved to maximize matches.", React.createElement("br", null), 
+                          React.createElement("i", {className: "fa fa-exclamation-circle"}), " Please cite ", React.createElement("a", {href: "http://www.ncbi.nlm.nih.gov/pubmed/15703242", target: "_blank"}, "PMID 15703242"), " if you use this result in a publication, presentation, or other scientific work."
+                        )
+                      )
+                  )
+              )
+            );
+
+  }
+});
+
+
+
+
 var Summary = React.createClass({displayName: "Summary",
 
   getDefaultProps : function() {
@@ -4171,228 +5134,6 @@ function rerender_summary(json) {
   $("#hyphy-relax-summary").empty();
   render_summary(json);
 }
-
-var TreeSummary = React.createClass({displayName: "TreeSummary",
-
-  getInitialState: function() {
-
-    var table_row_data = this.getSummaryRows(this.props.json),
-        table_columns = this.getTreeSummaryColumns(table_row_data);
-
-    return { 
-              table_row_data: table_row_data, 
-              table_columns: table_columns
-           };
-  },
-
-  getRateClasses : function(branch_annotations) {
-
-    // Get count of all rate classes
-    var all_branches = _.values(branch_annotations);
-
-    return _.countBy(all_branches, function(branch) {
-      return branch.omegas.length;
-    });
-
-  },
-
-  getBranchProportion : function(rate_classes) {
-    var sum = _.reduce(_.values(rate_classes), function(memo, num) { return memo + num; });
-    return _.mapObject(rate_classes, function(val, key) { return d3.format(".2p")(val/sum) } );
-  },
-
-  getBranchLengthProportion : function(rate_classes, branch_annotations, total_branch_length) {
-
-    var self = this;
-
-    // get branch lengths of each rate distribution
-    //return prop_format(d[2] / total_tree_length
-
-    // Get count of all rate classes
-    var branch_lengths = _.mapObject(rate_classes, function(d) { return 0}); 
-
-    for (var key in branch_annotations) {
-      var node = self.tree.get_node_by_name(key);
-      branch_lengths[branch_annotations[key].omegas.length] += self.tree.branch_length()(node);
-    };
-
-    return _.mapObject(branch_lengths, function(val, key) { return d3.format(".2p")(val/total_branch_length) } );
-
-  },
-
-  getNumUnderSelection : function(rate_classes, branch_annotations, test_results) {
-
-    var num_under_selection = _.mapObject(rate_classes, function(d) { return 0}); 
-
-    for (var key in branch_annotations) {
-      num_under_selection[branch_annotations[key].omegas.length] += test_results[key]["p"] <= 0.05;
-    };
-
-    return num_under_selection;
-
-  },
-
-  getSummaryRows : function(json) {
-
-    var self = this;
-
-    // Will need to create a tree for each fits
-    var analysis_data = json;
-
-    if(!analysis_data) {
-      return [];
-    }
-
-    // Create an array of phylotrees from fits
-    var trees = _.map(analysis_data["fits"], function(d) { return d3.layout.phylotree("body")(d["tree string"]) });
-    var tree = trees[0];
-
-    self.tree = tree;
-    
-
-    //TODO : Do not hard code model here
-    var tree_length = analysis_data["fits"]["Full model"]["tree length"];
-    var branch_annotations = analysis_data["fits"]["Full model"]["branch-annotations"];
-    var test_results = analysis_data["test results"];
-
-    var rate_classes = this.getRateClasses(branch_annotations),
-        proportions = this.getBranchProportion(rate_classes),
-        length_proportions = this.getBranchLengthProportion(rate_classes, branch_annotations, tree_length),
-        num_under_selection = this.getNumUnderSelection(rate_classes, branch_annotations, test_results);
-
-    // zip objects into matrix
-    var keys = _.keys(rate_classes);
-
-    var summary_rows = _.zip(
-      keys
-      ,_.values(rate_classes)
-      ,_.values(proportions)
-      ,_.values(length_proportions)
-      ,_.values(num_under_selection)
-    )
-
-    summary_rows.sort(function(a, b) {
-      if (a[0] == b[0]) {
-          return a[1] < b[1] ? -1 : (a[1] == b[1] ? 0 : 1);
-      }
-      return a[0] - b[0];
-    });
-
-    return summary_rows;
-
-  },
-
-  getTreeSummaryColumns : function(table_row_data) {
-
-    var omega_header = '<th>ω rate<br>classes</th>',
-        branch_num_header = '<th># of <br>branches</th>',
-        branch_prop_header = '<th>% of <br>branches</th>',
-        branch_prop_length_header = '<th>% of tree <br>length</th>',
-        under_selection_header = '<th># under <br>selection</th>';
-
-
-    // inspect table_row_data and return header
-    var all_columns = [ 
-                    omega_header,
-                    branch_num_header, 
-                    branch_prop_header, 
-                    branch_prop_length_header, 
-                    under_selection_header
-                  ];
-
-    // validate each table row with its associated header
-    if(table_row_data.length == 0) {
-      return [];
-    }
-
-    // trim columns to length of table_row_data
-    column_headers = _.take(all_columns, table_row_data[0].length)
-
-    return column_headers;
-  },
-
-  componentWillReceiveProps: function(nextProps) {
-
-    var table_row_data = this.getSummaryRows(nextProps.json),
-        table_columns = this.getTreeSummaryColumns(table_row_data);
-
-    this.setState({
-                    table_row_data: table_row_data, 
-                    table_columns: table_columns
-                  });
-
-  },
-
-  componentDidUpdate : function() {
-
-    d3.select('#summary-tree-header').empty();
-
-    var tree_summary_columns = d3.select('#summary-tree-header');
-
-    tree_summary_columns = tree_summary_columns.selectAll("th").data(this.state.table_columns);
-    tree_summary_columns.enter().append("th");
-    tree_summary_columns.html(function(d) {
-        return d;
-    });
-
-    var tree_summary_rows = d3.select('#summary-tree-table').selectAll("tr").data(this.state.table_row_data);
-    tree_summary_rows.enter().append('tr');
-    tree_summary_rows.exit().remove();
-    tree_summary_rows = tree_summary_rows.selectAll("td").data(function(d) {
-        return d;
-    });
-
-    tree_summary_rows.enter().append("td");
-    tree_summary_rows.html(function(d) {
-        return d;
-    });
-
-
-  },
-
-
-  render: function() {
-
-    return (
-        React.createElement("ul", {className: "list-group"}, 
-            React.createElement("li", {className: "list-group-item"}, 
-              React.createElement("h4", {className: "list-group-item-heading"}, React.createElement("i", {className: "fa fa-tree"}), "Tree"), 
-              React.createElement("table", {className: "table table-hover table-condensed list-group-item-text"}, 
-                React.createElement("thead", {id: "summary-tree-header"}), 
-                React.createElement("tbody", {id: "summary-tree-table"})
-              )
-            )
-        )
-      )
-  }
-
-});
-
-//TODO
-//<caption>
-//<p className="list-group-item-text text-muted">
-//    Total tree length under the branch-site model is <strong id="summary-tree-length">2.30</strong> expected substitutions per nucleotide site, and <strong id="summary-tree-length-mg94">1.74</strong> under the MG94 model.
-//</p>
-//</caption>
-
-
-// Will need to make a call to this
-// omega distributions
-function render_tree_summary(json, element) {
-  React.render(
-    React.createElement(TreeSummary, {json: json}),
-    $(element)[0]
-  );
-}
-
-// Will need to make a call to this
-// omega distributions
-function rerender_tree_summary(tree, element) {
-  $(element).empty();
-  render_tree_summary(tree, element);
-}
-
-
 
 var Tree = React.createClass({displayName: "Tree",
 
@@ -5131,6 +5872,228 @@ function rerender_tree(json, element, settings) {
   return render_tree(json, settings);
 
 }
+
+
+var TreeSummary = React.createClass({displayName: "TreeSummary",
+
+  getInitialState: function() {
+
+    var table_row_data = this.getSummaryRows(this.props.json),
+        table_columns = this.getTreeSummaryColumns(table_row_data);
+
+    return { 
+              table_row_data: table_row_data, 
+              table_columns: table_columns
+           };
+  },
+
+  getRateClasses : function(branch_annotations) {
+
+    // Get count of all rate classes
+    var all_branches = _.values(branch_annotations);
+
+    return _.countBy(all_branches, function(branch) {
+      return branch.omegas.length;
+    });
+
+  },
+
+  getBranchProportion : function(rate_classes) {
+    var sum = _.reduce(_.values(rate_classes), function(memo, num) { return memo + num; });
+    return _.mapObject(rate_classes, function(val, key) { return d3.format(".2p")(val/sum) } );
+  },
+
+  getBranchLengthProportion : function(rate_classes, branch_annotations, total_branch_length) {
+
+    var self = this;
+
+    // get branch lengths of each rate distribution
+    //return prop_format(d[2] / total_tree_length
+
+    // Get count of all rate classes
+    var branch_lengths = _.mapObject(rate_classes, function(d) { return 0}); 
+
+    for (var key in branch_annotations) {
+      var node = self.tree.get_node_by_name(key);
+      branch_lengths[branch_annotations[key].omegas.length] += self.tree.branch_length()(node);
+    };
+
+    return _.mapObject(branch_lengths, function(val, key) { return d3.format(".2p")(val/total_branch_length) } );
+
+  },
+
+  getNumUnderSelection : function(rate_classes, branch_annotations, test_results) {
+
+    var num_under_selection = _.mapObject(rate_classes, function(d) { return 0}); 
+
+    for (var key in branch_annotations) {
+      num_under_selection[branch_annotations[key].omegas.length] += test_results[key]["p"] <= 0.05;
+    };
+
+    return num_under_selection;
+
+  },
+
+  getSummaryRows : function(json) {
+
+    var self = this;
+
+    // Will need to create a tree for each fits
+    var analysis_data = json;
+
+    if(!analysis_data) {
+      return [];
+    }
+
+    // Create an array of phylotrees from fits
+    var trees = _.map(analysis_data["fits"], function(d) { return d3.layout.phylotree("body")(d["tree string"]) });
+    var tree = trees[0];
+
+    self.tree = tree;
+    
+
+    //TODO : Do not hard code model here
+    var tree_length = analysis_data["fits"]["Full model"]["tree length"];
+    var branch_annotations = analysis_data["fits"]["Full model"]["branch-annotations"];
+    var test_results = analysis_data["test results"];
+
+    var rate_classes = this.getRateClasses(branch_annotations),
+        proportions = this.getBranchProportion(rate_classes),
+        length_proportions = this.getBranchLengthProportion(rate_classes, branch_annotations, tree_length),
+        num_under_selection = this.getNumUnderSelection(rate_classes, branch_annotations, test_results);
+
+    // zip objects into matrix
+    var keys = _.keys(rate_classes);
+
+    var summary_rows = _.zip(
+      keys
+      ,_.values(rate_classes)
+      ,_.values(proportions)
+      ,_.values(length_proportions)
+      ,_.values(num_under_selection)
+    )
+
+    summary_rows.sort(function(a, b) {
+      if (a[0] == b[0]) {
+          return a[1] < b[1] ? -1 : (a[1] == b[1] ? 0 : 1);
+      }
+      return a[0] - b[0];
+    });
+
+    return summary_rows;
+
+  },
+
+  getTreeSummaryColumns : function(table_row_data) {
+
+    var omega_header = '<th>ω rate<br>classes</th>',
+        branch_num_header = '<th># of <br>branches</th>',
+        branch_prop_header = '<th>% of <br>branches</th>',
+        branch_prop_length_header = '<th>% of tree <br>length</th>',
+        under_selection_header = '<th># under <br>selection</th>';
+
+
+    // inspect table_row_data and return header
+    var all_columns = [ 
+                    omega_header,
+                    branch_num_header, 
+                    branch_prop_header, 
+                    branch_prop_length_header, 
+                    under_selection_header
+                  ];
+
+    // validate each table row with its associated header
+    if(table_row_data.length == 0) {
+      return [];
+    }
+
+    // trim columns to length of table_row_data
+    column_headers = _.take(all_columns, table_row_data[0].length)
+
+    return column_headers;
+  },
+
+  componentWillReceiveProps: function(nextProps) {
+
+    var table_row_data = this.getSummaryRows(nextProps.json),
+        table_columns = this.getTreeSummaryColumns(table_row_data);
+
+    this.setState({
+                    table_row_data: table_row_data, 
+                    table_columns: table_columns
+                  });
+
+  },
+
+  componentDidUpdate : function() {
+
+    d3.select('#summary-tree-header').empty();
+
+    var tree_summary_columns = d3.select('#summary-tree-header');
+
+    tree_summary_columns = tree_summary_columns.selectAll("th").data(this.state.table_columns);
+    tree_summary_columns.enter().append("th");
+    tree_summary_columns.html(function(d) {
+        return d;
+    });
+
+    var tree_summary_rows = d3.select('#summary-tree-table').selectAll("tr").data(this.state.table_row_data);
+    tree_summary_rows.enter().append('tr');
+    tree_summary_rows.exit().remove();
+    tree_summary_rows = tree_summary_rows.selectAll("td").data(function(d) {
+        return d;
+    });
+
+    tree_summary_rows.enter().append("td");
+    tree_summary_rows.html(function(d) {
+        return d;
+    });
+
+
+  },
+
+
+  render: function() {
+
+    return (
+        React.createElement("ul", {className: "list-group"}, 
+            React.createElement("li", {className: "list-group-item"}, 
+              React.createElement("h4", {className: "list-group-item-heading"}, React.createElement("i", {className: "fa fa-tree"}), "Tree"), 
+              React.createElement("table", {className: "table table-hover table-condensed list-group-item-text"}, 
+                React.createElement("thead", {id: "summary-tree-header"}), 
+                React.createElement("tbody", {id: "summary-tree-table"})
+              )
+            )
+        )
+      )
+  }
+
+});
+
+//TODO
+//<caption>
+//<p className="list-group-item-text text-muted">
+//    Total tree length under the branch-site model is <strong id="summary-tree-length">2.30</strong> expected substitutions per nucleotide site, and <strong id="summary-tree-length-mg94">1.74</strong> under the MG94 model.
+//</p>
+//</caption>
+
+
+// Will need to make a call to this
+// omega distributions
+function render_tree_summary(json, element) {
+  React.render(
+    React.createElement(TreeSummary, {json: json}),
+    $(element)[0]
+  );
+}
+
+// Will need to make a call to this
+// omega distributions
+function rerender_tree_summary(tree, element) {
+  $(element).empty();
+  render_tree_summary(tree, element);
+}
+
 
 
 //# sourceMappingURL=hyphy-vision.js.map
