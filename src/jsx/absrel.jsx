@@ -38,11 +38,11 @@ var BSREL = React.createClass({
         if (svg_defs.empty()) {
           svg_defs = svg.append("defs")
                       .attr("class", "phylotree-definitions")
-        }   
+        }
 
         // clear existing linearGradients
 
-        var scaling_exponent = 0.33,
+        var scaling_exponent = 1./3,
             omega_format = d3.format(".3r"),
             prop_format = d3.format(".2p"),
             fit_format = d3.format(".2f"),
@@ -85,7 +85,7 @@ var BSREL = React.createClass({
               self.gradient_count = 0;
             }
 
-            if(node.annotations) { 
+            if(node.annotations) {
 
               if (node.annotations.length == 1) {
                 node['color'] = self.omega_color(node.annotations[0]["omega"]);
@@ -181,7 +181,7 @@ var BSREL = React.createClass({
 
 
 
-    return { 
+    return {
               annotations : null,
               json : null,
               pmid : null,
@@ -286,14 +286,14 @@ var BSREL = React.createClass({
 
                 <div className="row">
                   <div id="summary-div" className="col-md-12">
-                    <BSRELSummary test_results={self.state.test_results} 
+                    <BSRELSummary test_results={self.state.test_results}
                                   pmid={self.state.pmid} />
                   </div>
-                </div> 
+                </div>
 
                 <div className="row">
                     <div id="hyphy-tree-summary" className="col-md-6">
-                      <TreeSummary json={self.state.json} />      
+                      <TreeSummary json={self.state.json} />
                     </div>
                     <div id="hyphy-model-fits" className="col-md-6">
                       <ModelFits json={self.state.json} />
@@ -302,13 +302,13 @@ var BSREL = React.createClass({
             </div>
 
             <div className='tab-pane' id="tree-tab">
-              <Tree json={self.state.json} 
+              <Tree json={self.state.json}
                     settings={self.state.settings} />
             </div>
 
             <div className='tab-pane' id="table_tab">
-              <BranchTable tree={self.state.tree} 
-                           test_results={self.state.test_results} 
+              <BranchTable tree={self.state.tree}
+                           test_results={self.state.test_results}
                            annotations={self.state.annotations} />
             </div>
 
