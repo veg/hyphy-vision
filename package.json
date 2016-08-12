@@ -30,7 +30,8 @@
     "gulp-sourcemaps": "^1.6.0",
     "gulp-util": "^3.0.7",
     "gulp-watch": "^4.3.8",
-    "uglify-js": "2.4.x"
+    "uglify-js": "2.4.x",
+    "react-lazy-render": "0.3.0"
   },
   "scripts": {
     "lint": "eslint hyphy-vision.js",

@@ -52,12 +52,6 @@
             <!-- Collect the nav links, forms, and other content for toggling -->
             <div class="collapse navbar-collapse" id="navbar-collapse-1">
 
-                <ul class="nav nav-pills navbar-right" role="tablist" id='navigation_buttons'>
-                    <li class="active"><a href="#summary-tab" role="tab" data-toggle="tab"><i class="fa fa-list" style = 'margin-right: 5px'></i>Summary</a></li>
-                    <li><a class="site-tab-btn" href="#site-tab" role="tab" data-toggle="tab"><i class="fa fa-list-ol" style = 'margin-right: 5px'></i> Sites</a></li>
-                    <li><a class="tree-tab-btn" href="#tree-tab" role="tab" data-toggle="tab"><i class="fa fa-tree" style = 'margin-right: 5px'></i> Trees</a></li>
-                </ul>
-
                 <ul class="nav navbar-nav">
                     <li class="dropdown">
                         <a href="#" class="dropdown-toggle" id = "datamonkey-json-file-toggle" data-toggle="dropdown">Load file<b class="caret"></b></a>
@@ -69,6 +63,11 @@
                     </li>
                  </ul>
 
+                <ul class="nav nav-pills navbar-right" role="tablist">
+                    <li role="presentation"><a href="#summary_tab" role="tab" data-toggle="tab" aria-controls="summary_tab"><i class="fa fa-list" style = 'margin-right: 5px'></i>Summary</a></li>
+                    <li role="presentation" class="active"><a href="#sites_tab" role="tab" data-toggle="tab" aria-controls="sites_tab"><i class="fa fa-list-ol" style = 'margin-right: 5px'></i> Sites</a></li>
+                    <li role="presentation"><a  href="#tree_tab" role="tab" data-toggle="tab" aria-controls="tree_tab"><i class="fa fa-tree" style = 'margin-right: 5px'></i> Trees</a></li>
+                </ul>
 
             </div>
             <!-- /.navbar-collapse -->
@@ -85,7 +84,13 @@
 
     <script>
       $(document).ready(function() {
+        //React.addons.Perf.start ();
+
         render_slac("test-data/test.json", "datamonkey-slac-content");
+
+        //React.addons.Perf.stop ();
+        //var prof = React.addons.Perf.getLastMeasurements();
+        //React.addons.Perf.printExclusive (prof);
       });
     </script>
 

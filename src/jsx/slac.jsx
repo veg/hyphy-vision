@@ -45,7 +45,6 @@ var SLAC = React.createClass({
   },
 
   componentWillMount: function() {
-
     this.dm_loadFromServer();
     this.dm_setEvents();
   },
@@ -84,35 +83,6 @@ var SLAC = React.createClass({
 
   },
 
-  formatBranchAnnotations : function(json, key) {
-
-    var initial_branch_annotations = json["fits"][key]["branch-annotations"];
-
-    if(!initial_branch_annotations) {
-      initial_branch_annotations = json["fits"][key]["rate distributions"];
-    }
-
-    // Iterate over objects
-    branch_annotations = _.mapObject(initial_branch_annotations, function(val, key) {
-
-      var vals = [];
-        try {
-          vals = JSON.parse(val);
-        } catch (e) {
-          vals = val;
-        }
-
-      var omegas = {"omegas" : _.map(vals, function(d) { return _.object(["omega","prop"], d)})};
-      var test_results = _.clone(json["test results"][key]);
-      _.extend(test_results, omegas);
-      return test_results;
-
-    });
-
-    return branch_annotations;
-
-  },
-
   dm_adjustPvalue : function (event) {
     this.setState ({pValue: parseFloat(event.target.value)});
   },
@@ -134,7 +104,7 @@ var SLAC = React.createClass({
 
         return (
            <div className="tab-content">
-                <div className="tab-pane active" id="summary-tab">
+                <div className="tab-pane" id="summary_tab">
 
                     <div className="row">
                         <div id="summary-div" className="col-md-12">
@@ -195,62 +165,28 @@ var SLAC = React.createClass({
                         </div>
                     </div>
 
-                    {/*<div className="row visible-print-block">
-                        <div id="datamonkey-slac-tree-summary" className="col-md-12">
-                             <div className = "panel panel-info">
-                                <div className="panel-heading">
-                                    <h5 className="list-group-item-heading">
-                                        <i className="fa fa-puzzle-piece"></i> Partition information
-                                     </h5>
-                                </div>
-                                <div className="panel-body">
-                                    <small>
-                                    </small>
-                                </div>
-                            </div>
-                       </div>
-                        <div id="datamonkey-slac-model-fits" className="col-md-12">
-                            <div className = "panel panel-info">
-                                <div className="panel-heading">
-                                    <h5 className="list-group-item-heading">
-                                        <i className="fa fa-table"></i> Model fits
-                                     </h5>
-                                </div>
-                                <div className="panel-body">
-                                    <small>
-                                        {<DatamonkeyModelTable fits={self.state.analysis_results.fits}/>}
-                                    </small>
-                                </div>
-                            </div>
-                        </div>
-                        <div id="datamonkey-slac-timers" className="col-md-12">
-                            <div className = "panel panel-info">
-                                <div className="panel-heading">
-                                    <h5 className="list-group-item-heading">
-                                        <i className="fa fa-clock-o"></i> Execution time
-                                     </h5>
-                                </div>
-                                <div className="panel-body">
-                                    <small>
-                                        <DatamonkeyTimersTable timers={self.state.analysis_results.timers} totalTime={"Total time"} />
-                                    </small>
-                                </div>
-                            </div>
-                        </div>
-                    </div>*/}
 
-
-                    <div className='tab-pane' id="tree-tab">
-                        {/*
-                        <Tree json={self.state.json} settings={self.state.settings} /> */}
                     </div>
 
-                    <div className='tab-pane' id="table_tab">
-                        { /*
-                        <BranchTable tree={self.state.tree} test_results={self.state.test_results} annotations={self.state.annotations} /> */}
+                    <div className='tab-pane active' id="sites_tab">
+                        <div className="row">
+                            <div id="summary-div" className="col-md-12">
+                                <SLACSites
+                                    headers={self.state.analysis_results.MLE.headers}
+                                    mle={datamonkey.helpers.map (datamonkey.helpers.filter (self.state.analysis_results.MLE.content, function (value, key) {return _.has (value, "by-site");}),
+                                               function (value, key) {return value["by-site"];})}
+                                    sample25={self.state.analysis_results["sample-2.5"]}
+                                    sampleMedian={self.state.analysis_results["sample-median"]}
+                                    sample975={self.state.analysis_results["sample-97.5"]}
+                                    partitionSites={self.state.analysis_results.partitions}
+                                />
+                            </div>
+                        </div>
                     </div>
 
-                </div>
+                    <div className='tab-pane' id="tree_tab">
+                    </div>
+
             </div>
         );
         }
