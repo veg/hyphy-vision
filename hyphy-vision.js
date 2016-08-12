@@ -685,6 +685,27 @@ function datamonkey_count_sites_from_partitions (json) {
     return 0;
 }
 
+function datamonkey_filter_list (list, predicate, context) {
+    var result = {};
+    predicate = _.bind (predicate, context);
+    _.each (list, _.bind(function (value, key) {
+        if (predicate (value, key)) {
+            result[key] = value;
+        }
+      }, context)
+    );
+    return result;
+}
+
+function datamonkey_map_list (list, transform, context) {
+    var result = {};
+    transform = _.bind (transform, context);
+   _.each (list, _.bind(function (value, key) {
+        result[key] = transform(value,key);
+      }, context)
+    );
+    return result;
+}
 
 datamonkey.helpers = new Object;
 datamonkey.helpers.save_newick_to_file = datamonkey_save_newick_to_file;
@@ -698,6 +719,8 @@ datamonkey.helpers.capitalize = datamonkey_capitalize;
 datamonkey.helpers.countPartitionsJSON = datamonkey_count_partitions;
 datamonkey.helpers.countSitesFromPartitionsJSON = datamonkey_count_sites_from_partitions;
 datamonkey.helpers.sum = datamonkey_sum;
+datamonkey.helpers.filter=datamonkey_filter_list;
+datamonkey.helpers.map=datamonkey_map_list;
 
 function set_tree_handlers(tree_object) {
     $("[data-direction]").on("click", function(e) {
@@ -4125,7 +4148,8 @@ function render_relax(url, element) {
 }
 
 
-var DatamonkeyTableRow = React.createClass ({displayName: "DatamonkeyTableRow",
+
+const DatamonkeyTableRow = React.createClass ({displayName: "DatamonkeyTableRow",
 /**
     A single table row
 
@@ -4151,10 +4175,88 @@ var DatamonkeyTableRow = React.createClass ({displayName: "DatamonkeyTableRow",
     *header* is a bool indicating whether the header is a header row (th cells) or a regular row (td cells)
 */
 
-    propTypes: {
+    /*propTypes: {
      rowData: React.PropTypes.arrayOf (React.PropTypes.oneOfType ([React.PropTypes.string,React.PropTypes.number,React.PropTypes.object,React.PropTypes.array])).isRequired,
      header:  React.PropTypes.bool,
+    },*/
+
+    dm_compareTwoValues: function (a,b) {
+        /**
+            compare objects by iterating over keys
+        */
+
+        var myType = typeof a,
+            self   = this;
+
+        if (myType == typeof b) {
+            if (myType == "string" || myType == "number") {
+                    return a == b ? 1 : 0;
+            }
+
+            if (_.isArray (a) && _.isArray (b)) {
+
+                if (a.length != b.length) {
+                    return 0;
+                }
+
+                var not_compared = 0;
+                var result = _.every (a, function (c, i) {var comp = self.dm_compareTwoValues (c, b[i]); if (comp < 0) {not_compared = comp; return false;} return comp == 1;});
+
+                if (not_compared < 0) {
+                    return not_compared;
+                }
+
+                return result ? 1 : 0;
+            }
+
+            return -2;
+        }
+        return -1;
     },
+
+   dm_log100times: _.before (100, function (v) {
+    console.log (v);
+    return 0;
+   }),
+
+   shouldComponentUpdate: function (nextProps) {
+
+        var self = this;
+
+        if (this.props.header !== nextProps.header) {
+            return true;
+        }
+
+        var result = _.some (this.props.rowData, function (value, index) {
+            /** TO DO
+                check for format and other field equality
+            */
+            if (value === nextProps.rowData[index]) {
+                return false;
+            }
+
+            var compare = self.dm_compareTwoValues (value, nextProps.rowData[index]);
+            if (compare >= 0) {
+                return compare == 0;
+            }
+
+            if (compare == -2) {
+                if (_.has (value, "value") && _.has (nextProps.rowData[index], "value")) {
+                    return self.dm_compareTwoValues (value.value, nextProps.rowData[index].value) != 1;
+                }
+
+            }
+
+            return true;
+        });
+
+        if (result) {
+            this.dm_log100times (["Old", this.props.rowData, "New", nextProps.rowData]);
+        }
+
+        return result;
+    },
+
 
     render: function () {
         return (
@@ -4165,16 +4267,21 @@ var DatamonkeyTableRow = React.createClass ({displayName: "DatamonkeyTableRow",
                         var value = _.has (cell, "value") ? cell.value : cell;
 
                         if (_.isArray (value)) {
-                            return value;
-                        }
-
-                        if (_.isObject (value)) {
-                            if (!React.isValidElement (value)) {
-                                return null;
+                            if (!_.has (cell, "format")) {
+                                return value;
                             }
                         } else {
-                            value = _.has (cell, "format") ? cell.format (value) : value;
+                            if (_.isObject (value)) {
+                                if (!React.isValidElement (value)) {
+                                    return null;
+                                }
+                            }
                         }
+
+                        if (_.has (cell, "format")) {
+                            value = cell.format (value);
+                        }
+
 
                         if (_.has (cell, "abbr")) {
                             value = (
@@ -4217,14 +4324,23 @@ var DatamonkeyTable = React.createClass ({displayName: "DatamonkeyTable",
         *classes* -- CSS classes to apply to the table element
 */
 
-    propTypes: {
+    /*propTypes: {
         headerData: React.PropTypes.array,
         bodyData: React.PropTypes.arrayOf (React.PropTypes.array),
-    },
+    },*/
 
     getDefaultProps : function () {
-        return {classes : "table table-condensed table-hover"};
+        return {classes : "table table-condensed table-hover",
+                rowHash : null,
+                sortableColumns : new Object (null),
+                initialSort: null,
+                };
     },
+
+    getInitialState: function () {
+        return {sortedOn: this.props.initialSort};
+    },
+
 
     render: function () {
         const children = [];
@@ -4255,7 +4371,7 @@ var DatamonkeyTable = React.createClass ({displayName: "DatamonkeyTable",
         children.push (React.createElement ("tbody", {key : 1},
              _.map (this.props.bodyData, _.bind(function (componentData, index) {
                             return (
-                                React.createElement(DatamonkeyTableRow, {rowData: componentData, key: index, header: false})
+                                React.createElement(DatamonkeyTableRow, {rowData: componentData, key: this.props.rowHash ? this.props.rowHash (componentData) : index, header: false})
                             );
                         }, this))));
 
@@ -4388,7 +4504,7 @@ var DatamonkeyPartitionTable = React.createClass({displayName: "DatamonkeyPartit
     getInitialState: function() {
         return {
             header: this.dm_makeHeaderRow (this.props.pValue),
-            rows: this.dm_computePartitionInformation (this.props.trees, this.props.partitions, this.props.branchAttributes),
+            rows: this.dm_computePartitionInformation (this.props.trees, this.props.partitions, this.props.branchAttributes, this.props.pValue),
         }
     },
 
@@ -4400,7 +4516,9 @@ var DatamonkeyPartitionTable = React.createClass({displayName: "DatamonkeyPartit
     },
 
     render: function() {
-        return (React.createElement(DatamonkeyTable, {headerData: this.state.header, bodyData: this.state.rows}));
+        return (React.createElement("div", {className: "table-responsive"}, 
+                    React.createElement(DatamonkeyTable, {headerData: this.state.header, bodyData: this.state.rows})
+                ));
     }
 });
 
@@ -4538,7 +4656,9 @@ var DatamonkeyModelTable = React.createClass({displayName: "DatamonkeyModelTable
 
 
   render: function() {
-        return (React.createElement(DatamonkeyTable, {headerData: this.state.header, bodyData: this.state.rows}));
+        return (React.createElement("div", {className: "table-responsive"}, 
+                    React.createElement(DatamonkeyTable, {headerData: this.state.header, bodyData: this.state.rows})
+                ));
   },
 });
 
@@ -4607,7 +4727,10 @@ var DatamonkeyTimersTable = React.createClass({displayName: "DatamonkeyTimersTab
 
 
   render: function() {
-        return (React.createElement(DatamonkeyTable, {headerData: this.state.header, bodyData: this.state.rows}));
+        return (
+            React.createElement(DatamonkeyTable, {headerData: this.state.header, bodyData: this.state.rows})
+
+        );
   },
 });
 
@@ -4662,7 +4785,6 @@ var SLAC = React.createClass({displayName: "SLAC",
   },
 
   componentWillMount: function() {
-
     this.dm_loadFromServer();
     this.dm_setEvents();
   },
@@ -4701,35 +4823,6 @@ var SLAC = React.createClass({displayName: "SLAC",
 
   },
 
-  formatBranchAnnotations : function(json, key) {
-
-    var initial_branch_annotations = json["fits"][key]["branch-annotations"];
-
-    if(!initial_branch_annotations) {
-      initial_branch_annotations = json["fits"][key]["rate distributions"];
-    }
-
-    // Iterate over objects
-    branch_annotations = _.mapObject(initial_branch_annotations, function(val, key) {
-
-      var vals = [];
-        try {
-          vals = JSON.parse(val);
-        } catch (e) {
-          vals = val;
-        }
-
-      var omegas = {"omegas" : _.map(vals, function(d) { return _.object(["omega","prop"], d)})};
-      var test_results = _.clone(json["test results"][key]);
-      _.extend(test_results, omegas);
-      return test_results;
-
-    });
-
-    return branch_annotations;
-
-  },
-
   dm_adjustPvalue : function (event) {
     this.setState ({pValue: parseFloat(event.target.value)});
   },
@@ -4751,7 +4844,7 @@ var SLAC = React.createClass({displayName: "SLAC",
 
         return (
            React.createElement("div", {className: "tab-content"}, 
-                React.createElement("div", {className: "tab-pane active", id: "summary-tab"}, 
+                React.createElement("div", {className: "tab-pane", id: "summary_tab"}, 
 
                     React.createElement("div", {className: "row"}, 
                         React.createElement("div", {id: "summary-div", className: "col-md-12"}, 
@@ -4810,64 +4903,30 @@ var SLAC = React.createClass({displayName: "SLAC",
                                 )
                             )
                         )
-                    ), 
-
-                    /*<div className="row visible-print-block">
-                        <div id="datamonkey-slac-tree-summary" className="col-md-12">
-                             <div className = "panel panel-info">
-                                <div className="panel-heading">
-                                    <h5 className="list-group-item-heading">
-                                        <i className="fa fa-puzzle-piece"></i> Partition information
-                                     </h5>
-                                </div>
-                                <div className="panel-body">
-                                    <small>
-                                    </small>
-                                </div>
-                            </div>
-                       </div>
-                        <div id="datamonkey-slac-model-fits" className="col-md-12">
-                            <div className = "panel panel-info">
-                                <div className="panel-heading">
-                                    <h5 className="list-group-item-heading">
-                                        <i className="fa fa-table"></i> Model fits
-                                     </h5>
-                                </div>
-                                <div className="panel-body">
-                                    <small>
-                                        {<DatamonkeyModelTable fits={self.state.analysis_results.fits}/>}
-                                    </small>
-                                </div>
-                            </div>
-                        </div>
-                        <div id="datamonkey-slac-timers" className="col-md-12">
-                            <div className = "panel panel-info">
-                                <div className="panel-heading">
-                                    <h5 className="list-group-item-heading">
-                                        <i className="fa fa-clock-o"></i> Execution time
-                                     </h5>
-                                </div>
-                                <div className="panel-body">
-                                    <small>
-                                        <DatamonkeyTimersTable timers={self.state.analysis_results.timers} totalTime={"Total time"} />
-                                    </small>
-                                </div>
-                            </div>
-                        </div>
-                    </div>*/
-
-
-                    React.createElement("div", {className: "tab-pane", id: "tree-tab"}
-                        /*
-                        <Tree json={self.state.json} settings={self.state.settings} /> */
-                    ), 
-
-                    React.createElement("div", {className: "tab-pane", id: "table_tab"}
-                        /*
-                        <BranchTable tree={self.state.tree} test_results={self.state.test_results} annotations={self.state.annotations} /> */
                     )
 
-                )
+
+                    ), 
+
+                    React.createElement("div", {className: "tab-pane active", id: "sites_tab"}, 
+                        React.createElement("div", {className: "row"}, 
+                            React.createElement("div", {id: "summary-div", className: "col-md-12"}, 
+                                React.createElement(SLACSites, {
+                                    headers: self.state.analysis_results.MLE.headers, 
+                                    mle: datamonkey.helpers.map (datamonkey.helpers.filter (self.state.analysis_results.MLE.content, function (value, key) {return _.has (value, "by-site");}),
+                                               function (value, key) {return value["by-site"];}), 
+                                    sample25: self.state.analysis_results["sample-2.5"], 
+                                    sampleMedian: self.state.analysis_results["sample-median"], 
+                                    sample975: self.state.analysis_results["sample-97.5"], 
+                                    partitionSites: self.state.analysis_results.partitions}
+                                )
+                            )
+                        )
+                    ), 
+
+                    React.createElement("div", {className: "tab-pane", id: "tree_tab"}
+                    )
+
             )
         );
         }
@@ -4886,6 +4945,256 @@ function render_slac(url, element) {
     document.getElementById(element)
   );
 }
+
+var SLACSites = React.createClass({displayName: "SLACSites",
+    propTypes: {
+     headers: React.PropTypes.arrayOf (React.PropTypes.arrayOf (React.PropTypes.string)).isRequired,
+     mle  : React.PropTypes.object.isRequired,
+     sample25 : React.PropTypes.object,
+     sampleMedian: React.PropTypes.object,
+     sample975: React.PropTypes.object,
+     initialAmbigHandling: React.PropTypes.string.isRequired,
+     partitionSites: React.PropTypes.object.isRequired,
+    },
+
+
+
+  getInitialState: function() {
+    var canDoCI = this.props.sample25 && this.props.sampleMedian && this.props.sample975;
+
+    return {
+
+                ambigOptions: this.dm_AmbigOptions (this.props),
+                ambigHandling: this.props.initialAmbigHandling,
+                filters: new Object (null),
+                showIntervals: canDoCI,
+                hasCI : canDoCI,
+           };
+  },
+
+  getDefaultProps: function() {
+
+    return {
+                sample25: null,
+                sampleMedian: null,
+                sample975: null,
+                initialAmbigHandling: "RESOLVED",
+           };
+  },
+
+
+
+  componentWillReceiveProps: function(nextProps) {
+        this.setState (
+           {
+
+                ambigOptions: this.dm_AmbigOptions (nextProps),
+                ambigHandling: nextProps.initialAmbigHandling,
+           }
+        );
+  },
+
+  dm_formatNumber: d3.format (".3r"),
+  dm_formatNumberShort: d3.format (".2r"),
+
+  dm_log10times: _.before (10, function (v) {
+    console.log (v);
+    return 0;
+  }),
+
+  dm_formatInterval: function (values) {
+    //this.dm_log10times (values);
+
+    return this.dm_formatNumber (values[0]) + " / " + this.dm_formatNumber (values[2]) +
+                " ["  + this.dm_formatNumber (values[1])  +
+                " : " + this.dm_formatNumber (values[3]) + "]";
+  },
+
+  dm_AmbigOptions: function (theseProps) {
+    return _.keys (theseProps.mle[0]);
+  },
+
+
+  dm_changeAmbig : function (event) {
+
+    this.setState ({
+                        ambigHandling : event.target.value,
+                   });
+  },
+
+  dm_toggleIntervals : function (event) {
+     this.setState ({
+                        showIntervals : !this.state.showIntervals,
+                   });
+  },
+
+  dm_toggleVariableFilter: function (event) {
+
+    var filterState = new Object (null);
+    _.extend (filterState,  this.state.filters);
+    filterState ["variable"] = (this.state.filters["variable"] == "on") ? "off" : "on";
+    this.setState ({filters: filterState});
+
+  },
+
+  dm_makeFilterFunction: function () {
+
+    var filterFunction = null;
+
+    _.each (this.state.filters, function (value, key) {
+        var composeFunction = null;
+
+        switch (key) {
+            case "variable" : {
+                if (value == "on") {
+                    composeFunction = function (f, partitionIndex, index, site, siteData) {
+                        return (!f || f (partitionIndex, index, site, siteData)) && (siteData[2] + siteData[3] > 0);
+                    }
+                }
+                break;
+            }
+        }
+
+        if (composeFunction) {
+         filterFunction = _.wrap (filterFunction, composeFunction);
+        }
+    });
+
+     return filterFunction;
+  },
+
+  dm_makeHeaderRow : function () {
+
+        var headers = ['Partition', 'Site'],
+            doCI = this.state.showIntervals;
+
+        if (doCI) {
+            var secondRow = ['',''];
+
+            _.each (this.props.headers, function (value) {
+                headers.push ({value : value[0], abbr: value[1], span: 4, style: {textAlign: 'center'}});
+                secondRow.push ('MLE');
+                secondRow.push ('Med');
+                secondRow.push ('2.5%');
+                secondRow.push ('97.5%');
+            });
+            return [headers, secondRow];
+
+       } else {
+
+            _.each (this.props.headers, function (value) {
+                headers.push ({value : value[0], abbr: value[1]});
+            });
+
+        }
+        return headers;
+  },
+
+  dm_makeDataRows: function (filter) {
+
+    var rows           = [],
+        partitionCount = datamonkey.helpers.countPartitionsJSON (this.props.partitionSites),
+        partitionIndex = 0,
+        self = this,
+        doCI = this.state.showIntervals;
+
+    while (partitionIndex < partitionCount) {
+
+        _.each (self.props.partitionSites [partitionIndex].coverage[0], function (site, index) {
+            var siteData = self.props.mle[partitionIndex][self.state.ambigHandling][index];
+            if (!filter || filter (partitionIndex, index, site, siteData)) {
+                var thisRow   = [partitionIndex+1, site+1];
+                    //secondRow = doCI ? ['',''] : null;
+
+                _.each (siteData, function (estimate, colIndex) {
+
+                    if (doCI) {
+                        thisRow.push ({value : estimate, format : self.dm_formatNumber});
+                        thisRow.push ({value : self.props.sample25[partitionIndex][self.state.ambigHandling][index][colIndex], format : self.dm_formatNumberShort});
+                        thisRow.push ({value : self.props.sampleMedian[partitionIndex][self.state.ambigHandling][index][colIndex], format : self.dm_formatNumberShort});
+                        thisRow.push ({value : self.props.sample975[partitionIndex][self.state.ambigHandling][index][colIndex], format : self.dm_formatNumberShort});
+
+                        /*thisRow.push ({value: [estimate, self.props.sample25[partitionIndex][self.state.ambigHandling][index][colIndex],
+                                                         self.props.sampleMedian[partitionIndex][self.state.ambigHandling][index][colIndex],
+                                                         self.props.sample975[partitionIndex][self.state.ambigHandling][index][colIndex]],
+                                       format: self.dm_formatInterval,
+
+                                       }); */
+                    } else {
+                        thisRow.push ({value : estimate, format : self.dm_formatNumber});
+                    }
+                });
+                rows.push (thisRow);
+                //if (secondRow) {
+                //    rows.push (secondRow);
+                //}
+            }
+        });
+
+        partitionIndex ++;
+    }
+
+    return rows;
+  },
+
+  render: function() {
+
+        var self = this;
+
+
+        var result = (
+
+                React.createElement("div", {className: "table-responsive"}, 
+                    React.createElement("form", {className: "form-inline navbar-form navbar-left"}, 
+                      React.createElement("div", {className: "form-group"}, 
+
+                      React.createElement("div", {className: "btn-group"}, 
+                          React.createElement("button", {className: "btn btn-default btn-sm dropdown-toggle", type: "button", "data-toggle": "dropdown", "aria-haspopup": "true", "aria-expanded": "false"}, 
+                            "Display Options ", React.createElement("span", {className: "caret"})
+                          ), 
+                          React.createElement("ul", {className: "dropdown-menu"}, 
+                            React.createElement("li", {key: "variable"}, 
+                                React.createElement("div", {className: "checkbox"}, 
+                                    React.createElement("input", {type: "checkbox", checked: self.state.filters["variable"] == "on" ? true : false, defaultChecked: self.state.filters["variable"] == "on" ? true : false, onChange: self.dm_toggleVariableFilter}), " Variable sites only"
+                                )
+                            ), 
+                            self.state.hasCI ? (
+                            React.createElement("li", {key: "intervals"}, 
+                                React.createElement("div", {className: "checkbox"}, 
+                                    React.createElement("input", {type: "checkbox", checked: self.state.showIntervals, defaultChecked: self.state.showIntervals, onChange: self.dm_toggleIntervals}), " Show sampling confidence intervals"
+                                )
+                            )) : null
+                          )
+                        ), 
+
+
+                        React.createElement("div", {className: "input-group"}, 
+                          React.createElement("div", {className: "input-group-addon"}, "Ambiguities are "), 
+                          React.createElement("select", {className: "form-control input-sm", defaultValue: self.state.ambigHandling, onChange: self.dm_changeAmbig}, 
+                                
+                                    _.map (this.state.ambigOptions, function (value, index) {
+                                        return (
+                                            React.createElement("option", {key: index, value: value}, value)
+                                        );
+                                    })
+                                
+                          )
+                        )
+                      )
+                    ), 
+
+                    React.createElement(DatamonkeyTable, {headerData: this.dm_makeHeaderRow(), bodyData: this.dm_makeDataRows (this.dm_makeFilterFunction())})
+                ));
+
+
+        return result;
+
+
+  }
+});
+
+
+
 
 var SLACBanner = React.createClass({displayName: "SLACBanner",
 
@@ -4977,7 +5286,6 @@ var SLACBanner = React.createClass({displayName: "SLACBanner",
 var SLACBanner = React.createClass({displayName: "SLACBanner",
 
   dm_countSites : function (json, cutoff) {
-    cutoff = cutoff || this.props.pValue;
 
     var result = { all : 0,
                    positive: 0,
@@ -5005,20 +5313,20 @@ var SLACBanner = React.createClass({displayName: "SLACBanner",
   },
 
 
-  dm_computeState: function (state) {
+  dm_computeState: function (state, pvalue) {
     return {
-              sites: this.dm_countSites (state),
+              sites: this.dm_countSites (state, pvalue),
            }
   },
 
   dm_formatP: d3.format (".3f"),
 
   getInitialState: function() {
-    return this.dm_computeState (this.props.analysis_results);
+    return this.dm_computeState (this.props.analysis_results, this.props.pValue);
   },
 
   componentWillReceiveProps: function(nextProps) {
-    this.setState(this.dm_computeState (nextProps.analysis_results));
+    this.setState(this.dm_computeState (nextProps.analysis_results, nextProps.pValue));
   },
 
   render: function() {
@@ -5040,14 +5348,14 @@ var SLACBanner = React.createClass({displayName: "SLACBanner",
                       React.createElement("div", {style: {marginBottom: '0em'}}, 
                         React.createElement("small", null, 
                           React.createElement("sup", null, "†"), "Extended binomial test, p ≤ ", this.dm_formatP(this.props.pValue), 
-                          React.createElement("div", {className: "dropdown hidden-print", style: {display: 'inline'}}, 
-                            React.createElement("button", {id: "dm.pvalue.slider", type: "button", className: "btn btn-xs dropdown-toggle", "data-toggle": "dropdown", "aria-haspopup": "true", "aria-expanded": "false"}, 
+                          React.createElement("div", {className: "dropdown hidden-print", style: {display: 'inline', marginLeft: '0.25em'}}, 
+                            React.createElement("button", {id: "dm.pvalue.slider", type: "button", className: "btn btn-primary btn-xs dropdown-toggle", "data-toggle": "dropdown", "aria-haspopup": "true", "aria-expanded": "false"}, 
                             React.createElement("span", {className: "caret"})), 
                             React.createElement("ul", {className: "dropdown-menu", "aria-labelledby": "dm.pvalue.slider"}, 
                               React.createElement("li", null, React.createElement("a", {href: "#"}, React.createElement("input", {type: "range", min: "0", max: "1", value: this.props.pValue, step: "0.01", onChange: this.props.pAdjuster})))
                             )
                            ), 
-                          React.createElement("emph", null, " not"), " corrected for multiple testing; ambiguous characters resolved to maximize matches.", React.createElement("br", null), 
+                          React.createElement("emph", null, " not"), " corrected for multiple testing; ambiguous characters resolved to minimize substitution counts.", React.createElement("br", null), 
                           React.createElement("i", {className: "fa fa-exclamation-circle"}), " Please cite ", React.createElement("a", {href: "http://www.ncbi.nlm.nih.gov/pubmed/15703242", target: "_blank"}, "PMID 15703242"), " if you use this result in a publication, presentation, or other scientific work."
                         )
                       )

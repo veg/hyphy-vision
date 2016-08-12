@@ -226,6 +226,27 @@ function datamonkey_count_sites_from_partitions (json) {
     return 0;
 }
 
+function datamonkey_filter_list (list, predicate, context) {
+    var result = {};
+    predicate = _.bind (predicate, context);
+    _.each (list, _.bind(function (value, key) {
+        if (predicate (value, key)) {
+            result[key] = value;
+        }
+      }, context)
+    );
+    return result;
+}
+
+function datamonkey_map_list (list, transform, context) {
+    var result = {};
+    transform = _.bind (transform, context);
+   _.each (list, _.bind(function (value, key) {
+        result[key] = transform(value,key);
+      }, context)
+    );
+    return result;
+}
 
 datamonkey.helpers = new Object;
 datamonkey.helpers.save_newick_to_file = datamonkey_save_newick_to_file;
@@ -239,3 +260,5 @@ datamonkey.helpers.capitalize = datamonkey_capitalize;
 datamonkey.helpers.countPartitionsJSON = datamonkey_count_partitions;
 datamonkey.helpers.countSitesFromPartitionsJSON = datamonkey_count_sites_from_partitions;
 datamonkey.helpers.sum = datamonkey_sum;
+datamonkey.helpers.filter=datamonkey_filter_list;
+datamonkey.helpers.map=datamonkey_map_list;
