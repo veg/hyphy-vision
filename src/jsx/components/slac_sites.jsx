@@ -148,7 +148,8 @@ var SLACSites = React.createClass({
         partitionCount = datamonkey.helpers.countPartitionsJSON (this.props.partitionSites),
         partitionIndex = 0,
         self = this,
-        doCI = this.state.showIntervals;
+        doCI = this.state.showIntervals,
+        siteCount = 0;
 
     while (partitionIndex < partitionCount) {
 
@@ -157,6 +158,7 @@ var SLACSites = React.createClass({
             if (!filter || filter (partitionIndex, index, site, siteData)) {
                 var thisRow   = [partitionIndex+1, site+1];
                     //secondRow = doCI ? ['',''] : null;
+                siteCount++;
 
                 _.each (siteData, function (estimate, colIndex) {
 
@@ -186,56 +188,65 @@ var SLACSites = React.createClass({
         partitionIndex ++;
     }
 
-    return rows;
+    return {rows: rows, count: siteCount};
   },
 
   render: function() {
 
         var self = this;
-
+        var {rows, count} = this.dm_makeDataRows (this.dm_makeFilterFunction());
 
         var result = (
 
-                <div className="table-responsive">
-                    <form className="form-inline navbar-form navbar-left">
-                      <div className="form-group">
+            <div className="table-responsive">
+                <nav className="navbar">
+                    <form className="navbar-form ">
+                      <div className="form-group navbar-left">
 
-                      <div className="btn-group">
-                          <button className="btn btn-default btn-sm dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            Display Options <span className="caret"></span>
-                          </button>
-                          <ul className="dropdown-menu">
-                            <li key = "variable">
-                                <div className = "checkbox">
-                                    <input type="checkbox" checked = {self.state.filters["variable"] == "on" ? true : false} defaultChecked = {self.state.filters["variable"] == "on" ? true : false} onChange={self.dm_toggleVariableFilter}/> Variable sites only
-                                </div>
-                            </li>
-                            {self.state.hasCI ? (
-                            <li key = "intervals">
-                                <div className = "checkbox">
-                                    <input type="checkbox" checked = {self.state.showIntervals} defaultChecked = {self.state.showIntervals} onChange={self.dm_toggleIntervals}/> Show sampling confidence intervals
-                                </div>
-                            </li>) : null}
-                          </ul>
-                        </div>
+                          <div className="btn-group">
+                              <button className="btn btn-default btn-sm dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                Display Options <span className="caret"></span>
+                              </button>
+                              <ul className="dropdown-menu">
+                                <li key = "variable">
+                                    <div className = "checkbox">
+                                        <input type="checkbox" checked = {self.state.filters["variable"] == "on" ? true : false} defaultChecked = {self.state.filters["variable"] == "on" ? true : false} onChange={self.dm_toggleVariableFilter}/> Variable sites only
+                                    </div>
+                                </li>
+                                {self.state.hasCI ? (
+                                <li key = "intervals">
+                                    <div className = "checkbox">
+                                        <input type="checkbox" checked = {self.state.showIntervals} defaultChecked = {self.state.showIntervals} onChange={self.dm_toggleIntervals}/> Show sampling confidence intervals
+                                    </div>
+                                </li>) : null}
+                              </ul>
+                            </div>
 
 
-                        <div className="input-group">
-                          <div className="input-group-addon">Ambiguities are </div>
-                          <select className="form-control input-sm" defaultValue={self.state.ambigHandling} onChange={self.dm_changeAmbig}>
-                                {
-                                    _.map (this.state.ambigOptions, function (value, index) {
-                                        return (
-                                            <option key={index} value={value}>{value}</option>
-                                        );
-                                    })
-                                }
-                          </select>
-                        </div>
+                            <div className="input-group">
+                              <div className="input-group-addon">Ambiguities are </div>
+                              <select className="form-control input-sm" defaultValue={self.state.ambigHandling} onChange={self.dm_changeAmbig}>
+                                    {
+                                        _.map (this.state.ambigOptions, function (value, index) {
+                                            return (
+                                                <option key={index} value={value}>{value}</option>
+                                            );
+                                        })
+                                    }
+                              </select>
+                            </div>
+
                       </div>
-                    </form>
+                      <div className="navbar-right">
+                              <span className="badge">{count}</span> sites shown
+                      </div>
 
-                    <DatamonkeyTable headerData = {this.dm_makeHeaderRow()} bodyData = {this.dm_makeDataRows (this.dm_makeFilterFunction())}/>
+                    </form>
+                </nav>
+
+
+
+                   <DatamonkeyTable headerData = {this.dm_makeHeaderRow()} bodyData = {rows}/>
                 </div>);
 
 
