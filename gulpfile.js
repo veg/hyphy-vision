@@ -5,6 +5,7 @@ var gulp = require('gulp'),
     sourcemaps = require('gulp-sourcemaps'),
     react = require('gulp-react');
 
+
 gulp.task('scripts', ['react'], function() {
     return gulp.src(['src/**/*.js', 'jsx-compiled/*.js'])
     .pipe(order([
@@ -33,7 +34,7 @@ gulp.task('build', ['react', 'scripts']);
 gulp.task('watch', function () {
     watch(['src/**/*', 'src/jsx/components/*'], function () {
         gulp.start('build');
-    }); 
+    });
 });
 
 gulp.task('default', function () {
