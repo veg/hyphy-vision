@@ -4,7 +4,7 @@ var PropChart = React.createClass({
     return {
       svg_id : null,
       dimensions : { width : 600, height : 400 },
-      margins : { 'left': 50, 'right': 15, 'bottom': 35, 'top': 35 },
+      margins : { 'left': 50, 'right': 15, 'bottom': 25, 'top': 35 },
       has_zeros : false,
       legend_id : null,
       do_log_plot : true,
@@ -44,12 +44,15 @@ var PropChart = React.createClass({
     // Set props from settings
     this.props.svg_id = this.props.settings.svg_id;
     this.props.dimensions = this.props.settings.dimensions || this.props.dimensions;
+    this.props.margins = this.props.settings.margins || this.props.margins;
     this.props.legend_id = this.props.settings.legend || this.props.legend_id;
     this.props.do_log_plot = this.props.settings.log || this.props.do_log_plot;
     this.props.k_p = this.props.settings.k || this.props.k_p;
 
+
     var dimensions = this.props.dimensions;
     var margins = this.props.margins;
+    console.log(margins);
 
     if (this.props.do_log_plot) {
       this.props.has_zeros = this.data_to_plot.some(function(d) { return d.omega <= 0; });
@@ -69,10 +72,14 @@ var PropChart = React.createClass({
 
     // compute margins -- circle AREA is proportional to the relative weight
     // maximum diameter is (height - text margin)
-    this.svg = d3.select("#" + this.props.settings.svg_id).attr("width", dimensions.width).attr("height", dimensions.height);
+    this.svg = d3.select("#" + this.props.settings.svg_id)
+                .attr("width", dimensions.width + margins['left'] + margins['right'])
+                .attr("height", dimensions.height + margins['top'] + margins['bottom']);
+
     this.plot = this.svg.selectAll(".container");
 
     this.svg.selectAll("defs").remove();
+
     this.svg.append("defs").append("marker")
         .attr("id", "arrowhead")
         .attr("refX", 10) /*must be smarter way to calculate shift*/

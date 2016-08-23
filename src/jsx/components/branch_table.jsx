@@ -12,9 +12,9 @@ var BranchTable = React.createClass({
 
     var distro_settings = {
       dimensions : { width : 600, height : 400 },
-      margins : { 'left': 50, 'right': 15, 'bottom': 35, 'top': 35 },
+      margins : { 'left': 50, 'right': 15, 'bottom': 15, 'top': 35 },
       legend: false,
-      domain : [0.00001, 10],
+      domain : [0.00001, 10000],
       do_log_plot : true,
       k_p : null,
       plot : null,
@@ -144,7 +144,7 @@ var BranchTable = React.createClass({
 
     this.settings = {
       dimensions : { width : 600, height : 400 },
-      margins : { 'left': 50, 'right': 15, 'bottom': 35, 'top': 35 },
+      margins : { 'left': 50, 'right': 15, 'bottom': 15, 'top': 15 },
       has_zeros : true,
       legend_id : null,
       do_log_plot : true,
@@ -204,9 +204,9 @@ var BranchTable = React.createClass({
 
     var distro_settings = {
       dimensions : { width : 600, height : 400 },
-      margins : { 'left': 50, 'right': 15, 'bottom': 35, 'top': 35 },
+      margins : { 'left': 50, 'right': 15, 'bottom': 15, 'top': 15 },
       legend: false,
-      domain : [0.00001, 10],
+      domain : [0.00001, 10000],
       do_log_plot : true,
       k_p : null,
       plot : null,
