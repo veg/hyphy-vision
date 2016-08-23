@@ -10,6 +10,11 @@ var BSREL = React.createClass({
       data["fits"]["MG94"]["branch-annotations"] = self.formatBranchAnnotations(data, "MG94");
       data["fits"]["Full model"]["branch-annotations"] = self.formatBranchAnnotations(data, "Full model");
 
+      // GH-#18 Add omega annotation tag
+      data["fits"]["MG94"]["annotation-tag"] = "ω";
+      data["fits"]["Full model"]["annotation-tag"] = "ω";
+
+
       var annotations = data["fits"]["Full model"]["branch-annotations"],
           json = data,
           pmid = data["PMID"],
