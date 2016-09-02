@@ -14,7 +14,7 @@
      "jquery"        : "1.x",
      "react"         : "0.14.x",
      "phylotree"     : "git@github.com:veg/phylotree.js.git#v0.1.4",
-     "redux"         : "https://npmcdn.com/redux/dist/redux.js",
+     "redux"         : "https://unpkg.com/redux/dist/redux.js",
      "immutable"     : "3.8.1"
   }
 }
