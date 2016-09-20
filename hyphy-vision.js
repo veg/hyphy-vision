@@ -4181,8 +4181,16 @@ const DatamonkeyTableRow = React.createClass ({displayName: "DatamonkeyTableRow"
     },*/
 
     dm_compareTwoValues: function (a,b) {
+    /* this should be made static */
+
         /**
             compare objects by iterating over keys
+
+            return 0 : equal
+                   1 : a < b
+                   2 : a > b
+                   -1 : cannot be compared
+                   -2 : not compared, but could contain 'value' objects that could be compared
         */
 
         var myType = typeof a,
@@ -4190,28 +4198,46 @@ const DatamonkeyTableRow = React.createClass ({displayName: "DatamonkeyTableRow"
 
         if (myType == typeof b) {
             if (myType == "string" || myType == "number") {
-                    return a == b ? 1 : 0;
+                return a == b ? 0 : (a > b) ? 2 : 1;
             }
 
             if (_.isArray (a) && _.isArray (b)) {
 
                 if (a.length != b.length) {
-                    return 0;
+                    return a.length > b.length ? 2 : 1;
                 }
 
-                var not_compared = 0;
-                var result = _.every (a, function (c, i) {var comp = self.dm_compareTwoValues (c, b[i]); if (comp < 0) {not_compared = comp; return false;} return comp == 1;});
+                var comparison_result = 0;
 
-                if (not_compared < 0) {
-                    return not_compared;
-                }
+                _.every (a, function (c, i) {
+                    var comp = self.dm_compareTwoValues (c, b[i]);
+                    if (comp != 0) {
+                        comparison_result = comp;
+                        return false;
+                    }
+                    return true;
+                });
 
-                return result ? 1 : 0;
+                return comparison_result;
             }
 
             return -2;
+            // further check to see if 'this' has a "value" attribute
         }
         return -1;
+    },
+
+    dm_compareTwoValues_level2: function (a, b) {
+        var compare = this.dm_compareTwoValues (a, b);
+
+        if (compare == -2) {
+            if (_.has (a, "value") && _.has (b, "value")) {
+                return this.dm_compareTwoValues (a.value, b.value);
+            }
+        }
+
+        return compare;
+
     },
 
    dm_log100times: _.before (100, function (v) {
@@ -4227,22 +4253,35 @@ const DatamonkeyTableRow = React.createClass ({displayName: "DatamonkeyTableRow"
             return true;
         }
 
+        if (this.props.sortOn != nextProps.sortOn) {
+            return true;
+        }
+
         var result = _.some (this.props.rowData, function (value, index) {
             /** TO DO
                 check for format and other field equality
             */
+
             if (value === nextProps.rowData[index]) {
                 return false;
             }
 
-            var compare = self.dm_compareTwoValues (value, nextProps.rowData[index]);
+            var compare = self.dm_compareTwoValues_level2 (value, nextProps.rowData[index]);
             if (compare >= 0) {
-                return compare == 0;
-            }
+                if (compare == 0) { // values match, compare properties
+                    var existing_keys = _.keys (value),
+                        new_keys = _.keys (nextProps.rowData[index]),
+                        shared = _.intersection (existing_keys,new_keys);
 
-            if (compare == -2) {
-                if (_.has (value, "value") && _.has (nextProps.rowData[index], "value")) {
-                    return self.dm_compareTwoValues (value.value, nextProps.rowData[index].value) != 1;
+                    if (shared.length < new_keys.length || shared.length < existing_keys.length) {
+                        return true;
+                    }
+
+                    return false;
+
+
+                } else {
+                    return true;
                 }
 
             }
@@ -4250,15 +4289,11 @@ const DatamonkeyTableRow = React.createClass ({displayName: "DatamonkeyTableRow"
             return true;
         });
 
-        if (result) {
-            this.dm_log100times (["Old", this.props.rowData, "New", nextProps.rowData]);
-        }
-
         return result;
     },
 
-
     render: function () {
+
         return (
             React.createElement("tr", null, 
             
@@ -4299,10 +4334,33 @@ const DatamonkeyTableRow = React.createClass ({displayName: "DatamonkeyTableRow"
                             cellProps["style"] = cell.style;
                         }
 
+                        if (_.has (cell, "tooltip")) {
+                            cellProps["title"] = cell.tooltip;
+                            //this.dm_log100times (cellProps);
+                        }
+
                         if (_.has (cell, "classes")) {
                             cellProps["className"] = cell.classes;
                         }
 
+                        if (this.props.header && this.props.sorter) {
+                          //console.log ("header + sorter", cell);
+                          if (_.has (cell, "sortable")) {
+                            cellProps ["onClick"] = _.partial ( this.props.sorter, index, this.dm_compareTwoValues_level2);
+
+                            var sortedness_state = "fa fa-sort";
+                            if (this.props.sortOn && this.props.sortOn [0] == index) {
+                                sortedness_state = this.props.sortOn[1] ? "fa fa-sort-amount-asc" : "fa fa-sort-amount-desc";
+                            }
+
+                            value = (
+                                React.createElement("div", null, 
+                                    value, 
+                                    React.createElement("i", {className: sortedness_state, "aria-hidden": "true", style: {marginLeft : "0.5em"}})
+                                )
+                            );
+                          }
+                        }
 
                         return React.createElement (this.props.header ? "th" : "td" ,
                                                     cellProps,
@@ -4324,56 +4382,90 @@ var DatamonkeyTable = React.createClass ({displayName: "DatamonkeyTable",
         *classes* -- CSS classes to apply to the table element
 */
 
-    /*propTypes: {
-        headerData: React.PropTypes.array,
-        bodyData: React.PropTypes.arrayOf (React.PropTypes.array),
-    },*/
-
     getDefaultProps : function () {
         return {classes : "table table-condensed table-hover",
                 rowHash : null,
-                sortableColumns : new Object (null),
-                initialSort: null,
                 };
     },
 
     getInitialState: function () {
-        return {sortedOn: this.props.initialSort};
+        return {
+                    rowOrder: _.range (0,this.props.bodyData.length),
+                    sortOn: this.props.initialSort ? [this.props.initialSort, true] : null,
+                    /* either null or [index,
+                                       bool / to indicate if the sort is ascending (True) or descending (False)]
+                    */
+                };
     },
 
+    componentWillReceiveProps: function (nextProps) {
+        this.setState ({
+            rowOrder: _.range (0,nextProps.bodyData.length),
+        });
+    },
+
+    dm_sortOnColumn : function (index, compare_function) {
+
+        var self = this;
+        var is_ascending = true;
+        if (this.state.sortOn && this.state.sortOn[0] == index) {
+            is_ascending = !this.state.sortOn[1];
+        }
+
+        var new_order = _.map (this.state.rowOrder, _.identity).sort (function (i,j) {
+            var comp_value = compare_function (self.props.bodyData[i][index], self.props.bodyData[j][index]);
+            if (comp_value > 0) {
+                return is_ascending ? (2*comp_value-3) : (3-2*comp_value);
+            }
+            return 0;
+        });
+
+        if (_.some (new_order, function (value, index) {
+            return value != self.state.rowOrder[index];
+        })) {
+            this.setState ({rowOrder : new_order, sortOn : [index, is_ascending]});
+        }
+    },
 
     render: function () {
         const children = [];
 
+        var self = this;
+
         if (this.props.headerData) {
             if (_.isArray (this.props.headerData[0])) { // multiple rows
-                 children.push ((
+                 children.push (
                     React.createElement("thead", {key: 0}, 
                         
                             _.map (this.props.headerData, function (row, index) {
                                 return (
-                                    React.createElement(DatamonkeyTableRow, {rowData: row, header: true, key: index})
+                                    React.createElement(DatamonkeyTableRow, {rowData: row, header: true, key: index, sorter: _.bind (self.dm_sortOnColumn, self), sortOn: self.state.sortOn})
                                 );
                             })
                         
                     )
-                ));
+                );
             }
             else {
                 children.push ((
                     React.createElement("thead", {key: 0}, 
-                        React.createElement(DatamonkeyTableRow, {rowData: this.props.headerData, header: true})
+                        React.createElement(DatamonkeyTableRow, {rowData: this.props.headerData, header: true, sorter: _.bind (self.dm_sortOnColumn, self), sortOn: self.state.sortOn})
                     )
                 ));
             }
         }
 
+
+
         children.push (React.createElement ("tbody", {key : 1},
-             _.map (this.props.bodyData, _.bind(function (componentData, index) {
+             _.map (this.state.rowOrder, _.bind(function (row_index) {
+                        var componentData = this.props.bodyData [row_index];
+
                             return (
-                                React.createElement(DatamonkeyTableRow, {rowData: componentData, key: this.props.rowHash ? this.props.rowHash (componentData) : index, header: false})
+                                React.createElement(DatamonkeyTableRow, {rowData: componentData, key: this.props.rowHash ? this.props.rowHash (componentData) : row_index, header: false})
                             );
                         }, this))));
+
 
 
         return React.createElement ("table", {className: this.props.classes}, children);
@@ -4924,6 +5016,9 @@ var SLAC = React.createClass({displayName: "SLAC",
                         )
                     ), 
 
+                    React.createElement("div", {className: "tab-pane", id: "graphs_tab"}
+                    ), 
+
                     React.createElement("div", {className: "tab-pane", id: "tree_tab"}
                     )
 
@@ -4957,8 +5052,6 @@ var SLACSites = React.createClass({displayName: "SLACSites",
      partitionSites: React.PropTypes.object.isRequired,
     },
 
-
-
   getInitialState: function() {
     var canDoCI = this.props.sample25 && this.props.sampleMedian && this.props.sample975;
 
@@ -4967,8 +5060,14 @@ var SLACSites = React.createClass({displayName: "SLACSites",
                 ambigOptions: this.dm_AmbigOptions (this.props),
                 ambigHandling: this.props.initialAmbigHandling,
                 filters: new Object (null),
-                showIntervals: canDoCI,
+                showIntervals: false,
+                showCellColoring: canDoCI,
                 hasCI : canDoCI,
+                filterField: ["Site",-1],
+                filterOp: "AND",
+                canAddFilter: false,
+                lowerFilterBound: -Infinity,
+                upperFilterBound: Infinity
            };
   },
 
@@ -4996,6 +5095,8 @@ var SLACSites = React.createClass({displayName: "SLACSites",
 
   dm_formatNumber: d3.format (".3r"),
   dm_formatNumberShort: d3.format (".2r"),
+  dm_rangeColorizer : d3.scale.linear ().range ([d3.rgb("blue"), d3.rgb("white"), d3.rgb ("red")]).clamp (true).domain ([-1,0,1]),
+  dm_rangeTextColorizer : d3.scale.linear ().range ([d3.rgb("white"), d3.rgb("black"), d3.rgb ("black")]).clamp (true).domain ([-1,-0.25,1]),
 
   dm_log10times: _.before (10, function (v) {
     console.log (v);
@@ -5015,16 +5116,22 @@ var SLACSites = React.createClass({displayName: "SLACSites",
   },
 
 
-  dm_changeAmbig : function (event) {
-
+  dm_setAmbigOption : function (value) {
     this.setState ({
-                        ambigHandling : event.target.value,
+                        ambigHandling : value,
                    });
   },
 
   dm_toggleIntervals : function (event) {
      this.setState ({
                         showIntervals : !this.state.showIntervals,
+                        showCellColoring : this.state.showIntervals ? this.state.showCellColoring : false
+                   });
+  },
+
+  dm_toggleCellColoring : function (event) {
+     this.setState ({
+                        showCellColoring : !this.state.showCellColoring,
                    });
   },
 
@@ -5032,7 +5139,12 @@ var SLACSites = React.createClass({displayName: "SLACSites",
 
     var filterState = new Object (null);
     _.extend (filterState,  this.state.filters);
-    filterState ["variable"] = (this.state.filters["variable"] == "on") ? "off" : "on";
+    if (! ("variable" in this.state.filters)) {
+        filterState ["variable"] = true;
+    }
+    else {
+        delete filterState ["variable"];
+    }
     this.setState ({filters: filterState});
 
   },
@@ -5046,17 +5158,64 @@ var SLACSites = React.createClass({displayName: "SLACSites",
 
         switch (key) {
             case "variable" : {
-                if (value == "on") {
+                if (filterFunction) {
                     composeFunction = function (f, partitionIndex, index, site, siteData) {
-                        return (!f || f (partitionIndex, index, site, siteData)) && (siteData[2] + siteData[3] > 0);
+                        return (f (partitionIndex, index, site, siteData)) && (siteData[2] + siteData[3] > 0);
+                    }
+
+                } else {
+                    filterFunction = function (partitionIndex, index, site, siteData) {
+                        return siteData[2] + siteData[3] > 0;
                     }
                 }
                 break;
             }
+            default: {
+                if (_.isArray (value)) {
+                    var new_condition = null,
+                        filter_index = value[0][1];
+                    switch (filter_index) {
+                        case -2:
+                            new_condition = function (partitionIndex, index, site, siteData) {
+                                return partitionIndex >= value[1] && partitionIndex <= value[2];
+                            };
+                            break;
+                        case -1:
+                            new_condition = function (partitionIndex, index, site, siteData) {
+                                return site >= value[1] && site <= value[2];
+                            };
+                            break;
+                        default:
+                            new_condition = function (partitionIndex, index, site, siteData) {
+                                return siteData[filter_index] >= value[1] && siteData[filter_index] <= value[2];
+                            };
+                    }
+
+                     if (new_condition) {
+                         if (value[3] == "AND") {
+                             composeFunction = function (f, partitionIndex, index, site, siteData) {
+                                return (!f || f (partitionIndex, index, site, siteData)) && new_condition (partitionIndex, index, site, siteData);
+
+                             }
+                        } else {
+                             if (filterFunction) {
+                                 composeFunction = function (f,  partitionIndex, index, site, siteData) {
+                                    return (f (partitionIndex, index, site, siteData)) || new_condition (partitionIndex, index, site, siteData);
+                                 }
+                            } else {
+                                 filterFunction = function (partitionIndex, index, site, siteData) {
+                                    return new_condition (partitionIndex, index, site, siteData);
+                                 }
+
+                            }
+                        }
+                    }
+                }
+            }
         }
 
         if (composeFunction) {
-         filterFunction = _.wrap (filterFunction, composeFunction);
+            filterFunction = _.wrap (filterFunction, composeFunction);
         }
     });
 
@@ -5065,29 +5224,31 @@ var SLACSites = React.createClass({displayName: "SLACSites",
 
   dm_makeHeaderRow : function () {
 
-        var headers = ['Partition', 'Site'],
-            doCI = this.state.showIntervals;
+        var headers = [{value : 'Partition', sortable : true}, {value : 'Site', sortable: true}],
+            doCI = this.state.showIntervals,
+            filterable = [['Partition',-2], ['Site',-1]];
 
         if (doCI) {
             var secondRow = ['',''];
 
-            _.each (this.props.headers, function (value) {
+            _.each (this.props.headers, function (value, index) {
                 headers.push ({value : value[0], abbr: value[1], span: 4, style: {textAlign: 'center'}});
-                secondRow.push ('MLE');
-                secondRow.push ('Med');
-                secondRow.push ('2.5%');
-                secondRow.push ('97.5%');
-            });
-            return [headers, secondRow];
+                filterable.push ([value[0], index]);
+                _.each (['MLE', 'Med', '2.5%', '97.5%'], function (v) {
+                    secondRow.push ({value : v, sortable: true});
+                });
+             });
+            return {headers: [headers, secondRow], filterable : filterable};
 
        } else {
 
-            _.each (this.props.headers, function (value) {
-                headers.push ({value : value[0], abbr: value[1]});
+            _.each (this.props.headers, function (value, index) {
+                headers.push ({value : value[0], abbr: value[1], sortable: true});
+                filterable.push ([value[0], index]);
             });
 
         }
-        return headers;
+        return {headers: headers, filterable : filterable};
   },
 
   dm_makeDataRows: function (filter) {
@@ -5103,27 +5264,46 @@ var SLACSites = React.createClass({displayName: "SLACSites",
 
         _.each (self.props.partitionSites [partitionIndex].coverage[0], function (site, index) {
             var siteData = self.props.mle[partitionIndex][self.state.ambigHandling][index];
-            if (!filter || filter (partitionIndex, index, site, siteData)) {
+            if (!filter || filter (partitionIndex+1, index+1, site+1, siteData)) {
                 var thisRow   = [partitionIndex+1, site+1];
                     //secondRow = doCI ? ['',''] : null;
                 siteCount++;
 
                 _.each (siteData, function (estimate, colIndex) {
+                    var sampled_range         = null,
+                        scaled_median_mle_dev = 0;
+
+                    if (self.state.hasCI) {
+                        sampled_range = [self.props.sampleMedian[partitionIndex][self.state.ambigHandling][index][colIndex],
+                                         self.props.sample25[partitionIndex][self.state.ambigHandling][index][colIndex],
+                                         self.props.sample975[partitionIndex][self.state.ambigHandling][index][colIndex]
+                                         ];
+
+                        var range = (sampled_range[2]-sampled_range[1]);
+                        if (range > 0) {
+                            scaled_median_mle_dev = (estimate - sampled_range[0]) / range;
+                        }
+
+                    }
 
                     if (doCI) {
                         thisRow.push ({value : estimate, format : self.dm_formatNumber});
-                        thisRow.push ({value : self.props.sample25[partitionIndex][self.state.ambigHandling][index][colIndex], format : self.dm_formatNumberShort});
-                        thisRow.push ({value : self.props.sampleMedian[partitionIndex][self.state.ambigHandling][index][colIndex], format : self.dm_formatNumberShort});
-                        thisRow.push ({value : self.props.sample975[partitionIndex][self.state.ambigHandling][index][colIndex], format : self.dm_formatNumberShort});
+                        thisRow.push ({value : sampled_range[0], format : self.dm_formatNumberShort});
+                        thisRow.push ({value : sampled_range[1], format : self.dm_formatNumberShort});
+                        thisRow.push ({value : sampled_range[2], format : self.dm_formatNumberShort});
 
-                        /*thisRow.push ({value: [estimate, self.props.sample25[partitionIndex][self.state.ambigHandling][index][colIndex],
-                                                         self.props.sampleMedian[partitionIndex][self.state.ambigHandling][index][colIndex],
-                                                         self.props.sample975[partitionIndex][self.state.ambigHandling][index][colIndex]],
-                                       format: self.dm_formatInterval,
-
-                                       }); */
                     } else {
-                        thisRow.push ({value : estimate, format : self.dm_formatNumber});
+                        var this_cell = {value : estimate, format : self.dm_formatNumber}
+                        if (self.state.hasCI) {
+                            if (self.state.showCellColoring) {
+                                this_cell.style = {backgroundColor: self.dm_rangeColorizer (scaled_median_mle_dev), color: self.dm_rangeTextColorizer (scaled_median_mle_dev)};
+                            }
+                            this_cell.tooltip = self.dm_formatNumberShort (sampled_range[0]) +
+                                              " [" + self.dm_formatNumberShort (sampled_range[1]) +
+                                            " - " + self.dm_formatNumberShort (sampled_range[2]) + "]";
+                        }
+                        thisRow.push (this_cell);
+
                     }
                 });
                 rows.push (thisRow);
@@ -5139,10 +5319,81 @@ var SLACSites = React.createClass({displayName: "SLACSites",
     return {rows: rows, count: siteCount};
   },
 
+  dm_handleLB : function (e) {
+    var new_value = parseFloat (e.target.value);
+    this.setState ({lowerFilterBound : _.isFinite (new_value) ? new_value : -Infinity});
+  },
+
+  dm_handleUB : function (e) {
+    var new_value = parseFloat (e.target.value);
+    this.setState ({upperFilterBound : _.isFinite (new_value) ? new_value : Infinity});
+  },
+
+  dm_handleFilterField: function (value) {
+    this.setState ({filterField : value});
+  },
+
+  dm_checkFilterValidity: function () {
+    if (_.isFinite (this.state.lowerFilterBound)) {
+        if (_.isFinite (this.state.upperFilterBound)) {
+            return this.state.lowerFilterBound <= this.state.upperFilterBound;
+        }
+        return true;
+    }
+    return _.isFinite (this.state.upperFilterBound);
+  },
+
+  dm_unique_filter_ID : 0,
+
+  dm_handleAddCondition: function (e) {
+    e.preventDefault();
+    var filterState = new Object (null);
+    _.extend (filterState,  this.state.filters);
+    filterState [this.dm_unique_filter_ID++] =
+        [this.state.filterField, this.state.lowerFilterBound, this.state.upperFilterBound, this.state.filterOp];
+
+    this.setState ({filters: filterState});
+  },
+
+  dm_handleRemoveCondition: function (key,e) {
+    e.preventDefault();
+    var filterState = new Object (null);
+
+    _.extend (filterState,  this.state.filters);
+    delete filterState[key];
+    //console.log (key, this.state.filters,filterState);
+
+    this.setState ({filters: filterState});
+  },
+
   render: function() {
 
         var self = this;
         var {rows, count} = this.dm_makeDataRows (this.dm_makeFilterFunction());
+        var {headers,filterable}       = this.dm_makeHeaderRow();
+
+        var show_ci_menu  = function () {
+            if (self.state.hasCI) {
+                var ci_menu = [
+                        (React.createElement("li", {key: "ci_divider", className: "divider"})),
+                        (React.createElement("li", {key: "intervals"}, 
+                            React.createElement("a", {href: "#", "data-value": "showIntervals", tabIndex: "-1", onClick: self.dm_toggleIntervals}, 
+                                React.createElement("input", {type: "checkbox", checked: self.state.showIntervals, defaultChecked: self.state.showIntervals, onChange: self.dm_toggleIntervals}), " Show sampling confidence intervals"
+                            )
+                         ))
+                       ];
+
+                if (!self.state.showIntervals) {
+                    ci_menu.push  (( React.createElement("li", {key: "coloring"}, 
+                            React.createElement("a", {href: "#", "data-value": "showIntervals", tabIndex: "-1", onClick: self.dm_toggleCellColoring}, 
+                                React.createElement("input", {type: "checkbox", checked: self.state.showCellColoring, defaultChecked: self.state.showCellColoring, onChange: self.dm_toggleCellColoring}), " Color cells based on MLE-median"
+                            )
+                         )));
+                }
+                return ci_menu;
+            }
+            return null;
+        };
 
         var result = (
 
@@ -5151,142 +5402,171 @@ var SLACSites = React.createClass({displayName: "SLACSites",
                     React.createElement("form", {className: "navbar-form "}, 
                       React.createElement("div", {className: "form-group navbar-left"}, 
 
-                          React.createElement("div", {className: "btn-group"}, 
-                              React.createElement("button", {className: "btn btn-default btn-sm dropdown-toggle", type: "button", "data-toggle": "dropdown", "aria-haspopup": "true", "aria-expanded": "false"}, 
-                                "Display Options ", React.createElement("span", {className: "caret"})
-                              ), 
+                          React.createElement("div", {className: "input-group"}, 
+                             React.createElement("span", {className: "input-group-addon"}, "Display Options "), 
+
                               React.createElement("ul", {className: "dropdown-menu"}, 
                                 React.createElement("li", {key: "variable"}, 
-                                    React.createElement("div", {className: "checkbox"}, 
-                                        React.createElement("input", {type: "checkbox", checked: self.state.filters["variable"] == "on" ? true : false, defaultChecked: self.state.filters["variable"] == "on" ? true : false, onChange: self.dm_toggleVariableFilter}), " Variable sites only"
+                                    React.createElement("a", {href: "#", "data-value": "variable", tabIndex: "-1", onClick: self.dm_toggleVariableFilter}, 
+                                        React.createElement("input", {type: "checkbox", checked: "variable" in self.state.filters, defaultChecked: "variable" in self.state.filters, onChange: self.dm_toggleVariableFilter}), " Variable sites only"
                                     )
                                 ), 
-                                self.state.hasCI ? (
-                                React.createElement("li", {key: "intervals"}, 
-                                    React.createElement("div", {className: "checkbox"}, 
-                                        React.createElement("input", {type: "checkbox", checked: self.state.showIntervals, defaultChecked: self.state.showIntervals, onChange: self.dm_toggleIntervals}), " Show sampling confidence intervals"
-                                    )
-                                )) : null
+                                show_ci_menu()
+                              ), 
+                              React.createElement("button", {className: "btn btn-default btn-sm dropdown-toggle form-control", type: "button", "data-toggle": "dropdown", "aria-haspopup": "true", "aria-expanded": "false"}, 
+                                React.createElement("span", {className: "caret"})
                               )
                             ), 
 
 
                             React.createElement("div", {className: "input-group"}, 
-                              React.createElement("div", {className: "input-group-addon"}, "Ambiguities are "), 
-                              React.createElement("select", {className: "form-control input-sm", defaultValue: self.state.ambigHandling, onChange: self.dm_changeAmbig}, 
+                              React.createElement("span", {className: "input-group-addon"}, "Ambiguities "), 
+                              React.createElement("ul", {className: "dropdown-menu"}, 
                                     
                                         _.map (this.state.ambigOptions, function (value, index) {
                                             return (
-                                                React.createElement("option", {key: index, value: value}, value)
+                                                React.createElement("li", {key: index}, 
+                                                    React.createElement("a", {href: "#", tabIndex: "-1", onClick: _.partial(self.dm_setAmbigOption,value)}, 
+                                                        value
+                                                    )
+                                                )
                                             );
                                         })
                                     
+                              ), 
+                              React.createElement("button", {className: "btn btn-default btn-sm dropdown-toggle form-control", type: "button", "data-toggle": "dropdown", "aria-haspopup": "true", "aria-expanded": "false"}, 
+                                self.state.ambigHandling, " ", React.createElement("span", {className: "caret"})
                               )
-                            )
 
+                            )
                       ), 
-                      React.createElement("div", {className: "navbar-right"}, 
-                              React.createElement("span", {className: "badge"}, count), " sites shown"
+                      React.createElement("div", {className: "form-group navbar-right"}, 
+                            React.createElement("div", {className: "input-group"}, 
+                              React.createElement("ul", {className: "dropdown-menu"}, 
+                                    
+                                        _.map (filterable, function (d, index) {
+                                            return (
+                                                React.createElement("li", {key: index}, 
+                                                    React.createElement("a", {href: "#", tabIndex: "-1", onClick: _.partial (self.dm_handleFilterField, d)}, 
+                                                        d[0]
+                                                    )
+                                                )
+                                            );
+                                        })
+                                    
+                              ), 
+                              React.createElement("button", {className: "btn btn-default btn-sm dropdown-toggle form-control", type: "button", "data-toggle": "dropdown", "aria-haspopup": "true", "aria-expanded": "false"}, 
+                                self.state.filterField[0], " ", React.createElement("span", {className: "caret"})
+                              )
+                            ), 
+                            React.createElement("div", {className: "input-group"}, 
+                                React.createElement("span", {className: "input-group-addon"}, " ", String.fromCharCode(8712) + ' [', " "), 
+                                React.createElement("input", {type: "text", className: "form-control", placeholder: "-∞", defaultValue: '-' + String.fromCharCode(8734), onChange: self.dm_handleLB})
+                            ), 
+                            React.createElement("div", {className: "input-group"}, 
+                                React.createElement("span", {className: "input-group-addon"}, ","), 
+                                React.createElement("input", {type: "text", className: "form-control", placeholder: "∞", defaultValue: String.fromCharCode(8734), onChange: self.dm_handleUB}), 
+                                 React.createElement("span", {className: "input-group-addon"}, "]")
+                           ), 
+
+                            React.createElement("div", {className: "input-group"}, 
+                                React.createElement("button", {className: "btn btn-default " + (self.dm_checkFilterValidity() ? "" : "disabled"), onClick: self.dm_handleAddCondition}, " Add condition as ")
+                            ), 
+
+                             React.createElement("div", {className: "input-group"}, 
+                                React.createElement("ul", {className: "dropdown-menu"}, 
+                                    
+                                        _.map (["AND", "OR"], function (d, index) {
+                                            return (
+                                                React.createElement("li", {key: index}, 
+                                                    React.createElement("a", {href: "#", tabIndex: "-1", onClick: function () {self.setState ({filterOp:d});}}, 
+                                                        d
+                                                    )
+                                                )
+                                            );
+                                        })
+                                    
+                                ), 
+                                React.createElement("button", {className: "btn btn-default btn-sm dropdown-toggle form-control", type: "button", "data-toggle": "dropdown", "aria-haspopup": "true", "aria-expanded": "false"}, 
+                                    self.state.filterOp, " ", React.createElement("span", {className: "caret"})
+                               )
+                            ), 
+
+
+                            React.createElement("span", {className: "badge", style: {marginLeft : "0.5em"}}, count), " sites shown"
                       )
+
 
                     )
                 ), 
 
+                 self.state.hasCI ?
+                (React.createElement("div", {className: "alert alert-info alert-dismissable"}, 
+                    React.createElement("button", {type: "button", className: "close pull-right", "data-dismiss": "alert", "aria-hidden": "true"}, " × "), 
+                     "Default table shading is used to indicate the magnitude of difference between the estimate" + ' ' +
+                     "of a specific quantity using the MLE ancestral state reconstruction, and the median" + ' ' +
+                     "of the estimate using a sample from the distribution of ancestral state reconstructions.", 
+                     React.createElement("br", null), 
+                     React.createElement("strong", null, "Color legend:"), " MLE is  ", 
+                     React.createElement("span", {className: "badge", style: {backgroundColor: self.dm_rangeColorizer(-1)}}, 
+                        "is much less"
+                     ), 
+                     " ", 
+                     React.createElement("span", {className: "badge", style: {backgroundColor: self.dm_rangeColorizer(0), color: "black"}}, 
+                        "is the same as"
+                     ), 
+                     " ", 
+                     React.createElement("span", {className: "badge", style: {backgroundColor: self.dm_rangeColorizer(1)}}, 
+                        "is much greater"
+                     ), 
+                     " " + ' ' +
+                     "than the sampled median. You can mouse over the cells to see individual sampling intervals."
+                )) : null, 
 
+                _.keys (self.state.filters).length > 0 ? (
+                    React.createElement("div", {className: "well well-sm"}, 
+                        
+                            _.map (self.state.filters, function (value, key) {
+                                if (key == "variable") {
+                                    return (
+                                    React.createElement("div", {className: "input-group", style: {display: 'inline'}, key: key}, 
+                                        React.createElement("span", {className: "badge badge-info"}, "(AND) variable sites", 
+                                        React.createElement("i", {className: "fa fa-times-circle", style: {marginLeft : "0.25em"}, onClick: self.dm_toggleVariableFilter})
+                                        )
+                                    ));
+                                } else {
 
-                   React.createElement(DatamonkeyTable, {headerData: this.dm_makeHeaderRow(), bodyData: rows})
-                ));
+                                    var label = (value[3] == "AND" ? " (AND) " : " (OR) ") +  value[0][0];
+
+                                    if (_.isFinite (value[1])) {
+                                        if (_.isFinite (value[2])) {
+                                            label +=  String.fromCharCode(8712) + "[" + value[1] + "," + value[2] + "]";
+                                        } else {
+                                            label +=  String.fromCharCode(8805) + value[1];
+                                        }
+                                    } else {
+                                             label +=  String.fromCharCode(8804) + value[2];
+                                    }
+
+                                    return (
+                                        React.createElement("div", {className: "input-group", style: {display: 'inline'}, key: key}, 
+                                            React.createElement("span", {className: "badge badge-info"}, label, 
+                                            React.createElement("i", {className: "fa fa-times-circle", style: {marginLeft : "0.25em"}, onClick: _.bind(_.partial (self.dm_handleRemoveCondition, key), self)})
+                                            )
+                                        )
+                                   );
+                                }
+                            })
+                        
+                    )
+                    ) : null, 
+
+                React.createElement(DatamonkeyTable, {headerData: headers, bodyData: rows, initialSort: 1})
+            ));
 
 
         return result;
 
-
-  }
-});
-
-
-
-
-var SLACBanner = React.createClass({displayName: "SLACBanner",
-
-  dm_countPartitons : function (json) {
-    return datamonkey.helpers.countPartitionsJSON (json);
-  },
-
-  dm_countSites : function (json, cutoff) {
-    cutoff = cutoff || 0.1;
-
-    var result = { all : 0,
-                   positive: 0,
-                   negative : 0};
-
-    result.all       = datamonkey.helpers.countSitesFromPartitionsJSON (json);
-
-    result.positive = datamonkey.helpers.sum (
-                            json["MLE"]["content"],
-                            function (partition) {
-                                return _.reduce (partition["by-site"]["RESOLVED"], function (sum, row)
-                                    {return sum + (row[8] <= cutoff ? 1 : 0);}, 0);
-                            }
-                       );
-
-    result.negative = datamonkey.helpers.sum (
-                            json["MLE"]["content"],
-                            function (partition) {
-                                return _.reduce (partition["by-site"]["RESOLVED"], function (sum, row)
-                                    {return sum + (row[9] <= cutoff ? 1 : 0);}, 0);
-                            }
-                       );
-
-    return result;
-  },
-
-
-
-  getInitialState: function() {
-
-    return {
-              partitions:  this.dm_countPartitons(this.props.analysis_results),
-              sites: this.dm_countSites (this.props.analysis_results),
-           };
-  },
-
-  componentWillReceiveProps: function(nextProps) {
-
-    this.setState({
-                    partitions : this.dm_countPartitons(nextProps.analysis_results),
-                    sites : this.dm_countSites (nextProps.analysis_results),
-                  });
-
-  },
-
-  render: function() {
-
-        return (
-              React.createElement("ul", {className: "list-group"}, 
-                  React.createElement("li", {className: "list-group-item list-group-item-info"}, 
-                      React.createElement("h3", {className: "list-group-item-heading"}, 
-                        React.createElement("i", {className: "fa fa-line-chart"}), " ", React.createElement("abbr", {title: "Single Likelihood Ancestor Counting"}, "SLAC"), " analysis summary"
-                      ), 
-                      React.createElement("p", {className: "list-group-item-text lead"}, 
-                          "Evidence", React.createElement("sup", null, "†"), " of pervasive ", React.createElement("span", {className: "hyphy-red"}, "diversifying"), " / ", React.createElement("span", {className: "hyphy-navy"}, "purifying"), " selection was found at", 
-                          React.createElement("strong", {className: "hyphy-red"}, " ", this.state.sites.positive), " / ", React.createElement("strong", {className: "hyphy-navy"}, this.state.sites.negative), " sites" + ' ' +
-                          "among ", this.state.sites.all, " tested sites", 
-                          React.createElement("span", null, " ", this.state.partitions > 1 ? "(" + this.state.partitions + " partitions)" : "")
-                      ), 
-                      React.createElement("p", null, 
-                        React.createElement("small", null, 
-                          React.createElement("sup", null, "†"), "Extended binomial test, p ≤ 0.1, ", React.createElement("emph", null, "not"), " corrected for multiple testing; ambiguous characters resolved to maximize matches."
-                        )
-                      ), 
-                      React.createElement("p", null, 
-                        React.createElement("small", null, 
-                            React.createElement("i", {className: "fa fa-exclamation-circle"}), " Please cite ", React.createElement("a", {href: "http://www.ncbi.nlm.nih.gov/pubmed/15703242", target: "_blank"}, "PMID 15703242"), " if you use this result in a publication, presentation, or other scientific work."
-                        )
-                      )
-                  )
-              )
-            );
 
   }
 });

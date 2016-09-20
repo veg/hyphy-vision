@@ -184,6 +184,9 @@ var SLAC = React.createClass({
                         </div>
                     </div>
 
+                    <div className='tab-pane' id="graphs_tab">
+                    </div>
+
                     <div className='tab-pane' id="tree_tab">
                     </div>
 

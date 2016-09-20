@@ -66,6 +66,7 @@
                 <ul class="nav nav-pills navbar-right" role="tablist">
                     <li role="presentation"><a href="#summary_tab" role="tab" data-toggle="tab" aria-controls="summary_tab"><i class="fa fa-list" style = 'margin-right: 5px'></i>Summary</a></li>
                     <li role="presentation" class="active"><a href="#sites_tab" role="tab" data-toggle="tab" aria-controls="sites_tab"><i class="fa fa-list-ol" style = 'margin-right: 5px'></i> Sites</a></li>
+                    <li role="presentation"><a href="#graphs_tab" role="tab" data-toggle="tab" aria-controls="graph_tab"><i class="fa fa-line-chart" style = 'margin-right: 5px'></i> Graphs</a></li>
                     <li role="presentation"><a  href="#tree_tab" role="tab" data-toggle="tab" aria-controls="tree_tab"><i class="fa fa-tree" style = 'margin-right: 5px'></i> Trees</a></li>
                 </ul>
 
@@ -86,7 +87,7 @@
       $(document).ready(function() {
         //React.addons.Perf.start ();
 
-        render_slac("test-data/test.json", "datamonkey-slac-content");
+        render_slac("test-data/CD2.nex.slac.json", "datamonkey-slac-content");
 
         //React.addons.Perf.stop ();
         //var prof = React.addons.Perf.getLastMeasurements();
