@@ -199,6 +199,7 @@ var Tree = React.createClass({
 
       var self = this;
 
+
       $("#hyphy-error-hide").on("click", function(e) {
           d3.select("#hyphy-error").style("display", "none");
           e.preventDefault();
@@ -221,6 +222,17 @@ var Tree = React.createClass({
       $("#export-phylo-png").on('click', function(e) {
           datamonkey.save_image("png", "#tree_container");
       });
+
+      $("#export-phylo-nwk").on('click', function(e) {
+        var nwk = self.tree.get_newick(function(){});
+        var pom = document.createElement('a');
+        pom.setAttribute('href', 'data:text/octet-stream;charset=utf-8,' + encodeURIComponent(nwk));
+        pom.setAttribute('download', 'nwk.txt');
+        $("body").append(pom);
+        pom.click();
+        pom.remove();
+      });
+
 
   },
 
@@ -623,9 +635,11 @@ var Tree = React.createClass({
               <div className="cold-md-12">
                   <div className="input-group input-group-sm">
                       <div className="input-group-btn">
-                          <button id="export-phylo-png" type="button" className="btn btn-default btn-sm" title="Save Image">
-                              <i className="fa fa-image"></i>
-                          </button>
+                            <button type="button" className="btn btn-default dropdown-toggle" data-toggle="dropdown">Export<span className="caret"></span></button>
+                            <ul className="dropdown-menu">
+                              <li id="export-phylo-png"><a href="#"><i className="fa fa-image"></i> Image</a></li>
+                              <li id="export-phylo-nwk"><a href="#"><i className="fa fa-file-o"></i> Newick File</a></li>
+                            </ul>
                           <button type="button" className="btn btn-default btn-sm" data-direction="vertical" data-amount="1" title="Expand vertical spacing">
                               <i className="fa fa-arrows-v"></i>
                           </button>

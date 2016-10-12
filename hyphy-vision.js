@@ -5794,6 +5794,7 @@ var Tree = React.createClass({displayName: "Tree",
 
       var self = this;
 
+
       $("#hyphy-error-hide").on("click", function(e) {
           d3.select("#hyphy-error").style("display", "none");
           e.preventDefault();
@@ -5816,6 +5817,17 @@ var Tree = React.createClass({displayName: "Tree",
       $("#export-phylo-png").on('click', function(e) {
           datamonkey.save_image("png", "#tree_container");
       });
+
+      $("#export-phylo-nwk").on('click', function(e) {
+        var nwk = self.tree.get_newick(function(){});
+        var pom = document.createElement('a');
+        pom.setAttribute('href', 'data:text/octet-stream;charset=utf-8,' + encodeURIComponent(nwk));
+        pom.setAttribute('download', 'nwk.txt');
+        $("body").append(pom);
+        pom.click();
+        pom.remove();
+      });
+
 
   },
 
@@ -6218,9 +6230,11 @@ var Tree = React.createClass({displayName: "Tree",
               React.createElement("div", {className: "cold-md-12"}, 
                   React.createElement("div", {className: "input-group input-group-sm"}, 
                       React.createElement("div", {className: "input-group-btn"}, 
-                          React.createElement("button", {id: "export-phylo-png", type: "button", className: "btn btn-default btn-sm", title: "Save Image"}, 
-                              React.createElement("i", {className: "fa fa-image"})
-                          ), 
+                            React.createElement("button", {type: "button", className: "btn btn-default dropdown-toggle", "data-toggle": "dropdown"}, "Export", React.createElement("span", {className: "caret"})), 
+                            React.createElement("ul", {className: "dropdown-menu"}, 
+                              React.createElement("li", {id: "export-phylo-png"}, React.createElement("a", {href: "#"}, React.createElement("i", {className: "fa fa-image"}), " Image")), 
+                              React.createElement("li", {id: "export-phylo-nwk"}, React.createElement("a", {href: "#"}, React.createElement("i", {className: "fa fa-file-o"}), " Newick File"))
+                            ), 
                           React.createElement("button", {type: "button", className: "btn btn-default btn-sm", "data-direction": "vertical", "data-amount": "1", title: "Expand vertical spacing"}, 
                               React.createElement("i", {className: "fa fa-arrows-v"})
                           ), 
