@@ -1,3 +1,7 @@
+import _ from 'lodash';
+require("react");
+require("d3");
+
 var PropChart = React.createClass({
 
   getDefaultProps : function() {

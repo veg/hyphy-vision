@@ -1,3 +1,5 @@
+require('datamonkey.js');
+
 function datamonkey_alignment_viewer(options) {
 
   var self = this;

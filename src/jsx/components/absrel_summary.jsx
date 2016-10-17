@@ -1,3 +1,7 @@
+import _ from 'lodash';
+require("react");
+require("d3");
+
 var BSRELSummary = React.createClass({
 
   float_format : d3.format(".2f"),

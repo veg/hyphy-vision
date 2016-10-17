@@ -1,3 +1,7 @@
+import _ from 'lodash';
+require("react");
+require("d3");
+
 var SLACSites = React.createClass({
     propTypes: {
      headers: React.PropTypes.arrayOf (React.PropTypes.arrayOf (React.PropTypes.string)).isRequired,

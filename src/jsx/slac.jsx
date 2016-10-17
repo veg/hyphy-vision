@@ -1,3 +1,11 @@
+import _ from 'lodash';
+require("react");
+require("d3");
+
+require("./components/shared_summary.jsx");
+require("./components/slac_sites.jsx");
+require("./components/slac_summary.jsx");
+
 var SLAC = React.createClass({
 
   float_format : d3.format(".2f"),

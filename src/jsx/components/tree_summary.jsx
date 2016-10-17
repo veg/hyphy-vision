@@ -1,3 +1,7 @@
+import _ from 'lodash';
+require("react");
+require("d3");
+
 var TreeSummary = React.createClass({
 
   getInitialState: function() {

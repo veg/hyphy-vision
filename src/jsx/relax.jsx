@@ -1,3 +1,12 @@
+import _ from 'lodash';
+require("react");
+require("d3");
+
+require("./components/model_fits.jsx");
+require("./components/tree_summary.jsx");
+require("./components/tree.jsx");
+require("./components/omega_plot.jsx");
+
 var RELAX = React.createClass({
 
   float_format : d3.format(".2f"),
@@ -103,28 +112,28 @@ var RELAX = React.createClass({
 
   getInitialState: function() {
 
-        var model_fits_id = "#hyphy-model-fits",
-            omega_plots_id = "#hyphy-omega-plots",
-            summary_id = "#hyphy-relax-summary",
-            tree_id = "#tree-tab";
+    var model_fits_id = "#hyphy-model-fits",
+        omega_plots_id = "#hyphy-omega-plots",
+        summary_id = "#hyphy-relax-summary",
+        tree_id = "#tree-tab";
 
-        var tree_settings = {
-            'omegaPlot': {},
-            'tree-options': {
-                /* value arrays have the following meaning
-                    [0] - the value of the attribute
-                    [1] - does the change in attribute value trigger tree re-layout?
-                */
-                'hyphy-tree-model': ["Partitioned MG94xREV", true],
-                'hyphy-tree-highlight': ["RELAX.test", false],
-                'hyphy-tree-branch-lengths': [true, true],
-                'hyphy-tree-hide-legend': [true, false],
-                'hyphy-tree-fill-color': [true, false]
-            },
-            'suppress-tree-render': false,
-            'chart-append-html' : true,
-            'edgeColorizer' : this.props.edgeColorizer
-        };
+    var tree_settings = {
+        'omegaPlot': {},
+        'tree-options': {
+            /* value arrays have the following meaning
+                [0] - the value of the attribute
+                [1] - does the change in attribute value trigger tree re-layout?
+            */
+            'hyphy-tree-model': ["Partitioned MG94xREV", true],
+            'hyphy-tree-highlight': ["RELAX.test", false],
+            'hyphy-tree-branch-lengths': [true, true],
+            'hyphy-tree-hide-legend': [true, false],
+            'hyphy-tree-fill-color': [true, false]
+        },
+        'suppress-tree-render': false,
+        'chart-append-html' : true,
+        'edgeColorizer' : this.props.edgeColorizer
+    };
 
     return { 
               annotations : null,

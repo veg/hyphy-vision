@@ -1,3 +1,4 @@
+require("datamonkey.js");
 function datamonkey_cancel(self) {
     $(self).show().next().remove();
 }

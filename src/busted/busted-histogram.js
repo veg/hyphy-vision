@@ -1,3 +1,8 @@
+require("d3");
+require("dc");
+require("../datamonkey/datamonkey.js");
+require("./busted.js");
+
 function busted_render_histogram(c, json) {
 
   var self = this;

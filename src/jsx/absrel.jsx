@@ -1,3 +1,14 @@
+import _ from 'lodash';
+require("react");
+require("d3");
+
+require("./components/absrel_summary.jsx");
+require("./components/model_fits.jsx");
+require("./components/tree_summary.jsx");
+require("./components/tree.jsx");
+require("./components/branch_table.jsx");
+
+
 var BSREL = React.createClass({
 
   float_format : d3.format(".2f"),

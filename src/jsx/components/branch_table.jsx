@@ -1,3 +1,7 @@
+import _ from 'lodash';
+require("react");
+require("./components/prop_chart.jsx");
+
 var BranchTable = React.createClass({
 
   getInitialState: function() {

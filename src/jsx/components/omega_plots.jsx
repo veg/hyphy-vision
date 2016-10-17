@@ -1,3 +1,7 @@
+import _ from 'lodash';
+require("react");
+require("d3");
+
 var OmegaPlot = React.createClass({
 
   getDefaultProps : function() {

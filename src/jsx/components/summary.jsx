@@ -1,3 +1,7 @@
+import _ from 'lodash';
+require("react");
+require("d3");
+
 var Summary = React.createClass({
 
   getDefaultProps : function() {

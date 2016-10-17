@@ -1,3 +1,6 @@
+import _ from 'lodash';
+require("react");
+require("d3");
 
 const DatamonkeyTableRow = React.createClass ({
 /**

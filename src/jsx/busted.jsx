@@ -1,3 +1,9 @@
+require("react");
+require("d3");
+require('../js/datamonkey/datamonkey.js');
+require("./components/tree_summary.jsx");
+require("./components/prop_chart.jsx");
+
 var BUSTED = React.createClass({
 
   float_format : d3.format(".2f"),

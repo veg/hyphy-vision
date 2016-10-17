@@ -1,3 +1,7 @@
+import _ from 'lodash';
+require("react");
+require("d3");
+
 var SLACBanner = React.createClass({
 
   dm_countSites : function (json, cutoff) {

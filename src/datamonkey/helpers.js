@@ -1,3 +1,5 @@
+require("./datamonkey.js");
+
 function datamonkey_get_styles(doc) {
   var styles = "",
       styleSheets = doc.styleSheets;

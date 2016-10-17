@@ -1,3 +1,8 @@
+import _ from 'lodash';
+require("react");
+require("d3");
+require('../datamonkey/datamonkey.js');
+
 var Tree = React.createClass({
 
   getInitialState: function() {
