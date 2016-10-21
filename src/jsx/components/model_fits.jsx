@@ -1,6 +1,4 @@
-import _ from 'lodash';
-require("react");
-require("d3");
+var React = require('react');
 
 var ModelFits = React.createClass({
 
@@ -186,7 +184,7 @@ var ModelFits = React.createClass({
         omega_3_header = '<th>&omega;<sub>3</sub></th>';
 
     // inspect table_row_data and return header
-    all_columns = [ 
+    var all_columns = [ 
                     model_header,
                     logl_header, 
                     num_params_header, 
@@ -282,3 +280,4 @@ function rerender_model_fits(json, element) {
 
 }
 
+module.exports = ModelFits;

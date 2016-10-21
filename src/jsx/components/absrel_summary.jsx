@@ -1,6 +1,4 @@
-import _ from 'lodash';
-require("react");
-require("d3");
+var React = require('react');
 
 var BSRELSummary = React.createClass({
 

@@ -1,10 +1,10 @@
-import _ from 'lodash';
-require("react");
-require("d3");
 
 require("./components/shared_summary.jsx");
 require("./components/slac_sites.jsx");
 require("./components/slac_summary.jsx");
+
+var React = require('react');
+var datamonkey = require('../datamonkey/datamonkey.js');
 
 var SLAC = React.createClass({
 

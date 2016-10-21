@@ -1,13 +1,10 @@
-import _ from 'lodash';
-require("react");
-require("d3");
-
 require("./components/absrel_summary.jsx");
 require("./components/model_fits.jsx");
 require("./components/tree_summary.jsx");
 require("./components/tree.jsx");
 require("./components/branch_table.jsx");
 
+var React = require('react');
 
 var BSREL = React.createClass({
 
@@ -58,7 +55,7 @@ var BSREL = React.createClass({
 
         // clear existing linearGradients
 
-        var scaling_exponent = 1./3,
+        var scaling_exponent = 1.0/3,
             omega_format = d3.format(".3r"),
             prop_format = d3.format(".2p"),
             fit_format = d3.format(".2f"),
@@ -71,7 +68,6 @@ var BSREL = React.createClass({
                 ? ["#DDDDDD", "#AAAAAA", "#888888", "#444444", "#000000"]
                 : ["#6e4fa2", "#3288bd", "#e6f598", "#f46d43", "#9e0142"])
             .clamp(true);
-
 
         var createBranchGradient = function(node) {
 

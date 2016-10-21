@@ -1,6 +1,5 @@
-import _ from 'lodash';
-require("react");
-require("d3");
+var React = require('react');
+var datamonkey = require('../../datamonkey/datamonkey.js');
 
 var PropChart = React.createClass({
 

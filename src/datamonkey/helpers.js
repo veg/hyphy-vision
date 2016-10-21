@@ -83,7 +83,7 @@ function datamonkey_save_newick_tree(type) {
   var defsEl = document.createElement("defs");
   svg.insertBefore(defsEl, svg.firstChild);
 
-  var styleEl = document.createElement("style")
+  var styleEl = document.createElement("style");
   defsEl.appendChild(styleEl);
   styleEl.setAttribute("type", "text/css");
 

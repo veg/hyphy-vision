@@ -1,6 +1,7 @@
 /* HYPHY VISION */
 
 /* font-awesome rotation fix */
+
 .fa-rotate-45 {
   -webkit-transform: rotate(45deg);
   -moz-transform: rotate(45deg);

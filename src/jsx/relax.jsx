@@ -1,11 +1,9 @@
-import _ from 'lodash';
-require("react");
-require("d3");
-
 require("./components/model_fits.jsx");
 require("./components/tree_summary.jsx");
 require("./components/tree.jsx");
-require("./components/omega_plot.jsx");
+require("./components/omega_plots.jsx");
+
+var React = require('react');
 
 var RELAX = React.createClass({
 

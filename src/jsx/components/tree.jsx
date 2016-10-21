@@ -1,7 +1,6 @@
-import _ from 'lodash';
-require("react");
-require("d3");
-require('../datamonkey/datamonkey.js');
+var React = require('react');
+
+var datamonkey = require('../../datamonkey/datamonkey.js');
 
 var Tree = React.createClass({
 
@@ -755,3 +754,5 @@ function rerender_tree(json, element, settings) {
 
 }
 
+
+module.exports = Tree;

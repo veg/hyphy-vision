@@ -1,6 +1,5 @@
-import _ from 'lodash';
-require("react");
-require("./components/prop_chart.jsx");
+var React = require('react');
+require("./prop_chart.jsx");
 
 var BranchTable = React.createClass({
 

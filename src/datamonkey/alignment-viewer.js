@@ -35,7 +35,7 @@ function datamonkey_alignment_viewer(options) {
       "PEREGRINEFALCON_HK_D0028_2004",
       "TREESPARROW_HENAN_2_2004",
       "HONGKONG_538_97"
-    ]
+    ];
 
     //-- Private
     //self.xScale; 
@@ -46,7 +46,7 @@ function datamonkey_alignment_viewer(options) {
 
     draw();
 
-  };
+  }
 
 
   function draw() {

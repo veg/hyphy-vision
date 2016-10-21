@@ -35,7 +35,7 @@ function getStyles(doc) {
 function exportCSVButton(data) {
 
   data = d3.csv.format(data);
-  if (data != null) {
+  if (data !== null) {
     var pom = document.createElement('a');
     pom.setAttribute('href', 'data:text/csv;charset=utf-8,' + encodeURIComponent(data));
     pom.setAttribute('download', 'export.csv');
@@ -114,7 +114,7 @@ function saveImage(type, container) {
   var image_string = 'data:image/svg+xml;base66,' + encodeURIComponent(to_download);
 
   if(type == "png") {
-    convertSVGtoPNG(image_string)
+    convertSVGtoPNG(image_string);
   } else {
     var pom = document.createElement('a');
     pom.setAttribute('download', 'image.svg');
