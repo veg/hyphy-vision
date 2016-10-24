@@ -8,13 +8,12 @@ config = {
   debug: true,
   devtool: 'source-map',
   entry: {
-    app : './src/entry.js',
+    app : ['./src/entry.js'],
 		vendor : [
 							"bootstrap", 
 							"crossfilter", 
 							"d3",
 							"dc",
-							"font-awesome",
 							"immutable",
 							"jquery",
 							"jquery-ui",
@@ -25,7 +24,7 @@ config = {
 						 ]
   },
   output: {
-    path: path.resolve(__dirname, 'src/public'),
+    path: path.resolve(__dirname, 'dist/'),
     filename: '[name].js',
   },
 	externals: {
@@ -44,20 +43,22 @@ config = {
 		{ test: /\.css$/, loader: ExtractTextPlugin.extract("style-loader", "css-loader")},
 		{ test: /jquery/, loader: 'expose?$!expose?jQuery' },
 		{ test: /d3/, loader: 'expose?$!expose?d3' },
-		{ test: /\.woff(2)?(\?v=[0-9]\.[0-9]\.[0-9])?$/, loader: "url-loader?limit=10000&minetype=application/font-woff" },
-		{ test: /\.(ttf|eot|svg)(\?v=[0-9]\.[0-9]\.[0-9])?$/, loader: "file-loader" }
+		{ test: /\.(woff|woff2)(\?v=\d+\.\d+\.\d+)?$/, loader: 'url?limit=10000&mimetype=application/font-woff'},
+		{ test: /\.ttf(\?v=\d+\.\d+\.\d+)?$/, loader: 'url?limit=10000&mimetype=application/octet-stream'},
+		{ test: /\.eot(\?v=\d+\.\d+\.\d+)?$/, loader: 'file'},
+		{ test: /\.svg(\?v=\d+\.\d+\.\d+)?$/, loader: 'url?limit=10000&mimetype=image/svg+xml'},
 		],
 
   },
   plugins: [
 		new webpack.optimize.CommonsChunkPlugin("vendor", "vendor.js"),
 		new webpack.ProvidePlugin({
-				$: "jquery",
+				$ : "jquery",
 				d3: "d3",
 				crossfilter : "crossfilter",
 				dc : "dc",
 				datamonkey : "datamonkey",
-				_: "lodash",
+				_ : "lodash",
 				jQuery: "jquery"
 		}),
  		new webpack.IgnorePlugin(/jsdom$/),
@@ -65,12 +66,16 @@ config = {
 	],
   resolve: {
 		alias: {
-			'dc': __dirname + '/node_modules/dc/dc.min.js',
-			'dc.css': __dirname + '/node_modules/dc/dc.min.css',
-			'bootstrap.css': __dirname + '/node_modules/bootstrap/dist/css/bootstrap.css',
-			'bootstrap-theme.css': __dirname + '/node_modules/bootstrap/dist/css/bootstrap-theme.css',
-			'phylotree.css': __dirname + '/node_modules/phylotree/phylotree.css'
-		}
+			'dc' : __dirname + '/node_modules/dc/dc.min.js',
+			'dc.css' : __dirname + '/node_modules/dc/dc.min.css',
+			'phylotree.css' : __dirname + '/node_modules/phylotree/phylotree.css',
+      //'bootstrap.css' : __dirname + '/node_modules/bootstrap/dist/css/bootstrap.css'
+		},
+    modulesDirectories: [
+      'src',
+      'node_modules'
+    ],
+    extensions: ['', '.json', '.js', '.jsx']
 	},
 };
 

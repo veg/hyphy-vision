@@ -1,12 +1,10 @@
 window.$ = window.JQuery = $;
 
-require("bootstrap.css");
-//require("bootstrap-theme.css");
+import Bootstrap from 'bootstrap/dist/css/bootstrap.css';
+require("font-awesome-webpack");
 require('./hyphy-vision.css');
 
-
 require('bootstrap');
-
 require('./datamonkey/datamonkey.js');
 
 // Bundle exports under hyphyvision
