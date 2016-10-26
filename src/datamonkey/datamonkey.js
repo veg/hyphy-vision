@@ -1,5 +1,4 @@
 var root = this;
-
 var datamonkey = function () {};
 
 if (typeof exports !== 'undefined') {

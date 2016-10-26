@@ -1,10 +1,10 @@
-require("./components/model_fits.jsx");
-require("./components/tree_summary.jsx");
-require("./components/tree.jsx");
-require("./components/omega_plots.jsx");
+import {ModelFits} from "./components/model_fits.jsx";
+import {TreeSummary} from "./components/tree_summary.jsx";
+import {Tree} from "./components/tree.jsx";
+import {OmegaPlotGrid} from "./components/omega_plots.jsx";
 
 var React = require('react');
-
+var _ = require('underscore');
 var RELAX = React.createClass({
 
   float_format : d3.format(".2f"),
@@ -230,7 +230,7 @@ var RELAX = React.createClass({
     }
 
     // Iterate over objects
-    branch_annotations = _.mapObject(initial_branch_annotations, function(val, key) {
+    var branch_annotations = _.mapObject(initial_branch_annotations, function(val, key) {
       return {"length" : val};
     });
 
@@ -293,3 +293,5 @@ function render_relax(url, element) {
   );
 }
 
+
+module.exports = render_relax;

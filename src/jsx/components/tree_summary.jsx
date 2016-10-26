@@ -1,4 +1,5 @@
-var React = require('react');
+var React = require('react'),
+		_ = require('underscore');
 
 var TreeSummary = React.createClass({
 
@@ -134,7 +135,7 @@ var TreeSummary = React.createClass({
     }
 
     // trim columns to length of table_row_data
-    column_headers = _.take(all_columns, table_row_data[0].length)
+    var column_headers = _.take(all_columns, table_row_data[0].length)
 
     return column_headers;
   },
@@ -220,4 +221,6 @@ function rerender_tree_summary(tree, element) {
   render_tree_summary(tree, element);
 }
 
-module.exports = TreeSummary;
+module.exports.TreeSummary = TreeSummary;
+module.exports.render_tree_summary = render_tree_summary;
+module.exports.rerender_tree_summary = rerender_tree_summary;

@@ -5,21 +5,10 @@
 
   <meta charset="utf-8">
 
-  <link rel="stylesheet" href="../vendor/bootstrap/dist/css/bootstrap.min.css">
-  <link rel="stylesheet" href="../vendor/bootstrap/dist/css/bootstrap-theme.min.css">
-  <link rel="stylesheet" href="../vendor/font-awesome/css/font-awesome.css">
-  <link rel="stylesheet" href="../vendor/phylotree/phylotree.css">
-  <link href="../hyphy-vision.css" rel="stylesheet">
+  <link rel="stylesheet" href="../dist/app.css">
+  <script src="../dist/vendor.js"></script>
+  <script src="../dist/app.js"></script>
 
-  <!-- <meta name="viewport" content="width=device-width, initial-scale=1.0">-->
-  <script src="../vendor/jquery/dist/jquery.js"></script>
-  <script src="../vendor/bootstrap/dist/js/bootstrap.min.js"></script>
-  <script src="../vendor/underscore/underscore-min.js"></script>
-  <script src="../vendor/d3/d3.min.js"></script>
-  <script src="../vendor/phylotree/phylotree.js"></script>
-  <script src="../vendor/react/react-with-addons.js"></script>
-
-  <script src="../hyphy-vision.js"></script>
   <title> RELAX analysis result</title>
 
 </head>
@@ -77,7 +66,7 @@
     <!-- END HTML -->
     <script>
       $(document).ready(function() {
-        render_relax("test-data/test.json", "relax-content");
+        relax("test-data/test.json", "relax-content");
       });
     </script>
 

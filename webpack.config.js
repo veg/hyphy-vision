@@ -1,4 +1,3 @@
-
 path = require('path');
 webpack = require('webpack');
 var ExtractTextPlugin = require("extract-text-webpack-plugin");
@@ -17,7 +16,7 @@ config = {
 							"immutable",
 							"jquery",
 							"jquery-ui",
-							"lodash",
+							"underscore",
 							"phylotree",
 							"react",
 							"redux"
@@ -58,7 +57,7 @@ config = {
 				crossfilter : "crossfilter",
 				dc : "dc",
 				datamonkey : "datamonkey",
-				_ : "lodash",
+				_ : "underscore",
 				jQuery: "jquery"
 		}),
  		new webpack.IgnorePlugin(/jsdom$/),
@@ -69,7 +68,6 @@ config = {
 			'dc' : __dirname + '/node_modules/dc/dc.min.js',
 			'dc.css' : __dirname + '/node_modules/dc/dc.min.css',
 			'phylotree.css' : __dirname + '/node_modules/phylotree/phylotree.css',
-      //'bootstrap.css' : __dirname + '/node_modules/bootstrap/dist/css/bootstrap.css'
 		},
     modulesDirectories: [
       'src',

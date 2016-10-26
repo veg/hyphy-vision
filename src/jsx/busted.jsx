@@ -4,10 +4,10 @@ require("phylotree.css");
 var React = require('react'),
 		ReactDOM = require('react-dom');
 
-var TreeSummary = require("./components/tree_summary.jsx"),
-		PropChart = require("./components/prop_chart.jsx"),
-		ModelFits = require("./components/model_fits.jsx"),
-		Tree = require("./components/tree.jsx");
+import {Tree} from "./components/tree.jsx";
+import {ModelFits} from "./components/model_fits.jsx";
+import {TreeSummary} from "./components/tree_summary.jsx";
+import {PropChart} from './components/prop_chart.jsx';
 
 var datamonkey = require('../datamonkey/datamonkey.js'),
 		busted = require('../busted/busted.js');
@@ -123,7 +123,6 @@ var BUSTED = React.createClass({
       pmid_text : null,
       pmid_href : null
     }
-
   },
 
   setEvents : function() {
@@ -187,10 +186,10 @@ var BUSTED = React.createClass({
     
     // Iterate over objects
     var branch_annotations = _.object(node_names, 
-                           _.map(node_names, function(d) {
-                             return { is_foreground : _.indexOf(foreground, d) > -1 }
-                             })
-                          );
+                             _.map(node_names, function(d) {
+                               return { is_foreground : _.indexOf(foreground, d) > -1 }
+                               })
+                            );
 
     return branch_annotations;
 
@@ -339,8 +338,6 @@ var BUSTED = React.createClass({
                settings={self.props.distro_settings} />
             </div>
           </div>
-
-
 
         </div>
       </div>

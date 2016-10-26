@@ -1,5 +1,5 @@
 var React = require('react');
-require("./prop_chart.jsx");
+import {PropChart} from './prop_chart.jsx';
 
 var BranchTable = React.createClass({
 
@@ -94,7 +94,7 @@ var BranchTable = React.createClass({
     for (var m in test_results) {
 
       var branch_row = [];
-      branch = test_results[m];
+      var branch = test_results[m];
 
       branch_row = [
         m,
@@ -172,7 +172,7 @@ var BranchTable = React.createClass({
         omega_header = '<th>ω distribution over sites</th>';
 
     // inspect table_row_data and return header
-    all_columns = [ 
+    var all_columns = [ 
                     name_header,
                     length_header,
                     lrt_header,
@@ -184,10 +184,10 @@ var BranchTable = React.createClass({
     // validate each table row with its associated header
 
     // trim columns to length of table_row_data
-    column_headers = _.take(all_columns, table_row_data[0].length)
+    var column_headers = _.take(all_columns, table_row_data[0].length)
 
     // remove all columns that have 0, null, or undefined rows
-    items = d3.transpose(table_row_data);
+    var items = d3.transpose(table_row_data);
     
 
     return column_headers;
@@ -303,3 +303,6 @@ function rerender_branch_table(tree, test_results, annotations, element) {
   render_branch_table(tree, test_results, annotations, element);
 }
 
+module.exports.BranchTable = BranchTable;
+module.exports.render_branch_table = render_branch_table;
+module.exports.rerender_branch_table = rerender_branch_table;

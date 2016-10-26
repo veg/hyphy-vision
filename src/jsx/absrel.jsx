@@ -1,8 +1,17 @@
-require("./components/absrel_summary.jsx");
-require("./components/model_fits.jsx");
-require("./components/tree_summary.jsx");
-require("./components/tree.jsx");
-require("./components/branch_table.jsx");
+var React = require('react'),
+		ReactDOM = require('react-dom');
+
+var datamonkey = require('../datamonkey/datamonkey.js'),
+    _ = require('underscore'),
+		busted = require('../busted/busted.js');
+
+require("phylotree");
+require("phylotree.css");
+import {BSRELSummary} from "./components/absrel_summary.jsx";
+import {ModelFits} from "./components/model_fits.jsx";
+import {TreeSummary} from "./components/tree_summary.jsx";
+import {Tree} from "./components/tree.jsx";
+import {BranchTable} from "./components/branch_table.jsx";
 
 var React = require('react');
 
@@ -259,7 +268,7 @@ var BSREL = React.createClass({
     }
 
     // Iterate over objects
-    branch_annotations = _.mapObject(initial_branch_annotations, function(val, key) {
+    var branch_annotations = _.mapObject(initial_branch_annotations, function(val, key) {
 
       var vals = [];
         try {
@@ -340,3 +349,6 @@ function render_absrel(url, element) {
     document.getElementById(element)
   );
 }
+
+
+module.exports = render_absrel;

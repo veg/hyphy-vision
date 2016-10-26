@@ -40,25 +40,23 @@ var PropChart = React.createClass({
   initialize : function() {
 
     // clear svg
-    d3.select("#prop-chart").html("");
+		d3.select("#prop-chart").html("");
 
     this.data_to_plot = this.state.omegas;
 
     // Set props from settings
-    this.props.svg_id = this.props.settings.svg_id;
-    this.props.dimensions = this.props.settings.dimensions || this.props.dimensions;
-    this.props.margins = this.props.settings.margins || this.props.margins;
-    this.props.legend_id = this.props.settings.legend || this.props.legend_id;
-    this.props.do_log_plot = this.props.settings.log || this.props.do_log_plot;
-    this.props.k_p = this.props.settings.k || this.props.k_p;
-
+    this.svg_id = this.props.settings.svg_id;
+    this.dimensions = this.props.settings.dimensions || this.props.dimensions;
+    this.margins = this.props.settings.margins || this.props.margins;
+    this.legend_id = this.props.settings.legend || this.props.legend_id;
+    this.do_log_plot = this.props.settings.log || this.props.do_log_plot;
+    this.k_p = this.props.settings.k || this.props.k_p;
 
     var dimensions = this.props.dimensions;
     var margins = this.props.margins;
-    console.log(margins);
 
     if (this.props.do_log_plot) {
-      this.props.has_zeros = this.data_to_plot.some(function(d) { return d.omega <= 0; });
+      this.has_zeros = this.data_to_plot.some(function(d) { return d.omega <= 0; });
     }
 
     this.plot_width = dimensions["width"] - margins['left'] - margins['right'],
@@ -66,8 +64,8 @@ var PropChart = React.createClass({
 
     var domain = this.state.settings["domain"];
 
-    this.omega_scale = (this.props.settings.do_log_plot 
-        ? (this.props.settings.has_zeros 
+    this.omega_scale = (this.do_log_plot 
+        ? (this.has_zeros 
         ? d3.scale.pow().exponent (0.2) : d3.scale.log()) : d3.scale.linear())
         .range([0, this.plot_width]).domain(domain).nice();
 
@@ -75,7 +73,7 @@ var PropChart = React.createClass({
 
     // compute margins -- circle AREA is proportional to the relative weight
     // maximum diameter is (height - text margin)
-    this.svg = d3.select("#" + this.props.settings.svg_id)
+    this.svg = d3.select("#" + this.svg_id)
                 .attr("width", dimensions.width + margins['left'] + margins['right'])
                 .attr("height", dimensions.height + margins['top'] + margins['bottom']);
 
@@ -99,7 +97,7 @@ var PropChart = React.createClass({
       this.plot = this.svg.append("g").attr("class", "container");
     }
 
-    this.plot.attr("transform", "translate(" + this.props.margins["left"] + " , " + this.props.margins["top"] + ")");
+    this.plot.attr("transform", "translate(" + this.margins["left"] + " , " + this.margins["top"] + ")");
     this.reference_omega_lines = this.plot.selectAll(".hyphy-omega-line-reference"),
     this.displacement_lines = this.plot.selectAll(".hyphy-displacement-line");
 
@@ -108,18 +106,21 @@ var PropChart = React.createClass({
     this.createYAxis();
     this.setEvents();
     this.createOmegaLine(this.state.omegas);
+		console.log('initialized everything');
     //_.map(this.props.omegas, function(d) { return this.createOmegaLine(d["omega"],d["prop"]); });
+
+		console.log(this.svg);
     
 
   },
 
   createOmegaLine : function(omegas) {
 
-    var data_to_plot = this.data_to_plot;
     var self = this;
+    var data_to_plot = this.data_to_plot;
 
     // generate color wheel from omegas
-    var colores_g = _.shuffle([ "#1f77b4"
+    self.colores_g = _.shuffle([ "#1f77b4"
       ,"#ff7f0e"
       ,"#2ca02c"
       ,"#d62728"
@@ -143,18 +144,18 @@ var PropChart = React.createClass({
         .attr("x2", function(d) {
             return self.omega_scale(d.omega);
         })
-        .attr("y1", function(d) {
-            return self.proportion_scale(-0.05);
-        })
-        .attr("y2", function(d) {
-            return self.proportion_scale(d.prop);
-        })
-        .style("stroke", function(d) {
-          color = _.take(colores_g);
-          colores_g = _.rest(colores_g);
-          return color;
-        })
-        .attr("class", "hyphy-omega-line");
+				.attr("y1", function(d) {
+						return self.proportion_scale(-0.05);
+				})
+				.attr("y2", function(d) {
+						return self.proportion_scale(d.prop);
+				})
+				.style("stroke", function(d) {
+					var color = _.take(self.colores_g);
+					self.colores_g = _.rest(self.colores_g);
+					return color;
+				})
+				.attr("class", "hyphy-omega-line");
   },
 
   createNeutralLine : function() {
@@ -180,8 +181,8 @@ var PropChart = React.createClass({
         .scale(this.omega_scale)
         .orient("bottom");
 
-    if (this.props.do_log_plot) {
-        xAxis.ticks(10, this.props.has_zeros ? ".2r" : ".1r");
+    if (this.do_log_plot) {
+        xAxis.ticks(10, this.has_zeros ? ".2r" : ".1r");
     }
 
     var x_axis = this.svg.selectAll(".x.axis");
@@ -196,9 +197,9 @@ var PropChart = React.createClass({
         x_label = x_axis.select(".axis-label.x-label");
     }
 
-    x_axis.attr("transform", "translate(" + this.props.margins["left"] + "," + (this.plot_height + this.props.margins["top"]) + ")")
+    x_axis.attr("transform", "translate(" + this.margins["left"] + "," + (this.plot_height + this.margins["top"]) + ")")
         .call(xAxis);
-    x_label = x_label.attr("transform", "translate(" + this.plot_width + "," + this.props.margins["bottom"] + ")")
+    x_label = x_label.attr("transform", "translate(" + this.plot_width + "," + this.margins["bottom"] + ")")
         .selectAll("text").data(["\u03C9"]);
     x_label.enter().append("text");
     x_label.text(function(d) {
@@ -225,9 +226,9 @@ var PropChart = React.createClass({
     } else {
         y_label = y_axis.select(".hyphy-axis-label.y-label");
     }
-    y_axis.attr("transform", "translate(" + this.props.margins["left"] + "," + this.props.margins["top"] + ")")
+    y_axis.attr("transform", "translate(" + this.margins["left"] + "," + this.margins["top"] + ")")
         .call(yAxis);
-    y_label = y_label.attr("transform", "translate(" + (-this.props.margins["left"]) + "," + 0 + ")")
+    y_label = y_label.attr("transform", "translate(" + (-this.margins["left"]) + "," + 0 + ")")
         .selectAll("text").data(["Proportion of sites"]);
     y_label.enter().append("text");
     y_label.text(function(d) {
@@ -253,7 +254,6 @@ var PropChart = React.createClass({
   },
 
   componentDidUpdate : function() {
-
     try {
       this.initialize();
     } catch(e) {};
@@ -262,7 +262,6 @@ var PropChart = React.createClass({
 
   render: function() {
 
-    this.svg_id = this.props.settings.svg_id;
     this.save_svg_id = "export-" + this.svg_id + "-svg";
     this.save_png_id = "export-" + this.svg_id + "-png";
 
@@ -301,4 +300,8 @@ function rerender_prop_chart(model_name, omeags, settings) {
   return render_prop_chart(model_name, omeags, settings);
 
 }
+
+module.exports.render_prop_chart = render_prop_chart;
+module.exports.rerender_prop_chart = rerender_prop_chart;
+module.exports.PropChart = PropChart;
 

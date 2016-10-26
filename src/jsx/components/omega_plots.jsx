@@ -1,5 +1,6 @@
 var React = require('react');
 var datamonkey = require('../../datamonkey/datamonkey.js');
+var _ = require('underscore');
 
 var OmegaPlot = React.createClass({
 
@@ -39,19 +40,21 @@ var OmegaPlot = React.createClass({
     var secondary_data = this.state.omegas["Test"];
 
     // Set props from settings
-    this.props.svg_id = this.props.settings.svg_id;
-    this.props.dimensions = this.props.settings.dimensions || this.props.dimensions;
-    this.props.legend_id = this.props.settings.legend || this.props.legend_id;
-    this.props.do_log_plot = this.props.settings.log || this.props.do_log_plot;
-    this.props.k_p = this.props.settings.k || this.props.k_p;
+    this.svg_id = this.props.settings.svg_id;
+    this.dimensions = this.props.settings.dimensions || this.props.dimensions;
+    this.legend_id = this.props.settings.legend || this.props.legend_id;
+    this.do_log_plot = this.props.settings.log || this.props.do_log_plot;
+    this.k_p = this.props.settings.k || this.props.k_p;
 
     var dimensions = this.props.dimensions;
     var margins = this.props.margins;
 
-    if (this.props.do_log_plot) {
-      this.props.has_zeros = data_to_plot.some(function(d) {return d.omega <= 0;});
+    this.margins = margins;
+
+    if (this.do_log_plot) {
+      this.has_zeros = data_to_plot.some(function(d) {return d.omega <= 0;});
       if (secondary_data) {
-        this.props.has_zeros = this.props.has_zeros || data_to_plot.some(function(d) {return d.omega <= 0;});
+        this.has_zeros = this.has_zeros || data_to_plot.some(function(d) {return d.omega <= 0;});
       }
     }
 
@@ -68,14 +71,14 @@ var OmegaPlot = React.createClass({
 
     domain[0] *= 0.5;
 
-    this.omega_scale = (this.props.do_log_plot ? (this.props.has_zeros ? d3.scale.pow().exponent (0.2) : d3.scale.log()) : d3.scale.linear())
+    this.omega_scale = (this.do_log_plot ? (this.has_zeros ? d3.scale.pow().exponent (0.2) : d3.scale.log()) : d3.scale.linear())
         .range([0, this.plot_width]).domain(domain).nice();
 
     this.proportion_scale = d3.scale.linear().range([this.plot_height, 0]).domain([-0.05, 1]).clamp(true);
 
     // compute margins -- circle AREA is proportional to the relative weight
     // maximum diameter is (height - text margin)
-    this.svg = d3.select("#" + this.props.settings.svg_id).attr("width", dimensions.width).attr("height", dimensions.height);
+    this.svg = d3.select("#" + this.svg_id).attr("width", dimensions.width).attr("height", dimensions.height);
     this.plot = this.svg.selectAll(".container");
 
     this.svg.selectAll("defs").remove();
@@ -95,7 +98,7 @@ var OmegaPlot = React.createClass({
       this.plot = this.svg.append("g").attr("class", "container");
     }
 
-    this.plot.attr("transform", "translate(" + this.props.margins["left"] + " , " + this.props.margins["top"] + ")");
+    this.plot.attr("transform", "translate(" + this.margins["left"] + " , " + this.margins["top"] + ")");
     this.reference_omega_lines = this.plot.selectAll(".hyphy-omega-line-reference"),
     this.displacement_lines = this.plot.selectAll(".hyphy-displacement-line");
 
@@ -264,8 +267,8 @@ var OmegaPlot = React.createClass({
         .scale(this.omega_scale)
         .orient("bottom");
 
-    if (this.props.do_log_plot) {
-        xAxis.ticks(10, this.props.has_zeros ? ".2r" : ".1r");
+    if (this.do_log_plot) {
+        xAxis.ticks(10, this.has_zeros ? ".2r" : ".1r");
     }
 
     var x_axis = this.svg.selectAll(".x.axis");
@@ -280,9 +283,9 @@ var OmegaPlot = React.createClass({
         x_label = x_axis.select(".axis-label.x-label");
     }
 
-    x_axis.attr("transform", "translate(" + this.props.margins["left"] + "," + (this.plot_height + this.props.margins["top"]) + ")")
+    x_axis.attr("transform", "translate(" + this.margins["left"] + "," + (this.plot_height + this.margins["top"]) + ")")
         .call(xAxis);
-    x_label = x_label.attr("transform", "translate(" + this.plot_width + "," + this.props.margins["bottom"] + ")")
+    x_label = x_label.attr("transform", "translate(" + this.plot_width + "," + this.margins["bottom"] + ")")
         .selectAll("text").data(["\u03C9"]);
     x_label.enter().append("text");
     x_label.text(function(d) {
@@ -309,9 +312,9 @@ var OmegaPlot = React.createClass({
     } else {
         y_label = y_axis.select(".hyphy-axis-label.y-label");
     }
-    y_axis.attr("transform", "translate(" + this.props.margins["left"] + "," + this.props.margins["top"] + ")")
+    y_axis.attr("transform", "translate(" + this.margins["left"] + "," + this.margins["top"] + ")")
         .call(yAxis);
-    y_label = y_label.attr("transform", "translate(" + (-this.props.margins["left"]) + "," + 0 + ")")
+    y_label = y_label.attr("transform", "translate(" + (-this.margins["left"]) + "," + 0 + ")")
         .selectAll("text").data(["Proportion of sites"]);
     y_label.enter().append("text");
     y_label.text(function(d) {
@@ -461,3 +464,8 @@ var OmegaPlotGrid = React.createClass({
   }
 
 });
+
+
+module.exports.OmegaPlot = OmegaPlot;
+module.exports.OmegaPlotGrid = OmegaPlotGrid;
+

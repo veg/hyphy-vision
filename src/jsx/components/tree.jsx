@@ -1,6 +1,6 @@
 var React = require('react');
-
 var datamonkey = require('../../datamonkey/datamonkey.js');
+require('phylotree');
 
 var Tree = React.createClass({
 
@@ -137,7 +137,7 @@ var Tree = React.createClass({
                 'right': 2
             };
 
-        this_grad = svg.append("defs")
+        var this_grad = svg.append("defs")
             .attr("class", "legend-definitions")
             .append("linearGradient")
               .attr("id", "_omega_bar")
@@ -185,6 +185,7 @@ var Tree = React.createClass({
         scale_bar.selectAll("text")
             .style("text-anchor", "right");
 
+				var _label = '';
         var x_label = _label = scale_bar.append("g").attr("class", "hyphy-omega-bar");
         x_label = x_label.selectAll("text").data([attr_name]);
         x_label.enter().append("text");
@@ -608,7 +609,8 @@ var Tree = React.createClass({
               if (do_layout) {
                   this.tree.update_layout();
               }
-              d3_phylotree_trigger_refresh(this.tree);
+              //d3_phylotree_trigger_refresh(this.tree);
+							//this.tree.trigger_refresh();
           }
 
       }
@@ -722,7 +724,6 @@ var Tree = React.createClass({
                   </div>
               </div>
           </div>
-
           <div className="row">
               <div className="col-md-12">
                   <div className="row">
@@ -738,21 +739,18 @@ var Tree = React.createClass({
 });
 
 function render_tree(json, element, settings) {
-
   return React.render (
     <Tree json={json} settings={settings} />,
     $(element)[0]
   );
-
-
 }
 
 function rerender_tree(json, element, settings) {
-
   $(element).empty();
   return render_tree(json, settings);
-
 }
 
 
-module.exports = Tree;
+module.exports.Tree = Tree;
+module.exports.render_tree = render_tree;
+module.exports.rerender_tree = rerender_tree;
