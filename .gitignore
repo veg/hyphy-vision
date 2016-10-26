@@ -36,3 +36,8 @@ web/docs/public
 
 *.map
 jsx-compiled
+dist/*.ttf 
+dist/*.eot 
+*.woff2 
+*.svg
+dist/vendor.js
