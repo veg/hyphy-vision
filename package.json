@@ -19,8 +19,8 @@
     "type": "git",
     "url": "git://github.com/veg/hyphy-vision.git"
   },
-  "main": "hyphy-vision.js",
-  "version": "0.2.4",
+  "main": ["dist/hyphyvision.js", "dist/hyphyvision.css"],
+  "version": "1.0.0",
   "dependencies": {
     "bootstrap": "3.x",
     "crossfilter": "1.x",
@@ -67,13 +67,12 @@
     "webpack": "^1.13.2"
   },
   "scripts": {
-    "lint": "eslint hyphy-vision.js",
-    "build": "uglifyjs hyphy-vision.js -m -o hyphy-vision.min.js"
+    "lint": "eslint dist/hyphyvision.js"
   },
   "license": "MIT",
   "files": [
-    "hyphy-vision.js",
-    "hyphy-vision.min.js",
-    "hyphy-vision-min.map"
+    "dist/hyphyvision.js",
+    "dist/hyphyvision.min.js",
+    "dist/hyphyvision-min.map"
   ]
 }
