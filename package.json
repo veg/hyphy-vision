@@ -33,6 +33,7 @@
     "jquery": "1.x",
     "jquery-ui": "^1.12.1",
     "lodash": "3.x",
+    "lodash.clonedeep": "^4.5.0",
     "phylotree": "0.1.4",
     "react": "0.14.x",
     "redux": "x.x"

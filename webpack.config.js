@@ -1,5 +1,7 @@
-path = require('path');
-webpack = require('webpack');
+var path = require('path'),
+    webpack = require('webpack'),
+    cloneDeep = require('lodash.clonedeep');
+
 var ExtractTextPlugin = require("extract-text-webpack-plugin");
 
 config = {
@@ -7,7 +9,7 @@ config = {
   debug: true,
   devtool: 'source-map',
   entry: {
-    app : ['./src/entry.js'],
+    hyphyvision : ['./src/entry.js'],
 		vendor : [
 							"bootstrap", 
 							"crossfilter", 
@@ -105,4 +107,9 @@ if (process.env.NODE_ENV === 'production') {
   config.plugins.push(new webpack.optimize.UglifyJsPlugin());
 }
 
-module.exports = config;
+var minimized = cloneDeep(config);
+
+minimized.plugins.push(new webpack.optimize.UglifyJsPlugin());
+minimized.output.filename = 'hyphyvision.min.js';
+
+module.exports = [config, minimized];
