@@ -19,7 +19,7 @@
     "type": "git",
     "url": "git://github.com/veg/hyphy-vision.git"
   },
-  "main": ["dist/hyphyvision.js", "dist/hyphyvision.css"],
+  "main": "dist/hyphyvision.js",
   "version": "1.0.0",
   "dependencies": {
     "bootstrap": "3.x",
