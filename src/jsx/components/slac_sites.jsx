@@ -314,7 +314,6 @@ var SLACSites = React.createClass({
 
   dm_handleRemoveCondition: function (key,e) {
     e.preventDefault();
-    var filterState = new Object (null);
 
     _.extend (filterState,  this.state.filters);
     delete filterState[key];
@@ -417,7 +416,7 @@ var SLACSites = React.createClass({
                               </button>
                             </div>
                             <div className="input-group" >
-                                <span className="input-group-addon"> {String.fromCharCode(8712) + ' ['} </span>
+                                <span className="input-group-addon"> {'is in ['} </span>
                                 <input type="text" className="form-control" placeholder="-∞" defaultValue = {'-' + String.fromCharCode(8734)} onChange = {self.dm_handleLB}/>
                             </div>
                             <div className="input-group">
