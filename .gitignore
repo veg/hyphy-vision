@@ -38,6 +38,8 @@ web/docs/public
 jsx-compiled
 dist/*.ttf 
 dist/*.eot 
-*.woff2 
-*.svg
+dist/*.woff
+dist/*.woff2 
+dist/*.svg
 dist/vendor.js
+
