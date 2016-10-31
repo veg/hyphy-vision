@@ -85,5 +85,4 @@ var SLACBanner = React.createClass({
   }
 });
 
-
-
+module.exports.SLACBanner = SLACBanner;

@@ -1,4 +1,4 @@
-require("./datamonkey.js");
+var datamonkey = require("./datamonkey.js");
 
 function datamonkey_get_styles(doc) {
   var styles = "",

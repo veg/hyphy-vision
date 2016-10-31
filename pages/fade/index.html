@@ -2,21 +2,19 @@
 <html>
 
   <head>
-    <meta http-equiv='Content-Style-Type' content='text/css'>
-    <meta http-equiv='Content-Type' content='text/html; charset=ISO-8859-1'>
-    <meta NAME='description' CONTENT='.'> 
+
+    <meta charset="utf-8">
     <title>
       FADE analysis results
     </title>
-    <link rel=STYLESHEET type='text/css' href='/2007/styles.css'>
+
+    <link rel="stylesheet" href="../../dist/hyphyvision.css">
     <link rel=STYLESHEET type='text/css' href='http://www.datamonkey.org/css/bootstrap/css/bootstrap.css' media='screen'>
-    <meta name='viewport' content='width=device-width, initial-scale=1.0'>
-    <script src='http://d3js.org/d3.v3.min.js'></script>
-    <script src='http://code.jquery.com/jquery.js'></script>
-    <script src='http://www.datamonkey.org/css/bootstrap/js/bootstrap.js'></script>
-    <script src="../vendor/react/react-with-addons.js"></script>
-    <script src="../hyphy-vision.js"></script>
-    <link REL=STYLESHEET TYPE='text/css' media='screen' href='FADE.css'>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.17/d3.min.js"></script>
+    <script src="../../dist/vendor.js"></script>
+    <script src="../../dist/hyphyvision.js"></script>
+
   </head>
 
 <div class='container'>
@@ -236,7 +234,7 @@
 <script>
   var cutoff = 0.9;
   d3.json("test.json", function (json) {
-    datamonkey.fade(json);
-    render_fade_summary(json['results'], json['msa']);
+    fade(json);
+    fade_summary(json['results'], json['msa']);
   }); 
 </script>

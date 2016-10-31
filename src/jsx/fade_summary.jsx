@@ -1,3 +1,5 @@
+var React = require('react');
+
 var FadeSummary = React.createClass({
 
   float_format : d3.format(".2f"),
@@ -59,3 +61,6 @@ function render_fade_summary(json, msa) {
     document.getElementById("summary-div")
   );
 }
+
+module.exports = render_fade_summary;
+

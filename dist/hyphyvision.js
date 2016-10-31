@@ -25,21 +25,25 @@ webpackJsonp([0],{
 	
 	__webpack_require__(14);
 	__webpack_require__(22);
+	__webpack_require__(249);
 	
 	__webpack_require__(24);
 	__webpack_require__(37);
 	
-	// Bundle exports under hyphyvision
-	__webpack_require__(42);
-	
 	var absrel = __webpack_require__(203);
 	var busted = __webpack_require__(221);
+	var fade = __webpack_require__(247);
+	var fade_summary = __webpack_require__(248);
 	var relax = __webpack_require__(222);
+	var slac = __webpack_require__(42);
 	
 	// Create new hyphy-vision export
 	window.absrel = absrel;
 	window.busted = busted;
+	window.fade = fade;
+	window.fade_summary = fade_summary;
 	window.relax = relax;
+	window.slac = slac;
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2)))
 
 /***/ },
@@ -306,17 +310,23 @@ webpackJsonp([0],{
 /***/ 42:
 /***/ function(module, exports, __webpack_require__) {
 
-	/* WEBPACK VAR INJECTION */(function(d3, $, _) {"use strict";
+	/* WEBPACK VAR INJECTION */(function(d3, $) {'use strict';
 	
-	__webpack_require__(43);
-	__webpack_require__(201);
-	__webpack_require__(202);
+	var _shared_summary = __webpack_require__(43);
 	
-	var React = __webpack_require__(44);
+	var _slac_sites = __webpack_require__(201);
+	
+	var _slac_summary = __webpack_require__(202);
+	
+	var React = __webpack_require__(44),
+	    ReactDOM = __webpack_require__(211),
+	    _ = __webpack_require__(41);
+	
 	var datamonkey = __webpack_require__(37);
+	__webpack_require__(246);
 	
 	var SLAC = React.createClass({
-	    displayName: "SLAC",
+	    displayName: 'SLAC',
 	
 	
 	    float_format: d3.format(".2f"),
@@ -403,70 +413,70 @@ webpackJsonp([0],{
 	
 	        if (self.state.error_message) {
 	            return React.createElement(
-	                "div",
-	                { id: "datamonkey-error", className: "alert alert-danger alert-dismissible", role: "alert" },
+	                'div',
+	                { id: 'datamonkey-error', className: 'alert alert-danger alert-dismissible', role: 'alert' },
 	                React.createElement(
-	                    "button",
-	                    { type: "button", className: "close", "data-dismiss": "alert", "aria-label": "Close" },
+	                    'button',
+	                    { type: 'button', className: 'close', 'data-dismiss': 'alert', 'aria-label': 'Close' },
 	                    React.createElement(
-	                        "span",
-	                        { "aria-hidden": "true" },
-	                        "\xD7"
+	                        'span',
+	                        { 'aria-hidden': 'true' },
+	                        '\xD7'
 	                    )
 	                ),
 	                React.createElement(
-	                    "strong",
+	                    'strong',
 	                    null,
 	                    self.state.error_message
 	                ),
-	                " ",
-	                React.createElement("span", { id: "datamonkey-error-text" })
+	                ' ',
+	                React.createElement('span', { id: 'datamonkey-error-text' })
 	            );
 	        }
 	
 	        if (self.state.analysis_results) {
 	
 	            return React.createElement(
-	                "div",
-	                { className: "tab-content" },
+	                'div',
+	                { className: 'tab-content' },
 	                React.createElement(
-	                    "div",
-	                    { className: "tab-pane", id: "summary_tab" },
+	                    'div',
+	                    { className: 'tab-pane', id: 'summary_tab' },
 	                    React.createElement(
-	                        "div",
-	                        { className: "row" },
+	                        'div',
+	                        { className: 'row' },
 	                        React.createElement(
-	                            "div",
-	                            { id: "summary-div", className: "col-md-12" },
-	                            React.createElement(SLACBanner, { analysis_results: self.state.analysis_results, pValue: self.state.pValue, pAdjuster: _.bind(self.dm_adjustPvalue, self) })
+	                            'div',
+	                            { id: 'summary-div', className: 'col-md-12' },
+	                            React.createElement(_slac_summary.SLACBanner, { analysis_results: self.state.analysis_results, pValue: self.state.pValue, pAdjuster: _.bind(self.dm_adjustPvalue, self) })
 	                        )
 	                    ),
 	                    React.createElement(
-	                        "div",
-	                        { className: "row hidden-print" },
+	                        'div',
+	                        { className: 'row hidden-print' },
 	                        React.createElement(
-	                            "div",
-	                            { id: "datamonkey-slac-tree-summary", className: "col-lg-4 col-md-6 col-sm-12" },
+	                            'div',
+	                            { id: 'datamonkey-slac-tree-summary', className: 'col-lg-4 col-md-6 col-sm-12' },
 	                            React.createElement(
-	                                "div",
-	                                { className: "panel panel-default" },
+	                                'div',
+	                                { className: 'panel panel-default' },
 	                                React.createElement(
-	                                    "div",
-	                                    { className: "panel-heading" },
+	                                    'div',
+	                                    { className: 'panel-heading' },
 	                                    React.createElement(
-	                                        "h3",
-	                                        { className: "panel-title" },
-	                                        React.createElement("i", { className: "fa fa-puzzle-piece" }),
-	                                        " Partition information"
+	                                        'h3',
+	                                        { className: 'panel-title' },
+	                                        React.createElement('i', { className: 'fa fa-puzzle-piece' }),
+	                                        ' Partition information'
 	                                    )
 	                                ),
 	                                React.createElement(
-	                                    "div",
-	                                    { className: "panel-body" },
+	                                    'div',
+	                                    { className: 'panel-body' },
 	                                    React.createElement(
-	                                        "small",
+	                                        'small',
 	                                        null,
-	                                        React.createElement(DatamonkeyPartitionTable, {
+	                                        React.createElement(_shared_summary.DatamonkeyPartitionTable, {
 	                                            pValue: self.state.pValue,
 	                                            trees: self.state.analysis_results.trees,
 	                                            partitions: self.state.analysis_results.partitions,
@@ -488,55 +498,55 @@ webpackJsonp([0],{
 	                            )
 	                        ),
 	                        React.createElement(
-	                            "div",
-	                            { id: "datamonkey-slac-model-fits", className: "col-lg-5 col-md-6 col-sm-12" },
+	                            'div',
+	                            { id: 'datamonkey-slac-model-fits', className: 'col-lg-5 col-md-6 col-sm-12' },
 	                            React.createElement(
-	                                "div",
-	                                { className: "panel panel-default" },
+	                                'div',
+	                                { className: 'panel panel-default' },
 	                                React.createElement(
-	                                    "div",
-	                                    { className: "panel-heading" },
+	                                    'div',
+	                                    { className: 'panel-heading' },
 	                                    React.createElement(
-	                                        "h3",
-	                                        { className: "panel-title" },
-	                                        React.createElement("i", { className: "fa fa-table" }),
-	                                        " Model fits"
+	                                        'h3',
+	                                        { className: 'panel-title' },
+	                                        React.createElement('i', { className: 'fa fa-table' }),
+	                                        ' Model fits'
 	                                    )
 	                                ),
 	                                React.createElement(
-	                                    "div",
-	                                    { className: "panel-body" },
+	                                    'div',
+	                                    { className: 'panel-body' },
 	                                    React.createElement(
-	                                        "small",
+	                                        'small',
 	                                        null,
-	                                        React.createElement(DatamonkeyModelTable, { fits: self.state.analysis_results.fits })
+	                                        React.createElement(_shared_summary.DatamonkeyModelTable, { fits: self.state.analysis_results.fits })
 	                                    )
 	                                )
 	                            )
 	                        ),
 	                        React.createElement(
-	                            "div",
-	                            { id: "datamonkey-slac-timers", className: "col-lg-3 col-md-3 col-sm-12" },
+	                            'div',
+	                            { id: 'datamonkey-slac-timers', className: 'col-lg-3 col-md-3 col-sm-12' },
 	                            React.createElement(
-	                                "div",
-	                                { className: "panel panel-default" },
+	                                'div',
+	                                { className: 'panel panel-default' },
 	                                React.createElement(
-	                                    "div",
-	                                    { className: "panel-heading" },
+	                                    'div',
+	                                    { className: 'panel-heading' },
 	                                    React.createElement(
-	                                        "h3",
-	                                        { className: "panel-title" },
-	                                        React.createElement("i", { className: "fa fa-clock-o" }),
-	                                        " Execution time"
+	                                        'h3',
+	                                        { className: 'panel-title' },
+	                                        React.createElement('i', { className: 'fa fa-clock-o' }),
+	                                        ' Execution time'
 	                                    )
 	                                ),
 	                                React.createElement(
-	                                    "div",
-	                                    { className: "panel-body" },
+	                                    'div',
+	                                    { className: 'panel-body' },
 	                                    React.createElement(
-	                                        "small",
+	                                        'small',
 	                                        null,
-	                                        React.createElement(DatamonkeyTimersTable, { timers: self.state.analysis_results.timers, totalTime: "Total time" })
+	                                        React.createElement(_shared_summary.DatamonkeyTimersTable, { timers: self.state.analysis_results.timers, totalTime: "Total time" })
 	                                    )
 	                                )
 	                            )
@@ -544,15 +554,15 @@ webpackJsonp([0],{
 	                    )
 	                ),
 	                React.createElement(
-	                    "div",
-	                    { className: "tab-pane active", id: "sites_tab" },
+	                    'div',
+	                    { className: 'tab-pane active', id: 'sites_tab' },
 	                    React.createElement(
-	                        "div",
-	                        { className: "row" },
+	                        'div',
+	                        { className: 'row' },
 	                        React.createElement(
-	                            "div",
-	                            { id: "summary-div", className: "col-md-12" },
-	                            React.createElement(SLACSites, {
+	                            'div',
+	                            { id: 'summary-div', className: 'col-md-12' },
+	                            React.createElement(_slac_sites.SLACSites, {
 	                                headers: self.state.analysis_results.MLE.headers,
 	                                mle: datamonkey.helpers.map(datamonkey.helpers.filter(self.state.analysis_results.MLE.content, function (value, key) {
 	                                    return _.has(value, "by-site");
@@ -567,7 +577,7 @@ webpackJsonp([0],{
 	                        )
 	                    )
 	                ),
-	                React.createElement("div", { className: "tab-pane", id: "tree_tab" })
+	                React.createElement('div', { className: 'tab-pane', id: 'tree_tab' })
 	            );
 	        }
 	        return null;
@@ -580,7 +590,9 @@ webpackJsonp([0],{
 	function render_slac(url, element) {
 	    ReactDOM.render(React.createElement(SLAC, { url: url }), document.getElementById(element));
 	}
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(38), __webpack_require__(2), __webpack_require__(41)))
+	
+	module.exports = render_slac;
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(38), __webpack_require__(2)))
 
 /***/ },
 
@@ -1170,6 +1182,13 @@ webpackJsonp([0],{
 	        return React.createElement(DatamonkeyTable, { headerData: this.state.header, bodyData: this.state.rows });
 	    }
 	});
+	
+	module.exports.DatamonkeyTable = DatamonkeyTable;
+	module.exports.DatamonkeyTableRow = DatamonkeyTableRow;
+	module.exports.DatamonkeyRateDistributionTable = DatamonkeyRateDistributionTable;
+	module.exports.DatamonkeyPartitionTable = DatamonkeyPartitionTable;
+	module.exports.DatamonkeyModelTable = DatamonkeyModelTable;
+	module.exports.DatamonkeyTimersTable = DatamonkeyTimersTable;
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(41), __webpack_require__(38)))
 
 /***/ },
@@ -1178,6 +1197,8 @@ webpackJsonp([0],{
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(d3, _) {'use strict';
+	
+	var _shared_summary = __webpack_require__(43);
 	
 	var React = __webpack_require__(44);
 	var datamonkey = __webpack_require__(37);
@@ -1432,12 +1453,14 @@ webpackJsonp([0],{
 	                    )
 	                )
 	            ),
-	            React.createElement(DatamonkeyTable, { headerData: this.dm_makeHeaderRow(), bodyData: this.dm_makeDataRows(this.dm_makeFilterFunction()) })
+	            React.createElement(_shared_summary.DatamonkeyTable, { headerData: this.dm_makeHeaderRow(), bodyData: this.dm_makeDataRows(this.dm_makeFilterFunction()) })
 	        );
 	
 	        return result;
 	    }
 	});
+	
+	module.exports.SLACSites = SLACSites;
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(38), __webpack_require__(41)))
 
 /***/ },
@@ -1609,6 +1632,8 @@ webpackJsonp([0],{
 	    );
 	  }
 	});
+	
+	module.exports.SLACBanner = SLACBanner;
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(41), __webpack_require__(38)))
 
 /***/ },
@@ -5579,6 +5604,797 @@ webpackJsonp([0],{
 	module.exports.OmegaPlot = OmegaPlot;
 	module.exports.OmegaPlotGrid = OmegaPlotGrid;
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(38)))
+
+/***/ },
+
+/***/ 246:
+/***/ function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function($, jQuery, d3, _) {"use strict";
+	
+	var datamonkey = __webpack_require__(37);
+	
+	function datamonkey_get_styles(doc) {
+	  var styles = "",
+	      styleSheets = doc.styleSheets;
+	
+	  if (styleSheets) {
+	    for (var i = 0; i < styleSheets.length; i++) {
+	      processStyleSheet(styleSheets[i]);
+	    }
+	  }
+	
+	  function processStyleSheet(ss) {
+	    if (ss.cssRules) {
+	      for (var i = 0; i < ss.cssRules.length; i++) {
+	        var rule = ss.cssRules[i];
+	        if (rule.type === 3) {
+	          // Import Rule
+	          processStyleSheet(rule.styleSheet);
+	        } else {
+	          // hack for illustrator crashing on descendent selectors
+	          if (rule.selectorText) {
+	            if (rule.selectorText.indexOf(">") === -1) {
+	              styles += "\n" + rule.cssText;
+	            }
+	          }
+	        }
+	      }
+	    }
+	  }
+	  return styles;
+	}
+	
+	function datamonkey_save_newick_to_file() {
+	  var top_modal_container = "#neighbor-tree-modal";
+	  var nwk = $(top_modal_container).data("tree");
+	  var pom = document.createElement('a');
+	  pom.setAttribute('href', 'data:text/octet-stream;charset=utf-8,' + encodeURIComponent(nwk));
+	  pom.setAttribute('download', 'nwk.txt');
+	  $("body").append(pom);
+	  pom.click();
+	  pom.remove();
+	}
+	
+	function datamonkey_convert_svg_to_png(image_string) {
+	  var image = document.getElementById("image");
+	  image.src = image_string;
+	
+	  image.onload = function () {
+	    var canvas = document.getElementById("canvas");
+	    canvas.width = image.width;
+	    canvas.height = image.height;
+	    var context = canvas.getContext("2d");
+	    context.fillStyle = "#FFFFFF";
+	    context.fillRect(0, 0, image.width, image.height);
+	    context.drawImage(image, 0, 0);
+	    var img = canvas.toDataURL("image/png");
+	
+	    var pom = document.createElement('a');
+	    pom.setAttribute('download', 'phylotree.png');
+	    pom.href = canvas.toDataURL("image/png");
+	    $("body").append(pom);
+	    pom.click();
+	    pom.remove();
+	  };
+	}
+	
+	function datamonkey_save_newick_tree(type) {
+	
+	  var prefix = {
+	    xmlns: "http://www.w3.org/2000/xmlns/",
+	    xlink: "http://www.w3.org/1999/xlink",
+	    svg: "http://www.w3.org/2000/svg"
+	  };
+	
+	  var tree_container = "#tree_container";
+	  var svg = $("#tree_container").find("svg")[0];
+	  var styles = datamonkey_get_styles(window.document);
+	
+	  svg.setAttribute("version", "1.1");
+	
+	  var defsEl = document.createElement("defs");
+	  svg.insertBefore(defsEl, svg.firstChild);
+	
+	  var styleEl = document.createElement("style");
+	  defsEl.appendChild(styleEl);
+	  styleEl.setAttribute("type", "text/css");
+	
+	  // removing attributes so they aren't doubled up
+	  svg.removeAttribute("xmlns");
+	  svg.removeAttribute("xlink");
+	
+	  // These are needed for the svg
+	  if (!svg.hasAttributeNS(prefix.xmlns, "xmlns")) {
+	    svg.setAttributeNS(prefix.xmlns, "xmlns", prefix.svg);
+	  }
+	
+	  if (!svg.hasAttributeNS(prefix.xmlns, "xmlns:xlink")) {
+	    svg.setAttributeNS(prefix.xmlns, "xmlns:xlink", prefix.xlink);
+	  }
+	
+	  var source = new XMLSerializer().serializeToString(svg).replace('</style>', '<![CDATA[' + styles + ']]></style>');
+	  var rect = svg.getBoundingClientRect();
+	  var doctype = '<?xml version="1.0" standalone="no"?><!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">';
+	  var to_download = [doctype + source];
+	  var image_string = 'data:image/svg+xml;base66,' + encodeURIComponent(to_download);
+	
+	  if (type == "png") {
+	    datamonkey_convert_svg_to_png(image_string);
+	  } else {
+	    var pom = document.createElement('a');
+	    pom.setAttribute('download', 'phylotree.svg');
+	    pom.setAttribute('href', image_string);
+	    $("body").append(pom);
+	    pom.click();
+	    pom.remove();
+	  }
+	}
+	
+	function datamonkey_validate_email(email) {
+	  if ($(this).find("input[name='receive_mail']")[0].checked) {
+	    var regex = /^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+	    if (regex.test($(this).find("input[name='mail']").val())) {
+	      // Give them green. They like that.
+	      $(this).removeClass('has-error');
+	      $(this).addClass('has-success');
+	      $(this).next('.help-block').remove();
+	    } else {
+	      $(this).next('.help-block').remove();
+	      $(this).removeClass('has-error');
+	      $(this).removeClass('has-success');
+	      $(this).addClass('has-error');
+	      var span = jQuery('<span/>', {
+	        class: 'help-block col-lg-9 pull-right',
+	        text: 'Invalid Email'
+	      }).insertAfter($(this));
+	    }
+	  } else {
+	    $(this).removeClass('has-error');
+	    $(this).removeClass('has-success');
+	    $(this).next('.help-block').remove();
+	  }
+	}
+	
+	function datamonkey_describe_vector(vector, as_list) {
+	
+	  vector.sort(d3.ascending);
+	
+	  var d = { 'min': d3.min(vector),
+	    'max': d3.max(vector),
+	    'median': d3.median(vector),
+	    'Q1': d3.quantile(vector, 0.25),
+	    'Q3': d3.quantile(vector, 0.75),
+	    'mean': d3.mean(vector) };
+	
+	  if (as_list) {
+	
+	    d = "<pre>Range  :" + d['min'] + "-" + d['max'] + "\n" + "IQR    :" + d['Q1'] + "-" + d['Q3'] + "\n" + "Mean   :" + d['mean'] + "\n" + "Median :" + d['median'] + "\n" + "</pre>";
+	
+	    /*d =
+	    "<dl class = 'dl-horizontal'>" +
+	    "<dt>Range</dt><dd>" + d['min'] + "-" + d['max'] + "</dd>" +
+	    "<dt>IQR</dt><dd>" + d['Q1'] + "-" + d['Q3'] +  "</dd>" +
+	    "<dt>Mean</dt><dd>" + d['mean'] +  "</dd>" +
+	    "<dt>Median</dt><dd>" + d['median'] + "</dd></dl>";*/
+	  }
+	
+	  return d;
+	}
+	
+	function datamonkey_export_handler(data, filename, mimeType) {
+	  var pom = document.createElement('a');
+	  pom.setAttribute('href', 'data:' + (mimeType || 'text/plain') + ';charset=utf-8,' + encodeURIComponent(data));
+	  pom.setAttribute('download', filename || "download.tsv");
+	  pom.click();
+	  pom.remove();
+	}
+	
+	function datamonkey_table_to_text(table_id, sep) {
+	  sep = sep || "\t";
+	  var header_row = [];
+	  d3.select(table_id + " thead").selectAll("th").each(function () {
+	    header_row.push(d3.select(this).text());
+	  });
+	  var data_rows = [];
+	  d3.select(table_id + " tbody").selectAll("tr").each(function (d, i) {
+	    data_rows.push([]);d3.select(this).selectAll("td").each(function () {
+	      data_rows[i].push(d3.select(this).text());
+	    });
+	  });
+	
+	  return header_row.join(sep) + "\n" + data_rows.map(function (d) {
+	    return d.join(sep);
+	  }).join("\n");
+	}
+	
+	function datamonkey_capitalize(s) {
+	  if (s.length > 0) {
+	    return s[0].toUpperCase() + s.slice(1);
+	  } else {
+	    return s;
+	  }
+	}
+	
+	function datamonkey_count_partitions(json) {
+	  try {
+	    return _.keys(json).length;
+	  } catch (e) {
+	    // ignore errors
+	  }
+	  return 0;
+	}
+	
+	function datamonkey_sum(object, accessor) {
+	  accessor = accessor || function (value) {
+	    return value;
+	  };
+	  return _.reduce(object, function (sum, value, index) {
+	    return sum + accessor(value, index);
+	  }, 0);
+	}
+	
+	function datamonkey_count_sites_from_partitions(json) {
+	  try {
+	    return datamonkey_sum(json["partitions"], function (value) {
+	      return value["coverage"][0].length;
+	    });
+	  } catch (e) {
+	    // ignore errors
+	  }
+	  return 0;
+	}
+	
+	function datamonkey_filter_list(list, predicate, context) {
+	  var result = {};
+	  predicate = _.bind(predicate, context);
+	  _.each(list, _.bind(function (value, key) {
+	    if (predicate(value, key)) {
+	      result[key] = value;
+	    }
+	  }, context));
+	  return result;
+	}
+	
+	function datamonkey_map_list(list, transform, context) {
+	  var result = {};
+	  transform = _.bind(transform, context);
+	  _.each(list, _.bind(function (value, key) {
+	    result[key] = transform(value, key);
+	  }, context));
+	  return result;
+	}
+	
+	datamonkey.helpers = new Object();
+	datamonkey.helpers.save_newick_to_file = datamonkey_save_newick_to_file;
+	datamonkey.helpers.convert_svg_to_png = datamonkey_convert_svg_to_png;
+	datamonkey.helpers.save_newick_tree = datamonkey_save_newick_tree;
+	datamonkey.helpers.validate_email = datamonkey_validate_email;
+	datamonkey.helpers.describe_vector = datamonkey_describe_vector;
+	datamonkey.helpers.table_to_text = datamonkey_table_to_text;
+	datamonkey.helpers.export_handler = datamonkey_export_handler;
+	datamonkey.helpers.capitalize = datamonkey_capitalize;
+	datamonkey.helpers.countPartitionsJSON = datamonkey_count_partitions;
+	datamonkey.helpers.countSitesFromPartitionsJSON = datamonkey_count_sites_from_partitions;
+	datamonkey.helpers.sum = datamonkey_sum;
+	datamonkey.helpers.filter = datamonkey_filter_list;
+	datamonkey.helpers.map = datamonkey_map_list;
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2), __webpack_require__(2), __webpack_require__(38), __webpack_require__(41)))
+
+/***/ },
+
+/***/ 247:
+/***/ function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(d3, $) {'use strict';
+	
+	var datamonkey_fade = function datamonkey_fade(json) {
+	
+	    var _colorizerB = d3.interpolateRgb(d3.rgb(0, 0, 255), d3.rgb(255, 255, 255));
+	    var _colorizerR = d3.interpolateRgb(d3.rgb(255, 255, 255), d3.rgb(255, 0, 0));
+	    var _use_BF = false;
+	
+	    var fade_headers = [['Site', 'A', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'K', 'L', 'M', 'N', 'P', 'Q', 'R', 'S', 'T', 'V', 'W', 'Y'], ['Site', 'Alanine', 'Cysteine', 'Aspartic acid', 'Glutamic acid', 'Phenylalanine', 'Glycine', 'Histidine', 'Isoleucine', 'Lysine', 'Leucine', 'Methionine', 'Asparagine', 'Proline', 'Glutamine', 'Arginine', 'Serine', 'Threonine', 'Valine', 'Tryptophan', 'Tyrosin']];
+	
+	    var fade_results = json['results']["FADE"];
+	
+	    var dict_to_array = function dict_to_array(dict) {
+	        ar = [];
+	        for (var k in dict) {
+	            ar.push(dict[k]);
+	        }
+	        return ar;
+	    };
+	
+	    var keys_in_dict = function keys_in_dict(dict) {
+	        ar = [];
+	        for (var k in dict) {
+	            ar.push(k);
+	        }
+	        return ar;
+	    };
+	
+	    //For displaying table with Posteriors
+	    var display_column_map = function display_column_map(row) {
+	        var result = [parseInt(row[0])];
+	
+	        for (var k = 4; k < row.length; k += 5) {
+	            result.push(row[k]);
+	        }
+	        return result;
+	    };
+	
+	    //For displaying table with BFs
+	    var display_column_map_bf = function display_column_map_bf(row) {
+	        //result = [parseInt(row[0]),row[3]];
+	        var result = [parseInt(row[0])];
+	
+	        for (var k = 5; k < row.length; k += 5) {
+	            result.push(row[k]);
+	        }
+	        return result;
+	    };
+	
+	    var row_display_filter = function row_display_filter(d) {
+	
+	        //Any row, with at least one val > thres must get displayed. Any elements greater must be in red. 
+	        // if (d.slice(2).reduce (function (a,b) {return a+b;}) == 0.0) {return false;} 
+	        //console.log (d, this);
+	        for (var k = 1; k < 21; k++) {
+	            if (d[k] > this) return true;
+	        }
+	        return false;
+	    };
+	
+	    var initial_display = function initial_display() {
+	        //load_data_summary ("summary_div", data_summary);
+	        $('#filter_on_pvalue').trigger('submit');
+	        plot_property_graphs("property_plot_svg", fade_results); //Using a matrix from html
+	    };
+	
+	    var set_handlers = function set_handlers(file_id) {
+	
+	        var fade_headers = [['Site', 'A', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'K', 'L', 'M', 'N', 'P', 'Q', 'R', 'S', 'T', 'V', 'W', 'Y'], ['Site', 'Alanine', 'Cysteine', 'Aspartic acid', 'Glutamic acid', 'Phenylalanine', 'Glycine', 'Histidine', 'Isoleucine', 'Lysine', 'Leucine', 'Methionine', 'Asparagine', 'Proline', 'Glutamine', 'Arginine', 'Serine', 'Threonine', 'Valine', 'Tryptophan', 'Tyrosin']];
+	
+	        var found = '';
+	
+	        $('body').attr('data-job-id', file_id);
+	        $('#filter_on_pvalue').submit(function (e) {
+	            cutoff = parseFloat($('#pvalue')[0].value);
+	            if (_use_BF) {
+	                found = load_analysis_results('prime_table', fade_headers, fade_results, display_column_map_bf, row_display_filter);
+	            } else {
+	                found = load_analysis_results('prime_table', fade_headers, fade_results, display_column_map, row_display_filter);
+	            }
+	            d3.select("#total_sites_found").selectAll("span").data(found).html(function (d) {
+	                return d;
+	            });
+	            return false;
+	        });
+	
+	        $('#site_rate_display').on('show', function (e) {
+	            //alert ("Show");
+	            //console.log (this);
+	            return true;
+	        });
+	
+	        $('body').on('click', '[data-toggle="modal"]', function (event) {
+	            display_site_properties($(this).attr("data-codon-id"));
+	        });
+	
+	        $('#set-p-value').click(function (event) {
+	            d3.select("#pq_selector").html("Posterior <span class='caret'></span>");
+	            _use_BF = false;
+	            event.preventDefault();
+	        });
+	
+	        $('#set-q-value').click(function (event) {
+	            d3.select("#pq_selector").html("BF <span class='caret'></span>");
+	            _use_BF = true;
+	            event.preventDefault();
+	        });
+	
+	        $('body').on('click', '#property_selector .btn', function (event) {
+	            event.stopPropagation(); // prevent default bootstrap behavior
+	            if ($(this).attr('data-toggle') != 'button') {
+	                // don't toggle if data-toggle="button"
+	                $(this).toggleClass('active');
+	            }
+	            toggle_view("property_plot_svg", parseInt($(this).attr('data-property-id')), $(this).hasClass('active')); // button state AFTER the click
+	        });
+	    };
+	
+	    var property_plot_done = false;
+	
+	    var display_site_properties = function display_site_properties(site_id) {
+	        job_id = $('body').attr('data-job-id');
+	        url = "/cgi-bin/datamonkey/wrapHyPhyBF.pl?file=fade_site&mode=1&arguments=" + job_id + "-" + site_id;
+	        d3.json(url, function (json) {
+	            site_info(json, site_id);
+	        });
+	    };
+	
+	    var toggle_view = function toggle_view(property_plot, group, show_hide) {
+	        if (show_hide) {
+	            prop = 'visible';
+	        } else {
+	            prop = 'hidden';
+	        }
+	        d3.select("#" + property_plot).selectAll(".dot" + group).style("visibility", prop);
+	    };
+	
+	    var site_info = function site_info(values, site_id) {
+	        d3.select("#site_rate_display_header").html("Detailed information about site " + site_id);
+	        elements = dict_to_array(values);
+	        headers = keys_in_dict(elements[0]).sort();
+	        var header_element = d3.select('#site_info_table').select("thead");
+	        header_element.selectAll("th").remove();
+	        header_element.selectAll("th").data(headers).enter().append("th").html(function (d, i) //Get header of table
+	        {
+	            return d;
+	        });
+	    };
+	
+	    var plot_property_graphs = function plot_property_graphs(property_plot, property_info) {
+	        if (!property_plot_done) {
+	            property_info = property_info.map(display_column_map);
+	            property_plot_done = true;
+	            var site_count = property_info.length;
+	
+	            //console.log (d3.extent (property_info.map(function (d){return d[0];})));
+	
+	            var margin = { top: 20, right: 40, bottom: 30, left: 40 },
+	                width = 800 - margin.left - margin.right,
+	                height = 500 - margin.top - margin.bottom;
+	
+	            var x = d3.scale.linear().range([0, width]);
+	
+	            var y = d3.scale.linear().range([height, 0]);
+	
+	            var color = d3.scale.category10();
+	
+	            var xAxis = d3.svg.axis().scale(x).orient("bottom");
+	
+	            var yAxis = d3.svg.axis().scale(y).orient("left");
+	
+	            var yAxis2 = d3.svg.axis().scale(y).orient("right");
+	
+	            var make_x_axis = function make_x_axis() {
+	                return d3.svg.axis().scale(x).orient("bottom").ticks(20);
+	            };
+	
+	            var make_y_axis = function make_y_axis() {
+	                return d3.svg.axis().scale(y).orient("left").ticks(20);
+	            };
+	
+	            var svg = d3.select("#" + property_plot).attr("width", width + margin.left + margin.right).attr("height", height + margin.top + margin.bottom).append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+	
+	            x.domain([1, site_count]);
+	            y.domain([0, 1]);
+	
+	            svg.append("g").attr("class", "x hyphy-axis").attr("transform", "translate(0," + height + ")").call(xAxis).append("text")
+	            //.attr("class", "label")
+	            .attr("x", width).attr("y", 30).style("text-anchor", "end").text("Site index");
+	
+	            svg.append("g").attr("class", "grid").call(make_y_axis().tickSize(-width, 0, 0).tickFormat(""));
+	
+	            svg.append("g").attr("class", "grid").attr("transform", "translate(0," + height + ")").call(make_x_axis().tickSize(-height, 0, 0).tickFormat(""));
+	
+	            svg.append("g").attr("class", "y hyphy-axis").call(yAxis).append("text")
+	            //.attr("class", "label")
+	            .attr("transform", "rotate(-90)").attr("y", -37).attr("dy", ".71em").style("text-anchor", "end").text("P(Bias>1)");
+	
+	            var y2 = svg.append("g").attr("class", "y hyphy-axis").attr("transform", "translate(" + width + ",0)").call(yAxis2.tickFormat(""));
+	
+	            y2.append("text")
+	            //.attr("class", "label")
+	            .attr("transform", "rotate(-90)").attr("y", 10).attr("dy", ".71em").style("text-anchor", "end").text("High Posteriors");
+	
+	            y2.append("text")
+	            //.attr("class", "label")
+	            .attr("transform", "rotate(-90)").attr("y", 10).attr("x", -height).attr("dy", ".71em").style("text-anchor", "start").text("Low Posteriors");
+	
+	            var legend = svg.selectAll(".legend").data(color.domain()).enter().append("g").attr("class", "legend").attr("transform", function (d, i) {
+	                return "translate(0," + i * 20 + ")";
+	            });
+	
+	            var h = {}; //Hash of numbers -> AA names for labels
+	            h[1] = "Alanine";
+	            h[2] = "Cysteine";
+	            h[3] = "Aspartic acid";
+	            h[4] = "Glutamic acid";
+	            h[5] = "Phenylalanine";
+	            h[6] = "Glycine";
+	            h[7] = "Histidine";
+	            h[8] = "Isoleucine";
+	            h[9] = "Lysine";
+	            h[10] = "Leucine";
+	            h[11] = "Methionine";
+	            h[12] = "Asparagine";
+	            h[13] = "Proline";
+	            h[14] = "Glutamine";
+	            h[15] = "Arginine";
+	            h[16] = "Serine";
+	            h[17] = "Threonine";
+	            h[18] = "Valine";
+	            h[19] = "Tryptophan";
+	            h[20] = "Tyrosine";
+	
+	            var vis = 'visible';
+	            for (var series = 1; series <= 20; series++) {
+	                if (series > 1) {
+	                    vis = 'hidden';
+	                }
+	                svg.selectAll(".dot" + series).data(property_info).enter().append("circle").attr("class", "dot" + series).attr("r", function (d) {
+	                    if (d[series] == 0) return 1;return 3.5;
+	                }).attr("cx", function (d) {
+	                    return x(d[0]);
+	                }).attr("cy", function (d) {
+	                    return y(d[series]);
+	                }).style("fill", function (d) {
+	                    return color(series);
+	                }).style("opacity", 0.5).style('visibility', vis).append("title").text(function (d) {
+	                    return "Site " + d[0] + ", " + h[series] + " P(Beta>1) =" + d[series];
+	                });
+	                d3.select("#show_property" + series).style("color", function (d) {
+	                    return color(series);
+	                }); //Colour buttons on HTML
+	            }
+	        }
+	    };
+	
+	    var load_data_summary = function load_data_summary(id, json_object) {
+	        //if (error) return console.warn(error);
+	        reportable_entries = [];
+	        warnings = [];
+	        for (var k in json_object) {
+	            if (k == 'Warnings') {
+	                warnings = json_object[k];
+	            } else {
+	                reportable_entries.push({ "Phase": k, "Information": json_object[k] });
+	            }
+	        }
+	        info_container = d3.select("#" + id);
+	        items = info_container.selectAll("dt").data(reportable_entries);
+	        items.enter().append("dt").text(function (d) {
+	            return d["Phase"];
+	        });
+	        item_count = items[0].length;
+	        current_child = 2;
+	        for (z = 1; z <= item_count; z++) {
+	            info = dict_to_array(reportable_entries[z - 1]["Information"]);
+	            for (y = 0; y < info.length; y++) {
+	                info_container.insert("dd", ":nth-child(" + current_child + ")").data([info[y]]).text(function (d) {
+	                    return d;
+	                });
+	            }
+	            key = reportable_entries[z - 1]["Phase"];
+	            if (key in warnings) {
+	                current_child++;
+	                info_container.insert("dd", ":nth-child(" + current_child + ")").selectAll("div").data([warnings[key]]).enter().append("div").classed("alert", true).html(function (d) {
+	                    return d;
+	                });
+	            }
+	            current_child += info.length + 1;
+	        }
+	        return 0;
+	    };
+	
+	    var load_analysis_results = function load_analysis_results(id, headers, matrix, column_selector, condition) {
+	        var header_element = d3.select('#' + id).select("thead");
+	        header_element.selectAll("th").remove();
+	        header_element.selectAll("th").data(headers[0]).enter().append("th").html(function (d, i) //Get header of table
+	        {
+	            return "<a href='#' data-toggle='tooltip' data-placement = 'right' data-html = true title data-original-title='" + headers[1][i] + "'>" + d + "</a>";
+	        });
+	
+	        var parent_element = d3.select('#' + id).select("tbody");
+	        parent_element.selectAll("tr").remove();
+	        var filtered_matrix = matrix.map(column_selector).filter(condition, cutoff); //Get the columns to display in table
+	        var rows = parent_element.selectAll("tr").data(function (d) {
+	            return filtered_matrix;
+	        });
+	        var conserved = 0;
+	        rows.enter().append("tr").selectAll("td").data(function (d) {
+	            return d;
+	        }).enter().append("td").html(function (d, i) {
+	            d = parseFloat(d);
+	            if (i) {
+	                if (_use_BF == false) {
+	                    if (d > 0.99) return "1.00";
+	                    return d.toFixed(2);
+	                } else {
+	                    if (d > 100) return "100+";
+	                    return d.toFixed(1);
+	                }
+	            }
+	            return "<b>" + d + "</b> <a href='#site_rate_display' data-toggle='modal' data-codon-id = '" + d + "' data-placement = 'bottom'><i class='icon-list'></i></a>";
+	        }).classed("btn-danger", function (d, i, j) {
+	            if (d >= cutoff && i >= 1) {
+	                conserved++;return true;
+	            }return false;
+	        });
+	
+	        d3.select('#' + id).classed("table-striped table-hover", true);
+	        $('a').tooltip();
+	        return [filtered_matrix.length, conserved];
+	    };
+	
+	    var numberToColor = function numberToColor(value) {
+	        if (typeof value == "string") {
+	            return "rgba (1,0,0,1)";
+	        }
+	        rate_value = Math.min(20, Math.max(-20, Math.log(value) / Math.LN20));
+	        if (rate_value < 0) {
+	            return _colorizerB((20 + rate_value) / 20.0);
+	        }
+	        return _colorizerR(rate_value / 20.0);
+	    };
+	
+	    var fgColor = function fgColor(value, normalizer) {
+	        if (typeof value == "string") {
+	            return "rgba (1,1,1,1)";
+	        }
+	
+	        var score = 1 - Math.exp(-20 * value / normalizer);
+	
+	        if (score > 0.45) {
+	            return "white";
+	        }
+	        return "black";
+	    };
+	
+	    set_handlers('test');
+	    initial_display();
+	};
+	
+	module.exports = datamonkey_fade;
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(38), __webpack_require__(2)))
+
+/***/ },
+
+/***/ 248:
+/***/ function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(d3) {'use strict';
+	
+	var React = __webpack_require__(44);
+	
+	var FadeSummary = React.createClass({
+	  displayName: 'FadeSummary',
+	
+	
+	  float_format: d3.format(".2f"),
+	
+	  countBranchesTested: function countBranchesTested(branches_tested) {
+	    if (branches_tested) {
+	      return branches_tested.split(';').length;
+	    } else {
+	      return 0;
+	    }
+	  },
+	
+	  getDefaultProps: function getDefaultProps() {
+	    return {
+	      subs: []
+	    };
+	  },
+	
+	  componentDidMount: function componentDidMount() {
+	
+	    this.setProps({
+	      alpha_level: 0.05,
+	      sequences: this.props.msa.sequences,
+	      subs: this.props.fade_results["TREE_LENGTHS"][0],
+	      sites: this.props.msa.sites,
+	      model: this.props.fade_results["MODEL_INFO"],
+	      grid_desc: this.props.fade_results["GRID_DESCRIPTION"],
+	      branches_tested: this.props.fade_results["BRANCHES_TESTED"]
+	    });
+	  },
+	
+	  render: function render() {
+	
+	    var self = this;
+	
+	    return React.createElement(
+	      'dl',
+	      { className: 'dl-horizontal' },
+	      React.createElement(
+	        'dt',
+	        null,
+	        'Data summary'
+	      ),
+	      React.createElement(
+	        'dd',
+	        null,
+	        this.props.sequences,
+	        ' sequences with ',
+	        this.props.partitions,
+	        ' partitions.'
+	      ),
+	      React.createElement(
+	        'dd',
+	        null,
+	        React.createElement(
+	          'div',
+	          { className: 'alert' },
+	          'These sequences have not been screened for recombination. Selection analyses of alignments with recombinants in them using a single tree may generate ',
+	          React.createElement(
+	            'u',
+	            null,
+	            'misleading'
+	          ),
+	          ' results.'
+	        )
+	      ),
+	      this.props.msa.partition_info.map(function (partition, index) {
+	        return React.createElement(
+	          'div',
+	          null,
+	          React.createElement(
+	            'dt',
+	            null,
+	            'Partition ',
+	            partition["partition"]
+	          ),
+	          React.createElement(
+	            'dd',
+	            null,
+	            ' ',
+	            self.float_format(self.props.subs[index]),
+	            ' subs/ aminoacid  site'
+	          ),
+	          React.createElement(
+	            'dd',
+	            null,
+	            partition["endcodon"] - partition["startcodon"],
+	            ' aminoacids'
+	          )
+	        );
+	      }),
+	      React.createElement(
+	        'dt',
+	        null,
+	        'Settings'
+	      ),
+	      React.createElement(
+	        'dd',
+	        null,
+	        this.props.model
+	      ),
+	      React.createElement(
+	        'dd',
+	        null,
+	        this.props.grid_desc
+	      ),
+	      React.createElement(
+	        'dd',
+	        null,
+	        'Directional model applied to ',
+	        self.countBranchesTested(this.props.branches_tested),
+	        ' branches'
+	      )
+	    );
+	  }
+	
+	});
+	
+	// Will need to make a call to this
+	// omega distributions
+	function render_fade_summary(json, msa) {
+	  React.render(React.createElement(FadeSummary, { fade_results: json, msa: msa }), document.getElementById("summary-div"));
+	}
+	
+	module.exports = render_fade_summary;
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(38)))
+
+/***/ },
+
+/***/ 249:
+/***/ function(module, exports) {
+
+	// removed by extract-text-webpack-plugin
 
 /***/ }
 

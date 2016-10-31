@@ -1,6 +1,8 @@
 var React = require('react');
 var datamonkey = require('../../datamonkey/datamonkey.js');
 
+import {DatamonkeyTable} from "./shared_summary.jsx";
+
 var SLACSites = React.createClass({
     propTypes: {
      headers: React.PropTypes.arrayOf (React.PropTypes.arrayOf (React.PropTypes.string)).isRequired,
@@ -248,5 +250,4 @@ var SLACSites = React.createClass({
   }
 });
 
-
-
+module.exports.SLACSites = SLACSites;

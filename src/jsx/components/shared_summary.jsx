@@ -587,5 +587,10 @@ var DatamonkeyTimersTable = React.createClass({
 });
 
 
-
+module.exports.DatamonkeyTable = DatamonkeyTable;
+module.exports.DatamonkeyTableRow = DatamonkeyTableRow;
+module.exports.DatamonkeyRateDistributionTable = DatamonkeyRateDistributionTable;
+module.exports.DatamonkeyPartitionTable = DatamonkeyPartitionTable;
+module.exports.DatamonkeyModelTable = DatamonkeyModelTable;
+module.exports.DatamonkeyTimersTable = DatamonkeyTimersTable;
 

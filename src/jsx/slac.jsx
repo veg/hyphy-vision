@@ -1,10 +1,13 @@
+var React = require('react'),
+    ReactDOM = require('react-dom'),
+    _ = require('underscore');
 
-require("./components/shared_summary.jsx");
-require("./components/slac_sites.jsx");
-require("./components/slac_summary.jsx");
+import {DatamonkeyPartitionTable, DatamonkeyModelTable, DatamonkeyTimersTable} from "./components/shared_summary.jsx";
+import {SLACSites} from "./components/slac_sites.jsx";
+import {SLACBanner} from "./components/slac_summary.jsx";
 
-var React = require('react');
 var datamonkey = require('../datamonkey/datamonkey.js');
+require('../datamonkey/helpers.js');
 
 var SLAC = React.createClass({
 
@@ -192,8 +195,7 @@ var SLAC = React.createClass({
                         </div>
                     </div>
 
-                    <div className='tab-pane' id="tree_tab">
-                    </div>
+                    <div className='tab-pane' id="tree_tab"></div>
 
             </div>
         );
@@ -213,3 +215,6 @@ function render_slac(url, element) {
     document.getElementById(element)
   );
 }
+
+
+module.exports = render_slac;
