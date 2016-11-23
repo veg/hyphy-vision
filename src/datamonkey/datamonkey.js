@@ -152,48 +152,6 @@ datamonkey.save_image = function(type, container) {
 
 };
 
-datamonkey.jobQueue = function(container) {
-
-  // Load template
-  _.templateSettings = {
-    evaluate    : /\{\%(.+?)\%\}/g,
-    interpolate : /\{\{(.+?)\}\}/g,
-    variable    : "rc"
-  };
-
-  d3.json( '/jobqueue', function(data) {
-
-    var job_queue = _.template(
-      $("script.job-queue").html()
-    );
-
-    var job_queue_html = job_queue(data);
-    $("#job-queue-panel").find('table').remove();
-    $(container).append(job_queue_html);
-
-  });
-
-};
-
-datamonkey.status_check = function () {
-
-  // Check if there are any status checkers on the page
-  if($(".status-checker").length) {
-    // Check health status and report back to element
-    var url = "/clusterhealth";
-    d3.json(url, function(data) {
-      // Add appropriate class based on result
-      if (data.successful_connection) {
-        d3.select('.status-checker').classed({'status-healthy': true, 'status-troubled': false});
-        $(".status-checker").attr( "title", 'Cluster Status : Healthy');
-      } else {
-        d3.select('.status-checker').classed({'status-healthy': false, 'status-troubled': true});
-        $(".status-checker").attr( "title", 'Cluster Status : Troubled; ' + data.msg.description);
-      }
-    });
-  }
-};
-
 datamonkey.validate_date = function () {
 
   // Check that it is not empty
