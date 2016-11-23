@@ -107,9 +107,9 @@ if (process.env.NODE_ENV === 'production') {
   config.plugins.push(new webpack.optimize.UglifyJsPlugin());
 }
 
-var minimized = cloneDeep(config);
+//var minimized = cloneDeep(config);
 
-minimized.plugins.push(new webpack.optimize.UglifyJsPlugin());
-minimized.output.filename = 'hyphyvision.min.js';
+//minimized.plugins.push(new webpack.optimize.UglifyJsPlugin());
+//minimized.output.filename = 'hyphyvision.min.js';
 
-module.exports = [config, minimized];
+module.exports = config;

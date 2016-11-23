@@ -15,6 +15,27 @@ datamonkey.errorModal = function (msg) {
   $('#errorModal').modal();
 };
 
+function b64toBlob(b64, onsuccess, onerror) {
+    var img = new Image();
+
+    img.onerror = onerror;
+
+    img.onload = function onload() {
+        var canvas = document.getElementById("hyphy-chart-canvas");
+        canvas.width = img.width;
+        canvas.height = img.height;
+
+        var ctx = canvas.getContext('2d');
+      	ctx.fillStyle = "#FFFFFF";
+				ctx.fillRect(0,0,canvas.width,canvas.height);
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+        canvas.toBlob(onsuccess);
+    };
+
+    img.src = b64;
+}
+
 
 datamonkey.export_csv_button = function(data) {
   data = d3.csv.format(data);
@@ -140,7 +161,20 @@ datamonkey.save_image = function(type, container) {
   var image_string = 'data:image/svg+xml;base66,' + encodeURIComponent(to_download);
 
   if(type == "png") {
-    convert_svg_to_png(image_string);
+		b64toBlob(image_string,
+				function(blob) {
+
+						var url = window.URL.createObjectURL(blob);
+						var pom = document.createElement('a');
+						pom.setAttribute('download', 'image.png');
+						pom.setAttribute('href', url);
+						$("body").append(pom);
+						pom.click();
+						pom.remove();
+
+				}, function(error) {
+						// handle error
+				});
   } else {
     var pom = document.createElement('a');
     pom.setAttribute('download', 'image.svg');
