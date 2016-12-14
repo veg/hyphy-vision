@@ -112,4 +112,4 @@ var minimized = cloneDeep(config);
 minimized.plugins.push(new webpack.optimize.UglifyJsPlugin());
 minimized.output.filename = 'hyphyvision.min.js';
 
-module.exports = [config, minimized];
+module.exports = [config,minimized];
