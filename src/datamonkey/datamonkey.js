@@ -15,6 +15,27 @@ datamonkey.errorModal = function (msg) {
   $('#errorModal').modal();
 };
 
+function b64toBlob(b64, onsuccess, onerror) {
+    var img = new Image();
+
+    img.onerror = onerror;
+
+    img.onload = function onload() {
+        var canvas = document.getElementById("hyphy-chart-canvas");
+        canvas.width = img.width;
+        canvas.height = img.height;
+
+        var ctx = canvas.getContext('2d');
+      	ctx.fillStyle = "#FFFFFF";
+				ctx.fillRect(0,0,canvas.width,canvas.height);
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+        canvas.toBlob(onsuccess);
+    };
+
+    img.src = b64;
+}
+
 
 datamonkey.export_csv_button = function(data) {
   data = d3.csv.format(data);
@@ -140,7 +161,20 @@ datamonkey.save_image = function(type, container) {
   var image_string = 'data:image/svg+xml;base66,' + encodeURIComponent(to_download);
 
   if(type == "png") {
-    convert_svg_to_png(image_string);
+		b64toBlob(image_string,
+				function(blob) {
+
+						var url = window.URL.createObjectURL(blob);
+						var pom = document.createElement('a');
+						pom.setAttribute('download', 'image.png');
+						pom.setAttribute('href', url);
+						$("body").append(pom);
+						pom.click();
+						pom.remove();
+
+				}, function(error) {
+						// handle error
+				});
   } else {
     var pom = document.createElement('a');
     pom.setAttribute('download', 'image.svg');
@@ -150,48 +184,6 @@ datamonkey.save_image = function(type, container) {
     pom.remove();
   }
 
-};
-
-datamonkey.jobQueue = function(container) {
-
-  // Load template
-  _.templateSettings = {
-    evaluate    : /\{\%(.+?)\%\}/g,
-    interpolate : /\{\{(.+?)\}\}/g,
-    variable    : "rc"
-  };
-
-  d3.json( '/jobqueue', function(data) {
-
-    var job_queue = _.template(
-      $("script.job-queue").html()
-    );
-
-    var job_queue_html = job_queue(data);
-    $("#job-queue-panel").find('table').remove();
-    $(container).append(job_queue_html);
-
-  });
-
-};
-
-datamonkey.status_check = function () {
-
-  // Check if there are any status checkers on the page
-  if($(".status-checker").length) {
-    // Check health status and report back to element
-    var url = "/clusterhealth";
-    d3.json(url, function(data) {
-      // Add appropriate class based on result
-      if (data.successful_connection) {
-        d3.select('.status-checker').classed({'status-healthy': true, 'status-troubled': false});
-        $(".status-checker").attr( "title", 'Cluster Status : Healthy');
-      } else {
-        d3.select('.status-checker').classed({'status-healthy': false, 'status-troubled': true});
-        $(".status-checker").attr( "title", 'Cluster Status : Troubled; ' + data.msg.description);
-      }
-    });
-  }
 };
 
 datamonkey.validate_date = function () {

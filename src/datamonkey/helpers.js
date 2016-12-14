@@ -178,11 +178,30 @@ function datamonkey_describe_vector (vector, as_list) {
 }
 
 function datamonkey_export_handler (data, filename, mimeType) {
+
+  function msieversion() {
+    var ua = window.navigator.userAgent;
+    var msie = ua.indexOf("MSIE ");
+    if (msie > 0 || !!navigator.userAgent.match(/Trident.*rv\:11\./)) {
+      return true;
+    }
+    return false;
+  }
+
+  if(msieversion()) {
+    var IEwindow = window.open();
+    IEwindow.document.write(data);
+    IEwindow.document.close();
+    IEwindow.document.execCommand('SaveAs', true, filename + ".csv");
+    IEwindow.close();
+  } else {
     var pom = document.createElement('a');
     pom.setAttribute('href', 'data:' + (mimeType || 'text/plain')  +  ';charset=utf-8,' + encodeURIComponent(data));
     pom.setAttribute('download', filename || "download.tsv");
     pom.click();
     pom.remove();
+  }
+
 }
 
 

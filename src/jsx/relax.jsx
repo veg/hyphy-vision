@@ -3,8 +3,10 @@ import {TreeSummary} from "./components/tree_summary.jsx";
 import {Tree} from "./components/tree.jsx";
 import {OmegaPlotGrid} from "./components/omega_plots.jsx";
 
-var React = require('react');
-var _ = require('underscore');
+var React = require('react'),
+		ReactDOM = require('react-dom'),
+		_ = require('underscore');
+
 var RELAX = React.createClass({
 
   float_format : d3.format(".2f"),
@@ -287,7 +289,7 @@ var RELAX = React.createClass({
 // Will need to make a call to this
 // omega distributions
 function render_relax(url, element) {
-  React.render(
+  ReactDOM.render(
     <RELAX url={url} />,
     document.getElementById(element)
   );
