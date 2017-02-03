@@ -344,7 +344,7 @@ var BSREL = React.createClass({
 // Will need to make a call to this
 // omega distributions
 function render_absrel(url, element) {
-  React.render(
+  ReactDOM.render(
     <BSREL url={url} />,
     document.getElementById(element)
   );
