@@ -1117,12 +1117,12 @@ webpackJsonp([0],[
 	          React.createElement(
 	            "h4",
 	            { className: "list-group-item-heading" },
-	            React.createElement("i", { className: "fa fa-cubes", styleFormat: "margin-right: 10px" }),
+	            React.createElement("i", { className: "fa fa-cubes", style: { marginRight: "10px" } }),
 	            "Model fits"
 	          ),
 	          React.createElement(
 	            "table",
-	            { className: "table table-hover table-condensed list-group-item-text", styleFormat: "margin-top:0.5em;" },
+	            { className: "table table-hover table-condensed list-group-item-text", style: { marginTop: "0.5em" } },
 	            React.createElement("thead", { id: "summary-model-header1" }),
 	            React.createElement("tbody", { id: "summary-model-table" })
 	          )
@@ -20665,7 +20665,7 @@ webpackJsonp([0],[
 	        { className: "tab-pane active", id: "summary_tab" },
 	        React.createElement(
 	          "div",
-	          { className: "row", styleName: "margin-top: 5px" },
+	          { className: "row", style: { marginTop: "5px" } },
 	          React.createElement(
 	            "div",
 	            { className: "col-md-12" },
@@ -20678,7 +20678,7 @@ webpackJsonp([0],[
 	                React.createElement(
 	                  "h3",
 	                  { className: "list-group-item-heading" },
-	                  React.createElement("i", { className: "fa fa-list", styleName: "margin-right: 10px" }),
+	                  React.createElement("i", { className: "fa fa-list", style: { "marginRight": "10px" } }),
 	                  React.createElement(
 	                    "span",
 	                    { id: "summary-method-name" },
@@ -21634,7 +21634,7 @@ webpackJsonp([0],[
 	                React.createElement(
 	                  "h3",
 	                  { className: "list-group-item-heading" },
-	                  React.createElement("i", { className: "fa fa-list", styleFormat: "margin-right: 10px" }),
+	                  React.createElement("i", { className: "fa fa-list", style: { marginRight: '10px' } }),
 	                  React.createElement(
 	                    "span",
 	                    { id: "summary-method-name" },
@@ -21644,7 +21644,7 @@ webpackJsonp([0],[
 	                ),
 	                React.createElement(
 	                  "p",
-	                  { className: "list-group-item-text lead", styleFormat: "margin-top:0.5em; " },
+	                  { className: "list-group-item-text lead", style: { marginTop: "0.5em" } },
 	                  "Test for selection ",
 	                  React.createElement(
 	                    "strong",

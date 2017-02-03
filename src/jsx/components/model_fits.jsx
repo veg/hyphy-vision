@@ -250,8 +250,8 @@ var ModelFits = React.createClass({
         <div className="col-lg-12">
           <ul className="list-group">
             <li className="list-group-item">
-              <h4 className="list-group-item-heading"><i className="fa fa-cubes" styleFormat = 'margin-right: 10px'></i>Model fits</h4>
-               <table className="table table-hover table-condensed list-group-item-text" styleFormat ="margin-top:0.5em;">
+              <h4 className="list-group-item-heading"><i className="fa fa-cubes" style = {{marginRight: "10px"}}></i>Model fits</h4>
+               <table className="table table-hover table-condensed list-group-item-text" style = {{marginTop:"0.5em"}} >
                   <thead id='summary-model-header1'></thead>
                   <tbody id='summary-model-table'></tbody>
                </table>

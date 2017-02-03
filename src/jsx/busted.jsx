@@ -244,12 +244,12 @@ var BUSTED = React.createClass({
 
       <div className="tab-content">
         <div className="tab-pane active" id="summary_tab">
-          <div className="row" styleName="margin-top: 5px">
+          <div className="row" style={{marginTop: "5px"}}>
             <div className="col-md-12">
               <ul className="list-group">
               <li className="list-group-item list-group-item-info">
                 <h3 className="list-group-item-heading">
-                  <i className="fa fa-list" styleName='margin-right: 10px'></i>
+                  <i className="fa fa-list" style={{"marginRight": "10px"}}></i>
                   <span id="summary-method-name">BUSTED</span> summary</h3>
                   There is <strong>{this.state.test_result}</strong> of episodic diversifying selection, with LRT p-value of {this.state.p}.
                   <p>
