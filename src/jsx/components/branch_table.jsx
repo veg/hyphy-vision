@@ -9,8 +9,8 @@ var BranchTable = React.createClass({
     var table_row_data = this.getBranchRows(this.props.tree, this.props.test_results, this.props.annotations),
         table_columns = this.getBranchColumns(table_row_data),
         initial_model_name = _.take(_.keys(this.props.annotations)),
-        initial_omegas = this.props.annotations ? 
-                         this.props.annotations[initial_model_name]["omegas"] : 
+        initial_omegas = this.props.annotations ?
+                         this.props.annotations[initial_model_name]["omegas"] :
                          null;
 
     var distro_settings = {
@@ -24,11 +24,11 @@ var BranchTable = React.createClass({
       svg_id : "prop-chart"
     };
 
-    return { 
+    return {
              tree : this.props.tree,
              test_results : this.props.test_results,
              annotations : this.props.annotations,
-             table_row_data : table_row_data, 
+             table_row_data : table_row_data,
              table_columns : table_columns,
              current_model_name : initial_model_name,
              current_omegas : initial_omegas,
@@ -133,7 +133,7 @@ var BranchTable = React.createClass({
       branch_table.on("click", function(d) {
         var label = d[0];
         self.setState({
-                        current_model_name : label, 
+                        current_model_name : label,
                         current_omegas : self.state.annotations[label]["omegas"]
                       });
       });
@@ -172,7 +172,7 @@ var BranchTable = React.createClass({
         omega_header = '<th>ω distribution over sites</th>';
 
     // inspect table_row_data and return header
-    var all_columns = [ 
+    var all_columns = [
                     name_header,
                     length_header,
                     lrt_header,
@@ -188,7 +188,7 @@ var BranchTable = React.createClass({
 
     // remove all columns that have 0, null, or undefined rows
     var items = d3.transpose(table_row_data);
-    
+
 
     return column_headers;
 
@@ -196,13 +196,13 @@ var BranchTable = React.createClass({
 
   componentWillReceiveProps: function(nextProps) {
 
-    var table_row_data = this.getBranchRows(nextProps.tree, 
-                                            nextProps.test_results, 
+    var table_row_data = this.getBranchRows(nextProps.tree,
+                                            nextProps.test_results,
                                             nextProps.annotations),
         table_columns = this.getBranchColumns(table_row_data),
         initial_model_name = _.take(_.keys(nextProps.annotations)),
-        initial_omegas = nextProps.annotations ? 
-                         nextProps.annotations[initial_model_name]["omegas"] : 
+        initial_omegas = nextProps.annotations ?
+                         nextProps.annotations[initial_model_name]["omegas"] :
                          null;
 
     var distro_settings = {
@@ -217,11 +217,11 @@ var BranchTable = React.createClass({
     };
 
     if(nextProps.test_results && nextProps.annotations) {
-      this.setState({ 
+      this.setState({
                tree : nextProps.tree,
                test_results : nextProps.test_results,
                annotations : nextProps.annotations,
-               table_row_data : table_row_data, 
+               table_row_data : table_row_data,
                table_columns : table_columns,
                current_model_name : initial_model_name,
                current_omegas : initial_omegas,
@@ -269,15 +269,15 @@ var BranchTable = React.createClass({
 
     return (
         <div className="row">
-          <div id="hyphy-branch-table" className="col-md-7">
+          <div id="hyphy-branch-table" className="col-md-12">
               <table className="table table-hover table-condensed">
                   <thead id="table-branch-header"></thead>
                   <tbody id="table-branch-table"></tbody>
               </table>
           </div>
 
-          <div id='primary-omega-tag' className="col-md-5">
-            <PropChart name={self.state.current_model_name} omegas={self.state.current_omegas} 
+          <div id='primary-omega-tag' className="col-md-12">
+            <PropChart name={self.state.current_model_name} omegas={self.state.current_omegas}
              settings={self.state.distro_settings} />
           </div>
         </div>

@@ -302,16 +302,14 @@ var BSREL = React.createClass({
     var self = this;
 
     return (
-        <div className="tab-content">
-            <div className="tab-pane active" id="summary-tab">
-
+        <div id="results">
+            <div id="summary-tab">
                 <div className="row">
-                  <div id="summary-div" className="col-md-12">
+                    <div id="summary-div" className="col-md-12">
                     <BSRELSummary test_results={self.state.test_results}
                                   pmid={self.state.pmid} />
                   </div>
                 </div>
-
                 <div className="row">
                     <div id="hyphy-tree-summary" className="col-md-6">
                       <TreeSummary json={self.state.json} />
@@ -322,15 +320,19 @@ var BSREL = React.createClass({
                 </div>
             </div>
 
-            <div className='tab-pane' id="tree-tab">
-              <Tree json={self.state.json}
-                    settings={self.state.settings} />
+            <div className="row">
+                <div id="tree-tab" className="col-md-12">
+                    <Tree json={self.state.json}
+                          settings={self.state.settings} />
+                </div>
             </div>
 
-            <div className='tab-pane' id="table_tab">
-              <BranchTable tree={self.state.tree}
-                           test_results={self.state.test_results}
-                           annotations={self.state.annotations} />
+            <div className="row">
+                <div id="table-tab" className="col-md-12">
+                    <BranchTable tree={self.state.tree}
+                                 test_results={self.state.test_results}
+                                 annotations={self.state.annotations} />
+                </div>
             </div>
 
         </div>
