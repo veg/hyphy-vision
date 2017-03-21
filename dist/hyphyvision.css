@@ -9218,6 +9218,23 @@ button.close {
     position: fixed;
 }
 
+.nav-pills a {
+    color: #428765;
+}
+
+.nav-pills a:hover {
+    color: #060;
+}
+
+.nav-pills > li.active > a {
+    color: #fff;
+    background-color: #428765;
+}
+
+.nav-pills > li.active > a:hover {
+    background-color: #060;
+}
+
 /* Bootstrap-docs scroll spy */
 /* sidebar */
 .bs-docs-sidebar {
