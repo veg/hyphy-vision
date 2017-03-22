@@ -1,3 +1,7 @@
+
+var React = require('react');
+var datamonkey = require('../../datamonkey/datamonkey.js');
+
 var SLACBanner = React.createClass({
 
   dm_countSites : function (json, cutoff) {
@@ -81,5 +85,4 @@ var SLACBanner = React.createClass({
   }
 });
 
-
-
+module.exports.SLACBanner = SLACBanner;

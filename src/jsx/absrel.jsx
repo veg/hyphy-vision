@@ -1,3 +1,20 @@
+var React = require('react'),
+		ReactDOM = require('react-dom');
+
+var datamonkey = require('../datamonkey/datamonkey.js'),
+    _ = require('underscore'),
+		busted = require('../busted/busted.js');
+
+require("phylotree");
+require("phylotree.css");
+import {BSRELSummary} from "./components/absrel_summary.jsx";
+import {ModelFits} from "./components/model_fits.jsx";
+import {TreeSummary} from "./components/tree_summary.jsx";
+import {Tree} from "./components/tree.jsx";
+import {BranchTable} from "./components/branch_table.jsx";
+
+var React = require('react');
+
 var BSREL = React.createClass({
 
   float_format : d3.format(".2f"),
@@ -9,6 +26,11 @@ var BSREL = React.createClass({
 
       data["fits"]["MG94"]["branch-annotations"] = self.formatBranchAnnotations(data, "MG94");
       data["fits"]["Full model"]["branch-annotations"] = self.formatBranchAnnotations(data, "Full model");
+
+      // GH-#18 Add omega annotation tag
+      data["fits"]["MG94"]["annotation-tag"] = "ω";
+      data["fits"]["Full model"]["annotation-tag"] = "ω";
+
 
       var annotations = data["fits"]["Full model"]["branch-annotations"],
           json = data,
@@ -42,7 +64,7 @@ var BSREL = React.createClass({
 
         // clear existing linearGradients
 
-        var scaling_exponent = 1./3,
+        var scaling_exponent = 1.0/3,
             omega_format = d3.format(".3r"),
             prop_format = d3.format(".2p"),
             fit_format = d3.format(".2f"),
@@ -55,7 +77,6 @@ var BSREL = React.createClass({
                 ? ["#DDDDDD", "#AAAAAA", "#888888", "#444444", "#000000"]
                 : ["#6e4fa2", "#3288bd", "#e6f598", "#f46d43", "#9e0142"])
             .clamp(true);
-
 
         var createBranchGradient = function(node) {
 
@@ -247,7 +268,7 @@ var BSREL = React.createClass({
     }
 
     // Iterate over objects
-    branch_annotations = _.mapObject(initial_branch_annotations, function(val, key) {
+    var branch_annotations = _.mapObject(initial_branch_annotations, function(val, key) {
 
       var vals = [];
         try {
@@ -323,8 +344,11 @@ var BSREL = React.createClass({
 // Will need to make a call to this
 // omega distributions
 function render_absrel(url, element) {
-  React.render(
+  ReactDOM.render(
     <BSREL url={url} />,
     document.getElementById(element)
   );
 }
+
+
+module.exports = render_absrel;

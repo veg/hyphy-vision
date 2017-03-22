@@ -1,3 +1,7 @@
+var React = require('react');
+
+var datamonkey = require('../datamonkey/datamonkey.js');
+
 var Summary = React.createClass({
 
   getDefaultProps : function() {

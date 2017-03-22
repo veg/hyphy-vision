@@ -1,3 +1,5 @@
+var datamonkey = require("./datamonkey.js");
+
 function datamonkey_get_styles(doc) {
   var styles = "",
       styleSheets = doc.styleSheets;
@@ -81,7 +83,7 @@ function datamonkey_save_newick_tree(type) {
   var defsEl = document.createElement("defs");
   svg.insertBefore(defsEl, svg.firstChild);
 
-  var styleEl = document.createElement("style")
+  var styleEl = document.createElement("style");
   defsEl.appendChild(styleEl);
   styleEl.setAttribute("type", "text/css");
 
@@ -176,11 +178,30 @@ function datamonkey_describe_vector (vector, as_list) {
 }
 
 function datamonkey_export_handler (data, filename, mimeType) {
-    var link = $('body').add('a');
-    link.attr('download', filename || "download.tsv")
-        .attr('href', 'data:' + (mimeType || 'text/plain')  +  ';charset=utf-8,' + encodeURIComponent(data))
-        .click()
-        .detach();
+
+  function msieversion() {
+    var ua = window.navigator.userAgent;
+    var msie = ua.indexOf("MSIE ");
+    if (msie > 0 || !!navigator.userAgent.match(/Trident.*rv\:11\./)) {
+      return true;
+    }
+    return false;
+  }
+
+  if(msieversion()) {
+    var IEwindow = window.open();
+    IEwindow.document.write(data);
+    IEwindow.document.close();
+    IEwindow.document.execCommand('SaveAs', true, filename + ".csv");
+    IEwindow.close();
+  } else {
+    var pom = document.createElement('a');
+    pom.setAttribute('href', 'data:' + (mimeType || 'text/plain')  +  ';charset=utf-8,' + encodeURIComponent(data));
+    pom.setAttribute('download', filename || "download.tsv");
+    pom.click();
+    pom.remove();
+  }
+
 }
 
 

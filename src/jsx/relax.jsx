@@ -1,3 +1,12 @@
+import {ModelFits} from "./components/model_fits.jsx";
+import {TreeSummary} from "./components/tree_summary.jsx";
+import {Tree} from "./components/tree.jsx";
+import {OmegaPlotGrid} from "./components/omega_plots.jsx";
+
+var React = require('react'),
+		ReactDOM = require('react-dom'),
+		_ = require('underscore');
+
 var RELAX = React.createClass({
 
   float_format : d3.format(".2f"),
@@ -103,28 +112,28 @@ var RELAX = React.createClass({
 
   getInitialState: function() {
 
-        var model_fits_id = "#hyphy-model-fits",
-            omega_plots_id = "#hyphy-omega-plots",
-            summary_id = "#hyphy-relax-summary",
-            tree_id = "#tree-tab";
+    var model_fits_id = "#hyphy-model-fits",
+        omega_plots_id = "#hyphy-omega-plots",
+        summary_id = "#hyphy-relax-summary",
+        tree_id = "#tree-tab";
 
-        var tree_settings = {
-            'omegaPlot': {},
-            'tree-options': {
-                /* value arrays have the following meaning
-                    [0] - the value of the attribute
-                    [1] - does the change in attribute value trigger tree re-layout?
-                */
-                'hyphy-tree-model': ["Partitioned MG94xREV", true],
-                'hyphy-tree-highlight': ["RELAX.test", false],
-                'hyphy-tree-branch-lengths': [true, true],
-                'hyphy-tree-hide-legend': [true, false],
-                'hyphy-tree-fill-color': [true, false]
-            },
-            'suppress-tree-render': false,
-            'chart-append-html' : true,
-            'edgeColorizer' : this.props.edgeColorizer
-        };
+    var tree_settings = {
+        'omegaPlot': {},
+        'tree-options': {
+            /* value arrays have the following meaning
+                [0] - the value of the attribute
+                [1] - does the change in attribute value trigger tree re-layout?
+            */
+            'hyphy-tree-model': ["Partitioned MG94xREV", true],
+            'hyphy-tree-highlight': ["RELAX.test", false],
+            'hyphy-tree-branch-lengths': [true, true],
+            'hyphy-tree-hide-legend': [true, false],
+            'hyphy-tree-fill-color': [true, false]
+        },
+        'suppress-tree-render': false,
+        'chart-append-html' : true,
+        'edgeColorizer' : this.props.edgeColorizer
+    };
 
     return { 
               annotations : null,
@@ -223,7 +232,7 @@ var RELAX = React.createClass({
     }
 
     // Iterate over objects
-    branch_annotations = _.mapObject(initial_branch_annotations, function(val, key) {
+    var branch_annotations = _.mapObject(initial_branch_annotations, function(val, key) {
       return {"length" : val};
     });
 
@@ -280,9 +289,11 @@ var RELAX = React.createClass({
 // Will need to make a call to this
 // omega distributions
 function render_relax(url, element) {
-  React.render(
+  ReactDOM.render(
     <RELAX url={url} />,
     document.getElementById(element)
   );
 }
 
+
+module.exports = render_relax;

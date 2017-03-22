@@ -35,7 +35,7 @@ function getStyles(doc) {
 function exportCSVButton(data) {
 
   data = d3.csv.format(data);
-  if (data != null) {
+  if (data !== null) {
     var pom = document.createElement('a');
     pom.setAttribute('href', 'data:text/csv;charset=utf-8,' + encodeURIComponent(data));
     pom.setAttribute('download', 'export.csv');
@@ -89,7 +89,7 @@ function saveImage(type, container) {
   var defsEl = document.createElement("defs");
   svg.insertBefore(defsEl, svg.firstChild); 
 
-  var styleEl = document.createElement("style")
+  var styleEl = document.createElement("style");
   defsEl.appendChild(styleEl);
   styleEl.setAttribute("type", "text/css");
 
@@ -110,11 +110,11 @@ function saveImage(type, container) {
   var source = (new XMLSerializer()).serializeToString(svg).replace('</style>', '<![CDATA[' + styles + ']]></style>');
   var rect = svg.getBoundingClientRect();
   var doctype = '<?xml version="1.0" standalone="no"?><!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">';
-  var to_download = [doctype + source]
+  var to_download = [doctype + source];
   var image_string = 'data:image/svg+xml;base66,' + encodeURIComponent(to_download);
 
   if(type == "png") {
-    convertSVGtoPNG(image_string)
+    convertSVGtoPNG(image_string);
   } else {
     var pom = document.createElement('a');
     pom.setAttribute('download', 'image.svg');

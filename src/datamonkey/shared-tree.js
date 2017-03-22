@@ -1,9 +1,10 @@
+require("./datamonkey.js");
+
 function set_tree_handlers(tree_object) {
     $("[data-direction]").on("click", function(e) {
         var which_function = $(this).data("direction") == 'vertical' ? tree_object.spacing_x : tree_object.spacing_y;
         which_function(which_function() + (+$(this).data("amount"))).update();
     });
-
 
     $(".phylotree-layout-mode").on("change", function(e) {
         if ($(this).is(':checked')) {

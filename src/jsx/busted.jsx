@@ -1,3 +1,17 @@
+require("phylotree");
+require("phylotree.css");
+
+var React = require('react'),
+		ReactDOM = require('react-dom');
+
+import {Tree} from "./components/tree.jsx";
+import {ModelFits} from "./components/model_fits.jsx";
+import {TreeSummary} from "./components/tree_summary.jsx";
+import {PropChart} from './components/prop_chart.jsx';
+
+var datamonkey = require('../datamonkey/datamonkey.js'),
+		busted = require('../busted/busted.js');
+
 var BUSTED = React.createClass({
 
   float_format : d3.format(".2f"),
@@ -7,6 +21,7 @@ var BUSTED = React.createClass({
   loadFromServer : function() {
 
     var self = this;
+
     d3.json(this.props.url, function(data) {
 
       data["fits"]["Unconstrained model"]["branch-annotations"] = self.formatBranchAnnotations(data, "Unconstrained model");
@@ -108,7 +123,6 @@ var BUSTED = React.createClass({
       pmid_text : null,
       pmid_href : null
     }
-
   },
 
   setEvents : function() {
@@ -171,11 +185,11 @@ var BUSTED = React.createClass({
         node_names = _.map(nodes, function(d) { return d.name});
     
     // Iterate over objects
-    branch_annotations = _.object(node_names, 
-                           _.map(node_names, function(d) {
-                             return { is_foreground : _.indexOf(foreground, d) > -1 }
-                             })
-                          );
+    var branch_annotations = _.object(node_names, 
+                             _.map(node_names, function(d) {
+                               return { is_foreground : _.indexOf(foreground, d) > -1 }
+                               })
+                            );
 
     return branch_annotations;
 
@@ -189,14 +203,10 @@ var BUSTED = React.createClass({
       return;
     }
 
-    datamonkey.busted.render_histogram("#chart-id", json);
+    busted.render_histogram("#chart-id", json);
 
     // delete existing tree
     d3.select('#tree_container').select("svg").remove();
-
-    //datamonkey.busted.render_tree('#tree_container', "body", json);
-    //var svg = d3.select('#tree_container').select("svg");
-    //add_dc_legend(svg);
 
     var fg_rate = json["fits"]["Unconstrained model"]["rate distributions"]["FG"],
         omegas  = fg_rate.map(function (r) {return r[0];}),
@@ -208,9 +218,6 @@ var BUSTED = React.createClass({
       'domain'    : [0.00001, 20],
       'dimensions': {'width' : 325, 'height' : 300}
     }
-
-    //datamonkey.busted.draw_distribution("FG", omegas, weights, dsettings);
-
 
     $("#export-dist-svg").on('click', function(e) { 
       datamonkey.save_image("svg", "#primary-omega-dist"); 
@@ -332,8 +339,6 @@ var BUSTED = React.createClass({
             </div>
           </div>
 
-
-
         </div>
       </div>
     )
@@ -344,10 +349,11 @@ var BUSTED = React.createClass({
 
 // Will need to make a call to this
 // omega distributions
-function render_busted(url, element) {
-  React.render(
+var render_busted = function(url, element) {
+  ReactDOM.render(
     <BUSTED url={url} />,
     document.getElementById(element)
   );
 }
 
+module.exports = render_busted;

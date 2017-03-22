@@ -1,14 +1,10 @@
-if (!datamonkey) {
-    var datamonkey = {};
-}
-
-datamonkey.fade = function(json) { 
+var datamonkey_fade = function(json) { 
   
   var _colorizerB = d3.interpolateRgb  (d3.rgb(0,0,255),d3.rgb(255,255,255));
   var _colorizerR = d3.interpolateRgb  (d3.rgb(255,255,255),d3.rgb(255,0,0));
   var _use_BF = false;
 
-  fade_headers = [
+  var fade_headers = [
     ['Site','A','C','D','E','F','G','H','I','K','L','M','N','P','Q','R','S','T','V','W','Y'],
     ['Site','Alanine','Cysteine','Aspartic acid','Glutamic acid','Phenylalanine','Glycine','Histidine','Isoleucine','Lysine','Leucine','Methionine', 'Asparagine','Proline','Glutamine','Arginine','Serine','Threonine','Valine', 'Tryptophan','Tyrosin']
   ];
@@ -16,41 +12,41 @@ datamonkey.fade = function(json) {
   var fade_results = json['results']["FADE"];
 
   var dict_to_array = function(dict) {
-          ar = []
-          for (k in dict) {
-              ar.push (dict[k])
+          ar = [];
+          for (var k in dict) {
+              ar.push (dict[k]);
           }
           return ar;
-      }
+      };
       
    var keys_in_dict = function(dict) {
-          ar = []
-          for (k in dict) {
-              ar.push (k)
+          ar = [];
+          for (var k in dict) {
+              ar.push (k);
           }
           return ar;
-      }   
+      };
       
   //For displaying table with Posteriors
   var display_column_map = function(row) { 
-      result = [parseInt(row[0])];
+      var result = [parseInt(row[0])];
     
-    for (k = 4; k < row.length; k+=5) {
+    for (var k = 4; k < row.length; k+=5) {
           result.push((row[k]));
       }
       return result;
-  }
+  };
 
   //For displaying table with BFs
   var display_column_map_bf = function(row) { 
        //result = [parseInt(row[0]),row[3]];
-      result = [parseInt(row[0])];
+      var result = [parseInt(row[0])];
     
-    for (k = 5; k < row.length; k+=5) {
+    for (var k = 5; k < row.length; k+=5) {
           result.push((row[k]));
       }
       return result;
-  }
+  };
 
 
   var row_display_filter = function(d) {
@@ -58,7 +54,7 @@ datamonkey.fade = function(json) {
   //Any row, with at least one val > thres must get displayed. Any elements greater must be in red. 
      // if (d.slice(2).reduce (function (a,b) {return a+b;}) == 0.0) {return false;} 
       //console.log (d, this);
-      for (k=1;k<21;k++) {
+      for (var k=1;k<21;k++) {
           if (d[k] > this) return true;
       } 
       return false;
@@ -70,9 +66,17 @@ datamonkey.fade = function(json) {
       //load_data_summary ("summary_div", data_summary);
       $('#filter_on_pvalue').trigger ('submit');
       plot_property_graphs("property_plot_svg",fade_results); //Using a matrix from html
-  }
+  };
 
   var set_handlers = function (file_id) {
+
+      var fade_headers = [
+        ['Site','A','C','D','E','F','G','H','I','K','L','M','N','P','Q','R','S','T','V','W','Y'],
+        ['Site','Alanine','Cysteine','Aspartic acid','Glutamic acid','Phenylalanine','Glycine','Histidine','Isoleucine','Lysine','Leucine','Methionine', 'Asparagine','Proline','Glutamine','Arginine','Serine','Threonine','Valine', 'Tryptophan','Tyrosin']
+      ];
+
+      var found = '';
+
       $('body').attr ('data-job-id', file_id);
       $('#filter_on_pvalue').submit(function (e) {
               cutoff = parseFloat($('#pvalue')[0].value);
@@ -116,16 +120,16 @@ datamonkey.fade = function(json) {
           }
            toggle_view("property_plot_svg", parseInt($(this).attr( 'data-property-id' )), $(this).hasClass( 'active' ) ); // button state AFTER the click
       });
-  }
+  };
 
-  property_plot_done = false;
+  var property_plot_done = false;
 
 
   var display_site_properties = function(site_id) {
       job_id = $('body').attr ('data-job-id');
       url = "/cgi-bin/datamonkey/wrapHyPhyBF.pl?file=fade_site&mode=1&arguments=" + job_id + "-" + site_id;
-      d3.json (url, function (json) { site_info (json, site_id) });
-  }
+      d3.json (url, function (json) { site_info (json, site_id);});
+  };
 
   var toggle_view = function(property_plot, group, show_hide) {
       if (show_hide) {
@@ -135,26 +139,26 @@ datamonkey.fade = function(json) {
       }
       d3.select("#"+property_plot).selectAll(".dot"+group)
                     .style("visibility", prop);
-  }
+  };
 
   var site_info = function(values, site_id) {    
       d3.select ("#site_rate_display_header").html ("Detailed information about site " + site_id);
       elements = dict_to_array(values);
       headers = keys_in_dict (elements[0]).sort();
-      header_element = d3.select ('#site_info_table').select("thead");
+      var header_element = d3.select ('#site_info_table').select("thead");
       header_element.selectAll("th").remove();
       header_element.selectAll("th").data (headers).enter().append("th").html (function (d,i) //Get header of table
           {return d;}
       );
 
-  }
+  };
 
 
   var plot_property_graphs = function(property_plot, property_info) {
       if (!property_plot_done) {
           property_info = property_info.map (display_column_map);
           property_plot_done = true;
-          site_count = property_info.length;
+          var site_count = property_info.length;
                  
           //console.log (d3.extent (property_info.map(function (d){return d[0];})));
                   
@@ -271,7 +275,7 @@ datamonkey.fade = function(json) {
                 .attr("transform", function(d, i) { return "translate(0," + i * 20 + ")"; });
       
       
-      var h = new Object(); //Hash of numbers -> AA names for labels
+      var h = {}; //Hash of numbers -> AA names for labels
       h[1] = "Alanine";
       h[2] = "Cysteine";
       h[3] = "Aspartic acid";
@@ -295,8 +299,8 @@ datamonkey.fade = function(json) {
       
       
 
-          vis = 'visible';
-          for (series = 1; series <= 20; series++) {
+          var vis = 'visible';
+          for (var series = 1; series <= 20; series++) {
               if (series > 1) {
                   vis = 'hidden';
               }
@@ -316,13 +320,13 @@ datamonkey.fade = function(json) {
         
        } 
           
-  }
+  };
 
   var load_data_summary = function(id, json_object) {
       //if (error) return console.warn(error);
-      reportable_entries = []
-      warnings = []
-      for (k in json_object) {
+      reportable_entries = [];
+      warnings = [];
+      for (var k in json_object) {
           if (k == 'Warnings') {
               warnings = json_object[k];
           } else {
@@ -347,20 +351,20 @@ datamonkey.fade = function(json) {
           current_child += info.length+1;
       }
       return 0;
-  }
+  };
       
   var load_analysis_results = function (id, headers, matrix, column_selector, condition) {    
-      header_element = d3.select ('#' + id).select("thead");
+      var header_element = d3.select ('#' + id).select("thead");
       header_element.selectAll("th").remove();
       header_element.selectAll("th").data (headers[0]).enter().append("th").html (function (d,i) //Get header of table
           {return "<a href='#' data-toggle='tooltip' data-placement = 'right' data-html = true title data-original-title='" + headers[1][i] + "'>" + d + "</a>";}
       );
           
-      parent_element = d3.select ('#' + id).select("tbody");
+      var parent_element = d3.select ('#' + id).select("tbody");
       parent_element.selectAll("tr").remove();
-      filtered_matrix = matrix.map (column_selector).filter(condition,cutoff); //Get the columns to display in table
-      rows = parent_element.selectAll("tr").data(function (d) {return filtered_matrix;});
-      conserved = 0;
+      var filtered_matrix = matrix.map (column_selector).filter(condition,cutoff); //Get the columns to display in table
+      var rows = parent_element.selectAll("tr").data(function (d) {return filtered_matrix;});
+      var conserved = 0;
       rows.enter().append ("tr").selectAll("td").data (function (d) {return d;}).enter().append("td").
           html (function (d,i) {
               d = parseFloat (d);
@@ -380,7 +384,7 @@ datamonkey.fade = function(json) {
       d3.select ('#' + id).classed ("table-striped table-hover", true);
       $('a').tooltip(); 
       return [filtered_matrix.length, conserved];
-  }
+  };
 
 
   var numberToColor = function(value) {
@@ -389,10 +393,10 @@ datamonkey.fade = function(json) {
       }
       rate_value = Math.min(20,Math.max(-20,Math.log (value)/Math.LN20));
       if (rate_value < 0) {
-          return _colorizerB ((20+rate_value)/20.);
+          return _colorizerB ((20+rate_value)/20.0);
       }
-      return _colorizerR ((rate_value)/20.);
-  }
+      return _colorizerR ((rate_value)/20.0);
+  };
 
   var fgColor = function(value, normalizer) {
       if (typeof (value) == "string") {
@@ -405,9 +409,11 @@ datamonkey.fade = function(json) {
           return "white";
       }
       return "black";
-  }
+  };
 
   set_handlers('test');
   initial_display();
 
-}
+};
+
+module.exports = datamonkey_fade;

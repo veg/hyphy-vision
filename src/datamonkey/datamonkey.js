@@ -1,10 +1,9 @@
 var root = this;
-
 var datamonkey = function () {};
 
 if (typeof exports !== 'undefined') {
   if (typeof module !== 'undefined' && module.exports) {
-    exports = module.exports = Datamonkey;
+    exports = module.exports = datamonkey;
   }
   exports.datamonkey = datamonkey;
 } else {
@@ -14,11 +13,33 @@ if (typeof exports !== 'undefined') {
 datamonkey.errorModal = function (msg) {
   $('#modal-error-msg').text(msg);
   $('#errorModal').modal();
+};
+
+function b64toBlob(b64, onsuccess, onerror) {
+    var img = new Image();
+
+    img.onerror = onerror;
+
+    img.onload = function onload() {
+        var canvas = document.getElementById("hyphy-chart-canvas");
+        canvas.width = img.width;
+        canvas.height = img.height;
+
+        var ctx = canvas.getContext('2d');
+      	ctx.fillStyle = "#FFFFFF";
+				ctx.fillRect(0,0,canvas.width,canvas.height);
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+        canvas.toBlob(onsuccess);
+    };
+
+    img.src = b64;
 }
+
 
 datamonkey.export_csv_button = function(data) {
   data = d3.csv.format(data);
-  if (data != null) {
+  if (data !== null) {
     var pom = document.createElement('a');
     pom.setAttribute('href', 'data:text/csv;charset=utf-8,' + encodeURIComponent(data));
     pom.setAttribute('download', 'export.csv');
@@ -28,7 +49,7 @@ datamonkey.export_csv_button = function(data) {
     pom.click();
     pom.remove();
   }
-}
+};
 
 datamonkey.save_image = function(type, container) {
 
@@ -36,7 +57,7 @@ datamonkey.save_image = function(type, container) {
     xmlns: "http://www.w3.org/2000/xmlns/",
     xlink: "http://www.w3.org/1999/xlink",
     svg: "http://www.w3.org/2000/svg"
-  }
+  };
 
   function get_styles(doc) {
 
@@ -97,11 +118,11 @@ datamonkey.save_image = function(type, container) {
       pom.click();
       pom.remove();
 
-    }
+    };
 
     image.src = image_string;
 
-  }
+  };
 
   var svg = $(container).find("svg")[0];
   if (!svg) {
@@ -115,7 +136,7 @@ datamonkey.save_image = function(type, container) {
   var defsEl = document.createElement("defs");
   svg.insertBefore(defsEl, svg.firstChild); 
 
-  var styleEl = document.createElement("style")
+  var styleEl = document.createElement("style");
   defsEl.appendChild(styleEl);
   styleEl.setAttribute("type", "text/css");
 
@@ -136,11 +157,24 @@ datamonkey.save_image = function(type, container) {
   var source = (new XMLSerializer()).serializeToString(svg).replace('</style>', '<![CDATA[' + styles + ']]></style>');
   var rect = svg.getBoundingClientRect();
   var doctype = '<?xml version="1.0" standalone="no"?><!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">';
-  var to_download = [doctype + source]
+  var to_download = [doctype + source];
   var image_string = 'data:image/svg+xml;base66,' + encodeURIComponent(to_download);
 
   if(type == "png") {
-    convert_svg_to_png(image_string);
+		b64toBlob(image_string,
+				function(blob) {
+
+						var url = window.URL.createObjectURL(blob);
+						var pom = document.createElement('a');
+						pom.setAttribute('download', 'image.png');
+						pom.setAttribute('href', url);
+						$("body").append(pom);
+						pom.click();
+						pom.remove();
+
+				}, function(error) {
+						// handle error
+				});
   } else {
     var pom = document.createElement('a');
     pom.setAttribute('download', 'image.svg');
@@ -150,54 +184,12 @@ datamonkey.save_image = function(type, container) {
     pom.remove();
   }
 
-}
-
-datamonkey.jobQueue = function(container) {
-
-  // Load template
-  _.templateSettings = {
-    evaluate    : /\{\%(.+?)\%\}/g,
-    interpolate : /\{\{(.+?)\}\}/g,
-    variable    : "rc"
-  };
-
-  d3.json( '/jobqueue', function(data) {
-
-    var job_queue = _.template(
-      $("script.job-queue").html()
-    );
-
-    var job_queue_html = job_queue(data);
-    $("#job-queue-panel").find('table').remove();
-    $(container).append(job_queue_html);
-
-  });
-
-}
-
-datamonkey.status_check = function () {
-
-  // Check if there are any status checkers on the page
-  if($(".status-checker").length) {
-    // Check health status and report back to element
-    var url = "/clusterhealth";
-    d3.json(url, function(data) {
-      // Add appropriate class based on result
-      if (data["successful_connection"]) {
-        d3.select('.status-checker').classed({'status-healthy': true, 'status-troubled': false})
-        $(".status-checker").attr( "title", 'Cluster Status : Healthy');
-      } else {
-        d3.select('.status-checker').classed({'status-healthy': false, 'status-troubled': true})
-        $(".status-checker").attr( "title", 'Cluster Status : Troubled; ' + data.msg.description);
-      }
-    });
-  }
-}
+};
 
 datamonkey.validate_date = function () {
 
   // Check that it is not empty
-  if($(this).val().length == 0) {
+  if($(this).val().length === 0) {
     $(this).next('.help-block').remove();
     $(this).parent().removeClass('has-success');
     $(this).parent().addClass('has-error');
@@ -223,10 +215,10 @@ datamonkey.validate_date = function () {
     $(this).next('.help-block').remove();
   }
 
-}
+};
 
 $( document ).ready( function () {
-  $(function () {$('[data-toggle="tooltip"]').tooltip()});
+  $(function () {$('[data-toggle="tooltip"]').tooltip();});
   $('#datamonkey-header').collapse ();
   
   var initial_padding = $("body").css("padding-top");

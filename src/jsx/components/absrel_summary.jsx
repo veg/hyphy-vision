@@ -1,3 +1,5 @@
+var React = require('react');
+
 var BSRELSummary = React.createClass({
 
   float_format : d3.format(".2f"),
@@ -15,7 +17,7 @@ var BSRELSummary = React.createClass({
   getBranchesWithEvidence : function(test_results) {
 
     var self = this;
-    return _.filter(test_results, function(d) { return d.p <= .05 }).length;
+    return _.filter(test_results, function(d) { return d.p <= 0.05 }).length;
 
   },
 
@@ -97,3 +99,5 @@ function render_absrel_summary(test_results, pmid, element) {
   );
 }
 
+module.exports.BSRELSummary = BSRELSummary;
+module.exports.render_absrel_summary = render_absrel_summary;
