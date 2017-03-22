@@ -61,30 +61,32 @@ var BSRELSummary = React.createClass({
     var self = this;
 
     return (
-          <ul className="list-group">
-              <li className="list-group-item list-group-item-info">
-                  <h3 className="list-group-item-heading">
-                    <i className="fa fa-list"></i>
-                    <span id="summary-method-name">Adaptive branch site REL</span> summary
-                  </h3>
-                  <p className="list-group-item-text lead">
-                    Evidence<sup>†</sup> of episodic diversifying selection was found on 
-                      <strong> {self.state.branches_with_evidence}</strong> out of 
-                      <span> {self.state.test_branches}</span> tested branches 
-                      (<span>{self.state.total_branches}</span> total branches).
-                  </p>
-                  <p>
+        <div className="row" id="summary-div" >
+            <div className="col-md-8">
+                <h3 className="list-group-item-heading">
+                    <span id="summary-method-name">Adaptive branch site REL - Results summary</span>
+                </h3>
+                <p className="list-group-item-text lead">
+                    Evidence<sup>†</sup> of episodic diversifying selection was found on
+                    <strong> {self.state.branches_with_evidence}</strong> out of
+                    <span> {self.state.test_branches}</span> tested branches
+                    (<span>{self.state.total_branches}</span> total branches).
+                </p>
+                <p>
                     <small>
-                      <sup>†</sup><abbr title="Likelihood Ratio Test">LRT</abbr> p ≤ 0.05, corrected for multiple testing.
+                        <sup>†</sup><abbr title="Likelihood Ratio Test">LRT</abbr> p ≤ 0.05, corrected for multiple testing.
                     </small>
-                  </p>
-                  <p>
+                </p>
+                <p>
                     <small>
-                      Please cite <a href="http://www.ncbi.nlm.nih.gov/pubmed/25697341" id="summary-pmid" target="_blank">PMID 25697341</a> if you use this result in a publication, presentation, or other scientific work.
+                        Please cite <a href="http://www.ncbi.nlm.nih.gov/pubmed/25697341" id="summary-pmid" target="_blank">PMID 25697341</a> if you use this result in a publication, presentation, or other scientific work.
                     </small>
-                  </p>
-              </li>
-          </ul>
+                </p>
+            </div>
+            <div id="data-circle-div" className="col-md-4">
+                <img src="../../images/data-circle.svg" id="data-circle"/>
+            </div>
+        </div>
         )
   }
 

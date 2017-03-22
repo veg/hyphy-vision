@@ -626,27 +626,19 @@ webpackJsonp([0],[
 	            React.createElement(
 	                'div',
 	                { id: 'summary-tab' },
+	                React.createElement(_absrel_summary.BSRELSummary, { test_results: self.state.test_results,
+	                    pmid: self.state.pmid }),
 	                React.createElement(
 	                    'div',
 	                    { className: 'row' },
 	                    React.createElement(
 	                        'div',
-	                        { id: 'summary-div', className: 'col-md-12' },
-	                        React.createElement(_absrel_summary.BSRELSummary, { test_results: self.state.test_results,
-	                            pmid: self.state.pmid })
-	                    )
-	                ),
-	                React.createElement(
-	                    'div',
-	                    { className: 'row' },
-	                    React.createElement(
-	                        'div',
-	                        { id: 'hyphy-tree-summary', className: 'col-md-6' },
+	                        { id: 'hyphy-tree-summary', className: 'col-md-12' },
 	                        React.createElement(_tree_summary.TreeSummary, { json: self.state.json })
 	                    ),
 	                    React.createElement(
 	                        'div',
-	                        { id: 'hyphy-model-fits', className: 'col-md-6' },
+	                        { id: 'hyphy-model-fits', className: 'col-md-12' },
 	                        React.createElement(_model_fits.ModelFits, { json: self.state.json })
 	                    )
 	                )
@@ -756,21 +748,19 @@ webpackJsonp([0],[
 	    var self = this;
 	
 	    return React.createElement(
-	      'ul',
-	      { className: 'list-group' },
+	      'div',
+	      { className: 'row', id: 'summary-div' },
 	      React.createElement(
-	        'li',
-	        { className: 'list-group-item list-group-item-info' },
+	        'div',
+	        { className: 'col-md-8' },
 	        React.createElement(
 	          'h3',
 	          { className: 'list-group-item-heading' },
-	          React.createElement('i', { className: 'fa fa-list' }),
 	          React.createElement(
 	            'span',
 	            { id: 'summary-method-name' },
-	            'Adaptive branch site REL'
-	          ),
-	          ' summary'
+	            'Adaptive branch site REL - Results summary'
+	          )
 	        ),
 	        React.createElement(
 	          'p',
@@ -837,6 +827,11 @@ webpackJsonp([0],[
 	            ' if you use this result in a publication, presentation, or other scientific work.'
 	          )
 	        )
+	      ),
+	      React.createElement(
+	        'div',
+	        { id: 'data-circle-div', className: 'col-md-4' },
+	        React.createElement('img', { src: '../../images/data-circle.svg', id: 'data-circle' })
 	      )
 	    );
 	  }
@@ -1283,11 +1278,11 @@ webpackJsonp([0],[
 	
 	  getTreeSummaryColumns: function getTreeSummaryColumns(table_row_data) {
 	
-	    var omega_header = '<th>ω rate<br>classes</th>',
-	        branch_num_header = '<th># of <br>branches</th>',
-	        branch_prop_header = '<th>% of <br>branches</th>',
-	        branch_prop_length_header = '<th>% of tree <br>length</th>',
-	        under_selection_header = '<th># under <br>selection</th>';
+	    var omega_header = '<th">ω rate classes</th>',
+	        branch_num_header = '<th># of branches</th>',
+	        branch_prop_header = '<th>% of branches</th>',
+	        branch_prop_length_header = '<th>% of tree length</th>',
+	        under_selection_header = '<th># under selection</th>';
 	
 	    // inspect table_row_data and return header
 	    var all_columns = [omega_header, branch_num_header, branch_prop_header, branch_prop_length_header, under_selection_header];
@@ -1349,13 +1344,12 @@ webpackJsonp([0],[
 	        { className: 'list-group-item' },
 	        React.createElement(
 	          'h4',
-	          { className: 'list-group-item-heading' },
-	          React.createElement('i', { className: 'fa fa-tree' }),
+	          { className: 'list-group-item-heading tree-title' },
 	          'Tree'
 	        ),
 	        React.createElement(
 	          'table',
-	          { className: 'table table-hover table-condensed list-group-item-text' },
+	          { className: 'table info-table table-hover table-striped table-condensed list-group-item-text' },
 	          React.createElement('thead', { id: 'summary-tree-header' }),
 	          React.createElement('tbody', { id: 'summary-tree-table' })
 	        )

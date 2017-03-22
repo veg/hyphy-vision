@@ -9212,6 +9212,13 @@ button.close {
   width: 50px;
   height: 50px;
   float: left;
+  margin-right: 15px;
+}
+
+.logo {
+    font-family: "Noto Sans";
+    font-weight: 900;
+    color: #00a99d!important;
 }
 
 .fixed{
@@ -9219,7 +9226,7 @@ button.close {
 }
 
 .nav-pills a {
-    color: #428765;
+    color: #00a99d;
 }
 
 .nav-pills a:hover {
@@ -9228,11 +9235,36 @@ button.close {
 
 .nav-pills > li.active > a {
     color: #fff;
-    background-color: #428765;
+    background-color: #00a99d;
 }
 
 .nav-pills > li.active > a:hover {
     background-color: #060;
+}
+
+#summary-method-name{
+    color: #00a99d;
+}
+
+.tree-title {
+    background-color: #00a99d;
+    color: #FFF;
+    text-align: center;
+    padding: 5px 5px 5px 5px;
+}
+
+table.info-table > thead > th {
+    color: #00a99d;
+}
+
+#data-circle {
+    height: 175px;
+    width: 175px;
+}
+
+#data-circle-div {
+    text-align: center;
+    padding: 5px 5px 5px 5px;
 }
 
 /* Bootstrap-docs scroll spy */
@@ -9261,10 +9293,10 @@ button.close {
 .bs-docs-sidebar .nav>.active>a,
 .bs-docs-sidebar .nav>li>a:hover,
 .bs-docs-sidebar .nav>li>a:focus {
-  color: #428765;
+  color: #00a99d;
   text-decoration: none;
   background-color: transparent;
-  border-left-color: #428765;
+  border-left-color: #00a99d;
 }
 /* all active links */
 .bs-docs-sidebar .nav>.active>a,

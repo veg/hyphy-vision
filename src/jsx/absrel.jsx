@@ -304,18 +304,14 @@ var BSREL = React.createClass({
     return (
         <div id="results">
             <div id="summary-tab">
+                <BSRELSummary test_results={self.state.test_results}
+                              pmid={self.state.pmid} />
                 <div className="row">
-                    <div id="summary-div" className="col-md-12">
-                    <BSRELSummary test_results={self.state.test_results}
-                                  pmid={self.state.pmid} />
-                  </div>
-                </div>
-                <div className="row">
-                    <div id="hyphy-tree-summary" className="col-md-6">
-                      <TreeSummary json={self.state.json} />
+                    <div id="hyphy-tree-summary" className="col-md-12">
+                        <TreeSummary json={self.state.json} />
                     </div>
-                    <div id="hyphy-model-fits" className="col-md-6">
-                      <ModelFits json={self.state.json} />
+                    <div id="hyphy-model-fits" className="col-md-12">
+                        <ModelFits json={self.state.json} />
                     </div>
                 </div>
             </div>
