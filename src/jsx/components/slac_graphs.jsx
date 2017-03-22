@@ -1,3 +1,9 @@
+var React = require('react');
+var datamonkey = require('../../datamonkey/datamonkey.js');
+
+import {DatamonkeyScatterplot,DatamonkeySeries} from "./shared_graph.jsx";
+
+
 var SLACGraphs = React.createClass({
 
   getInitialState: function() {
@@ -207,4 +213,5 @@ var SLACGraphs = React.createClass({
 });
 
 
+module.exports.SLACGraphs = SLACGraphs;
 

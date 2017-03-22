@@ -1,3 +1,6 @@
+var React = require('react');
+var datamonkey = require('../../datamonkey/datamonkey.js');
+
 var _dmGraphDefaultColorPallette = d3.scale.category10().domain (_.range (10));
 
 var _dmGraphBaseDefinitions = {
@@ -262,5 +265,6 @@ _dmGraphSeriesDefinitions.dm_renderGraph = function (x_scale, y_scale, dom_eleme
 var DatamonkeyScatterplot = React.createClass (_dmGraphBaseDefinitions);
 var DatamonkeySeries = React.createClass (_dmGraphSeriesDefinitions);
 
-
+module.exports.DatamonkeyScatterplot=DatamonkeyScatterplot;
+module.exports.DatamonkeySeries=DatamonkeySeries;
 
