@@ -68,9 +68,8 @@ var BSRELSummary = React.createClass({
                 </h3>
                 <p className="list-group-item-text lead">
                     Evidence<sup>†</sup> of episodic diversifying selection was found on
-                    <strong> {self.state.branches_with_evidence}</strong> out of
-                    <span> {self.state.test_branches}</span> tested branches
-                    (<span>{self.state.total_branches}</span> total branches).
+                    <span className="hyphy-highlight"><strong> {self.state.branches_with_evidence}</strong> out 
+                    of {self.state.test_branches}</span> tested branches ({self.state.total_branches} total branches).
                 </p>
                 <p>
                     <small>
@@ -84,7 +83,14 @@ var BSRELSummary = React.createClass({
                 </p>
             </div>
             <div id="data-circle-div" className="col-md-4">
-                <img src="../../images/data-circle.svg" id="data-circle"/>
+                <div id="data-circle">
+                    <div id="data-text">
+                        <h5 className="hyphy-highlight">INPUT DATA</h5><br/>
+                        <p><span className="hyphy-highlight">16</span> sequences</p><br/>
+                        <p><span className="hyphy-highlight">8</span> branches</p><br/>
+                        <p><span className="hyphy-highlight">16</span> variants</p><br/>
+                    </div>
+                </div>
             </div>
         </div>
         )

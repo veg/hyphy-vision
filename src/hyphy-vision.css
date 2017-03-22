@@ -136,7 +136,7 @@
 }
 
 .nav-pills a:hover {
-    color: #060;
+    color: #7EC6B3;
 }
 
 .nav-pills > li.active > a {
@@ -145,7 +145,7 @@
 }
 
 .nav-pills > li.active > a:hover {
-    background-color: #060;
+    background-color: #7EC6B3;
 }
 
 #summary-method-name{
@@ -163,14 +163,32 @@ table.info-table > thead > th {
     color: #00a99d;
 }
 
+.hyphy-highlight {
+    color: #00a99d;
+}
+
+#summary-pmid {
+    color: #00a99d;
+}
+
 #data-circle {
     height: 175px;
     width: 175px;
+    margin: auto;
+    background-image: url("/images/data-circle.svg");
+    background-size: cover;
+    line-height: .3;
+    display: flex;
+    justify-content: center; /* align horizontal */
+    align-items: center; /* align vertical */
 }
 
 #data-circle-div {
-    text-align: center;
     padding: 5px 5px 5px 5px;
+}
+
+#data-text {
+    text-align: center;
 }
 
 /* Bootstrap-docs scroll spy */

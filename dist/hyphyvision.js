@@ -687,161 +687,202 @@ webpackJsonp([0],[
 	var React = __webpack_require__(46);
 	
 	var BSRELSummary = React.createClass({
-	  displayName: 'BSRELSummary',
+	    displayName: 'BSRELSummary',
 	
 	
-	  float_format: d3.format(".2f"),
+	    float_format: d3.format(".2f"),
 	
-	  countBranchesTested: function countBranchesTested(branches_tested) {
+	    countBranchesTested: function countBranchesTested(branches_tested) {
 	
-	    if (branches_tested) {
-	      return branches_tested.split(';').length;
-	    } else {
-	      return 0;
+	        if (branches_tested) {
+	            return branches_tested.split(';').length;
+	        } else {
+	            return 0;
+	        }
+	    },
+	
+	    getBranchesWithEvidence: function getBranchesWithEvidence(test_results) {
+	
+	        var self = this;
+	        return _.filter(test_results, function (d) {
+	            return d.p <= 0.05;
+	        }).length;
+	    },
+	
+	    getTestBranches: function getTestBranches(test_results) {
+	
+	        var self = this;
+	        return _.filter(test_results, function (d) {
+	            return d.tested > 0;
+	        }).length;
+	    },
+	
+	    getTotalBranches: function getTotalBranches(test_results) {
+	
+	        var self = this;
+	        return _.keys(test_results).length;
+	    },
+	
+	    getInitialState: function getInitialState() {
+	
+	        var self = this;
+	
+	        return {
+	            branches_with_evidence: this.getBranchesWithEvidence(self.props.test_results),
+	            test_branches: this.getTestBranches(self.props.test_results),
+	            total_branches: this.getTotalBranches(self.props.test_results)
+	        };
+	    },
+	
+	    componentWillReceiveProps: function componentWillReceiveProps(nextProps) {
+	
+	        this.setState({
+	            branches_with_evidence: this.getBranchesWithEvidence(nextProps.test_results),
+	            test_branches: this.getTestBranches(nextProps.test_results),
+	            total_branches: this.getTotalBranches(nextProps.test_results)
+	        });
+	    },
+	
+	    render: function render() {
+	
+	        var self = this;
+	
+	        return React.createElement(
+	            'div',
+	            { className: 'row', id: 'summary-div' },
+	            React.createElement(
+	                'div',
+	                { className: 'col-md-8' },
+	                React.createElement(
+	                    'h3',
+	                    { className: 'list-group-item-heading' },
+	                    React.createElement(
+	                        'span',
+	                        { id: 'summary-method-name' },
+	                        'Adaptive branch site REL - Results summary'
+	                    )
+	                ),
+	                React.createElement(
+	                    'p',
+	                    { className: 'list-group-item-text lead' },
+	                    'Evidence',
+	                    React.createElement(
+	                        'sup',
+	                        null,
+	                        '\u2020'
+	                    ),
+	                    ' of episodic diversifying selection was found on',
+	                    React.createElement(
+	                        'span',
+	                        { className: 'hyphy-highlight' },
+	                        React.createElement(
+	                            'strong',
+	                            null,
+	                            ' ',
+	                            self.state.branches_with_evidence
+	                        ),
+	                        ' out of ',
+	                        self.state.test_branches
+	                    ),
+	                    ' tested branches (',
+	                    self.state.total_branches,
+	                    ' total branches).'
+	                ),
+	                React.createElement(
+	                    'p',
+	                    null,
+	                    React.createElement(
+	                        'small',
+	                        null,
+	                        React.createElement(
+	                            'sup',
+	                            null,
+	                            '\u2020'
+	                        ),
+	                        React.createElement(
+	                            'abbr',
+	                            { title: 'Likelihood Ratio Test' },
+	                            'LRT'
+	                        ),
+	                        ' p \u2264 0.05, corrected for multiple testing.'
+	                    )
+	                ),
+	                React.createElement(
+	                    'p',
+	                    null,
+	                    React.createElement(
+	                        'small',
+	                        null,
+	                        'Please cite ',
+	                        React.createElement(
+	                            'a',
+	                            { href: 'http://www.ncbi.nlm.nih.gov/pubmed/25697341', id: 'summary-pmid', target: '_blank' },
+	                            'PMID 25697341'
+	                        ),
+	                        ' if you use this result in a publication, presentation, or other scientific work.'
+	                    )
+	                )
+	            ),
+	            React.createElement(
+	                'div',
+	                { id: 'data-circle-div', className: 'col-md-4' },
+	                React.createElement(
+	                    'div',
+	                    { id: 'data-circle' },
+	                    React.createElement(
+	                        'div',
+	                        { id: 'data-text' },
+	                        React.createElement(
+	                            'h5',
+	                            { className: 'hyphy-highlight' },
+	                            'INPUT DATA'
+	                        ),
+	                        React.createElement('br', null),
+	                        React.createElement(
+	                            'p',
+	                            null,
+	                            React.createElement(
+	                                'span',
+	                                { className: 'hyphy-highlight' },
+	                                '16'
+	                            ),
+	                            ' sequences'
+	                        ),
+	                        React.createElement('br', null),
+	                        React.createElement(
+	                            'p',
+	                            null,
+	                            React.createElement(
+	                                'span',
+	                                { className: 'hyphy-highlight' },
+	                                '8'
+	                            ),
+	                            ' branches'
+	                        ),
+	                        React.createElement('br', null),
+	                        React.createElement(
+	                            'p',
+	                            null,
+	                            React.createElement(
+	                                'span',
+	                                { className: 'hyphy-highlight' },
+	                                '16'
+	                            ),
+	                            ' variants'
+	                        ),
+	                        React.createElement('br', null)
+	                    )
+	                )
+	            )
+	        );
 	    }
-	  },
-	
-	  getBranchesWithEvidence: function getBranchesWithEvidence(test_results) {
-	
-	    var self = this;
-	    return _.filter(test_results, function (d) {
-	      return d.p <= 0.05;
-	    }).length;
-	  },
-	
-	  getTestBranches: function getTestBranches(test_results) {
-	
-	    var self = this;
-	    return _.filter(test_results, function (d) {
-	      return d.tested > 0;
-	    }).length;
-	  },
-	
-	  getTotalBranches: function getTotalBranches(test_results) {
-	
-	    var self = this;
-	    return _.keys(test_results).length;
-	  },
-	
-	  getInitialState: function getInitialState() {
-	
-	    var self = this;
-	
-	    return {
-	      branches_with_evidence: this.getBranchesWithEvidence(self.props.test_results),
-	      test_branches: this.getTestBranches(self.props.test_results),
-	      total_branches: this.getTotalBranches(self.props.test_results)
-	    };
-	  },
-	
-	  componentWillReceiveProps: function componentWillReceiveProps(nextProps) {
-	
-	    this.setState({
-	      branches_with_evidence: this.getBranchesWithEvidence(nextProps.test_results),
-	      test_branches: this.getTestBranches(nextProps.test_results),
-	      total_branches: this.getTotalBranches(nextProps.test_results)
-	    });
-	  },
-	
-	  render: function render() {
-	
-	    var self = this;
-	
-	    return React.createElement(
-	      'div',
-	      { className: 'row', id: 'summary-div' },
-	      React.createElement(
-	        'div',
-	        { className: 'col-md-8' },
-	        React.createElement(
-	          'h3',
-	          { className: 'list-group-item-heading' },
-	          React.createElement(
-	            'span',
-	            { id: 'summary-method-name' },
-	            'Adaptive branch site REL - Results summary'
-	          )
-	        ),
-	        React.createElement(
-	          'p',
-	          { className: 'list-group-item-text lead' },
-	          'Evidence',
-	          React.createElement(
-	            'sup',
-	            null,
-	            '\u2020'
-	          ),
-	          ' of episodic diversifying selection was found on',
-	          React.createElement(
-	            'strong',
-	            null,
-	            ' ',
-	            self.state.branches_with_evidence
-	          ),
-	          ' out of',
-	          React.createElement(
-	            'span',
-	            null,
-	            ' ',
-	            self.state.test_branches
-	          ),
-	          ' tested branches (',
-	          React.createElement(
-	            'span',
-	            null,
-	            self.state.total_branches
-	          ),
-	          ' total branches).'
-	        ),
-	        React.createElement(
-	          'p',
-	          null,
-	          React.createElement(
-	            'small',
-	            null,
-	            React.createElement(
-	              'sup',
-	              null,
-	              '\u2020'
-	            ),
-	            React.createElement(
-	              'abbr',
-	              { title: 'Likelihood Ratio Test' },
-	              'LRT'
-	            ),
-	            ' p \u2264 0.05, corrected for multiple testing.'
-	          )
-	        ),
-	        React.createElement(
-	          'p',
-	          null,
-	          React.createElement(
-	            'small',
-	            null,
-	            'Please cite ',
-	            React.createElement(
-	              'a',
-	              { href: 'http://www.ncbi.nlm.nih.gov/pubmed/25697341', id: 'summary-pmid', target: '_blank' },
-	              'PMID 25697341'
-	            ),
-	            ' if you use this result in a publication, presentation, or other scientific work.'
-	          )
-	        )
-	      ),
-	      React.createElement(
-	        'div',
-	        { id: 'data-circle-div', className: 'col-md-4' },
-	        React.createElement('img', { src: '../../images/data-circle.svg', id: 'data-circle' })
-	      )
-	    );
-	  }
 	
 	});
 	
 	// Will need to make a call to this
 	// omega distributions
 	function render_absrel_summary(test_results, pmid, element) {
-	  React.render(React.createElement(BSRELSummary, { test_results: test_results, pmid: pmid }), document.getElementById(element));
+	    React.render(React.createElement(BSRELSummary, { test_results: test_results, pmid: pmid }), document.getElementById(element));
 	}
 	
 	module.exports.BSRELSummary = BSRELSummary;
