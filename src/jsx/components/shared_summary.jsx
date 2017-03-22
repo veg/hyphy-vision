@@ -33,8 +33,16 @@ const DatamonkeyTableRow = React.createClass ({
     },*/
 
     dm_compareTwoValues: function (a,b) {
+    /* this should be made static */
+
         /**
             compare objects by iterating over keys
+
+            return 0 : equal
+                   1 : a < b
+                   2 : a > b
+                   -1 : cannot be compared
+                   -2 : not compared, but could contain 'value' objects that could be compared
         */
 
         var myType = typeof a,
@@ -42,28 +50,46 @@ const DatamonkeyTableRow = React.createClass ({
 
         if (myType == typeof b) {
             if (myType == "string" || myType == "number") {
-                    return a == b ? 1 : 0;
+                return a == b ? 0 : (a > b) ? 2 : 1;
             }
 
             if (_.isArray (a) && _.isArray (b)) {
 
                 if (a.length != b.length) {
-                    return 0;
+                    return a.length > b.length ? 2 : 1;
                 }
 
-                var not_compared = 0;
-                var result = _.every (a, function (c, i) {var comp = self.dm_compareTwoValues (c, b[i]); if (comp < 0) {not_compared = comp; return false;} return comp == 1;});
+                var comparison_result = 0;
 
-                if (not_compared < 0) {
-                    return not_compared;
-                }
+                _.every (a, function (c, i) {
+                    var comp = self.dm_compareTwoValues (c, b[i]);
+                    if (comp != 0) {
+                        comparison_result = comp;
+                        return false;
+                    }
+                    return true;
+                });
 
-                return result ? 1 : 0;
+                return comparison_result;
             }
 
             return -2;
+            // further check to see if 'this' has a "value" attribute
         }
         return -1;
+    },
+
+    dm_compareTwoValues_level2: function (a, b) {
+        var compare = this.dm_compareTwoValues (a, b);
+
+        if (compare == -2) {
+            if (_.has (a, "value") && _.has (b, "value")) {
+                return this.dm_compareTwoValues (a.value, b.value);
+            }
+        }
+
+        return compare;
+
     },
 
    dm_log100times: _.before (100, function (v) {
@@ -79,22 +105,35 @@ const DatamonkeyTableRow = React.createClass ({
             return true;
         }
 
+        if (this.props.sortOn != nextProps.sortOn) {
+            return true;
+        }
+
         var result = _.some (this.props.rowData, function (value, index) {
             /** TO DO
                 check for format and other field equality
             */
+
             if (value === nextProps.rowData[index]) {
                 return false;
             }
 
-            var compare = self.dm_compareTwoValues (value, nextProps.rowData[index]);
+            var compare = self.dm_compareTwoValues_level2 (value, nextProps.rowData[index]);
             if (compare >= 0) {
-                return compare == 0;
-            }
+                if (compare == 0) { // values match, compare properties
+                    var existing_keys = _.keys (value),
+                        new_keys = _.keys (nextProps.rowData[index]),
+                        shared = _.intersection (existing_keys,new_keys);
 
-            if (compare == -2) {
-                if (_.has (value, "value") && _.has (nextProps.rowData[index], "value")) {
-                    return self.dm_compareTwoValues (value.value, nextProps.rowData[index].value) != 1;
+                    if (shared.length < new_keys.length || shared.length < existing_keys.length) {
+                        return true;
+                    }
+
+                    return false;
+
+
+                } else {
+                    return true;
                 }
 
             }
@@ -102,15 +141,11 @@ const DatamonkeyTableRow = React.createClass ({
             return true;
         });
 
-        if (result) {
-            this.dm_log100times (["Old", this.props.rowData, "New", nextProps.rowData]);
-        }
-
         return result;
     },
 
-
     render: function () {
+
         return (
             <tr>
             {
@@ -151,10 +186,33 @@ const DatamonkeyTableRow = React.createClass ({
                             cellProps["style"] = cell.style;
                         }
 
+                        if (_.has (cell, "tooltip")) {
+                            cellProps["title"] = cell.tooltip;
+                            //this.dm_log100times (cellProps);
+                        }
+
                         if (_.has (cell, "classes")) {
                             cellProps["className"] = cell.classes;
                         }
 
+                        if (this.props.header && this.props.sorter) {
+                          //console.log ("header + sorter", cell);
+                          if (_.has (cell, "sortable")) {
+                            cellProps ["onClick"] = _.partial ( this.props.sorter, index, this.dm_compareTwoValues_level2);
+
+                            var sortedness_state = "fa fa-sort";
+                            if (this.props.sortOn && this.props.sortOn [0] == index) {
+                                sortedness_state = this.props.sortOn[1] ? "fa fa-sort-amount-asc" : "fa fa-sort-amount-desc";
+                            }
+
+                            value = (
+                                <div>
+                                    {value}
+                                    <i className={sortedness_state} aria-hidden="true" style={{marginLeft : "0.5em"}}></i>
+                                </div>
+                            );
+                          }
+                        }
 
                         return React.createElement (this.props.header ? "th" : "td" ,
                                                     cellProps,
@@ -176,56 +234,90 @@ var DatamonkeyTable = React.createClass ({
         *classes* -- CSS classes to apply to the table element
 */
 
-    /*propTypes: {
-        headerData: React.PropTypes.array,
-        bodyData: React.PropTypes.arrayOf (React.PropTypes.array),
-    },*/
-
     getDefaultProps : function () {
         return {classes : "table table-condensed table-hover",
                 rowHash : null,
-                sortableColumns : new Object (null),
-                initialSort: null,
                 };
     },
 
     getInitialState: function () {
-        return {sortedOn: this.props.initialSort};
+        return {
+                    rowOrder: _.range (0,this.props.bodyData.length),
+                    sortOn: this.props.initialSort ? [this.props.initialSort, true] : null,
+                    /* either null or [index,
+                                       bool / to indicate if the sort is ascending (True) or descending (False)]
+                    */
+                };
     },
 
+    componentWillReceiveProps: function (nextProps) {
+        this.setState ({
+            rowOrder: _.range (0,nextProps.bodyData.length),
+        });
+    },
+
+    dm_sortOnColumn : function (index, compare_function) {
+
+        var self = this;
+        var is_ascending = true;
+        if (this.state.sortOn && this.state.sortOn[0] == index) {
+            is_ascending = !this.state.sortOn[1];
+        }
+
+        var new_order = _.map (this.state.rowOrder, _.identity).sort (function (i,j) {
+            var comp_value = compare_function (self.props.bodyData[i][index], self.props.bodyData[j][index]);
+            if (comp_value > 0) {
+                return is_ascending ? (2*comp_value-3) : (3-2*comp_value);
+            }
+            return 0;
+        });
+
+        if (_.some (new_order, function (value, index) {
+            return value != self.state.rowOrder[index];
+        })) {
+            this.setState ({rowOrder : new_order, sortOn : [index, is_ascending]});
+        }
+    },
 
     render: function () {
         const children = [];
 
+        var self = this;
+
         if (this.props.headerData) {
             if (_.isArray (this.props.headerData[0])) { // multiple rows
-                 children.push ((
+                 children.push (
                     <thead key = {0}>
                         {
                             _.map (this.props.headerData, function (row, index) {
                                 return (
-                                    <DatamonkeyTableRow rowData={row} header={true} key={index}/>
+                                    <DatamonkeyTableRow rowData={row} header={true} key={index} sorter={_.bind (self.dm_sortOnColumn, self)} sortOn = {self.state.sortOn}/>
                                 );
                             })
                         }
                     </thead>
-                ));
+                );
             }
             else {
                 children.push ((
                     <thead key = {0}>
-                        <DatamonkeyTableRow rowData={this.props.headerData} header={true}/>
+                        <DatamonkeyTableRow rowData={this.props.headerData} header={true} sorter={_.bind (self.dm_sortOnColumn, self)} sortOn = {self.state.sortOn}/>
                     </thead>
                 ));
             }
         }
 
+
+
         children.push (React.createElement ("tbody", {key : 1},
-             _.map (this.props.bodyData, _.bind(function (componentData, index) {
+             _.map (this.state.rowOrder, _.bind(function (row_index) {
+                        var componentData = this.props.bodyData [row_index];
+
                             return (
-                                <DatamonkeyTableRow rowData={componentData} key={this.props.rowHash ? this.props.rowHash (componentData) : index} header={false}/>
+                                <DatamonkeyTableRow rowData={componentData} key={this.props.rowHash ? this.props.rowHash (componentData) : row_index} header={false}/>
                             );
                         }, this))));
+
 
 
         return React.createElement ("table", {className: this.props.classes}, children);
