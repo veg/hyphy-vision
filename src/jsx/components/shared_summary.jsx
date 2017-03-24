@@ -529,6 +529,16 @@ var DatamonkeyModelTable = React.createClass({
     };
   },
 
+  componentWillReceiveProps: function(nextProps) {
+      var self = this,
+          tableInfo = self.dm_extractFitsTable (nextProps.fits);
+    //console.log(self.dm_makeHeaderRow     (tableInfo.columns));
+    this.setState({
+      header: self.dm_makeHeaderRow(tableInfo.columns),
+      rows: tableInfo.data
+    });
+  },
+
   dm_extractFitsTable : function (jsonTable) {
      var modelList = [];
      var columnMap = null;

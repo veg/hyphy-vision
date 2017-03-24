@@ -8,7 +8,7 @@ var datamonkey = require('../datamonkey/datamonkey.js'),
 require("phylotree");
 require("phylotree.css");
 import {BSRELSummary} from "./components/absrel_summary.jsx";
-import {ModelFits} from "./components/model_fits.jsx";
+import {DatamonkeyModelTable} from "./components/shared_summary.jsx";
 import {TreeSummary} from "./components/tree_summary.jsx";
 import {Tree} from "./components/tree.jsx";
 import {BranchTable} from "./components/branch_table.jsx";
@@ -35,12 +35,14 @@ var BSREL = React.createClass({
       var annotations = data["fits"]["Full model"]["branch-annotations"],
           json = data,
           pmid = data["PMID"],
+		  fits = data["fits"],
           test_results = data["test results"];
 
       self.setState({
                       annotations : annotations,
                       json : json,
                       pmid : pmid,
+					  fits : fits,
                       test_results : test_results
                     });
 
@@ -206,6 +208,7 @@ var BSREL = React.createClass({
               annotations : null,
               json : null,
               pmid : null,
+			  model_fits : {},
               settings : tree_settings,
               test_results : null,
               tree : null,
@@ -300,7 +303,7 @@ var BSREL = React.createClass({
   render: function() {
 
     var self = this;
-
+	
     return (
         <div id="results">
             <div id="summary-tab">
@@ -311,7 +314,7 @@ var BSREL = React.createClass({
                         <TreeSummary json={self.state.json} />
                     </div>
                     <div id="hyphy-model-fits" className="col-md-12">
-                        <ModelFits json={self.state.json} />
+                        <DatamonkeyModelTable fits={self.state.fits} />
                     </div>
                 </div>
             </div>

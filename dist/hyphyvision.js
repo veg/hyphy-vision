@@ -343,7 +343,7 @@ webpackJsonp([0],[
 	
 	var _absrel_summary = __webpack_require__(44);
 	
-	var _model_fits = __webpack_require__(77);
+	var _shared_summary = __webpack_require__(244);
 	
 	var _tree_summary = __webpack_require__(78);
 	
@@ -385,12 +385,14 @@ webpackJsonp([0],[
 	            var annotations = data["fits"]["Full model"]["branch-annotations"],
 	                json = data,
 	                pmid = data["PMID"],
+	                fits = data["fits"],
 	                test_results = data["test results"];
 	
 	            self.setState({
 	                annotations: annotations,
 	                json: json,
 	                pmid: pmid,
+	                fits: fits,
 	                test_results: test_results
 	            });
 	        });
@@ -530,6 +532,7 @@ webpackJsonp([0],[
 	            annotations: null,
 	            json: null,
 	            pmid: null,
+	            model_fits: {},
 	            settings: tree_settings,
 	            test_results: null,
 	            tree: null
@@ -639,7 +642,7 @@ webpackJsonp([0],[
 	                    React.createElement(
 	                        'div',
 	                        { id: 'hyphy-model-fits', className: 'col-md-12' },
-	                        React.createElement(_model_fits.ModelFits, { json: self.state.json })
+	                        React.createElement(_shared_summary.DatamonkeyModelTable, { fits: self.state.fits })
 	                    )
 	                )
 	            ),
@@ -1150,26 +1153,22 @@ webpackJsonp([0],[
 	  render: function render() {
 	
 	    return React.createElement(
-	      "div",
-	      { className: "col-lg-12" },
+	      "ul",
+	      { className: "list-group" },
 	      React.createElement(
-	        "ul",
-	        { className: "list-group" },
+	        "li",
+	        { className: "list-group-item" },
 	        React.createElement(
-	          "li",
-	          { className: "list-group-item" },
-	          React.createElement(
-	            "h4",
-	            { className: "list-group-item-heading" },
-	            React.createElement("i", { className: "fa fa-cubes", styleFormat: "margin-right: 10px" }),
-	            "Model fits"
-	          ),
-	          React.createElement(
-	            "table",
-	            { className: "table table-hover table-condensed list-group-item-text", styleFormat: "margin-top:0.5em;" },
-	            React.createElement("thead", { id: "summary-model-header1" }),
-	            React.createElement("tbody", { id: "summary-model-table" })
-	          )
+	          "h4",
+	          { className: "list-group-item-heading" },
+	          React.createElement("i", { className: "fa fa-cubes", styleFormat: "margin-right: 10px" }),
+	          "Model fits"
+	        ),
+	        React.createElement(
+	          "table",
+	          { className: "table table-hover table-condensed list-group-item-text", styleFormat: "margin-top:0.5em;" },
+	          React.createElement("thead", { id: "summary-model-header1" }),
+	          React.createElement("tbody", { id: "summary-model-table" })
 	        )
 	      )
 	    );
@@ -16923,10 +16922,10 @@ webpackJsonp([0],[
 	 */
 	
 	function getUnboundedScrollPosition(scrollable) {
-	  if (scrollable.Window && scrollable instanceof scrollable.Window) {
+	  if (scrollable === window) {
 	    return {
-	      x: scrollable.pageXOffset || scrollable.document.documentElement.scrollLeft,
-	      y: scrollable.pageYOffset || scrollable.document.documentElement.scrollTop
+	      x: window.pageXOffset || document.documentElement.scrollLeft,
+	      y: window.pageYOffset || document.documentElement.scrollTop
 	    };
 	  }
 	  return {
@@ -17675,9 +17674,7 @@ webpackJsonp([0],[
 	 * @return {boolean} Whether or not the object is a DOM node.
 	 */
 	function isNode(object) {
-	  var doc = object ? object.ownerDocument || object : document;
-	  var defaultView = doc.defaultView || window;
-	  return !!(object && (typeof defaultView.Node === 'function' ? object instanceof defaultView.Node : typeof object === 'object' && typeof object.nodeType === 'number' && typeof object.nodeName === 'string'));
+	  return !!(object && (typeof Node === 'function' ? object instanceof Node : typeof object === 'object' && typeof object.nodeType === 'number' && typeof object.nodeName === 'string'));
 	}
 	
 	module.exports = isNode;
@@ -17686,7 +17683,7 @@ webpackJsonp([0],[
 /* 203 */
 /***/ function(module, exports) {
 
-	/* WEBPACK VAR INJECTION */(function(global) {'use strict';
+	'use strict';
 	
 	/**
 	 * Copyright (c) 2013-present, Facebook, Inc.
@@ -17707,24 +17704,19 @@ webpackJsonp([0],[
 	 *
 	 * The activeElement will be null only if the document or document body is not
 	 * yet defined.
-	 *
-	 * @param {?DOMDocument} doc Defaults to current document.
-	 * @return {?DOMElement}
 	 */
-	function getActiveElement(doc) /*?DOMElement*/{
-	  doc = doc || global.document;
-	  if (typeof doc === 'undefined') {
+	function getActiveElement() /*?DOMElement*/{
+	  if (typeof document === 'undefined') {
 	    return null;
 	  }
 	  try {
-	    return doc.activeElement || doc.body;
+	    return document.activeElement || document.body;
 	  } catch (e) {
-	    return doc.body;
+	    return document.body;
 	  }
 	}
 	
 	module.exports = getActiveElement;
-	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
 
 /***/ },
 /* 204 */
@@ -22270,14 +22262,14 @@ webpackJsonp([0],[
 	
 	var _slac_summary = __webpack_require__(246);
 	
-	var _slac_graphs = __webpack_require__(252);
+	var _slac_graphs = __webpack_require__(247);
 	
 	var React = __webpack_require__(46),
 	    ReactDOM = __webpack_require__(83),
 	    _ = __webpack_require__(45);
 	
 	var datamonkey = __webpack_require__(39);
-	__webpack_require__(247);
+	__webpack_require__(249);
 	
 	var SLAC = React.createClass({
 	    displayName: 'SLAC',
@@ -23089,6 +23081,16 @@ webpackJsonp([0],[
 	        return {
 	            orderOn: "display order"
 	        };
+	    },
+	
+	    componentWillReceiveProps: function componentWillReceiveProps(nextProps) {
+	        var self = this,
+	            tableInfo = self.dm_extractFitsTable(nextProps.fits);
+	        //console.log(self.dm_makeHeaderRow     (tableInfo.columns));
+	        this.setState({
+	            header: self.dm_makeHeaderRow(tableInfo.columns),
+	            rows: tableInfo.data
+	        });
 	    },
 	
 	    dm_extractFitsTable: function dm_extractFitsTable(jsonTable) {
@@ -24044,6 +24046,502 @@ webpackJsonp([0],[
 /* 247 */
 /***/ function(module, exports, __webpack_require__) {
 
+	/* WEBPACK VAR INJECTION */(function(_) {'use strict';
+	
+	var _shared_graph = __webpack_require__(248);
+	
+	var React = __webpack_require__(46);
+	var datamonkey = __webpack_require__(39);
+	
+	var SLACGraphs = React.createClass({
+	    displayName: 'SLACGraphs',
+	
+	
+	    getInitialState: function getInitialState() {
+	
+	        return {
+	            ambigHandling: this.props.initialAmbigHandling,
+	            ambigOptions: this.dm_AmbigOptions(this.props),
+	            xLabel: "Site",
+	            yLabel: "dN-dS"
+	        };
+	    },
+	
+	    getDefaultProps: function getDefaultProps() {
+	
+	        return {
+	            mle: null,
+	            partitionSites: null,
+	            initialAmbigHandling: "RESOLVED"
+	        };
+	    },
+	
+	    dm_AmbigOptions: function dm_AmbigOptions(theseProps) {
+	        return _.keys(theseProps.mle[0]);
+	    },
+	
+	    componentWillReceiveProps: function componentWillReceiveProps(nextProps) {
+	        this.setState({
+	
+	            ambigOptions: this.dm_AmbigOptions(nextProps),
+	            ambigHandling: nextProps.initialAmbigHandling
+	        });
+	    },
+	
+	    dm_makePlotData: function dm_makePlotData(xlabel, ylabels) {
+	
+	        var self = this;
+	
+	        var x = [];
+	        var y = [[]];
+	
+	        var partitionCount = datamonkey.helpers.countPartitionsJSON(this.props.partitionSites),
+	            partitionIndex = 0,
+	            siteCount = 0,
+	            col_index = [],
+	            x_index = -1;
+	
+	        _.each(self.props.headers, function (d, i) {
+	
+	            if (_.find(ylabels, function (l) {
+	                return l == d[0];
+	            })) {
+	                col_index.push(i);
+	            }
+	        });
+	
+	        x_index = _.pluck(self.props.headers, 0).indexOf(xlabel);
+	
+	        y = _.map(col_index, function () {
+	            return [];
+	        });
+	
+	        while (partitionIndex < partitionCount) {
+	
+	            _.each(self.props.partitionSites[partitionIndex].coverage[0], function (site, index) {
+	                var siteData = self.props.mle[partitionIndex][self.state.ambigHandling][index];
+	
+	                var thisRow = [partitionIndex + 1, site + 1];
+	                //secondRow = doCI ? ['',''] : null;
+	                siteCount++;
+	                if (x_index < 0) {
+	                    x.push(siteCount);
+	                } else {
+	                    x.push(siteData[x_index]);
+	                }
+	                _.each(col_index, function (ci, i) {
+	                    y[i].push(siteData[ci]);
+	                });
+	            });
+	            partitionIndex++;
+	        }
+	
+	        return { x: x, y: y };
+	    },
+	
+	    dm_xAxis: function dm_xAxis(column) {
+	        this.setState({ xLabel: column });
+	    },
+	
+	    dm_yAxis: function dm_yAxis(column) {
+	        this.setState({ yLabel: column });
+	    },
+	
+	    dm_setAmbigOption: function dm_setAmbigOption(value) {
+	        this.setState({
+	            ambigHandling: value
+	        });
+	    },
+	
+	    dm_doScatter: function dm_doScatter() {
+	        return this.state.xLabel != "Site";
+	    },
+	
+	    render: function render() {
+	
+	        var self = this;
+	
+	        var _dm_makePlotData = this.dm_makePlotData(this.state.xLabel, [this.state.yLabel]),
+	            x = _dm_makePlotData.x,
+	            y = _dm_makePlotData.y;
+	
+	        return React.createElement(
+	            'div',
+	            { className: 'row' },
+	            React.createElement(
+	                'nav',
+	                { className: 'navbar' },
+	                React.createElement(
+	                    'form',
+	                    { className: 'navbar-form ' },
+	                    React.createElement(
+	                        'div',
+	                        { className: 'form-group navbar-left' },
+	                        React.createElement(
+	                            'div',
+	                            { className: 'input-group' },
+	                            React.createElement(
+	                                'span',
+	                                { className: 'input-group-addon' },
+	                                'X-axis:'
+	                            ),
+	                            React.createElement(
+	                                'ul',
+	                                { className: 'dropdown-menu' },
+	                                _.map(['Site'].concat(_.pluck(self.props.headers, 0)), function (value) {
+	                                    return React.createElement(
+	                                        'li',
+	                                        { key: value },
+	                                        React.createElement(
+	                                            'a',
+	                                            { href: '#', tabIndex: '-1', onClick: _.partial(self.dm_xAxis, value) },
+	                                            value
+	                                        )
+	                                    );
+	                                })
+	                            ),
+	                            React.createElement(
+	                                'button',
+	                                { className: 'btn btn-default btn-sm dropdown-toggle form-control', type: 'button', 'data-toggle': 'dropdown', 'aria-haspopup': 'true', 'aria-expanded': 'false' },
+	                                self.state.xLabel,
+	                                React.createElement('span', { className: 'caret' })
+	                            )
+	                        ),
+	                        React.createElement(
+	                            'div',
+	                            { className: 'input-group' },
+	                            React.createElement(
+	                                'span',
+	                                { className: 'input-group-addon' },
+	                                'Y-axis:'
+	                            ),
+	                            React.createElement(
+	                                'ul',
+	                                { className: 'dropdown-menu' },
+	                                _.map(_.pluck(self.props.headers, 0), function (value) {
+	                                    return React.createElement(
+	                                        'li',
+	                                        { key: value },
+	                                        React.createElement(
+	                                            'a',
+	                                            { href: '#', tabIndex: '-1', onClick: _.partial(self.dm_yAxis, value) },
+	                                            value
+	                                        )
+	                                    );
+	                                })
+	                            ),
+	                            React.createElement(
+	                                'button',
+	                                { className: 'btn btn-default btn-sm dropdown-toggle form-control', type: 'button', 'data-toggle': 'dropdown', 'aria-haspopup': 'true', 'aria-expanded': 'false' },
+	                                self.state.yLabel,
+	                                React.createElement('span', { className: 'caret' })
+	                            )
+	                        ),
+	                        React.createElement(
+	                            'div',
+	                            { className: 'input-group' },
+	                            React.createElement(
+	                                'span',
+	                                { className: 'input-group-addon' },
+	                                'Ambiguities '
+	                            ),
+	                            React.createElement(
+	                                'ul',
+	                                { className: 'dropdown-menu' },
+	                                _.map(this.state.ambigOptions, function (value, index) {
+	                                    return React.createElement(
+	                                        'li',
+	                                        { key: index },
+	                                        React.createElement(
+	                                            'a',
+	                                            { href: '#', tabIndex: '-1', onClick: _.partial(self.dm_setAmbigOption, value) },
+	                                            value
+	                                        )
+	                                    );
+	                                })
+	                            ),
+	                            React.createElement(
+	                                'button',
+	                                { className: 'btn btn-default btn-sm dropdown-toggle form-control', type: 'button', 'data-toggle': 'dropdown', 'aria-haspopup': 'true', 'aria-expanded': 'false' },
+	                                self.state.ambigHandling,
+	                                ' ',
+	                                React.createElement('span', { className: 'caret' })
+	                            )
+	                        )
+	                    )
+	                )
+	            ),
+	            self.dm_doScatter() ? React.createElement(_shared_graph.DatamonkeyScatterplot, { x: x, y: y, marginLeft: 50, transitions: true }) : React.createElement(_shared_graph.DatamonkeySeries, { x: x, y: y, marginLeft: 50, transitions: true, doDots: true })
+	        );
+	
+	        return null;
+	    }
+	});
+	
+	module.exports.SLACGraphs = SLACGraphs;
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(45)))
+
+/***/ },
+/* 248 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(d3, _) {'use strict';
+	
+	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+	
+	var React = __webpack_require__(46);
+	var datamonkey = __webpack_require__(39);
+	
+	var _dmGraphDefaultColorPallette = d3.scale.category10().domain(_.range(10));
+	
+	var _dmGraphBaseDefinitions = {
+	
+	    getDefaultProps: function getDefaultProps() {
+	        return {
+	            width: 800,
+	            height: 400,
+	            marginLeft: 35,
+	            marginRight: 10,
+	            marginTop: 10,
+	            marginBottom: 35,
+	            marginXaxis: 5,
+	            marginYaxis: 5,
+	            graphData: null,
+	            renderStyle: { "axis": { "class": "hyphy-axis" }, "points": { "class": "" } },
+	            xScale: "linear",
+	            yScale: "linear",
+	            xAxis: true,
+	            yAxis: true,
+	            transitions: false,
+	            numberFormat: d3.format(".4r"),
+	            tracker: true,
+	            xLabel: null,
+	            yLabel: null,
+	            x: [],
+	            y: []
+	        };
+	    },
+	
+	    getInitialState: function getInitialState() {
+	        return null;
+	    },
+	
+	    dm_computeRanges: function dm_computeRanges() {
+	        return {
+	            x_range: d3.extent(this.props.x),
+	            y_range: d3.extent(_.flatten(_.map(this.props.y, function (data_point) {
+	                return d3.extent(data_point);
+	            })))
+	        };
+	    },
+	
+	    dm_computeDimensions: function dm_computeDimensions() {
+	        return {
+	            main: { width: this.props.width - this.props.marginLeft - this.props.marginRight,
+	                height: this.props.height - this.props.marginTop - this.props.marginBottom }
+	
+	        };
+	    },
+	
+	    componentWillReceiveProps: function componentWillReceiveProps(nextProps) {},
+	
+	    /*shouldComponentUpdate: function () {
+	        return false;
+	    },*/
+	
+	    componentDidMount: function componentDidMount() {
+	
+	        //this.dm_renderGraph (x_scale, y_scale, ReactDOM.findDOMNode(this));
+	    },
+	
+	    dm_makeTitle: function dm_makeTitle(point) {
+	        return "x = " + this.props.numberFormat(point[0]) + " y = " + this.props.numberFormat(point[1]);
+	    },
+	
+	    dm_setTracker: function dm_setTracker(main_graph, point) {
+	        if (this.props.tracker) {
+	            var tracker = main_graph.selectAll(".graph-tracker").data([[""]]);
+	            tracker.enter().append("g");
+	            tracker.attr("transform", "translate (50,50)").classed("graph-tracker", true);
+	
+	            if (point) {
+	                var text_element = tracker.selectAll("text").data(function (d) {
+	                    return d;
+	                });
+	                text_element.enter().append("text");
+	                text_element.text(this.dm_makeTitle(point)).attr("background-color", "red");
+	            } else {
+	                tracker.selectAll("text").remove();
+	            }
+	        }
+	    },
+	
+	    dm_renderGraph: function dm_renderGraph(x_scale, y_scale, dom_element) {
+	
+	        var main_graph = d3.select(dom_element);
+	        var self = this;
+	        var dot_classes = this.dm_makeClasses("points");
+	
+	        _.each(this.props.y, _.bind(function (y, i) {
+	            var series_color = _dmGraphDefaultColorPallette(i);
+	
+	            var data_points = main_graph.selectAll("circle.series_" + i).data(_.zip(this.props.x, y));
+	            data_points.enter().append("circle");
+	            data_points.exit().remove();
+	
+	            data_points.on("mouseover", function (t) {
+	                self.dm_setTracker(main_graph, t);
+	            }).on("mouseout", function (t) {
+	                self.dm_setTracker(main_graph, null);
+	            });
+	
+	            this.dm_doTransition(data_points.classed("series_" + i, true)).attr("cx", function (d) {
+	                return x_scale(d[0]);
+	            }).attr("cy", function (d) {
+	                return y_scale(d[1]);
+	            }).attr("r", function (d) {
+	                return 3;
+	            }).attr("fill", series_color);
+	        }, this));
+	    },
+	
+	    dm_doTransition: function dm_doTransition(d3sel) {
+	        if (this.props.transitions) {
+	            return d3sel.transition();
+	        }
+	        return d3sel;
+	    },
+	
+	    dm_renderAxis: function dm_renderAxis(scale, location, label, dom_element) {
+	
+	        var xAxis = d3.svg.axis().scale(scale).orient(location); // e.g. bottom
+	
+	        this.dm_doTransition(d3.select(dom_element)).call(xAxis);
+	
+	        if (label) {
+	            var axis_label = dom_element.selectAll(".");
+	        }
+	    },
+	
+	    dm_makeClasses: function dm_makeClasses(key) {
+	        var className = null,
+	            styleDict = null;
+	
+	        if (key in this.props.renderStyle) {
+	            if ("class" in this.props.renderStyle[key]) {
+	                className = this.props.renderStyle[key]["class"];
+	            }
+	            if ("style" in this.props.renderStyle[key]) {
+	                styleDict = this.props.renderStyle[key]["style"];
+	            }
+	        }
+	
+	        return { className: className, style: styleDict };
+	    },
+	
+	    dm_makeScale: function dm_makeScale(type, domain, range) {
+	        var scale;
+	        if (_.isFunction(type)) {
+	            scale = type;
+	        } else {
+	            switch (type) {
+	                case 'linear':
+	                    scale = d3.scale.linear();
+	                    break;
+	                case 'log':
+	                    scale = d3.scale.log();
+	                    break;
+	                default:
+	                    scale = d3.scale.linear();
+	            }
+	        }
+	        return scale.domain(domain).range(range);
+	    },
+	
+	    render: function render() {
+	        var _dm_computeDimensions = this.dm_computeDimensions(),
+	            main = _dm_computeDimensions.main,
+	            _dm_computeRanges = this.dm_computeRanges(),
+	            x_range = _dm_computeRanges.x_range,
+	            y_range = _dm_computeRanges.y_range;
+	
+	        var x_scale = this.dm_makeScale(this.props.xScale, x_range, [0, main.width]),
+	            y_scale = this.dm_makeScale(this.props.yScale, y_range, [main.height, 0]);
+	
+	        return React.createElement(
+	            'svg',
+	            { width: this.props.width, height: this.props.height },
+	            React.createElement('g', { transform: "translate(" + this.props.marginLeft + "," + this.props.marginTop + ")", ref: _.partial(this.dm_renderGraph, x_scale, y_scale) }),
+	            this.props.xAxis ? React.createElement('g', _extends({}, this.dm_makeClasses("axis"), { transform: "translate(" + this.props.marginLeft + "," + (main.height + this.props.marginTop + this.props.marginXaxis) + ")", ref: _.partial(this.dm_renderAxis, x_scale, "bottom", this.props.xLabel) })) : null,
+	            this.props.yAxis ? React.createElement('g', _extends({}, this.dm_makeClasses("axis"), { transform: "translate(" + (this.props.marginLeft - this.props.marginYaxis) + "," + this.props.marginTop + ")", ref: _.partial(this.dm_renderAxis, y_scale, "left", this.props.yLabel) })) : null
+	        );
+	    }
+	};
+	
+	var _dmGraphSeriesDefinitions = _.clone(_dmGraphBaseDefinitions);
+	
+	_dmGraphSeriesDefinitions.dm_renderGraph = function (x_scale, y_scale, dom_element) {
+	
+	    var main_graph = d3.select(dom_element);
+	    var self = this;
+	
+	    _.each(this.props.y, _.bind(function (y, i) {
+	        var series_color = _dmGraphDefaultColorPallette(i);
+	
+	        var series_line = d3.svg.area().interpolate("step").y1(function (d) {
+	            return y_scale(d[1]);
+	        }).x(function (d) {
+	            return x_scale(d[0]);
+	        });
+	
+	        if (y_scale.domain()[0] < 0) {
+	            series_line.y0(function (d) {
+	                return y_scale(0);
+	            });
+	        } else {
+	            series_line.y0(y_scale(y_scale.domain()[0]));
+	        }
+	
+	        var data_points = main_graph.selectAll("path.series_" + i).data([_.zip(this.props.x, y)]);
+	        data_points.enter().append("path");
+	        data_points.exit().remove();
+	
+	        this.dm_doTransition(data_points.classed("series_" + i, true)).attr("d", series_line).attr("fill", series_color).attr("fill-opacity", 0.25).attr("stroke", series_color).attr("stroke-width", "0.5px");
+	
+	        if (this.props.doDots) {
+	
+	            var data_points = main_graph.selectAll("circle.series_" + i).data(_.zip(this.props.x, y));
+	            data_points.enter().append("circle");
+	            data_points.exit().remove();
+	
+	            data_points.on("mouseover", function (t) {
+	                self.dm_setTracker(main_graph, t);
+	            }).on("mouseout", function (t) {
+	                self.dm_setTracker(main_graph, null);
+	            });
+	
+	            this.dm_doTransition(data_points.classed("series_" + i, true)).attr("cx", function (d) {
+	                return x_scale(d[0]);
+	            }).attr("cy", function (d) {
+	                return y_scale(d[1]);
+	            }).attr("r", function (d) {
+	                return 2;
+	            }).attr("fill", series_color);
+	        }
+	    }, this));
+	};
+	
+	var DatamonkeyScatterplot = React.createClass(_dmGraphBaseDefinitions);
+	var DatamonkeySeries = React.createClass(_dmGraphSeriesDefinitions);
+	
+	module.exports.DatamonkeyScatterplot = DatamonkeyScatterplot;
+	module.exports.DatamonkeySeries = DatamonkeySeries;
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(40), __webpack_require__(45)))
+
+/***/ },
+/* 249 */
+/***/ function(module, exports, __webpack_require__) {
+
 	/* WEBPACK VAR INJECTION */(function($, jQuery, d3, _) {"use strict";
 	
 	var datamonkey = __webpack_require__(39);
@@ -24332,506 +24830,6 @@ webpackJsonp([0],[
 	datamonkey.helpers.filter = datamonkey_filter_list;
 	datamonkey.helpers.map = datamonkey_map_list;
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2), __webpack_require__(2), __webpack_require__(40), __webpack_require__(45)))
-
-/***/ },
-/* 248 */,
-/* 249 */,
-/* 250 */,
-/* 251 */,
-/* 252 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/* WEBPACK VAR INJECTION */(function(_) {'use strict';
-	
-	var _shared_graph = __webpack_require__(253);
-	
-	var React = __webpack_require__(46);
-	var datamonkey = __webpack_require__(39);
-	
-	var SLACGraphs = React.createClass({
-	    displayName: 'SLACGraphs',
-	
-	
-	    getInitialState: function getInitialState() {
-	
-	        return {
-	            ambigHandling: this.props.initialAmbigHandling,
-	            ambigOptions: this.dm_AmbigOptions(this.props),
-	            xLabel: "Site",
-	            yLabel: "dN-dS"
-	        };
-	    },
-	
-	    getDefaultProps: function getDefaultProps() {
-	
-	        return {
-	            mle: null,
-	            partitionSites: null,
-	            initialAmbigHandling: "RESOLVED"
-	        };
-	    },
-	
-	    dm_AmbigOptions: function dm_AmbigOptions(theseProps) {
-	        return _.keys(theseProps.mle[0]);
-	    },
-	
-	    componentWillReceiveProps: function componentWillReceiveProps(nextProps) {
-	        this.setState({
-	
-	            ambigOptions: this.dm_AmbigOptions(nextProps),
-	            ambigHandling: nextProps.initialAmbigHandling
-	        });
-	    },
-	
-	    dm_makePlotData: function dm_makePlotData(xlabel, ylabels) {
-	
-	        var self = this;
-	
-	        var x = [];
-	        var y = [[]];
-	
-	        var partitionCount = datamonkey.helpers.countPartitionsJSON(this.props.partitionSites),
-	            partitionIndex = 0,
-	            siteCount = 0,
-	            col_index = [],
-	            x_index = -1;
-	
-	        _.each(self.props.headers, function (d, i) {
-	
-	            if (_.find(ylabels, function (l) {
-	                return l == d[0];
-	            })) {
-	                col_index.push(i);
-	            }
-	        });
-	
-	        x_index = _.pluck(self.props.headers, 0).indexOf(xlabel);
-	
-	        y = _.map(col_index, function () {
-	            return [];
-	        });
-	
-	        while (partitionIndex < partitionCount) {
-	
-	            _.each(self.props.partitionSites[partitionIndex].coverage[0], function (site, index) {
-	                var siteData = self.props.mle[partitionIndex][self.state.ambigHandling][index];
-	
-	                var thisRow = [partitionIndex + 1, site + 1];
-	                //secondRow = doCI ? ['',''] : null;
-	                siteCount++;
-	                if (x_index < 0) {
-	                    x.push(siteCount);
-	                } else {
-	                    x.push(siteData[x_index]);
-	                }
-	                _.each(col_index, function (ci, i) {
-	                    y[i].push(siteData[ci]);
-	                });
-	            });
-	            partitionIndex++;
-	        }
-	
-	        return { x: x, y: y };
-	    },
-	
-	    dm_xAxis: function dm_xAxis(column) {
-	        this.setState({ xLabel: column });
-	    },
-	
-	    dm_yAxis: function dm_yAxis(column) {
-	        this.setState({ yLabel: column });
-	    },
-	
-	    dm_setAmbigOption: function dm_setAmbigOption(value) {
-	        this.setState({
-	            ambigHandling: value
-	        });
-	    },
-	
-	    dm_doScatter: function dm_doScatter() {
-	        return this.state.xLabel != "Site";
-	    },
-	
-	    render: function render() {
-	
-	        var self = this;
-	
-	        var _dm_makePlotData = this.dm_makePlotData(this.state.xLabel, [this.state.yLabel]),
-	            x = _dm_makePlotData.x,
-	            y = _dm_makePlotData.y;
-	
-	        return React.createElement(
-	            'div',
-	            { className: 'row' },
-	            React.createElement(
-	                'nav',
-	                { className: 'navbar' },
-	                React.createElement(
-	                    'form',
-	                    { className: 'navbar-form ' },
-	                    React.createElement(
-	                        'div',
-	                        { className: 'form-group navbar-left' },
-	                        React.createElement(
-	                            'div',
-	                            { className: 'input-group' },
-	                            React.createElement(
-	                                'span',
-	                                { className: 'input-group-addon' },
-	                                'X-axis:'
-	                            ),
-	                            React.createElement(
-	                                'ul',
-	                                { className: 'dropdown-menu' },
-	                                _.map(['Site'].concat(_.pluck(self.props.headers, 0)), function (value) {
-	                                    return React.createElement(
-	                                        'li',
-	                                        { key: value },
-	                                        React.createElement(
-	                                            'a',
-	                                            { href: '#', tabIndex: '-1', onClick: _.partial(self.dm_xAxis, value) },
-	                                            value
-	                                        )
-	                                    );
-	                                })
-	                            ),
-	                            React.createElement(
-	                                'button',
-	                                { className: 'btn btn-default btn-sm dropdown-toggle form-control', type: 'button', 'data-toggle': 'dropdown', 'aria-haspopup': 'true', 'aria-expanded': 'false' },
-	                                self.state.xLabel,
-	                                React.createElement('span', { className: 'caret' })
-	                            )
-	                        ),
-	                        React.createElement(
-	                            'div',
-	                            { className: 'input-group' },
-	                            React.createElement(
-	                                'span',
-	                                { className: 'input-group-addon' },
-	                                'Y-axis:'
-	                            ),
-	                            React.createElement(
-	                                'ul',
-	                                { className: 'dropdown-menu' },
-	                                _.map(_.pluck(self.props.headers, 0), function (value) {
-	                                    return React.createElement(
-	                                        'li',
-	                                        { key: value },
-	                                        React.createElement(
-	                                            'a',
-	                                            { href: '#', tabIndex: '-1', onClick: _.partial(self.dm_yAxis, value) },
-	                                            value
-	                                        )
-	                                    );
-	                                })
-	                            ),
-	                            React.createElement(
-	                                'button',
-	                                { className: 'btn btn-default btn-sm dropdown-toggle form-control', type: 'button', 'data-toggle': 'dropdown', 'aria-haspopup': 'true', 'aria-expanded': 'false' },
-	                                self.state.yLabel,
-	                                React.createElement('span', { className: 'caret' })
-	                            )
-	                        ),
-	                        React.createElement(
-	                            'div',
-	                            { className: 'input-group' },
-	                            React.createElement(
-	                                'span',
-	                                { className: 'input-group-addon' },
-	                                'Ambiguities '
-	                            ),
-	                            React.createElement(
-	                                'ul',
-	                                { className: 'dropdown-menu' },
-	                                _.map(this.state.ambigOptions, function (value, index) {
-	                                    return React.createElement(
-	                                        'li',
-	                                        { key: index },
-	                                        React.createElement(
-	                                            'a',
-	                                            { href: '#', tabIndex: '-1', onClick: _.partial(self.dm_setAmbigOption, value) },
-	                                            value
-	                                        )
-	                                    );
-	                                })
-	                            ),
-	                            React.createElement(
-	                                'button',
-	                                { className: 'btn btn-default btn-sm dropdown-toggle form-control', type: 'button', 'data-toggle': 'dropdown', 'aria-haspopup': 'true', 'aria-expanded': 'false' },
-	                                self.state.ambigHandling,
-	                                ' ',
-	                                React.createElement('span', { className: 'caret' })
-	                            )
-	                        )
-	                    )
-	                )
-	            ),
-	            self.dm_doScatter() ? React.createElement(_shared_graph.DatamonkeyScatterplot, { x: x, y: y, marginLeft: 50, transitions: true }) : React.createElement(_shared_graph.DatamonkeySeries, { x: x, y: y, marginLeft: 50, transitions: true, doDots: true })
-	        );
-	
-	        return null;
-	    }
-	});
-	
-	module.exports.SLACGraphs = SLACGraphs;
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(45)))
-
-/***/ },
-/* 253 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/* WEBPACK VAR INJECTION */(function(d3, _) {'use strict';
-	
-	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
-	
-	var React = __webpack_require__(46);
-	var datamonkey = __webpack_require__(39);
-	
-	var _dmGraphDefaultColorPallette = d3.scale.category10().domain(_.range(10));
-	
-	var _dmGraphBaseDefinitions = {
-	
-	    getDefaultProps: function getDefaultProps() {
-	        return {
-	            width: 800,
-	            height: 400,
-	            marginLeft: 35,
-	            marginRight: 10,
-	            marginTop: 10,
-	            marginBottom: 35,
-	            marginXaxis: 5,
-	            marginYaxis: 5,
-	            graphData: null,
-	            renderStyle: { "axis": { "class": "hyphy-axis" }, "points": { "class": "" } },
-	            xScale: "linear",
-	            yScale: "linear",
-	            xAxis: true,
-	            yAxis: true,
-	            transitions: false,
-	            numberFormat: d3.format(".4r"),
-	            tracker: true,
-	            xLabel: null,
-	            yLabel: null,
-	            x: [],
-	            y: []
-	        };
-	    },
-	
-	    getInitialState: function getInitialState() {
-	        return null;
-	    },
-	
-	    dm_computeRanges: function dm_computeRanges() {
-	        return {
-	            x_range: d3.extent(this.props.x),
-	            y_range: d3.extent(_.flatten(_.map(this.props.y, function (data_point) {
-	                return d3.extent(data_point);
-	            })))
-	        };
-	    },
-	
-	    dm_computeDimensions: function dm_computeDimensions() {
-	        return {
-	            main: { width: this.props.width - this.props.marginLeft - this.props.marginRight,
-	                height: this.props.height - this.props.marginTop - this.props.marginBottom }
-	
-	        };
-	    },
-	
-	    componentWillReceiveProps: function componentWillReceiveProps(nextProps) {},
-	
-	    /*shouldComponentUpdate: function () {
-	        return false;
-	    },*/
-	
-	    componentDidMount: function componentDidMount() {
-	
-	        //this.dm_renderGraph (x_scale, y_scale, ReactDOM.findDOMNode(this));
-	    },
-	
-	    dm_makeTitle: function dm_makeTitle(point) {
-	        return "x = " + this.props.numberFormat(point[0]) + " y = " + this.props.numberFormat(point[1]);
-	    },
-	
-	    dm_setTracker: function dm_setTracker(main_graph, point) {
-	        if (this.props.tracker) {
-	            var tracker = main_graph.selectAll(".graph-tracker").data([[""]]);
-	            tracker.enter().append("g");
-	            tracker.attr("transform", "translate (50,50)").classed("graph-tracker", true);
-	
-	            if (point) {
-	                var text_element = tracker.selectAll("text").data(function (d) {
-	                    return d;
-	                });
-	                text_element.enter().append("text");
-	                text_element.text(this.dm_makeTitle(point)).attr("background-color", "red");
-	            } else {
-	                tracker.selectAll("text").remove();
-	            }
-	        }
-	    },
-	
-	    dm_renderGraph: function dm_renderGraph(x_scale, y_scale, dom_element) {
-	
-	        var main_graph = d3.select(dom_element);
-	        var self = this;
-	        var dot_classes = this.dm_makeClasses("points");
-	
-	        _.each(this.props.y, _.bind(function (y, i) {
-	            var series_color = _dmGraphDefaultColorPallette(i);
-	
-	            var data_points = main_graph.selectAll("circle.series_" + i).data(_.zip(this.props.x, y));
-	            data_points.enter().append("circle");
-	            data_points.exit().remove();
-	
-	            data_points.on("mouseover", function (t) {
-	                self.dm_setTracker(main_graph, t);
-	            }).on("mouseout", function (t) {
-	                self.dm_setTracker(main_graph, null);
-	            });
-	
-	            this.dm_doTransition(data_points.classed("series_" + i, true)).attr("cx", function (d) {
-	                return x_scale(d[0]);
-	            }).attr("cy", function (d) {
-	                return y_scale(d[1]);
-	            }).attr("r", function (d) {
-	                return 3;
-	            }).attr("fill", series_color);
-	        }, this));
-	    },
-	
-	    dm_doTransition: function dm_doTransition(d3sel) {
-	        if (this.props.transitions) {
-	            return d3sel.transition();
-	        }
-	        return d3sel;
-	    },
-	
-	    dm_renderAxis: function dm_renderAxis(scale, location, label, dom_element) {
-	
-	        var xAxis = d3.svg.axis().scale(scale).orient(location); // e.g. bottom
-	
-	        this.dm_doTransition(d3.select(dom_element)).call(xAxis);
-	
-	        if (label) {
-	            var axis_label = dom_element.selectAll(".");
-	        }
-	    },
-	
-	    dm_makeClasses: function dm_makeClasses(key) {
-	        var className = null,
-	            styleDict = null;
-	
-	        if (key in this.props.renderStyle) {
-	            if ("class" in this.props.renderStyle[key]) {
-	                className = this.props.renderStyle[key]["class"];
-	            }
-	            if ("style" in this.props.renderStyle[key]) {
-	                styleDict = this.props.renderStyle[key]["style"];
-	            }
-	        }
-	
-	        return { className: className, style: styleDict };
-	    },
-	
-	    dm_makeScale: function dm_makeScale(type, domain, range) {
-	        var scale;
-	        if (_.isFunction(type)) {
-	            scale = type;
-	        } else {
-	            switch (type) {
-	                case 'linear':
-	                    scale = d3.scale.linear();
-	                    break;
-	                case 'log':
-	                    scale = d3.scale.log();
-	                    break;
-	                default:
-	                    scale = d3.scale.linear();
-	            }
-	        }
-	        return scale.domain(domain).range(range);
-	    },
-	
-	    render: function render() {
-	        var _dm_computeDimensions = this.dm_computeDimensions(),
-	            main = _dm_computeDimensions.main,
-	            _dm_computeRanges = this.dm_computeRanges(),
-	            x_range = _dm_computeRanges.x_range,
-	            y_range = _dm_computeRanges.y_range;
-	
-	        var x_scale = this.dm_makeScale(this.props.xScale, x_range, [0, main.width]),
-	            y_scale = this.dm_makeScale(this.props.yScale, y_range, [main.height, 0]);
-	
-	        return React.createElement(
-	            'svg',
-	            { width: this.props.width, height: this.props.height },
-	            React.createElement('g', { transform: "translate(" + this.props.marginLeft + "," + this.props.marginTop + ")", ref: _.partial(this.dm_renderGraph, x_scale, y_scale) }),
-	            this.props.xAxis ? React.createElement('g', _extends({}, this.dm_makeClasses("axis"), { transform: "translate(" + this.props.marginLeft + "," + (main.height + this.props.marginTop + this.props.marginXaxis) + ")", ref: _.partial(this.dm_renderAxis, x_scale, "bottom", this.props.xLabel) })) : null,
-	            this.props.yAxis ? React.createElement('g', _extends({}, this.dm_makeClasses("axis"), { transform: "translate(" + (this.props.marginLeft - this.props.marginYaxis) + "," + this.props.marginTop + ")", ref: _.partial(this.dm_renderAxis, y_scale, "left", this.props.yLabel) })) : null
-	        );
-	    }
-	};
-	
-	var _dmGraphSeriesDefinitions = _.clone(_dmGraphBaseDefinitions);
-	
-	_dmGraphSeriesDefinitions.dm_renderGraph = function (x_scale, y_scale, dom_element) {
-	
-	    var main_graph = d3.select(dom_element);
-	    var self = this;
-	
-	    _.each(this.props.y, _.bind(function (y, i) {
-	        var series_color = _dmGraphDefaultColorPallette(i);
-	
-	        var series_line = d3.svg.area().interpolate("step").y1(function (d) {
-	            return y_scale(d[1]);
-	        }).x(function (d) {
-	            return x_scale(d[0]);
-	        });
-	
-	        if (y_scale.domain()[0] < 0) {
-	            series_line.y0(function (d) {
-	                return y_scale(0);
-	            });
-	        } else {
-	            series_line.y0(y_scale(y_scale.domain()[0]));
-	        }
-	
-	        var data_points = main_graph.selectAll("path.series_" + i).data([_.zip(this.props.x, y)]);
-	        data_points.enter().append("path");
-	        data_points.exit().remove();
-	
-	        this.dm_doTransition(data_points.classed("series_" + i, true)).attr("d", series_line).attr("fill", series_color).attr("fill-opacity", 0.25).attr("stroke", series_color).attr("stroke-width", "0.5px");
-	
-	        if (this.props.doDots) {
-	
-	            var data_points = main_graph.selectAll("circle.series_" + i).data(_.zip(this.props.x, y));
-	            data_points.enter().append("circle");
-	            data_points.exit().remove();
-	
-	            data_points.on("mouseover", function (t) {
-	                self.dm_setTracker(main_graph, t);
-	            }).on("mouseout", function (t) {
-	                self.dm_setTracker(main_graph, null);
-	            });
-	
-	            this.dm_doTransition(data_points.classed("series_" + i, true)).attr("cx", function (d) {
-	                return x_scale(d[0]);
-	            }).attr("cy", function (d) {
-	                return y_scale(d[1]);
-	            }).attr("r", function (d) {
-	                return 2;
-	            }).attr("fill", series_color);
-	        }
-	    }, this));
-	};
-	
-	var DatamonkeyScatterplot = React.createClass(_dmGraphBaseDefinitions);
-	var DatamonkeySeries = React.createClass(_dmGraphSeriesDefinitions);
-	
-	module.exports.DatamonkeyScatterplot = DatamonkeyScatterplot;
-	module.exports.DatamonkeySeries = DatamonkeySeries;
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(40), __webpack_require__(45)))
 
 /***/ }
 ]);
