@@ -5,6 +5,7 @@ var React = require('react'),
 import {DatamonkeyPartitionTable, DatamonkeyModelTable, DatamonkeyTimersTable} from "./components/shared_summary.jsx";
 import {SLACSites} from "./components/slac_sites.jsx";
 import {SLACBanner} from "./components/slac_summary.jsx";
+import {SLACGraphs} from "./components/slac_graphs.jsx";
 
 var datamonkey = require('../datamonkey/datamonkey.js');
 require('../datamonkey/helpers.js');
@@ -179,9 +180,9 @@ var SLAC = React.createClass({
 
                     </div>
 
-                    <div className='tab-pane active' id="sites_tab">
+                    <div className='tab-pane' id="sites_tab">
                         <div className="row">
-                            <div id="summary-div" className="col-md-12">
+                            <div className="col-md-12">
                                 <SLACSites
                                     headers={self.state.analysis_results.MLE.headers}
                                     mle={datamonkey.helpers.map (datamonkey.helpers.filter (self.state.analysis_results.MLE.content, function (value, key) {return _.has (value, "by-site");}),
@@ -195,8 +196,23 @@ var SLAC = React.createClass({
                         </div>
                     </div>
 
-                    <div className='tab-pane' id="tree_tab"></div>
+                   <div className='tab-pane active' id="graphs_tab">
+                         <div className="row">
+                            <div className="col-md-12">
+                                <SLACGraphs
+                                    mle={datamonkey.helpers.map (datamonkey.helpers.filter (self.state.analysis_results.MLE.content, function (value, key) {return _.has (value, "by-site");}),
+                                               function (value, key) {return value["by-site"];})}
+                                    partitionSites={self.state.analysis_results.partitions}
+                                    headers={self.state.analysis_results.MLE.headers}
+                                />
+                            </div>
+                        </div>
+                    </div>
 
+                    <div className='tab-pane' id="tree_tab">
+                    </div>
+
+                    <div className='tab-pane' id="tree_tab"></div>
             </div>
         );
         }
