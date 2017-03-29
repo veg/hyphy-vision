@@ -113,3 +113,139 @@
 #table-branch-table tr{
   cursor : pointer;
 }
+
+#hyphy-logo {
+  width: 50px;
+  height: 50px;
+  float: left;
+  margin-right: 15px;
+}
+
+.logo {
+    font-family: "Noto Sans";
+    font-weight: 900;
+    color: #00a99d!important;
+}
+
+.fixed{
+    position: fixed;
+}
+
+.nav-pills a {
+    color: #00a99d;
+}
+
+.nav-pills a:hover {
+    color: #7EC6B3;
+}
+
+.nav-pills > li.active > a {
+    color: #fff;
+    background-color: #00a99d;
+}
+
+.nav-pills > li.active > a:hover {
+    background-color: #7EC6B3;
+}
+
+#summary-method-name{
+    color: #00a99d;
+}
+
+.tree-title {
+    background-color: #00a99d;
+    color: #FFF;
+    text-align: center;
+    padding: 5px 5px 5px 5px;
+}
+
+table.info-table > thead > th {
+    color: #00a99d;
+}
+
+.hyphy-highlight {
+    color: #00a99d;
+}
+
+#summary-pmid {
+    color: #00a99d;
+}
+
+#data-circle {
+    height: 175px;
+    width: 175px;
+    margin: auto;
+    background-image: url("/images/data-circle.svg");
+    background-size: cover;
+    line-height: .3;
+    display: flex;
+    justify-content: center; /* align horizontal */
+    align-items: center; /* align vertical */
+}
+
+#data-circle-div {
+    padding: 5px 5px 5px 5px;
+}
+
+#data-text {
+    text-align: center;
+}
+
+/* Bootstrap-docs scroll spy */
+/* sidebar */
+.bs-docs-sidebar {
+  padding-left: 20px;
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+/* all links */
+.bs-docs-sidebar .nav>li>a {
+  color: #999;
+  border-left: 2px solid transparent;
+  padding: 4px 20px;
+  font-size: 13px;
+  font-weight: 400;
+}
+/* nested links */
+.bs-docs-sidebar .nav .nav>li>a {
+  padding-top: 1px;
+  padding-bottom: 1px;
+  padding-left: 30px;
+  font-size: 12px;
+}
+/* active & hover links */
+.bs-docs-sidebar .nav>.active>a,
+.bs-docs-sidebar .nav>li>a:hover,
+.bs-docs-sidebar .nav>li>a:focus {
+  color: #00a99d;
+  text-decoration: none;
+  background-color: transparent;
+  border-left-color: #00a99d;
+}
+/* all active links */
+.bs-docs-sidebar .nav>.active>a,
+.bs-docs-sidebar .nav>.active:hover>a,
+.bs-docs-sidebar .nav>.active:focus>a {
+  font-weight: 700;
+}
+/* nested active links */
+.bs-docs-sidebar .nav .nav>.active>a,
+.bs-docs-sidebar .nav .nav>.active:hover>a,
+.bs-docs-sidebar .nav .nav>.active:focus>a {
+  font-weight: 500;
+}
+/* hide inactive nested list */
+.bs-docs-sidebar .nav ul.nav {
+  /*display: none;       */
+}
+/* show active nested list */
+.bs-docs-sidebar .nav>.active>ul.nav {
+  display: block;
+}
+.bs-docs-section {
+  margin-bottom:60px;
+}
+.bs-docs-example {
+  margin-top : 20px;
+  margin-bottom : 20px;
+}

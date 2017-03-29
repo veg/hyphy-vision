@@ -6756,15 +6756,15 @@ button.close {
 }
 /*# sourceMappingURL=bootstrap.css.map */
 /*!
- *  Font Awesome 4.6.3 by @davegandy - http://fontawesome.io - @fontawesome
+ *  Font Awesome 4.7.0 by @davegandy - http://fontawesome.io - @fontawesome
  *  License - http://fontawesome.io/license (Font: SIL OFL 1.1, CSS: MIT License)
  */
 /* FONT PATH
  * -------------------------- */
 @font-face {
   font-family: 'FontAwesome';
-  src: url(25a32416abee198dd821b0b17a198a8f.eot);
-  src: url(25a32416abee198dd821b0b17a198a8f.eot?#iefix&v=4.6.3) format('embedded-opentype'), url(e6cf7c6ec7c2d6f670ae9d762604cb0b.woff2) format('woff2'), url(c8ddf1e5e5bf3682bc7bebf30f394148.woff) format('woff'), url(1dc35d25e61d819a9c357074014867ab.ttf) format('truetype'), url(d7c639084f684d66a1bc66855d193ed8.svg#fontawesomeregular) format('svg');
+  src: url(674f50d287a8c48dc19ba404d20fe713.eot);
+  src: url(674f50d287a8c48dc19ba404d20fe713.eot?#iefix&v=4.7.0) format('embedded-opentype'), url(af7ae505a9eed503f8b8e6982036873e.woff2) format('woff2'), url(fee66e712a8a08eef5805a46892932ad.woff) format('woff'), url(b06871f281fee6b241d60582ae9369b9.ttf) format('truetype'), url(912ec66d7572ff821749319396470bde.svg#fontawesomeregular) format('svg');
   font-weight: normal;
   font-style: normal;
 }
@@ -8589,6 +8589,7 @@ button.close {
   content: "\F23E";
 }
 .fa-battery-4:before,
+.fa-battery:before,
 .fa-battery-full:before {
   content: "\F240";
 }
@@ -8935,6 +8936,143 @@ button.close {
 .fa-font-awesome:before {
   content: "\F2B4";
 }
+.fa-handshake-o:before {
+  content: "\F2B5";
+}
+.fa-envelope-open:before {
+  content: "\F2B6";
+}
+.fa-envelope-open-o:before {
+  content: "\F2B7";
+}
+.fa-linode:before {
+  content: "\F2B8";
+}
+.fa-address-book:before {
+  content: "\F2B9";
+}
+.fa-address-book-o:before {
+  content: "\F2BA";
+}
+.fa-vcard:before,
+.fa-address-card:before {
+  content: "\F2BB";
+}
+.fa-vcard-o:before,
+.fa-address-card-o:before {
+  content: "\F2BC";
+}
+.fa-user-circle:before {
+  content: "\F2BD";
+}
+.fa-user-circle-o:before {
+  content: "\F2BE";
+}
+.fa-user-o:before {
+  content: "\F2C0";
+}
+.fa-id-badge:before {
+  content: "\F2C1";
+}
+.fa-drivers-license:before,
+.fa-id-card:before {
+  content: "\F2C2";
+}
+.fa-drivers-license-o:before,
+.fa-id-card-o:before {
+  content: "\F2C3";
+}
+.fa-quora:before {
+  content: "\F2C4";
+}
+.fa-free-code-camp:before {
+  content: "\F2C5";
+}
+.fa-telegram:before {
+  content: "\F2C6";
+}
+.fa-thermometer-4:before,
+.fa-thermometer:before,
+.fa-thermometer-full:before {
+  content: "\F2C7";
+}
+.fa-thermometer-3:before,
+.fa-thermometer-three-quarters:before {
+  content: "\F2C8";
+}
+.fa-thermometer-2:before,
+.fa-thermometer-half:before {
+  content: "\F2C9";
+}
+.fa-thermometer-1:before,
+.fa-thermometer-quarter:before {
+  content: "\F2CA";
+}
+.fa-thermometer-0:before,
+.fa-thermometer-empty:before {
+  content: "\F2CB";
+}
+.fa-shower:before {
+  content: "\F2CC";
+}
+.fa-bathtub:before,
+.fa-s15:before,
+.fa-bath:before {
+  content: "\F2CD";
+}
+.fa-podcast:before {
+  content: "\F2CE";
+}
+.fa-window-maximize:before {
+  content: "\F2D0";
+}
+.fa-window-minimize:before {
+  content: "\F2D1";
+}
+.fa-window-restore:before {
+  content: "\F2D2";
+}
+.fa-times-rectangle:before,
+.fa-window-close:before {
+  content: "\F2D3";
+}
+.fa-times-rectangle-o:before,
+.fa-window-close-o:before {
+  content: "\F2D4";
+}
+.fa-bandcamp:before {
+  content: "\F2D5";
+}
+.fa-grav:before {
+  content: "\F2D6";
+}
+.fa-etsy:before {
+  content: "\F2D7";
+}
+.fa-imdb:before {
+  content: "\F2D8";
+}
+.fa-ravelry:before {
+  content: "\F2D9";
+}
+.fa-eercast:before {
+  content: "\F2DA";
+}
+.fa-microchip:before {
+  content: "\F2DB";
+}
+.fa-snowflake-o:before {
+  content: "\F2DC";
+}
+.fa-superpowers:before {
+  content: "\F2DD";
+}
+.fa-wpexplorer:before {
+  content: "\F2DE";
+}
+.fa-meetup:before {
+  content: "\F2E0";
+}
 .sr-only {
   position: absolute;
   width: 1px;
@@ -9068,6 +9206,142 @@ button.close {
 
 #table-branch-table tr{
   cursor : pointer;
+}
+
+#hyphy-logo {
+  width: 50px;
+  height: 50px;
+  float: left;
+  margin-right: 15px;
+}
+
+.logo {
+    font-family: "Noto Sans";
+    font-weight: 900;
+    color: #00a99d!important;
+}
+
+.fixed{
+    position: fixed;
+}
+
+.nav-pills a {
+    color: #00a99d;
+}
+
+.nav-pills a:hover {
+    color: #7EC6B3;
+}
+
+.nav-pills > li.active > a {
+    color: #fff;
+    background-color: #00a99d;
+}
+
+.nav-pills > li.active > a:hover {
+    background-color: #7EC6B3;
+}
+
+#summary-method-name{
+    color: #00a99d;
+}
+
+.tree-title {
+    background-color: #00a99d;
+    color: #FFF;
+    text-align: center;
+    padding: 5px 5px 5px 5px;
+}
+
+table.info-table > thead > th {
+    color: #00a99d;
+}
+
+.hyphy-highlight {
+    color: #00a99d;
+}
+
+#summary-pmid {
+    color: #00a99d;
+}
+
+#data-circle {
+    height: 175px;
+    width: 175px;
+    margin: auto;
+    background-image: url("/images/data-circle.svg");
+    background-size: cover;
+    line-height: .3;
+    display: flex;
+    justify-content: center; /* align horizontal */
+    align-items: center; /* align vertical */
+}
+
+#data-circle-div {
+    padding: 5px 5px 5px 5px;
+}
+
+#data-text {
+    text-align: center;
+}
+
+/* Bootstrap-docs scroll spy */
+/* sidebar */
+.bs-docs-sidebar {
+  padding-left: 20px;
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+/* all links */
+.bs-docs-sidebar .nav>li>a {
+  color: #999;
+  border-left: 2px solid transparent;
+  padding: 4px 20px;
+  font-size: 13px;
+  font-weight: 400;
+}
+/* nested links */
+.bs-docs-sidebar .nav .nav>li>a {
+  padding-top: 1px;
+  padding-bottom: 1px;
+  padding-left: 30px;
+  font-size: 12px;
+}
+/* active & hover links */
+.bs-docs-sidebar .nav>.active>a,
+.bs-docs-sidebar .nav>li>a:hover,
+.bs-docs-sidebar .nav>li>a:focus {
+  color: #00a99d;
+  text-decoration: none;
+  background-color: transparent;
+  border-left-color: #00a99d;
+}
+/* all active links */
+.bs-docs-sidebar .nav>.active>a,
+.bs-docs-sidebar .nav>.active:hover>a,
+.bs-docs-sidebar .nav>.active:focus>a {
+  font-weight: 700;
+}
+/* nested active links */
+.bs-docs-sidebar .nav .nav>.active>a,
+.bs-docs-sidebar .nav .nav>.active:hover>a,
+.bs-docs-sidebar .nav .nav>.active:focus>a {
+  font-weight: 500;
+}
+/* hide inactive nested list */
+.bs-docs-sidebar .nav ul.nav {
+  /*display: none;       */
+}
+/* show active nested list */
+.bs-docs-sidebar .nav>.active>ul.nav {
+  display: block;
+}
+.bs-docs-section {
+  margin-bottom:60px;
+}
+.bs-docs-example {
+  margin-top : 20px;
+  margin-bottom : 20px;
 }
 .axis path,
 .axis line {

@@ -8,7 +8,7 @@ var datamonkey = require('../datamonkey/datamonkey.js'),
 require("phylotree");
 require("phylotree.css");
 import {BSRELSummary} from "./components/absrel_summary.jsx";
-import {ModelFits} from "./components/model_fits.jsx";
+import {DatamonkeyModelTable} from "./components/shared_summary.jsx";
 import {TreeSummary} from "./components/tree_summary.jsx";
 import {Tree} from "./components/tree.jsx";
 import {BranchTable} from "./components/branch_table.jsx";
@@ -35,12 +35,14 @@ var BSREL = React.createClass({
       var annotations = data["fits"]["Full model"]["branch-annotations"],
           json = data,
           pmid = data["PMID"],
+		  fits = data["fits"],
           test_results = data["test results"];
 
       self.setState({
                       annotations : annotations,
                       json : json,
                       pmid : pmid,
+					  fits : fits,
                       test_results : test_results
                     });
 
@@ -206,6 +208,7 @@ var BSREL = React.createClass({
               annotations : null,
               json : null,
               pmid : null,
+			  model_fits : {},
               settings : tree_settings,
               test_results : null,
               tree : null,
@@ -300,37 +303,35 @@ var BSREL = React.createClass({
   render: function() {
 
     var self = this;
-
+	
     return (
-        <div className="tab-content">
-            <div className="tab-pane active" id="summary-tab">
-
+        <div id="results">
+            <div id="summary-tab">
+                <BSRELSummary test_results={self.state.test_results}
+                              pmid={self.state.pmid} />
                 <div className="row">
-                  <div id="summary-div" className="col-md-12">
-                    <BSRELSummary test_results={self.state.test_results}
-                                  pmid={self.state.pmid} />
-                  </div>
-                </div>
-
-                <div className="row">
-                    <div id="hyphy-tree-summary" className="col-md-6">
-                      <TreeSummary json={self.state.json} />
+                    <div id="hyphy-tree-summary" className="col-md-12">
+                        <TreeSummary json={self.state.json} />
                     </div>
-                    <div id="hyphy-model-fits" className="col-md-6">
-                      <ModelFits json={self.state.json} />
+                    <div id="hyphy-model-fits" className="col-md-12">
+                        <DatamonkeyModelTable fits={self.state.fits} />
                     </div>
                 </div>
             </div>
 
-            <div className='tab-pane' id="tree-tab">
-              <Tree json={self.state.json}
-                    settings={self.state.settings} />
+            <div className="row">
+                <div id="tree-tab" className="col-md-12">
+                    <Tree json={self.state.json}
+                          settings={self.state.settings} />
+                </div>
             </div>
 
-            <div className='tab-pane' id="table_tab">
-              <BranchTable tree={self.state.tree}
-                           test_results={self.state.test_results}
-                           annotations={self.state.annotations} />
+            <div className="row">
+                <div id="table-tab" className="col-md-12">
+                    <BranchTable tree={self.state.tree}
+                                 test_results={self.state.test_results}
+                                 annotations={self.state.annotations} />
+                </div>
             </div>
 
         </div>
@@ -344,7 +345,7 @@ var BSREL = React.createClass({
 // Will need to make a call to this
 // omega distributions
 function render_absrel(url, element) {
-  React.render(
+  ReactDOM.render(
     <BSREL url={url} />,
     document.getElementById(element)
   );

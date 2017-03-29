@@ -31,12 +31,14 @@
     "font-awesome-webpack": "0.0.4",
     "immutable": "3.8.1",
     "jquery": "1.x",
-    "jquery-ui": "^1.12.1",
+    "jquery-ui": "1.x",
+    "jquery-ui-bundle": "^1.11.4",
+    "less": "^2.7.1",
     "lodash": "3.x",
     "lodash.clonedeep": "^4.5.0",
     "phylotree": "0.1.4",
-    "react": "0.14.x",
-    "redux": "x.x"
+    "react": "15.x.x",
+    "react-dom": "^15.4.1"
   },
   "devDependencies": {
     "babel-core": "^6.17.0",

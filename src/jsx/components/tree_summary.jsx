@@ -113,11 +113,11 @@ var TreeSummary = React.createClass({
 
   getTreeSummaryColumns : function(table_row_data) {
 
-    var omega_header = '<th>ω rate<br>classes</th>',
-        branch_num_header = '<th># of <br>branches</th>',
-        branch_prop_header = '<th>% of <br>branches</th>',
-        branch_prop_length_header = '<th>% of tree <br>length</th>',
-        under_selection_header = '<th># under <br>selection</th>';
+    var omega_header = '<th">ω rate classes</th>',
+        branch_num_header = '<th># of branches</th>',
+        branch_prop_header = '<th>% of branches</th>',
+        branch_prop_length_header = '<th>% of tree length</th>',
+        under_selection_header = '<th># under selection</th>';
 
 
     // inspect table_row_data and return header
@@ -185,11 +185,11 @@ var TreeSummary = React.createClass({
     return (
         <ul className="list-group">
             <li className="list-group-item">
-              <h4 className="list-group-item-heading"><i className="fa fa-tree"></i>Tree</h4>
-              <table className="table table-hover table-condensed list-group-item-text">
-                <thead id='summary-tree-header'></thead>
-                <tbody id="summary-tree-table"></tbody>
-              </table>
+                <h4 className="list-group-item-heading tree-title">Tree</h4>
+                <table className="table info-table table-hover table-striped table-condensed list-group-item-text">
+                  <thead id="summary-tree-header"></thead>
+                  <tbody id="summary-tree-table"></tbody>
+                </table>
             </li>
         </ul>
       )

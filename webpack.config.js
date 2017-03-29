@@ -11,17 +11,16 @@ config = {
   entry: {
     hyphyvision : ['./src/entry.js'],
 		vendor : [
-							"bootstrap", 
-							"crossfilter", 
-							"d3",
-							"dc",
-							"immutable",
-							"jquery",
-							"jquery-ui",
-							"underscore",
+              "jquery",
+              "jquery-ui-bundle",
+              "bootstrap", 
+              "d3",
+              "crossfilter", 
+              "dc",
+              "immutable",
+              "underscore",
 							"phylotree",
-							"react",
-							"redux"
+							"react"
 						 ]
   },
   output: {
@@ -35,11 +34,18 @@ config = {
     loaders: [{
       test: /\.js?$/,
       exclude: /node_modules/,
-      loader: 'babel'
+      loader: 'babel',
+      query : {
+        presets:['react']
+      }
     }, {
       test: /\.jsx?$/,
       exclude: /node_modules/,
-      loader: 'babel'
+      loader: 'babel',
+      query : {
+        presets:['react']
+      }
+
     },
 		{ test: /\.css$/, loader: ExtractTextPlugin.extract("style-loader", "css-loader")},
 		{ test: /jquery/, loader: 'expose?$!expose?jQuery' },
@@ -55,12 +61,12 @@ config = {
 		new webpack.optimize.CommonsChunkPlugin("vendor", "vendor.js"),
 		new webpack.ProvidePlugin({
 				$ : "jquery",
+				jQuery : "jquery",
 				d3: "d3",
 				crossfilter : "crossfilter",
 				dc : "dc",
 				datamonkey : "datamonkey",
-				_ : "underscore",
-				jQuery: "jquery"
+				_ : "underscore"
 		}),
  		new webpack.IgnorePlugin(/jsdom$/),
 		new ExtractTextPlugin("[name].css")
@@ -69,7 +75,7 @@ config = {
 		alias: {
 			'dc' : __dirname + '/node_modules/dc/dc.min.js',
 			'dc.css' : __dirname + '/node_modules/dc/dc.min.css',
-			'phylotree.css' : __dirname + '/node_modules/phylotree/phylotree.css',
+			'phylotree.css' : __dirname + '/node_modules/phylotree/phylotree.css'
 		},
     modulesDirectories: [
       'src',
@@ -107,9 +113,9 @@ if (process.env.NODE_ENV === 'production') {
   config.plugins.push(new webpack.optimize.UglifyJsPlugin());
 }
 
-var minimized = cloneDeep(config);
+//var minimized = cloneDeep(config);
+//minimized.plugins.push(new webpack.optimize.UglifyJsPlugin());
+//minimized.output.filename = 'hyphyvision.min.js';
 
-minimized.plugins.push(new webpack.optimize.UglifyJsPlugin());
-minimized.output.filename = 'hyphyvision.min.js';
-
-module.exports = [config, minimized];
+//module.exports = [config,minimized];
+module.exports = [config];
