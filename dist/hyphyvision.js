@@ -30,10 +30,10 @@ webpackJsonp([0],[
 	
 	var absrel = __webpack_require__(43);
 	var busted = __webpack_require__(238);
-	var fade = __webpack_require__(239);
-	var fade_summary = __webpack_require__(240);
-	var relax = __webpack_require__(241);
-	var slac = __webpack_require__(243);
+	var fade = __webpack_require__(240);
+	var fade_summary = __webpack_require__(241);
+	var relax = __webpack_require__(242);
+	var slac = __webpack_require__(244);
 	
 	// Create new hyphy-vision export
 	window.absrel = absrel;
@@ -343,7 +343,7 @@ webpackJsonp([0],[
 	
 	var _absrel_summary = __webpack_require__(44);
 	
-	var _shared_summary = __webpack_require__(244);
+	var _shared_summary = __webpack_require__(77);
 	
 	var _tree_summary = __webpack_require__(78);
 	
@@ -928,271 +928,689 @@ webpackJsonp([0],[
 /* 77 */
 /***/ function(module, exports, __webpack_require__) {
 
-	/* WEBPACK VAR INJECTION */(function(d3, _, $) {"use strict";
+	/* WEBPACK VAR INJECTION */(function(_, d3) {'use strict';
+	
+	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 	
 	var React = __webpack_require__(46);
+	var datamonkey = __webpack_require__(39);
 	
-	var ModelFits = React.createClass({
-	  displayName: "ModelFits",
+	var DatamonkeyTableRow = React.createClass({
+	    displayName: 'DatamonkeyTableRow',
 	
+	    /**
+	        A single table row
+	    
+	        *rowData* is an array of cells
+	            each cell can be one of
+	                1. string: simply render the text as shown
+	                2. object: a polymorphic case; can be rendered directly (if the object is a valid react.js element)
+	                   or via a transformation of the value associated with the key 'value'
+	    
+	                   supported keys
+	                    2.1. 'value' : the value to use to generate cell context
+	                    2.2. 'format' : the function (returning something react.js can render directly) that will be called
+	                    to transform 'value' into the object to be rendered
+	                    2.3. 'span' : colSpan attribute
+	                    2.4. 'style': CSS style attributes (JSX specification, i.e. {margin-top: '1em'} and not a string)
+	                    2.5. 'classes': CSS classes to apply to the cell
+	                    2.6. 'abbr': wrap cell value in <abbr> tags
+	    
+	                3. array: directly render array elements in the cell (must be renderable to react.js; note that plain
+	                text elements will be wrapped in "span" which is not allowed to nest in <th/td>
+	    
+	    
+	        *header* is a bool indicating whether the header is a header row (th cells) or a regular row (td cells)
+	    */
 	
-	  getInitialState: function getInitialState() {
-	    var table_row_data = this.getModelRows(this.props.json),
-	        table_columns = this.getModelColumns(table_row_data);
+	    /*propTypes: {
+	     rowData: React.PropTypes.arrayOf (React.PropTypes.oneOfType ([React.PropTypes.string,React.PropTypes.number,React.PropTypes.object,React.PropTypes.array])).isRequired,
+	     header:  React.PropTypes.bool,
+	    },*/
 	
-	    return {
-	      table_row_data: table_row_data,
-	      table_columns: table_columns
-	    };
-	  },
+	    dm_compareTwoValues: function dm_compareTwoValues(a, b) {
+	        /* this should be made static */
 	
-	  formatRuntime: function formatRuntime(seconds) {
-	    var duration_string = "",
-	        seconds = parseFloat(seconds);
+	        /**
+	            compare objects by iterating over keys
+	             return 0 : equal
+	                   1 : a < b
+	                   2 : a > b
+	                   -1 : cannot be compared
+	                   -2 : not compared, but could contain 'value' objects that could be compared
+	        */
 	
-	    var split_array = [Math.floor(seconds / (24 * 3600)), Math.floor(seconds / 3600) % 24, Math.floor(seconds / 60) % 60, seconds % 60],
-	        quals = ["d.", "hrs.", "min.", "sec."];
+	        var myType = typeof a === 'undefined' ? 'undefined' : _typeof(a),
+	            self = this;
 	
-	    split_array.forEach(function (d, i) {
-	      if (d) {
-	        duration_string += " " + d + " " + quals[i];
-	      }
-	    });
+	        if (myType == (typeof b === 'undefined' ? 'undefined' : _typeof(b))) {
+	            if (myType == "string" || myType == "number") {
+	                return a == b ? 0 : a > b ? 2 : 1;
+	            }
 	
-	    return duration_string;
-	  },
+	            if (_.isArray(a) && _.isArray(b)) {
 	
-	  getLogLikelihood: function getLogLikelihood(this_model) {
-	    return d3.format(".2f")(this_model['log-likelihood']);
-	  },
+	                if (a.length != b.length) {
+	                    return a.length > b.length ? 2 : 1;
+	                }
 	
-	  getAIC: function getAIC(this_model) {
-	    return d3.format(".2f")(this_model['AIC-c']);
-	  },
+	                var comparison_result = 0;
 	
-	  getNumParameters: function getNumParameters(this_model) {
-	    return this_model['parameters'];
-	  },
+	                _.every(a, function (c, i) {
+	                    var comp = self.dm_compareTwoValues(c, b[i]);
+	                    if (comp != 0) {
+	                        comparison_result = comp;
+	                        return false;
+	                    }
+	                    return true;
+	                });
 	
-	  getBranchLengths: function getBranchLengths(this_model) {
+	                return comparison_result;
+	            }
 	
-	    if (this_model["tree length"]) {
-	      return d3.format(".2f")(this_model["tree length"]);
-	    } else {
-	      return d3.format(".2f")(d3.values(this_model["branch-lengths"]).reduce(function (p, c) {
-	        return p + c;
-	      }, 0));
-	    }
-	  },
-	
-	  getRuntime: function getRuntime(this_model) {
-	    //return this.formatRuntime(this_model['runtime']);
-	    return this.formatRuntime(this_model['runtime']);
-	  },
-	
-	  getDistributions: function getDistributions(m, this_model) {
-	
-	    var omega_distributions = {};
-	    omega_distributions[m] = {};
-	
-	    var omega_format = d3.format(".3r"),
-	        prop_format = d3.format(".2p"),
-	        p_value_format = d3.format(".4f");
-	
-	    var distributions = [];
-	
-	    for (var d in this_model["rate-distributions"]) {
-	
-	      var this_distro = this_model["rate-distributions"][d];
-	      var this_distro_entry = [d, "", "", ""];
-	
-	      omega_distributions[m][d] = this_distro.map(function (d) {
-	        return {
-	          'omega': d[0],
-	          'weight': d[1]
-	        };
-	      });
-	
-	      for (var k = 0; k < this_distro.length; k++) {
-	        this_distro_entry[k + 1] = omega_format(this_distro[k][0]) + " (" + prop_format(this_distro[k][1]) + ")";
-	      }
-	
-	      distributions.push(this_distro_entry);
-	    }
-	
-	    distributions.sort(function (a, b) {
-	      return a[0] < b[0] ? -1 : a[0] == b[0] ? 0 : 1;
-	    });
-	
-	    return distributions;
-	  },
-	
-	  getModelRows: function getModelRows(json) {
-	
-	    if (!json) {
-	      return [];
-	    }
-	
-	    var table_row_data = [];
-	    var omega_format = d3.format(".3r");
-	    var prop_format = d3.format(".2p");
-	    var p_value_format = d3.format(".4f");
-	
-	    for (var m in json["fits"]) {
-	
-	      var this_model_row = [],
-	          this_model = json["fits"][m];
-	
-	      this_model_row = [this_model['display-order'], "", m, this.getLogLikelihood(this_model), this.getNumParameters(this_model), this.getAIC(this_model), this.getRuntime(this_model), this.getBranchLengths(this_model)];
-	
-	      var distributions = this.getDistributions(m, this_model);
-	
-	      if (distributions.length) {
-	
-	        this_model_row = this_model_row.concat(distributions[0]);
-	        this_model_row[1] = distributions[0][0];
-	
-	        table_row_data.push(this_model_row);
-	
-	        for (var d = 1; d < distributions.length; d++) {
-	
-	          var this_distro_entry = this_model_row.map(function (d, i) {
-	            if (i) return "";
-	            return d;
-	          });
-	
-	          this_distro_entry[1] = distributions[d][0];
-	
-	          for (var k = this_distro_entry.length - 4; k < this_distro_entry.length; k++) {
-	            this_distro_entry[k] = distributions[d][k - this_distro_entry.length + 4];
-	          }
-	
-	          table_row_data.push(this_distro_entry);
+	            return -2;
+	            // further check to see if 'this' has a "value" attribute
 	        }
-	      } else {
-	        table_row_data.push(this_model_row);
-	      }
+	        return -1;
+	    },
+	
+	    dm_compareTwoValues_level2: function dm_compareTwoValues_level2(a, b) {
+	        var compare = this.dm_compareTwoValues(a, b);
+	
+	        if (compare == -2) {
+	            if (_.has(a, "value") && _.has(b, "value")) {
+	                return this.dm_compareTwoValues(a.value, b.value);
+	            }
+	        }
+	
+	        return compare;
+	    },
+	
+	    dm_log100times: _.before(100, function (v) {
+	        console.log(v);
+	        return 0;
+	    }),
+	
+	    shouldComponentUpdate: function shouldComponentUpdate(nextProps) {
+	
+	        var self = this;
+	
+	        if (this.props.header !== nextProps.header) {
+	            return true;
+	        }
+	
+	        if (this.props.sortOn != nextProps.sortOn) {
+	            return true;
+	        }
+	
+	        var result = _.some(this.props.rowData, function (value, index) {
+	            /** TO DO
+	                check for format and other field equality
+	            */
+	
+	            if (value === nextProps.rowData[index]) {
+	                return false;
+	            }
+	
+	            var compare = self.dm_compareTwoValues_level2(value, nextProps.rowData[index]);
+	            if (compare >= 0) {
+	                if (compare == 0) {
+	                    // values match, compare properties
+	                    var existing_keys = _.keys(value),
+	                        new_keys = _.keys(nextProps.rowData[index]),
+	                        shared = _.intersection(existing_keys, new_keys);
+	
+	                    if (shared.length < new_keys.length || shared.length < existing_keys.length) {
+	                        return true;
+	                    }
+	
+	                    return false;
+	                } else {
+	                    return true;
+	                }
+	            }
+	
+	            return true;
+	        });
+	
+	        return result;
+	    },
+	
+	    render: function render() {
+	
+	        return React.createElement(
+	            'tr',
+	            null,
+	            this.props.rowData.map(_.bind(function (cell, index) {
+	
+	                var value = _.has(cell, "value") ? cell.value : cell;
+	
+	                if (_.isArray(value)) {
+	                    if (!_.has(cell, "format")) {
+	                        return value;
+	                    }
+	                } else {
+	                    if (_.isObject(value)) {
+	                        if (!React.isValidElement(value)) {
+	                            return null;
+	                        }
+	                    }
+	                }
+	
+	                if (_.has(cell, "format")) {
+	                    value = cell.format(value);
+	                }
+	
+	                if (_.has(cell, "abbr")) {
+	                    value = React.createElement(
+	                        'abbr',
+	                        { title: cell.abbr },
+	                        value
+	                    );
+	                }
+	
+	                var cellProps = { key: index };
+	
+	                if (_.has(cell, "span")) {
+	                    cellProps["colSpan"] = cell.span;
+	                }
+	
+	                if (_.has(cell, "style")) {
+	                    cellProps["style"] = cell.style;
+	                }
+	
+	                if (_.has(cell, "tooltip")) {
+	                    cellProps["title"] = cell.tooltip;
+	                    //this.dm_log100times (cellProps);
+	                }
+	
+	                if (_.has(cell, "classes")) {
+	                    cellProps["className"] = cell.classes;
+	                }
+	
+	                if (this.props.header && this.props.sorter) {
+	                    //console.log ("header + sorter", cell);
+	                    if (_.has(cell, "sortable")) {
+	                        cellProps["onClick"] = _.partial(this.props.sorter, index, this.dm_compareTwoValues_level2);
+	
+	                        var sortedness_state = "fa fa-sort";
+	                        if (this.props.sortOn && this.props.sortOn[0] == index) {
+	                            sortedness_state = this.props.sortOn[1] ? "fa fa-sort-amount-asc" : "fa fa-sort-amount-desc";
+	                        }
+	
+	                        value = React.createElement(
+	                            'div',
+	                            null,
+	                            value,
+	                            React.createElement('i', { className: sortedness_state, 'aria-hidden': 'true', style: { marginLeft: "0.5em" } })
+	                        );
+	                    }
+	                }
+	
+	                return React.createElement(this.props.header ? "th" : "td", cellProps, value);
+	            }, this))
+	        );
 	    }
+	});
 	
-	    table_row_data.sort(function (a, b) {
-	      if (a[0] == b[0]) {
-	        return a[1] < b[1] ? -1 : a[1] == b[1] ? 0 : 1;
-	      }
-	      return a[0] - b[0];
-	    });
+	var DatamonkeyTable = React.createClass({
+	    displayName: 'DatamonkeyTable',
 	
-	    table_row_data = table_row_data.map(function (r) {
-	      return r.slice(2);
-	    });
+	    /**
+	        A table composed of rows
+	            *headerData* -- an array of cells (see DatamonkeyTableRow) to render as the header
+	            *bodyData* -- an array of arrays of cells (rows) to render
+	            *classes* -- CSS classes to apply to the table element
+	    */
 	
-	    return table_row_data;
-	  },
+	    getDefaultProps: function getDefaultProps() {
+	        return { classes: "table table-condensed table-hover",
+	            rowHash: null
+	        };
+	    },
 	
-	  getModelColumns: function getModelColumns(table_row_data) {
+	    getInitialState: function getInitialState() {
+	        return {
+	            rowOrder: _.range(0, this.props.bodyData.length),
+	            sortOn: this.props.initialSort ? [this.props.initialSort, true] : null
+	        };
+	    },
 	
-	    var model_header = '<th>Model</th>',
-	        logl_header = '<th><em> log </em>L</th>',
-	        num_params_header = '<th><abbr title="Number of estimated model parameters"># par.</abbr></th>',
-	        aic_header = '<th><abbr title="Small Sample AIC">AIC<sub>c</sub></abbr></th>',
-	        runtime_header = '<th>Time to fit</th>',
-	        branch_lengths_header = '<th><abbr title="Total tree length, expected substitutions/site">L<sub>tree</sub></abbr></th>',
-	        branch_set_header = '<th>Branch set</th>',
-	        omega_1_header = '<th>&omega;<sub>1</sub></th>',
-	        omega_2_header = '<th>&omega;<sub>2</sub></th>',
-	        omega_3_header = '<th>&omega;<sub>3</sub></th>';
+	    componentWillReceiveProps: function componentWillReceiveProps(nextProps) {
+	        this.setState({
+	            rowOrder: _.range(0, nextProps.bodyData.length)
+	        });
+	    },
 	
-	    // inspect table_row_data and return header
-	    var all_columns = [model_header, logl_header, num_params_header, aic_header, runtime_header, branch_lengths_header, branch_set_header, omega_1_header, omega_2_header, omega_3_header];
+	    dm_sortOnColumn: function dm_sortOnColumn(index, compare_function) {
 	
-	    // validate each table row with its associated header
-	    if (table_row_data.length == 0) {
-	      return [];
+	        var self = this;
+	        var is_ascending = true;
+	        if (this.state.sortOn && this.state.sortOn[0] == index) {
+	            is_ascending = !this.state.sortOn[1];
+	        }
+	
+	        var new_order = _.map(this.state.rowOrder, _.identity).sort(function (i, j) {
+	            var comp_value = compare_function(self.props.bodyData[i][index], self.props.bodyData[j][index]);
+	            if (comp_value > 0) {
+	                return is_ascending ? 2 * comp_value - 3 : 3 - 2 * comp_value;
+	            }
+	            return 0;
+	        });
+	
+	        if (_.some(new_order, function (value, index) {
+	            return value != self.state.rowOrder[index];
+	        })) {
+	            this.setState({ rowOrder: new_order, sortOn: [index, is_ascending] });
+	        }
+	    },
+	
+	    render: function render() {
+	        var children = [];
+	
+	        var self = this;
+	
+	        if (this.props.headerData) {
+	            if (_.isArray(this.props.headerData[0])) {
+	                // multiple rows
+	                children.push(React.createElement(
+	                    'thead',
+	                    { key: 0 },
+	                    _.map(this.props.headerData, function (row, index) {
+	                        return React.createElement(DatamonkeyTableRow, { rowData: row, header: true, key: index, sorter: _.bind(self.dm_sortOnColumn, self), sortOn: self.state.sortOn });
+	                    })
+	                ));
+	            } else {
+	                children.push(React.createElement(
+	                    'thead',
+	                    { key: 0 },
+	                    React.createElement(DatamonkeyTableRow, { rowData: this.props.headerData, header: true, sorter: _.bind(self.dm_sortOnColumn, self), sortOn: self.state.sortOn })
+	                ));
+	            }
+	        }
+	
+	        children.push(React.createElement("tbody", { key: 1 }, _.map(this.state.rowOrder, _.bind(function (row_index) {
+	            var componentData = this.props.bodyData[row_index];
+	
+	            return React.createElement(DatamonkeyTableRow, { rowData: componentData, key: this.props.rowHash ? this.props.rowHash(componentData) : row_index, header: false });
+	        }, this))));
+	
+	        return React.createElement("table", { className: this.props.classes }, children);
 	    }
+	});
 	
-	    // trim columns to length of table_row_data
-	    var column_headers = _.take(all_columns, table_row_data[0].length);
+	var DatamonkeyRateDistributionTable = React.createClass({
+	    displayName: 'DatamonkeyRateDistributionTable',
 	
-	    // remove all columns that have 0, null, or undefined rows
-	    var items = d3.transpose(table_row_data);
 	
-	    return column_headers;
-	  },
+	    /** render a rate distribution table from JSON formatted like this
+	    {
+	         "non-synonymous/synonymous rate ratio for *background*":[ // name of distribution
+	          [0.1701428265961598, 1] // distribution points (rate, weight)
+	          ],
+	         "non-synonymous/synonymous rate ratio for *test*":[
+	          [0.1452686330406915, 1]
+	          ]
+	    }
+	     */
 	
-	  componentDidUpdate: function componentDidUpdate() {
+	    propTypes: {
+	        distribution: React.PropTypes.object.isRequired
+	    },
 	
-	    var model_columns = d3.select('#summary-model-header1');
-	    model_columns = model_columns.selectAll("th").data(this.state.table_columns);
-	    model_columns.enter().append("th");
-	    model_columns.html(function (d) {
-	      return d;
-	    });
+	    dm_formatterRate: d3.format(".3r"),
+	    dm_formatterProp: d3.format(".3p"),
 	
-	    var model_rows = d3.select('#summary-model-table').selectAll("tr").data(this.state.table_row_data);
-	    model_rows.enter().append('tr');
-	    model_rows.exit().remove();
-	    model_rows = model_rows.selectAll("td").data(function (d) {
-	      return d;
-	    });
-	    model_rows.enter().append("td");
-	    model_rows.html(function (d) {
-	      return d;
-	    });
-	  },
+	    dm_createDistributionTable: function dm_createDistributionTable(jsonRates) {
+	        var rowData = [];
+	        var self = this;
+	        _.each(jsonRates, function (value, key) {
+	            rowData.push([{ value: key, span: 3, classes: "info" }]);
+	            _.each(value, function (rate, index) {
+	                rowData.push([{ value: rate[1], format: self.dm_formatterProp }, '@', { value: rate[0], format: self.dm_formatterRate }]);
+	            });
+	        });
+	        return rowData;
+	    },
 	
-	  componentWillReceiveProps: function componentWillReceiveProps(nextProps) {
-	
-	    var table_row_data = this.getModelRows(nextProps.json),
-	        table_columns = this.getModelColumns(table_row_data);
-	
-	    this.setState({
-	      table_row_data: table_row_data,
-	      table_columns: table_columns
-	    });
-	  },
-	
-	  render: function render() {
-	
-	    return React.createElement(
-	      "ul",
-	      { className: "list-group" },
-	      React.createElement(
-	        "li",
-	        { className: "list-group-item" },
-	        React.createElement(
-	          "h4",
-	          { className: "list-group-item-heading" },
-	          React.createElement("i", { className: "fa fa-cubes", styleFormat: "margin-right: 10px" }),
-	          "Model fits"
-	        ),
-	        React.createElement(
-	          "table",
-	          { className: "table table-hover table-condensed list-group-item-text", styleFormat: "margin-top:0.5em;" },
-	          React.createElement("thead", { id: "summary-model-header1" }),
-	          React.createElement("tbody", { id: "summary-model-table" })
-	        )
-	      )
-	    );
-	  }
+	    render: function render() {
+	        return React.createElement(DatamonkeyTable, { bodyData: this.dm_createDistributionTable(this.props.distribution), classes: "table table-condensed" });
+	    }
 	
 	});
 	
-	// Will need to make a call to this
-	// omega distributions
-	function render_model_fits(json, element) {
-	  React.render(React.createElement(ModelFits, { json: json }), $(element)[0]);
-	}
+	var DatamonkeyPartitionTable = React.createClass({
+	    displayName: 'DatamonkeyPartitionTable',
 	
-	// Will need to make a call to this
-	// omega distributions
-	function rerender_model_fits(json, element) {
-	  $(element).empty();
-	  render_model_fits(json, element);
-	}
 	
-	module.exports.ModelFits = ModelFits;
-	module.exports.render_model_fits = render_model_fits;
-	module.exports.rerender_model_fits = rerender_model_fits;
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(40), __webpack_require__(45), __webpack_require__(2)))
+	    dm_formatterFloat: d3.format(".3r"),
+	    dm_formatterProp: d3.format(".3p"),
+	
+	    propTypes: {
+	        trees: React.PropTypes.object.isRequired,
+	        partitions: React.PropTypes.object.isRequired,
+	        branchAttributes: React.PropTypes.object.isRequired,
+	        siteResults: React.PropTypes.object.isRequired,
+	        accessorNegative: React.PropTypes.func.isRequired,
+	        accessorPositive: React.PropTypes.func.isRequired,
+	        pValue: React.PropTypes.number.isRequired
+	    },
+	
+	    dm_computePartitionInformation: function dm_computePartitionInformation(trees, partitions, attributes, pValue) {
+	
+	        var partitionKeys = _.sortBy(_.keys(partitions), function (v) {
+	            return v;
+	        }),
+	            matchingKey = null,
+	            self = this;
+	
+	        var extractBranchLength = this.props.extractOn || _.find(attributes.attributes, function (value, key) {
+	            matchingKey = key;return value["attribute type"] == "branch length";
+	        });
+	        if (matchingKey) {
+	            extractBranchLength = matchingKey;
+	        }
+	
+	        return _.map(partitionKeys, function (key, index) {
+	            var treeBranches = trees.tested[key],
+	                tested = {};
+	
+	            _.each(treeBranches, function (value, key) {
+	                if (value == "test") tested[key] = 1;
+	            });
+	
+	            var testedLength = extractBranchLength ? datamonkey.helpers.sum(attributes[key], function (v, k) {
+	                if (tested[k.toUpperCase()]) {
+	                    return v[extractBranchLength];
+	                }return 0;
+	            }) : 0;
+	            var totalLength = extractBranchLength ? datamonkey.helpers.sum(attributes[key], function (v) {
+	                return v[extractBranchLength] || 0;
+	            }) : 0; // || 0 is to resolve root node missing length
+	
+	
+	            return _.map([index + 1, // 1-based partition index
+	            partitions[key].coverage[0].length, // number of sites in the partition
+	            _.size(tested), // tested branches
+	            _.keys(treeBranches).length, // total branches
+	            testedLength, testedLength / totalLength, totalLength, _.filter(self.props.accessorPositive(self.props.siteResults, key), function (p) {
+	                return p <= pValue;
+	            }).length, _.filter(self.props.accessorNegative(self.props.siteResults, key), function (p) {
+	                return p <= pValue;
+	            }).length], function (cell, index) {
+	                if (index > 1) {
+	                    var attributedCell = { value: cell,
+	                        style: { textAlign: 'center' } };
+	
+	                    if (index == 4 || index == 6) {
+	                        _.extend(attributedCell, { 'format': self.dm_formatterFloat });
+	                    }
+	                    if (index == 5) {
+	                        _.extend(attributedCell, { 'format': self.dm_formatterProp });
+	                    }
+	
+	                    return attributedCell;
+	                }
+	                return cell;
+	            });
+	        });
+	    },
+	
+	    dm_makeHeaderRow: function dm_makeHeaderRow(pValue) {
+	        return [_.map(["Partition", "Sites", "Branches", "Branch Length", "Selected at p" + String.fromCharCode(parseInt("2264", 16)) + pValue], function (d, i) {
+	            return _.extend({ value: d, style: { borderBottom: 0, textAlign: i > 1 ? 'center' : 'left' } }, i > 1 ? { 'span': i == 3 ? 3 : 2 } : {});
+	        }), _.map(["", "", "Tested", "Total", "Tested", "% of total", "Total", "Positive", "Negative"], function (d, i) {
+	            return { value: d, style: { borderTop: 0, textAlign: i > 1 ? 'center' : 'left' } };
+	        })];
+	    },
+	
+	    getInitialState: function getInitialState() {
+	        return {
+	            header: this.dm_makeHeaderRow(this.props.pValue),
+	            rows: this.dm_computePartitionInformation(this.props.trees, this.props.partitions, this.props.branchAttributes, this.props.pValue)
+	        };
+	    },
+	
+	    componentWillReceiveProps: function componentWillReceiveProps(nextProps) {
+	        this.setState({
+	            header: this.dm_makeHeaderRow(nextProps.pValue),
+	            rows: this.dm_computePartitionInformation(nextProps.trees, nextProps.partitions, nextProps.branchAttributes, nextProps.pValue)
+	        });
+	    },
+	
+	    render: function render() {
+	        return React.createElement(
+	            'div',
+	            { className: 'table-responsive' },
+	            React.createElement(DatamonkeyTable, { headerData: this.state.header, bodyData: this.state.rows })
+	        );
+	    }
+	});
+	
+	var DatamonkeyModelTable = React.createClass({
+	    displayName: 'DatamonkeyModelTable',
+	
+	
+	    /** render a model fit table from a JSON object with entries like this
+	            "Global MG94xREV":{ // model name
+	               "log likelihood":-5453.527975908821,
+	               "parameters":131,
+	               "AIC-c":11172.05569160427,
+	               "rate distributions":{
+	                 "non-synonymous/synonymous rate ratio for *background*":[
+	                  [0.1701428265961598, 1]
+	                  ],
+	                 "non-synonymous/synonymous rate ratio for *test*":[
+	                  [0.1452686330406915, 1]
+	                  ]
+	                },
+	               "display order":0
+	              }
+	       dm_supportedColumns controls which keys from model specification will be consumed;
+	          * 'value' is the cell specification to be consumed by DatamonkeyTableRow
+	          * 'order' is the column order in the resulting table (relative; doesn't have to be sequential)
+	          * 'display_format' is a formatting function for cell entries
+	          * 'transform' is a data trasformation function for cell entries
+	     */
+	
+	    dm_numberFormatter: d3.format(".2f"),
+	
+	    dm_supportedColumns: { 'log likelihood': { order: 2,
+	            value: { "value": "log L", "abbr": "log likelihood" },
+	            display_format: d3.format(".2f") },
+	        'parameters': { order: 3,
+	            value: "Parameters" },
+	        'AIC-c': { order: 1,
+	            value: { value: React.createElement('span', null, ['AIC', React.createElement(
+	                    'sub',
+	                    { key: '0' },
+	                    'C'
+	                )]),
+	                abbr: "Small-sample corrected Akaike Information Score" },
+	            display_format: d3.format(".2f") },
+	        'rate distributions': { order: 4,
+	            value: "Rate distributions",
+	            transform: function transform(value) {
+	                return React.createElement(DatamonkeyRateDistributionTable, { distribution: value });
+	            } }
+	    },
+	
+	    propTypes: {
+	        fits: React.PropTypes.object.isRequired
+	    },
+	
+	    getDefaultProps: function getDefaultProps() {
+	        return {
+	            orderOn: "display order"
+	        };
+	    },
+	
+	    componentWillReceiveProps: function componentWillReceiveProps(nextProps) {
+	        var self = this,
+	            tableInfo = self.dm_extractFitsTable(nextProps.fits);
+	        //console.log(self.dm_makeHeaderRow     (tableInfo.columns));
+	        this.setState({
+	            header: self.dm_makeHeaderRow(tableInfo.columns),
+	            rows: tableInfo.data
+	        });
+	    },
+	
+	    dm_extractFitsTable: function dm_extractFitsTable(jsonTable) {
+	        var modelList = [];
+	        var columnMap = null;
+	        var columnMapIterator = [];
+	        var valueFormat = {};
+	        var valueTransform = {};
+	        var rowData = [];
+	        var self = this;
+	
+	        _.each(jsonTable, function (value, key) {
+	            if (!columnMap) {
+	                columnMap = {};
+	                _.each(value, function (cellValue, cellName) {
+	                    if (self.dm_supportedColumns[cellName]) {
+	                        columnMap[cellName] = self.dm_supportedColumns[cellName];
+	                        columnMapIterator[columnMap[cellName].order] = cellName;
+	                        valueFormat[cellName] = self.dm_supportedColumns[cellName]["display_format"];
+	                        if (_.isFunction(self.dm_supportedColumns[cellName]["transform"])) {
+	                            valueTransform[cellName] = self.dm_supportedColumns[cellName]["transform"];
+	                        }
+	                    }
+	                });
+	                columnMapIterator = _.filter(columnMapIterator, function (v) {
+	                    return v;
+	                });
+	            }
+	
+	            var thisRow = [{ value: key, style: { fontVariant: "small-caps" } }];
+	
+	            _.each(columnMapIterator, function (tag) {
+	
+	                var myValue = valueTransform[tag] ? valueTransform[tag](value[tag]) : value[tag];
+	
+	                if (valueFormat[tag]) {
+	                    thisRow.push({ 'value': myValue, 'format': valueFormat[tag] });
+	                } else {
+	                    thisRow.push(myValue);
+	                }
+	            });
+	
+	            rowData.push([thisRow, _.isNumber(value[self.props.orderOn]) ? value[self.props.orderOn] : rowData.length]);
+	        });
+	
+	        return { 'data': _.map(_.sortBy(rowData, function (value) {
+	                return value[1];
+	            }), function (r) {
+	                return r[0];
+	            }),
+	            'columns': _.map(columnMapIterator, function (tag) {
+	                return columnMap[tag].value;
+	            }) };
+	    },
+	
+	    dm_makeHeaderRow: function dm_makeHeaderRow(columnMap) {
+	        var headerRow = ['Model'];
+	        _.each(columnMap, function (v) {
+	            headerRow.push(v);
+	        });
+	        return headerRow;
+	    },
+	
+	    getInitialState: function getInitialState() {
+	
+	        var tableInfo = this.dm_extractFitsTable(this.props.fits);
+	
+	        return {
+	            header: this.dm_makeHeaderRow(tableInfo.columns),
+	            rows: tableInfo.data,
+	            caption: null
+	        };
+	    },
+	
+	    render: function render() {
+	        return React.createElement(
+	            'div',
+	            { className: 'table-responsive' },
+	            React.createElement(DatamonkeyTable, { headerData: this.state.header, bodyData: this.state.rows })
+	        );
+	    }
+	});
+	
+	var DatamonkeyTimersTable = React.createClass({
+	    displayName: 'DatamonkeyTimersTable',
+	
+	
+	    dm_percentageFormatter: d3.format(".2%"),
+	
+	    propTypes: {
+	        timers: React.PropTypes.object.isRequired
+	    },
+	
+	    dm_formatSeconds: function dm_formatSeconds(seconds) {
+	
+	        var fields = [~~(seconds / 3600), ~~(seconds % 3600 / 60), seconds % 60];
+	
+	        return _.map(fields, function (d) {
+	            return d < 10 ? "0" + d : "" + d;
+	        }).join(':');
+	    },
+	
+	    dm_extractTimerTable: function dm_extractTimerTable(jsonTable) {
+	        var totalTime = 0.,
+	            formattedRows = _.map(jsonTable, _.bind(function (value, key) {
+	            if (this.props.totalTime) {
+	                if (key == this.props.totalTime) {
+	                    totalTime = value['timer'];
+	                }
+	            } else {
+	                totalTime += value['timer'];
+	            }
+	            return [key, value['timer'], value['order']];
+	        }, this));
+	
+	        formattedRows = _.sortBy(formattedRows, function (row) {
+	            return row[2];
+	        });
+	
+	        formattedRows = _.map(formattedRows, _.bind(function (row) {
+	            var fraction = null;
+	            if (this.props.totalTime === null || this.props.totalTime != row[0]) {
+	                row[2] = { "value": row[1] / totalTime, "format": this.dm_percentageFormatter };
+	            } else {
+	                row[2] = "";
+	            }
+	            row[1] = this.dm_formatSeconds(row[1]);
+	            return row;
+	        }, this));
+	
+	        return formattedRows;
+	    },
+	
+	    dm_makeHeaderRow: function dm_makeHeaderRow() {
+	        return ['Task', 'Time', '%'];
+	    },
+	
+	    getInitialState: function getInitialState() {
+	
+	        return {
+	            header: this.dm_makeHeaderRow(),
+	            rows: this.dm_extractTimerTable(this.props.timers),
+	            caption: null
+	        };
+	    },
+	
+	    render: function render() {
+	        return React.createElement(DatamonkeyTable, { headerData: this.state.header, bodyData: this.state.rows });
+	    }
+	});
+	
+	module.exports.DatamonkeyTable = DatamonkeyTable;
+	module.exports.DatamonkeyTableRow = DatamonkeyTableRow;
+	module.exports.DatamonkeyRateDistributionTable = DatamonkeyRateDistributionTable;
+	module.exports.DatamonkeyPartitionTable = DatamonkeyPartitionTable;
+	module.exports.DatamonkeyModelTable = DatamonkeyModelTable;
+	module.exports.DatamonkeyTimersTable = DatamonkeyTimersTable;
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(45), __webpack_require__(40)))
 
 /***/ },
 /* 78 */
@@ -16922,10 +17340,10 @@ webpackJsonp([0],[
 	 */
 	
 	function getUnboundedScrollPosition(scrollable) {
-	  if (scrollable === window) {
+	  if (scrollable.Window && scrollable instanceof scrollable.Window) {
 	    return {
-	      x: window.pageXOffset || document.documentElement.scrollLeft,
-	      y: window.pageYOffset || document.documentElement.scrollTop
+	      x: scrollable.pageXOffset || scrollable.document.documentElement.scrollLeft,
+	      y: scrollable.pageYOffset || scrollable.document.documentElement.scrollTop
 	    };
 	  }
 	  return {
@@ -17674,7 +18092,9 @@ webpackJsonp([0],[
 	 * @return {boolean} Whether or not the object is a DOM node.
 	 */
 	function isNode(object) {
-	  return !!(object && (typeof Node === 'function' ? object instanceof Node : typeof object === 'object' && typeof object.nodeType === 'number' && typeof object.nodeName === 'string'));
+	  var doc = object ? object.ownerDocument || object : document;
+	  var defaultView = doc.defaultView || window;
+	  return !!(object && (typeof defaultView.Node === 'function' ? object instanceof defaultView.Node : typeof object === 'object' && typeof object.nodeType === 'number' && typeof object.nodeName === 'string'));
 	}
 	
 	module.exports = isNode;
@@ -17683,7 +18103,7 @@ webpackJsonp([0],[
 /* 203 */
 /***/ function(module, exports) {
 
-	'use strict';
+	/* WEBPACK VAR INJECTION */(function(global) {'use strict';
 	
 	/**
 	 * Copyright (c) 2013-present, Facebook, Inc.
@@ -17704,19 +18124,24 @@ webpackJsonp([0],[
 	 *
 	 * The activeElement will be null only if the document or document body is not
 	 * yet defined.
+	 *
+	 * @param {?DOMDocument} doc Defaults to current document.
+	 * @return {?DOMElement}
 	 */
-	function getActiveElement() /*?DOMElement*/{
-	  if (typeof document === 'undefined') {
+	function getActiveElement(doc) /*?DOMElement*/{
+	  doc = doc || global.document;
+	  if (typeof doc === 'undefined') {
 	    return null;
 	  }
 	  try {
-	    return document.activeElement || document.body;
+	    return doc.activeElement || doc.body;
 	  } catch (e) {
-	    return document.body;
+	    return doc.body;
 	  }
 	}
 	
 	module.exports = getActiveElement;
+	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
 
 /***/ },
 /* 204 */
@@ -20461,7 +20886,7 @@ webpackJsonp([0],[
 	
 	var _tree = __webpack_require__(79);
 	
-	var _model_fits = __webpack_require__(77);
+	var _model_fits = __webpack_require__(239);
 	
 	var _tree_summary = __webpack_require__(78);
 	
@@ -20914,6 +21339,276 @@ webpackJsonp([0],[
 /* 239 */
 /***/ function(module, exports, __webpack_require__) {
 
+	/* WEBPACK VAR INJECTION */(function(d3, _, $) {"use strict";
+	
+	var React = __webpack_require__(46);
+	
+	var ModelFits = React.createClass({
+	  displayName: "ModelFits",
+	
+	
+	  getInitialState: function getInitialState() {
+	    var table_row_data = this.getModelRows(this.props.json),
+	        table_columns = this.getModelColumns(table_row_data);
+	
+	    return {
+	      table_row_data: table_row_data,
+	      table_columns: table_columns
+	    };
+	  },
+	
+	  formatRuntime: function formatRuntime(seconds) {
+	    var duration_string = "",
+	        seconds = parseFloat(seconds);
+	
+	    var split_array = [Math.floor(seconds / (24 * 3600)), Math.floor(seconds / 3600) % 24, Math.floor(seconds / 60) % 60, seconds % 60],
+	        quals = ["d.", "hrs.", "min.", "sec."];
+	
+	    split_array.forEach(function (d, i) {
+	      if (d) {
+	        duration_string += " " + d + " " + quals[i];
+	      }
+	    });
+	
+	    return duration_string;
+	  },
+	
+	  getLogLikelihood: function getLogLikelihood(this_model) {
+	    return d3.format(".2f")(this_model['log-likelihood']);
+	  },
+	
+	  getAIC: function getAIC(this_model) {
+	    return d3.format(".2f")(this_model['AIC-c']);
+	  },
+	
+	  getNumParameters: function getNumParameters(this_model) {
+	    return this_model['parameters'];
+	  },
+	
+	  getBranchLengths: function getBranchLengths(this_model) {
+	
+	    if (this_model["tree length"]) {
+	      return d3.format(".2f")(this_model["tree length"]);
+	    } else {
+	      return d3.format(".2f")(d3.values(this_model["branch-lengths"]).reduce(function (p, c) {
+	        return p + c;
+	      }, 0));
+	    }
+	  },
+	
+	  getRuntime: function getRuntime(this_model) {
+	    //return this.formatRuntime(this_model['runtime']);
+	    return this.formatRuntime(this_model['runtime']);
+	  },
+	
+	  getDistributions: function getDistributions(m, this_model) {
+	
+	    var omega_distributions = {};
+	    omega_distributions[m] = {};
+	
+	    var omega_format = d3.format(".3r"),
+	        prop_format = d3.format(".2p"),
+	        p_value_format = d3.format(".4f");
+	
+	    var distributions = [];
+	
+	    for (var d in this_model["rate-distributions"]) {
+	
+	      var this_distro = this_model["rate-distributions"][d];
+	      var this_distro_entry = [d, "", "", ""];
+	
+	      omega_distributions[m][d] = this_distro.map(function (d) {
+	        return {
+	          'omega': d[0],
+	          'weight': d[1]
+	        };
+	      });
+	
+	      for (var k = 0; k < this_distro.length; k++) {
+	        this_distro_entry[k + 1] = omega_format(this_distro[k][0]) + " (" + prop_format(this_distro[k][1]) + ")";
+	      }
+	
+	      distributions.push(this_distro_entry);
+	    }
+	
+	    distributions.sort(function (a, b) {
+	      return a[0] < b[0] ? -1 : a[0] == b[0] ? 0 : 1;
+	    });
+	
+	    return distributions;
+	  },
+	
+	  getModelRows: function getModelRows(json) {
+	
+	    if (!json) {
+	      return [];
+	    }
+	
+	    var table_row_data = [];
+	    var omega_format = d3.format(".3r");
+	    var prop_format = d3.format(".2p");
+	    var p_value_format = d3.format(".4f");
+	
+	    for (var m in json["fits"]) {
+	
+	      var this_model_row = [],
+	          this_model = json["fits"][m];
+	
+	      this_model_row = [this_model['display-order'], "", m, this.getLogLikelihood(this_model), this.getNumParameters(this_model), this.getAIC(this_model), this.getRuntime(this_model), this.getBranchLengths(this_model)];
+	
+	      var distributions = this.getDistributions(m, this_model);
+	
+	      if (distributions.length) {
+	
+	        this_model_row = this_model_row.concat(distributions[0]);
+	        this_model_row[1] = distributions[0][0];
+	
+	        table_row_data.push(this_model_row);
+	
+	        for (var d = 1; d < distributions.length; d++) {
+	
+	          var this_distro_entry = this_model_row.map(function (d, i) {
+	            if (i) return "";
+	            return d;
+	          });
+	
+	          this_distro_entry[1] = distributions[d][0];
+	
+	          for (var k = this_distro_entry.length - 4; k < this_distro_entry.length; k++) {
+	            this_distro_entry[k] = distributions[d][k - this_distro_entry.length + 4];
+	          }
+	
+	          table_row_data.push(this_distro_entry);
+	        }
+	      } else {
+	        table_row_data.push(this_model_row);
+	      }
+	    }
+	
+	    table_row_data.sort(function (a, b) {
+	      if (a[0] == b[0]) {
+	        return a[1] < b[1] ? -1 : a[1] == b[1] ? 0 : 1;
+	      }
+	      return a[0] - b[0];
+	    });
+	
+	    table_row_data = table_row_data.map(function (r) {
+	      return r.slice(2);
+	    });
+	
+	    return table_row_data;
+	  },
+	
+	  getModelColumns: function getModelColumns(table_row_data) {
+	
+	    var model_header = '<th>Model</th>',
+	        logl_header = '<th><em> log </em>L</th>',
+	        num_params_header = '<th><abbr title="Number of estimated model parameters"># par.</abbr></th>',
+	        aic_header = '<th><abbr title="Small Sample AIC">AIC<sub>c</sub></abbr></th>',
+	        runtime_header = '<th>Time to fit</th>',
+	        branch_lengths_header = '<th><abbr title="Total tree length, expected substitutions/site">L<sub>tree</sub></abbr></th>',
+	        branch_set_header = '<th>Branch set</th>',
+	        omega_1_header = '<th>&omega;<sub>1</sub></th>',
+	        omega_2_header = '<th>&omega;<sub>2</sub></th>',
+	        omega_3_header = '<th>&omega;<sub>3</sub></th>';
+	
+	    // inspect table_row_data and return header
+	    var all_columns = [model_header, logl_header, num_params_header, aic_header, runtime_header, branch_lengths_header, branch_set_header, omega_1_header, omega_2_header, omega_3_header];
+	
+	    // validate each table row with its associated header
+	    if (table_row_data.length == 0) {
+	      return [];
+	    }
+	
+	    // trim columns to length of table_row_data
+	    var column_headers = _.take(all_columns, table_row_data[0].length);
+	
+	    // remove all columns that have 0, null, or undefined rows
+	    var items = d3.transpose(table_row_data);
+	
+	    return column_headers;
+	  },
+	
+	  componentDidUpdate: function componentDidUpdate() {
+	
+	    var model_columns = d3.select('#summary-model-header1');
+	    model_columns = model_columns.selectAll("th").data(this.state.table_columns);
+	    model_columns.enter().append("th");
+	    model_columns.html(function (d) {
+	      return d;
+	    });
+	
+	    var model_rows = d3.select('#summary-model-table').selectAll("tr").data(this.state.table_row_data);
+	    model_rows.enter().append('tr');
+	    model_rows.exit().remove();
+	    model_rows = model_rows.selectAll("td").data(function (d) {
+	      return d;
+	    });
+	    model_rows.enter().append("td");
+	    model_rows.html(function (d) {
+	      return d;
+	    });
+	  },
+	
+	  componentWillReceiveProps: function componentWillReceiveProps(nextProps) {
+	
+	    var table_row_data = this.getModelRows(nextProps.json),
+	        table_columns = this.getModelColumns(table_row_data);
+	
+	    this.setState({
+	      table_row_data: table_row_data,
+	      table_columns: table_columns
+	    });
+	  },
+	
+	  render: function render() {
+	
+	    return React.createElement(
+	      "ul",
+	      { className: "list-group" },
+	      React.createElement(
+	        "li",
+	        { className: "list-group-item" },
+	        React.createElement(
+	          "h4",
+	          { className: "list-group-item-heading" },
+	          React.createElement("i", { className: "fa fa-cubes", styleFormat: "margin-right: 10px" }),
+	          "Model fits"
+	        ),
+	        React.createElement(
+	          "table",
+	          { className: "table table-hover table-condensed list-group-item-text", styleFormat: "margin-top:0.5em;" },
+	          React.createElement("thead", { id: "summary-model-header1" }),
+	          React.createElement("tbody", { id: "summary-model-table" })
+	        )
+	      )
+	    );
+	  }
+	
+	});
+	
+	// Will need to make a call to this
+	// omega distributions
+	function render_model_fits(json, element) {
+	  React.render(React.createElement(ModelFits, { json: json }), $(element)[0]);
+	}
+	
+	// Will need to make a call to this
+	// omega distributions
+	function rerender_model_fits(json, element) {
+	  $(element).empty();
+	  render_model_fits(json, element);
+	}
+	
+	module.exports.ModelFits = ModelFits;
+	module.exports.render_model_fits = render_model_fits;
+	module.exports.rerender_model_fits = rerender_model_fits;
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(40), __webpack_require__(45), __webpack_require__(2)))
+
+/***/ },
+/* 240 */
+/***/ function(module, exports, __webpack_require__) {
+
 	/* WEBPACK VAR INJECTION */(function(d3, $) {'use strict';
 	
 	var datamonkey_fade = function datamonkey_fade(json) {
@@ -21280,7 +21975,7 @@ webpackJsonp([0],[
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(40), __webpack_require__(2)))
 
 /***/ },
-/* 240 */
+/* 241 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(d3) {'use strict';
@@ -21417,18 +22112,18 @@ webpackJsonp([0],[
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(40)))
 
 /***/ },
-/* 241 */
+/* 242 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(d3, $) {"use strict";
 	
-	var _model_fits = __webpack_require__(77);
+	var _model_fits = __webpack_require__(239);
 	
 	var _tree_summary = __webpack_require__(78);
 	
 	var _tree = __webpack_require__(79);
 	
-	var _omega_plots = __webpack_require__(242);
+	var _omega_plots = __webpack_require__(243);
 	
 	var React = __webpack_require__(46),
 	    ReactDOM = __webpack_require__(83),
@@ -21781,7 +22476,7 @@ webpackJsonp([0],[
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(40), __webpack_require__(2)))
 
 /***/ },
-/* 242 */
+/* 243 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(d3) {'use strict';
@@ -22251,12 +22946,12 @@ webpackJsonp([0],[
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(40)))
 
 /***/ },
-/* 243 */
+/* 244 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(d3, $) {'use strict';
 	
-	var _shared_summary = __webpack_require__(244);
+	var _shared_summary = __webpack_require__(77);
 	
 	var _slac_sites = __webpack_require__(245);
 	
@@ -22563,700 +23258,12 @@ webpackJsonp([0],[
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(40), __webpack_require__(2)))
 
 /***/ },
-/* 244 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/* WEBPACK VAR INJECTION */(function(_, d3) {'use strict';
-	
-	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
-	
-	var React = __webpack_require__(46);
-	var datamonkey = __webpack_require__(39);
-	
-	var DatamonkeyTableRow = React.createClass({
-	    displayName: 'DatamonkeyTableRow',
-	
-	    /**
-	        A single table row
-	    
-	        *rowData* is an array of cells
-	            each cell can be one of
-	                1. string: simply render the text as shown
-	                2. object: a polymorphic case; can be rendered directly (if the object is a valid react.js element)
-	                   or via a transformation of the value associated with the key 'value'
-	    
-	                   supported keys
-	                    2.1. 'value' : the value to use to generate cell context
-	                    2.2. 'format' : the function (returning something react.js can render directly) that will be called
-	                    to transform 'value' into the object to be rendered
-	                    2.3. 'span' : colSpan attribute
-	                    2.4. 'style': CSS style attributes (JSX specification, i.e. {margin-top: '1em'} and not a string)
-	                    2.5. 'classes': CSS classes to apply to the cell
-	                    2.6. 'abbr': wrap cell value in <abbr> tags
-	    
-	                3. array: directly render array elements in the cell (must be renderable to react.js; note that plain
-	                text elements will be wrapped in "span" which is not allowed to nest in <th/td>
-	    
-	    
-	        *header* is a bool indicating whether the header is a header row (th cells) or a regular row (td cells)
-	    */
-	
-	    /*propTypes: {
-	     rowData: React.PropTypes.arrayOf (React.PropTypes.oneOfType ([React.PropTypes.string,React.PropTypes.number,React.PropTypes.object,React.PropTypes.array])).isRequired,
-	     header:  React.PropTypes.bool,
-	    },*/
-	
-	    dm_compareTwoValues: function dm_compareTwoValues(a, b) {
-	        /* this should be made static */
-	
-	        /**
-	            compare objects by iterating over keys
-	             return 0 : equal
-	                   1 : a < b
-	                   2 : a > b
-	                   -1 : cannot be compared
-	                   -2 : not compared, but could contain 'value' objects that could be compared
-	        */
-	
-	        var myType = typeof a === 'undefined' ? 'undefined' : _typeof(a),
-	            self = this;
-	
-	        if (myType == (typeof b === 'undefined' ? 'undefined' : _typeof(b))) {
-	            if (myType == "string" || myType == "number") {
-	                return a == b ? 0 : a > b ? 2 : 1;
-	            }
-	
-	            if (_.isArray(a) && _.isArray(b)) {
-	
-	                if (a.length != b.length) {
-	                    return a.length > b.length ? 2 : 1;
-	                }
-	
-	                var comparison_result = 0;
-	
-	                _.every(a, function (c, i) {
-	                    var comp = self.dm_compareTwoValues(c, b[i]);
-	                    if (comp != 0) {
-	                        comparison_result = comp;
-	                        return false;
-	                    }
-	                    return true;
-	                });
-	
-	                return comparison_result;
-	            }
-	
-	            return -2;
-	            // further check to see if 'this' has a "value" attribute
-	        }
-	        return -1;
-	    },
-	
-	    dm_compareTwoValues_level2: function dm_compareTwoValues_level2(a, b) {
-	        var compare = this.dm_compareTwoValues(a, b);
-	
-	        if (compare == -2) {
-	            if (_.has(a, "value") && _.has(b, "value")) {
-	                return this.dm_compareTwoValues(a.value, b.value);
-	            }
-	        }
-	
-	        return compare;
-	    },
-	
-	    dm_log100times: _.before(100, function (v) {
-	        console.log(v);
-	        return 0;
-	    }),
-	
-	    shouldComponentUpdate: function shouldComponentUpdate(nextProps) {
-	
-	        var self = this;
-	
-	        if (this.props.header !== nextProps.header) {
-	            return true;
-	        }
-	
-	        if (this.props.sortOn != nextProps.sortOn) {
-	            return true;
-	        }
-	
-	        var result = _.some(this.props.rowData, function (value, index) {
-	            /** TO DO
-	                check for format and other field equality
-	            */
-	
-	            if (value === nextProps.rowData[index]) {
-	                return false;
-	            }
-	
-	            var compare = self.dm_compareTwoValues_level2(value, nextProps.rowData[index]);
-	            if (compare >= 0) {
-	                if (compare == 0) {
-	                    // values match, compare properties
-	                    var existing_keys = _.keys(value),
-	                        new_keys = _.keys(nextProps.rowData[index]),
-	                        shared = _.intersection(existing_keys, new_keys);
-	
-	                    if (shared.length < new_keys.length || shared.length < existing_keys.length) {
-	                        return true;
-	                    }
-	
-	                    return false;
-	                } else {
-	                    return true;
-	                }
-	            }
-	
-	            return true;
-	        });
-	
-	        return result;
-	    },
-	
-	    render: function render() {
-	
-	        return React.createElement(
-	            'tr',
-	            null,
-	            this.props.rowData.map(_.bind(function (cell, index) {
-	
-	                var value = _.has(cell, "value") ? cell.value : cell;
-	
-	                if (_.isArray(value)) {
-	                    if (!_.has(cell, "format")) {
-	                        return value;
-	                    }
-	                } else {
-	                    if (_.isObject(value)) {
-	                        if (!React.isValidElement(value)) {
-	                            return null;
-	                        }
-	                    }
-	                }
-	
-	                if (_.has(cell, "format")) {
-	                    value = cell.format(value);
-	                }
-	
-	                if (_.has(cell, "abbr")) {
-	                    value = React.createElement(
-	                        'abbr',
-	                        { title: cell.abbr },
-	                        value
-	                    );
-	                }
-	
-	                var cellProps = { key: index };
-	
-	                if (_.has(cell, "span")) {
-	                    cellProps["colSpan"] = cell.span;
-	                }
-	
-	                if (_.has(cell, "style")) {
-	                    cellProps["style"] = cell.style;
-	                }
-	
-	                if (_.has(cell, "tooltip")) {
-	                    cellProps["title"] = cell.tooltip;
-	                    //this.dm_log100times (cellProps);
-	                }
-	
-	                if (_.has(cell, "classes")) {
-	                    cellProps["className"] = cell.classes;
-	                }
-	
-	                if (this.props.header && this.props.sorter) {
-	                    //console.log ("header + sorter", cell);
-	                    if (_.has(cell, "sortable")) {
-	                        cellProps["onClick"] = _.partial(this.props.sorter, index, this.dm_compareTwoValues_level2);
-	
-	                        var sortedness_state = "fa fa-sort";
-	                        if (this.props.sortOn && this.props.sortOn[0] == index) {
-	                            sortedness_state = this.props.sortOn[1] ? "fa fa-sort-amount-asc" : "fa fa-sort-amount-desc";
-	                        }
-	
-	                        value = React.createElement(
-	                            'div',
-	                            null,
-	                            value,
-	                            React.createElement('i', { className: sortedness_state, 'aria-hidden': 'true', style: { marginLeft: "0.5em" } })
-	                        );
-	                    }
-	                }
-	
-	                return React.createElement(this.props.header ? "th" : "td", cellProps, value);
-	            }, this))
-	        );
-	    }
-	});
-	
-	var DatamonkeyTable = React.createClass({
-	    displayName: 'DatamonkeyTable',
-	
-	    /**
-	        A table composed of rows
-	            *headerData* -- an array of cells (see DatamonkeyTableRow) to render as the header
-	            *bodyData* -- an array of arrays of cells (rows) to render
-	            *classes* -- CSS classes to apply to the table element
-	    */
-	
-	    getDefaultProps: function getDefaultProps() {
-	        return { classes: "table table-condensed table-hover",
-	            rowHash: null
-	        };
-	    },
-	
-	    getInitialState: function getInitialState() {
-	        return {
-	            rowOrder: _.range(0, this.props.bodyData.length),
-	            sortOn: this.props.initialSort ? [this.props.initialSort, true] : null
-	        };
-	    },
-	
-	    componentWillReceiveProps: function componentWillReceiveProps(nextProps) {
-	        this.setState({
-	            rowOrder: _.range(0, nextProps.bodyData.length)
-	        });
-	    },
-	
-	    dm_sortOnColumn: function dm_sortOnColumn(index, compare_function) {
-	
-	        var self = this;
-	        var is_ascending = true;
-	        if (this.state.sortOn && this.state.sortOn[0] == index) {
-	            is_ascending = !this.state.sortOn[1];
-	        }
-	
-	        var new_order = _.map(this.state.rowOrder, _.identity).sort(function (i, j) {
-	            var comp_value = compare_function(self.props.bodyData[i][index], self.props.bodyData[j][index]);
-	            if (comp_value > 0) {
-	                return is_ascending ? 2 * comp_value - 3 : 3 - 2 * comp_value;
-	            }
-	            return 0;
-	        });
-	
-	        if (_.some(new_order, function (value, index) {
-	            return value != self.state.rowOrder[index];
-	        })) {
-	            this.setState({ rowOrder: new_order, sortOn: [index, is_ascending] });
-	        }
-	    },
-	
-	    render: function render() {
-	        var children = [];
-	
-	        var self = this;
-	
-	        if (this.props.headerData) {
-	            if (_.isArray(this.props.headerData[0])) {
-	                // multiple rows
-	                children.push(React.createElement(
-	                    'thead',
-	                    { key: 0 },
-	                    _.map(this.props.headerData, function (row, index) {
-	                        return React.createElement(DatamonkeyTableRow, { rowData: row, header: true, key: index, sorter: _.bind(self.dm_sortOnColumn, self), sortOn: self.state.sortOn });
-	                    })
-	                ));
-	            } else {
-	                children.push(React.createElement(
-	                    'thead',
-	                    { key: 0 },
-	                    React.createElement(DatamonkeyTableRow, { rowData: this.props.headerData, header: true, sorter: _.bind(self.dm_sortOnColumn, self), sortOn: self.state.sortOn })
-	                ));
-	            }
-	        }
-	
-	        children.push(React.createElement("tbody", { key: 1 }, _.map(this.state.rowOrder, _.bind(function (row_index) {
-	            var componentData = this.props.bodyData[row_index];
-	
-	            return React.createElement(DatamonkeyTableRow, { rowData: componentData, key: this.props.rowHash ? this.props.rowHash(componentData) : row_index, header: false });
-	        }, this))));
-	
-	        return React.createElement("table", { className: this.props.classes }, children);
-	    }
-	});
-	
-	var DatamonkeyRateDistributionTable = React.createClass({
-	    displayName: 'DatamonkeyRateDistributionTable',
-	
-	
-	    /** render a rate distribution table from JSON formatted like this
-	    {
-	         "non-synonymous/synonymous rate ratio for *background*":[ // name of distribution
-	          [0.1701428265961598, 1] // distribution points (rate, weight)
-	          ],
-	         "non-synonymous/synonymous rate ratio for *test*":[
-	          [0.1452686330406915, 1]
-	          ]
-	    }
-	     */
-	
-	    propTypes: {
-	        distribution: React.PropTypes.object.isRequired
-	    },
-	
-	    dm_formatterRate: d3.format(".3r"),
-	    dm_formatterProp: d3.format(".3p"),
-	
-	    dm_createDistributionTable: function dm_createDistributionTable(jsonRates) {
-	        var rowData = [];
-	        var self = this;
-	        _.each(jsonRates, function (value, key) {
-	            rowData.push([{ value: key, span: 3, classes: "info" }]);
-	            _.each(value, function (rate, index) {
-	                rowData.push([{ value: rate[1], format: self.dm_formatterProp }, '@', { value: rate[0], format: self.dm_formatterRate }]);
-	            });
-	        });
-	        return rowData;
-	    },
-	
-	    render: function render() {
-	        return React.createElement(DatamonkeyTable, { bodyData: this.dm_createDistributionTable(this.props.distribution), classes: "table table-condensed" });
-	    }
-	
-	});
-	
-	var DatamonkeyPartitionTable = React.createClass({
-	    displayName: 'DatamonkeyPartitionTable',
-	
-	
-	    dm_formatterFloat: d3.format(".3r"),
-	    dm_formatterProp: d3.format(".3p"),
-	
-	    propTypes: {
-	        trees: React.PropTypes.object.isRequired,
-	        partitions: React.PropTypes.object.isRequired,
-	        branchAttributes: React.PropTypes.object.isRequired,
-	        siteResults: React.PropTypes.object.isRequired,
-	        accessorNegative: React.PropTypes.func.isRequired,
-	        accessorPositive: React.PropTypes.func.isRequired,
-	        pValue: React.PropTypes.number.isRequired
-	    },
-	
-	    dm_computePartitionInformation: function dm_computePartitionInformation(trees, partitions, attributes, pValue) {
-	
-	        var partitionKeys = _.sortBy(_.keys(partitions), function (v) {
-	            return v;
-	        }),
-	            matchingKey = null,
-	            self = this;
-	
-	        var extractBranchLength = this.props.extractOn || _.find(attributes.attributes, function (value, key) {
-	            matchingKey = key;return value["attribute type"] == "branch length";
-	        });
-	        if (matchingKey) {
-	            extractBranchLength = matchingKey;
-	        }
-	
-	        return _.map(partitionKeys, function (key, index) {
-	            var treeBranches = trees.tested[key],
-	                tested = {};
-	
-	            _.each(treeBranches, function (value, key) {
-	                if (value == "test") tested[key] = 1;
-	            });
-	
-	            var testedLength = extractBranchLength ? datamonkey.helpers.sum(attributes[key], function (v, k) {
-	                if (tested[k.toUpperCase()]) {
-	                    return v[extractBranchLength];
-	                }return 0;
-	            }) : 0;
-	            var totalLength = extractBranchLength ? datamonkey.helpers.sum(attributes[key], function (v) {
-	                return v[extractBranchLength] || 0;
-	            }) : 0; // || 0 is to resolve root node missing length
-	
-	
-	            return _.map([index + 1, // 1-based partition index
-	            partitions[key].coverage[0].length, // number of sites in the partition
-	            _.size(tested), // tested branches
-	            _.keys(treeBranches).length, // total branches
-	            testedLength, testedLength / totalLength, totalLength, _.filter(self.props.accessorPositive(self.props.siteResults, key), function (p) {
-	                return p <= pValue;
-	            }).length, _.filter(self.props.accessorNegative(self.props.siteResults, key), function (p) {
-	                return p <= pValue;
-	            }).length], function (cell, index) {
-	                if (index > 1) {
-	                    var attributedCell = { value: cell,
-	                        style: { textAlign: 'center' } };
-	
-	                    if (index == 4 || index == 6) {
-	                        _.extend(attributedCell, { 'format': self.dm_formatterFloat });
-	                    }
-	                    if (index == 5) {
-	                        _.extend(attributedCell, { 'format': self.dm_formatterProp });
-	                    }
-	
-	                    return attributedCell;
-	                }
-	                return cell;
-	            });
-	        });
-	    },
-	
-	    dm_makeHeaderRow: function dm_makeHeaderRow(pValue) {
-	        return [_.map(["Partition", "Sites", "Branches", "Branch Length", "Selected at p" + String.fromCharCode(parseInt("2264", 16)) + pValue], function (d, i) {
-	            return _.extend({ value: d, style: { borderBottom: 0, textAlign: i > 1 ? 'center' : 'left' } }, i > 1 ? { 'span': i == 3 ? 3 : 2 } : {});
-	        }), _.map(["", "", "Tested", "Total", "Tested", "% of total", "Total", "Positive", "Negative"], function (d, i) {
-	            return { value: d, style: { borderTop: 0, textAlign: i > 1 ? 'center' : 'left' } };
-	        })];
-	    },
-	
-	    getInitialState: function getInitialState() {
-	        return {
-	            header: this.dm_makeHeaderRow(this.props.pValue),
-	            rows: this.dm_computePartitionInformation(this.props.trees, this.props.partitions, this.props.branchAttributes, this.props.pValue)
-	        };
-	    },
-	
-	    componentWillReceiveProps: function componentWillReceiveProps(nextProps) {
-	        this.setState({
-	            header: this.dm_makeHeaderRow(nextProps.pValue),
-	            rows: this.dm_computePartitionInformation(nextProps.trees, nextProps.partitions, nextProps.branchAttributes, nextProps.pValue)
-	        });
-	    },
-	
-	    render: function render() {
-	        return React.createElement(
-	            'div',
-	            { className: 'table-responsive' },
-	            React.createElement(DatamonkeyTable, { headerData: this.state.header, bodyData: this.state.rows })
-	        );
-	    }
-	});
-	
-	var DatamonkeyModelTable = React.createClass({
-	    displayName: 'DatamonkeyModelTable',
-	
-	
-	    /** render a model fit table from a JSON object with entries like this
-	            "Global MG94xREV":{ // model name
-	               "log likelihood":-5453.527975908821,
-	               "parameters":131,
-	               "AIC-c":11172.05569160427,
-	               "rate distributions":{
-	                 "non-synonymous/synonymous rate ratio for *background*":[
-	                  [0.1701428265961598, 1]
-	                  ],
-	                 "non-synonymous/synonymous rate ratio for *test*":[
-	                  [0.1452686330406915, 1]
-	                  ]
-	                },
-	               "display order":0
-	              }
-	       dm_supportedColumns controls which keys from model specification will be consumed;
-	          * 'value' is the cell specification to be consumed by DatamonkeyTableRow
-	          * 'order' is the column order in the resulting table (relative; doesn't have to be sequential)
-	          * 'display_format' is a formatting function for cell entries
-	          * 'transform' is a data trasformation function for cell entries
-	     */
-	
-	    dm_numberFormatter: d3.format(".2f"),
-	
-	    dm_supportedColumns: { 'log likelihood': { order: 2,
-	            value: { "value": "log L", "abbr": "log likelihood" },
-	            display_format: d3.format(".2f") },
-	        'parameters': { order: 3,
-	            value: "Parameters" },
-	        'AIC-c': { order: 1,
-	            value: { value: React.createElement('span', null, ['AIC', React.createElement(
-	                    'sub',
-	                    { key: '0' },
-	                    'C'
-	                )]),
-	                abbr: "Small-sample corrected Akaike Information Score" },
-	            display_format: d3.format(".2f") },
-	        'rate distributions': { order: 4,
-	            value: "Rate distributions",
-	            transform: function transform(value) {
-	                return React.createElement(DatamonkeyRateDistributionTable, { distribution: value });
-	            } }
-	    },
-	
-	    propTypes: {
-	        fits: React.PropTypes.object.isRequired
-	    },
-	
-	    getDefaultProps: function getDefaultProps() {
-	        return {
-	            orderOn: "display order"
-	        };
-	    },
-	
-	    componentWillReceiveProps: function componentWillReceiveProps(nextProps) {
-	        var self = this,
-	            tableInfo = self.dm_extractFitsTable(nextProps.fits);
-	        //console.log(self.dm_makeHeaderRow     (tableInfo.columns));
-	        this.setState({
-	            header: self.dm_makeHeaderRow(tableInfo.columns),
-	            rows: tableInfo.data
-	        });
-	    },
-	
-	    dm_extractFitsTable: function dm_extractFitsTable(jsonTable) {
-	        var modelList = [];
-	        var columnMap = null;
-	        var columnMapIterator = [];
-	        var valueFormat = {};
-	        var valueTransform = {};
-	        var rowData = [];
-	        var self = this;
-	
-	        _.each(jsonTable, function (value, key) {
-	            if (!columnMap) {
-	                columnMap = {};
-	                _.each(value, function (cellValue, cellName) {
-	                    if (self.dm_supportedColumns[cellName]) {
-	                        columnMap[cellName] = self.dm_supportedColumns[cellName];
-	                        columnMapIterator[columnMap[cellName].order] = cellName;
-	                        valueFormat[cellName] = self.dm_supportedColumns[cellName]["display_format"];
-	                        if (_.isFunction(self.dm_supportedColumns[cellName]["transform"])) {
-	                            valueTransform[cellName] = self.dm_supportedColumns[cellName]["transform"];
-	                        }
-	                    }
-	                });
-	                columnMapIterator = _.filter(columnMapIterator, function (v) {
-	                    return v;
-	                });
-	            }
-	
-	            var thisRow = [{ value: key, style: { fontVariant: "small-caps" } }];
-	
-	            _.each(columnMapIterator, function (tag) {
-	
-	                var myValue = valueTransform[tag] ? valueTransform[tag](value[tag]) : value[tag];
-	
-	                if (valueFormat[tag]) {
-	                    thisRow.push({ 'value': myValue, 'format': valueFormat[tag] });
-	                } else {
-	                    thisRow.push(myValue);
-	                }
-	            });
-	
-	            rowData.push([thisRow, _.isNumber(value[self.props.orderOn]) ? value[self.props.orderOn] : rowData.length]);
-	        });
-	
-	        return { 'data': _.map(_.sortBy(rowData, function (value) {
-	                return value[1];
-	            }), function (r) {
-	                return r[0];
-	            }),
-	            'columns': _.map(columnMapIterator, function (tag) {
-	                return columnMap[tag].value;
-	            }) };
-	    },
-	
-	    dm_makeHeaderRow: function dm_makeHeaderRow(columnMap) {
-	        var headerRow = ['Model'];
-	        _.each(columnMap, function (v) {
-	            headerRow.push(v);
-	        });
-	        return headerRow;
-	    },
-	
-	    getInitialState: function getInitialState() {
-	
-	        var tableInfo = this.dm_extractFitsTable(this.props.fits);
-	
-	        return {
-	            header: this.dm_makeHeaderRow(tableInfo.columns),
-	            rows: tableInfo.data,
-	            caption: null
-	        };
-	    },
-	
-	    render: function render() {
-	        return React.createElement(
-	            'div',
-	            { className: 'table-responsive' },
-	            React.createElement(DatamonkeyTable, { headerData: this.state.header, bodyData: this.state.rows })
-	        );
-	    }
-	});
-	
-	var DatamonkeyTimersTable = React.createClass({
-	    displayName: 'DatamonkeyTimersTable',
-	
-	
-	    dm_percentageFormatter: d3.format(".2%"),
-	
-	    propTypes: {
-	        timers: React.PropTypes.object.isRequired
-	    },
-	
-	    dm_formatSeconds: function dm_formatSeconds(seconds) {
-	
-	        var fields = [~~(seconds / 3600), ~~(seconds % 3600 / 60), seconds % 60];
-	
-	        return _.map(fields, function (d) {
-	            return d < 10 ? "0" + d : "" + d;
-	        }).join(':');
-	    },
-	
-	    dm_extractTimerTable: function dm_extractTimerTable(jsonTable) {
-	        var totalTime = 0.,
-	            formattedRows = _.map(jsonTable, _.bind(function (value, key) {
-	            if (this.props.totalTime) {
-	                if (key == this.props.totalTime) {
-	                    totalTime = value['timer'];
-	                }
-	            } else {
-	                totalTime += value['timer'];
-	            }
-	            return [key, value['timer'], value['order']];
-	        }, this));
-	
-	        formattedRows = _.sortBy(formattedRows, function (row) {
-	            return row[2];
-	        });
-	
-	        formattedRows = _.map(formattedRows, _.bind(function (row) {
-	            var fraction = null;
-	            if (this.props.totalTime === null || this.props.totalTime != row[0]) {
-	                row[2] = { "value": row[1] / totalTime, "format": this.dm_percentageFormatter };
-	            } else {
-	                row[2] = "";
-	            }
-	            row[1] = this.dm_formatSeconds(row[1]);
-	            return row;
-	        }, this));
-	
-	        return formattedRows;
-	    },
-	
-	    dm_makeHeaderRow: function dm_makeHeaderRow() {
-	        return ['Task', 'Time', '%'];
-	    },
-	
-	    getInitialState: function getInitialState() {
-	
-	        return {
-	            header: this.dm_makeHeaderRow(),
-	            rows: this.dm_extractTimerTable(this.props.timers),
-	            caption: null
-	        };
-	    },
-	
-	    render: function render() {
-	        return React.createElement(DatamonkeyTable, { headerData: this.state.header, bodyData: this.state.rows });
-	    }
-	});
-	
-	module.exports.DatamonkeyTable = DatamonkeyTable;
-	module.exports.DatamonkeyTableRow = DatamonkeyTableRow;
-	module.exports.DatamonkeyRateDistributionTable = DatamonkeyRateDistributionTable;
-	module.exports.DatamonkeyPartitionTable = DatamonkeyPartitionTable;
-	module.exports.DatamonkeyModelTable = DatamonkeyModelTable;
-	module.exports.DatamonkeyTimersTable = DatamonkeyTimersTable;
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(45), __webpack_require__(40)))
-
-/***/ },
 /* 245 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(d3, _) {'use strict';
 	
-	var _shared_summary = __webpack_require__(244);
+	var _shared_summary = __webpack_require__(77);
 	
 	var React = __webpack_require__(46);
 	var datamonkey = __webpack_require__(39);
