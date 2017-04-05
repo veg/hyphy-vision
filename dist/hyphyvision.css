@@ -9244,6 +9244,7 @@ button.close {
 
 #summary-method-name{
     color: #00a99d;
+    font-family: "Montserrat";
 }
 
 .tree-title {
@@ -9283,6 +9284,26 @@ table.info-table > thead > th {
 
 #data-text {
     text-align: center;
+}
+
+.main-result{
+  background-color: #EEE;
+  border-style: solid;
+  border-radius: 5px;
+  border-width: 2px;
+  border-color: #00A99D;
+  padding: 10px 10px 10px 10px;
+}
+
+div.main-result p {
+  font-family: "Noto Sans";
+  color: #222;
+}
+
+div.main-result hr {
+  border-top: 1px solid #AAA;
+  margin-top: 10px;
+  margin-bottom: 10px;
 }
 
 /* Bootstrap-docs scroll spy */
