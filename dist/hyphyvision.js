@@ -1036,11 +1036,17 @@ webpackJsonp([0],[
 	        return 0;
 	    }),
 	
+	    getInitialState: function getInitialState() {
+	        return {
+	            header: []
+	        };
+	    },
+	
 	    shouldComponentUpdate: function shouldComponentUpdate(nextProps) {
 	
 	        var self = this;
 	
-	        if (this.props.header !== nextProps.header) {
+	        if (this.state.header !== nextProps.header) {
 	            return true;
 	        }
 	
@@ -1079,6 +1085,13 @@ webpackJsonp([0],[
 	        });
 	
 	        return result;
+	    },
+	
+	    componentWillReceiveProps: function componentWillReceiveProps(nextProps) {
+	
+	        this.setState({
+	            header: nextProps.header
+	        });
 	    },
 	
 	    render: function render() {
@@ -1133,7 +1146,7 @@ webpackJsonp([0],[
 	                    cellProps["className"] = cell.classes;
 	                }
 	
-	                if (this.props.header && this.props.sorter) {
+	                if (this.state.header && this.props.sorter) {
 	                    //console.log ("header + sorter", cell);
 	                    if (_.has(cell, "sortable")) {
 	                        cellProps["onClick"] = _.partial(this.props.sorter, index, this.dm_compareTwoValues_level2);
@@ -1152,7 +1165,7 @@ webpackJsonp([0],[
 	                    }
 	                }
 	
-	                return React.createElement(this.props.header ? "th" : "td", cellProps, value);
+	                return React.createElement(this.state.header ? "th" : "td", cellProps, value);
 	            }, this))
 	        );
 	    }
@@ -1175,15 +1188,19 @@ webpackJsonp([0],[
 	    },
 	
 	    getInitialState: function getInitialState() {
+	        // either null or [index,
+	        // bool / to indicate if the sort is ascending (True) or descending (False)]
 	        return {
 	            rowOrder: _.range(0, this.props.bodyData.length),
+	            headerData: this.props.headerData,
 	            sortOn: this.props.initialSort ? [this.props.initialSort, true] : null
 	        };
 	    },
 	
 	    componentWillReceiveProps: function componentWillReceiveProps(nextProps) {
 	        this.setState({
-	            rowOrder: _.range(0, nextProps.bodyData.length)
+	            rowOrder: _.range(0, nextProps.bodyData.length),
+	            headerData: nextProps.headerData
 	        });
 	    },
 	
@@ -1215,13 +1232,13 @@ webpackJsonp([0],[
 	
 	        var self = this;
 	
-	        if (this.props.headerData) {
+	        if (this.state.headerData) {
+	            // check if header will be multiple rows by checking if headerData is an array of arrays
 	            if (_.isArray(this.props.headerData[0])) {
-	                // multiple rows
 	                children.push(React.createElement(
 	                    'thead',
 	                    { key: 0 },
-	                    _.map(this.props.headerData, function (row, index) {
+	                    _.map(this.state.headerData, function (row, index) {
 	                        return React.createElement(DatamonkeyTableRow, { rowData: row, header: true, key: index, sorter: _.bind(self.dm_sortOnColumn, self), sortOn: self.state.sortOn });
 	                    })
 	                ));
@@ -1229,7 +1246,7 @@ webpackJsonp([0],[
 	                children.push(React.createElement(
 	                    'thead',
 	                    { key: 0 },
-	                    React.createElement(DatamonkeyTableRow, { rowData: this.props.headerData, header: true, sorter: _.bind(self.dm_sortOnColumn, self), sortOn: self.state.sortOn })
+	                    React.createElement(DatamonkeyTableRow, { rowData: this.state.headerData, header: true, sorter: _.bind(self.dm_sortOnColumn, self), sortOn: self.state.sortOn })
 	                ));
 	            }
 	        }
@@ -18108,7 +18125,7 @@ webpackJsonp([0],[
 /* 203 */
 /***/ function(module, exports) {
 
-	/* WEBPACK VAR INJECTION */(function(global) {'use strict';
+	'use strict';
 	
 	/**
 	 * Copyright (c) 2013-present, Facebook, Inc.
@@ -18134,7 +18151,7 @@ webpackJsonp([0],[
 	 * @return {?DOMElement}
 	 */
 	function getActiveElement(doc) /*?DOMElement*/{
-	  doc = doc || global.document;
+	  doc = doc || (typeof document !== 'undefined' ? document : undefined);
 	  if (typeof doc === 'undefined') {
 	    return null;
 	  }
@@ -18146,7 +18163,6 @@ webpackJsonp([0],[
 	}
 	
 	module.exports = getActiveElement;
-	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
 
 /***/ },
 /* 204 */

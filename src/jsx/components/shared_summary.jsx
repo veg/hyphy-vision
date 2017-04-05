@@ -97,11 +97,17 @@ const DatamonkeyTableRow = React.createClass ({
     return 0;
    }),
 
+   getInitialState: function() {
+     return {
+      header : []
+     }
+   },
+
    shouldComponentUpdate: function (nextProps) {
 
         var self = this;
 
-        if (this.props.header !== nextProps.header) {
+        if (this.state.header !== nextProps.header) {
             return true;
         }
 
@@ -142,6 +148,16 @@ const DatamonkeyTableRow = React.createClass ({
         });
 
         return result;
+    },
+
+    componentWillReceiveProps : function(nextProps) {
+
+      this.setState(
+        {
+          header : nextProps.header
+        }
+      )
+
     },
 
     render: function () {
@@ -195,7 +211,7 @@ const DatamonkeyTableRow = React.createClass ({
                             cellProps["className"] = cell.classes;
                         }
 
-                        if (this.props.header && this.props.sorter) {
+                        if (this.state.header && this.props.sorter) {
                           //console.log ("header + sorter", cell);
                           if (_.has (cell, "sortable")) {
                             cellProps ["onClick"] = _.partial ( this.props.sorter, index, this.dm_compareTwoValues_level2);
@@ -214,7 +230,7 @@ const DatamonkeyTableRow = React.createClass ({
                           }
                         }
 
-                        return React.createElement (this.props.header ? "th" : "td" ,
+                        return React.createElement (this.state.header ? "th" : "td" ,
                                                     cellProps,
                                                     value);
 
@@ -236,24 +252,25 @@ var DatamonkeyTable = React.createClass ({
 
     getDefaultProps : function () {
         return {classes : "table table-condensed table-hover",
-                rowHash : null,
+                rowHash : null
                 };
     },
 
     getInitialState: function () {
+        // either null or [index,
+        // bool / to indicate if the sort is ascending (True) or descending (False)]
         return {
-                    rowOrder: _.range (0,this.props.bodyData.length),
-                    sortOn: this.props.initialSort ? [this.props.initialSort, true] : null,
-                    /* either null or [index,
-                                       bool / to indicate if the sort is ascending (True) or descending (False)]
-                    */
+                  rowOrder: _.range (0,this.props.bodyData.length),
+                  headerData: this.props.headerData,
+                  sortOn: this.props.initialSort ? [this.props.initialSort, true] : null,
                 };
     },
 
     componentWillReceiveProps: function (nextProps) {
-        this.setState ({
-            rowOrder: _.range (0,nextProps.bodyData.length),
-        });
+      this.setState ({
+          rowOrder: _.range (0,nextProps.bodyData.length),
+          headerData: nextProps.headerData
+      });
     },
 
     dm_sortOnColumn : function (index, compare_function) {
@@ -284,12 +301,13 @@ var DatamonkeyTable = React.createClass ({
 
         var self = this;
 
-        if (this.props.headerData) {
-            if (_.isArray (this.props.headerData[0])) { // multiple rows
+        if (this.state.headerData) {
+            // check if header will be multiple rows by checking if headerData is an array of arrays
+            if (_.isArray (this.props.headerData[0])) { 
                  children.push (
                     <thead key = {0}>
                         {
-                            _.map (this.props.headerData, function (row, index) {
+                            _.map (this.state.headerData, function (row, index) {
                                 return (
                                     <DatamonkeyTableRow rowData={row} header={true} key={index} sorter={_.bind (self.dm_sortOnColumn, self)} sortOn = {self.state.sortOn}/>
                                 );
@@ -301,7 +319,7 @@ var DatamonkeyTable = React.createClass ({
             else {
                 children.push ((
                     <thead key = {0}>
-                        <DatamonkeyTableRow rowData={this.props.headerData} header={true} sorter={_.bind (self.dm_sortOnColumn, self)} sortOn = {self.state.sortOn}/>
+                        <DatamonkeyTableRow rowData={this.state.headerData} header={true} sorter={_.bind (self.dm_sortOnColumn, self)} sortOn = {self.state.sortOn}/>
                     </thead>
                 ));
             }
