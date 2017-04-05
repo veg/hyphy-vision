@@ -66,16 +66,19 @@ var BSRELSummary = React.createClass({
                 <h3 className="list-group-item-heading">
                     <span id="summary-method-name">Adaptive branch site REL - Results summary</span>
                 </h3>
-                <p className="list-group-item-text lead">
-                    Evidence<sup>†</sup> of episodic diversifying selection was found on
-                    <span className="hyphy-highlight"><strong> {self.state.branches_with_evidence}</strong> out 
-                    of {self.state.test_branches}</span> tested branches ({self.state.total_branches} total branches).
-                </p>
-                <p>
+                <div className="main-result">
+                  <p className="list-group-item-text label_and_input">
+                     Evidence<sup>†</sup> of episodic diversifying selection was found on
+                     <span className="hyphy-highlight"><strong> {self.state.branches_with_evidence}</strong> out 
+                     of {self.state.test_branches}</span> tested branches ({self.state.total_branches} total branches).
+                  </p>
+                  <hr/>
+                  <p>
                     <small>
-                        <sup>†</sup><abbr title="Likelihood Ratio Test">LRT</abbr> p ≤ 0.05, corrected for multiple testing.
+                      <sup>†</sup><abbr title="Likelihood Ratio Test">LRT</abbr> p ≤ 0.05, corrected for multiple testing.
                     </small>
-                </p>
+                  </p>
+                </div>
                 <p>
                     <small>
                         Please cite <a href="http://www.ncbi.nlm.nih.gov/pubmed/25697341" id="summary-pmid" target="_blank">PMID 25697341</a> if you use this result in a publication, presentation, or other scientific work.
