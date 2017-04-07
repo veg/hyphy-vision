@@ -2,97 +2,102 @@
 <html lang='en'>
 
 <head>
-    <meta charset="utf-8">
-    <link rel="stylesheet" href="../../dist/hyphyvision.css">
-    <link href='//fonts.googleapis.com/css?family=Montserrat' rel='stylesheet'>
-    <link href='//fonts.googleapis.com/css?family=Noto Sans' rel='stylesheet'>
-    <script src="../../dist/vendor.js"></script>
-    <script src="../../dist/hyphyvision.js"></script>
+  <meta charset="utf-8">
+  <link rel="stylesheet" href="../../dist/hyphyvision.css">
+  <link href='//fonts.googleapis.com/css?family=Montserrat' rel='stylesheet'>
+  <link href='//fonts.googleapis.com/css?family=Noto Sans' rel='stylesheet'>
+  <script src="../../dist/vendor.js"></script>
+  <script src="../../dist/hyphyvision.js"></script>
 </head>
 
 <body style='padding-top: 70px;'>
 
-    <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
+  <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
 
-        <div class="container-fluid">
-            <!-- Brand and toggle get grouped for better mobile display -->
-            <a href='#'><img id="hyphy-logo" src="../../images/hyphy-logo.svg"></a>
-            <div class="navbar-header">
-                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar-collapse-1">
-                    <span class="sr-only">Toggle navigation</span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
-                <a class="navbar-brand logo" href="#">HYPHY VISION</a>
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-sm-2"></div>
+        <div class="col-sm-8">
+          <!-- Brand and toggle get grouped for better mobile display -->
+          <a href='#'><img id="hyphy-logo" src="../../images/hyphy-logo.svg"></a>
+          <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar-collapse-1">
+              <span class="sr-only">Toggle navigation</span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand logo" href="#">HYPHY VISION</a>
+          </div>
 
-            </div>
+          <!-- Collect the nav links, forms, and other content for toggling -->
+          <div class="collapse navbar-collapse" id="navbar-collapse-1">
 
+            <ul class="nav nav-pills navbar-right" id='navigation_buttons'>
+              <li class="active">
+                <a href="#" role="tab">absrel</a>
+              </li>
+              <li>
+                <a href="../relax" role="tab">relax</a>
+              </li>
+              <li>
+                <a href="../busted" role="tab">busted</a>
+              </li>
+              <li>
+                <a href="../fade" role="tab">fade</a>
+              </li>
+              <li>
+                <a href="../slac" role="tab">slac</a>
+              </li>
+            </ul>
 
-            <!-- Collect the nav links, forms, and other content for toggling -->
-            <div class="collapse navbar-collapse" id="navbar-collapse-1">
-
-                <ul class="nav nav-pills navbar-right" id='navigation_buttons'>
-                    <li class="active">
-                        <a href="#" role="tab">absrel</a>
-                    </li>
-                    <li>
-                        <a href="../relax" role="tab">relax</a>
-                    </li>
-                    <li>
-                        <a href="../busted" role="tab">busted</a>
-                    </li>
-                    <li>
-                        <a href="../fade" role="tab">fade</a>
-                    </li>
-                    <li>
-                        <a href="../slac" role="tab">slac</a>
-                    </li>
-                </ul>
-
-            </div>
-            <!-- /.navbar-collapse -->
+          </div>
         </div>
-        <!-- /.container-fluid -->
-    </nav>
+        <div class="col-sm-2"></div>
 
-    <div class='container-fluid'>
+        <!-- /.navbar-collapse -->
+      </div>
+    </div>
+    <!-- /.container-fluid -->
+  </nav>
 
-        <div class="row">
-            <nav class="col-sm-2 bs-docs-sidebar">
-                <ul class="nav nav-pills nav-stacked fixed">
-                    <li class="active"><a href="#summary-tab" id="#summary-tab">summary</a></li>
-                    <li><a href="#tree-tab">tree</a></li>
-                    <li><a href="#table-tab">table</a></li>
-                </ul>
-            </nav>
-            <div class="col-sm-8">
-                <div id='datamonkey-absrel-error' class="alert alert-danger alert-dismissible" role="alert" style="display:none;">
-                    <button type="button" class="close" id='datamonkey-absrel-error-hide'><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-                    <strong>Error!</strong> <span id='datamonkey-absrel-error-text'></span>
-                </div>
+  <div class='container-fluid'>
 
-                <div id="absrel-content" class="tab-content"></div>
-            </div>
-            <div class="col-sm-2">
-            </div>
+    <div class="row">
+      <div class="col-sm-1"></div>
+      <nav class="col-sm-1 bs-docs-sidebar">
+        <ul class="nav nav-pills nav-stacked fixed">
+          <li class="active"><a href="#summary-tab" id="#summary-tab">summary</a></li>
+          <li><a href="#tree-tab">tree</a></li>
+          <li><a href="#table-tab">table</a></li>
+        </ul>
+      </nav>
+      <div class="col-sm-8">
+        <div id='datamonkey-absrel-error' class="alert alert-danger alert-dismissible" role="alert" style="display:none;">
+          <button type="button" class="close" id='datamonkey-absrel-error-hide'><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+          <strong>Error!</strong> <span id='datamonkey-absrel-error-text'></span>
         </div>
 
+        <div id="absrel-content" class="tab-content"></div>
+      </div>
+      <div class="col-sm-2"></div>
     </div>
 
-    <img id="hyphy-chart-image" />
-    <canvas id="hyphy-chart-canvas"></canvas>
+  </div>
+
+  <img id="hyphy-chart-image" />
+  <canvas id="hyphy-chart-canvas"></canvas>
 
 
-    <script>
-      $(document).ready(function() {
-        absrel("test-data/test.json", "absrel-content");
-        $('body').scrollspy({
-          target: '.bs-docs-sidebar',
-          offset: 50
-        });
+  <script>
+    $(document).ready(function() {
+      absrel("test-data/test.json", "absrel-content");
+      $('body').scrollspy({
+        target: '.bs-docs-sidebar',
+        offset: 50
       });
-    </script>
+    });
+  </script>
 
 </body>
 
