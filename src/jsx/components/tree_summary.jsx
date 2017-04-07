@@ -183,16 +183,14 @@ var TreeSummary = React.createClass({
   render: function() {
 
     return (
-        <ul className="list-group">
-            <li className="list-group-item">
-                <h4 className="list-group-item-heading tree-title">Tree</h4>
-                <table className="table info-table table-hover table-striped table-condensed list-group-item-text">
-                  <thead id="summary-tree-header"></thead>
-                  <tbody id="summary-tree-table"></tbody>
-                </table>
-            </li>
-        </ul>
-      )
+      <div>
+        <h4 className="dm-table-header">Tree</h4>
+        <table className="table dm-table table-hover table-striped table-condensed list-group-item-text">
+          <thead id="summary-tree-header"></thead>
+          <tbody id="summary-tree-table"></tbody>
+        </table>
+      </div>
+    )
   }
 
 });

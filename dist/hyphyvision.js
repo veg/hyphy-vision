@@ -1178,7 +1178,7 @@ webpackJsonp([0],[
 	
 	  getDefaultProps: function getDefaultProps() {
 	    return {
-	      classes: "table table-condensed table-hover",
+	      classes: "dm-table table table-condensed table-hover",
 	      rowHash: null
 	    };
 	  },
@@ -1615,7 +1615,12 @@ webpackJsonp([0],[
 	  render: function render() {
 	    return React.createElement(
 	      'div',
-	      { className: 'table-responsive' },
+	      null,
+	      React.createElement(
+	        'h4',
+	        { className: 'dm-table-header' },
+	        'Model fits'
+	      ),
 	      React.createElement(DatamonkeyTable, { headerData: this.state.header, bodyData: this.state.rows })
 	    );
 	  }
@@ -1883,22 +1888,18 @@ webpackJsonp([0],[
 	  render: function render() {
 	
 	    return React.createElement(
-	      'ul',
-	      { className: 'list-group' },
+	      'div',
+	      null,
 	      React.createElement(
-	        'li',
-	        { className: 'list-group-item' },
-	        React.createElement(
-	          'h4',
-	          { className: 'list-group-item-heading tree-title' },
-	          'Tree'
-	        ),
-	        React.createElement(
-	          'table',
-	          { className: 'table info-table table-hover table-striped table-condensed list-group-item-text' },
-	          React.createElement('thead', { id: 'summary-tree-header' }),
-	          React.createElement('tbody', { id: 'summary-tree-table' })
-	        )
+	        'h4',
+	        { className: 'dm-table-header' },
+	        'Tree'
+	      ),
+	      React.createElement(
+	        'table',
+	        { className: 'table dm-table table-hover table-striped table-condensed list-group-item-text' },
+	        React.createElement('thead', { id: 'summary-tree-header' }),
+	        React.createElement('tbody', { id: 'summary-tree-table' })
 	      )
 	    );
 	  }
@@ -18191,7 +18192,7 @@ webpackJsonp([0],[
 /* 203 */
 /***/ function(module, exports) {
 
-	'use strict';
+	/* WEBPACK VAR INJECTION */(function(global) {'use strict';
 	
 	/**
 	 * Copyright (c) 2013-present, Facebook, Inc.
@@ -18217,7 +18218,7 @@ webpackJsonp([0],[
 	 * @return {?DOMElement}
 	 */
 	function getActiveElement(doc) /*?DOMElement*/{
-	  doc = doc || (typeof document !== 'undefined' ? document : undefined);
+	  doc = doc || global.document;
 	  if (typeof doc === 'undefined') {
 	    return null;
 	  }
@@ -18229,6 +18230,7 @@ webpackJsonp([0],[
 	}
 	
 	module.exports = getActiveElement;
+	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
 
 /***/ },
 /* 204 */

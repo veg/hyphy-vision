@@ -250,7 +250,7 @@ var DatamonkeyTable = React.createClass({
 
   getDefaultProps: function() {
     return {
-      classes: "table table-condensed table-hover",
+      classes: "dm-table table table-condensed table-hover",
       rowHash: null
     };
   },
@@ -714,9 +714,10 @@ var DatamonkeyModelTable = React.createClass({
 
 
   render: function() {
-    return (<div className="table-responsive">
-                    <DatamonkeyTable headerData = {this.state.header} bodyData = {this.state.rows}/>
-                </div>);
+    return (<div>
+      <h4 className="dm-table-header">Model fits</h4>
+      <DatamonkeyTable headerData={this.state.header} bodyData={this.state.rows}/>
+    </div>);
   },
 });
 

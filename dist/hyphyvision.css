@@ -9242,19 +9242,19 @@ button.close {
     background-color: #7EC6B3;
 }
 
-#summary-method-name{
+#summary-method-name {
     color: #00a99d;
     font-family: "Montserrat";
 }
 
-.tree-title {
+.dm-table-header {
     background-color: #00a99d;
     color: #FFF;
     text-align: center;
     padding: 5px 5px 5px 5px;
 }
 
-table.info-table > thead > th {
+table.dm-table > thead > tr > th {
     color: #00a99d;
 }
 

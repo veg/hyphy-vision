@@ -39,12 +39,12 @@ var BSREL = React.createClass({
           test_results = data["test results"];
 
       self.setState({
-                      annotations : annotations,
-                      json : json,
-                      pmid : pmid,
-					  fits : fits,
-                      test_results : test_results
-                    });
+        annotations : annotations,
+        json : json,
+        pmid : pmid,
+        fits : fits,
+        test_results : test_results
+      });
 
     });
 
