@@ -1,16 +1,30 @@
 var React = require('react'),
 		_ = require('underscore');
 
+import {DatamonkeyTable} from "./shared_summary.jsx";
+
+/**
+ * Generates a table that contains tree summary information
+ * @param model -- the model to obtain information from
+ * @param test results -- the general test result information
+ */
 var TreeSummary = React.createClass({
+
+  getDefaultProps() {
+    return {
+      model : {},
+      test_results : {}
+    }
+  },
 
   getInitialState: function() {
 
-    var table_row_data = this.getSummaryRows(this.props.json),
+    var table_row_data = this.getSummaryRows(this.props.model, this.props.test_results),
         table_columns = this.getTreeSummaryColumns(table_row_data);
 
     return { 
               table_row_data: table_row_data, 
-              table_columns: table_columns
+              table_columns: table_columns,
            };
   },
 
@@ -30,19 +44,24 @@ var TreeSummary = React.createClass({
     return _.mapObject(rate_classes, function(val, key) { return d3.format(".2p")(val/sum) } );
   },
 
-  getBranchLengthProportion : function(rate_classes, branch_annotations, total_branch_length) {
+  getBranchLengthProportion : function(model, rate_classes, branch_annotations, total_branch_length) {
 
     var self = this;
 
     // get branch lengths of each rate distribution
     //return prop_format(d[2] / total_tree_length
+    if(_.has(model,"tree string")) {
+      var tree = d3.layout.phylotree("body")(model["tree string"]);
+    } else {
+      return null;
+    }
 
     // Get count of all rate classes
     var branch_lengths = _.mapObject(rate_classes, function(d) { return 0}); 
 
     for (var key in branch_annotations) {
-      var node = self.tree.get_node_by_name(key);
-      branch_lengths[branch_annotations[key].omegas.length] += self.tree.branch_length()(node);
+      var node = tree.get_node_by_name(key);
+      branch_lengths[branch_annotations[key].omegas.length] += tree.branch_length()(node);
     };
 
     return _.mapObject(branch_lengths, function(val, key) { return d3.format(".2p")(val/total_branch_length) } );
@@ -61,32 +80,22 @@ var TreeSummary = React.createClass({
 
   },
 
-  getSummaryRows : function(json) {
+  getSummaryRows : function(model, test_results) {
 
     var self = this;
 
-    // Will need to create a tree for each fits
-    var analysis_data = json;
-
-    if(!analysis_data) {
+    if(!model || !test_results) {
       return [];
     }
 
     // Create an array of phylotrees from fits
-    var trees = _.map(analysis_data["fits"], function(d) { return d3.layout.phylotree("body")(d["tree string"]) });
-    var tree = trees[0];
-
-    self.tree = tree;
     
-
-    //TODO : Do not hard code model here
-    var tree_length = analysis_data["fits"]["Full model"]["tree length"];
-    var branch_annotations = analysis_data["fits"]["Full model"]["branch-annotations"];
-    var test_results = analysis_data["test results"];
+    var tree_length = model["tree length"];
+    var branch_annotations = model["branch-annotations"];
 
     var rate_classes = this.getRateClasses(branch_annotations),
         proportions = this.getBranchProportion(rate_classes),
-        length_proportions = this.getBranchLengthProportion(rate_classes, branch_annotations, tree_length),
+        length_proportions = this.getBranchLengthProportion(model, rate_classes, branch_annotations, tree_length),
         num_under_selection = this.getNumUnderSelection(rate_classes, branch_annotations, test_results);
 
     // zip objects into matrix
@@ -113,11 +122,11 @@ var TreeSummary = React.createClass({
 
   getTreeSummaryColumns : function(table_row_data) {
 
-    var omega_header = '<th">ω rate classes</th>',
-        branch_num_header = '<th># of branches</th>',
-        branch_prop_header = '<th>% of branches</th>',
-        branch_prop_length_header = '<th>% of tree length</th>',
-        under_selection_header = '<th># under selection</th>';
+    var omega_header = 'ω rate classes',
+        branch_num_header = '# of branches',
+        branch_prop_header = '% of branches',
+        branch_prop_length_header = '% of tree length',
+        under_selection_header = '# under selection';
 
 
     // inspect table_row_data and return header
@@ -136,13 +145,13 @@ var TreeSummary = React.createClass({
 
     // trim columns to length of table_row_data
     var column_headers = _.take(all_columns, table_row_data[0].length)
-
     return column_headers;
+
   },
 
   componentWillReceiveProps: function(nextProps) {
 
-    var table_row_data = this.getSummaryRows(nextProps.json),
+    var table_row_data = this.getSummaryRows(nextProps.model, nextProps.test_results),
         table_columns = this.getTreeSummaryColumns(table_row_data);
 
     this.setState({
@@ -152,62 +161,24 @@ var TreeSummary = React.createClass({
 
   },
 
-  componentDidUpdate : function() {
-
-    d3.select('#summary-tree-header').empty();
-
-    var tree_summary_columns = d3.select('#summary-tree-header');
-
-    tree_summary_columns = tree_summary_columns.selectAll("th").data(this.state.table_columns);
-    tree_summary_columns.enter().append("th");
-    tree_summary_columns.html(function(d) {
-        return d;
-    });
-
-    var tree_summary_rows = d3.select('#summary-tree-table').selectAll("tr").data(this.state.table_row_data);
-    tree_summary_rows.enter().append('tr');
-    tree_summary_rows.exit().remove();
-    tree_summary_rows = tree_summary_rows.selectAll("td").data(function(d) {
-        return d;
-    });
-
-    tree_summary_rows.enter().append("td");
-    tree_summary_rows.html(function(d) {
-        return d;
-    });
-
-
-  },
-
-
   render: function() {
 
     return (
       <div>
         <h4 className="dm-table-header">Tree</h4>
-        <table className="table dm-table table-hover table-striped table-condensed list-group-item-text">
-          <thead id="summary-tree-header"></thead>
-          <tbody id="summary-tree-table"></tbody>
-        </table>
+        <DatamonkeyTable headerData={this.state.table_columns} bodyData={this.state.table_row_data}/>
       </div>
     )
+
   }
 
 });
-
-//TODO
-//<caption>
-//<p className="list-group-item-text text-muted">
-//    Total tree length under the branch-site model is <strong id="summary-tree-length">2.30</strong> expected substitutions per nucleotide site, and <strong id="summary-tree-length-mg94">1.74</strong> under the MG94 model.
-//</p>
-//</caption>
-
 
 // Will need to make a call to this
 // omega distributions
 function render_tree_summary(json, element) {
   React.render(
-    <TreeSummary json={json} />,
+    <TreeSummary model={model} test_results={test_results} />,
     $(element)[0]
   );
 }

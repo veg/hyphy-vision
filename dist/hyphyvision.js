@@ -386,6 +386,7 @@ webpackJsonp([0],[
 	                json = data,
 	                pmid = data["PMID"],
 	                fits = data["fits"],
+	                full_model = fits["Full model"],
 	                test_results = data["test results"];
 	
 	            self.setState({
@@ -393,6 +394,7 @@ webpackJsonp([0],[
 	                json: json,
 	                pmid: pmid,
 	                fits: fits,
+	                full_model: full_model,
 	                test_results: test_results
 	            });
 	        });
@@ -564,12 +566,14 @@ webpackJsonp([0],[
 	                        var annotations = data["fits"]["Full model"]["branch-annotations"],
 	                            json = data,
 	                            pmid = data["PMID"],
+	                            full_model = json["fits"]["Full model"],
 	                            test_results = data["test results"];
 	
 	                        self.setState({
 	                            annotations: annotations,
 	                            json: json,
 	                            pmid: pmid,
+	                            full_model: full_model,
 	                            test_results: test_results
 	                        });
 	                    };
@@ -637,7 +641,7 @@ webpackJsonp([0],[
 	                    React.createElement(
 	                        'div',
 	                        { id: 'hyphy-tree-summary', className: 'col-md-12' },
-	                        React.createElement(_tree_summary.TreeSummary, { json: self.state.json })
+	                        React.createElement(_tree_summary.TreeSummary, { model: self.state.full_model, test_results: self.state.test_results })
 	                    ),
 	                    React.createElement(
 	                        'div',
@@ -1166,15 +1170,19 @@ webpackJsonp([0],[
 	  }
 	});
 	
+	/**
+	 * A table composed of rows
+	 * @param *headerData* -- an array of cells (see DatamonkeyTableRow) to render as the header
+	 * @param *bodyData* -- an array of arrays of cells (rows) to render
+	 * @param *classes* -- CSS classes to apply to the table element
+	 * @example
+	 * header = ["Model","AIC","Parameters"]
+	 * rows = [[{"value":"MG94","style":{"fontVariant":"small-caps"}},{"value":0},46],
+	 *         [{"value":"Full model","style":{"fontVariant":"small-caps"}},{"value":6954.016129926898},60]]
+	 */
 	var DatamonkeyTable = React.createClass({
 	  displayName: 'DatamonkeyTable',
 	
-	  /**
-	      A table composed of rows
-	          *headerData* -- an array of cells (see DatamonkeyTableRow) to render as the header
-	          *bodyData* -- an array of arrays of cells (rows) to render
-	          *classes* -- CSS classes to apply to the table element
-	  */
 	
 	  getDefaultProps: function getDefaultProps() {
 	    return {
@@ -1711,16 +1719,29 @@ webpackJsonp([0],[
 
 	/* WEBPACK VAR INJECTION */(function(d3, $) {'use strict';
 	
+	var _shared_summary = __webpack_require__(77);
+	
 	var React = __webpack_require__(46),
 	    _ = __webpack_require__(45);
 	
+	/**
+	 * Generates a table that contains tree summary information
+	 * @param model -- the model to obtain information from
+	 * @param test results -- the general test result information
+	 */
 	var TreeSummary = React.createClass({
 	  displayName: 'TreeSummary',
+	  getDefaultProps: function getDefaultProps() {
+	    return {
+	      model: {},
+	      test_results: {}
+	    };
+	  },
 	
 	
 	  getInitialState: function getInitialState() {
 	
-	    var table_row_data = this.getSummaryRows(this.props.json),
+	    var table_row_data = this.getSummaryRows(this.props.model, this.props.test_results),
 	        table_columns = this.getTreeSummaryColumns(table_row_data);
 	
 	    return {
@@ -1748,12 +1769,17 @@ webpackJsonp([0],[
 	    });
 	  },
 	
-	  getBranchLengthProportion: function getBranchLengthProportion(rate_classes, branch_annotations, total_branch_length) {
+	  getBranchLengthProportion: function getBranchLengthProportion(model, rate_classes, branch_annotations, total_branch_length) {
 	
 	    var self = this;
 	
 	    // get branch lengths of each rate distribution
 	    //return prop_format(d[2] / total_tree_length
+	    if (_.has(model, "tree string")) {
+	      var tree = d3.layout.phylotree("body")(model["tree string"]);
+	    } else {
+	      return null;
+	    }
 	
 	    // Get count of all rate classes
 	    var branch_lengths = _.mapObject(rate_classes, function (d) {
@@ -1761,8 +1787,8 @@ webpackJsonp([0],[
 	    });
 	
 	    for (var key in branch_annotations) {
-	      var node = self.tree.get_node_by_name(key);
-	      branch_lengths[branch_annotations[key].omegas.length] += self.tree.branch_length()(node);
+	      var node = tree.get_node_by_name(key);
+	      branch_lengths[branch_annotations[key].omegas.length] += tree.branch_length()(node);
 	    };
 	
 	    return _.mapObject(branch_lengths, function (val, key) {
@@ -1783,33 +1809,22 @@ webpackJsonp([0],[
 	    return num_under_selection;
 	  },
 	
-	  getSummaryRows: function getSummaryRows(json) {
+	  getSummaryRows: function getSummaryRows(model, test_results) {
 	
 	    var self = this;
 	
-	    // Will need to create a tree for each fits
-	    var analysis_data = json;
-	
-	    if (!analysis_data) {
+	    if (!model || !test_results) {
 	      return [];
 	    }
 	
 	    // Create an array of phylotrees from fits
-	    var trees = _.map(analysis_data["fits"], function (d) {
-	      return d3.layout.phylotree("body")(d["tree string"]);
-	    });
-	    var tree = trees[0];
 	
-	    self.tree = tree;
-	
-	    //TODO : Do not hard code model here
-	    var tree_length = analysis_data["fits"]["Full model"]["tree length"];
-	    var branch_annotations = analysis_data["fits"]["Full model"]["branch-annotations"];
-	    var test_results = analysis_data["test results"];
+	    var tree_length = model["tree length"];
+	    var branch_annotations = model["branch-annotations"];
 	
 	    var rate_classes = this.getRateClasses(branch_annotations),
 	        proportions = this.getBranchProportion(rate_classes),
-	        length_proportions = this.getBranchLengthProportion(rate_classes, branch_annotations, tree_length),
+	        length_proportions = this.getBranchLengthProportion(model, rate_classes, branch_annotations, tree_length),
 	        num_under_selection = this.getNumUnderSelection(rate_classes, branch_annotations, test_results);
 	
 	    // zip objects into matrix
@@ -1829,11 +1844,11 @@ webpackJsonp([0],[
 	
 	  getTreeSummaryColumns: function getTreeSummaryColumns(table_row_data) {
 	
-	    var omega_header = '<th">ω rate classes</th>',
-	        branch_num_header = '<th># of branches</th>',
-	        branch_prop_header = '<th>% of branches</th>',
-	        branch_prop_length_header = '<th>% of tree length</th>',
-	        under_selection_header = '<th># under selection</th>';
+	    var omega_header = 'ω rate classes',
+	        branch_num_header = '# of branches',
+	        branch_prop_header = '% of branches',
+	        branch_prop_length_header = '% of tree length',
+	        under_selection_header = '# under selection';
 	
 	    // inspect table_row_data and return header
 	    var all_columns = [omega_header, branch_num_header, branch_prop_header, branch_prop_length_header, under_selection_header];
@@ -1845,43 +1860,17 @@ webpackJsonp([0],[
 	
 	    // trim columns to length of table_row_data
 	    var column_headers = _.take(all_columns, table_row_data[0].length);
-	
 	    return column_headers;
 	  },
 	
 	  componentWillReceiveProps: function componentWillReceiveProps(nextProps) {
 	
-	    var table_row_data = this.getSummaryRows(nextProps.json),
+	    var table_row_data = this.getSummaryRows(nextProps.model, nextProps.test_results),
 	        table_columns = this.getTreeSummaryColumns(table_row_data);
 	
 	    this.setState({
 	      table_row_data: table_row_data,
 	      table_columns: table_columns
-	    });
-	  },
-	
-	  componentDidUpdate: function componentDidUpdate() {
-	
-	    d3.select('#summary-tree-header').empty();
-	
-	    var tree_summary_columns = d3.select('#summary-tree-header');
-	
-	    tree_summary_columns = tree_summary_columns.selectAll("th").data(this.state.table_columns);
-	    tree_summary_columns.enter().append("th");
-	    tree_summary_columns.html(function (d) {
-	      return d;
-	    });
-	
-	    var tree_summary_rows = d3.select('#summary-tree-table').selectAll("tr").data(this.state.table_row_data);
-	    tree_summary_rows.enter().append('tr');
-	    tree_summary_rows.exit().remove();
-	    tree_summary_rows = tree_summary_rows.selectAll("td").data(function (d) {
-	      return d;
-	    });
-	
-	    tree_summary_rows.enter().append("td");
-	    tree_summary_rows.html(function (d) {
-	      return d;
 	    });
 	  },
 	
@@ -1895,29 +1884,16 @@ webpackJsonp([0],[
 	        { className: 'dm-table-header' },
 	        'Tree'
 	      ),
-	      React.createElement(
-	        'table',
-	        { className: 'table dm-table table-hover table-striped table-condensed list-group-item-text' },
-	        React.createElement('thead', { id: 'summary-tree-header' }),
-	        React.createElement('tbody', { id: 'summary-tree-table' })
-	      )
+	      React.createElement(_shared_summary.DatamonkeyTable, { headerData: this.state.table_columns, bodyData: this.state.table_row_data })
 	    );
 	  }
 	
 	});
 	
-	//TODO
-	//<caption>
-	//<p className="list-group-item-text text-muted">
-	//    Total tree length under the branch-site model is <strong id="summary-tree-length">2.30</strong> expected substitutions per nucleotide site, and <strong id="summary-tree-length-mg94">1.74</strong> under the MG94 model.
-	//</p>
-	//</caption>
-	
-	
 	// Will need to make a call to this
 	// omega distributions
 	function render_tree_summary(json, element) {
-	  React.render(React.createElement(TreeSummary, { json: json }), $(element)[0]);
+	  React.render(React.createElement(TreeSummary, { model: model, test_results: test_results }), $(element)[0]);
 	}
 	
 	// Will need to make a call to this
@@ -18192,7 +18168,7 @@ webpackJsonp([0],[
 /* 203 */
 /***/ function(module, exports) {
 
-	/* WEBPACK VAR INJECTION */(function(global) {'use strict';
+	'use strict';
 	
 	/**
 	 * Copyright (c) 2013-present, Facebook, Inc.
@@ -18218,7 +18194,7 @@ webpackJsonp([0],[
 	 * @return {?DOMElement}
 	 */
 	function getActiveElement(doc) /*?DOMElement*/{
-	  doc = doc || global.document;
+	  doc = doc || (typeof document !== 'undefined' ? document : undefined);
 	  if (typeof doc === 'undefined') {
 	    return null;
 	  }
@@ -18230,7 +18206,6 @@ webpackJsonp([0],[
 	}
 	
 	module.exports = getActiveElement;
-	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
 
 /***/ },
 /* 204 */

@@ -35,7 +35,8 @@ var BSREL = React.createClass({
       var annotations = data["fits"]["Full model"]["branch-annotations"],
           json = data,
           pmid = data["PMID"],
-		  fits = data["fits"],
+		      fits = data["fits"],
+		      full_model = fits["Full model"],
           test_results = data["test results"];
 
       self.setState({
@@ -43,6 +44,7 @@ var BSREL = React.createClass({
         json : json,
         pmid : pmid,
         fits : fits,
+        full_model : full_model,
         test_results : test_results
       });
 
@@ -241,12 +243,14 @@ var BSREL = React.createClass({
                   var annotations = data["fits"]["Full model"]["branch-annotations"],
                       json = data,
                       pmid = data["PMID"],
+                      full_model = json["fits"]["Full model"],
                       test_results = data["test results"];
 
                   self.setState({
                                   annotations : annotations,
                                   json : json,
                                   pmid : pmid,
+                                  full_model : full_model,
                                   test_results : test_results
                                 });
 
@@ -311,7 +315,7 @@ var BSREL = React.createClass({
                               pmid={self.state.pmid} />
                 <div className="row">
                     <div id="hyphy-tree-summary" className="col-md-12">
-                        <TreeSummary json={self.state.json} />
+                        <TreeSummary model={self.state.full_model} test_results={self.state.test_results} />
                     </div>
                     <div id="hyphy-model-fits" className="col-md-12">
                         <DatamonkeyModelTable fits={self.state.fits} />

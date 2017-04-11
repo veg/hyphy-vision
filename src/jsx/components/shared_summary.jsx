@@ -240,13 +240,17 @@ const DatamonkeyTableRow = React.createClass({
   }
 });
 
+/**
+ * A table composed of rows
+ * @param *headerData* -- an array of cells (see DatamonkeyTableRow) to render as the header
+ * @param *bodyData* -- an array of arrays of cells (rows) to render
+ * @param *classes* -- CSS classes to apply to the table element
+ * @example
+ * header = ["Model","AIC","Parameters"]
+ * rows = [[{"value":"MG94","style":{"fontVariant":"small-caps"}},{"value":0},46],
+ *         [{"value":"Full model","style":{"fontVariant":"small-caps"}},{"value":6954.016129926898},60]]
+ */
 var DatamonkeyTable = React.createClass({
-  /**
-      A table composed of rows
-          *headerData* -- an array of cells (see DatamonkeyTableRow) to render as the header
-          *bodyData* -- an array of arrays of cells (rows) to render
-          *classes* -- CSS classes to apply to the table element
-  */
 
   getDefaultProps: function() {
     return {
