@@ -3,6 +3,11 @@ var React = require('react'),
 
 import {DatamonkeyTable} from "./shared_summary.jsx";
 
+/**
+ * Generates a table that contains tree summary information
+ * @param model -- the model to obtain information from
+ * @param test results -- the general test result information
+ */
 var TreeSummary = React.createClass({
 
   getDefaultProps() {

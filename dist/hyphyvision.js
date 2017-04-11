@@ -1724,6 +1724,11 @@ webpackJsonp([0],[
 	var React = __webpack_require__(46),
 	    _ = __webpack_require__(45);
 	
+	/**
+	 * Generates a table that contains tree summary information
+	 * @param model -- the model to obtain information from
+	 * @param test results -- the general test result information
+	 */
 	var TreeSummary = React.createClass({
 	  displayName: 'TreeSummary',
 	  getDefaultProps: function getDefaultProps() {
