@@ -386,6 +386,7 @@ webpackJsonp([0],[
 	                json = data,
 	                pmid = data["PMID"],
 	                fits = data["fits"],
+	                full_model = fits["Full model"],
 	                test_results = data["test results"];
 	
 	            self.setState({
@@ -393,6 +394,7 @@ webpackJsonp([0],[
 	                json: json,
 	                pmid: pmid,
 	                fits: fits,
+	                full_model: full_model,
 	                test_results: test_results
 	            });
 	        });
@@ -564,12 +566,14 @@ webpackJsonp([0],[
 	                        var annotations = data["fits"]["Full model"]["branch-annotations"],
 	                            json = data,
 	                            pmid = data["PMID"],
+	                            full_model = json["fits"]["Full model"],
 	                            test_results = data["test results"];
 	
 	                        self.setState({
 	                            annotations: annotations,
 	                            json: json,
 	                            pmid: pmid,
+	                            full_model: full_model,
 	                            test_results: test_results
 	                        });
 	                    };
@@ -637,7 +641,7 @@ webpackJsonp([0],[
 	                    React.createElement(
 	                        'div',
 	                        { id: 'hyphy-tree-summary', className: 'col-md-12' },
-	                        React.createElement(_tree_summary.TreeSummary, { json: self.state.json })
+	                        React.createElement(_tree_summary.TreeSummary, { model: self.state.full_model, test_results: self.state.test_results })
 	                    ),
 	                    React.createElement(
 	                        'div',
@@ -1722,11 +1726,17 @@ webpackJsonp([0],[
 	
 	var TreeSummary = React.createClass({
 	  displayName: 'TreeSummary',
+	  getDefaultProps: function getDefaultProps() {
+	    return {
+	      model: {},
+	      test_results: {}
+	    };
+	  },
 	
 	
 	  getInitialState: function getInitialState() {
 	
-	    var table_row_data = this.getSummaryRows(this.props.json),
+	    var table_row_data = this.getSummaryRows(this.props.model, this.props.test_results),
 	        table_columns = this.getTreeSummaryColumns(table_row_data);
 	
 	    return {
@@ -1760,6 +1770,11 @@ webpackJsonp([0],[
 	
 	    // get branch lengths of each rate distribution
 	    //return prop_format(d[2] / total_tree_length
+	    if (_.has(this.props.model, "tree string")) {
+	      var tree = d3.layout.phylotree("body")(this.props.model["tree string"]);
+	    } else {
+	      return null;
+	    }
 	
 	    // Get count of all rate classes
 	    var branch_lengths = _.mapObject(rate_classes, function (d) {
@@ -1767,8 +1782,8 @@ webpackJsonp([0],[
 	    });
 	
 	    for (var key in branch_annotations) {
-	      var node = self.tree.get_node_by_name(key);
-	      branch_lengths[branch_annotations[key].omegas.length] += self.tree.branch_length()(node);
+	      var node = tree.get_node_by_name(key);
+	      branch_lengths[branch_annotations[key].omegas.length] += tree.branch_length()(node);
 	    };
 	
 	    return _.mapObject(branch_lengths, function (val, key) {
@@ -1789,29 +1804,18 @@ webpackJsonp([0],[
 	    return num_under_selection;
 	  },
 	
-	  getSummaryRows: function getSummaryRows(json) {
+	  getSummaryRows: function getSummaryRows(model, test_results) {
 	
 	    var self = this;
 	
-	    // Will need to create a tree for each fits
-	    var analysis_data = json;
-	
-	    if (!analysis_data) {
+	    if (!model || !test_results) {
 	      return [];
 	    }
 	
 	    // Create an array of phylotrees from fits
-	    var trees = _.map(analysis_data["fits"], function (d) {
-	      return d3.layout.phylotree("body")(d["tree string"]);
-	    });
-	    var tree = trees[0];
 	
-	    self.tree = tree;
-	
-	    //TODO : Do not hard code model here
-	    var tree_length = analysis_data["fits"]["Full model"]["tree length"];
-	    var branch_annotations = analysis_data["fits"]["Full model"]["branch-annotations"];
-	    var test_results = analysis_data["test results"];
+	    var tree_length = model["tree length"];
+	    var branch_annotations = model["branch-annotations"];
 	
 	    var rate_classes = this.getRateClasses(branch_annotations),
 	        proportions = this.getBranchProportion(rate_classes),
@@ -1856,7 +1860,7 @@ webpackJsonp([0],[
 	
 	  componentWillReceiveProps: function componentWillReceiveProps(nextProps) {
 	
-	    var table_row_data = this.getSummaryRows(nextProps.json),
+	    var table_row_data = this.getSummaryRows(nextProps.model, nextProps.test_results),
 	        table_columns = this.getTreeSummaryColumns(table_row_data);
 	
 	    this.setState({
@@ -1884,7 +1888,7 @@ webpackJsonp([0],[
 	// Will need to make a call to this
 	// omega distributions
 	function render_tree_summary(json, element) {
-	  React.render(React.createElement(TreeSummary, { json: json }), $(element)[0]);
+	  React.render(React.createElement(TreeSummary, { model: model, test_results: test_results }), $(element)[0]);
 	}
 	
 	// Will need to make a call to this

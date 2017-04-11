@@ -5,14 +5,21 @@ import {DatamonkeyTable} from "./shared_summary.jsx";
 
 var TreeSummary = React.createClass({
 
+  getDefaultProps() {
+    return {
+      model : {},
+      test_results : {}
+    }
+  },
+
   getInitialState: function() {
 
-    var table_row_data = this.getSummaryRows(this.props.json),
+    var table_row_data = this.getSummaryRows(this.props.model, this.props.test_results),
         table_columns = this.getTreeSummaryColumns(table_row_data);
 
     return { 
               table_row_data: table_row_data, 
-              table_columns: table_columns
+              table_columns: table_columns,
            };
   },
 
@@ -38,13 +45,18 @@ var TreeSummary = React.createClass({
 
     // get branch lengths of each rate distribution
     //return prop_format(d[2] / total_tree_length
+    if(_.has(this.props.model,"tree string")) {
+      var tree = d3.layout.phylotree("body")(this.props.model["tree string"]);
+    } else {
+      return null;
+    }
 
     // Get count of all rate classes
     var branch_lengths = _.mapObject(rate_classes, function(d) { return 0}); 
 
     for (var key in branch_annotations) {
-      var node = self.tree.get_node_by_name(key);
-      branch_lengths[branch_annotations[key].omegas.length] += self.tree.branch_length()(node);
+      var node = tree.get_node_by_name(key);
+      branch_lengths[branch_annotations[key].omegas.length] += tree.branch_length()(node);
     };
 
     return _.mapObject(branch_lengths, function(val, key) { return d3.format(".2p")(val/total_branch_length) } );
@@ -63,28 +75,18 @@ var TreeSummary = React.createClass({
 
   },
 
-  getSummaryRows : function(json) {
+  getSummaryRows : function(model, test_results) {
 
     var self = this;
 
-    // Will need to create a tree for each fits
-    var analysis_data = json;
-
-    if(!analysis_data) {
+    if(!model || !test_results) {
       return [];
     }
 
     // Create an array of phylotrees from fits
-    var trees = _.map(analysis_data["fits"], function(d) { return d3.layout.phylotree("body")(d["tree string"]) });
-    var tree = trees[0];
-
-    self.tree = tree;
     
-
-    //TODO : Do not hard code model here
-    var tree_length = analysis_data["fits"]["Full model"]["tree length"];
-    var branch_annotations = analysis_data["fits"]["Full model"]["branch-annotations"];
-    var test_results = analysis_data["test results"];
+    var tree_length = model["tree length"];
+    var branch_annotations = model["branch-annotations"];
 
     var rate_classes = this.getRateClasses(branch_annotations),
         proportions = this.getBranchProportion(rate_classes),
@@ -144,7 +146,7 @@ var TreeSummary = React.createClass({
 
   componentWillReceiveProps: function(nextProps) {
 
-    var table_row_data = this.getSummaryRows(nextProps.json),
+    var table_row_data = this.getSummaryRows(nextProps.model, nextProps.test_results),
         table_columns = this.getTreeSummaryColumns(table_row_data);
 
     this.setState({
@@ -171,7 +173,7 @@ var TreeSummary = React.createClass({
 // omega distributions
 function render_tree_summary(json, element) {
   React.render(
-    <TreeSummary json={json} />,
+    <TreeSummary model={model} test_results={test_results} />,
     $(element)[0]
   );
 }
