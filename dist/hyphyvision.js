@@ -1166,15 +1166,19 @@ webpackJsonp([0],[
 	  }
 	});
 	
+	/**
+	 * A table composed of rows
+	 * @param *headerData* -- an array of cells (see DatamonkeyTableRow) to render as the header
+	 * @param *bodyData* -- an array of arrays of cells (rows) to render
+	 * @param *classes* -- CSS classes to apply to the table element
+	 * @example
+	 * header = ["Model","AIC","Parameters"]
+	 * rows = [[{"value":"MG94","style":{"fontVariant":"small-caps"}},{"value":0},46],
+	 *         [{"value":"Full model","style":{"fontVariant":"small-caps"}},{"value":6954.016129926898},60]]
+	 */
 	var DatamonkeyTable = React.createClass({
 	  displayName: 'DatamonkeyTable',
 	
-	  /**
-	      A table composed of rows
-	          *headerData* -- an array of cells (see DatamonkeyTableRow) to render as the header
-	          *bodyData* -- an array of arrays of cells (rows) to render
-	          *classes* -- CSS classes to apply to the table element
-	  */
 	
 	  getDefaultProps: function getDefaultProps() {
 	    return {
@@ -1711,6 +1715,8 @@ webpackJsonp([0],[
 
 	/* WEBPACK VAR INJECTION */(function(d3, $) {'use strict';
 	
+	var _shared_summary = __webpack_require__(77);
+	
 	var React = __webpack_require__(46),
 	    _ = __webpack_require__(45);
 	
@@ -1829,11 +1835,11 @@ webpackJsonp([0],[
 	
 	  getTreeSummaryColumns: function getTreeSummaryColumns(table_row_data) {
 	
-	    var omega_header = '<th">ω rate classes</th>',
-	        branch_num_header = '<th># of branches</th>',
-	        branch_prop_header = '<th>% of branches</th>',
-	        branch_prop_length_header = '<th>% of tree length</th>',
-	        under_selection_header = '<th># under selection</th>';
+	    var omega_header = 'ω rate classes',
+	        branch_num_header = '# of branches',
+	        branch_prop_header = '% of branches',
+	        branch_prop_length_header = '% of tree length',
+	        under_selection_header = '# under selection';
 	
 	    // inspect table_row_data and return header
 	    var all_columns = [omega_header, branch_num_header, branch_prop_header, branch_prop_length_header, under_selection_header];
@@ -1845,7 +1851,6 @@ webpackJsonp([0],[
 	
 	    // trim columns to length of table_row_data
 	    var column_headers = _.take(all_columns, table_row_data[0].length);
-	
 	    return column_headers;
 	  },
 	
@@ -1860,31 +1865,6 @@ webpackJsonp([0],[
 	    });
 	  },
 	
-	  componentDidUpdate: function componentDidUpdate() {
-	
-	    d3.select('#summary-tree-header').empty();
-	
-	    var tree_summary_columns = d3.select('#summary-tree-header');
-	
-	    tree_summary_columns = tree_summary_columns.selectAll("th").data(this.state.table_columns);
-	    tree_summary_columns.enter().append("th");
-	    tree_summary_columns.html(function (d) {
-	      return d;
-	    });
-	
-	    var tree_summary_rows = d3.select('#summary-tree-table').selectAll("tr").data(this.state.table_row_data);
-	    tree_summary_rows.enter().append('tr');
-	    tree_summary_rows.exit().remove();
-	    tree_summary_rows = tree_summary_rows.selectAll("td").data(function (d) {
-	      return d;
-	    });
-	
-	    tree_summary_rows.enter().append("td");
-	    tree_summary_rows.html(function (d) {
-	      return d;
-	    });
-	  },
-	
 	  render: function render() {
 	
 	    return React.createElement(
@@ -1895,24 +1875,11 @@ webpackJsonp([0],[
 	        { className: 'dm-table-header' },
 	        'Tree'
 	      ),
-	      React.createElement(
-	        'table',
-	        { className: 'table dm-table table-hover table-striped table-condensed list-group-item-text' },
-	        React.createElement('thead', { id: 'summary-tree-header' }),
-	        React.createElement('tbody', { id: 'summary-tree-table' })
-	      )
+	      React.createElement(_shared_summary.DatamonkeyTable, { headerData: this.state.table_columns, bodyData: this.state.table_row_data })
 	    );
 	  }
 	
 	});
-	
-	//TODO
-	//<caption>
-	//<p className="list-group-item-text text-muted">
-	//    Total tree length under the branch-site model is <strong id="summary-tree-length">2.30</strong> expected substitutions per nucleotide site, and <strong id="summary-tree-length-mg94">1.74</strong> under the MG94 model.
-	//</p>
-	//</caption>
-	
 	
 	// Will need to make a call to this
 	// omega distributions
@@ -18192,7 +18159,7 @@ webpackJsonp([0],[
 /* 203 */
 /***/ function(module, exports) {
 
-	/* WEBPACK VAR INJECTION */(function(global) {'use strict';
+	'use strict';
 	
 	/**
 	 * Copyright (c) 2013-present, Facebook, Inc.
@@ -18218,7 +18185,7 @@ webpackJsonp([0],[
 	 * @return {?DOMElement}
 	 */
 	function getActiveElement(doc) /*?DOMElement*/{
-	  doc = doc || global.document;
+	  doc = doc || (typeof document !== 'undefined' ? document : undefined);
 	  if (typeof doc === 'undefined') {
 	    return null;
 	  }
@@ -18230,7 +18197,6 @@ webpackJsonp([0],[
 	}
 	
 	module.exports = getActiveElement;
-	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
 
 /***/ },
 /* 204 */

@@ -1,6 +1,8 @@
 var React = require('react'),
 		_ = require('underscore');
 
+import {DatamonkeyTable} from "./shared_summary.jsx";
+
 var TreeSummary = React.createClass({
 
   getInitialState: function() {
@@ -113,11 +115,11 @@ var TreeSummary = React.createClass({
 
   getTreeSummaryColumns : function(table_row_data) {
 
-    var omega_header = '<th">ω rate classes</th>',
-        branch_num_header = '<th># of branches</th>',
-        branch_prop_header = '<th>% of branches</th>',
-        branch_prop_length_header = '<th>% of tree length</th>',
-        under_selection_header = '<th># under selection</th>';
+    var omega_header = 'ω rate classes',
+        branch_num_header = '# of branches',
+        branch_prop_header = '% of branches',
+        branch_prop_length_header = '% of tree length',
+        under_selection_header = '# under selection';
 
 
     // inspect table_row_data and return header
@@ -136,8 +138,8 @@ var TreeSummary = React.createClass({
 
     // trim columns to length of table_row_data
     var column_headers = _.take(all_columns, table_row_data[0].length)
-
     return column_headers;
+
   },
 
   componentWillReceiveProps: function(nextProps) {
@@ -152,56 +154,18 @@ var TreeSummary = React.createClass({
 
   },
 
-  componentDidUpdate : function() {
-
-    d3.select('#summary-tree-header').empty();
-
-    var tree_summary_columns = d3.select('#summary-tree-header');
-
-    tree_summary_columns = tree_summary_columns.selectAll("th").data(this.state.table_columns);
-    tree_summary_columns.enter().append("th");
-    tree_summary_columns.html(function(d) {
-        return d;
-    });
-
-    var tree_summary_rows = d3.select('#summary-tree-table').selectAll("tr").data(this.state.table_row_data);
-    tree_summary_rows.enter().append('tr');
-    tree_summary_rows.exit().remove();
-    tree_summary_rows = tree_summary_rows.selectAll("td").data(function(d) {
-        return d;
-    });
-
-    tree_summary_rows.enter().append("td");
-    tree_summary_rows.html(function(d) {
-        return d;
-    });
-
-
-  },
-
-
   render: function() {
 
     return (
       <div>
         <h4 className="dm-table-header">Tree</h4>
-        <table className="table dm-table table-hover table-striped table-condensed list-group-item-text">
-          <thead id="summary-tree-header"></thead>
-          <tbody id="summary-tree-table"></tbody>
-        </table>
+        <DatamonkeyTable headerData={this.state.table_columns} bodyData={this.state.table_row_data}/>
       </div>
     )
+
   }
 
 });
-
-//TODO
-//<caption>
-//<p className="list-group-item-text text-muted">
-//    Total tree length under the branch-site model is <strong id="summary-tree-length">2.30</strong> expected substitutions per nucleotide site, and <strong id="summary-tree-length-mg94">1.74</strong> under the MG94 model.
-//</p>
-//</caption>
-
 
 // Will need to make a call to this
 // omega distributions
