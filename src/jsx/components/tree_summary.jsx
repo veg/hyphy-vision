@@ -39,14 +39,14 @@ var TreeSummary = React.createClass({
     return _.mapObject(rate_classes, function(val, key) { return d3.format(".2p")(val/sum) } );
   },
 
-  getBranchLengthProportion : function(rate_classes, branch_annotations, total_branch_length) {
+  getBranchLengthProportion : function(model, rate_classes, branch_annotations, total_branch_length) {
 
     var self = this;
 
     // get branch lengths of each rate distribution
     //return prop_format(d[2] / total_tree_length
-    if(_.has(this.props.model,"tree string")) {
-      var tree = d3.layout.phylotree("body")(this.props.model["tree string"]);
+    if(_.has(model,"tree string")) {
+      var tree = d3.layout.phylotree("body")(model["tree string"]);
     } else {
       return null;
     }
@@ -90,7 +90,7 @@ var TreeSummary = React.createClass({
 
     var rate_classes = this.getRateClasses(branch_annotations),
         proportions = this.getBranchProportion(rate_classes),
-        length_proportions = this.getBranchLengthProportion(rate_classes, branch_annotations, tree_length),
+        length_proportions = this.getBranchLengthProportion(model, rate_classes, branch_annotations, tree_length),
         num_under_selection = this.getNumUnderSelection(rate_classes, branch_annotations, test_results);
 
     // zip objects into matrix
