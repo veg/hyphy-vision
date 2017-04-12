@@ -2467,7 +2467,7 @@ webpackJsonp([0],[
 	                { className: 'row' },
 	                React.createElement(
 	                    'div',
-	                    { className: 'cold-md-12' },
+	                    { className: 'col-md-12' },
 	                    React.createElement(
 	                        'div',
 	                        { className: 'input-group input-group-sm' },
