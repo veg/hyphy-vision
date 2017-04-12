@@ -9254,7 +9254,8 @@ button.close {
     padding: 5px 5px 5px 5px;
 }
 
-table.dm-table > thead > tr > th {
+table.dm-table > thead > tr > th,
+table.dm-table > thead > th {
     color: #00a99d;
 }
 
@@ -9304,6 +9305,10 @@ div.main-result hr {
   border-top: 1px solid #AAA;
   margin-top: 10px;
   margin-bottom: 10px;
+}
+
+tbody > tr {
+  background-color: #EEE;
 }
 
 /* Bootstrap-docs scroll spy */

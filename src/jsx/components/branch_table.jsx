@@ -270,7 +270,8 @@ var BranchTable = React.createClass({
     return (
         <div className="row">
           <div id="hyphy-branch-table" className="col-md-12">
-              <table className="table table-hover table-condensed">
+              <h4 className='dm-table-header'>Detailed results</h4>
+              <table className="table table-hover table-condensed dm-table">
                   <thead id="table-branch-header"></thead>
                   <tbody id="table-branch-table"></tbody>
               </table>

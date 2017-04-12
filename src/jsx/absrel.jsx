@@ -317,9 +317,7 @@ var BSREL = React.createClass({
                     <div id="hyphy-tree-summary" className="col-md-12">
                         <TreeSummary model={self.state.full_model} test_results={self.state.test_results} />
                     </div>
-                    <div id="hyphy-model-fits" className="col-md-12">
-                        <DatamonkeyModelTable fits={self.state.fits} />
-                    </div>
+                    
                 </div>
             </div>
 
@@ -335,6 +333,9 @@ var BSREL = React.createClass({
                     <BranchTable tree={self.state.tree}
                                  test_results={self.state.test_results}
                                  annotations={self.state.annotations} />
+                </div>
+                <div id="hyphy-model-fits" className="col-md-12">
+                  <DatamonkeyModelTable fits={self.state.fits} />
                 </div>
             </div>
 

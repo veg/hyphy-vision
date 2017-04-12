@@ -642,11 +642,6 @@ webpackJsonp([0],[
 	                        'div',
 	                        { id: 'hyphy-tree-summary', className: 'col-md-12' },
 	                        React.createElement(_tree_summary.TreeSummary, { model: self.state.full_model, test_results: self.state.test_results })
-	                    ),
-	                    React.createElement(
-	                        'div',
-	                        { id: 'hyphy-model-fits', className: 'col-md-12' },
-	                        React.createElement(_shared_summary.DatamonkeyModelTable, { fits: self.state.fits })
 	                    )
 	                )
 	            ),
@@ -669,6 +664,11 @@ webpackJsonp([0],[
 	                    React.createElement(_branch_table.BranchTable, { tree: self.state.tree,
 	                        test_results: self.state.test_results,
 	                        annotations: self.state.annotations })
+	                ),
+	                React.createElement(
+	                    'div',
+	                    { id: 'hyphy-model-fits', className: 'col-md-12' },
+	                    React.createElement(_shared_summary.DatamonkeyModelTable, { fits: self.state.fits })
 	                )
 	            )
 	        );
@@ -2906,8 +2906,13 @@ webpackJsonp([0],[
 	        'div',
 	        { id: 'hyphy-branch-table', className: 'col-md-12' },
 	        React.createElement(
+	          'h4',
+	          { className: 'dm-table-header' },
+	          'Detailed results'
+	        ),
+	        React.createElement(
 	          'table',
-	          { className: 'table table-hover table-condensed' },
+	          { className: 'table table-hover table-condensed dm-table' },
 	          React.createElement('thead', { id: 'table-branch-header' }),
 	          React.createElement('tbody', { id: 'table-branch-table' })
 	        )
@@ -18168,7 +18173,7 @@ webpackJsonp([0],[
 /* 203 */
 /***/ function(module, exports) {
 
-	'use strict';
+	/* WEBPACK VAR INJECTION */(function(global) {'use strict';
 	
 	/**
 	 * Copyright (c) 2013-present, Facebook, Inc.
@@ -18194,7 +18199,7 @@ webpackJsonp([0],[
 	 * @return {?DOMElement}
 	 */
 	function getActiveElement(doc) /*?DOMElement*/{
-	  doc = doc || (typeof document !== 'undefined' ? document : undefined);
+	  doc = doc || global.document;
 	  if (typeof doc === 'undefined') {
 	    return null;
 	  }
@@ -18206,6 +18211,7 @@ webpackJsonp([0],[
 	}
 	
 	module.exports = getActiveElement;
+	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
 
 /***/ },
 /* 204 */
