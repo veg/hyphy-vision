@@ -303,6 +303,13 @@ var BSREL = React.createClass({
         tree_id = "#tree-tab";
 
   },
+  
+  componentDidUpdate(prevProps, prevState) {
+    $('body').scrollspy({
+        target: '.bs-docs-sidebar',
+        offset: 50
+      });
+  },
 
   render: function() {
 

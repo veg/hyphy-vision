@@ -623,6 +623,14 @@ webpackJsonp([0],[
 	            tree_id = "#tree-tab";
 	    },
 	
+	    componentDidUpdate: function componentDidUpdate(prevProps, prevState) {
+	        $('body').scrollspy({
+	            target: '.bs-docs-sidebar',
+	            offset: 50
+	        });
+	    },
+	
+	
 	    render: function render() {
 	
 	        var self = this;
