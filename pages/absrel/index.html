@@ -92,6 +92,11 @@
   <script>
     $(document).ready(function() {
       absrel("test-data/test.json", "absrel-content");
+      
+      // Corrects navbar offset when clicking anchor hash
+      var shiftWindow = function() { scrollBy(0, -50) };
+      if (location.hash) shiftWindow();
+      window.addEventListener("hashchange", shiftWindow);
     });
   </script>
 
