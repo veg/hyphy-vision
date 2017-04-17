@@ -7,6 +7,7 @@ var datamonkey = require('../datamonkey/datamonkey.js'),
 
 require("phylotree");
 require("phylotree.css");
+
 import {BSRELSummary} from "./components/absrel_summary.jsx";
 import {DatamonkeyModelTable} from "./components/shared_summary.jsx";
 import {TreeSummary} from "./components/tree_summary.jsx";
@@ -22,6 +23,7 @@ var BSREL = React.createClass({
   loadFromServer : function() {
 
     var self = this;
+
     d3.json(this.props.url, function(data) {
 
       data["fits"]["MG94"]["branch-annotations"] = self.formatBranchAnnotations(data, "MG94");

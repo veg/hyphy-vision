@@ -106,11 +106,7 @@ var PropChart = React.createClass({
     this.createYAxis();
     this.setEvents();
     this.createOmegaLine(this.state.omegas);
-		console.log('initialized everything');
     //_.map(this.props.omegas, function(d) { return this.createOmegaLine(d["omega"],d["prop"]); });
-
-		console.log(this.svg);
-    
 
   },
 

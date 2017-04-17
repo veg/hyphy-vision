@@ -29,11 +29,11 @@ webpackJsonp([0],[
 	__webpack_require__(39);
 	
 	var absrel = __webpack_require__(43);
-	var busted = __webpack_require__(238);
-	var fade = __webpack_require__(240);
-	var fade_summary = __webpack_require__(241);
-	var relax = __webpack_require__(242);
-	var slac = __webpack_require__(244);
+	var busted = __webpack_require__(44);
+	var fade = __webpack_require__(243);
+	var fade_summary = __webpack_require__(244);
+	var relax = __webpack_require__(245);
+	var slac = __webpack_require__(247);
 	
 	// Create new hyphy-vision export
 	window.absrel = absrel;
@@ -341,28 +341,27 @@ webpackJsonp([0],[
 
 	/* WEBPACK VAR INJECTION */(function(d3, $) {'use strict';
 	
-	var _absrel_summary = __webpack_require__(44);
+	var _absrel_summary = __webpack_require__(257);
 	
-	var _shared_summary = __webpack_require__(77);
+	var _shared_summary = __webpack_require__(85);
 	
-	var _tree_summary = __webpack_require__(78);
+	var _tree_summary = __webpack_require__(84);
 	
-	var _tree = __webpack_require__(79);
+	var _tree = __webpack_require__(46);
 	
-	var _branch_table = __webpack_require__(81);
+	var _branch_table = __webpack_require__(258);
 	
-	var React = __webpack_require__(46),
-	    ReactDOM = __webpack_require__(83);
+	var React = __webpack_require__(47),
+	    ReactDOM = __webpack_require__(89);
 	
 	var datamonkey = __webpack_require__(39),
 	    _ = __webpack_require__(45),
-	    busted = __webpack_require__(229);
+	    busted = __webpack_require__(236);
 	
-	__webpack_require__(80);
-	__webpack_require__(236);
+	__webpack_require__(82);
+	__webpack_require__(87);
 	
-	
-	var React = __webpack_require__(46);
+	var React = __webpack_require__(47);
 	
 	var BSREL = React.createClass({
 	    displayName: 'BSREL',
@@ -373,6 +372,7 @@ webpackJsonp([0],[
 	    loadFromServer: function loadFromServer() {
 	
 	        var self = this;
+	
 	        d3.json(this.props.url, function (data) {
 	
 	            data["fits"]["MG94"]["branch-annotations"] = self.formatBranchAnnotations(data, "MG94");
@@ -689,221 +689,1202 @@ webpackJsonp([0],[
 /* 44 */
 /***/ function(module, exports, __webpack_require__) {
 
-	/* WEBPACK VAR INJECTION */(function(d3, _) {'use strict';
+	/* WEBPACK VAR INJECTION */(function(d3, _, $) {"use strict";
 	
-	var React = __webpack_require__(46);
+	var _tree = __webpack_require__(46);
 	
-	var BSRELSummary = React.createClass({
-	  displayName: 'BSRELSummary',
+	var _model_fits = __webpack_require__(83);
+	
+	var _tree_summary = __webpack_require__(84);
+	
+	var _prop_chart = __webpack_require__(86);
+	
+	__webpack_require__(82);
+	__webpack_require__(87);
+	
+	var React = __webpack_require__(47),
+	    ReactDOM = __webpack_require__(89);
+	
+	var datamonkey = __webpack_require__(39),
+	    busted = __webpack_require__(236);
+	
+	var BUSTED = React.createClass({
+	  displayName: "BUSTED",
 	
 	
 	  float_format: d3.format(".2f"),
+	  p_value_format: d3.format(".4f"),
+	  fit_format: d3.format(".2f"),
 	
-	  countBranchesTested: function countBranchesTested(branches_tested) {
-	
-	    if (branches_tested) {
-	      return branches_tested.split(';').length;
-	    } else {
-	      return 0;
-	    }
-	  },
-	
-	  getBranchesWithEvidence: function getBranchesWithEvidence(test_results) {
+	  loadFromServer: function loadFromServer() {
 	
 	    var self = this;
-	    return _.filter(test_results, function (d) {
-	      return d.p <= 0.05;
-	    }).length;
+	
+	    d3.json(this.props.url, function (data) {
+	
+	      data["fits"]["Unconstrained model"]["branch-annotations"] = self.formatBranchAnnotations(data, "Unconstrained model");
+	      data["fits"]["Constrained model"]["branch-annotations"] = self.formatBranchAnnotations(data, "Constrained model");
+	
+	      // rename rate distributions
+	      data["fits"]["Unconstrained model"]["rate-distributions"] = data["fits"]["Unconstrained model"]["rate distributions"];
+	      data["fits"]["Constrained model"]["rate-distributions"] = data["fits"]["Constrained model"]["rate distributions"];
+	
+	      // set display order
+	      data["fits"]["Unconstrained model"]["display-order"] = 0;
+	      data["fits"]["Constrained model"]["display-order"] = 1;
+	
+	      var json = data,
+	          pmid = "25701167",
+	          pmid_text = "PubMed ID " + pmid,
+	          pmid_href = "http://www.ncbi.nlm.nih.gov/pubmed/" + pmid,
+	          p = json["test results"]["p"],
+	          test_result = p <= 0.05 ? "evidence" : "no evidence";
+	
+	      var fg_rate = json["fits"]["Unconstrained model"]["rate distributions"]["FG"];
+	      var mapped_omegas = { "omegas": _.map(fg_rate, function (d) {
+	          return _.object(["omega", "prop"], d);
+	        }) };
+	
+	      self.setState({
+	        p: p,
+	        test_result: test_result,
+	        json: json,
+	        omegas: mapped_omegas["omegas"],
+	        pmid_text: pmid_text,
+	        pmid_href: pmid_href
+	      });
+	    });
 	  },
 	
-	  getTestBranches: function getTestBranches(test_results) {
+	  getDefaultProps: function getDefaultProps() {
 	
-	    var self = this;
-	    return _.filter(test_results, function (d) {
-	      return d.tested > 0;
-	    }).length;
-	  },
+	    var edgeColorizer = function edgeColorizer(element, data) {
 	
-	  getTotalBranches: function getTotalBranches(test_results) {
+	      var is_foreground = data.target.annotations.is_foreground,
+	          color_fill = this.options()["color-fill"] ? "black" : "red";
 	
-	    var self = this;
-	    return _.keys(test_results).length;
-	  },
+	      element.style('stroke', is_foreground ? color_fill : 'gray').style('stroke-linejoin', 'round').style('stroke-linejoin', 'round').style('stroke-linecap', 'round');
+	    };
 	
-	  getInitialState: function getInitialState() {
+	    var tree_settings = {
+	      'omegaPlot': {},
+	      'tree-options': {
+	        /* value arrays have the following meaning
+	            [0] - the value of the attribute
+	            [1] - does the change in attribute value trigger tree re-layout?
+	        */
+	        'hyphy-tree-model': ["Unconstrained model", true],
+	        'hyphy-tree-highlight': ["RELAX.test", false],
+	        'hyphy-tree-branch-lengths': [true, true],
+	        'hyphy-tree-hide-legend': [true, false],
+	        'hyphy-tree-fill-color': [true, false]
+	      },
+	      'hyphy-tree-legend-type': 'discrete',
+	      'suppress-tree-render': false,
+	      'chart-append-html': true,
+	      'edgeColorizer': edgeColorizer
+	    };
 	
-	    var self = this;
+	    var distro_settings = {
+	      dimensions: { width: 600, height: 400 },
+	      margins: { 'left': 50, 'right': 15, 'bottom': 35, 'top': 35 },
+	      legend: false,
+	      domain: [0.00001, 100],
+	      do_log_plot: true,
+	      k_p: null,
+	      plot: null,
+	      svg_id: "prop-chart"
+	    };
 	
 	    return {
-	      branches_with_evidence: this.getBranchesWithEvidence(self.props.test_results),
-	      test_branches: this.getTestBranches(self.props.test_results),
-	      total_branches: this.getTotalBranches(self.props.test_results)
+	      distro_settings: distro_settings,
+	      tree_settings: tree_settings,
+	      constrained_threshold: "Infinity",
+	      null_threshold: "-Infinity",
+	      model_name: "FG"
 	    };
 	  },
 	
-	  componentWillReceiveProps: function componentWillReceiveProps(nextProps) {
+	  getInitialState: function getInitialState() {
+	    return {
+	      p: null,
+	      test_result: null,
+	      json: null,
+	      omegas: null,
+	      pmid_text: null,
+	      pmid_href: null
+	    };
+	  },
 	
-	    this.setState({
-	      branches_with_evidence: this.getBranchesWithEvidence(nextProps.test_results),
-	      test_branches: this.getTestBranches(nextProps.test_results),
-	      total_branches: this.getTotalBranches(nextProps.test_results)
+	  setEvents: function setEvents() {
+	
+	    var self = this;
+	
+	    $("#json_file").on("change", function (e) {
+	      var files = e.target.files; // FileList object
+	      if (files.length == 1) {
+	        var f = files[0];
+	        var reader = new FileReader();
+	        reader.onload = function (theFile) {
+	          return function (e) {
+	
+	            var data = JSON.parse(this.result);
+	            data["fits"]["Unconstrained model"]["branch-annotations"] = self.formatBranchAnnotations(data, "Unconstrained model");
+	            data["fits"]["Constrained model"]["branch-annotations"] = self.formatBranchAnnotations(data, "Constrained model");
+	
+	            // rename rate distributions
+	            data["fits"]["Unconstrained model"]["rate-distributions"] = data["fits"]["Unconstrained model"]["rate distributions"];
+	            data["fits"]["Constrained model"]["rate-distributions"] = data["fits"]["Constrained model"]["rate distributions"];
+	
+	            var json = data,
+	                pmid = "25701167",
+	                pmid_text = "PubMed ID " + pmid,
+	                pmid_href = "http://www.ncbi.nlm.nih.gov/pubmed/" + pmid,
+	                p = json["test results"]["p"],
+	                test_result = p <= 0.05 ? "evidence" : "no evidence";
+	
+	            var fg_rate = json["fits"]["Unconstrained model"]["rate distributions"]["FG"];
+	            var mapped_omegas = { "omegas": _.map(fg_rate, function (d) {
+	                return _.object(["omega", "prop"], d);
+	              }) };
+	
+	            self.setState({
+	              p: p,
+	              test_result: test_result,
+	              json: json,
+	              omegas: mapped_omegas["omegas"],
+	              pmid_text: pmid_text,
+	              pmid_href: pmid_href
+	            });
+	          };
+	        }(f);
+	        reader.readAsText(f);
+	      }
+	      $("#datamonkey-absrel-toggle-here").dropdown("toggle");
+	      e.preventDefault();
 	    });
+	  },
+	
+	  formatBranchAnnotations: function formatBranchAnnotations(json, key) {
+	
+	    // attach is_foreground to branch annotations
+	    var foreground = json["test set"].split(",");
+	
+	    var tree = d3.layout.phylotree(),
+	        nodes = tree(json["fits"][key]["tree string"]).get_nodes(),
+	        node_names = _.map(nodes, function (d) {
+	      return d.name;
+	    });
+	
+	    // Iterate over objects
+	    var branch_annotations = _.object(node_names, _.map(node_names, function (d) {
+	      return { is_foreground: _.indexOf(foreground, d) > -1 };
+	    }));
+	
+	    return branch_annotations;
+	  },
+	
+	  initialize: function initialize() {
+	
+	    var json = this.state.json;
+	
+	    if (!json) {
+	      return;
+	    }
+	
+	    busted.render_histogram("#chart-id", json);
+	
+	    // delete existing tree
+	    d3.select('#tree_container').select("svg").remove();
+	
+	    var fg_rate = json["fits"]["Unconstrained model"]["rate distributions"]["FG"],
+	        omegas = fg_rate.map(function (r) {
+	      return r[0];
+	    }),
+	        weights = fg_rate.map(function (r) {
+	      return r[1];
+	    });
+	
+	    var dsettings = {
+	      'log': true,
+	      'legend': false,
+	      'domain': [0.00001, 20],
+	      'dimensions': { 'width': 325, 'height': 300 }
+	    };
+	
+	    $("#export-dist-svg").on('click', function (e) {
+	      datamonkey.save_image("svg", "#primary-omega-dist");
+	    });
+	
+	    $("#export-dist-png").on('click', function (e) {
+	      datamonkey.save_image("png", "#primary-omega-dist");
+	    });
+	  },
+	
+	  componentWillMount: function componentWillMount() {
+	    this.loadFromServer();
+	    this.setEvents();
 	  },
 	
 	  render: function render() {
 	
 	    var self = this;
+	    self.initialize();
 	
 	    return React.createElement(
-	      'div',
-	      { className: 'row', id: 'summary-div' },
+	      "div",
+	      { className: "tab-content" },
 	      React.createElement(
-	        'div',
-	        { className: 'col-md-8' },
+	        "div",
+	        { className: "tab-pane active", id: "summary_tab" },
 	        React.createElement(
-	          'h3',
-	          { className: 'list-group-item-heading' },
+	          "div",
+	          { className: "row", styleName: "margin-top: 5px" },
 	          React.createElement(
-	            'span',
-	            { id: 'summary-method-name' },
-	            'Adaptive branch site REL - Results summary'
-	          )
-	        ),
-	        React.createElement(
-	          'div',
-	          { className: 'main-result' },
-	          React.createElement(
-	            'p',
-	            { className: 'list-group-item-text label_and_input' },
-	            'Evidence',
+	            "div",
+	            { className: "col-md-12" },
 	            React.createElement(
-	              'sup',
-	              null,
-	              '\u2020'
-	            ),
-	            ' of episodic diversifying selection was found on',
-	            React.createElement(
-	              'span',
-	              { className: 'hyphy-highlight' },
+	              "ul",
+	              { className: "list-group" },
 	              React.createElement(
-	                'strong',
-	                null,
-	                ' ',
-	                self.state.branches_with_evidence
-	              ),
-	              ' out of ',
-	              self.state.test_branches
-	            ),
-	            ' tested branches (',
-	            self.state.total_branches,
-	            ' total branches).'
-	          ),
-	          React.createElement('hr', null),
-	          React.createElement(
-	            'p',
-	            null,
-	            React.createElement(
-	              'small',
-	              null,
-	              React.createElement(
-	                'sup',
-	                null,
-	                '\u2020'
-	              ),
-	              React.createElement(
-	                'abbr',
-	                { title: 'Likelihood Ratio Test' },
-	                'LRT'
-	              ),
-	              ' p \u2264 0.05, corrected for multiple testing.'
+	                "li",
+	                { className: "list-group-item list-group-item-info" },
+	                React.createElement(
+	                  "h3",
+	                  { className: "list-group-item-heading" },
+	                  React.createElement("i", { className: "fa fa-list", styleName: "margin-right: 10px" }),
+	                  React.createElement(
+	                    "span",
+	                    { id: "summary-method-name" },
+	                    "BUSTED"
+	                  ),
+	                  " summary"
+	                ),
+	                "There is ",
+	                React.createElement(
+	                  "strong",
+	                  null,
+	                  this.state.test_result
+	                ),
+	                " of episodic diversifying selection, with LRT p-value of ",
+	                this.state.p,
+	                ".",
+	                React.createElement(
+	                  "p",
+	                  null,
+	                  React.createElement(
+	                    "small",
+	                    null,
+	                    "Please cite ",
+	                    React.createElement(
+	                      "a",
+	                      { href: this.state.pmid_href, id: "summary-pmid" },
+	                      this.state.pmid_text
+	                    ),
+	                    " if you use this result in a publication, presentation, or other scientific work."
+	                  )
+	                )
+	              )
 	            )
 	          )
 	        ),
 	        React.createElement(
-	          'p',
-	          null,
+	          "div",
+	          { className: "row" },
 	          React.createElement(
-	            'small',
-	            null,
-	            'Please cite ',
+	            "div",
+	            { id: "hyphy-model-fits", className: "col-lg-12" },
+	            React.createElement(_model_fits.ModelFits, { json: self.state.json })
+	          )
+	        ),
+	        React.createElement(
+	          "button",
+	          { id: "export-chart-svg", type: "button", className: "btn btn-default btn-sm pull-right btn-export" },
+	          React.createElement("span", { className: "glyphicon glyphicon-floppy-save" }),
+	          " Export Chart to SVG"
+	        ),
+	        React.createElement(
+	          "button",
+	          { id: "export-chart-png", type: "button", className: "btn btn-default btn-sm pull-right btn-export" },
+	          React.createElement("span", { className: "glyphicon glyphicon-floppy-save" }),
+	          " Export Chart to PNG"
+	        ),
+	        React.createElement(
+	          "div",
+	          { className: "row hyphy-busted-site-table" },
+	          React.createElement(
+	            "div",
+	            { id: "chart-id", className: "col-lg-8" },
 	            React.createElement(
-	              'a',
-	              { href: 'http://www.ncbi.nlm.nih.gov/pubmed/25697341', id: 'summary-pmid', target: '_blank' },
-	              'PMID 25697341'
+	              "strong",
+	              null,
+	              "Model Evidence Ratios Per Site"
 	            ),
-	            ' if you use this result in a publication, presentation, or other scientific work.'
+	            React.createElement("div", { className: "clearfix" })
+	          )
+	        ),
+	        React.createElement(
+	          "div",
+	          { className: "row site-table" },
+	          React.createElement(
+	            "div",
+	            { className: "col-lg-12" },
+	            React.createElement(
+	              "form",
+	              { id: "er-thresholds" },
+	              React.createElement(
+	                "div",
+	                { className: "form-group" },
+	                React.createElement(
+	                  "label",
+	                  { "for": "er-constrained-threshold" },
+	                  "Constrained Evidence Ratio Threshold:"
+	                ),
+	                React.createElement("input", { type: "text", className: "form-control", id: "er-constrained-threshold", defaultValue: this.props.constrained_threshold })
+	              ),
+	              React.createElement(
+	                "div",
+	                { className: "form-group" },
+	                React.createElement(
+	                  "label",
+	                  { "for": "er-optimized-null-threshold" },
+	                  "Optimized Null Evidence Ratio Threshold:"
+	                ),
+	                React.createElement("input", { type: "text", className: "form-control", id: "er-optimized-null-threshold", defaultValue: this.props.null_threshold })
+	              )
+	            ),
+	            React.createElement(
+	              "button",
+	              { id: "export-csv", type: "button", className: "btn btn-default btn-sm pull-right hyphy-busted-btn-export" },
+	              React.createElement("span", { className: "glyphicon glyphicon-floppy-save" }),
+	              " Export Table to CSV"
+	            ),
+	            React.createElement(
+	              "button",
+	              { id: "apply-thresholds", type: "button", className: "btn btn-default btn-sm pull-right hyphy-busted-btn-export" },
+	              "Apply Thresholds"
+	            ),
+	            React.createElement(
+	              "table",
+	              { id: "sites", className: "table sites dc-data-table" },
+	              React.createElement(
+	                "thead",
+	                null,
+	                React.createElement(
+	                  "tr",
+	                  { className: "header" },
+	                  React.createElement(
+	                    "th",
+	                    null,
+	                    "Site Index"
+	                  ),
+	                  React.createElement(
+	                    "th",
+	                    null,
+	                    "Unconstrained Likelihood"
+	                  ),
+	                  React.createElement(
+	                    "th",
+	                    null,
+	                    "Constrained Likelihood"
+	                  ),
+	                  React.createElement(
+	                    "th",
+	                    null,
+	                    "Optimized Null Likelihood"
+	                  ),
+	                  React.createElement(
+	                    "th",
+	                    null,
+	                    "Constrained Evidence Ratio"
+	                  ),
+	                  React.createElement(
+	                    "th",
+	                    null,
+	                    "Optimized Null Evidence Ratio"
+	                  )
+	                )
+	              )
+	            )
 	          )
 	        )
 	      ),
 	      React.createElement(
-	        'div',
-	        { id: 'data-circle-div', className: 'col-md-4' },
+	        "div",
+	        { className: "tab-pane", id: "tree_tab" },
 	        React.createElement(
-	          'div',
-	          { id: 'data-circle' },
+	          "div",
+	          { className: "col-md-12" },
+	          React.createElement(_tree.Tree, { json: self.state.json,
+	            settings: self.props.tree_settings })
+	        ),
+	        React.createElement(
+	          "div",
+	          { className: "col-md-12" },
 	          React.createElement(
-	            'div',
-	            { id: 'data-text' },
-	            React.createElement(
-	              'h5',
-	              { className: 'hyphy-highlight' },
-	              'INPUT DATA'
-	            ),
-	            React.createElement('br', null),
-	            React.createElement(
-	              'p',
-	              null,
-	              React.createElement(
-	                'span',
-	                { className: 'hyphy-highlight' },
-	                '16'
-	              ),
-	              ' sequences'
-	            ),
-	            React.createElement('br', null),
-	            React.createElement(
-	              'p',
-	              null,
-	              React.createElement(
-	                'span',
-	                { className: 'hyphy-highlight' },
-	                '8'
-	              ),
-	              ' branches'
-	            ),
-	            React.createElement('br', null),
-	            React.createElement(
-	              'p',
-	              null,
-	              React.createElement(
-	                'span',
-	                { className: 'hyphy-highlight' },
-	                '16'
-	              ),
-	              ' variants'
-	            ),
-	            React.createElement('br', null)
+	            "div",
+	            { id: "primary-omega-dist", className: "panel-body" },
+	            React.createElement(_prop_chart.PropChart, { name: self.props.model_name, omegas: self.state.omegas,
+	              settings: self.props.distro_settings })
 	          )
 	        )
 	      )
 	    );
 	  }
-	
 	});
 	
 	// Will need to make a call to this
 	// omega distributions
-	function render_absrel_summary(test_results, pmid, element) {
-	  React.render(React.createElement(BSRELSummary, { test_results: test_results, pmid: pmid }), document.getElementById(element));
-	}
+	var render_busted = function render_busted(url, element) {
+	  ReactDOM.render(React.createElement(BUSTED, { url: url }), document.getElementById(element));
+	};
 	
-	module.exports.BSRELSummary = BSRELSummary;
-	module.exports.render_absrel_summary = render_absrel_summary;
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(40), __webpack_require__(45)))
+	module.exports = render_busted;
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(40), __webpack_require__(45), __webpack_require__(2)))
 
 /***/ },
 /* 45 */,
-/* 46 */,
+/* 46 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(d3, _, $) {'use strict';
+	
+	var React = __webpack_require__(47);
+	var datamonkey = __webpack_require__(39);
+	__webpack_require__(82);
+	
+	var Tree = React.createClass({
+	    displayName: 'Tree',
+	
+	
+	    getInitialState: function getInitialState() {
+	        return {
+	            json: this.props.json,
+	            settings: this.props.settings
+	        };
+	    },
+	
+	    sortNodes: function sortNodes(asc) {
+	
+	        var self = this;
+	
+	        self.tree.traverse_and_compute(function (n) {
+	            var d = 1;
+	            if (n.children && n.children.length) {
+	                d += d3.max(n.children, function (d) {
+	                    return d["count_depth"];
+	                });
+	            }
+	            n["count_depth"] = d;
+	        });
+	
+	        self.tree.resort_children(function (a, b) {
+	            return (a["count_depth"] - b["count_depth"]) * (asc ? 1 : -1);
+	        });
+	    },
+	
+	    getBranchLengths: function getBranchLengths() {
+	
+	        var self = this;
+	
+	        if (!this.state.json) {
+	            return [];
+	        }
+	
+	        var branch_lengths = self.settings["tree-options"]["hyphy-tree-branch-lengths"][0] ? this.state.json["fits"][this.which_model]["branch-lengths"] : null;
+	
+	        if (!branch_lengths) {
+	
+	            var nodes = _.filter(self.tree.get_nodes(), function (d) {
+	                return d.parent;
+	            });
+	
+	            branch_lengths = _.object(_.map(nodes, function (d) {
+	                return d.name;
+	            }), _.map(nodes, function (d) {
+	                return parseFloat(d.attribute);
+	            }));
+	        }
+	
+	        return branch_lengths;
+	    },
+	
+	    assignBranchAnnotations: function assignBranchAnnotations() {
+	        if (this.state.json && this.state.json["fits"][this.which_model]) {
+	            this.tree.assign_attributes(this.state.json["fits"][this.which_model]["branch-annotations"]);
+	        }
+	    },
+	
+	    renderDiscreteLegendColorScheme: function renderDiscreteLegendColorScheme(svg_container) {
+	
+	        var self = this,
+	            svg = self.svg;
+	
+	        var color_fill = self.settings["tree-options"]["hyphy-tree-fill-color"][0] ? "black" : "red";
+	
+	        var margins = {
+	            'bottom': 30,
+	            'top': 15,
+	            'left': 40,
+	            'right': 2
+	        };
+	
+	        d3.selectAll("#color-legend").remove();
+	
+	        var dc_legend = svg.append("g").attr("id", "color-legend").attr("class", "dc-legend").attr("transform", "translate(" + margins["left"] + "," + margins["top"] + ")");
+	
+	        var fg_item = dc_legend.append("g").attr("class", "dc-legend-item").attr("transform", "translate(0,0)");
+	
+	        fg_item.append("rect").attr("width", "13").attr("height", "13").attr("fill", color_fill);
+	
+	        fg_item.append("text").attr("x", "15").attr("y", "11").text("Foreground");
+	
+	        var bg_item = dc_legend.append("g").attr("class", "dc-legend-item").attr("transform", "translate(0,18)");
+	
+	        bg_item.append("rect").attr("width", "13").attr("height", "13").attr("fill", "gray");
+	
+	        bg_item.append("text").attr("x", "15").attr("y", "11").text("Background");
+	    },
+	
+	    renderLegendColorScheme: function renderLegendColorScheme(svg_container, attr_name, do_not_render) {
+	
+	        var self = this;
+	
+	        var branch_annotations = this.state.json["fits"][this.which_model]["branch-annotations"];
+	
+	        var svg = self.svg;
+	
+	        // clear existing linearGradients
+	        d3.selectAll(".legend-definitions").selectAll("linearGradient").remove();
+	        d3.selectAll("#color-legend").remove();
+	
+	        if (branch_annotations && !do_not_render) {
+	            var bar_width = 70,
+	                bar_height = 300,
+	                margins = {
+	                'bottom': 30,
+	                'top': 15,
+	                'left': 40,
+	                'right': 2
+	            };
+	
+	            var this_grad = svg.append("defs").attr("class", "legend-definitions").append("linearGradient").attr("id", "_omega_bar").attr("x1", "0%").attr("y1", "0%").attr("x2", "0%").attr("y2", "100%");
+	
+	            var omega_scale = d3.scale.pow().exponent(this.scaling_exponent).domain(d3.extent(self.omega_color.domain())).range([0, 1]),
+	                axis_scale = d3.scale.pow().exponent(this.scaling_exponent).domain(d3.extent(self.omega_color.domain())).range([0, bar_height - margins['top'] - margins['bottom']]);
+	
+	            self.omega_color.domain().forEach(function (d) {
+	                this_grad.append("stop").attr("offset", "" + omega_scale(d) * 100 + "%").style("stop-color", self.omega_color(d));
+	            });
+	
+	            var g_container = svg.append("g").attr("id", "color-legend").attr("transform", "translate(" + margins["left"] + "," + margins["top"] + ")");
+	
+	            g_container.append("rect").attr("x", 0).attr("width", bar_width - margins['left'] - margins['right']).attr("y", 0).attr("height", bar_height - margins['top'] - margins['bottom']).style("fill", "url(#_omega_bar)");
+	
+	            var draw_omega_bar = d3.svg.axis().scale(axis_scale).orient("left").tickFormat(d3.format(".1r")).tickValues([0, 0.01, 0.1, 0.5, 1, 2, 5, 10]);
+	
+	            var scale_bar = g_container.append("g");
+	
+	            scale_bar.style("font-size", "14").attr("class", "hyphy-omega-bar").call(draw_omega_bar);
+	
+	            scale_bar.selectAll("text").style("text-anchor", "right");
+	
+	            var _label = '';
+	            var x_label = _label = scale_bar.append("g").attr("class", "hyphy-omega-bar");
+	            x_label = x_label.selectAll("text").data([attr_name]);
+	            x_label.enter().append("text");
+	            x_label.text(function (d) {
+	                return $('<textarea />').html(d).text();
+	            }).attr("transform", "translate(" + (bar_width - margins['left'] - margins['right']) * 0.5 + "," + (bar_height - margins['bottom']) + ")").style("text-anchor", "middle").style("font-size", "18").attr("dx", "0.0em").attr("dy", "0.1em");
+	        }
+	    },
+	
+	    setHandlers: function setHandlers() {
+	
+	        var self = this;
+	
+	        $("#hyphy-error-hide").on("click", function (e) {
+	            d3.select("#hyphy-error").style("display", "none");
+	            e.preventDefault();
+	        });
+	
+	        $(".hyphy-tree-trigger").on("click", function (e) {
+	
+	            self.renderTree();
+	        });
+	
+	        $(".tree-tab-btn").on('click', function (e) {
+	            self.tree.placenodes().update();
+	        });
+	
+	        $("#export-phylo-svg").on('click', function (e) {
+	            datamonkey.save_image("svg", "#tree_container");
+	        });
+	
+	        $("#export-phylo-png").on('click', function (e) {
+	            datamonkey.save_image("png", "#tree_container");
+	        });
+	
+	        $("#export-phylo-nwk").on('click', function (e) {
+	            var nwk = self.tree.get_newick(function () {});
+	            var pom = document.createElement('a');
+	            pom.setAttribute('href', 'data:text/octet-stream;charset=utf-8,' + encodeURIComponent(nwk));
+	            pom.setAttribute('download', 'nwk.txt');
+	            $("body").append(pom);
+	            pom.click();
+	            pom.remove();
+	        });
+	    },
+	
+	    setTreeHandlers: function setTreeHandlers() {
+	
+	        var self = this;
+	        var tree_object = self.tree;
+	
+	        $("[data-direction]").on("click", function (e) {
+	            var which_function = $(this).data("direction") == 'vertical' ? tree_object.spacing_x : tree_object.spacing_y;
+	            which_function(which_function() + +$(this).data("amount")).update();
+	        });
+	
+	        $(".phylotree-layout-mode").on("change", function (e) {
+	            if ($(this).is(':checked')) {
+	                if (tree_object.radial() != ($(this).data("mode") == "radial")) {
+	                    tree_object.radial(!tree_object.radial()).placenodes().update();
+	                }
+	            }
+	        });
+	
+	        $(".phylotree-align-toggler").on("change", function (e) {
+	            if ($(this).is(':checked')) {
+	                if (tree_object.align_tips($(this).data("align") == "right")) {
+	                    tree_object.placenodes().update();
+	                }
+	            }
+	        });
+	
+	        $("#sort_original").on("click", function (e) {
+	            tree_object.resort_children(function (a, b) {
+	                return a["original_child_order"] - b["original_child_order"];
+	            });
+	
+	            e.preventDefault();
+	        });
+	
+	        $("#sort_ascending").on("click", function (e) {
+	            self.sortNodes(true);
+	            e.preventDefault();
+	        });
+	
+	        $("#sort_descending").on("click", function (e) {
+	            self.sortNodes(false);
+	            e.preventDefault();
+	        });
+	    },
+	
+	    setPartitionList: function setPartitionList() {
+	
+	        var self = this;
+	
+	        // Check if partition list exists
+	        if (!self.props.json["partition"]) {
+	            d3.select("#hyphy-tree-highlight-div").style("display", "none");
+	            d3.select("#hyphy-tree-highlight").style("display", "none");
+	            return;
+	        }
+	
+	        // set tree partitions
+	        self.tree.set_partitions(self.props.json["partition"]);
+	
+	        var partition_list = d3.select("#hyphy-tree-highlight-branches").selectAll("li").data([['None']].concat(d3.keys(self.props.json["partition"]).map(function (d) {
+	            return [d];
+	        }).sort()));
+	
+	        partition_list.enter().append("li");
+	        partition_list.exit().remove();
+	        partition_list = partition_list.selectAll("a").data(function (d) {
+	            return d;
+	        });
+	
+	        partition_list.enter().append("a");
+	        partition_list.attr("href", "#").on("click", function (d, i) {
+	            d3.select("#hyphy-tree-highlight").attr("value", d);
+	            self.renderTree();
+	        });
+	
+	        // set default to passed setting
+	        partition_list.text(function (d) {
+	            if (d == "RELAX.test") {
+	                this.click();
+	            }
+	            return d;
+	        });
+	    },
+	
+	    setModelList: function setModelList() {
+	
+	        var self = this;
+	
+	        if (!this.state.json) {
+	            return [];
+	        }
+	
+	        this.state.settings['suppress-tree-render'] = true;
+	
+	        var def_displayed = false;
+	
+	        var model_list = d3.select("#hyphy-tree-model-list").selectAll("li").data(d3.keys(this.state.json["fits"]).map(function (d) {
+	            return [d];
+	        }).sort());
+	
+	        model_list.enter().append("li");
+	        model_list.exit().remove();
+	        model_list = model_list.selectAll("a").data(function (d) {
+	            return d;
+	        });
+	
+	        model_list.enter().append("a");
+	
+	        model_list.attr("href", "#").on("click", function (d, i) {
+	            d3.select("#hyphy-tree-model").attr("value", d);
+	            self.renderTree();
+	        });
+	
+	        model_list.text(function (d) {
+	
+	            if (d == "General Descriptive") {
+	                def_displayed = true;
+	                this.click();
+	            }
+	
+	            if (!def_displayed && d == "Alternative") {
+	                def_displayed = true;
+	                this.click();
+	            }
+	
+	            if (!def_displayed && d == "Partitioned MG94xREV") {
+	                def_displayed = true;
+	                this.click();
+	            }
+	
+	            if (!def_displayed && d == "MG94") {
+	                def_displayed = true;
+	                this.click();
+	            }
+	
+	            if (!def_displayed && d == "Full model") {
+	                def_displayed = true;
+	                this.click();
+	            }
+	
+	            return d;
+	        });
+	
+	        this.settings['suppress-tree-render'] = false;
+	    },
+	
+	    initialize: function initialize() {
+	
+	        var self = this;
+	
+	        this.settings = this.state.settings;
+	
+	        if (!this.settings) {
+	            return null;
+	        }
+	
+	        if (!this.state.json) {
+	            return null;
+	        }
+	
+	        $("#hyphy-tree-branch-lengths").click();
+	
+	        this.scaling_exponent = 0.33;
+	        this.omega_format = d3.format(".3r");
+	        this.prop_format = d3.format(".2p");
+	        this.fit_format = d3.format(".2f");
+	        this.p_value_format = d3.format(".4f");
+	
+	        var json = this.state.json;
+	        var analysis_data = json;
+	
+	        this.width = 800;
+	        this.height = 600;
+	
+	        this.which_model = this.settings["tree-options"]["hyphy-tree-model"][0];
+	        this.legend_type = this.settings["hyphy-tree-legend-type"];
+	
+	        this.setHandlers();
+	        this.setModelList();
+	        this.initializeTree();
+	        this.setPartitionList();
+	    },
+	
+	    initializeTree: function initializeTree() {
+	
+	        var self = this;
+	
+	        var analysis_data = self.state.json;
+	
+	        var width = this.width,
+	            height = this.height,
+	            alpha_level = 0.05,
+	            branch_lengths = [];
+	
+	        if (!this.tree) {
+	            this.tree = d3.layout.phylotree("body").size([height, width]).separation(function (a, b) {
+	                return 0;
+	            });
+	        }
+	
+	        this.setTreeHandlers();
+	
+	        // clear any existing svg
+	        d3.select("#tree_container").html("");
+	
+	        this.svg = d3.select("#tree_container").append("svg").attr("width", width).attr("height", height);
+	
+	        this.tree.branch_name(null);
+	        this.tree.node_span('equal');
+	        this.tree.options({
+	            'draw-size-bubbles': false,
+	            'selectable': false,
+	            'left-right-spacing': 'fit-to-size',
+	            'left-offset': 100,
+	            'color-fill': this.settings["tree-options"]["hyphy-tree-fill-color"][0]
+	        }, false);
+	
+	        this.assignBranchAnnotations();
+	
+	        self.omega_color = d3.scale.pow().exponent(this.scaling_exponent).domain([0, 0.25, 1, 5, 10]).range(this.settings["tree-options"]["hyphy-tree-fill-color"][0] ? ["#DDDDDD", "#AAAAAA", "#888888", "#444444", "#000000"] : ["#5e4fa2", "#3288bd", "#e6f598", "#f46d43", "#9e0142"]).clamp(true);
+	
+	        self.renderTree();
+	
+	        if (self.legend_type == 'discrete') {
+	            self.renderDiscreteLegendColorScheme("tree_container");
+	        } else {
+	            self.renderLegendColorScheme("tree_container", analysis_data["fits"][this.which_model]["annotation-tag"]);
+	        }
+	
+	        if (this.settings.edgeColorizer) {
+	            this.edgeColorizer = this.settings.edgeColorizer;
+	        }
+	
+	        this.tree.style_edges(this.edgeColorizer);
+	        this.tree.style_nodes(this.nodeColorizer);
+	
+	        this.tree.spacing_x(30, true);
+	        this.tree.layout();
+	        this.tree.placenodes().update();
+	        this.tree.layout();
+	    },
+	
+	    renderTree: function renderTree(skip_render) {
+	
+	        var self = this;
+	        var analysis_data = this.state.json;
+	        var svg = self.svg;
+	
+	        if (!this.settings['suppress-tree-render']) {
+	
+	            var do_layout = false;
+	
+	            for (var k in this.settings["tree-options"]) {
+	
+	                //TODO : Check to make sure settings has a matching field
+	                if (k == 'hyphy-tree-model') {
+	
+	                    var controller = d3.select("#" + k),
+	                        controller_value = controller.attr("value") || controller.property("checked");
+	
+	                    if (controller_value != this.settings["tree-options"][k][0] && controller_value != false) {
+	                        this.settings["tree-options"][k][0] = controller_value;
+	                        do_layout = do_layout || this.settings["tree-options"][k][1];
+	                    }
+	                } else {
+	                    var controller = d3.select("#" + k),
+	                        controller_value = controller.attr("value") || controller.property("checked");
+	
+	                    if (controller_value != this.settings["tree-options"][k][0]) {
+	                        this.settings["tree-options"][k][0] = controller_value;
+	                        do_layout = do_layout || this.settings["tree-options"][k][1];
+	                    }
+	                }
+	            }
+	
+	            // Update which_model
+	            if (self.which_model != this.settings["tree-options"]["hyphy-tree-model"][0]) {
+	                self.which_model = this.settings["tree-options"]["hyphy-tree-model"][0];
+	                self.initializeTree();
+	                return;
+	            }
+	
+	            if (_.indexOf(_.keys(analysis_data), "tree") > -1) {
+	                this.tree(analysis_data["tree"]).svg(svg);
+	            } else {
+	                this.tree(analysis_data["fits"][self.which_model]["tree string"]).svg(svg);
+	            }
+	
+	            this.branch_lengths = this.getBranchLengths();
+	
+	            this.tree.font_size(18);
+	            this.tree.scale_bar_font_size(14);
+	            this.tree.node_circle_size(0);
+	
+	            this.tree.branch_length(function (n) {
+	                if (self.branch_lengths) {
+	                    return self.branch_lengths[n.name] || 0;
+	                }
+	                return undefined;
+	            });
+	
+	            this.assignBranchAnnotations();
+	
+	            if (_.findKey(analysis_data, "partition")) {
+	                this.partition = (this.settings["tree-options"]["hyphy-tree-highlight"] ? analysis_data["partition"][this.settings["tree-options"]["hyphy-tree-highlight"][0]] : null) || null;
+	            } else {
+	                this.partition = null;
+	            }
+	
+	            self.omega_color = d3.scale.pow().exponent(self.scaling_exponent).domain([0, 0.25, 1, 5, 10]).range(self.settings["tree-options"]["hyphy-tree-fill-color"][0] ? ["#DDDDDD", "#AAAAAA", "#888888", "#444444", "#000000"] : ["#5e4fa2", "#3288bd", "#e6f598", "#f46d43", "#9e0142"]).clamp(true);
+	
+	            self.tree.options({
+	                'color-fill': self.settings["tree-options"]["hyphy-tree-fill-color"][0]
+	            }, false);
+	
+	            d3.select(".phylotree-definitions").selectAll("linearGradient").remove();
+	
+	            // TODO: Should be a prop. Hide or show legend.
+	            if (!this.settings["tree-options"]["hyphy-tree-hide-legend"][0]) {
+	                d3.select("#color-legend").style("visibility", "visible");
+	
+	                if (self.legend_type) {
+	                    self.renderDiscreteLegendColorScheme("tree_container");
+	                } else {
+	                    self.renderLegendColorScheme("tree_container", self.state.json["fits"][self.which_model]["annotation-tag"]);
+	                }
+	            } else {
+	                d3.select("#color-legend").style("visibility", "hidden");
+	            }
+	
+	            if (!skip_render) {
+	                if (do_layout) {
+	                    this.tree.update_layout();
+	                }
+	                //d3_phylotree_trigger_refresh(this.tree);
+	                //this.tree.trigger_refresh();
+	            }
+	        }
+	    },
+	
+	    componentDidMount: function componentDidMount() {
+	        this.initialize();
+	    },
+	
+	    componentWillReceiveProps: function componentWillReceiveProps(nextProps) {
+	
+	        this.setState({
+	            json: nextProps.json,
+	            settings: nextProps.settings
+	        });
+	    },
+	
+	    componentDidUpdate: function componentDidUpdate() {
+	        this.initialize();
+	    },
+	
+	    render: function render() {
+	
+	        return React.createElement(
+	            'div',
+	            null,
+	            React.createElement(
+	                'div',
+	                { className: 'row' },
+	                React.createElement(
+	                    'div',
+	                    { className: 'cold-md-12' },
+	                    React.createElement(
+	                        'div',
+	                        { className: 'input-group input-group-sm' },
+	                        React.createElement(
+	                            'div',
+	                            { className: 'input-group-btn' },
+	                            React.createElement(
+	                                'button',
+	                                { type: 'button', className: 'btn btn-default dropdown-toggle', 'data-toggle': 'dropdown' },
+	                                'Export',
+	                                React.createElement('span', { className: 'caret' })
+	                            ),
+	                            React.createElement(
+	                                'ul',
+	                                { className: 'dropdown-menu' },
+	                                React.createElement(
+	                                    'li',
+	                                    { id: 'export-phylo-png' },
+	                                    React.createElement(
+	                                        'a',
+	                                        { href: '#' },
+	                                        React.createElement('i', { className: 'fa fa-image' }),
+	                                        ' Image'
+	                                    )
+	                                ),
+	                                React.createElement(
+	                                    'li',
+	                                    { id: 'export-phylo-nwk' },
+	                                    React.createElement(
+	                                        'a',
+	                                        { href: '#' },
+	                                        React.createElement('i', { className: 'fa fa-file-o' }),
+	                                        ' Newick File'
+	                                    )
+	                                )
+	                            ),
+	                            React.createElement(
+	                                'button',
+	                                { type: 'button', className: 'btn btn-default btn-sm', 'data-direction': 'vertical', 'data-amount': '1', title: 'Expand vertical spacing' },
+	                                React.createElement('i', { className: 'fa fa-arrows-v' })
+	                            ),
+	                            React.createElement(
+	                                'button',
+	                                { type: 'button', className: 'btn btn-default btn-sm', 'data-direction': 'vertical', 'data-amount': '-1', title: 'Compress vertical spacing' },
+	                                React.createElement('i', { className: 'fa  fa-compress fa-rotate-135' })
+	                            ),
+	                            React.createElement(
+	                                'button',
+	                                { type: 'button', className: 'btn btn-default btn-sm', 'data-direction': 'horizontal', 'data-amount': '1', title: 'Expand horizonal spacing' },
+	                                React.createElement('i', { className: 'fa fa-arrows-h' })
+	                            ),
+	                            React.createElement(
+	                                'button',
+	                                { type: 'button', className: 'btn btn-default btn-sm', 'data-direction': 'horizontal', 'data-amount': '-1', title: 'Compress horizonal spacing' },
+	                                React.createElement('i', { className: 'fa  fa-compress fa-rotate-45' })
+	                            ),
+	                            React.createElement(
+	                                'button',
+	                                { type: 'button', className: 'btn btn-default btn-sm', id: 'sort_ascending', title: 'Sort deepest clades to the bototm' },
+	                                React.createElement('i', { className: 'fa fa-sort-amount-asc' })
+	                            ),
+	                            React.createElement(
+	                                'button',
+	                                { type: 'button', className: 'btn btn-default btn-sm', id: 'sort_descending', title: 'Sort deepsest clades to the top' },
+	                                React.createElement('i', { className: 'fa fa-sort-amount-desc' })
+	                            ),
+	                            React.createElement(
+	                                'button',
+	                                { type: 'button', className: 'btn btn-default btn-sm', id: 'sort_original', title: 'Restore original order' },
+	                                React.createElement('i', { className: 'fa fa-sort' })
+	                            )
+	                        ),
+	                        React.createElement(
+	                            'div',
+	                            { className: 'input-group-btn', 'data-toggle': 'buttons' },
+	                            React.createElement(
+	                                'label',
+	                                { className: 'btn btn-default active btn-sm' },
+	                                React.createElement('input', { type: 'radio', name: 'options', className: 'phylotree-layout-mode', 'data-mode': 'linear', autoComplete: 'off', checked: '', title: 'Layout left-to-right' }),
+	                                'Linear'
+	                            ),
+	                            React.createElement(
+	                                'label',
+	                                { className: 'btn btn-default  btn-sm' },
+	                                React.createElement('input', { type: 'radio', name: 'options', className: 'phylotree-layout-mode', 'data-mode': 'radial', autoComplete: 'off', title: 'Layout radially' }),
+	                                ' Radial'
+	                            )
+	                        ),
+	                        React.createElement(
+	                            'div',
+	                            { className: 'input-group-btn', 'data-toggle': 'buttons' },
+	                            React.createElement(
+	                                'label',
+	                                { className: 'btn btn-default active btn-sm' },
+	                                React.createElement('input', { type: 'radio', className: 'phylotree-align-toggler', 'data-align': 'left', name: 'options-align', autoComplete: 'off', checked: '', title: 'Align tips labels to branches' }),
+	                                React.createElement('i', { className: 'fa fa-align-left' })
+	                            ),
+	                            React.createElement(
+	                                'label',
+	                                { className: 'btn btn-default btn-sm' },
+	                                React.createElement('input', { type: 'radio', className: 'phylotree-align-toggler', 'data-align': 'right', name: 'options-align', autoComplete: 'off', title: 'Align tips labels to the edge of the plot' }),
+	                                React.createElement('i', { className: 'fa fa-align-right' })
+	                            )
+	                        ),
+	                        React.createElement(
+	                            'div',
+	                            { className: 'input-group-btn' },
+	                            React.createElement(
+	                                'button',
+	                                { type: 'button', className: 'btn btn-default dropdown-toggle', 'data-toggle': 'dropdown' },
+	                                'Model',
+	                                React.createElement('span', { className: 'caret' })
+	                            ),
+	                            React.createElement('ul', { className: 'dropdown-menu', id: 'hyphy-tree-model-list' })
+	                        ),
+	                        React.createElement('input', { type: 'text', className: 'form-control disabled', id: 'hyphy-tree-model', disabled: true }),
+	                        React.createElement(
+	                            'div',
+	                            { id: 'hyphy-tree-highlight-div', className: 'input-group-btn' },
+	                            React.createElement(
+	                                'button',
+	                                { type: 'button', className: 'btn btn-default dropdown-toggle', 'data-toggle': 'dropdown' },
+	                                'Highlight branch set',
+	                                React.createElement('span', { className: 'caret' })
+	                            ),
+	                            React.createElement('ul', { className: 'dropdown-menu', id: 'hyphy-tree-highlight-branches' })
+	                        ),
+	                        React.createElement('input', { type: 'text', className: 'form-control disabled', id: 'hyphy-tree-highlight', disabled: true }),
+	                        React.createElement(
+	                            'span',
+	                            { className: 'input-group-addon' },
+	                            'Use model branch lengths',
+	                            React.createElement('input', { type: 'checkbox', id: 'hyphy-tree-branch-lengths', className: 'hyphy-tree-trigger' })
+	                        ),
+	                        React.createElement(
+	                            'span',
+	                            { className: 'input-group-addon' },
+	                            'Hide legend',
+	                            React.createElement('input', { type: 'checkbox', id: 'hyphy-tree-hide-legend', className: 'hyphy-tree-trigger' })
+	                        ),
+	                        React.createElement(
+	                            'span',
+	                            { className: 'input-group-addon' },
+	                            'Grayscale',
+	                            React.createElement('input', { type: 'checkbox', id: 'hyphy-tree-fill-color', className: 'hyphy-tree-trigger' })
+	                        )
+	                    )
+	                )
+	            ),
+	            React.createElement(
+	                'div',
+	                { className: 'row' },
+	                React.createElement(
+	                    'div',
+	                    { className: 'col-md-12' },
+	                    React.createElement(
+	                        'div',
+	                        { className: 'row' },
+	                        React.createElement('div', { id: 'tree_container', className: 'tree-widget' })
+	                    )
+	                )
+	            )
+	        );
+	    }
+	
+	});
+	
+	function render_tree(json, element, settings) {
+	    return React.render(React.createElement(Tree, { json: json, settings: settings }), $(element)[0]);
+	}
+	
+	function rerender_tree(json, element, settings) {
+	    $(element).empty();
+	    return render_tree(json, settings);
+	}
+	
+	module.exports.Tree = Tree;
+	module.exports.render_tree = render_tree;
+	module.exports.rerender_tree = rerender_tree;
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(40), __webpack_require__(45), __webpack_require__(2)))
+
+/***/ },
 /* 47 */,
 /* 48 */,
 /* 49 */,
@@ -934,14 +1915,485 @@ webpackJsonp([0],[
 /* 74 */,
 /* 75 */,
 /* 76 */,
-/* 77 */
+/* 77 */,
+/* 78 */,
+/* 79 */,
+/* 80 */,
+/* 81 */,
+/* 82 */,
+/* 83 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(d3, _, $) {"use strict";
+	
+	var React = __webpack_require__(47);
+	
+	var ModelFits = React.createClass({
+	  displayName: "ModelFits",
+	
+	
+	  getInitialState: function getInitialState() {
+	    var table_row_data = this.getModelRows(this.props.json),
+	        table_columns = this.getModelColumns(table_row_data);
+	
+	    return {
+	      table_row_data: table_row_data,
+	      table_columns: table_columns
+	    };
+	  },
+	
+	  formatRuntime: function formatRuntime(seconds) {
+	    var duration_string = "",
+	        seconds = parseFloat(seconds);
+	
+	    var split_array = [Math.floor(seconds / (24 * 3600)), Math.floor(seconds / 3600) % 24, Math.floor(seconds / 60) % 60, seconds % 60],
+	        quals = ["d.", "hrs.", "min.", "sec."];
+	
+	    split_array.forEach(function (d, i) {
+	      if (d) {
+	        duration_string += " " + d + " " + quals[i];
+	      }
+	    });
+	
+	    return duration_string;
+	  },
+	
+	  getLogLikelihood: function getLogLikelihood(this_model) {
+	    return d3.format(".2f")(this_model['log-likelihood']);
+	  },
+	
+	  getAIC: function getAIC(this_model) {
+	    return d3.format(".2f")(this_model['AIC-c']);
+	  },
+	
+	  getNumParameters: function getNumParameters(this_model) {
+	    return this_model['parameters'];
+	  },
+	
+	  getBranchLengths: function getBranchLengths(this_model) {
+	
+	    if (this_model["tree length"]) {
+	      return d3.format(".2f")(this_model["tree length"]);
+	    } else {
+	      return d3.format(".2f")(d3.values(this_model["branch-lengths"]).reduce(function (p, c) {
+	        return p + c;
+	      }, 0));
+	    }
+	  },
+	
+	  getRuntime: function getRuntime(this_model) {
+	    //return this.formatRuntime(this_model['runtime']);
+	    return this.formatRuntime(this_model['runtime']);
+	  },
+	
+	  getDistributions: function getDistributions(m, this_model) {
+	
+	    var omega_distributions = {};
+	    omega_distributions[m] = {};
+	
+	    var omega_format = d3.format(".3r"),
+	        prop_format = d3.format(".2p"),
+	        p_value_format = d3.format(".4f");
+	
+	    var distributions = [];
+	
+	    for (var d in this_model["rate-distributions"]) {
+	
+	      var this_distro = this_model["rate-distributions"][d];
+	      var this_distro_entry = [d, "", "", ""];
+	
+	      omega_distributions[m][d] = this_distro.map(function (d) {
+	        return {
+	          'omega': d[0],
+	          'weight': d[1]
+	        };
+	      });
+	
+	      for (var k = 0; k < this_distro.length; k++) {
+	        this_distro_entry[k + 1] = omega_format(this_distro[k][0]) + " (" + prop_format(this_distro[k][1]) + ")";
+	      }
+	
+	      distributions.push(this_distro_entry);
+	    }
+	
+	    distributions.sort(function (a, b) {
+	      return a[0] < b[0] ? -1 : a[0] == b[0] ? 0 : 1;
+	    });
+	
+	    return distributions;
+	  },
+	
+	  getModelRows: function getModelRows(json) {
+	
+	    if (!json) {
+	      return [];
+	    }
+	
+	    var table_row_data = [];
+	    var omega_format = d3.format(".3r");
+	    var prop_format = d3.format(".2p");
+	    var p_value_format = d3.format(".4f");
+	
+	    for (var m in json["fits"]) {
+	
+	      var this_model_row = [],
+	          this_model = json["fits"][m];
+	
+	      this_model_row = [this_model['display-order'], "", m, this.getLogLikelihood(this_model), this.getNumParameters(this_model), this.getAIC(this_model), this.getRuntime(this_model), this.getBranchLengths(this_model)];
+	
+	      var distributions = this.getDistributions(m, this_model);
+	
+	      if (distributions.length) {
+	
+	        this_model_row = this_model_row.concat(distributions[0]);
+	        this_model_row[1] = distributions[0][0];
+	
+	        table_row_data.push(this_model_row);
+	
+	        for (var d = 1; d < distributions.length; d++) {
+	
+	          var this_distro_entry = this_model_row.map(function (d, i) {
+	            if (i) return "";
+	            return d;
+	          });
+	
+	          this_distro_entry[1] = distributions[d][0];
+	
+	          for (var k = this_distro_entry.length - 4; k < this_distro_entry.length; k++) {
+	            this_distro_entry[k] = distributions[d][k - this_distro_entry.length + 4];
+	          }
+	
+	          table_row_data.push(this_distro_entry);
+	        }
+	      } else {
+	        table_row_data.push(this_model_row);
+	      }
+	    }
+	
+	    table_row_data.sort(function (a, b) {
+	      if (a[0] == b[0]) {
+	        return a[1] < b[1] ? -1 : a[1] == b[1] ? 0 : 1;
+	      }
+	      return a[0] - b[0];
+	    });
+	
+	    table_row_data = table_row_data.map(function (r) {
+	      return r.slice(2);
+	    });
+	
+	    return table_row_data;
+	  },
+	
+	  getModelColumns: function getModelColumns(table_row_data) {
+	
+	    var model_header = '<th>Model</th>',
+	        logl_header = '<th><em> log </em>L</th>',
+	        num_params_header = '<th><abbr title="Number of estimated model parameters"># par.</abbr></th>',
+	        aic_header = '<th><abbr title="Small Sample AIC">AIC<sub>c</sub></abbr></th>',
+	        runtime_header = '<th>Time to fit</th>',
+	        branch_lengths_header = '<th><abbr title="Total tree length, expected substitutions/site">L<sub>tree</sub></abbr></th>',
+	        branch_set_header = '<th>Branch set</th>',
+	        omega_1_header = '<th>&omega;<sub>1</sub></th>',
+	        omega_2_header = '<th>&omega;<sub>2</sub></th>',
+	        omega_3_header = '<th>&omega;<sub>3</sub></th>';
+	
+	    // inspect table_row_data and return header
+	    var all_columns = [model_header, logl_header, num_params_header, aic_header, runtime_header, branch_lengths_header, branch_set_header, omega_1_header, omega_2_header, omega_3_header];
+	
+	    // validate each table row with its associated header
+	    if (table_row_data.length == 0) {
+	      return [];
+	    }
+	
+	    // trim columns to length of table_row_data
+	    var column_headers = _.take(all_columns, table_row_data[0].length);
+	
+	    // remove all columns that have 0, null, or undefined rows
+	    var items = d3.transpose(table_row_data);
+	
+	    return column_headers;
+	  },
+	
+	  componentDidUpdate: function componentDidUpdate() {
+	
+	    var model_columns = d3.select('#summary-model-header1');
+	    model_columns = model_columns.selectAll("th").data(this.state.table_columns);
+	    model_columns.enter().append("th");
+	    model_columns.html(function (d) {
+	      return d;
+	    });
+	
+	    var model_rows = d3.select('#summary-model-table').selectAll("tr").data(this.state.table_row_data);
+	    model_rows.enter().append('tr');
+	    model_rows.exit().remove();
+	    model_rows = model_rows.selectAll("td").data(function (d) {
+	      return d;
+	    });
+	    model_rows.enter().append("td");
+	    model_rows.html(function (d) {
+	      return d;
+	    });
+	  },
+	
+	  componentWillReceiveProps: function componentWillReceiveProps(nextProps) {
+	
+	    var table_row_data = this.getModelRows(nextProps.json),
+	        table_columns = this.getModelColumns(table_row_data);
+	
+	    this.setState({
+	      table_row_data: table_row_data,
+	      table_columns: table_columns
+	    });
+	  },
+	
+	  render: function render() {
+	
+	    return React.createElement(
+	      "ul",
+	      { className: "list-group" },
+	      React.createElement(
+	        "li",
+	        { className: "list-group-item" },
+	        React.createElement(
+	          "h4",
+	          { className: "list-group-item-heading" },
+	          React.createElement("i", { className: "fa fa-cubes", styleFormat: "margin-right: 10px" }),
+	          "Model fits"
+	        ),
+	        React.createElement(
+	          "table",
+	          { className: "table table-hover table-condensed list-group-item-text", styleFormat: "margin-top:0.5em;" },
+	          React.createElement("thead", { id: "summary-model-header1" }),
+	          React.createElement("tbody", { id: "summary-model-table" })
+	        )
+	      )
+	    );
+	  }
+	
+	});
+	
+	// Will need to make a call to this
+	// omega distributions
+	function render_model_fits(json, element) {
+	  React.render(React.createElement(ModelFits, { json: json }), $(element)[0]);
+	}
+	
+	// Will need to make a call to this
+	// omega distributions
+	function rerender_model_fits(json, element) {
+	  $(element).empty();
+	  render_model_fits(json, element);
+	}
+	
+	module.exports.ModelFits = ModelFits;
+	module.exports.render_model_fits = render_model_fits;
+	module.exports.rerender_model_fits = rerender_model_fits;
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(40), __webpack_require__(45), __webpack_require__(2)))
+
+/***/ },
+/* 84 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(d3, $) {'use strict';
+	
+	var _shared_summary = __webpack_require__(85);
+	
+	var React = __webpack_require__(47),
+	    _ = __webpack_require__(45);
+	
+	/**
+	 * Generates a table that contains tree summary information
+	 * @param model -- the model to obtain information from
+	 * @param test results -- the general test result information
+	 */
+	var TreeSummary = React.createClass({
+	  displayName: 'TreeSummary',
+	  getDefaultProps: function getDefaultProps() {
+	    return {
+	      model: {},
+	      test_results: {}
+	    };
+	  },
+	
+	
+	  getInitialState: function getInitialState() {
+	
+	    var table_row_data = this.getSummaryRows(this.props.model, this.props.test_results),
+	        table_columns = this.getTreeSummaryColumns(table_row_data);
+	
+	    return {
+	      table_row_data: table_row_data,
+	      table_columns: table_columns
+	    };
+	  },
+	
+	  getRateClasses: function getRateClasses(branch_annotations) {
+	
+	    // Get count of all rate classes
+	    var all_branches = _.values(branch_annotations);
+	
+	    return _.countBy(all_branches, function (branch) {
+	      return branch.omegas.length;
+	    });
+	  },
+	
+	  getBranchProportion: function getBranchProportion(rate_classes) {
+	    var sum = _.reduce(_.values(rate_classes), function (memo, num) {
+	      return memo + num;
+	    });
+	    return _.mapObject(rate_classes, function (val, key) {
+	      return d3.format(".2p")(val / sum);
+	    });
+	  },
+	
+	  getBranchLengthProportion: function getBranchLengthProportion(model, rate_classes, branch_annotations, total_branch_length) {
+	
+	    var self = this;
+	
+	    // get branch lengths of each rate distribution
+	    //return prop_format(d[2] / total_tree_length
+	    if (_.has(model, "tree string")) {
+	      var tree = d3.layout.phylotree("body")(model["tree string"]);
+	    } else {
+	      return null;
+	    }
+	
+	    // Get count of all rate classes
+	    var branch_lengths = _.mapObject(rate_classes, function (d) {
+	      return 0;
+	    });
+	
+	    for (var key in branch_annotations) {
+	      var node = tree.get_node_by_name(key);
+	      branch_lengths[branch_annotations[key].omegas.length] += tree.branch_length()(node);
+	    };
+	
+	    return _.mapObject(branch_lengths, function (val, key) {
+	      return d3.format(".2p")(val / total_branch_length);
+	    });
+	  },
+	
+	  getNumUnderSelection: function getNumUnderSelection(rate_classes, branch_annotations, test_results) {
+	
+	    var num_under_selection = _.mapObject(rate_classes, function (d) {
+	      return 0;
+	    });
+	
+	    for (var key in branch_annotations) {
+	      num_under_selection[branch_annotations[key].omegas.length] += test_results[key]["p"] <= 0.05;
+	    };
+	
+	    return num_under_selection;
+	  },
+	
+	  getSummaryRows: function getSummaryRows(model, test_results) {
+	
+	    var self = this;
+	
+	    if (!model || !test_results) {
+	      return [];
+	    }
+	
+	    // Create an array of phylotrees from fits
+	
+	    var tree_length = model["tree length"];
+	    var branch_annotations = model["branch-annotations"];
+	
+	    var rate_classes = this.getRateClasses(branch_annotations),
+	        proportions = this.getBranchProportion(rate_classes),
+	        length_proportions = this.getBranchLengthProportion(model, rate_classes, branch_annotations, tree_length),
+	        num_under_selection = this.getNumUnderSelection(rate_classes, branch_annotations, test_results);
+	
+	    // zip objects into matrix
+	    var keys = _.keys(rate_classes);
+	
+	    var summary_rows = _.zip(keys, _.values(rate_classes), _.values(proportions), _.values(length_proportions), _.values(num_under_selection));
+	
+	    summary_rows.sort(function (a, b) {
+	      if (a[0] == b[0]) {
+	        return a[1] < b[1] ? -1 : a[1] == b[1] ? 0 : 1;
+	      }
+	      return a[0] - b[0];
+	    });
+	
+	    return summary_rows;
+	  },
+	
+	  getTreeSummaryColumns: function getTreeSummaryColumns(table_row_data) {
+	
+	    var omega_header = 'ω rate classes',
+	        branch_num_header = '# of branches',
+	        branch_prop_header = '% of branches',
+	        branch_prop_length_header = '% of tree length',
+	        under_selection_header = '# under selection';
+	
+	    // inspect table_row_data and return header
+	    var all_columns = [omega_header, branch_num_header, branch_prop_header, branch_prop_length_header, under_selection_header];
+	
+	    // validate each table row with its associated header
+	    if (table_row_data.length == 0) {
+	      return [];
+	    }
+	
+	    // trim columns to length of table_row_data
+	    var column_headers = _.take(all_columns, table_row_data[0].length);
+	    return column_headers;
+	  },
+	
+	  componentWillReceiveProps: function componentWillReceiveProps(nextProps) {
+	
+	    var table_row_data = this.getSummaryRows(nextProps.model, nextProps.test_results),
+	        table_columns = this.getTreeSummaryColumns(table_row_data);
+	
+	    this.setState({
+	      table_row_data: table_row_data,
+	      table_columns: table_columns
+	    });
+	  },
+	
+	  render: function render() {
+	
+	    return React.createElement(
+	      'div',
+	      null,
+	      React.createElement(
+	        'h4',
+	        { className: 'dm-table-header' },
+	        'Tree'
+	      ),
+	      React.createElement(_shared_summary.DatamonkeyTable, { headerData: this.state.table_columns, bodyData: this.state.table_row_data })
+	    );
+	  }
+	
+	});
+	
+	// Will need to make a call to this
+	// omega distributions
+	function render_tree_summary(json, element) {
+	  React.render(React.createElement(TreeSummary, { model: model, test_results: test_results }), $(element)[0]);
+	}
+	
+	// Will need to make a call to this
+	// omega distributions
+	function rerender_tree_summary(tree, element) {
+	  $(element).empty();
+	  render_tree_summary(tree, element);
+	}
+	
+	module.exports.TreeSummary = TreeSummary;
+	module.exports.render_tree_summary = render_tree_summary;
+	module.exports.rerender_tree_summary = rerender_tree_summary;
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(40), __webpack_require__(2)))
+
+/***/ },
+/* 85 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(_, d3) {'use strict';
 	
 	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 	
-	var React = __webpack_require__(46);
+	var React = __webpack_require__(47);
 	var datamonkey = __webpack_require__(39);
 	
 	var DatamonkeyTableRow = React.createClass({
@@ -1714,1240 +3166,12 @@ webpackJsonp([0],[
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(45), __webpack_require__(40)))
 
 /***/ },
-/* 78 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/* WEBPACK VAR INJECTION */(function(d3, $) {'use strict';
-	
-	var _shared_summary = __webpack_require__(77);
-	
-	var React = __webpack_require__(46),
-	    _ = __webpack_require__(45);
-	
-	/**
-	 * Generates a table that contains tree summary information
-	 * @param model -- the model to obtain information from
-	 * @param test results -- the general test result information
-	 */
-	var TreeSummary = React.createClass({
-	  displayName: 'TreeSummary',
-	  getDefaultProps: function getDefaultProps() {
-	    return {
-	      model: {},
-	      test_results: {}
-	    };
-	  },
-	
-	
-	  getInitialState: function getInitialState() {
-	
-	    var table_row_data = this.getSummaryRows(this.props.model, this.props.test_results),
-	        table_columns = this.getTreeSummaryColumns(table_row_data);
-	
-	    return {
-	      table_row_data: table_row_data,
-	      table_columns: table_columns
-	    };
-	  },
-	
-	  getRateClasses: function getRateClasses(branch_annotations) {
-	
-	    // Get count of all rate classes
-	    var all_branches = _.values(branch_annotations);
-	
-	    return _.countBy(all_branches, function (branch) {
-	      return branch.omegas.length;
-	    });
-	  },
-	
-	  getBranchProportion: function getBranchProportion(rate_classes) {
-	    var sum = _.reduce(_.values(rate_classes), function (memo, num) {
-	      return memo + num;
-	    });
-	    return _.mapObject(rate_classes, function (val, key) {
-	      return d3.format(".2p")(val / sum);
-	    });
-	  },
-	
-	  getBranchLengthProportion: function getBranchLengthProportion(model, rate_classes, branch_annotations, total_branch_length) {
-	
-	    var self = this;
-	
-	    // get branch lengths of each rate distribution
-	    //return prop_format(d[2] / total_tree_length
-	    if (_.has(model, "tree string")) {
-	      var tree = d3.layout.phylotree("body")(model["tree string"]);
-	    } else {
-	      return null;
-	    }
-	
-	    // Get count of all rate classes
-	    var branch_lengths = _.mapObject(rate_classes, function (d) {
-	      return 0;
-	    });
-	
-	    for (var key in branch_annotations) {
-	      var node = tree.get_node_by_name(key);
-	      branch_lengths[branch_annotations[key].omegas.length] += tree.branch_length()(node);
-	    };
-	
-	    return _.mapObject(branch_lengths, function (val, key) {
-	      return d3.format(".2p")(val / total_branch_length);
-	    });
-	  },
-	
-	  getNumUnderSelection: function getNumUnderSelection(rate_classes, branch_annotations, test_results) {
-	
-	    var num_under_selection = _.mapObject(rate_classes, function (d) {
-	      return 0;
-	    });
-	
-	    for (var key in branch_annotations) {
-	      num_under_selection[branch_annotations[key].omegas.length] += test_results[key]["p"] <= 0.05;
-	    };
-	
-	    return num_under_selection;
-	  },
-	
-	  getSummaryRows: function getSummaryRows(model, test_results) {
-	
-	    var self = this;
-	
-	    if (!model || !test_results) {
-	      return [];
-	    }
-	
-	    // Create an array of phylotrees from fits
-	
-	    var tree_length = model["tree length"];
-	    var branch_annotations = model["branch-annotations"];
-	
-	    var rate_classes = this.getRateClasses(branch_annotations),
-	        proportions = this.getBranchProportion(rate_classes),
-	        length_proportions = this.getBranchLengthProportion(model, rate_classes, branch_annotations, tree_length),
-	        num_under_selection = this.getNumUnderSelection(rate_classes, branch_annotations, test_results);
-	
-	    // zip objects into matrix
-	    var keys = _.keys(rate_classes);
-	
-	    var summary_rows = _.zip(keys, _.values(rate_classes), _.values(proportions), _.values(length_proportions), _.values(num_under_selection));
-	
-	    summary_rows.sort(function (a, b) {
-	      if (a[0] == b[0]) {
-	        return a[1] < b[1] ? -1 : a[1] == b[1] ? 0 : 1;
-	      }
-	      return a[0] - b[0];
-	    });
-	
-	    return summary_rows;
-	  },
-	
-	  getTreeSummaryColumns: function getTreeSummaryColumns(table_row_data) {
-	
-	    var omega_header = 'ω rate classes',
-	        branch_num_header = '# of branches',
-	        branch_prop_header = '% of branches',
-	        branch_prop_length_header = '% of tree length',
-	        under_selection_header = '# under selection';
-	
-	    // inspect table_row_data and return header
-	    var all_columns = [omega_header, branch_num_header, branch_prop_header, branch_prop_length_header, under_selection_header];
-	
-	    // validate each table row with its associated header
-	    if (table_row_data.length == 0) {
-	      return [];
-	    }
-	
-	    // trim columns to length of table_row_data
-	    var column_headers = _.take(all_columns, table_row_data[0].length);
-	    return column_headers;
-	  },
-	
-	  componentWillReceiveProps: function componentWillReceiveProps(nextProps) {
-	
-	    var table_row_data = this.getSummaryRows(nextProps.model, nextProps.test_results),
-	        table_columns = this.getTreeSummaryColumns(table_row_data);
-	
-	    this.setState({
-	      table_row_data: table_row_data,
-	      table_columns: table_columns
-	    });
-	  },
-	
-	  render: function render() {
-	
-	    return React.createElement(
-	      'div',
-	      null,
-	      React.createElement(
-	        'h4',
-	        { className: 'dm-table-header' },
-	        'Tree'
-	      ),
-	      React.createElement(_shared_summary.DatamonkeyTable, { headerData: this.state.table_columns, bodyData: this.state.table_row_data })
-	    );
-	  }
-	
-	});
-	
-	// Will need to make a call to this
-	// omega distributions
-	function render_tree_summary(json, element) {
-	  React.render(React.createElement(TreeSummary, { model: model, test_results: test_results }), $(element)[0]);
-	}
-	
-	// Will need to make a call to this
-	// omega distributions
-	function rerender_tree_summary(tree, element) {
-	  $(element).empty();
-	  render_tree_summary(tree, element);
-	}
-	
-	module.exports.TreeSummary = TreeSummary;
-	module.exports.render_tree_summary = render_tree_summary;
-	module.exports.rerender_tree_summary = rerender_tree_summary;
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(40), __webpack_require__(2)))
-
-/***/ },
-/* 79 */
+/* 86 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(d3, _, $) {'use strict';
 	
-	var React = __webpack_require__(46);
-	var datamonkey = __webpack_require__(39);
-	__webpack_require__(80);
-	
-	var Tree = React.createClass({
-	    displayName: 'Tree',
-	
-	
-	    getInitialState: function getInitialState() {
-	        return {
-	            json: this.props.json,
-	            settings: this.props.settings
-	        };
-	    },
-	
-	    sortNodes: function sortNodes(asc) {
-	
-	        var self = this;
-	
-	        self.tree.traverse_and_compute(function (n) {
-	            var d = 1;
-	            if (n.children && n.children.length) {
-	                d += d3.max(n.children, function (d) {
-	                    return d["count_depth"];
-	                });
-	            }
-	            n["count_depth"] = d;
-	        });
-	
-	        self.tree.resort_children(function (a, b) {
-	            return (a["count_depth"] - b["count_depth"]) * (asc ? 1 : -1);
-	        });
-	    },
-	
-	    getBranchLengths: function getBranchLengths() {
-	
-	        var self = this;
-	
-	        if (!this.state.json) {
-	            return [];
-	        }
-	
-	        var branch_lengths = self.settings["tree-options"]["hyphy-tree-branch-lengths"][0] ? this.state.json["fits"][this.which_model]["branch-lengths"] : null;
-	
-	        if (!branch_lengths) {
-	
-	            var nodes = _.filter(self.tree.get_nodes(), function (d) {
-	                return d.parent;
-	            });
-	
-	            branch_lengths = _.object(_.map(nodes, function (d) {
-	                return d.name;
-	            }), _.map(nodes, function (d) {
-	                return parseFloat(d.attribute);
-	            }));
-	        }
-	
-	        return branch_lengths;
-	    },
-	
-	    assignBranchAnnotations: function assignBranchAnnotations() {
-	        if (this.state.json && this.state.json["fits"][this.which_model]) {
-	            this.tree.assign_attributes(this.state.json["fits"][this.which_model]["branch-annotations"]);
-	        }
-	    },
-	
-	    renderDiscreteLegendColorScheme: function renderDiscreteLegendColorScheme(svg_container) {
-	
-	        var self = this,
-	            svg = self.svg;
-	
-	        var color_fill = self.settings["tree-options"]["hyphy-tree-fill-color"][0] ? "black" : "red";
-	
-	        var margins = {
-	            'bottom': 30,
-	            'top': 15,
-	            'left': 40,
-	            'right': 2
-	        };
-	
-	        d3.selectAll("#color-legend").remove();
-	
-	        var dc_legend = svg.append("g").attr("id", "color-legend").attr("class", "dc-legend").attr("transform", "translate(" + margins["left"] + "," + margins["top"] + ")");
-	
-	        var fg_item = dc_legend.append("g").attr("class", "dc-legend-item").attr("transform", "translate(0,0)");
-	
-	        fg_item.append("rect").attr("width", "13").attr("height", "13").attr("fill", color_fill);
-	
-	        fg_item.append("text").attr("x", "15").attr("y", "11").text("Foreground");
-	
-	        var bg_item = dc_legend.append("g").attr("class", "dc-legend-item").attr("transform", "translate(0,18)");
-	
-	        bg_item.append("rect").attr("width", "13").attr("height", "13").attr("fill", "gray");
-	
-	        bg_item.append("text").attr("x", "15").attr("y", "11").text("Background");
-	    },
-	
-	    renderLegendColorScheme: function renderLegendColorScheme(svg_container, attr_name, do_not_render) {
-	
-	        var self = this;
-	
-	        var branch_annotations = this.state.json["fits"][this.which_model]["branch-annotations"];
-	
-	        var svg = self.svg;
-	
-	        // clear existing linearGradients
-	        d3.selectAll(".legend-definitions").selectAll("linearGradient").remove();
-	        d3.selectAll("#color-legend").remove();
-	
-	        if (branch_annotations && !do_not_render) {
-	            var bar_width = 70,
-	                bar_height = 300,
-	                margins = {
-	                'bottom': 30,
-	                'top': 15,
-	                'left': 40,
-	                'right': 2
-	            };
-	
-	            var this_grad = svg.append("defs").attr("class", "legend-definitions").append("linearGradient").attr("id", "_omega_bar").attr("x1", "0%").attr("y1", "0%").attr("x2", "0%").attr("y2", "100%");
-	
-	            var omega_scale = d3.scale.pow().exponent(this.scaling_exponent).domain(d3.extent(self.omega_color.domain())).range([0, 1]),
-	                axis_scale = d3.scale.pow().exponent(this.scaling_exponent).domain(d3.extent(self.omega_color.domain())).range([0, bar_height - margins['top'] - margins['bottom']]);
-	
-	            self.omega_color.domain().forEach(function (d) {
-	                this_grad.append("stop").attr("offset", "" + omega_scale(d) * 100 + "%").style("stop-color", self.omega_color(d));
-	            });
-	
-	            var g_container = svg.append("g").attr("id", "color-legend").attr("transform", "translate(" + margins["left"] + "," + margins["top"] + ")");
-	
-	            g_container.append("rect").attr("x", 0).attr("width", bar_width - margins['left'] - margins['right']).attr("y", 0).attr("height", bar_height - margins['top'] - margins['bottom']).style("fill", "url(#_omega_bar)");
-	
-	            var draw_omega_bar = d3.svg.axis().scale(axis_scale).orient("left").tickFormat(d3.format(".1r")).tickValues([0, 0.01, 0.1, 0.5, 1, 2, 5, 10]);
-	
-	            var scale_bar = g_container.append("g");
-	
-	            scale_bar.style("font-size", "14").attr("class", "hyphy-omega-bar").call(draw_omega_bar);
-	
-	            scale_bar.selectAll("text").style("text-anchor", "right");
-	
-	            var _label = '';
-	            var x_label = _label = scale_bar.append("g").attr("class", "hyphy-omega-bar");
-	            x_label = x_label.selectAll("text").data([attr_name]);
-	            x_label.enter().append("text");
-	            x_label.text(function (d) {
-	                return $('<textarea />').html(d).text();
-	            }).attr("transform", "translate(" + (bar_width - margins['left'] - margins['right']) * 0.5 + "," + (bar_height - margins['bottom']) + ")").style("text-anchor", "middle").style("font-size", "18").attr("dx", "0.0em").attr("dy", "0.1em");
-	        }
-	    },
-	
-	    setHandlers: function setHandlers() {
-	
-	        var self = this;
-	
-	        $("#hyphy-error-hide").on("click", function (e) {
-	            d3.select("#hyphy-error").style("display", "none");
-	            e.preventDefault();
-	        });
-	
-	        $(".hyphy-tree-trigger").on("click", function (e) {
-	
-	            self.renderTree();
-	        });
-	
-	        $(".tree-tab-btn").on('click', function (e) {
-	            self.tree.placenodes().update();
-	        });
-	
-	        $("#export-phylo-svg").on('click', function (e) {
-	            datamonkey.save_image("svg", "#tree_container");
-	        });
-	
-	        $("#export-phylo-png").on('click', function (e) {
-	            datamonkey.save_image("png", "#tree_container");
-	        });
-	
-	        $("#export-phylo-nwk").on('click', function (e) {
-	            var nwk = self.tree.get_newick(function () {});
-	            var pom = document.createElement('a');
-	            pom.setAttribute('href', 'data:text/octet-stream;charset=utf-8,' + encodeURIComponent(nwk));
-	            pom.setAttribute('download', 'nwk.txt');
-	            $("body").append(pom);
-	            pom.click();
-	            pom.remove();
-	        });
-	    },
-	
-	    setTreeHandlers: function setTreeHandlers() {
-	
-	        var self = this;
-	        var tree_object = self.tree;
-	
-	        $("[data-direction]").on("click", function (e) {
-	            var which_function = $(this).data("direction") == 'vertical' ? tree_object.spacing_x : tree_object.spacing_y;
-	            which_function(which_function() + +$(this).data("amount")).update();
-	        });
-	
-	        $(".phylotree-layout-mode").on("change", function (e) {
-	            if ($(this).is(':checked')) {
-	                if (tree_object.radial() != ($(this).data("mode") == "radial")) {
-	                    tree_object.radial(!tree_object.radial()).placenodes().update();
-	                }
-	            }
-	        });
-	
-	        $(".phylotree-align-toggler").on("change", function (e) {
-	            if ($(this).is(':checked')) {
-	                if (tree_object.align_tips($(this).data("align") == "right")) {
-	                    tree_object.placenodes().update();
-	                }
-	            }
-	        });
-	
-	        $("#sort_original").on("click", function (e) {
-	            tree_object.resort_children(function (a, b) {
-	                return a["original_child_order"] - b["original_child_order"];
-	            });
-	
-	            e.preventDefault();
-	        });
-	
-	        $("#sort_ascending").on("click", function (e) {
-	            self.sortNodes(true);
-	            e.preventDefault();
-	        });
-	
-	        $("#sort_descending").on("click", function (e) {
-	            self.sortNodes(false);
-	            e.preventDefault();
-	        });
-	    },
-	
-	    setPartitionList: function setPartitionList() {
-	
-	        var self = this;
-	
-	        // Check if partition list exists
-	        if (!self.props.json["partition"]) {
-	            d3.select("#hyphy-tree-highlight-div").style("display", "none");
-	            d3.select("#hyphy-tree-highlight").style("display", "none");
-	            return;
-	        }
-	
-	        // set tree partitions
-	        self.tree.set_partitions(self.props.json["partition"]);
-	
-	        var partition_list = d3.select("#hyphy-tree-highlight-branches").selectAll("li").data([['None']].concat(d3.keys(self.props.json["partition"]).map(function (d) {
-	            return [d];
-	        }).sort()));
-	
-	        partition_list.enter().append("li");
-	        partition_list.exit().remove();
-	        partition_list = partition_list.selectAll("a").data(function (d) {
-	            return d;
-	        });
-	
-	        partition_list.enter().append("a");
-	        partition_list.attr("href", "#").on("click", function (d, i) {
-	            d3.select("#hyphy-tree-highlight").attr("value", d);
-	            self.renderTree();
-	        });
-	
-	        // set default to passed setting
-	        partition_list.text(function (d) {
-	            if (d == "RELAX.test") {
-	                this.click();
-	            }
-	            return d;
-	        });
-	    },
-	
-	    setModelList: function setModelList() {
-	
-	        var self = this;
-	
-	        if (!this.state.json) {
-	            return [];
-	        }
-	
-	        this.state.settings['suppress-tree-render'] = true;
-	
-	        var def_displayed = false;
-	
-	        var model_list = d3.select("#hyphy-tree-model-list").selectAll("li").data(d3.keys(this.state.json["fits"]).map(function (d) {
-	            return [d];
-	        }).sort());
-	
-	        model_list.enter().append("li");
-	        model_list.exit().remove();
-	        model_list = model_list.selectAll("a").data(function (d) {
-	            return d;
-	        });
-	
-	        model_list.enter().append("a");
-	
-	        model_list.attr("href", "#").on("click", function (d, i) {
-	            d3.select("#hyphy-tree-model").attr("value", d);
-	            self.renderTree();
-	        });
-	
-	        model_list.text(function (d) {
-	
-	            if (d == "General Descriptive") {
-	                def_displayed = true;
-	                this.click();
-	            }
-	
-	            if (!def_displayed && d == "Alternative") {
-	                def_displayed = true;
-	                this.click();
-	            }
-	
-	            if (!def_displayed && d == "Partitioned MG94xREV") {
-	                def_displayed = true;
-	                this.click();
-	            }
-	
-	            if (!def_displayed && d == "MG94") {
-	                def_displayed = true;
-	                this.click();
-	            }
-	
-	            if (!def_displayed && d == "Full model") {
-	                def_displayed = true;
-	                this.click();
-	            }
-	
-	            return d;
-	        });
-	
-	        this.settings['suppress-tree-render'] = false;
-	    },
-	
-	    initialize: function initialize() {
-	
-	        var self = this;
-	
-	        this.settings = this.state.settings;
-	
-	        if (!this.settings) {
-	            return null;
-	        }
-	
-	        if (!this.state.json) {
-	            return null;
-	        }
-	
-	        $("#hyphy-tree-branch-lengths").click();
-	
-	        this.scaling_exponent = 0.33;
-	        this.omega_format = d3.format(".3r");
-	        this.prop_format = d3.format(".2p");
-	        this.fit_format = d3.format(".2f");
-	        this.p_value_format = d3.format(".4f");
-	
-	        var json = this.state.json;
-	        var analysis_data = json;
-	
-	        this.width = 800;
-	        this.height = 600;
-	
-	        this.which_model = this.settings["tree-options"]["hyphy-tree-model"][0];
-	        this.legend_type = this.settings["hyphy-tree-legend-type"];
-	
-	        this.setHandlers();
-	        this.setModelList();
-	        this.initializeTree();
-	        this.setPartitionList();
-	    },
-	
-	    initializeTree: function initializeTree() {
-	
-	        var self = this;
-	
-	        var analysis_data = self.state.json;
-	
-	        var width = this.width,
-	            height = this.height,
-	            alpha_level = 0.05,
-	            branch_lengths = [];
-	
-	        if (!this.tree) {
-	            this.tree = d3.layout.phylotree("body").size([height, width]).separation(function (a, b) {
-	                return 0;
-	            });
-	        }
-	
-	        this.setTreeHandlers();
-	
-	        // clear any existing svg
-	        d3.select("#tree_container").html("");
-	
-	        this.svg = d3.select("#tree_container").append("svg").attr("width", width).attr("height", height);
-	
-	        this.tree.branch_name(null);
-	        this.tree.node_span('equal');
-	        this.tree.options({
-	            'draw-size-bubbles': false,
-	            'selectable': false,
-	            'left-right-spacing': 'fit-to-size',
-	            'left-offset': 100,
-	            'color-fill': this.settings["tree-options"]["hyphy-tree-fill-color"][0]
-	        }, false);
-	
-	        this.assignBranchAnnotations();
-	
-	        self.omega_color = d3.scale.pow().exponent(this.scaling_exponent).domain([0, 0.25, 1, 5, 10]).range(this.settings["tree-options"]["hyphy-tree-fill-color"][0] ? ["#DDDDDD", "#AAAAAA", "#888888", "#444444", "#000000"] : ["#5e4fa2", "#3288bd", "#e6f598", "#f46d43", "#9e0142"]).clamp(true);
-	
-	        self.renderTree();
-	
-	        if (self.legend_type == 'discrete') {
-	            self.renderDiscreteLegendColorScheme("tree_container");
-	        } else {
-	            self.renderLegendColorScheme("tree_container", analysis_data["fits"][this.which_model]["annotation-tag"]);
-	        }
-	
-	        if (this.settings.edgeColorizer) {
-	            this.edgeColorizer = this.settings.edgeColorizer;
-	        }
-	
-	        this.tree.style_edges(this.edgeColorizer);
-	        this.tree.style_nodes(this.nodeColorizer);
-	
-	        this.tree.spacing_x(30, true);
-	        this.tree.layout();
-	        this.tree.placenodes().update();
-	        this.tree.layout();
-	    },
-	
-	    renderTree: function renderTree(skip_render) {
-	
-	        var self = this;
-	        var analysis_data = this.state.json;
-	        var svg = self.svg;
-	
-	        if (!this.settings['suppress-tree-render']) {
-	
-	            var do_layout = false;
-	
-	            for (var k in this.settings["tree-options"]) {
-	
-	                //TODO : Check to make sure settings has a matching field
-	                if (k == 'hyphy-tree-model') {
-	
-	                    var controller = d3.select("#" + k),
-	                        controller_value = controller.attr("value") || controller.property("checked");
-	
-	                    if (controller_value != this.settings["tree-options"][k][0] && controller_value != false) {
-	                        this.settings["tree-options"][k][0] = controller_value;
-	                        do_layout = do_layout || this.settings["tree-options"][k][1];
-	                    }
-	                } else {
-	                    var controller = d3.select("#" + k),
-	                        controller_value = controller.attr("value") || controller.property("checked");
-	
-	                    if (controller_value != this.settings["tree-options"][k][0]) {
-	                        this.settings["tree-options"][k][0] = controller_value;
-	                        do_layout = do_layout || this.settings["tree-options"][k][1];
-	                    }
-	                }
-	            }
-	
-	            // Update which_model
-	            if (self.which_model != this.settings["tree-options"]["hyphy-tree-model"][0]) {
-	                self.which_model = this.settings["tree-options"]["hyphy-tree-model"][0];
-	                self.initializeTree();
-	                return;
-	            }
-	
-	            if (_.indexOf(_.keys(analysis_data), "tree") > -1) {
-	                this.tree(analysis_data["tree"]).svg(svg);
-	            } else {
-	                this.tree(analysis_data["fits"][self.which_model]["tree string"]).svg(svg);
-	            }
-	
-	            this.branch_lengths = this.getBranchLengths();
-	
-	            this.tree.font_size(18);
-	            this.tree.scale_bar_font_size(14);
-	            this.tree.node_circle_size(0);
-	
-	            this.tree.branch_length(function (n) {
-	                if (self.branch_lengths) {
-	                    return self.branch_lengths[n.name] || 0;
-	                }
-	                return undefined;
-	            });
-	
-	            this.assignBranchAnnotations();
-	
-	            if (_.findKey(analysis_data, "partition")) {
-	                this.partition = (this.settings["tree-options"]["hyphy-tree-highlight"] ? analysis_data["partition"][this.settings["tree-options"]["hyphy-tree-highlight"][0]] : null) || null;
-	            } else {
-	                this.partition = null;
-	            }
-	
-	            self.omega_color = d3.scale.pow().exponent(self.scaling_exponent).domain([0, 0.25, 1, 5, 10]).range(self.settings["tree-options"]["hyphy-tree-fill-color"][0] ? ["#DDDDDD", "#AAAAAA", "#888888", "#444444", "#000000"] : ["#5e4fa2", "#3288bd", "#e6f598", "#f46d43", "#9e0142"]).clamp(true);
-	
-	            self.tree.options({
-	                'color-fill': self.settings["tree-options"]["hyphy-tree-fill-color"][0]
-	            }, false);
-	
-	            d3.select(".phylotree-definitions").selectAll("linearGradient").remove();
-	
-	            // TODO: Should be a prop. Hide or show legend.
-	            if (!this.settings["tree-options"]["hyphy-tree-hide-legend"][0]) {
-	                d3.select("#color-legend").style("visibility", "visible");
-	
-	                if (self.legend_type) {
-	                    self.renderDiscreteLegendColorScheme("tree_container");
-	                } else {
-	                    self.renderLegendColorScheme("tree_container", self.state.json["fits"][self.which_model]["annotation-tag"]);
-	                }
-	            } else {
-	                d3.select("#color-legend").style("visibility", "hidden");
-	            }
-	
-	            if (!skip_render) {
-	                if (do_layout) {
-	                    this.tree.update_layout();
-	                }
-	                //d3_phylotree_trigger_refresh(this.tree);
-	                //this.tree.trigger_refresh();
-	            }
-	        }
-	    },
-	
-	    componentDidMount: function componentDidMount() {
-	        this.initialize();
-	    },
-	
-	    componentWillReceiveProps: function componentWillReceiveProps(nextProps) {
-	
-	        this.setState({
-	            json: nextProps.json,
-	            settings: nextProps.settings
-	        });
-	    },
-	
-	    componentDidUpdate: function componentDidUpdate() {
-	        this.initialize();
-	    },
-	
-	    render: function render() {
-	
-	        return React.createElement(
-	            'div',
-	            null,
-	            React.createElement(
-	                'div',
-	                { className: 'row' },
-	                React.createElement(
-	                    'div',
-	                    { className: 'cold-md-12' },
-	                    React.createElement(
-	                        'div',
-	                        { className: 'input-group input-group-sm' },
-	                        React.createElement(
-	                            'div',
-	                            { className: 'input-group-btn' },
-	                            React.createElement(
-	                                'button',
-	                                { type: 'button', className: 'btn btn-default dropdown-toggle', 'data-toggle': 'dropdown' },
-	                                'Export',
-	                                React.createElement('span', { className: 'caret' })
-	                            ),
-	                            React.createElement(
-	                                'ul',
-	                                { className: 'dropdown-menu' },
-	                                React.createElement(
-	                                    'li',
-	                                    { id: 'export-phylo-png' },
-	                                    React.createElement(
-	                                        'a',
-	                                        { href: '#' },
-	                                        React.createElement('i', { className: 'fa fa-image' }),
-	                                        ' Image'
-	                                    )
-	                                ),
-	                                React.createElement(
-	                                    'li',
-	                                    { id: 'export-phylo-nwk' },
-	                                    React.createElement(
-	                                        'a',
-	                                        { href: '#' },
-	                                        React.createElement('i', { className: 'fa fa-file-o' }),
-	                                        ' Newick File'
-	                                    )
-	                                )
-	                            ),
-	                            React.createElement(
-	                                'button',
-	                                { type: 'button', className: 'btn btn-default btn-sm', 'data-direction': 'vertical', 'data-amount': '1', title: 'Expand vertical spacing' },
-	                                React.createElement('i', { className: 'fa fa-arrows-v' })
-	                            ),
-	                            React.createElement(
-	                                'button',
-	                                { type: 'button', className: 'btn btn-default btn-sm', 'data-direction': 'vertical', 'data-amount': '-1', title: 'Compress vertical spacing' },
-	                                React.createElement('i', { className: 'fa  fa-compress fa-rotate-135' })
-	                            ),
-	                            React.createElement(
-	                                'button',
-	                                { type: 'button', className: 'btn btn-default btn-sm', 'data-direction': 'horizontal', 'data-amount': '1', title: 'Expand horizonal spacing' },
-	                                React.createElement('i', { className: 'fa fa-arrows-h' })
-	                            ),
-	                            React.createElement(
-	                                'button',
-	                                { type: 'button', className: 'btn btn-default btn-sm', 'data-direction': 'horizontal', 'data-amount': '-1', title: 'Compress horizonal spacing' },
-	                                React.createElement('i', { className: 'fa  fa-compress fa-rotate-45' })
-	                            ),
-	                            React.createElement(
-	                                'button',
-	                                { type: 'button', className: 'btn btn-default btn-sm', id: 'sort_ascending', title: 'Sort deepest clades to the bototm' },
-	                                React.createElement('i', { className: 'fa fa-sort-amount-asc' })
-	                            ),
-	                            React.createElement(
-	                                'button',
-	                                { type: 'button', className: 'btn btn-default btn-sm', id: 'sort_descending', title: 'Sort deepsest clades to the top' },
-	                                React.createElement('i', { className: 'fa fa-sort-amount-desc' })
-	                            ),
-	                            React.createElement(
-	                                'button',
-	                                { type: 'button', className: 'btn btn-default btn-sm', id: 'sort_original', title: 'Restore original order' },
-	                                React.createElement('i', { className: 'fa fa-sort' })
-	                            )
-	                        ),
-	                        React.createElement(
-	                            'div',
-	                            { className: 'input-group-btn', 'data-toggle': 'buttons' },
-	                            React.createElement(
-	                                'label',
-	                                { className: 'btn btn-default active btn-sm' },
-	                                React.createElement('input', { type: 'radio', name: 'options', className: 'phylotree-layout-mode', 'data-mode': 'linear', autoComplete: 'off', checked: '', title: 'Layout left-to-right' }),
-	                                'Linear'
-	                            ),
-	                            React.createElement(
-	                                'label',
-	                                { className: 'btn btn-default  btn-sm' },
-	                                React.createElement('input', { type: 'radio', name: 'options', className: 'phylotree-layout-mode', 'data-mode': 'radial', autoComplete: 'off', title: 'Layout radially' }),
-	                                ' Radial'
-	                            )
-	                        ),
-	                        React.createElement(
-	                            'div',
-	                            { className: 'input-group-btn', 'data-toggle': 'buttons' },
-	                            React.createElement(
-	                                'label',
-	                                { className: 'btn btn-default active btn-sm' },
-	                                React.createElement('input', { type: 'radio', className: 'phylotree-align-toggler', 'data-align': 'left', name: 'options-align', autoComplete: 'off', checked: '', title: 'Align tips labels to branches' }),
-	                                React.createElement('i', { className: 'fa fa-align-left' })
-	                            ),
-	                            React.createElement(
-	                                'label',
-	                                { className: 'btn btn-default btn-sm' },
-	                                React.createElement('input', { type: 'radio', className: 'phylotree-align-toggler', 'data-align': 'right', name: 'options-align', autoComplete: 'off', title: 'Align tips labels to the edge of the plot' }),
-	                                React.createElement('i', { className: 'fa fa-align-right' })
-	                            )
-	                        ),
-	                        React.createElement(
-	                            'div',
-	                            { className: 'input-group-btn' },
-	                            React.createElement(
-	                                'button',
-	                                { type: 'button', className: 'btn btn-default dropdown-toggle', 'data-toggle': 'dropdown' },
-	                                'Model',
-	                                React.createElement('span', { className: 'caret' })
-	                            ),
-	                            React.createElement('ul', { className: 'dropdown-menu', id: 'hyphy-tree-model-list' })
-	                        ),
-	                        React.createElement('input', { type: 'text', className: 'form-control disabled', id: 'hyphy-tree-model', disabled: true }),
-	                        React.createElement(
-	                            'div',
-	                            { id: 'hyphy-tree-highlight-div', className: 'input-group-btn' },
-	                            React.createElement(
-	                                'button',
-	                                { type: 'button', className: 'btn btn-default dropdown-toggle', 'data-toggle': 'dropdown' },
-	                                'Highlight branch set',
-	                                React.createElement('span', { className: 'caret' })
-	                            ),
-	                            React.createElement('ul', { className: 'dropdown-menu', id: 'hyphy-tree-highlight-branches' })
-	                        ),
-	                        React.createElement('input', { type: 'text', className: 'form-control disabled', id: 'hyphy-tree-highlight', disabled: true }),
-	                        React.createElement(
-	                            'span',
-	                            { className: 'input-group-addon' },
-	                            'Use model branch lengths',
-	                            React.createElement('input', { type: 'checkbox', id: 'hyphy-tree-branch-lengths', className: 'hyphy-tree-trigger' })
-	                        ),
-	                        React.createElement(
-	                            'span',
-	                            { className: 'input-group-addon' },
-	                            'Hide legend',
-	                            React.createElement('input', { type: 'checkbox', id: 'hyphy-tree-hide-legend', className: 'hyphy-tree-trigger' })
-	                        ),
-	                        React.createElement(
-	                            'span',
-	                            { className: 'input-group-addon' },
-	                            'Grayscale',
-	                            React.createElement('input', { type: 'checkbox', id: 'hyphy-tree-fill-color', className: 'hyphy-tree-trigger' })
-	                        )
-	                    )
-	                )
-	            ),
-	            React.createElement(
-	                'div',
-	                { className: 'row' },
-	                React.createElement(
-	                    'div',
-	                    { className: 'col-md-12' },
-	                    React.createElement(
-	                        'div',
-	                        { className: 'row' },
-	                        React.createElement('div', { id: 'tree_container', className: 'tree-widget' })
-	                    )
-	                )
-	            )
-	        );
-	    }
-	
-	});
-	
-	function render_tree(json, element, settings) {
-	    return React.render(React.createElement(Tree, { json: json, settings: settings }), $(element)[0]);
-	}
-	
-	function rerender_tree(json, element, settings) {
-	    $(element).empty();
-	    return render_tree(json, settings);
-	}
-	
-	module.exports.Tree = Tree;
-	module.exports.render_tree = render_tree;
-	module.exports.rerender_tree = rerender_tree;
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(40), __webpack_require__(45), __webpack_require__(2)))
-
-/***/ },
-/* 80 */,
-/* 81 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/* WEBPACK VAR INJECTION */(function(_, d3, $) {'use strict';
-	
-	var _prop_chart = __webpack_require__(82);
-	
-	var React = __webpack_require__(46);
-	
-	
-	var BranchTable = React.createClass({
-	  displayName: 'BranchTable',
-	
-	
-	  getInitialState: function getInitialState() {
-	
-	    // add the following
-	    var table_row_data = this.getBranchRows(this.props.tree, this.props.test_results, this.props.annotations),
-	        table_columns = this.getBranchColumns(table_row_data),
-	        initial_model_name = _.take(_.keys(this.props.annotations)),
-	        initial_omegas = this.props.annotations ? this.props.annotations[initial_model_name]["omegas"] : null;
-	
-	    var distro_settings = {
-	      dimensions: { width: 600, height: 400 },
-	      margins: { 'left': 50, 'right': 15, 'bottom': 15, 'top': 35 },
-	      legend: false,
-	      domain: [0.00001, 10000],
-	      do_log_plot: true,
-	      k_p: null,
-	      plot: null,
-	      svg_id: "prop-chart"
-	    };
-	
-	    return {
-	      tree: this.props.tree,
-	      test_results: this.props.test_results,
-	      annotations: this.props.annotations,
-	      table_row_data: table_row_data,
-	      table_columns: table_columns,
-	      current_model_name: initial_model_name,
-	      current_omegas: initial_omegas,
-	      distro_settings: distro_settings
-	    };
-	  },
-	
-	  getBranchLength: function getBranchLength(m) {
-	
-	    if (!this.state.tree) {
-	      return '';
-	    }
-	
-	    return d3.format(".4f")(this.state.tree.get_node_by_name(m).attribute);
-	  },
-	
-	  getLRT: function getLRT(branch) {
-	    var formatted = d3.format(".4f")(branch["LRT"]);
-	    if (formatted == "NaN") {
-	      return branch["LRT"];
-	    } else {
-	      return formatted;
-	    }
-	  },
-	
-	  getPVal: function getPVal(branch) {
-	    return d3.format(".4f")(branch["p"]);
-	  },
-	
-	  getUncorrectedPVal: function getUncorrectedPVal(branch) {
-	    return d3.format(".4f")(branch["uncorrected p"]);
-	  },
-	
-	  getOmegaDistribution: function getOmegaDistribution(m, annotations) {
-	
-	    if (!annotations) {
-	      return '';
-	    }
-	
-	    var omega_string = "";
-	
-	    for (var i in annotations[m]["omegas"]) {
-	      var omega = parseFloat(annotations[m]["omegas"][i]["omega"]);
-	      var formatted_omega = "∞";
-	      if (omega < 1e+20) {
-	        formatted_omega = d3.format(".3r")(omega);
-	      }
-	      omega_string += "&omega;<sub>" + (parseInt(i) + 1) + "</sub> = " + formatted_omega + " (" + d3.format(".2p")(annotations[m]["omegas"][i]["prop"]) + ")<br/>";
-	    }
-	
-	    return omega_string;
-	  },
-	
-	  getBranchRows: function getBranchRows(tree, test_results, annotations) {
-	
-	    var self = this;
-	
-	    var table_row_data = [],
-	        omega_format = d3.format(".3r"),
-	        prop_format = d3.format(".2p");
-	
-	    for (var m in test_results) {
-	
-	      var branch_row = [];
-	      var branch = test_results[m];
-	
-	      branch_row = [m, this.getBranchLength(m), this.getLRT(branch), this.getPVal(branch), this.getUncorrectedPVal(branch), this.getOmegaDistribution(m, annotations)];
-	
-	      table_row_data.push(branch_row);
-	    }
-	
-	    table_row_data.sort(function (a, b) {
-	
-	      if (a[0] == b[0]) {
-	        return a[1] < b[1] ? -1 : a[1] == b[1] ? 0 : 1;
-	      }
-	
-	      return a[3] - b[3];
-	    });
-	
-	    return table_row_data;
-	  },
-	
-	  setEvents: function setEvents() {
-	
-	    var self = this;
-	
-	    if (self.state.annotations) {
-	      var branch_table = d3.select('#table-branch-table').selectAll("tr");
-	
-	      branch_table.on("click", function (d) {
-	        var label = d[0];
-	        self.setState({
-	          current_model_name: label,
-	          current_omegas: self.state.annotations[label]["omegas"]
-	        });
-	      });
-	    }
-	  },
-	
-	  createDistroChart: function createDistroChart() {
-	
-	    var self = this;
-	
-	    this.settings = {
-	      dimensions: { width: 600, height: 400 },
-	      margins: { 'left': 50, 'right': 15, 'bottom': 15, 'top': 15 },
-	      has_zeros: true,
-	      legend_id: null,
-	      do_log_plot: true,
-	      k_p: null,
-	      plot: null,
-	      svg_id: "prop-chart"
-	    };
-	  },
-	
-	  getBranchColumns: function getBranchColumns(table_row_data) {
-	
-	    if (table_row_data.length <= 0) {
-	      return null;
-	    }
-	
-	    var name_header = '<th>Name</th>',
-	        length_header = '<th><abbr title="Branch Length">B</abbr></th>',
-	        lrt_header = '<th><abbr title="Likelihood ratio test statistic">LRT</abbr></th>',
-	        pvalue_header = '<th>Test p-value</th>',
-	        uncorrected_pvalue_header = '<th>Uncorrected p-value</th>',
-	        omega_header = '<th>ω distribution over sites</th>';
-	
-	    // inspect table_row_data and return header
-	    var all_columns = [name_header, length_header, lrt_header, pvalue_header, uncorrected_pvalue_header, omega_header];
-	
-	    // validate each table row with its associated header
-	
-	    // trim columns to length of table_row_data
-	    var column_headers = _.take(all_columns, table_row_data[0].length);
-	
-	    // remove all columns that have 0, null, or undefined rows
-	    var items = d3.transpose(table_row_data);
-	
-	    return column_headers;
-	  },
-	
-	  componentWillReceiveProps: function componentWillReceiveProps(nextProps) {
-	
-	    var table_row_data = this.getBranchRows(nextProps.tree, nextProps.test_results, nextProps.annotations),
-	        table_columns = this.getBranchColumns(table_row_data),
-	        initial_model_name = _.take(_.keys(nextProps.annotations)),
-	        initial_omegas = nextProps.annotations ? nextProps.annotations[initial_model_name]["omegas"] : null;
-	
-	    var distro_settings = {
-	      dimensions: { width: 600, height: 400 },
-	      margins: { 'left': 50, 'right': 15, 'bottom': 15, 'top': 15 },
-	      legend: false,
-	      domain: [0.00001, 10000],
-	      do_log_plot: true,
-	      k_p: null,
-	      plot: null,
-	      svg_id: "prop-chart"
-	    };
-	
-	    if (nextProps.test_results && nextProps.annotations) {
-	      this.setState({
-	        tree: nextProps.tree,
-	        test_results: nextProps.test_results,
-	        annotations: nextProps.annotations,
-	        table_row_data: table_row_data,
-	        table_columns: table_columns,
-	        current_model_name: initial_model_name,
-	        current_omegas: initial_omegas,
-	        distro_settings: distro_settings
-	      });
-	    }
-	  },
-	
-	  componentDidUpdate: function componentDidUpdate() {
-	
-	    var branch_columns = d3.select('#table-branch-header');
-	    branch_columns = branch_columns.selectAll("th").data(this.state.table_columns);
-	    branch_columns.enter().append("th");
-	
-	    branch_columns.html(function (d) {
-	      return d;
-	    });
-	
-	    var branch_rows = d3.select('#table-branch-table').selectAll("tr").data(this.state.table_row_data);
-	
-	    branch_rows.enter().append('tr');
-	    branch_rows.exit().remove();
-	    branch_rows.style('font-weight', function (d) {
-	      return d[3] <= 0.05 ? 'bold' : 'normal';
-	    });
-	
-	    branch_rows = branch_rows.selectAll("td").data(function (d) {
-	      return d;
-	    });
-	
-	    branch_rows.enter().append("td");
-	    branch_rows.html(function (d) {
-	      return d;
-	    });
-	
-	    this.createDistroChart();
-	    this.setEvents();
-	  },
-	
-	  render: function render() {
-	
-	    var self = this;
-	
-	    return React.createElement(
-	      'div',
-	      { className: 'row' },
-	      React.createElement(
-	        'div',
-	        { id: 'hyphy-branch-table', className: 'col-md-12' },
-	        React.createElement(
-	          'table',
-	          { className: 'table table-hover table-condensed' },
-	          React.createElement('thead', { id: 'table-branch-header' }),
-	          React.createElement('tbody', { id: 'table-branch-table' })
-	        )
-	      ),
-	      React.createElement(
-	        'div',
-	        { id: 'primary-omega-tag', className: 'col-md-12' },
-	        React.createElement(_prop_chart.PropChart, { name: self.state.current_model_name, omegas: self.state.current_omegas,
-	          settings: self.state.distro_settings })
-	      )
-	    );
-	  }
-	
-	});
-	
-	// Will need to make a call to this
-	// omega distributions
-	function render_branch_table(tree, test_results, annotations, element) {
-	  React.render(React.createElement(BranchTable, { tree: tree, test_results: test_results, annotations: annotations }), $(element)[0]);
-	}
-	
-	// Will need to make a call to this
-	// omega distributions
-	function rerender_branch_table(tree, test_results, annotations, element) {
-	  $(element).empty();
-	  render_branch_table(tree, test_results, annotations, element);
-	}
-	
-	module.exports.BranchTable = BranchTable;
-	module.exports.render_branch_table = render_branch_table;
-	module.exports.rerender_branch_table = rerender_branch_table;
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(45), __webpack_require__(40), __webpack_require__(2)))
-
-/***/ },
-/* 82 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/* WEBPACK VAR INJECTION */(function(d3, _, $) {'use strict';
-	
-	var React = __webpack_require__(46);
+	var React = __webpack_require__(47);
 	var datamonkey = __webpack_require__(39);
 	
 	var PropChart = React.createClass({
@@ -3042,10 +3266,7 @@ webpackJsonp([0],[
 	        this.createYAxis();
 	        this.setEvents();
 	        this.createOmegaLine(this.state.omegas);
-	        console.log('initialized everything');
 	        //_.map(this.props.omegas, function(d) { return this.createOmegaLine(d["omega"],d["prop"]); });
-	
-	        console.log(this.svg);
 	    },
 	
 	    createOmegaLine: function createOmegaLine(omegas) {
@@ -3225,16 +3446,23 @@ webpackJsonp([0],[
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(40), __webpack_require__(45), __webpack_require__(2)))
 
 /***/ },
-/* 83 */
+/* 87 */
+/***/ function(module, exports) {
+
+	// removed by extract-text-webpack-plugin
+
+/***/ },
+/* 88 */,
+/* 89 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
-	module.exports = __webpack_require__(84);
+	module.exports = __webpack_require__(90);
 
 
 /***/ },
-/* 84 */
+/* 90 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -3251,17 +3479,17 @@ webpackJsonp([0],[
 	
 	'use strict';
 	
-	var ReactDOMComponentTree = __webpack_require__(85);
-	var ReactDefaultInjection = __webpack_require__(89);
-	var ReactMount = __webpack_require__(217);
-	var ReactReconciler = __webpack_require__(110);
-	var ReactUpdates = __webpack_require__(107);
-	var ReactVersion = __webpack_require__(222);
+	var ReactDOMComponentTree = __webpack_require__(91);
+	var ReactDefaultInjection = __webpack_require__(95);
+	var ReactMount = __webpack_require__(224);
+	var ReactReconciler = __webpack_require__(117);
+	var ReactUpdates = __webpack_require__(114);
+	var ReactVersion = __webpack_require__(229);
 	
-	var findDOMNode = __webpack_require__(223);
-	var getHostComponentFromComposite = __webpack_require__(224);
-	var renderSubtreeIntoContainer = __webpack_require__(225);
-	var warning = __webpack_require__(56);
+	var findDOMNode = __webpack_require__(230);
+	var getHostComponentFromComposite = __webpack_require__(231);
+	var renderSubtreeIntoContainer = __webpack_require__(232);
+	var warning = __webpack_require__(57);
 	
 	ReactDefaultInjection.inject();
 	
@@ -3300,7 +3528,7 @@ webpackJsonp([0],[
 	}
 	
 	if (process.env.NODE_ENV !== 'production') {
-	  var ExecutionEnvironment = __webpack_require__(99);
+	  var ExecutionEnvironment = __webpack_require__(105);
 	  if (ExecutionEnvironment.canUseDOM && window.top === window.self) {
 	
 	    // First check if devtools is not installed
@@ -3336,10 +3564,10 @@ webpackJsonp([0],[
 	}
 	
 	if (process.env.NODE_ENV !== 'production') {
-	  var ReactInstrumentation = __webpack_require__(113);
-	  var ReactDOMUnknownPropertyHook = __webpack_require__(226);
-	  var ReactDOMNullInputValuePropHook = __webpack_require__(227);
-	  var ReactDOMInvalidARIAHook = __webpack_require__(228);
+	  var ReactInstrumentation = __webpack_require__(120);
+	  var ReactDOMUnknownPropertyHook = __webpack_require__(233);
+	  var ReactDOMNullInputValuePropHook = __webpack_require__(234);
+	  var ReactDOMInvalidARIAHook = __webpack_require__(235);
 	
 	  ReactInstrumentation.debugTool.addHook(ReactDOMUnknownPropertyHook);
 	  ReactInstrumentation.debugTool.addHook(ReactDOMNullInputValuePropHook);
@@ -3347,10 +3575,10 @@ webpackJsonp([0],[
 	}
 	
 	module.exports = ReactDOM;
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(48)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(49)))
 
 /***/ },
-/* 85 */
+/* 91 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -3365,12 +3593,12 @@ webpackJsonp([0],[
 	
 	'use strict';
 	
-	var _prodInvariant = __webpack_require__(86);
+	var _prodInvariant = __webpack_require__(92);
 	
-	var DOMProperty = __webpack_require__(87);
-	var ReactDOMComponentFlags = __webpack_require__(88);
+	var DOMProperty = __webpack_require__(93);
+	var ReactDOMComponentFlags = __webpack_require__(94);
 	
-	var invariant = __webpack_require__(53);
+	var invariant = __webpack_require__(54);
 	
 	var ATTR_NAME = DOMProperty.ID_ATTRIBUTE_NAME;
 	var Flags = ReactDOMComponentFlags;
@@ -3547,10 +3775,10 @@ webpackJsonp([0],[
 	};
 	
 	module.exports = ReactDOMComponentTree;
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(48)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(49)))
 
 /***/ },
-/* 86 */
+/* 92 */
 /***/ function(module, exports) {
 
 	/**
@@ -3593,7 +3821,7 @@ webpackJsonp([0],[
 	module.exports = reactProdInvariant;
 
 /***/ },
-/* 87 */
+/* 93 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -3608,9 +3836,9 @@ webpackJsonp([0],[
 	
 	'use strict';
 	
-	var _prodInvariant = __webpack_require__(86);
+	var _prodInvariant = __webpack_require__(92);
 	
-	var invariant = __webpack_require__(53);
+	var invariant = __webpack_require__(54);
 	
 	function checkMask(value, bitmask) {
 	  return (value & bitmask) === bitmask;
@@ -3805,10 +4033,10 @@ webpackJsonp([0],[
 	};
 	
 	module.exports = DOMProperty;
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(48)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(49)))
 
 /***/ },
-/* 88 */
+/* 94 */
 /***/ function(module, exports) {
 
 	/**
@@ -3830,7 +4058,7 @@ webpackJsonp([0],[
 	module.exports = ReactDOMComponentFlags;
 
 /***/ },
-/* 89 */
+/* 95 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -3845,25 +4073,25 @@ webpackJsonp([0],[
 	
 	'use strict';
 	
-	var ARIADOMPropertyConfig = __webpack_require__(90);
-	var BeforeInputEventPlugin = __webpack_require__(91);
-	var ChangeEventPlugin = __webpack_require__(106);
-	var DefaultEventPluginOrder = __webpack_require__(123);
-	var EnterLeaveEventPlugin = __webpack_require__(124);
-	var HTMLDOMPropertyConfig = __webpack_require__(129);
-	var ReactComponentBrowserEnvironment = __webpack_require__(130);
-	var ReactDOMComponent = __webpack_require__(143);
-	var ReactDOMComponentTree = __webpack_require__(85);
-	var ReactDOMEmptyComponent = __webpack_require__(188);
-	var ReactDOMTreeTraversal = __webpack_require__(189);
-	var ReactDOMTextComponent = __webpack_require__(190);
-	var ReactDefaultBatchingStrategy = __webpack_require__(191);
-	var ReactEventListener = __webpack_require__(192);
-	var ReactInjection = __webpack_require__(195);
-	var ReactReconcileTransaction = __webpack_require__(196);
-	var SVGDOMPropertyConfig = __webpack_require__(204);
-	var SelectEventPlugin = __webpack_require__(205);
-	var SimpleEventPlugin = __webpack_require__(206);
+	var ARIADOMPropertyConfig = __webpack_require__(96);
+	var BeforeInputEventPlugin = __webpack_require__(97);
+	var ChangeEventPlugin = __webpack_require__(113);
+	var DefaultEventPluginOrder = __webpack_require__(130);
+	var EnterLeaveEventPlugin = __webpack_require__(131);
+	var HTMLDOMPropertyConfig = __webpack_require__(136);
+	var ReactComponentBrowserEnvironment = __webpack_require__(137);
+	var ReactDOMComponent = __webpack_require__(150);
+	var ReactDOMComponentTree = __webpack_require__(91);
+	var ReactDOMEmptyComponent = __webpack_require__(195);
+	var ReactDOMTreeTraversal = __webpack_require__(196);
+	var ReactDOMTextComponent = __webpack_require__(197);
+	var ReactDefaultBatchingStrategy = __webpack_require__(198);
+	var ReactEventListener = __webpack_require__(199);
+	var ReactInjection = __webpack_require__(202);
+	var ReactReconcileTransaction = __webpack_require__(203);
+	var SVGDOMPropertyConfig = __webpack_require__(211);
+	var SelectEventPlugin = __webpack_require__(212);
+	var SimpleEventPlugin = __webpack_require__(213);
 	
 	var alreadyInjected = false;
 	
@@ -3920,7 +4148,7 @@ webpackJsonp([0],[
 	};
 
 /***/ },
-/* 90 */
+/* 96 */
 /***/ function(module, exports) {
 
 	/**
@@ -3998,7 +4226,7 @@ webpackJsonp([0],[
 	module.exports = ARIADOMPropertyConfig;
 
 /***/ },
-/* 91 */
+/* 97 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -4013,11 +4241,11 @@ webpackJsonp([0],[
 	
 	'use strict';
 	
-	var EventPropagators = __webpack_require__(92);
-	var ExecutionEnvironment = __webpack_require__(99);
-	var FallbackCompositionState = __webpack_require__(100);
-	var SyntheticCompositionEvent = __webpack_require__(103);
-	var SyntheticInputEvent = __webpack_require__(105);
+	var EventPropagators = __webpack_require__(98);
+	var ExecutionEnvironment = __webpack_require__(105);
+	var FallbackCompositionState = __webpack_require__(106);
+	var SyntheticCompositionEvent = __webpack_require__(110);
+	var SyntheticInputEvent = __webpack_require__(112);
 	
 	var END_KEYCODES = [9, 13, 27, 32]; // Tab, Return, Esc, Space
 	var START_KEYCODE = 229;
@@ -4387,7 +4615,7 @@ webpackJsonp([0],[
 	module.exports = BeforeInputEventPlugin;
 
 /***/ },
-/* 92 */
+/* 98 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -4402,12 +4630,12 @@ webpackJsonp([0],[
 	
 	'use strict';
 	
-	var EventPluginHub = __webpack_require__(93);
-	var EventPluginUtils = __webpack_require__(95);
+	var EventPluginHub = __webpack_require__(99);
+	var EventPluginUtils = __webpack_require__(101);
 	
-	var accumulateInto = __webpack_require__(97);
-	var forEachAccumulated = __webpack_require__(98);
-	var warning = __webpack_require__(56);
+	var accumulateInto = __webpack_require__(103);
+	var forEachAccumulated = __webpack_require__(104);
+	var warning = __webpack_require__(57);
 	
 	var getListener = EventPluginHub.getListener;
 	
@@ -4523,10 +4751,10 @@ webpackJsonp([0],[
 	};
 	
 	module.exports = EventPropagators;
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(48)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(49)))
 
 /***/ },
-/* 93 */
+/* 99 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -4541,15 +4769,15 @@ webpackJsonp([0],[
 	
 	'use strict';
 	
-	var _prodInvariant = __webpack_require__(86);
+	var _prodInvariant = __webpack_require__(92);
 	
-	var EventPluginRegistry = __webpack_require__(94);
-	var EventPluginUtils = __webpack_require__(95);
-	var ReactErrorUtils = __webpack_require__(96);
+	var EventPluginRegistry = __webpack_require__(100);
+	var EventPluginUtils = __webpack_require__(101);
+	var ReactErrorUtils = __webpack_require__(102);
 	
-	var accumulateInto = __webpack_require__(97);
-	var forEachAccumulated = __webpack_require__(98);
-	var invariant = __webpack_require__(53);
+	var accumulateInto = __webpack_require__(103);
+	var forEachAccumulated = __webpack_require__(104);
+	var invariant = __webpack_require__(54);
 	
 	/**
 	 * Internal store for event listeners
@@ -4806,10 +5034,10 @@ webpackJsonp([0],[
 	};
 	
 	module.exports = EventPluginHub;
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(48)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(49)))
 
 /***/ },
-/* 94 */
+/* 100 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -4825,9 +5053,9 @@ webpackJsonp([0],[
 	
 	'use strict';
 	
-	var _prodInvariant = __webpack_require__(86);
+	var _prodInvariant = __webpack_require__(92);
 	
-	var invariant = __webpack_require__(53);
+	var invariant = __webpack_require__(54);
 	
 	/**
 	 * Injectable ordering of event plugins.
@@ -5066,10 +5294,10 @@ webpackJsonp([0],[
 	};
 	
 	module.exports = EventPluginRegistry;
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(48)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(49)))
 
 /***/ },
-/* 95 */
+/* 101 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -5084,12 +5312,12 @@ webpackJsonp([0],[
 	
 	'use strict';
 	
-	var _prodInvariant = __webpack_require__(86);
+	var _prodInvariant = __webpack_require__(92);
 	
-	var ReactErrorUtils = __webpack_require__(96);
+	var ReactErrorUtils = __webpack_require__(102);
 	
-	var invariant = __webpack_require__(53);
-	var warning = __webpack_require__(56);
+	var invariant = __webpack_require__(54);
+	var warning = __webpack_require__(57);
 	
 	/**
 	 * Injected dependencies:
@@ -5297,10 +5525,10 @@ webpackJsonp([0],[
 	};
 	
 	module.exports = EventPluginUtils;
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(48)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(49)))
 
 /***/ },
-/* 96 */
+/* 102 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -5370,7 +5598,6 @@ webpackJsonp([0],[
 	      var evtType = 'react-' + name;
 	      fakeNode.addEventListener(evtType, boundFunc, false);
 	      var evt = document.createEvent('Event');
-	      // $FlowFixMe https://github.com/facebook/flow/issues/2336
 	      evt.initEvent(evtType, false, false);
 	      fakeNode.dispatchEvent(evt);
 	      fakeNode.removeEventListener(evtType, boundFunc, false);
@@ -5379,10 +5606,10 @@ webpackJsonp([0],[
 	}
 	
 	module.exports = ReactErrorUtils;
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(48)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(49)))
 
 /***/ },
-/* 97 */
+/* 103 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -5398,9 +5625,9 @@ webpackJsonp([0],[
 	
 	'use strict';
 	
-	var _prodInvariant = __webpack_require__(86);
+	var _prodInvariant = __webpack_require__(92);
 	
-	var invariant = __webpack_require__(53);
+	var invariant = __webpack_require__(54);
 	
 	/**
 	 * Accumulates items that must not be null or undefined into the first one. This
@@ -5442,10 +5669,10 @@ webpackJsonp([0],[
 	}
 	
 	module.exports = accumulateInto;
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(48)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(49)))
 
 /***/ },
-/* 98 */
+/* 104 */
 /***/ function(module, exports) {
 
 	/**
@@ -5480,7 +5707,7 @@ webpackJsonp([0],[
 	module.exports = forEachAccumulated;
 
 /***/ },
-/* 99 */
+/* 105 */
 /***/ function(module, exports) {
 
 	/**
@@ -5520,7 +5747,7 @@ webpackJsonp([0],[
 	module.exports = ExecutionEnvironment;
 
 /***/ },
-/* 100 */
+/* 106 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -5535,11 +5762,11 @@ webpackJsonp([0],[
 	
 	'use strict';
 	
-	var _assign = __webpack_require__(49);
+	var _assign = __webpack_require__(107);
 	
-	var PooledClass = __webpack_require__(101);
+	var PooledClass = __webpack_require__(108);
 	
-	var getTextContentAccessor = __webpack_require__(102);
+	var getTextContentAccessor = __webpack_require__(109);
 	
 	/**
 	 * This helper class stores information about text content of a target node,
@@ -5619,7 +5846,103 @@ webpackJsonp([0],[
 	module.exports = FallbackCompositionState;
 
 /***/ },
-/* 101 */
+/* 107 */
+/***/ function(module, exports) {
+
+	/*
+	object-assign
+	(c) Sindre Sorhus
+	@license MIT
+	*/
+	
+	'use strict';
+	/* eslint-disable no-unused-vars */
+	var getOwnPropertySymbols = Object.getOwnPropertySymbols;
+	var hasOwnProperty = Object.prototype.hasOwnProperty;
+	var propIsEnumerable = Object.prototype.propertyIsEnumerable;
+	
+	function toObject(val) {
+		if (val === null || val === undefined) {
+			throw new TypeError('Object.assign cannot be called with null or undefined');
+		}
+	
+		return Object(val);
+	}
+	
+	function shouldUseNative() {
+		try {
+			if (!Object.assign) {
+				return false;
+			}
+	
+			// Detect buggy property enumeration order in older V8 versions.
+	
+			// https://bugs.chromium.org/p/v8/issues/detail?id=4118
+			var test1 = new String('abc');  // eslint-disable-line no-new-wrappers
+			test1[5] = 'de';
+			if (Object.getOwnPropertyNames(test1)[0] === '5') {
+				return false;
+			}
+	
+			// https://bugs.chromium.org/p/v8/issues/detail?id=3056
+			var test2 = {};
+			for (var i = 0; i < 10; i++) {
+				test2['_' + String.fromCharCode(i)] = i;
+			}
+			var order2 = Object.getOwnPropertyNames(test2).map(function (n) {
+				return test2[n];
+			});
+			if (order2.join('') !== '0123456789') {
+				return false;
+			}
+	
+			// https://bugs.chromium.org/p/v8/issues/detail?id=3056
+			var test3 = {};
+			'abcdefghijklmnopqrst'.split('').forEach(function (letter) {
+				test3[letter] = letter;
+			});
+			if (Object.keys(Object.assign({}, test3)).join('') !==
+					'abcdefghijklmnopqrst') {
+				return false;
+			}
+	
+			return true;
+		} catch (err) {
+			// We don't expect any of the above to throw, but better to be safe.
+			return false;
+		}
+	}
+	
+	module.exports = shouldUseNative() ? Object.assign : function (target, source) {
+		var from;
+		var to = toObject(target);
+		var symbols;
+	
+		for (var s = 1; s < arguments.length; s++) {
+			from = Object(arguments[s]);
+	
+			for (var key in from) {
+				if (hasOwnProperty.call(from, key)) {
+					to[key] = from[key];
+				}
+			}
+	
+			if (getOwnPropertySymbols) {
+				symbols = getOwnPropertySymbols(from);
+				for (var i = 0; i < symbols.length; i++) {
+					if (propIsEnumerable.call(from, symbols[i])) {
+						to[symbols[i]] = from[symbols[i]];
+					}
+				}
+			}
+		}
+	
+		return to;
+	};
+
+
+/***/ },
+/* 108 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -5635,9 +5958,9 @@ webpackJsonp([0],[
 	
 	'use strict';
 	
-	var _prodInvariant = __webpack_require__(86);
+	var _prodInvariant = __webpack_require__(92);
 	
-	var invariant = __webpack_require__(53);
+	var invariant = __webpack_require__(54);
 	
 	/**
 	 * Static poolers. Several custom versions for each potential number of
@@ -5733,10 +6056,10 @@ webpackJsonp([0],[
 	};
 	
 	module.exports = PooledClass;
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(48)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(49)))
 
 /***/ },
-/* 102 */
+/* 109 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -5751,7 +6074,7 @@ webpackJsonp([0],[
 	
 	'use strict';
 	
-	var ExecutionEnvironment = __webpack_require__(99);
+	var ExecutionEnvironment = __webpack_require__(105);
 	
 	var contentKey = null;
 	
@@ -5773,7 +6096,7 @@ webpackJsonp([0],[
 	module.exports = getTextContentAccessor;
 
 /***/ },
-/* 103 */
+/* 110 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -5788,7 +6111,7 @@ webpackJsonp([0],[
 	
 	'use strict';
 	
-	var SyntheticEvent = __webpack_require__(104);
+	var SyntheticEvent = __webpack_require__(111);
 	
 	/**
 	 * @interface Event
@@ -5813,7 +6136,7 @@ webpackJsonp([0],[
 	module.exports = SyntheticCompositionEvent;
 
 /***/ },
-/* 104 */
+/* 111 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -5828,12 +6151,12 @@ webpackJsonp([0],[
 	
 	'use strict';
 	
-	var _assign = __webpack_require__(49);
+	var _assign = __webpack_require__(107);
 	
-	var PooledClass = __webpack_require__(101);
+	var PooledClass = __webpack_require__(108);
 	
-	var emptyFunction = __webpack_require__(57);
-	var warning = __webpack_require__(56);
+	var emptyFunction = __webpack_require__(58);
+	var warning = __webpack_require__(57);
 	
 	var didWarnForAddedNewProperty = false;
 	var isProxySupported = typeof Proxy === 'function';
@@ -6083,10 +6406,10 @@ webpackJsonp([0],[
 	    process.env.NODE_ENV !== 'production' ? warning(warningCondition, 'This synthetic event is reused for performance reasons. If you\'re seeing this, ' + 'you\'re %s `%s` on a released/nullified synthetic event. %s. ' + 'If you must keep the original synthetic event around, use event.persist(). ' + 'See https://fb.me/react-event-pooling for more information.', action, propName, result) : void 0;
 	  }
 	}
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(48)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(49)))
 
 /***/ },
-/* 105 */
+/* 112 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -6101,7 +6424,7 @@ webpackJsonp([0],[
 	
 	'use strict';
 	
-	var SyntheticEvent = __webpack_require__(104);
+	var SyntheticEvent = __webpack_require__(111);
 	
 	/**
 	 * @interface Event
@@ -6127,7 +6450,7 @@ webpackJsonp([0],[
 	module.exports = SyntheticInputEvent;
 
 /***/ },
-/* 106 */
+/* 113 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -6142,16 +6465,16 @@ webpackJsonp([0],[
 	
 	'use strict';
 	
-	var EventPluginHub = __webpack_require__(93);
-	var EventPropagators = __webpack_require__(92);
-	var ExecutionEnvironment = __webpack_require__(99);
-	var ReactDOMComponentTree = __webpack_require__(85);
-	var ReactUpdates = __webpack_require__(107);
-	var SyntheticEvent = __webpack_require__(104);
+	var EventPluginHub = __webpack_require__(99);
+	var EventPropagators = __webpack_require__(98);
+	var ExecutionEnvironment = __webpack_require__(105);
+	var ReactDOMComponentTree = __webpack_require__(91);
+	var ReactUpdates = __webpack_require__(114);
+	var SyntheticEvent = __webpack_require__(111);
 	
-	var getEventTarget = __webpack_require__(120);
-	var isEventSupported = __webpack_require__(121);
-	var isTextInputElement = __webpack_require__(122);
+	var getEventTarget = __webpack_require__(127);
+	var isEventSupported = __webpack_require__(128);
+	var isTextInputElement = __webpack_require__(129);
 	
 	var eventTypes = {
 	  change: {
@@ -6397,6 +6720,26 @@ webpackJsonp([0],[
 	  }
 	}
 	
+	function handleControlledInputBlur(inst, node) {
+	  // TODO: In IE, inst is occasionally null. Why?
+	  if (inst == null) {
+	    return;
+	  }
+	
+	  // Fiber and ReactDOM keep wrapper state in separate places
+	  var state = inst._wrapperState || node._wrapperState;
+	
+	  if (!state || !state.controlled || node.type !== 'number') {
+	    return;
+	  }
+	
+	  // If controlled, assign the value attribute to the current value on blur
+	  var value = '' + node.value;
+	  if (node.getAttribute('value') !== value) {
+	    node.setAttribute('value', value);
+	  }
+	}
+	
 	/**
 	 * This plugin creates an `onChange` event that normalizes change events
 	 * across form elements. This event fires at a time when it's possible to
@@ -6445,6 +6788,11 @@ webpackJsonp([0],[
 	    if (handleEventFunc) {
 	      handleEventFunc(topLevelType, targetNode, targetInst);
 	    }
+	
+	    // When blurring, set the value attribute for number inputs
+	    if (topLevelType === 'topBlur') {
+	      handleControlledInputBlur(targetInst, targetNode);
+	    }
 	  }
 	
 	};
@@ -6452,7 +6800,7 @@ webpackJsonp([0],[
 	module.exports = ChangeEventPlugin;
 
 /***/ },
-/* 107 */
+/* 114 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -6467,16 +6815,16 @@ webpackJsonp([0],[
 	
 	'use strict';
 	
-	var _prodInvariant = __webpack_require__(86),
-	    _assign = __webpack_require__(49);
+	var _prodInvariant = __webpack_require__(92),
+	    _assign = __webpack_require__(107);
 	
-	var CallbackQueue = __webpack_require__(108);
-	var PooledClass = __webpack_require__(101);
-	var ReactFeatureFlags = __webpack_require__(109);
-	var ReactReconciler = __webpack_require__(110);
-	var Transaction = __webpack_require__(119);
+	var CallbackQueue = __webpack_require__(115);
+	var PooledClass = __webpack_require__(108);
+	var ReactFeatureFlags = __webpack_require__(116);
+	var ReactReconciler = __webpack_require__(117);
+	var Transaction = __webpack_require__(126);
 	
-	var invariant = __webpack_require__(53);
+	var invariant = __webpack_require__(54);
 	
 	var dirtyComponents = [];
 	var updateBatchNumber = 0;
@@ -6705,10 +7053,10 @@ webpackJsonp([0],[
 	};
 	
 	module.exports = ReactUpdates;
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(48)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(49)))
 
 /***/ },
-/* 108 */
+/* 115 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -6724,13 +7072,13 @@ webpackJsonp([0],[
 	
 	'use strict';
 	
-	var _prodInvariant = __webpack_require__(86);
+	var _prodInvariant = __webpack_require__(92);
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 	
-	var PooledClass = __webpack_require__(101);
+	var PooledClass = __webpack_require__(108);
 	
-	var invariant = __webpack_require__(53);
+	var invariant = __webpack_require__(54);
 	
 	/**
 	 * A specialized pseudo-event module to help keep track of components waiting to
@@ -6829,10 +7177,10 @@ webpackJsonp([0],[
 	}();
 	
 	module.exports = PooledClass.addPoolingTo(CallbackQueue);
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(48)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(49)))
 
 /***/ },
-/* 109 */
+/* 116 */
 /***/ function(module, exports) {
 
 	/**
@@ -6858,7 +7206,7 @@ webpackJsonp([0],[
 	module.exports = ReactFeatureFlags;
 
 /***/ },
-/* 110 */
+/* 117 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -6873,10 +7221,10 @@ webpackJsonp([0],[
 	
 	'use strict';
 	
-	var ReactRef = __webpack_require__(111);
-	var ReactInstrumentation = __webpack_require__(113);
+	var ReactRef = __webpack_require__(118);
+	var ReactInstrumentation = __webpack_require__(120);
 	
-	var warning = __webpack_require__(56);
+	var warning = __webpack_require__(57);
 	
 	/**
 	 * Helper to call ReactRef.attachRefs with this composite component, split out
@@ -7028,10 +7376,10 @@ webpackJsonp([0],[
 	};
 	
 	module.exports = ReactReconciler;
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(48)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(49)))
 
 /***/ },
-/* 111 */
+/* 118 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -7047,7 +7395,7 @@ webpackJsonp([0],[
 	
 	'use strict';
 	
-	var ReactOwner = __webpack_require__(112);
+	var ReactOwner = __webpack_require__(119);
 	
 	var ReactRef = {};
 	
@@ -7124,7 +7472,7 @@ webpackJsonp([0],[
 	module.exports = ReactRef;
 
 /***/ },
-/* 112 */
+/* 119 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -7140,9 +7488,9 @@ webpackJsonp([0],[
 	
 	'use strict';
 	
-	var _prodInvariant = __webpack_require__(86);
+	var _prodInvariant = __webpack_require__(92);
 	
-	var invariant = __webpack_require__(53);
+	var invariant = __webpack_require__(54);
 	
 	/**
 	 * @param {?object} object
@@ -7220,10 +7568,10 @@ webpackJsonp([0],[
 	};
 	
 	module.exports = ReactOwner;
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(48)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(49)))
 
 /***/ },
-/* 113 */
+/* 120 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -7244,15 +7592,15 @@ webpackJsonp([0],[
 	var debugTool = null;
 	
 	if (process.env.NODE_ENV !== 'production') {
-	  var ReactDebugTool = __webpack_require__(114);
+	  var ReactDebugTool = __webpack_require__(121);
 	  debugTool = ReactDebugTool;
 	}
 	
 	module.exports = { debugTool: debugTool };
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(48)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(49)))
 
 /***/ },
-/* 114 */
+/* 121 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -7268,13 +7616,13 @@ webpackJsonp([0],[
 	
 	'use strict';
 	
-	var ReactInvalidSetStateWarningHook = __webpack_require__(115);
-	var ReactHostOperationHistoryHook = __webpack_require__(116);
-	var ReactComponentTreeHook = __webpack_require__(71);
-	var ExecutionEnvironment = __webpack_require__(99);
+	var ReactInvalidSetStateWarningHook = __webpack_require__(122);
+	var ReactHostOperationHistoryHook = __webpack_require__(123);
+	var ReactComponentTreeHook = __webpack_require__(72);
+	var ExecutionEnvironment = __webpack_require__(105);
 	
-	var performanceNow = __webpack_require__(117);
-	var warning = __webpack_require__(56);
+	var performanceNow = __webpack_require__(124);
+	var warning = __webpack_require__(57);
 	
 	var hooks = [];
 	var didHookThrowForEvent = {};
@@ -7435,9 +7783,7 @@ webpackJsonp([0],[
 	}
 	
 	var lastMarkTimeStamp = 0;
-	var canUsePerformanceMeasure =
-	// $FlowFixMe https://github.com/facebook/flow/issues/2345
-	typeof performance !== 'undefined' && typeof performance.mark === 'function' && typeof performance.clearMarks === 'function' && typeof performance.measure === 'function' && typeof performance.clearMeasures === 'function';
+	var canUsePerformanceMeasure = typeof performance !== 'undefined' && typeof performance.mark === 'function' && typeof performance.clearMarks === 'function' && typeof performance.measure === 'function' && typeof performance.clearMeasures === 'function';
 	
 	function shouldMark(debugID) {
 	  if (!isProfiling || !canUsePerformanceMeasure) {
@@ -7615,10 +7961,10 @@ webpackJsonp([0],[
 	}
 	
 	module.exports = ReactDebugTool;
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(48)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(49)))
 
 /***/ },
-/* 115 */
+/* 122 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -7634,7 +7980,7 @@ webpackJsonp([0],[
 	
 	'use strict';
 	
-	var warning = __webpack_require__(56);
+	var warning = __webpack_require__(57);
 	
 	if (process.env.NODE_ENV !== 'production') {
 	  var processingChildContext = false;
@@ -7657,10 +8003,10 @@ webpackJsonp([0],[
 	};
 	
 	module.exports = ReactInvalidSetStateWarningHook;
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(48)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(49)))
 
 /***/ },
-/* 116 */
+/* 123 */
 /***/ function(module, exports) {
 
 	/**
@@ -7698,7 +8044,7 @@ webpackJsonp([0],[
 	module.exports = ReactHostOperationHistoryHook;
 
 /***/ },
-/* 117 */
+/* 124 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -7714,7 +8060,7 @@ webpackJsonp([0],[
 	 * @typechecks
 	 */
 	
-	var performance = __webpack_require__(118);
+	var performance = __webpack_require__(125);
 	
 	var performanceNow;
 	
@@ -7736,7 +8082,7 @@ webpackJsonp([0],[
 	module.exports = performanceNow;
 
 /***/ },
-/* 118 */
+/* 125 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -7752,7 +8098,7 @@ webpackJsonp([0],[
 	
 	'use strict';
 	
-	var ExecutionEnvironment = __webpack_require__(99);
+	var ExecutionEnvironment = __webpack_require__(105);
 	
 	var performance;
 	
@@ -7763,7 +8109,7 @@ webpackJsonp([0],[
 	module.exports = performance || {};
 
 /***/ },
-/* 119 */
+/* 126 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -7779,9 +8125,9 @@ webpackJsonp([0],[
 	
 	'use strict';
 	
-	var _prodInvariant = __webpack_require__(86);
+	var _prodInvariant = __webpack_require__(92);
 	
-	var invariant = __webpack_require__(53);
+	var invariant = __webpack_require__(54);
 	
 	var OBSERVED_ERROR = {};
 	
@@ -7990,10 +8336,10 @@ webpackJsonp([0],[
 	};
 	
 	module.exports = TransactionImpl;
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(48)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(49)))
 
 /***/ },
-/* 120 */
+/* 127 */
 /***/ function(module, exports) {
 
 	/**
@@ -8032,7 +8378,7 @@ webpackJsonp([0],[
 	module.exports = getEventTarget;
 
 /***/ },
-/* 121 */
+/* 128 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -8047,7 +8393,7 @@ webpackJsonp([0],[
 	
 	'use strict';
 	
-	var ExecutionEnvironment = __webpack_require__(99);
+	var ExecutionEnvironment = __webpack_require__(105);
 	
 	var useHasFeature;
 	if (ExecutionEnvironment.canUseDOM) {
@@ -8096,7 +8442,7 @@ webpackJsonp([0],[
 	module.exports = isEventSupported;
 
 /***/ },
-/* 122 */
+/* 129 */
 /***/ function(module, exports) {
 
 	/**
@@ -8151,7 +8497,7 @@ webpackJsonp([0],[
 	module.exports = isTextInputElement;
 
 /***/ },
-/* 123 */
+/* 130 */
 /***/ function(module, exports) {
 
 	/**
@@ -8181,7 +8527,7 @@ webpackJsonp([0],[
 	module.exports = DefaultEventPluginOrder;
 
 /***/ },
-/* 124 */
+/* 131 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -8196,9 +8542,9 @@ webpackJsonp([0],[
 	
 	'use strict';
 	
-	var EventPropagators = __webpack_require__(92);
-	var ReactDOMComponentTree = __webpack_require__(85);
-	var SyntheticMouseEvent = __webpack_require__(125);
+	var EventPropagators = __webpack_require__(98);
+	var ReactDOMComponentTree = __webpack_require__(91);
+	var SyntheticMouseEvent = __webpack_require__(132);
 	
 	var eventTypes = {
 	  mouseEnter: {
@@ -8285,7 +8631,7 @@ webpackJsonp([0],[
 	module.exports = EnterLeaveEventPlugin;
 
 /***/ },
-/* 125 */
+/* 132 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -8300,10 +8646,10 @@ webpackJsonp([0],[
 	
 	'use strict';
 	
-	var SyntheticUIEvent = __webpack_require__(126);
-	var ViewportMetrics = __webpack_require__(127);
+	var SyntheticUIEvent = __webpack_require__(133);
+	var ViewportMetrics = __webpack_require__(134);
 	
-	var getEventModifierState = __webpack_require__(128);
+	var getEventModifierState = __webpack_require__(135);
 	
 	/**
 	 * @interface MouseEvent
@@ -8361,7 +8707,7 @@ webpackJsonp([0],[
 	module.exports = SyntheticMouseEvent;
 
 /***/ },
-/* 126 */
+/* 133 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -8376,9 +8722,9 @@ webpackJsonp([0],[
 	
 	'use strict';
 	
-	var SyntheticEvent = __webpack_require__(104);
+	var SyntheticEvent = __webpack_require__(111);
 	
-	var getEventTarget = __webpack_require__(120);
+	var getEventTarget = __webpack_require__(127);
 	
 	/**
 	 * @interface UIEvent
@@ -8424,7 +8770,7 @@ webpackJsonp([0],[
 	module.exports = SyntheticUIEvent;
 
 /***/ },
-/* 127 */
+/* 134 */
 /***/ function(module, exports) {
 
 	/**
@@ -8455,7 +8801,7 @@ webpackJsonp([0],[
 	module.exports = ViewportMetrics;
 
 /***/ },
-/* 128 */
+/* 135 */
 /***/ function(module, exports) {
 
 	/**
@@ -8502,7 +8848,7 @@ webpackJsonp([0],[
 	module.exports = getEventModifierState;
 
 /***/ },
-/* 129 */
+/* 136 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -8517,7 +8863,7 @@ webpackJsonp([0],[
 	
 	'use strict';
 	
-	var DOMProperty = __webpack_require__(87);
+	var DOMProperty = __webpack_require__(93);
 	
 	var MUST_USE_PROPERTY = DOMProperty.injection.MUST_USE_PROPERTY;
 	var HAS_BOOLEAN_VALUE = DOMProperty.injection.HAS_BOOLEAN_VALUE;
@@ -8712,13 +9058,37 @@ webpackJsonp([0],[
 	    htmlFor: 'for',
 	    httpEquiv: 'http-equiv'
 	  },
-	  DOMPropertyNames: {}
+	  DOMPropertyNames: {},
+	  DOMMutationMethods: {
+	    value: function (node, value) {
+	      if (value == null) {
+	        return node.removeAttribute('value');
+	      }
+	
+	      // Number inputs get special treatment due to some edge cases in
+	      // Chrome. Let everything else assign the value attribute as normal.
+	      // https://github.com/facebook/react/issues/7253#issuecomment-236074326
+	      if (node.type !== 'number' || node.hasAttribute('value') === false) {
+	        node.setAttribute('value', '' + value);
+	      } else if (node.validity && !node.validity.badInput && node.ownerDocument.activeElement !== node) {
+	        // Don't assign an attribute if validation reports bad
+	        // input. Chrome will clear the value. Additionally, don't
+	        // operate on inputs that have focus, otherwise Chrome might
+	        // strip off trailing decimal places and cause the user's
+	        // cursor position to jump to the beginning of the input.
+	        //
+	        // In ReactDOMInput, we have an onBlur event that will trigger
+	        // this function again when focus is lost.
+	        node.setAttribute('value', '' + value);
+	      }
+	    }
+	  }
 	};
 	
 	module.exports = HTMLDOMPropertyConfig;
 
 /***/ },
-/* 130 */
+/* 137 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -8733,8 +9103,8 @@ webpackJsonp([0],[
 	
 	'use strict';
 	
-	var DOMChildrenOperations = __webpack_require__(131);
-	var ReactDOMIDOperations = __webpack_require__(142);
+	var DOMChildrenOperations = __webpack_require__(138);
+	var ReactDOMIDOperations = __webpack_require__(149);
 	
 	/**
 	 * Abstracts away all functionality of the reconciler that requires knowledge of
@@ -8752,7 +9122,7 @@ webpackJsonp([0],[
 	module.exports = ReactComponentBrowserEnvironment;
 
 /***/ },
-/* 131 */
+/* 138 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -8767,14 +9137,14 @@ webpackJsonp([0],[
 	
 	'use strict';
 	
-	var DOMLazyTree = __webpack_require__(132);
-	var Danger = __webpack_require__(138);
-	var ReactDOMComponentTree = __webpack_require__(85);
-	var ReactInstrumentation = __webpack_require__(113);
+	var DOMLazyTree = __webpack_require__(139);
+	var Danger = __webpack_require__(145);
+	var ReactDOMComponentTree = __webpack_require__(91);
+	var ReactInstrumentation = __webpack_require__(120);
 	
-	var createMicrosoftUnsafeLocalFunction = __webpack_require__(135);
-	var setInnerHTML = __webpack_require__(134);
-	var setTextContent = __webpack_require__(136);
+	var createMicrosoftUnsafeLocalFunction = __webpack_require__(142);
+	var setInnerHTML = __webpack_require__(141);
+	var setTextContent = __webpack_require__(143);
 	
 	function getNodeAfter(parentNode, node) {
 	  // Special case for text components, which return [open, close] comments
@@ -8979,10 +9349,10 @@ webpackJsonp([0],[
 	};
 	
 	module.exports = DOMChildrenOperations;
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(48)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(49)))
 
 /***/ },
-/* 132 */
+/* 139 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -8997,11 +9367,11 @@ webpackJsonp([0],[
 	
 	'use strict';
 	
-	var DOMNamespaces = __webpack_require__(133);
-	var setInnerHTML = __webpack_require__(134);
+	var DOMNamespaces = __webpack_require__(140);
+	var setInnerHTML = __webpack_require__(141);
 	
-	var createMicrosoftUnsafeLocalFunction = __webpack_require__(135);
-	var setTextContent = __webpack_require__(136);
+	var createMicrosoftUnsafeLocalFunction = __webpack_require__(142);
+	var setTextContent = __webpack_require__(143);
 	
 	var ELEMENT_NODE_TYPE = 1;
 	var DOCUMENT_FRAGMENT_NODE_TYPE = 11;
@@ -9104,7 +9474,7 @@ webpackJsonp([0],[
 	module.exports = DOMLazyTree;
 
 /***/ },
-/* 133 */
+/* 140 */
 /***/ function(module, exports) {
 
 	/**
@@ -9128,7 +9498,7 @@ webpackJsonp([0],[
 	module.exports = DOMNamespaces;
 
 /***/ },
-/* 134 */
+/* 141 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -9143,13 +9513,13 @@ webpackJsonp([0],[
 	
 	'use strict';
 	
-	var ExecutionEnvironment = __webpack_require__(99);
-	var DOMNamespaces = __webpack_require__(133);
+	var ExecutionEnvironment = __webpack_require__(105);
+	var DOMNamespaces = __webpack_require__(140);
 	
 	var WHITESPACE_TEST = /^[ \r\n\t\f]/;
 	var NONVISIBLE_TEST = /<(!--|link|noscript|meta|script|style)[ \r\n\t\f\/>]/;
 	
-	var createMicrosoftUnsafeLocalFunction = __webpack_require__(135);
+	var createMicrosoftUnsafeLocalFunction = __webpack_require__(142);
 	
 	// SVG temp container for IE lacking innerHTML
 	var reusableSVGContainer;
@@ -9230,7 +9600,7 @@ webpackJsonp([0],[
 	module.exports = setInnerHTML;
 
 /***/ },
-/* 135 */
+/* 142 */
 /***/ function(module, exports) {
 
 	/**
@@ -9266,7 +9636,7 @@ webpackJsonp([0],[
 	module.exports = createMicrosoftUnsafeLocalFunction;
 
 /***/ },
-/* 136 */
+/* 143 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -9281,9 +9651,9 @@ webpackJsonp([0],[
 	
 	'use strict';
 	
-	var ExecutionEnvironment = __webpack_require__(99);
-	var escapeTextContentForBrowser = __webpack_require__(137);
-	var setInnerHTML = __webpack_require__(134);
+	var ExecutionEnvironment = __webpack_require__(105);
+	var escapeTextContentForBrowser = __webpack_require__(144);
+	var setInnerHTML = __webpack_require__(141);
 	
 	/**
 	 * Set the textContent property of a node, ensuring that whitespace is preserved
@@ -9322,7 +9692,7 @@ webpackJsonp([0],[
 	module.exports = setTextContent;
 
 /***/ },
-/* 137 */
+/* 144 */
 /***/ function(module, exports) {
 
 	/**
@@ -9449,7 +9819,7 @@ webpackJsonp([0],[
 	module.exports = escapeTextContentForBrowser;
 
 /***/ },
-/* 138 */
+/* 145 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -9464,14 +9834,14 @@ webpackJsonp([0],[
 	
 	'use strict';
 	
-	var _prodInvariant = __webpack_require__(86);
+	var _prodInvariant = __webpack_require__(92);
 	
-	var DOMLazyTree = __webpack_require__(132);
-	var ExecutionEnvironment = __webpack_require__(99);
+	var DOMLazyTree = __webpack_require__(139);
+	var ExecutionEnvironment = __webpack_require__(105);
 	
-	var createNodesFromMarkup = __webpack_require__(139);
-	var emptyFunction = __webpack_require__(57);
-	var invariant = __webpack_require__(53);
+	var createNodesFromMarkup = __webpack_require__(146);
+	var emptyFunction = __webpack_require__(58);
+	var invariant = __webpack_require__(54);
 	
 	var Danger = {
 	
@@ -9499,10 +9869,10 @@ webpackJsonp([0],[
 	};
 	
 	module.exports = Danger;
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(48)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(49)))
 
 /***/ },
-/* 139 */
+/* 146 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {'use strict';
@@ -9520,11 +9890,11 @@ webpackJsonp([0],[
 	
 	/*eslint-disable fb-www/unsafe-html*/
 	
-	var ExecutionEnvironment = __webpack_require__(99);
+	var ExecutionEnvironment = __webpack_require__(105);
 	
-	var createArrayFromMixed = __webpack_require__(140);
-	var getMarkupWrap = __webpack_require__(141);
-	var invariant = __webpack_require__(53);
+	var createArrayFromMixed = __webpack_require__(147);
+	var getMarkupWrap = __webpack_require__(148);
+	var invariant = __webpack_require__(54);
 	
 	/**
 	 * Dummy container used to render all markup.
@@ -9588,10 +9958,10 @@ webpackJsonp([0],[
 	}
 	
 	module.exports = createNodesFromMarkup;
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(48)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(49)))
 
 /***/ },
-/* 140 */
+/* 147 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {'use strict';
@@ -9607,7 +9977,7 @@ webpackJsonp([0],[
 	 * @typechecks
 	 */
 	
-	var invariant = __webpack_require__(53);
+	var invariant = __webpack_require__(54);
 	
 	/**
 	 * Convert array-like objects to arrays.
@@ -9720,10 +10090,10 @@ webpackJsonp([0],[
 	}
 	
 	module.exports = createArrayFromMixed;
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(48)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(49)))
 
 /***/ },
-/* 141 */
+/* 148 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {'use strict';
@@ -9740,9 +10110,9 @@ webpackJsonp([0],[
 	
 	/*eslint-disable fb-www/unsafe-html */
 	
-	var ExecutionEnvironment = __webpack_require__(99);
+	var ExecutionEnvironment = __webpack_require__(105);
 	
-	var invariant = __webpack_require__(53);
+	var invariant = __webpack_require__(54);
 	
 	/**
 	 * Dummy container used to detect which wraps are necessary.
@@ -9820,10 +10190,10 @@ webpackJsonp([0],[
 	}
 	
 	module.exports = getMarkupWrap;
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(48)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(49)))
 
 /***/ },
-/* 142 */
+/* 149 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -9838,8 +10208,8 @@ webpackJsonp([0],[
 	
 	'use strict';
 	
-	var DOMChildrenOperations = __webpack_require__(131);
-	var ReactDOMComponentTree = __webpack_require__(85);
+	var DOMChildrenOperations = __webpack_require__(138);
+	var ReactDOMComponentTree = __webpack_require__(91);
 	
 	/**
 	 * Operations used to process updates to DOM nodes.
@@ -9861,7 +10231,7 @@ webpackJsonp([0],[
 	module.exports = ReactDOMIDOperations;
 
 /***/ },
-/* 143 */
+/* 150 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -9878,35 +10248,35 @@ webpackJsonp([0],[
 	
 	'use strict';
 	
-	var _prodInvariant = __webpack_require__(86),
-	    _assign = __webpack_require__(49);
+	var _prodInvariant = __webpack_require__(92),
+	    _assign = __webpack_require__(107);
 	
-	var AutoFocusUtils = __webpack_require__(144);
-	var CSSPropertyOperations = __webpack_require__(146);
-	var DOMLazyTree = __webpack_require__(132);
-	var DOMNamespaces = __webpack_require__(133);
-	var DOMProperty = __webpack_require__(87);
-	var DOMPropertyOperations = __webpack_require__(154);
-	var EventPluginHub = __webpack_require__(93);
-	var EventPluginRegistry = __webpack_require__(94);
-	var ReactBrowserEventEmitter = __webpack_require__(156);
-	var ReactDOMComponentFlags = __webpack_require__(88);
-	var ReactDOMComponentTree = __webpack_require__(85);
-	var ReactDOMInput = __webpack_require__(159);
-	var ReactDOMOption = __webpack_require__(162);
-	var ReactDOMSelect = __webpack_require__(163);
-	var ReactDOMTextarea = __webpack_require__(164);
-	var ReactInstrumentation = __webpack_require__(113);
-	var ReactMultiChild = __webpack_require__(165);
-	var ReactServerRenderingTransaction = __webpack_require__(184);
+	var AutoFocusUtils = __webpack_require__(151);
+	var CSSPropertyOperations = __webpack_require__(153);
+	var DOMLazyTree = __webpack_require__(139);
+	var DOMNamespaces = __webpack_require__(140);
+	var DOMProperty = __webpack_require__(93);
+	var DOMPropertyOperations = __webpack_require__(161);
+	var EventPluginHub = __webpack_require__(99);
+	var EventPluginRegistry = __webpack_require__(100);
+	var ReactBrowserEventEmitter = __webpack_require__(163);
+	var ReactDOMComponentFlags = __webpack_require__(94);
+	var ReactDOMComponentTree = __webpack_require__(91);
+	var ReactDOMInput = __webpack_require__(166);
+	var ReactDOMOption = __webpack_require__(169);
+	var ReactDOMSelect = __webpack_require__(170);
+	var ReactDOMTextarea = __webpack_require__(171);
+	var ReactInstrumentation = __webpack_require__(120);
+	var ReactMultiChild = __webpack_require__(172);
+	var ReactServerRenderingTransaction = __webpack_require__(191);
 	
-	var emptyFunction = __webpack_require__(57);
-	var escapeTextContentForBrowser = __webpack_require__(137);
-	var invariant = __webpack_require__(53);
-	var isEventSupported = __webpack_require__(121);
-	var shallowEqual = __webpack_require__(174);
-	var validateDOMNesting = __webpack_require__(187);
-	var warning = __webpack_require__(56);
+	var emptyFunction = __webpack_require__(58);
+	var escapeTextContentForBrowser = __webpack_require__(144);
+	var invariant = __webpack_require__(54);
+	var isEventSupported = __webpack_require__(128);
+	var shallowEqual = __webpack_require__(181);
+	var validateDOMNesting = __webpack_require__(194);
+	var warning = __webpack_require__(57);
 	
 	var Flags = ReactDOMComponentFlags;
 	var deleteListener = EventPluginHub.deleteListener;
@@ -10864,10 +11234,10 @@ webpackJsonp([0],[
 	_assign(ReactDOMComponent.prototype, ReactDOMComponent.Mixin, ReactMultiChild.Mixin);
 	
 	module.exports = ReactDOMComponent;
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(48)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(49)))
 
 /***/ },
-/* 144 */
+/* 151 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -10882,9 +11252,9 @@ webpackJsonp([0],[
 	
 	'use strict';
 	
-	var ReactDOMComponentTree = __webpack_require__(85);
+	var ReactDOMComponentTree = __webpack_require__(91);
 	
-	var focusNode = __webpack_require__(145);
+	var focusNode = __webpack_require__(152);
 	
 	var AutoFocusUtils = {
 	  focusDOMComponent: function () {
@@ -10895,7 +11265,7 @@ webpackJsonp([0],[
 	module.exports = AutoFocusUtils;
 
 /***/ },
-/* 145 */
+/* 152 */
 /***/ function(module, exports) {
 
 	/**
@@ -10926,7 +11296,7 @@ webpackJsonp([0],[
 	module.exports = focusNode;
 
 /***/ },
-/* 146 */
+/* 153 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -10941,15 +11311,15 @@ webpackJsonp([0],[
 	
 	'use strict';
 	
-	var CSSProperty = __webpack_require__(147);
-	var ExecutionEnvironment = __webpack_require__(99);
-	var ReactInstrumentation = __webpack_require__(113);
+	var CSSProperty = __webpack_require__(154);
+	var ExecutionEnvironment = __webpack_require__(105);
+	var ReactInstrumentation = __webpack_require__(120);
 	
-	var camelizeStyleName = __webpack_require__(148);
-	var dangerousStyleValue = __webpack_require__(150);
-	var hyphenateStyleName = __webpack_require__(151);
-	var memoizeStringOnly = __webpack_require__(153);
-	var warning = __webpack_require__(56);
+	var camelizeStyleName = __webpack_require__(155);
+	var dangerousStyleValue = __webpack_require__(157);
+	var hyphenateStyleName = __webpack_require__(158);
+	var memoizeStringOnly = __webpack_require__(160);
+	var warning = __webpack_require__(57);
 	
 	var processStyleName = memoizeStringOnly(function (styleName) {
 	  return hyphenateStyleName(styleName);
@@ -11137,10 +11507,10 @@ webpackJsonp([0],[
 	};
 	
 	module.exports = CSSPropertyOperations;
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(48)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(49)))
 
 /***/ },
-/* 147 */
+/* 154 */
 /***/ function(module, exports) {
 
 	/**
@@ -11292,7 +11662,7 @@ webpackJsonp([0],[
 	module.exports = CSSProperty;
 
 /***/ },
-/* 148 */
+/* 155 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -11308,7 +11678,7 @@ webpackJsonp([0],[
 	
 	'use strict';
 	
-	var camelize = __webpack_require__(149);
+	var camelize = __webpack_require__(156);
 	
 	var msPattern = /^-ms-/;
 	
@@ -11336,7 +11706,7 @@ webpackJsonp([0],[
 	module.exports = camelizeStyleName;
 
 /***/ },
-/* 149 */
+/* 156 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -11372,7 +11742,7 @@ webpackJsonp([0],[
 	module.exports = camelize;
 
 /***/ },
-/* 150 */
+/* 157 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -11387,8 +11757,8 @@ webpackJsonp([0],[
 	
 	'use strict';
 	
-	var CSSProperty = __webpack_require__(147);
-	var warning = __webpack_require__(56);
+	var CSSProperty = __webpack_require__(154);
+	var warning = __webpack_require__(57);
 	
 	var isUnitlessNumber = CSSProperty.isUnitlessNumber;
 	var styleWarnings = {};
@@ -11453,10 +11823,10 @@ webpackJsonp([0],[
 	}
 	
 	module.exports = dangerousStyleValue;
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(48)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(49)))
 
 /***/ },
-/* 151 */
+/* 158 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -11472,7 +11842,7 @@ webpackJsonp([0],[
 	
 	'use strict';
 	
-	var hyphenate = __webpack_require__(152);
+	var hyphenate = __webpack_require__(159);
 	
 	var msPattern = /^ms-/;
 	
@@ -11499,7 +11869,7 @@ webpackJsonp([0],[
 	module.exports = hyphenateStyleName;
 
 /***/ },
-/* 152 */
+/* 159 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -11536,7 +11906,7 @@ webpackJsonp([0],[
 	module.exports = hyphenate;
 
 /***/ },
-/* 153 */
+/* 160 */
 /***/ function(module, exports) {
 
 	/**
@@ -11570,7 +11940,7 @@ webpackJsonp([0],[
 	module.exports = memoizeStringOnly;
 
 /***/ },
-/* 154 */
+/* 161 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -11585,12 +11955,12 @@ webpackJsonp([0],[
 	
 	'use strict';
 	
-	var DOMProperty = __webpack_require__(87);
-	var ReactDOMComponentTree = __webpack_require__(85);
-	var ReactInstrumentation = __webpack_require__(113);
+	var DOMProperty = __webpack_require__(93);
+	var ReactDOMComponentTree = __webpack_require__(91);
+	var ReactInstrumentation = __webpack_require__(120);
 	
-	var quoteAttributeValueForBrowser = __webpack_require__(155);
-	var warning = __webpack_require__(56);
+	var quoteAttributeValueForBrowser = __webpack_require__(162);
+	var warning = __webpack_require__(57);
 	
 	var VALID_ATTRIBUTE_NAME_REGEX = new RegExp('^[' + DOMProperty.ATTRIBUTE_NAME_START_CHAR + '][' + DOMProperty.ATTRIBUTE_NAME_CHAR + ']*$');
 	var illegalAttributeNameCache = {};
@@ -11809,10 +12179,10 @@ webpackJsonp([0],[
 	};
 	
 	module.exports = DOMPropertyOperations;
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(48)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(49)))
 
 /***/ },
-/* 155 */
+/* 162 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -11827,7 +12197,7 @@ webpackJsonp([0],[
 	
 	'use strict';
 	
-	var escapeTextContentForBrowser = __webpack_require__(137);
+	var escapeTextContentForBrowser = __webpack_require__(144);
 	
 	/**
 	 * Escapes attribute value to prevent scripting attacks.
@@ -11842,7 +12212,7 @@ webpackJsonp([0],[
 	module.exports = quoteAttributeValueForBrowser;
 
 /***/ },
-/* 156 */
+/* 163 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -11857,14 +12227,14 @@ webpackJsonp([0],[
 	
 	'use strict';
 	
-	var _assign = __webpack_require__(49);
+	var _assign = __webpack_require__(107);
 	
-	var EventPluginRegistry = __webpack_require__(94);
-	var ReactEventEmitterMixin = __webpack_require__(157);
-	var ViewportMetrics = __webpack_require__(127);
+	var EventPluginRegistry = __webpack_require__(100);
+	var ReactEventEmitterMixin = __webpack_require__(164);
+	var ViewportMetrics = __webpack_require__(134);
 	
-	var getVendorPrefixedEventName = __webpack_require__(158);
-	var isEventSupported = __webpack_require__(121);
+	var getVendorPrefixedEventName = __webpack_require__(165);
+	var isEventSupported = __webpack_require__(128);
 	
 	/**
 	 * Summary of `ReactBrowserEventEmitter` event handling:
@@ -12174,7 +12544,7 @@ webpackJsonp([0],[
 	module.exports = ReactBrowserEventEmitter;
 
 /***/ },
-/* 157 */
+/* 164 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -12189,7 +12559,7 @@ webpackJsonp([0],[
 	
 	'use strict';
 	
-	var EventPluginHub = __webpack_require__(93);
+	var EventPluginHub = __webpack_require__(99);
 	
 	function runEventQueueInBatch(events) {
 	  EventPluginHub.enqueueEvents(events);
@@ -12211,7 +12581,7 @@ webpackJsonp([0],[
 	module.exports = ReactEventEmitterMixin;
 
 /***/ },
-/* 158 */
+/* 165 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -12226,7 +12596,7 @@ webpackJsonp([0],[
 	
 	'use strict';
 	
-	var ExecutionEnvironment = __webpack_require__(99);
+	var ExecutionEnvironment = __webpack_require__(105);
 	
 	/**
 	 * Generate a mapping of standard vendor prefixes using the defined style property and event name.
@@ -12316,7 +12686,7 @@ webpackJsonp([0],[
 	module.exports = getVendorPrefixedEventName;
 
 /***/ },
-/* 159 */
+/* 166 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -12331,16 +12701,16 @@ webpackJsonp([0],[
 	
 	'use strict';
 	
-	var _prodInvariant = __webpack_require__(86),
-	    _assign = __webpack_require__(49);
+	var _prodInvariant = __webpack_require__(92),
+	    _assign = __webpack_require__(107);
 	
-	var DOMPropertyOperations = __webpack_require__(154);
-	var LinkedValueUtils = __webpack_require__(160);
-	var ReactDOMComponentTree = __webpack_require__(85);
-	var ReactUpdates = __webpack_require__(107);
+	var DOMPropertyOperations = __webpack_require__(161);
+	var LinkedValueUtils = __webpack_require__(167);
+	var ReactDOMComponentTree = __webpack_require__(91);
+	var ReactUpdates = __webpack_require__(114);
 	
-	var invariant = __webpack_require__(53);
-	var warning = __webpack_require__(56);
+	var invariant = __webpack_require__(54);
+	var warning = __webpack_require__(57);
 	
 	var didWarnValueLink = false;
 	var didWarnCheckedLink = false;
@@ -12433,12 +12803,9 @@ webpackJsonp([0],[
 	      initialChecked: props.checked != null ? props.checked : props.defaultChecked,
 	      initialValue: props.value != null ? props.value : defaultValue,
 	      listeners: null,
-	      onChange: _handleChange.bind(inst)
+	      onChange: _handleChange.bind(inst),
+	      controlled: isControlled(props)
 	    };
-	
-	    if (process.env.NODE_ENV !== 'production') {
-	      inst._wrapperState.controlled = isControlled(props);
-	    }
 	  },
 	
 	  updateWrapper: function (inst) {
@@ -12467,14 +12834,24 @@ webpackJsonp([0],[
 	    var node = ReactDOMComponentTree.getNodeFromInstance(inst);
 	    var value = LinkedValueUtils.getValue(props);
 	    if (value != null) {
+	      if (value === 0 && node.value === '') {
+	        node.value = '0';
+	        // Note: IE9 reports a number inputs as 'text', so check props instead.
+	      } else if (props.type === 'number') {
+	        // Simulate `input.valueAsNumber`. IE9 does not support it
+	        var valueAsNumber = parseFloat(node.value, 10) || 0;
 	
-	      // Cast `value` to a string to ensure the value is set correctly. While
-	      // browsers typically do this as necessary, jsdom doesn't.
-	      var newValue = '' + value;
-	
-	      // To avoid side effects (such as losing text selection), only set value if changed
-	      if (newValue !== node.value) {
-	        node.value = newValue;
+	        // eslint-disable-next-line
+	        if (value != valueAsNumber) {
+	          // Cast `value` to a string to ensure the value is set correctly. While
+	          // browsers typically do this as necessary, jsdom doesn't.
+	          node.value = '' + value;
+	        }
+	        // eslint-disable-next-line
+	      } else if (value != node.value) {
+	        // Cast `value` to a string to ensure the value is set correctly. While
+	        // browsers typically do this as necessary, jsdom doesn't.
+	        node.value = '' + value;
 	      }
 	    } else {
 	      if (props.value == null && props.defaultValue != null) {
@@ -12596,10 +12973,10 @@ webpackJsonp([0],[
 	}
 	
 	module.exports = ReactDOMInput;
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(48)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(49)))
 
 /***/ },
-/* 160 */
+/* 167 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -12614,13 +12991,16 @@ webpackJsonp([0],[
 	
 	'use strict';
 	
-	var _prodInvariant = __webpack_require__(86);
+	var _prodInvariant = __webpack_require__(92);
 	
-	var React = __webpack_require__(47);
-	var ReactPropTypesSecret = __webpack_require__(161);
+	var ReactPropTypesSecret = __webpack_require__(168);
+	var propTypesFactory = __webpack_require__(76);
 	
-	var invariant = __webpack_require__(53);
-	var warning = __webpack_require__(56);
+	var React = __webpack_require__(48);
+	var PropTypes = propTypesFactory(React.isValidElement);
+	
+	var invariant = __webpack_require__(54);
+	var warning = __webpack_require__(57);
 	
 	var hasReadOnlyValue = {
 	  'button': true,
@@ -12658,7 +13038,7 @@ webpackJsonp([0],[
 	    }
 	    return new Error('You provided a `checked` prop to a form field without an ' + '`onChange` handler. This will render a read-only field. If ' + 'the field should be mutable use `defaultChecked`. Otherwise, ' + 'set either `onChange` or `readOnly`.');
 	  },
-	  onChange: React.PropTypes.func
+	  onChange: PropTypes.func
 	};
 	
 	var loggedTypeFailures = {};
@@ -12736,10 +13116,10 @@ webpackJsonp([0],[
 	};
 	
 	module.exports = LinkedValueUtils;
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(48)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(49)))
 
 /***/ },
-/* 161 */
+/* 168 */
 /***/ function(module, exports) {
 
 	/**
@@ -12760,7 +13140,7 @@ webpackJsonp([0],[
 	module.exports = ReactPropTypesSecret;
 
 /***/ },
-/* 162 */
+/* 169 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -12775,13 +13155,13 @@ webpackJsonp([0],[
 	
 	'use strict';
 	
-	var _assign = __webpack_require__(49);
+	var _assign = __webpack_require__(107);
 	
-	var React = __webpack_require__(47);
-	var ReactDOMComponentTree = __webpack_require__(85);
-	var ReactDOMSelect = __webpack_require__(163);
+	var React = __webpack_require__(48);
+	var ReactDOMComponentTree = __webpack_require__(91);
+	var ReactDOMSelect = __webpack_require__(170);
 	
-	var warning = __webpack_require__(56);
+	var warning = __webpack_require__(57);
 	var didWarnInvalidOptionChildren = false;
 	
 	function flattenChildren(children) {
@@ -12885,10 +13265,10 @@ webpackJsonp([0],[
 	};
 	
 	module.exports = ReactDOMOption;
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(48)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(49)))
 
 /***/ },
-/* 163 */
+/* 170 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -12903,13 +13283,13 @@ webpackJsonp([0],[
 	
 	'use strict';
 	
-	var _assign = __webpack_require__(49);
+	var _assign = __webpack_require__(107);
 	
-	var LinkedValueUtils = __webpack_require__(160);
-	var ReactDOMComponentTree = __webpack_require__(85);
-	var ReactUpdates = __webpack_require__(107);
+	var LinkedValueUtils = __webpack_require__(167);
+	var ReactDOMComponentTree = __webpack_require__(91);
+	var ReactUpdates = __webpack_require__(114);
 	
-	var warning = __webpack_require__(56);
+	var warning = __webpack_require__(57);
 	
 	var didWarnValueLink = false;
 	var didWarnValueDefaultValue = false;
@@ -13090,10 +13470,10 @@ webpackJsonp([0],[
 	}
 	
 	module.exports = ReactDOMSelect;
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(48)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(49)))
 
 /***/ },
-/* 164 */
+/* 171 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -13108,15 +13488,15 @@ webpackJsonp([0],[
 	
 	'use strict';
 	
-	var _prodInvariant = __webpack_require__(86),
-	    _assign = __webpack_require__(49);
+	var _prodInvariant = __webpack_require__(92),
+	    _assign = __webpack_require__(107);
 	
-	var LinkedValueUtils = __webpack_require__(160);
-	var ReactDOMComponentTree = __webpack_require__(85);
-	var ReactUpdates = __webpack_require__(107);
+	var LinkedValueUtils = __webpack_require__(167);
+	var ReactDOMComponentTree = __webpack_require__(91);
+	var ReactUpdates = __webpack_require__(114);
 	
-	var invariant = __webpack_require__(53);
-	var warning = __webpack_require__(56);
+	var invariant = __webpack_require__(54);
+	var warning = __webpack_require__(57);
 	
 	var didWarnValueLink = false;
 	var didWarnValDefaultVal = false;
@@ -13255,10 +13635,10 @@ webpackJsonp([0],[
 	}
 	
 	module.exports = ReactDOMTextarea;
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(48)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(49)))
 
 /***/ },
-/* 165 */
+/* 172 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -13273,19 +13653,19 @@ webpackJsonp([0],[
 	
 	'use strict';
 	
-	var _prodInvariant = __webpack_require__(86);
+	var _prodInvariant = __webpack_require__(92);
 	
-	var ReactComponentEnvironment = __webpack_require__(166);
-	var ReactInstanceMap = __webpack_require__(167);
-	var ReactInstrumentation = __webpack_require__(113);
+	var ReactComponentEnvironment = __webpack_require__(173);
+	var ReactInstanceMap = __webpack_require__(174);
+	var ReactInstrumentation = __webpack_require__(120);
 	
-	var ReactCurrentOwner = __webpack_require__(55);
-	var ReactReconciler = __webpack_require__(110);
-	var ReactChildReconciler = __webpack_require__(168);
+	var ReactCurrentOwner = __webpack_require__(56);
+	var ReactReconciler = __webpack_require__(117);
+	var ReactChildReconciler = __webpack_require__(175);
 	
-	var emptyFunction = __webpack_require__(57);
-	var flattenChildren = __webpack_require__(183);
-	var invariant = __webpack_require__(53);
+	var emptyFunction = __webpack_require__(58);
+	var flattenChildren = __webpack_require__(190);
+	var invariant = __webpack_require__(54);
 	
 	/**
 	 * Make an update for markup to be rendered and inserted at a supplied index.
@@ -13710,10 +14090,10 @@ webpackJsonp([0],[
 	};
 	
 	module.exports = ReactMultiChild;
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(48)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(49)))
 
 /***/ },
-/* 166 */
+/* 173 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -13729,9 +14109,9 @@ webpackJsonp([0],[
 	
 	'use strict';
 	
-	var _prodInvariant = __webpack_require__(86);
+	var _prodInvariant = __webpack_require__(92);
 	
-	var invariant = __webpack_require__(53);
+	var invariant = __webpack_require__(54);
 	
 	var injected = false;
 	
@@ -13761,10 +14141,10 @@ webpackJsonp([0],[
 	};
 	
 	module.exports = ReactComponentEnvironment;
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(48)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(49)))
 
 /***/ },
-/* 167 */
+/* 174 */
 /***/ function(module, exports) {
 
 	/**
@@ -13816,7 +14196,7 @@ webpackJsonp([0],[
 	module.exports = ReactInstanceMap;
 
 /***/ },
-/* 168 */
+/* 175 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -13831,13 +14211,13 @@ webpackJsonp([0],[
 	
 	'use strict';
 	
-	var ReactReconciler = __webpack_require__(110);
+	var ReactReconciler = __webpack_require__(117);
 	
-	var instantiateReactComponent = __webpack_require__(169);
-	var KeyEscapeUtils = __webpack_require__(179);
-	var shouldUpdateReactComponent = __webpack_require__(175);
-	var traverseAllChildren = __webpack_require__(180);
-	var warning = __webpack_require__(56);
+	var instantiateReactComponent = __webpack_require__(176);
+	var KeyEscapeUtils = __webpack_require__(186);
+	var shouldUpdateReactComponent = __webpack_require__(182);
+	var traverseAllChildren = __webpack_require__(187);
+	var warning = __webpack_require__(57);
 	
 	var ReactComponentTreeHook;
 	
@@ -13847,7 +14227,7 @@ webpackJsonp([0],[
 	  // https://github.com/facebook/react/issues/7240
 	  // Remove the inline requires when we don't need them anymore:
 	  // https://github.com/facebook/react/pull/7178
-	  ReactComponentTreeHook = __webpack_require__(71);
+	  ReactComponentTreeHook = __webpack_require__(72);
 	}
 	
 	function instantiateChild(childInstances, child, name, selfDebugID) {
@@ -13855,7 +14235,7 @@ webpackJsonp([0],[
 	  var keyUnique = childInstances[name] === undefined;
 	  if (process.env.NODE_ENV !== 'production') {
 	    if (!ReactComponentTreeHook) {
-	      ReactComponentTreeHook = __webpack_require__(71);
+	      ReactComponentTreeHook = __webpack_require__(72);
 	    }
 	    if (!keyUnique) {
 	      process.env.NODE_ENV !== 'production' ? warning(false, 'flattenChildren(...): Encountered two children with the same key, ' + '`%s`. Child keys must be unique; when two children share a key, only ' + 'the first child will be used.%s', KeyEscapeUtils.unescape(name), ReactComponentTreeHook.getStackAddendumByID(selfDebugID)) : void 0;
@@ -13972,10 +14352,10 @@ webpackJsonp([0],[
 	};
 	
 	module.exports = ReactChildReconciler;
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(48)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(49)))
 
 /***/ },
-/* 169 */
+/* 176 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -13990,24 +14370,21 @@ webpackJsonp([0],[
 	
 	'use strict';
 	
-	var _prodInvariant = __webpack_require__(86),
-	    _assign = __webpack_require__(49);
+	var _prodInvariant = __webpack_require__(92),
+	    _assign = __webpack_require__(107);
 	
-	var ReactCompositeComponent = __webpack_require__(170);
-	var ReactEmptyComponent = __webpack_require__(176);
-	var ReactHostComponent = __webpack_require__(177);
+	var ReactCompositeComponent = __webpack_require__(177);
+	var ReactEmptyComponent = __webpack_require__(183);
+	var ReactHostComponent = __webpack_require__(184);
 	
-	var getNextDebugID = __webpack_require__(178);
-	var invariant = __webpack_require__(53);
-	var warning = __webpack_require__(56);
+	var getNextDebugID = __webpack_require__(185);
+	var invariant = __webpack_require__(54);
+	var warning = __webpack_require__(57);
 	
 	// To avoid a cyclic dependency, we create the final class in this module
 	var ReactCompositeComponentWrapper = function (element) {
 	  this.construct(element);
 	};
-	_assign(ReactCompositeComponentWrapper.prototype, ReactCompositeComponent, {
-	  _instantiateReactComponent: instantiateReactComponent
-	});
 	
 	function getDeclarationErrorAddendum(owner) {
 	  if (owner) {
@@ -14104,11 +14481,15 @@ webpackJsonp([0],[
 	  return instance;
 	}
 	
+	_assign(ReactCompositeComponentWrapper.prototype, ReactCompositeComponent, {
+	  _instantiateReactComponent: instantiateReactComponent
+	});
+	
 	module.exports = instantiateReactComponent;
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(48)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(49)))
 
 /***/ },
-/* 170 */
+/* 177 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -14123,27 +14504,27 @@ webpackJsonp([0],[
 	
 	'use strict';
 	
-	var _prodInvariant = __webpack_require__(86),
-	    _assign = __webpack_require__(49);
+	var _prodInvariant = __webpack_require__(92),
+	    _assign = __webpack_require__(107);
 	
-	var React = __webpack_require__(47);
-	var ReactComponentEnvironment = __webpack_require__(166);
-	var ReactCurrentOwner = __webpack_require__(55);
-	var ReactErrorUtils = __webpack_require__(96);
-	var ReactInstanceMap = __webpack_require__(167);
-	var ReactInstrumentation = __webpack_require__(113);
-	var ReactNodeTypes = __webpack_require__(171);
-	var ReactReconciler = __webpack_require__(110);
+	var React = __webpack_require__(48);
+	var ReactComponentEnvironment = __webpack_require__(173);
+	var ReactCurrentOwner = __webpack_require__(56);
+	var ReactErrorUtils = __webpack_require__(102);
+	var ReactInstanceMap = __webpack_require__(174);
+	var ReactInstrumentation = __webpack_require__(120);
+	var ReactNodeTypes = __webpack_require__(178);
+	var ReactReconciler = __webpack_require__(117);
 	
 	if (process.env.NODE_ENV !== 'production') {
-	  var checkReactTypeSpec = __webpack_require__(172);
+	  var checkReactTypeSpec = __webpack_require__(179);
 	}
 	
-	var emptyObject = __webpack_require__(65);
-	var invariant = __webpack_require__(53);
-	var shallowEqual = __webpack_require__(174);
-	var shouldUpdateReactComponent = __webpack_require__(175);
-	var warning = __webpack_require__(56);
+	var emptyObject = __webpack_require__(66);
+	var invariant = __webpack_require__(54);
+	var shallowEqual = __webpack_require__(181);
+	var shouldUpdateReactComponent = __webpack_require__(182);
+	var warning = __webpack_require__(57);
 	
 	var CompositeTypes = {
 	  ImpureClass: 0,
@@ -14627,7 +15008,7 @@ webpackJsonp([0],[
 	    if (childContext) {
 	      !(typeof Component.childContextTypes === 'object') ? process.env.NODE_ENV !== 'production' ? invariant(false, '%s.getChildContext(): childContextTypes must be defined in order to use getChildContext().', this.getName() || 'ReactCompositeComponent') : _prodInvariant('107', this.getName() || 'ReactCompositeComponent') : void 0;
 	      if (process.env.NODE_ENV !== 'production') {
-	        this._checkContextTypes(Component.childContextTypes, childContext, 'childContext');
+	        this._checkContextTypes(Component.childContextTypes, childContext, 'child context');
 	      }
 	      for (var name in childContext) {
 	        !(name in Component.childContextTypes) ? process.env.NODE_ENV !== 'production' ? invariant(false, '%s.getChildContext(): key "%s" is not defined in childContextTypes.', this.getName() || 'ReactCompositeComponent', name) : _prodInvariant('108', this.getName() || 'ReactCompositeComponent', name) : void 0;
@@ -15012,10 +15393,10 @@ webpackJsonp([0],[
 	};
 	
 	module.exports = ReactCompositeComponent;
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(48)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(49)))
 
 /***/ },
-/* 171 */
+/* 178 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -15031,11 +15412,11 @@ webpackJsonp([0],[
 	
 	'use strict';
 	
-	var _prodInvariant = __webpack_require__(86);
+	var _prodInvariant = __webpack_require__(92);
 	
-	var React = __webpack_require__(47);
+	var React = __webpack_require__(48);
 	
-	var invariant = __webpack_require__(53);
+	var invariant = __webpack_require__(54);
 	
 	var ReactNodeTypes = {
 	  HOST: 0,
@@ -15057,10 +15438,10 @@ webpackJsonp([0],[
 	};
 	
 	module.exports = ReactNodeTypes;
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(48)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(49)))
 
 /***/ },
-/* 172 */
+/* 179 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -15075,13 +15456,13 @@ webpackJsonp([0],[
 	
 	'use strict';
 	
-	var _prodInvariant = __webpack_require__(86);
+	var _prodInvariant = __webpack_require__(92);
 	
-	var ReactPropTypeLocationNames = __webpack_require__(173);
-	var ReactPropTypesSecret = __webpack_require__(161);
+	var ReactPropTypeLocationNames = __webpack_require__(180);
+	var ReactPropTypesSecret = __webpack_require__(168);
 	
-	var invariant = __webpack_require__(53);
-	var warning = __webpack_require__(56);
+	var invariant = __webpack_require__(54);
+	var warning = __webpack_require__(57);
 	
 	var ReactComponentTreeHook;
 	
@@ -15091,7 +15472,7 @@ webpackJsonp([0],[
 	  // https://github.com/facebook/react/issues/7240
 	  // Remove the inline requires when we don't need them anymore:
 	  // https://github.com/facebook/react/pull/7178
-	  ReactComponentTreeHook = __webpack_require__(71);
+	  ReactComponentTreeHook = __webpack_require__(72);
 	}
 	
 	var loggedTypeFailures = {};
@@ -15133,7 +15514,7 @@ webpackJsonp([0],[
 	
 	        if (process.env.NODE_ENV !== 'production') {
 	          if (!ReactComponentTreeHook) {
-	            ReactComponentTreeHook = __webpack_require__(71);
+	            ReactComponentTreeHook = __webpack_require__(72);
 	          }
 	          if (debugID !== null) {
 	            componentStackInfo = ReactComponentTreeHook.getStackAddendumByID(debugID);
@@ -15149,10 +15530,10 @@ webpackJsonp([0],[
 	}
 	
 	module.exports = checkReactTypeSpec;
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(48)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(49)))
 
 /***/ },
-/* 173 */
+/* 180 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -15179,10 +15560,10 @@ webpackJsonp([0],[
 	}
 	
 	module.exports = ReactPropTypeLocationNames;
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(48)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(49)))
 
 /***/ },
-/* 174 */
+/* 181 */
 /***/ function(module, exports) {
 
 	/**
@@ -15254,7 +15635,7 @@ webpackJsonp([0],[
 	module.exports = shallowEqual;
 
 /***/ },
-/* 175 */
+/* 182 */
 /***/ function(module, exports) {
 
 	/**
@@ -15300,7 +15681,7 @@ webpackJsonp([0],[
 	module.exports = shouldUpdateReactComponent;
 
 /***/ },
-/* 176 */
+/* 183 */
 /***/ function(module, exports) {
 
 	/**
@@ -15334,7 +15715,7 @@ webpackJsonp([0],[
 	module.exports = ReactEmptyComponent;
 
 /***/ },
-/* 177 */
+/* 184 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -15349,9 +15730,9 @@ webpackJsonp([0],[
 	
 	'use strict';
 	
-	var _prodInvariant = __webpack_require__(86);
+	var _prodInvariant = __webpack_require__(92);
 	
-	var invariant = __webpack_require__(53);
+	var invariant = __webpack_require__(54);
 	
 	var genericComponentClass = null;
 	var textComponentClass = null;
@@ -15404,10 +15785,10 @@ webpackJsonp([0],[
 	};
 	
 	module.exports = ReactHostComponent;
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(48)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(49)))
 
 /***/ },
-/* 178 */
+/* 185 */
 /***/ function(module, exports) {
 
 	/**
@@ -15432,7 +15813,7 @@ webpackJsonp([0],[
 	module.exports = getNextDebugID;
 
 /***/ },
-/* 179 */
+/* 186 */
 /***/ function(module, exports) {
 
 	/**
@@ -15495,7 +15876,7 @@ webpackJsonp([0],[
 	module.exports = KeyEscapeUtils;
 
 /***/ },
-/* 180 */
+/* 187 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -15510,15 +15891,15 @@ webpackJsonp([0],[
 	
 	'use strict';
 	
-	var _prodInvariant = __webpack_require__(86);
+	var _prodInvariant = __webpack_require__(92);
 	
-	var ReactCurrentOwner = __webpack_require__(55);
-	var REACT_ELEMENT_TYPE = __webpack_require__(181);
+	var ReactCurrentOwner = __webpack_require__(56);
+	var REACT_ELEMENT_TYPE = __webpack_require__(188);
 	
-	var getIteratorFn = __webpack_require__(182);
-	var invariant = __webpack_require__(53);
-	var KeyEscapeUtils = __webpack_require__(179);
-	var warning = __webpack_require__(56);
+	var getIteratorFn = __webpack_require__(189);
+	var invariant = __webpack_require__(54);
+	var KeyEscapeUtils = __webpack_require__(186);
+	var warning = __webpack_require__(57);
 	
 	var SEPARATOR = '.';
 	var SUBSEPARATOR = ':';
@@ -15673,10 +16054,10 @@ webpackJsonp([0],[
 	}
 	
 	module.exports = traverseAllChildren;
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(48)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(49)))
 
 /***/ },
-/* 181 */
+/* 188 */
 /***/ function(module, exports) {
 
 	/**
@@ -15700,7 +16081,7 @@ webpackJsonp([0],[
 	module.exports = REACT_ELEMENT_TYPE;
 
 /***/ },
-/* 182 */
+/* 189 */
 /***/ function(module, exports) {
 
 	/**
@@ -15745,7 +16126,7 @@ webpackJsonp([0],[
 	module.exports = getIteratorFn;
 
 /***/ },
-/* 183 */
+/* 190 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -15761,9 +16142,9 @@ webpackJsonp([0],[
 	
 	'use strict';
 	
-	var KeyEscapeUtils = __webpack_require__(179);
-	var traverseAllChildren = __webpack_require__(180);
-	var warning = __webpack_require__(56);
+	var KeyEscapeUtils = __webpack_require__(186);
+	var traverseAllChildren = __webpack_require__(187);
+	var warning = __webpack_require__(57);
 	
 	var ReactComponentTreeHook;
 	
@@ -15773,7 +16154,7 @@ webpackJsonp([0],[
 	  // https://github.com/facebook/react/issues/7240
 	  // Remove the inline requires when we don't need them anymore:
 	  // https://github.com/facebook/react/pull/7178
-	  ReactComponentTreeHook = __webpack_require__(71);
+	  ReactComponentTreeHook = __webpack_require__(72);
 	}
 	
 	/**
@@ -15789,7 +16170,7 @@ webpackJsonp([0],[
 	    var keyUnique = result[name] === undefined;
 	    if (process.env.NODE_ENV !== 'production') {
 	      if (!ReactComponentTreeHook) {
-	        ReactComponentTreeHook = __webpack_require__(71);
+	        ReactComponentTreeHook = __webpack_require__(72);
 	      }
 	      if (!keyUnique) {
 	        process.env.NODE_ENV !== 'production' ? warning(false, 'flattenChildren(...): Encountered two children with the same key, ' + '`%s`. Child keys must be unique; when two children share a key, only ' + 'the first child will be used.%s', KeyEscapeUtils.unescape(name), ReactComponentTreeHook.getStackAddendumByID(selfDebugID)) : void 0;
@@ -15823,10 +16204,10 @@ webpackJsonp([0],[
 	}
 	
 	module.exports = flattenChildren;
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(48)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(49)))
 
 /***/ },
-/* 184 */
+/* 191 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -15841,12 +16222,12 @@ webpackJsonp([0],[
 	
 	'use strict';
 	
-	var _assign = __webpack_require__(49);
+	var _assign = __webpack_require__(107);
 	
-	var PooledClass = __webpack_require__(101);
-	var Transaction = __webpack_require__(119);
-	var ReactInstrumentation = __webpack_require__(113);
-	var ReactServerUpdateQueue = __webpack_require__(185);
+	var PooledClass = __webpack_require__(108);
+	var Transaction = __webpack_require__(126);
+	var ReactInstrumentation = __webpack_require__(120);
+	var ReactServerUpdateQueue = __webpack_require__(192);
 	
 	/**
 	 * Executed within the scope of the `Transaction` instance. Consider these as
@@ -15918,10 +16299,10 @@ webpackJsonp([0],[
 	PooledClass.addPoolingTo(ReactServerRenderingTransaction);
 	
 	module.exports = ReactServerRenderingTransaction;
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(48)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(49)))
 
 /***/ },
-/* 185 */
+/* 192 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -15939,9 +16320,9 @@ webpackJsonp([0],[
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 	
-	var ReactUpdateQueue = __webpack_require__(186);
+	var ReactUpdateQueue = __webpack_require__(193);
 	
-	var warning = __webpack_require__(56);
+	var warning = __webpack_require__(57);
 	
 	function warnNoop(publicInstance, callerName) {
 	  if (process.env.NODE_ENV !== 'production') {
@@ -16062,10 +16443,10 @@ webpackJsonp([0],[
 	}();
 	
 	module.exports = ReactServerUpdateQueue;
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(48)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(49)))
 
 /***/ },
-/* 186 */
+/* 193 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -16080,15 +16461,15 @@ webpackJsonp([0],[
 	
 	'use strict';
 	
-	var _prodInvariant = __webpack_require__(86);
+	var _prodInvariant = __webpack_require__(92);
 	
-	var ReactCurrentOwner = __webpack_require__(55);
-	var ReactInstanceMap = __webpack_require__(167);
-	var ReactInstrumentation = __webpack_require__(113);
-	var ReactUpdates = __webpack_require__(107);
+	var ReactCurrentOwner = __webpack_require__(56);
+	var ReactInstanceMap = __webpack_require__(174);
+	var ReactInstrumentation = __webpack_require__(120);
+	var ReactUpdates = __webpack_require__(114);
 	
-	var invariant = __webpack_require__(53);
-	var warning = __webpack_require__(56);
+	var invariant = __webpack_require__(54);
+	var warning = __webpack_require__(57);
 	
 	function enqueueUpdate(internalInstance) {
 	  ReactUpdates.enqueueUpdate(internalInstance);
@@ -16238,7 +16619,7 @@ webpackJsonp([0],[
 	   * @param {object} completeState Next state.
 	   * @internal
 	   */
-	  enqueueReplaceState: function (publicInstance, completeState) {
+	  enqueueReplaceState: function (publicInstance, completeState, callback) {
 	    var internalInstance = getInternalInstanceReadyForUpdate(publicInstance, 'replaceState');
 	
 	    if (!internalInstance) {
@@ -16247,6 +16628,16 @@ webpackJsonp([0],[
 	
 	    internalInstance._pendingStateQueue = [completeState];
 	    internalInstance._pendingReplaceState = true;
+	
+	    // Future-proof 15.5
+	    if (callback !== undefined && callback !== null) {
+	      ReactUpdateQueue.validateCallback(callback, 'replaceState');
+	      if (internalInstance._pendingCallbacks) {
+	        internalInstance._pendingCallbacks.push(callback);
+	      } else {
+	        internalInstance._pendingCallbacks = [callback];
+	      }
+	    }
 	
 	    enqueueUpdate(internalInstance);
 	  },
@@ -16293,10 +16684,10 @@ webpackJsonp([0],[
 	};
 	
 	module.exports = ReactUpdateQueue;
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(48)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(49)))
 
 /***/ },
-/* 187 */
+/* 194 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -16311,10 +16702,10 @@ webpackJsonp([0],[
 	
 	'use strict';
 	
-	var _assign = __webpack_require__(49);
+	var _assign = __webpack_require__(107);
 	
-	var emptyFunction = __webpack_require__(57);
-	var warning = __webpack_require__(56);
+	var emptyFunction = __webpack_require__(58);
+	var warning = __webpack_require__(57);
 	
 	var validateDOMNesting = emptyFunction;
 	
@@ -16525,16 +16916,11 @@ webpackJsonp([0],[
 	      case 'section':
 	      case 'summary':
 	      case 'ul':
-	
 	      case 'pre':
 	      case 'listing':
-	
 	      case 'table':
-	
 	      case 'hr':
-	
 	      case 'xmp':
-	
 	      case 'h1':
 	      case 'h2':
 	      case 'h3':
@@ -16680,10 +17066,10 @@ webpackJsonp([0],[
 	}
 	
 	module.exports = validateDOMNesting;
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(48)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(49)))
 
 /***/ },
-/* 188 */
+/* 195 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -16698,10 +17084,10 @@ webpackJsonp([0],[
 	
 	'use strict';
 	
-	var _assign = __webpack_require__(49);
+	var _assign = __webpack_require__(107);
 	
-	var DOMLazyTree = __webpack_require__(132);
-	var ReactDOMComponentTree = __webpack_require__(85);
+	var DOMLazyTree = __webpack_require__(139);
+	var ReactDOMComponentTree = __webpack_require__(91);
 	
 	var ReactDOMEmptyComponent = function (instantiate) {
 	  // ReactCompositeComponent uses this:
@@ -16747,7 +17133,7 @@ webpackJsonp([0],[
 	module.exports = ReactDOMEmptyComponent;
 
 /***/ },
-/* 189 */
+/* 196 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -16762,9 +17148,9 @@ webpackJsonp([0],[
 	
 	'use strict';
 	
-	var _prodInvariant = __webpack_require__(86);
+	var _prodInvariant = __webpack_require__(92);
 	
-	var invariant = __webpack_require__(53);
+	var invariant = __webpack_require__(54);
 	
 	/**
 	 * Return the lowest common ancestor of A and B, or null if they are in
@@ -16885,10 +17271,10 @@ webpackJsonp([0],[
 	  traverseTwoPhase: traverseTwoPhase,
 	  traverseEnterLeave: traverseEnterLeave
 	};
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(48)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(49)))
 
 /***/ },
-/* 190 */
+/* 197 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -16903,16 +17289,16 @@ webpackJsonp([0],[
 	
 	'use strict';
 	
-	var _prodInvariant = __webpack_require__(86),
-	    _assign = __webpack_require__(49);
+	var _prodInvariant = __webpack_require__(92),
+	    _assign = __webpack_require__(107);
 	
-	var DOMChildrenOperations = __webpack_require__(131);
-	var DOMLazyTree = __webpack_require__(132);
-	var ReactDOMComponentTree = __webpack_require__(85);
+	var DOMChildrenOperations = __webpack_require__(138);
+	var DOMLazyTree = __webpack_require__(139);
+	var ReactDOMComponentTree = __webpack_require__(91);
 	
-	var escapeTextContentForBrowser = __webpack_require__(137);
-	var invariant = __webpack_require__(53);
-	var validateDOMNesting = __webpack_require__(187);
+	var escapeTextContentForBrowser = __webpack_require__(144);
+	var invariant = __webpack_require__(54);
+	var validateDOMNesting = __webpack_require__(194);
 	
 	/**
 	 * Text nodes violate a couple assumptions that React makes about components:
@@ -17054,10 +17440,10 @@ webpackJsonp([0],[
 	});
 	
 	module.exports = ReactDOMTextComponent;
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(48)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(49)))
 
 /***/ },
-/* 191 */
+/* 198 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -17072,12 +17458,12 @@ webpackJsonp([0],[
 	
 	'use strict';
 	
-	var _assign = __webpack_require__(49);
+	var _assign = __webpack_require__(107);
 	
-	var ReactUpdates = __webpack_require__(107);
-	var Transaction = __webpack_require__(119);
+	var ReactUpdates = __webpack_require__(114);
+	var Transaction = __webpack_require__(126);
 	
-	var emptyFunction = __webpack_require__(57);
+	var emptyFunction = __webpack_require__(58);
 	
 	var RESET_BATCHED_UPDATES = {
 	  initialize: emptyFunction,
@@ -17129,7 +17515,7 @@ webpackJsonp([0],[
 	module.exports = ReactDefaultBatchingStrategy;
 
 /***/ },
-/* 192 */
+/* 199 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -17144,16 +17530,16 @@ webpackJsonp([0],[
 	
 	'use strict';
 	
-	var _assign = __webpack_require__(49);
+	var _assign = __webpack_require__(107);
 	
-	var EventListener = __webpack_require__(193);
-	var ExecutionEnvironment = __webpack_require__(99);
-	var PooledClass = __webpack_require__(101);
-	var ReactDOMComponentTree = __webpack_require__(85);
-	var ReactUpdates = __webpack_require__(107);
+	var EventListener = __webpack_require__(200);
+	var ExecutionEnvironment = __webpack_require__(105);
+	var PooledClass = __webpack_require__(108);
+	var ReactDOMComponentTree = __webpack_require__(91);
+	var ReactUpdates = __webpack_require__(114);
 	
-	var getEventTarget = __webpack_require__(120);
-	var getUnboundedScrollPosition = __webpack_require__(194);
+	var getEventTarget = __webpack_require__(127);
+	var getUnboundedScrollPosition = __webpack_require__(201);
 	
 	/**
 	 * Find the deepest React component completely containing the root of the
@@ -17288,7 +17674,7 @@ webpackJsonp([0],[
 	module.exports = ReactEventListener;
 
 /***/ },
-/* 193 */
+/* 200 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {'use strict';
@@ -17311,7 +17697,7 @@ webpackJsonp([0],[
 	 * @typechecks
 	 */
 	
-	var emptyFunction = __webpack_require__(57);
+	var emptyFunction = __webpack_require__(58);
 	
 	/**
 	 * Upstream version of event listener. Does not take into account specific
@@ -17374,10 +17760,10 @@ webpackJsonp([0],[
 	};
 	
 	module.exports = EventListener;
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(48)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(49)))
 
 /***/ },
-/* 194 */
+/* 201 */
 /***/ function(module, exports) {
 
 	/**
@@ -17420,7 +17806,7 @@ webpackJsonp([0],[
 	module.exports = getUnboundedScrollPosition;
 
 /***/ },
-/* 195 */
+/* 202 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -17435,14 +17821,14 @@ webpackJsonp([0],[
 	
 	'use strict';
 	
-	var DOMProperty = __webpack_require__(87);
-	var EventPluginHub = __webpack_require__(93);
-	var EventPluginUtils = __webpack_require__(95);
-	var ReactComponentEnvironment = __webpack_require__(166);
-	var ReactEmptyComponent = __webpack_require__(176);
-	var ReactBrowserEventEmitter = __webpack_require__(156);
-	var ReactHostComponent = __webpack_require__(177);
-	var ReactUpdates = __webpack_require__(107);
+	var DOMProperty = __webpack_require__(93);
+	var EventPluginHub = __webpack_require__(99);
+	var EventPluginUtils = __webpack_require__(101);
+	var ReactComponentEnvironment = __webpack_require__(173);
+	var ReactEmptyComponent = __webpack_require__(183);
+	var ReactBrowserEventEmitter = __webpack_require__(163);
+	var ReactHostComponent = __webpack_require__(184);
+	var ReactUpdates = __webpack_require__(114);
 	
 	var ReactInjection = {
 	  Component: ReactComponentEnvironment.injection,
@@ -17458,7 +17844,7 @@ webpackJsonp([0],[
 	module.exports = ReactInjection;
 
 /***/ },
-/* 196 */
+/* 203 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -17473,15 +17859,15 @@ webpackJsonp([0],[
 	
 	'use strict';
 	
-	var _assign = __webpack_require__(49);
+	var _assign = __webpack_require__(107);
 	
-	var CallbackQueue = __webpack_require__(108);
-	var PooledClass = __webpack_require__(101);
-	var ReactBrowserEventEmitter = __webpack_require__(156);
-	var ReactInputSelection = __webpack_require__(197);
-	var ReactInstrumentation = __webpack_require__(113);
-	var Transaction = __webpack_require__(119);
-	var ReactUpdateQueue = __webpack_require__(186);
+	var CallbackQueue = __webpack_require__(115);
+	var PooledClass = __webpack_require__(108);
+	var ReactBrowserEventEmitter = __webpack_require__(163);
+	var ReactInputSelection = __webpack_require__(204);
+	var ReactInstrumentation = __webpack_require__(120);
+	var Transaction = __webpack_require__(126);
+	var ReactUpdateQueue = __webpack_require__(193);
 	
 	/**
 	 * Ensures that, when possible, the selection range (currently selected text
@@ -17638,10 +18024,10 @@ webpackJsonp([0],[
 	PooledClass.addPoolingTo(ReactReconcileTransaction);
 	
 	module.exports = ReactReconcileTransaction;
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(48)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(49)))
 
 /***/ },
-/* 197 */
+/* 204 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -17656,11 +18042,11 @@ webpackJsonp([0],[
 	
 	'use strict';
 	
-	var ReactDOMSelection = __webpack_require__(198);
+	var ReactDOMSelection = __webpack_require__(205);
 	
-	var containsNode = __webpack_require__(200);
-	var focusNode = __webpack_require__(145);
-	var getActiveElement = __webpack_require__(203);
+	var containsNode = __webpack_require__(207);
+	var focusNode = __webpack_require__(152);
+	var getActiveElement = __webpack_require__(210);
 	
 	function isInDocument(node) {
 	  return containsNode(document.documentElement, node);
@@ -17769,7 +18155,7 @@ webpackJsonp([0],[
 	module.exports = ReactInputSelection;
 
 /***/ },
-/* 198 */
+/* 205 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -17784,10 +18170,10 @@ webpackJsonp([0],[
 	
 	'use strict';
 	
-	var ExecutionEnvironment = __webpack_require__(99);
+	var ExecutionEnvironment = __webpack_require__(105);
 	
-	var getNodeForCharacterOffset = __webpack_require__(199);
-	var getTextContentAccessor = __webpack_require__(102);
+	var getNodeForCharacterOffset = __webpack_require__(206);
+	var getTextContentAccessor = __webpack_require__(109);
 	
 	/**
 	 * While `isCollapsed` is available on the Selection object and `collapsed`
@@ -17985,7 +18371,7 @@ webpackJsonp([0],[
 	module.exports = ReactDOMSelection;
 
 /***/ },
-/* 199 */
+/* 206 */
 /***/ function(module, exports) {
 
 	/**
@@ -18063,7 +18449,7 @@ webpackJsonp([0],[
 	module.exports = getNodeForCharacterOffset;
 
 /***/ },
-/* 200 */
+/* 207 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -18079,7 +18465,7 @@ webpackJsonp([0],[
 	 * 
 	 */
 	
-	var isTextNode = __webpack_require__(201);
+	var isTextNode = __webpack_require__(208);
 	
 	/*eslint-disable no-bitwise */
 	
@@ -18107,7 +18493,7 @@ webpackJsonp([0],[
 	module.exports = containsNode;
 
 /***/ },
-/* 201 */
+/* 208 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -18123,7 +18509,7 @@ webpackJsonp([0],[
 	 * @typechecks
 	 */
 	
-	var isNode = __webpack_require__(202);
+	var isNode = __webpack_require__(209);
 	
 	/**
 	 * @param {*} object The object to check.
@@ -18136,7 +18522,7 @@ webpackJsonp([0],[
 	module.exports = isTextNode;
 
 /***/ },
-/* 202 */
+/* 209 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -18165,7 +18551,7 @@ webpackJsonp([0],[
 	module.exports = isNode;
 
 /***/ },
-/* 203 */
+/* 210 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -18208,7 +18594,7 @@ webpackJsonp([0],[
 	module.exports = getActiveElement;
 
 /***/ },
-/* 204 */
+/* 211 */
 /***/ function(module, exports) {
 
 	/**
@@ -18514,7 +18900,7 @@ webpackJsonp([0],[
 	module.exports = SVGDOMPropertyConfig;
 
 /***/ },
-/* 205 */
+/* 212 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -18529,15 +18915,15 @@ webpackJsonp([0],[
 	
 	'use strict';
 	
-	var EventPropagators = __webpack_require__(92);
-	var ExecutionEnvironment = __webpack_require__(99);
-	var ReactDOMComponentTree = __webpack_require__(85);
-	var ReactInputSelection = __webpack_require__(197);
-	var SyntheticEvent = __webpack_require__(104);
+	var EventPropagators = __webpack_require__(98);
+	var ExecutionEnvironment = __webpack_require__(105);
+	var ReactDOMComponentTree = __webpack_require__(91);
+	var ReactInputSelection = __webpack_require__(204);
+	var SyntheticEvent = __webpack_require__(111);
 	
-	var getActiveElement = __webpack_require__(203);
-	var isTextInputElement = __webpack_require__(122);
-	var shallowEqual = __webpack_require__(174);
+	var getActiveElement = __webpack_require__(210);
+	var isTextInputElement = __webpack_require__(129);
+	var shallowEqual = __webpack_require__(181);
 	
 	var skipSelectionChangeEvent = ExecutionEnvironment.canUseDOM && 'documentMode' in document && document.documentMode <= 11;
 	
@@ -18709,7 +19095,7 @@ webpackJsonp([0],[
 	module.exports = SelectEventPlugin;
 
 /***/ },
-/* 206 */
+/* 213 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -18725,26 +19111,26 @@ webpackJsonp([0],[
 	
 	'use strict';
 	
-	var _prodInvariant = __webpack_require__(86);
+	var _prodInvariant = __webpack_require__(92);
 	
-	var EventListener = __webpack_require__(193);
-	var EventPropagators = __webpack_require__(92);
-	var ReactDOMComponentTree = __webpack_require__(85);
-	var SyntheticAnimationEvent = __webpack_require__(207);
-	var SyntheticClipboardEvent = __webpack_require__(208);
-	var SyntheticEvent = __webpack_require__(104);
-	var SyntheticFocusEvent = __webpack_require__(209);
-	var SyntheticKeyboardEvent = __webpack_require__(210);
-	var SyntheticMouseEvent = __webpack_require__(125);
-	var SyntheticDragEvent = __webpack_require__(213);
-	var SyntheticTouchEvent = __webpack_require__(214);
-	var SyntheticTransitionEvent = __webpack_require__(215);
-	var SyntheticUIEvent = __webpack_require__(126);
-	var SyntheticWheelEvent = __webpack_require__(216);
+	var EventListener = __webpack_require__(200);
+	var EventPropagators = __webpack_require__(98);
+	var ReactDOMComponentTree = __webpack_require__(91);
+	var SyntheticAnimationEvent = __webpack_require__(214);
+	var SyntheticClipboardEvent = __webpack_require__(215);
+	var SyntheticEvent = __webpack_require__(111);
+	var SyntheticFocusEvent = __webpack_require__(216);
+	var SyntheticKeyboardEvent = __webpack_require__(217);
+	var SyntheticMouseEvent = __webpack_require__(132);
+	var SyntheticDragEvent = __webpack_require__(220);
+	var SyntheticTouchEvent = __webpack_require__(221);
+	var SyntheticTransitionEvent = __webpack_require__(222);
+	var SyntheticUIEvent = __webpack_require__(133);
+	var SyntheticWheelEvent = __webpack_require__(223);
 	
-	var emptyFunction = __webpack_require__(57);
-	var getEventCharCode = __webpack_require__(211);
-	var invariant = __webpack_require__(53);
+	var emptyFunction = __webpack_require__(58);
+	var getEventCharCode = __webpack_require__(218);
+	var invariant = __webpack_require__(54);
 	
 	/**
 	 * Turns
@@ -18939,10 +19325,10 @@ webpackJsonp([0],[
 	};
 	
 	module.exports = SimpleEventPlugin;
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(48)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(49)))
 
 /***/ },
-/* 207 */
+/* 214 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -18957,7 +19343,7 @@ webpackJsonp([0],[
 	
 	'use strict';
 	
-	var SyntheticEvent = __webpack_require__(104);
+	var SyntheticEvent = __webpack_require__(111);
 	
 	/**
 	 * @interface Event
@@ -18985,7 +19371,7 @@ webpackJsonp([0],[
 	module.exports = SyntheticAnimationEvent;
 
 /***/ },
-/* 208 */
+/* 215 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -19000,7 +19386,7 @@ webpackJsonp([0],[
 	
 	'use strict';
 	
-	var SyntheticEvent = __webpack_require__(104);
+	var SyntheticEvent = __webpack_require__(111);
 	
 	/**
 	 * @interface Event
@@ -19027,7 +19413,7 @@ webpackJsonp([0],[
 	module.exports = SyntheticClipboardEvent;
 
 /***/ },
-/* 209 */
+/* 216 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -19042,7 +19428,7 @@ webpackJsonp([0],[
 	
 	'use strict';
 	
-	var SyntheticUIEvent = __webpack_require__(126);
+	var SyntheticUIEvent = __webpack_require__(133);
 	
 	/**
 	 * @interface FocusEvent
@@ -19067,7 +19453,7 @@ webpackJsonp([0],[
 	module.exports = SyntheticFocusEvent;
 
 /***/ },
-/* 210 */
+/* 217 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -19082,11 +19468,11 @@ webpackJsonp([0],[
 	
 	'use strict';
 	
-	var SyntheticUIEvent = __webpack_require__(126);
+	var SyntheticUIEvent = __webpack_require__(133);
 	
-	var getEventCharCode = __webpack_require__(211);
-	var getEventKey = __webpack_require__(212);
-	var getEventModifierState = __webpack_require__(128);
+	var getEventCharCode = __webpack_require__(218);
+	var getEventKey = __webpack_require__(219);
+	var getEventModifierState = __webpack_require__(135);
 	
 	/**
 	 * @interface KeyboardEvent
@@ -19155,7 +19541,7 @@ webpackJsonp([0],[
 	module.exports = SyntheticKeyboardEvent;
 
 /***/ },
-/* 211 */
+/* 218 */
 /***/ function(module, exports) {
 
 	/**
@@ -19209,7 +19595,7 @@ webpackJsonp([0],[
 	module.exports = getEventCharCode;
 
 /***/ },
-/* 212 */
+/* 219 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -19224,7 +19610,7 @@ webpackJsonp([0],[
 	
 	'use strict';
 	
-	var getEventCharCode = __webpack_require__(211);
+	var getEventCharCode = __webpack_require__(218);
 	
 	/**
 	 * Normalization of deprecated HTML5 `key` values
@@ -19315,7 +19701,7 @@ webpackJsonp([0],[
 	module.exports = getEventKey;
 
 /***/ },
-/* 213 */
+/* 220 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -19330,7 +19716,7 @@ webpackJsonp([0],[
 	
 	'use strict';
 	
-	var SyntheticMouseEvent = __webpack_require__(125);
+	var SyntheticMouseEvent = __webpack_require__(132);
 	
 	/**
 	 * @interface DragEvent
@@ -19355,7 +19741,7 @@ webpackJsonp([0],[
 	module.exports = SyntheticDragEvent;
 
 /***/ },
-/* 214 */
+/* 221 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -19370,9 +19756,9 @@ webpackJsonp([0],[
 	
 	'use strict';
 	
-	var SyntheticUIEvent = __webpack_require__(126);
+	var SyntheticUIEvent = __webpack_require__(133);
 	
-	var getEventModifierState = __webpack_require__(128);
+	var getEventModifierState = __webpack_require__(135);
 	
 	/**
 	 * @interface TouchEvent
@@ -19404,7 +19790,7 @@ webpackJsonp([0],[
 	module.exports = SyntheticTouchEvent;
 
 /***/ },
-/* 215 */
+/* 222 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -19419,7 +19805,7 @@ webpackJsonp([0],[
 	
 	'use strict';
 	
-	var SyntheticEvent = __webpack_require__(104);
+	var SyntheticEvent = __webpack_require__(111);
 	
 	/**
 	 * @interface Event
@@ -19447,7 +19833,7 @@ webpackJsonp([0],[
 	module.exports = SyntheticTransitionEvent;
 
 /***/ },
-/* 216 */
+/* 223 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -19462,7 +19848,7 @@ webpackJsonp([0],[
 	
 	'use strict';
 	
-	var SyntheticMouseEvent = __webpack_require__(125);
+	var SyntheticMouseEvent = __webpack_require__(132);
 	
 	/**
 	 * @interface WheelEvent
@@ -19505,7 +19891,7 @@ webpackJsonp([0],[
 	module.exports = SyntheticWheelEvent;
 
 /***/ },
-/* 217 */
+/* 224 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -19520,30 +19906,30 @@ webpackJsonp([0],[
 	
 	'use strict';
 	
-	var _prodInvariant = __webpack_require__(86);
+	var _prodInvariant = __webpack_require__(92);
 	
-	var DOMLazyTree = __webpack_require__(132);
-	var DOMProperty = __webpack_require__(87);
-	var React = __webpack_require__(47);
-	var ReactBrowserEventEmitter = __webpack_require__(156);
-	var ReactCurrentOwner = __webpack_require__(55);
-	var ReactDOMComponentTree = __webpack_require__(85);
-	var ReactDOMContainerInfo = __webpack_require__(218);
-	var ReactDOMFeatureFlags = __webpack_require__(219);
-	var ReactFeatureFlags = __webpack_require__(109);
-	var ReactInstanceMap = __webpack_require__(167);
-	var ReactInstrumentation = __webpack_require__(113);
-	var ReactMarkupChecksum = __webpack_require__(220);
-	var ReactReconciler = __webpack_require__(110);
-	var ReactUpdateQueue = __webpack_require__(186);
-	var ReactUpdates = __webpack_require__(107);
+	var DOMLazyTree = __webpack_require__(139);
+	var DOMProperty = __webpack_require__(93);
+	var React = __webpack_require__(48);
+	var ReactBrowserEventEmitter = __webpack_require__(163);
+	var ReactCurrentOwner = __webpack_require__(56);
+	var ReactDOMComponentTree = __webpack_require__(91);
+	var ReactDOMContainerInfo = __webpack_require__(225);
+	var ReactDOMFeatureFlags = __webpack_require__(226);
+	var ReactFeatureFlags = __webpack_require__(116);
+	var ReactInstanceMap = __webpack_require__(174);
+	var ReactInstrumentation = __webpack_require__(120);
+	var ReactMarkupChecksum = __webpack_require__(227);
+	var ReactReconciler = __webpack_require__(117);
+	var ReactUpdateQueue = __webpack_require__(193);
+	var ReactUpdates = __webpack_require__(114);
 	
-	var emptyObject = __webpack_require__(65);
-	var instantiateReactComponent = __webpack_require__(169);
-	var invariant = __webpack_require__(53);
-	var setInnerHTML = __webpack_require__(134);
-	var shouldUpdateReactComponent = __webpack_require__(175);
-	var warning = __webpack_require__(56);
+	var emptyObject = __webpack_require__(66);
+	var instantiateReactComponent = __webpack_require__(176);
+	var invariant = __webpack_require__(54);
+	var setInnerHTML = __webpack_require__(141);
+	var shouldUpdateReactComponent = __webpack_require__(182);
+	var warning = __webpack_require__(57);
 	
 	var ATTR_NAME = DOMProperty.ID_ATTRIBUTE_NAME;
 	var ROOT_ATTR_NAME = DOMProperty.ROOT_ATTRIBUTE_NAME;
@@ -20045,10 +20431,10 @@ webpackJsonp([0],[
 	};
 	
 	module.exports = ReactMount;
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(48)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(49)))
 
 /***/ },
-/* 218 */
+/* 225 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -20063,7 +20449,7 @@ webpackJsonp([0],[
 	
 	'use strict';
 	
-	var validateDOMNesting = __webpack_require__(187);
+	var validateDOMNesting = __webpack_require__(194);
 	
 	var DOC_NODE_TYPE = 9;
 	
@@ -20083,10 +20469,10 @@ webpackJsonp([0],[
 	}
 	
 	module.exports = ReactDOMContainerInfo;
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(48)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(49)))
 
 /***/ },
-/* 219 */
+/* 226 */
 /***/ function(module, exports) {
 
 	/**
@@ -20109,7 +20495,7 @@ webpackJsonp([0],[
 	module.exports = ReactDOMFeatureFlags;
 
 /***/ },
-/* 220 */
+/* 227 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -20124,7 +20510,7 @@ webpackJsonp([0],[
 	
 	'use strict';
 	
-	var adler32 = __webpack_require__(221);
+	var adler32 = __webpack_require__(228);
 	
 	var TAG_END = /\/?>/;
 	var COMMENT_START = /^<\!\-\-/;
@@ -20163,7 +20549,7 @@ webpackJsonp([0],[
 	module.exports = ReactMarkupChecksum;
 
 /***/ },
-/* 221 */
+/* 228 */
 /***/ function(module, exports) {
 
 	/**
@@ -20211,7 +20597,7 @@ webpackJsonp([0],[
 	module.exports = adler32;
 
 /***/ },
-/* 222 */
+/* 229 */
 /***/ function(module, exports) {
 
 	/**
@@ -20226,10 +20612,10 @@ webpackJsonp([0],[
 	
 	'use strict';
 	
-	module.exports = '15.4.2';
+	module.exports = '15.5.4';
 
 /***/ },
-/* 223 */
+/* 230 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -20244,15 +20630,15 @@ webpackJsonp([0],[
 	
 	'use strict';
 	
-	var _prodInvariant = __webpack_require__(86);
+	var _prodInvariant = __webpack_require__(92);
 	
-	var ReactCurrentOwner = __webpack_require__(55);
-	var ReactDOMComponentTree = __webpack_require__(85);
-	var ReactInstanceMap = __webpack_require__(167);
+	var ReactCurrentOwner = __webpack_require__(56);
+	var ReactDOMComponentTree = __webpack_require__(91);
+	var ReactInstanceMap = __webpack_require__(174);
 	
-	var getHostComponentFromComposite = __webpack_require__(224);
-	var invariant = __webpack_require__(53);
-	var warning = __webpack_require__(56);
+	var getHostComponentFromComposite = __webpack_require__(231);
+	var invariant = __webpack_require__(54);
+	var warning = __webpack_require__(57);
 	
 	/**
 	 * Returns the DOM node rendered by this element.
@@ -20291,10 +20677,10 @@ webpackJsonp([0],[
 	}
 	
 	module.exports = findDOMNode;
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(48)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(49)))
 
 /***/ },
-/* 224 */
+/* 231 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -20309,7 +20695,7 @@ webpackJsonp([0],[
 	
 	'use strict';
 	
-	var ReactNodeTypes = __webpack_require__(171);
+	var ReactNodeTypes = __webpack_require__(178);
 	
 	function getHostComponentFromComposite(inst) {
 	  var type;
@@ -20328,7 +20714,7 @@ webpackJsonp([0],[
 	module.exports = getHostComponentFromComposite;
 
 /***/ },
-/* 225 */
+/* 232 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -20343,12 +20729,12 @@ webpackJsonp([0],[
 	
 	'use strict';
 	
-	var ReactMount = __webpack_require__(217);
+	var ReactMount = __webpack_require__(224);
 	
 	module.exports = ReactMount.renderSubtreeIntoContainer;
 
 /***/ },
-/* 226 */
+/* 233 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -20363,11 +20749,11 @@ webpackJsonp([0],[
 	
 	'use strict';
 	
-	var DOMProperty = __webpack_require__(87);
-	var EventPluginRegistry = __webpack_require__(94);
-	var ReactComponentTreeHook = __webpack_require__(71);
+	var DOMProperty = __webpack_require__(93);
+	var EventPluginRegistry = __webpack_require__(100);
+	var ReactComponentTreeHook = __webpack_require__(72);
 	
-	var warning = __webpack_require__(56);
+	var warning = __webpack_require__(57);
 	
 	if (process.env.NODE_ENV !== 'production') {
 	  var reactProps = {
@@ -20462,10 +20848,10 @@ webpackJsonp([0],[
 	};
 	
 	module.exports = ReactDOMUnknownPropertyHook;
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(48)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(49)))
 
 /***/ },
-/* 227 */
+/* 234 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -20480,9 +20866,9 @@ webpackJsonp([0],[
 	
 	'use strict';
 	
-	var ReactComponentTreeHook = __webpack_require__(71);
+	var ReactComponentTreeHook = __webpack_require__(72);
 	
-	var warning = __webpack_require__(56);
+	var warning = __webpack_require__(57);
 	
 	var didWarnValueNull = false;
 	
@@ -20510,10 +20896,10 @@ webpackJsonp([0],[
 	};
 	
 	module.exports = ReactDOMNullInputValuePropHook;
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(48)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(49)))
 
 /***/ },
-/* 228 */
+/* 235 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -20528,10 +20914,10 @@ webpackJsonp([0],[
 	
 	'use strict';
 	
-	var DOMProperty = __webpack_require__(87);
-	var ReactComponentTreeHook = __webpack_require__(71);
+	var DOMProperty = __webpack_require__(93);
+	var ReactComponentTreeHook = __webpack_require__(72);
 	
-	var warning = __webpack_require__(56);
+	var warning = __webpack_require__(57);
 	
 	var warnedProperties = {};
 	var rARIA = new RegExp('^(aria)-[' + DOMProperty.ATTRIBUTE_NAME_CHAR + ']*$');
@@ -20608,18 +20994,18 @@ webpackJsonp([0],[
 	};
 	
 	module.exports = ReactDOMInvalidARIAHook;
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(48)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(49)))
 
 /***/ },
-/* 229 */
+/* 236 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(d3, $) {'use strict';
 	
-	__webpack_require__(230);
+	__webpack_require__(237);
 	
-	var crossfilter = __webpack_require__(232),
-	    dc = __webpack_require__(235),
+	var crossfilter = __webpack_require__(239),
+	    dc = __webpack_require__(242),
 	    datamonkey = __webpack_require__(39);
 	
 	function busted_render_summary(json) {
@@ -20925,752 +21311,18 @@ webpackJsonp([0],[
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(40), __webpack_require__(2)))
 
 /***/ },
-/* 230 */
+/* 237 */
 /***/ function(module, exports) {
 
 	// removed by extract-text-webpack-plugin
 
 /***/ },
-/* 231 */,
-/* 232 */,
-/* 233 */,
-/* 234 */,
-/* 235 */,
-/* 236 */
-/***/ function(module, exports) {
-
-	// removed by extract-text-webpack-plugin
-
-/***/ },
-/* 237 */,
-/* 238 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/* WEBPACK VAR INJECTION */(function(d3, _, $) {"use strict";
-	
-	var _tree = __webpack_require__(79);
-	
-	var _model_fits = __webpack_require__(239);
-	
-	var _tree_summary = __webpack_require__(78);
-	
-	var _prop_chart = __webpack_require__(82);
-	
-	__webpack_require__(80);
-	__webpack_require__(236);
-	
-	var React = __webpack_require__(46),
-	    ReactDOM = __webpack_require__(83);
-	
-	var datamonkey = __webpack_require__(39),
-	    busted = __webpack_require__(229);
-	
-	var BUSTED = React.createClass({
-	  displayName: "BUSTED",
-	
-	
-	  float_format: d3.format(".2f"),
-	  p_value_format: d3.format(".4f"),
-	  fit_format: d3.format(".2f"),
-	
-	  loadFromServer: function loadFromServer() {
-	
-	    var self = this;
-	
-	    d3.json(this.props.url, function (data) {
-	
-	      data["fits"]["Unconstrained model"]["branch-annotations"] = self.formatBranchAnnotations(data, "Unconstrained model");
-	      data["fits"]["Constrained model"]["branch-annotations"] = self.formatBranchAnnotations(data, "Constrained model");
-	
-	      // rename rate distributions
-	      data["fits"]["Unconstrained model"]["rate-distributions"] = data["fits"]["Unconstrained model"]["rate distributions"];
-	      data["fits"]["Constrained model"]["rate-distributions"] = data["fits"]["Constrained model"]["rate distributions"];
-	
-	      // set display order
-	      data["fits"]["Unconstrained model"]["display-order"] = 0;
-	      data["fits"]["Constrained model"]["display-order"] = 1;
-	
-	      var json = data,
-	          pmid = "25701167",
-	          pmid_text = "PubMed ID " + pmid,
-	          pmid_href = "http://www.ncbi.nlm.nih.gov/pubmed/" + pmid,
-	          p = json["test results"]["p"],
-	          test_result = p <= 0.05 ? "evidence" : "no evidence";
-	
-	      var fg_rate = json["fits"]["Unconstrained model"]["rate distributions"]["FG"];
-	      var mapped_omegas = { "omegas": _.map(fg_rate, function (d) {
-	          return _.object(["omega", "prop"], d);
-	        }) };
-	
-	      self.setState({
-	        p: p,
-	        test_result: test_result,
-	        json: json,
-	        omegas: mapped_omegas["omegas"],
-	        pmid_text: pmid_text,
-	        pmid_href: pmid_href
-	      });
-	    });
-	  },
-	
-	  getDefaultProps: function getDefaultProps() {
-	
-	    var edgeColorizer = function edgeColorizer(element, data) {
-	
-	      var is_foreground = data.target.annotations.is_foreground,
-	          color_fill = this.options()["color-fill"] ? "black" : "red";
-	
-	      element.style('stroke', is_foreground ? color_fill : 'gray').style('stroke-linejoin', 'round').style('stroke-linejoin', 'round').style('stroke-linecap', 'round');
-	    };
-	
-	    var tree_settings = {
-	      'omegaPlot': {},
-	      'tree-options': {
-	        /* value arrays have the following meaning
-	            [0] - the value of the attribute
-	            [1] - does the change in attribute value trigger tree re-layout?
-	        */
-	        'hyphy-tree-model': ["Unconstrained model", true],
-	        'hyphy-tree-highlight': ["RELAX.test", false],
-	        'hyphy-tree-branch-lengths': [true, true],
-	        'hyphy-tree-hide-legend': [true, false],
-	        'hyphy-tree-fill-color': [true, false]
-	      },
-	      'hyphy-tree-legend-type': 'discrete',
-	      'suppress-tree-render': false,
-	      'chart-append-html': true,
-	      'edgeColorizer': edgeColorizer
-	    };
-	
-	    var distro_settings = {
-	      dimensions: { width: 600, height: 400 },
-	      margins: { 'left': 50, 'right': 15, 'bottom': 35, 'top': 35 },
-	      legend: false,
-	      domain: [0.00001, 100],
-	      do_log_plot: true,
-	      k_p: null,
-	      plot: null,
-	      svg_id: "prop-chart"
-	    };
-	
-	    return {
-	      distro_settings: distro_settings,
-	      tree_settings: tree_settings,
-	      constrained_threshold: "Infinity",
-	      null_threshold: "-Infinity",
-	      model_name: "FG"
-	    };
-	  },
-	
-	  getInitialState: function getInitialState() {
-	    return {
-	      p: null,
-	      test_result: null,
-	      json: null,
-	      omegas: null,
-	      pmid_text: null,
-	      pmid_href: null
-	    };
-	  },
-	
-	  setEvents: function setEvents() {
-	
-	    var self = this;
-	
-	    $("#json_file").on("change", function (e) {
-	      var files = e.target.files; // FileList object
-	      if (files.length == 1) {
-	        var f = files[0];
-	        var reader = new FileReader();
-	        reader.onload = function (theFile) {
-	          return function (e) {
-	
-	            var data = JSON.parse(this.result);
-	            data["fits"]["Unconstrained model"]["branch-annotations"] = self.formatBranchAnnotations(data, "Unconstrained model");
-	            data["fits"]["Constrained model"]["branch-annotations"] = self.formatBranchAnnotations(data, "Constrained model");
-	
-	            // rename rate distributions
-	            data["fits"]["Unconstrained model"]["rate-distributions"] = data["fits"]["Unconstrained model"]["rate distributions"];
-	            data["fits"]["Constrained model"]["rate-distributions"] = data["fits"]["Constrained model"]["rate distributions"];
-	
-	            var json = data,
-	                pmid = "25701167",
-	                pmid_text = "PubMed ID " + pmid,
-	                pmid_href = "http://www.ncbi.nlm.nih.gov/pubmed/" + pmid,
-	                p = json["test results"]["p"],
-	                test_result = p <= 0.05 ? "evidence" : "no evidence";
-	
-	            var fg_rate = json["fits"]["Unconstrained model"]["rate distributions"]["FG"];
-	            var mapped_omegas = { "omegas": _.map(fg_rate, function (d) {
-	                return _.object(["omega", "prop"], d);
-	              }) };
-	
-	            self.setState({
-	              p: p,
-	              test_result: test_result,
-	              json: json,
-	              omegas: mapped_omegas["omegas"],
-	              pmid_text: pmid_text,
-	              pmid_href: pmid_href
-	            });
-	          };
-	        }(f);
-	        reader.readAsText(f);
-	      }
-	      $("#datamonkey-absrel-toggle-here").dropdown("toggle");
-	      e.preventDefault();
-	    });
-	  },
-	
-	  formatBranchAnnotations: function formatBranchAnnotations(json, key) {
-	
-	    // attach is_foreground to branch annotations
-	    var foreground = json["test set"].split(",");
-	
-	    var tree = d3.layout.phylotree(),
-	        nodes = tree(json["fits"][key]["tree string"]).get_nodes(),
-	        node_names = _.map(nodes, function (d) {
-	      return d.name;
-	    });
-	
-	    // Iterate over objects
-	    var branch_annotations = _.object(node_names, _.map(node_names, function (d) {
-	      return { is_foreground: _.indexOf(foreground, d) > -1 };
-	    }));
-	
-	    return branch_annotations;
-	  },
-	
-	  initialize: function initialize() {
-	
-	    var json = this.state.json;
-	
-	    if (!json) {
-	      return;
-	    }
-	
-	    busted.render_histogram("#chart-id", json);
-	
-	    // delete existing tree
-	    d3.select('#tree_container').select("svg").remove();
-	
-	    var fg_rate = json["fits"]["Unconstrained model"]["rate distributions"]["FG"],
-	        omegas = fg_rate.map(function (r) {
-	      return r[0];
-	    }),
-	        weights = fg_rate.map(function (r) {
-	      return r[1];
-	    });
-	
-	    var dsettings = {
-	      'log': true,
-	      'legend': false,
-	      'domain': [0.00001, 20],
-	      'dimensions': { 'width': 325, 'height': 300 }
-	    };
-	
-	    $("#export-dist-svg").on('click', function (e) {
-	      datamonkey.save_image("svg", "#primary-omega-dist");
-	    });
-	
-	    $("#export-dist-png").on('click', function (e) {
-	      datamonkey.save_image("png", "#primary-omega-dist");
-	    });
-	  },
-	
-	  componentWillMount: function componentWillMount() {
-	    this.loadFromServer();
-	    this.setEvents();
-	  },
-	
-	  render: function render() {
-	
-	    var self = this;
-	    self.initialize();
-	
-	    return React.createElement(
-	      "div",
-	      { className: "tab-content" },
-	      React.createElement(
-	        "div",
-	        { className: "tab-pane active", id: "summary_tab" },
-	        React.createElement(
-	          "div",
-	          { className: "row", styleName: "margin-top: 5px" },
-	          React.createElement(
-	            "div",
-	            { className: "col-md-12" },
-	            React.createElement(
-	              "ul",
-	              { className: "list-group" },
-	              React.createElement(
-	                "li",
-	                { className: "list-group-item list-group-item-info" },
-	                React.createElement(
-	                  "h3",
-	                  { className: "list-group-item-heading" },
-	                  React.createElement("i", { className: "fa fa-list", styleName: "margin-right: 10px" }),
-	                  React.createElement(
-	                    "span",
-	                    { id: "summary-method-name" },
-	                    "BUSTED"
-	                  ),
-	                  " summary"
-	                ),
-	                "There is ",
-	                React.createElement(
-	                  "strong",
-	                  null,
-	                  this.state.test_result
-	                ),
-	                " of episodic diversifying selection, with LRT p-value of ",
-	                this.state.p,
-	                ".",
-	                React.createElement(
-	                  "p",
-	                  null,
-	                  React.createElement(
-	                    "small",
-	                    null,
-	                    "Please cite ",
-	                    React.createElement(
-	                      "a",
-	                      { href: this.state.pmid_href, id: "summary-pmid" },
-	                      this.state.pmid_text
-	                    ),
-	                    " if you use this result in a publication, presentation, or other scientific work."
-	                  )
-	                )
-	              )
-	            )
-	          )
-	        ),
-	        React.createElement(
-	          "div",
-	          { className: "row" },
-	          React.createElement(
-	            "div",
-	            { id: "hyphy-model-fits", className: "col-lg-12" },
-	            React.createElement(_model_fits.ModelFits, { json: self.state.json })
-	          )
-	        ),
-	        React.createElement(
-	          "button",
-	          { id: "export-chart-svg", type: "button", className: "btn btn-default btn-sm pull-right btn-export" },
-	          React.createElement("span", { className: "glyphicon glyphicon-floppy-save" }),
-	          " Export Chart to SVG"
-	        ),
-	        React.createElement(
-	          "button",
-	          { id: "export-chart-png", type: "button", className: "btn btn-default btn-sm pull-right btn-export" },
-	          React.createElement("span", { className: "glyphicon glyphicon-floppy-save" }),
-	          " Export Chart to PNG"
-	        ),
-	        React.createElement(
-	          "div",
-	          { className: "row hyphy-busted-site-table" },
-	          React.createElement(
-	            "div",
-	            { id: "chart-id", className: "col-lg-8" },
-	            React.createElement(
-	              "strong",
-	              null,
-	              "Model Evidence Ratios Per Site"
-	            ),
-	            React.createElement("div", { className: "clearfix" })
-	          )
-	        ),
-	        React.createElement(
-	          "div",
-	          { className: "row site-table" },
-	          React.createElement(
-	            "div",
-	            { className: "col-lg-12" },
-	            React.createElement(
-	              "form",
-	              { id: "er-thresholds" },
-	              React.createElement(
-	                "div",
-	                { className: "form-group" },
-	                React.createElement(
-	                  "label",
-	                  { "for": "er-constrained-threshold" },
-	                  "Constrained Evidence Ratio Threshold:"
-	                ),
-	                React.createElement("input", { type: "text", className: "form-control", id: "er-constrained-threshold", defaultValue: this.props.constrained_threshold })
-	              ),
-	              React.createElement(
-	                "div",
-	                { className: "form-group" },
-	                React.createElement(
-	                  "label",
-	                  { "for": "er-optimized-null-threshold" },
-	                  "Optimized Null Evidence Ratio Threshold:"
-	                ),
-	                React.createElement("input", { type: "text", className: "form-control", id: "er-optimized-null-threshold", defaultValue: this.props.null_threshold })
-	              )
-	            ),
-	            React.createElement(
-	              "button",
-	              { id: "export-csv", type: "button", className: "btn btn-default btn-sm pull-right hyphy-busted-btn-export" },
-	              React.createElement("span", { className: "glyphicon glyphicon-floppy-save" }),
-	              " Export Table to CSV"
-	            ),
-	            React.createElement(
-	              "button",
-	              { id: "apply-thresholds", type: "button", className: "btn btn-default btn-sm pull-right hyphy-busted-btn-export" },
-	              "Apply Thresholds"
-	            ),
-	            React.createElement(
-	              "table",
-	              { id: "sites", className: "table sites dc-data-table" },
-	              React.createElement(
-	                "thead",
-	                null,
-	                React.createElement(
-	                  "tr",
-	                  { className: "header" },
-	                  React.createElement(
-	                    "th",
-	                    null,
-	                    "Site Index"
-	                  ),
-	                  React.createElement(
-	                    "th",
-	                    null,
-	                    "Unconstrained Likelihood"
-	                  ),
-	                  React.createElement(
-	                    "th",
-	                    null,
-	                    "Constrained Likelihood"
-	                  ),
-	                  React.createElement(
-	                    "th",
-	                    null,
-	                    "Optimized Null Likelihood"
-	                  ),
-	                  React.createElement(
-	                    "th",
-	                    null,
-	                    "Constrained Evidence Ratio"
-	                  ),
-	                  React.createElement(
-	                    "th",
-	                    null,
-	                    "Optimized Null Evidence Ratio"
-	                  )
-	                )
-	              )
-	            )
-	          )
-	        )
-	      ),
-	      React.createElement(
-	        "div",
-	        { className: "tab-pane", id: "tree_tab" },
-	        React.createElement(
-	          "div",
-	          { className: "col-md-12" },
-	          React.createElement(_tree.Tree, { json: self.state.json,
-	            settings: self.props.tree_settings })
-	        ),
-	        React.createElement(
-	          "div",
-	          { className: "col-md-12" },
-	          React.createElement(
-	            "div",
-	            { id: "primary-omega-dist", className: "panel-body" },
-	            React.createElement(_prop_chart.PropChart, { name: self.props.model_name, omegas: self.state.omegas,
-	              settings: self.props.distro_settings })
-	          )
-	        )
-	      )
-	    );
-	  }
-	});
-	
-	// Will need to make a call to this
-	// omega distributions
-	var render_busted = function render_busted(url, element) {
-	  ReactDOM.render(React.createElement(BUSTED, { url: url }), document.getElementById(element));
-	};
-	
-	module.exports = render_busted;
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(40), __webpack_require__(45), __webpack_require__(2)))
-
-/***/ },
-/* 239 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/* WEBPACK VAR INJECTION */(function(d3, _, $) {"use strict";
-	
-	var React = __webpack_require__(46);
-	
-	var ModelFits = React.createClass({
-	  displayName: "ModelFits",
-	
-	
-	  getInitialState: function getInitialState() {
-	    var table_row_data = this.getModelRows(this.props.json),
-	        table_columns = this.getModelColumns(table_row_data);
-	
-	    return {
-	      table_row_data: table_row_data,
-	      table_columns: table_columns
-	    };
-	  },
-	
-	  formatRuntime: function formatRuntime(seconds) {
-	    var duration_string = "",
-	        seconds = parseFloat(seconds);
-	
-	    var split_array = [Math.floor(seconds / (24 * 3600)), Math.floor(seconds / 3600) % 24, Math.floor(seconds / 60) % 60, seconds % 60],
-	        quals = ["d.", "hrs.", "min.", "sec."];
-	
-	    split_array.forEach(function (d, i) {
-	      if (d) {
-	        duration_string += " " + d + " " + quals[i];
-	      }
-	    });
-	
-	    return duration_string;
-	  },
-	
-	  getLogLikelihood: function getLogLikelihood(this_model) {
-	    return d3.format(".2f")(this_model['log-likelihood']);
-	  },
-	
-	  getAIC: function getAIC(this_model) {
-	    return d3.format(".2f")(this_model['AIC-c']);
-	  },
-	
-	  getNumParameters: function getNumParameters(this_model) {
-	    return this_model['parameters'];
-	  },
-	
-	  getBranchLengths: function getBranchLengths(this_model) {
-	
-	    if (this_model["tree length"]) {
-	      return d3.format(".2f")(this_model["tree length"]);
-	    } else {
-	      return d3.format(".2f")(d3.values(this_model["branch-lengths"]).reduce(function (p, c) {
-	        return p + c;
-	      }, 0));
-	    }
-	  },
-	
-	  getRuntime: function getRuntime(this_model) {
-	    //return this.formatRuntime(this_model['runtime']);
-	    return this.formatRuntime(this_model['runtime']);
-	  },
-	
-	  getDistributions: function getDistributions(m, this_model) {
-	
-	    var omega_distributions = {};
-	    omega_distributions[m] = {};
-	
-	    var omega_format = d3.format(".3r"),
-	        prop_format = d3.format(".2p"),
-	        p_value_format = d3.format(".4f");
-	
-	    var distributions = [];
-	
-	    for (var d in this_model["rate-distributions"]) {
-	
-	      var this_distro = this_model["rate-distributions"][d];
-	      var this_distro_entry = [d, "", "", ""];
-	
-	      omega_distributions[m][d] = this_distro.map(function (d) {
-	        return {
-	          'omega': d[0],
-	          'weight': d[1]
-	        };
-	      });
-	
-	      for (var k = 0; k < this_distro.length; k++) {
-	        this_distro_entry[k + 1] = omega_format(this_distro[k][0]) + " (" + prop_format(this_distro[k][1]) + ")";
-	      }
-	
-	      distributions.push(this_distro_entry);
-	    }
-	
-	    distributions.sort(function (a, b) {
-	      return a[0] < b[0] ? -1 : a[0] == b[0] ? 0 : 1;
-	    });
-	
-	    return distributions;
-	  },
-	
-	  getModelRows: function getModelRows(json) {
-	
-	    if (!json) {
-	      return [];
-	    }
-	
-	    var table_row_data = [];
-	    var omega_format = d3.format(".3r");
-	    var prop_format = d3.format(".2p");
-	    var p_value_format = d3.format(".4f");
-	
-	    for (var m in json["fits"]) {
-	
-	      var this_model_row = [],
-	          this_model = json["fits"][m];
-	
-	      this_model_row = [this_model['display-order'], "", m, this.getLogLikelihood(this_model), this.getNumParameters(this_model), this.getAIC(this_model), this.getRuntime(this_model), this.getBranchLengths(this_model)];
-	
-	      var distributions = this.getDistributions(m, this_model);
-	
-	      if (distributions.length) {
-	
-	        this_model_row = this_model_row.concat(distributions[0]);
-	        this_model_row[1] = distributions[0][0];
-	
-	        table_row_data.push(this_model_row);
-	
-	        for (var d = 1; d < distributions.length; d++) {
-	
-	          var this_distro_entry = this_model_row.map(function (d, i) {
-	            if (i) return "";
-	            return d;
-	          });
-	
-	          this_distro_entry[1] = distributions[d][0];
-	
-	          for (var k = this_distro_entry.length - 4; k < this_distro_entry.length; k++) {
-	            this_distro_entry[k] = distributions[d][k - this_distro_entry.length + 4];
-	          }
-	
-	          table_row_data.push(this_distro_entry);
-	        }
-	      } else {
-	        table_row_data.push(this_model_row);
-	      }
-	    }
-	
-	    table_row_data.sort(function (a, b) {
-	      if (a[0] == b[0]) {
-	        return a[1] < b[1] ? -1 : a[1] == b[1] ? 0 : 1;
-	      }
-	      return a[0] - b[0];
-	    });
-	
-	    table_row_data = table_row_data.map(function (r) {
-	      return r.slice(2);
-	    });
-	
-	    return table_row_data;
-	  },
-	
-	  getModelColumns: function getModelColumns(table_row_data) {
-	
-	    var model_header = '<th>Model</th>',
-	        logl_header = '<th><em> log </em>L</th>',
-	        num_params_header = '<th><abbr title="Number of estimated model parameters"># par.</abbr></th>',
-	        aic_header = '<th><abbr title="Small Sample AIC">AIC<sub>c</sub></abbr></th>',
-	        runtime_header = '<th>Time to fit</th>',
-	        branch_lengths_header = '<th><abbr title="Total tree length, expected substitutions/site">L<sub>tree</sub></abbr></th>',
-	        branch_set_header = '<th>Branch set</th>',
-	        omega_1_header = '<th>&omega;<sub>1</sub></th>',
-	        omega_2_header = '<th>&omega;<sub>2</sub></th>',
-	        omega_3_header = '<th>&omega;<sub>3</sub></th>';
-	
-	    // inspect table_row_data and return header
-	    var all_columns = [model_header, logl_header, num_params_header, aic_header, runtime_header, branch_lengths_header, branch_set_header, omega_1_header, omega_2_header, omega_3_header];
-	
-	    // validate each table row with its associated header
-	    if (table_row_data.length == 0) {
-	      return [];
-	    }
-	
-	    // trim columns to length of table_row_data
-	    var column_headers = _.take(all_columns, table_row_data[0].length);
-	
-	    // remove all columns that have 0, null, or undefined rows
-	    var items = d3.transpose(table_row_data);
-	
-	    return column_headers;
-	  },
-	
-	  componentDidUpdate: function componentDidUpdate() {
-	
-	    var model_columns = d3.select('#summary-model-header1');
-	    model_columns = model_columns.selectAll("th").data(this.state.table_columns);
-	    model_columns.enter().append("th");
-	    model_columns.html(function (d) {
-	      return d;
-	    });
-	
-	    var model_rows = d3.select('#summary-model-table').selectAll("tr").data(this.state.table_row_data);
-	    model_rows.enter().append('tr');
-	    model_rows.exit().remove();
-	    model_rows = model_rows.selectAll("td").data(function (d) {
-	      return d;
-	    });
-	    model_rows.enter().append("td");
-	    model_rows.html(function (d) {
-	      return d;
-	    });
-	  },
-	
-	  componentWillReceiveProps: function componentWillReceiveProps(nextProps) {
-	
-	    var table_row_data = this.getModelRows(nextProps.json),
-	        table_columns = this.getModelColumns(table_row_data);
-	
-	    this.setState({
-	      table_row_data: table_row_data,
-	      table_columns: table_columns
-	    });
-	  },
-	
-	  render: function render() {
-	
-	    return React.createElement(
-	      "ul",
-	      { className: "list-group" },
-	      React.createElement(
-	        "li",
-	        { className: "list-group-item" },
-	        React.createElement(
-	          "h4",
-	          { className: "list-group-item-heading" },
-	          React.createElement("i", { className: "fa fa-cubes", styleFormat: "margin-right: 10px" }),
-	          "Model fits"
-	        ),
-	        React.createElement(
-	          "table",
-	          { className: "table table-hover table-condensed list-group-item-text", styleFormat: "margin-top:0.5em;" },
-	          React.createElement("thead", { id: "summary-model-header1" }),
-	          React.createElement("tbody", { id: "summary-model-table" })
-	        )
-	      )
-	    );
-	  }
-	
-	});
-	
-	// Will need to make a call to this
-	// omega distributions
-	function render_model_fits(json, element) {
-	  React.render(React.createElement(ModelFits, { json: json }), $(element)[0]);
-	}
-	
-	// Will need to make a call to this
-	// omega distributions
-	function rerender_model_fits(json, element) {
-	  $(element).empty();
-	  render_model_fits(json, element);
-	}
-	
-	module.exports.ModelFits = ModelFits;
-	module.exports.render_model_fits = render_model_fits;
-	module.exports.rerender_model_fits = rerender_model_fits;
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(40), __webpack_require__(45), __webpack_require__(2)))
-
-/***/ },
-/* 240 */
+/* 238 */,
+/* 239 */,
+/* 240 */,
+/* 241 */,
+/* 242 */,
+/* 243 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(d3, $) {'use strict';
@@ -22039,12 +21691,12 @@ webpackJsonp([0],[
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(40), __webpack_require__(2)))
 
 /***/ },
-/* 241 */
+/* 244 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(d3) {'use strict';
 	
-	var React = __webpack_require__(46);
+	var React = __webpack_require__(47);
 	
 	var FadeSummary = React.createClass({
 	  displayName: 'FadeSummary',
@@ -22176,21 +21828,21 @@ webpackJsonp([0],[
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(40)))
 
 /***/ },
-/* 242 */
+/* 245 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(d3, $) {"use strict";
 	
-	var _model_fits = __webpack_require__(239);
+	var _model_fits = __webpack_require__(83);
 	
-	var _tree_summary = __webpack_require__(78);
+	var _tree_summary = __webpack_require__(84);
 	
-	var _tree = __webpack_require__(79);
+	var _tree = __webpack_require__(46);
 	
-	var _omega_plots = __webpack_require__(243);
+	var _omega_plots = __webpack_require__(246);
 	
-	var React = __webpack_require__(46),
-	    ReactDOM = __webpack_require__(83),
+	var React = __webpack_require__(47),
+	    ReactDOM = __webpack_require__(89),
 	    _ = __webpack_require__(45);
 	
 	var RELAX = React.createClass({
@@ -22540,12 +22192,12 @@ webpackJsonp([0],[
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(40), __webpack_require__(2)))
 
 /***/ },
-/* 243 */
+/* 246 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(d3) {'use strict';
 	
-	var React = __webpack_require__(46);
+	var React = __webpack_require__(47);
 	var datamonkey = __webpack_require__(39);
 	var _ = __webpack_require__(45);
 	
@@ -23010,25 +22662,25 @@ webpackJsonp([0],[
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(40)))
 
 /***/ },
-/* 244 */
+/* 247 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(d3, $) {'use strict';
 	
-	var _shared_summary = __webpack_require__(77);
+	var _shared_summary = __webpack_require__(85);
 	
-	var _slac_sites = __webpack_require__(245);
+	var _slac_sites = __webpack_require__(248);
 	
-	var _slac_summary = __webpack_require__(246);
+	var _slac_summary = __webpack_require__(249);
 	
-	var _slac_graphs = __webpack_require__(247);
+	var _slac_graphs = __webpack_require__(250);
 	
-	var React = __webpack_require__(46),
-	    ReactDOM = __webpack_require__(83),
+	var React = __webpack_require__(47),
+	    ReactDOM = __webpack_require__(89),
 	    _ = __webpack_require__(45);
 	
 	var datamonkey = __webpack_require__(39);
-	__webpack_require__(249);
+	__webpack_require__(252);
 	
 	var SLAC = React.createClass({
 	    displayName: 'SLAC',
@@ -23322,14 +22974,14 @@ webpackJsonp([0],[
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(40), __webpack_require__(2)))
 
 /***/ },
-/* 245 */
+/* 248 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(d3, _) {'use strict';
 	
-	var _shared_summary = __webpack_require__(77);
+	var _shared_summary = __webpack_require__(85);
 	
-	var React = __webpack_require__(46);
+	var React = __webpack_require__(47);
 	var datamonkey = __webpack_require__(39);
 	
 	var SLACSites = React.createClass({
@@ -23942,12 +23594,12 @@ webpackJsonp([0],[
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(40), __webpack_require__(45)))
 
 /***/ },
-/* 246 */
+/* 249 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(_, d3) {'use strict';
 	
-	var React = __webpack_require__(46);
+	var React = __webpack_require__(47);
 	var datamonkey = __webpack_require__(39);
 	
 	var SLACBanner = React.createClass({
@@ -24114,14 +23766,14 @@ webpackJsonp([0],[
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(45), __webpack_require__(40)))
 
 /***/ },
-/* 247 */
+/* 250 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(_) {'use strict';
 	
-	var _shared_graph = __webpack_require__(248);
+	var _shared_graph = __webpack_require__(251);
 	
-	var React = __webpack_require__(46);
+	var React = __webpack_require__(47);
 	var datamonkey = __webpack_require__(39);
 	
 	var SLACGraphs = React.createClass({
@@ -24353,14 +24005,14 @@ webpackJsonp([0],[
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(45)))
 
 /***/ },
-/* 248 */
+/* 251 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(d3, _) {'use strict';
 	
 	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 	
-	var React = __webpack_require__(46);
+	var React = __webpack_require__(47);
 	var datamonkey = __webpack_require__(39);
 	
 	var _dmGraphDefaultColorPallette = d3.scale.category10().domain(_.range(10));
@@ -24610,7 +24262,7 @@ webpackJsonp([0],[
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(40), __webpack_require__(45)))
 
 /***/ },
-/* 249 */
+/* 252 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function($, jQuery, d3, _) {"use strict";
@@ -24901,6 +24553,517 @@ webpackJsonp([0],[
 	datamonkey.helpers.filter = datamonkey_filter_list;
 	datamonkey.helpers.map = datamonkey_map_list;
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2), __webpack_require__(2), __webpack_require__(40), __webpack_require__(45)))
+
+/***/ },
+/* 253 */,
+/* 254 */,
+/* 255 */,
+/* 256 */,
+/* 257 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(d3, _) {'use strict';
+	
+	var React = __webpack_require__(47);
+	
+	var BSRELSummary = React.createClass({
+	  displayName: 'BSRELSummary',
+	
+	
+	  float_format: d3.format(".2f"),
+	
+	  countBranchesTested: function countBranchesTested(branches_tested) {
+	
+	    if (branches_tested) {
+	      return branches_tested.split(';').length;
+	    } else {
+	      return 0;
+	    }
+	  },
+	
+	  getBranchesWithEvidence: function getBranchesWithEvidence(test_results) {
+	
+	    var self = this;
+	    return _.filter(test_results, function (d) {
+	      return d.p <= 0.05;
+	    }).length;
+	  },
+	
+	  getTestBranches: function getTestBranches(test_results) {
+	
+	    var self = this;
+	    return _.filter(test_results, function (d) {
+	      return d.tested > 0;
+	    }).length;
+	  },
+	
+	  getTotalBranches: function getTotalBranches(test_results) {
+	
+	    var self = this;
+	    return _.keys(test_results).length;
+	  },
+	
+	  getInitialState: function getInitialState() {
+	
+	    var self = this;
+	
+	    return {
+	      branches_with_evidence: this.getBranchesWithEvidence(self.props.test_results),
+	      test_branches: this.getTestBranches(self.props.test_results),
+	      total_branches: this.getTotalBranches(self.props.test_results)
+	    };
+	  },
+	
+	  componentWillReceiveProps: function componentWillReceiveProps(nextProps) {
+	
+	    this.setState({
+	      branches_with_evidence: this.getBranchesWithEvidence(nextProps.test_results),
+	      test_branches: this.getTestBranches(nextProps.test_results),
+	      total_branches: this.getTotalBranches(nextProps.test_results)
+	    });
+	  },
+	
+	  render: function render() {
+	
+	    var self = this;
+	
+	    return React.createElement(
+	      'div',
+	      { className: 'row', id: 'summary-div' },
+	      React.createElement(
+	        'div',
+	        { className: 'col-md-8' },
+	        React.createElement(
+	          'h3',
+	          { className: 'list-group-item-heading' },
+	          React.createElement(
+	            'span',
+	            { id: 'summary-method-name' },
+	            'Adaptive branch site REL - Results summary'
+	          )
+	        ),
+	        React.createElement(
+	          'div',
+	          { className: 'main-result' },
+	          React.createElement(
+	            'p',
+	            { className: 'list-group-item-text label_and_input' },
+	            'Evidence',
+	            React.createElement(
+	              'sup',
+	              null,
+	              '\u2020'
+	            ),
+	            ' of episodic diversifying selection was found on',
+	            React.createElement(
+	              'span',
+	              { className: 'hyphy-highlight' },
+	              React.createElement(
+	                'strong',
+	                null,
+	                ' ',
+	                self.state.branches_with_evidence
+	              ),
+	              ' out of ',
+	              self.state.test_branches
+	            ),
+	            ' tested branches (',
+	            self.state.total_branches,
+	            ' total branches).'
+	          ),
+	          React.createElement('hr', null),
+	          React.createElement(
+	            'p',
+	            null,
+	            React.createElement(
+	              'small',
+	              null,
+	              React.createElement(
+	                'sup',
+	                null,
+	                '\u2020'
+	              ),
+	              React.createElement(
+	                'abbr',
+	                { title: 'Likelihood Ratio Test' },
+	                'LRT'
+	              ),
+	              ' p \u2264 0.05, corrected for multiple testing.'
+	            )
+	          )
+	        ),
+	        React.createElement(
+	          'p',
+	          null,
+	          React.createElement(
+	            'small',
+	            null,
+	            'Please cite ',
+	            React.createElement(
+	              'a',
+	              { href: 'http://www.ncbi.nlm.nih.gov/pubmed/25697341', id: 'summary-pmid', target: '_blank' },
+	              'PMID 25697341'
+	            ),
+	            ' if you use this result in a publication, presentation, or other scientific work.'
+	          )
+	        )
+	      ),
+	      React.createElement(
+	        'div',
+	        { id: 'data-circle-div', className: 'col-md-4' },
+	        React.createElement(
+	          'div',
+	          { id: 'data-circle' },
+	          React.createElement(
+	            'div',
+	            { id: 'data-text' },
+	            React.createElement(
+	              'h5',
+	              { className: 'hyphy-highlight' },
+	              'INPUT DATA'
+	            ),
+	            React.createElement('br', null),
+	            React.createElement(
+	              'p',
+	              null,
+	              React.createElement(
+	                'span',
+	                { className: 'hyphy-highlight' },
+	                '16'
+	              ),
+	              ' sequences'
+	            ),
+	            React.createElement('br', null),
+	            React.createElement(
+	              'p',
+	              null,
+	              React.createElement(
+	                'span',
+	                { className: 'hyphy-highlight' },
+	                '8'
+	              ),
+	              ' branches'
+	            ),
+	            React.createElement('br', null),
+	            React.createElement(
+	              'p',
+	              null,
+	              React.createElement(
+	                'span',
+	                { className: 'hyphy-highlight' },
+	                '16'
+	              ),
+	              ' variants'
+	            ),
+	            React.createElement('br', null)
+	          )
+	        )
+	      )
+	    );
+	  }
+	
+	});
+	
+	// Will need to make a call to this
+	// omega distributions
+	function render_absrel_summary(test_results, pmid, element) {
+	  React.render(React.createElement(BSRELSummary, { test_results: test_results, pmid: pmid }), document.getElementById(element));
+	}
+	
+	module.exports.BSRELSummary = BSRELSummary;
+	module.exports.render_absrel_summary = render_absrel_summary;
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(40), __webpack_require__(45)))
+
+/***/ },
+/* 258 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(_, d3, $) {'use strict';
+	
+	var _prop_chart = __webpack_require__(86);
+	
+	var React = __webpack_require__(47);
+	
+	
+	var BranchTable = React.createClass({
+	  displayName: 'BranchTable',
+	
+	
+	  getInitialState: function getInitialState() {
+	
+	    // add the following
+	    var table_row_data = this.getBranchRows(this.props.tree, this.props.test_results, this.props.annotations),
+	        table_columns = this.getBranchColumns(table_row_data),
+	        initial_model_name = _.take(_.keys(this.props.annotations)),
+	        initial_omegas = this.props.annotations ? this.props.annotations[initial_model_name]["omegas"] : null;
+	
+	    var distro_settings = {
+	      dimensions: { width: 600, height: 400 },
+	      margins: { 'left': 50, 'right': 15, 'bottom': 15, 'top': 35 },
+	      legend: false,
+	      domain: [0.00001, 10000],
+	      do_log_plot: true,
+	      k_p: null,
+	      plot: null,
+	      svg_id: "prop-chart"
+	    };
+	
+	    return {
+	      tree: this.props.tree,
+	      test_results: this.props.test_results,
+	      annotations: this.props.annotations,
+	      table_row_data: table_row_data,
+	      table_columns: table_columns,
+	      current_model_name: initial_model_name,
+	      current_omegas: initial_omegas,
+	      distro_settings: distro_settings
+	    };
+	  },
+	
+	  getBranchLength: function getBranchLength(m) {
+	
+	    if (!this.state.tree) {
+	      return '';
+	    }
+	
+	    return d3.format(".4f")(this.state.tree.get_node_by_name(m).attribute);
+	  },
+	
+	  getLRT: function getLRT(branch) {
+	    var formatted = d3.format(".4f")(branch["LRT"]);
+	    if (formatted == "NaN") {
+	      return branch["LRT"];
+	    } else {
+	      return formatted;
+	    }
+	  },
+	
+	  getPVal: function getPVal(branch) {
+	    return d3.format(".4f")(branch["p"]);
+	  },
+	
+	  getUncorrectedPVal: function getUncorrectedPVal(branch) {
+	    return d3.format(".4f")(branch["uncorrected p"]);
+	  },
+	
+	  getOmegaDistribution: function getOmegaDistribution(m, annotations) {
+	
+	    if (!annotations) {
+	      return '';
+	    }
+	
+	    var omega_string = "";
+	
+	    for (var i in annotations[m]["omegas"]) {
+	      var omega = parseFloat(annotations[m]["omegas"][i]["omega"]);
+	      var formatted_omega = "∞";
+	      if (omega < 1e+20) {
+	        formatted_omega = d3.format(".3r")(omega);
+	      }
+	      omega_string += "&omega;<sub>" + (parseInt(i) + 1) + "</sub> = " + formatted_omega + " (" + d3.format(".2p")(annotations[m]["omegas"][i]["prop"]) + ")<br/>";
+	    }
+	
+	    return omega_string;
+	  },
+	
+	  getBranchRows: function getBranchRows(tree, test_results, annotations) {
+	
+	    var self = this;
+	
+	    var table_row_data = [],
+	        omega_format = d3.format(".3r"),
+	        prop_format = d3.format(".2p");
+	
+	    for (var m in test_results) {
+	
+	      var branch_row = [];
+	      var branch = test_results[m];
+	
+	      branch_row = [m, this.getBranchLength(m), this.getLRT(branch), this.getPVal(branch), this.getUncorrectedPVal(branch), this.getOmegaDistribution(m, annotations)];
+	
+	      table_row_data.push(branch_row);
+	    }
+	
+	    table_row_data.sort(function (a, b) {
+	
+	      if (a[0] == b[0]) {
+	        return a[1] < b[1] ? -1 : a[1] == b[1] ? 0 : 1;
+	      }
+	
+	      return a[3] - b[3];
+	    });
+	
+	    return table_row_data;
+	  },
+	
+	  setEvents: function setEvents() {
+	
+	    var self = this;
+	
+	    if (self.state.annotations) {
+	      var branch_table = d3.select('#table-branch-table').selectAll("tr");
+	
+	      branch_table.on("click", function (d) {
+	        var label = d[0];
+	        self.setState({
+	          current_model_name: label,
+	          current_omegas: self.state.annotations[label]["omegas"]
+	        });
+	      });
+	    }
+	  },
+	
+	  createDistroChart: function createDistroChart() {
+	
+	    var self = this;
+	
+	    this.settings = {
+	      dimensions: { width: 600, height: 400 },
+	      margins: { 'left': 50, 'right': 15, 'bottom': 15, 'top': 15 },
+	      has_zeros: true,
+	      legend_id: null,
+	      do_log_plot: true,
+	      k_p: null,
+	      plot: null,
+	      svg_id: "prop-chart"
+	    };
+	  },
+	
+	  getBranchColumns: function getBranchColumns(table_row_data) {
+	
+	    if (table_row_data.length <= 0) {
+	      return null;
+	    }
+	
+	    var name_header = '<th>Name</th>',
+	        length_header = '<th><abbr title="Branch Length">B</abbr></th>',
+	        lrt_header = '<th><abbr title="Likelihood ratio test statistic">LRT</abbr></th>',
+	        pvalue_header = '<th>Test p-value</th>',
+	        uncorrected_pvalue_header = '<th>Uncorrected p-value</th>',
+	        omega_header = '<th>ω distribution over sites</th>';
+	
+	    // inspect table_row_data and return header
+	    var all_columns = [name_header, length_header, lrt_header, pvalue_header, uncorrected_pvalue_header, omega_header];
+	
+	    // validate each table row with its associated header
+	
+	    // trim columns to length of table_row_data
+	    var column_headers = _.take(all_columns, table_row_data[0].length);
+	
+	    // remove all columns that have 0, null, or undefined rows
+	    var items = d3.transpose(table_row_data);
+	
+	    return column_headers;
+	  },
+	
+	  componentWillReceiveProps: function componentWillReceiveProps(nextProps) {
+	
+	    var table_row_data = this.getBranchRows(nextProps.tree, nextProps.test_results, nextProps.annotations),
+	        table_columns = this.getBranchColumns(table_row_data),
+	        initial_model_name = _.take(_.keys(nextProps.annotations)),
+	        initial_omegas = nextProps.annotations ? nextProps.annotations[initial_model_name]["omegas"] : null;
+	
+	    var distro_settings = {
+	      dimensions: { width: 600, height: 400 },
+	      margins: { 'left': 50, 'right': 15, 'bottom': 15, 'top': 15 },
+	      legend: false,
+	      domain: [0.00001, 10000],
+	      do_log_plot: true,
+	      k_p: null,
+	      plot: null,
+	      svg_id: "prop-chart"
+	    };
+	
+	    if (nextProps.test_results && nextProps.annotations) {
+	      this.setState({
+	        tree: nextProps.tree,
+	        test_results: nextProps.test_results,
+	        annotations: nextProps.annotations,
+	        table_row_data: table_row_data,
+	        table_columns: table_columns,
+	        current_model_name: initial_model_name,
+	        current_omegas: initial_omegas,
+	        distro_settings: distro_settings
+	      });
+	    }
+	  },
+	
+	  componentDidUpdate: function componentDidUpdate() {
+	
+	    var branch_columns = d3.select('#table-branch-header');
+	    branch_columns = branch_columns.selectAll("th").data(this.state.table_columns);
+	    branch_columns.enter().append("th");
+	
+	    branch_columns.html(function (d) {
+	      return d;
+	    });
+	
+	    var branch_rows = d3.select('#table-branch-table').selectAll("tr").data(this.state.table_row_data);
+	
+	    branch_rows.enter().append('tr');
+	    branch_rows.exit().remove();
+	    branch_rows.style('font-weight', function (d) {
+	      return d[3] <= 0.05 ? 'bold' : 'normal';
+	    });
+	
+	    branch_rows = branch_rows.selectAll("td").data(function (d) {
+	      return d;
+	    });
+	
+	    branch_rows.enter().append("td");
+	    branch_rows.html(function (d) {
+	      return d;
+	    });
+	
+	    this.createDistroChart();
+	    this.setEvents();
+	  },
+	
+	  render: function render() {
+	
+	    var self = this;
+	
+	    return React.createElement(
+	      'div',
+	      { className: 'row' },
+	      React.createElement(
+	        'div',
+	        { id: 'hyphy-branch-table', className: 'col-md-12' },
+	        React.createElement(
+	          'table',
+	          { className: 'table table-hover table-condensed' },
+	          React.createElement('thead', { id: 'table-branch-header' }),
+	          React.createElement('tbody', { id: 'table-branch-table' })
+	        )
+	      ),
+	      React.createElement(
+	        'div',
+	        { id: 'primary-omega-tag', className: 'col-md-12' },
+	        React.createElement(_prop_chart.PropChart, { name: self.state.current_model_name, omegas: self.state.current_omegas,
+	          settings: self.state.distro_settings })
+	      )
+	    );
+	  }
+	
+	});
+	
+	// Will need to make a call to this
+	// omega distributions
+	function render_branch_table(tree, test_results, annotations, element) {
+	  React.render(React.createElement(BranchTable, { tree: tree, test_results: test_results, annotations: annotations }), $(element)[0]);
+	}
+	
+	// Will need to make a call to this
+	// omega distributions
+	function rerender_branch_table(tree, test_results, annotations, element) {
+	  $(element).empty();
+	  render_branch_table(tree, test_results, annotations, element);
+	}
+	
+	module.exports.BranchTable = BranchTable;
+	module.exports.render_branch_table = render_branch_table;
+	module.exports.rerender_branch_table = rerender_branch_table;
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(45), __webpack_require__(40), __webpack_require__(2)))
 
 /***/ }
 ]);

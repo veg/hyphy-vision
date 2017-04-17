@@ -67,11 +67,18 @@
       <div class="col-sm-1"></div>
       <nav class="col-sm-1 bs-docs-sidebar">
         <ul class="nav nav-pills nav-stacked fixed">
-          <li class="active"><a href="#summary-tab" id="#summary-tab">summary</a></li>
+          <li class="active"><a href="#summary-tab">summary</a></li>
           <li><a href="#tree-tab">tree</a></li>
           <li><a href="#table-tab">table</a></li>
         </ul>
       </nav>
+
+      <div class="hide-from-print col-sm-1 pull-right">
+        <a class="btn btn-primary" href="#" data-action="download" onclick="window.print();">
+					<i class="fa fa-file" aria-hidden="true"></i> Print Report
+				</a>
+      </div>
+
       <div class="col-sm-8">
         <div id='datamonkey-absrel-error' class="alert alert-danger alert-dismissible" role="alert" style="display:none;">
           <button type="button" class="close" id='datamonkey-absrel-error-hide'><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
@@ -79,6 +86,8 @@
         </div>
 
         <div id="absrel-content" class="tab-content"></div>
+        <div id="absrel-print-content" class="tab-content"></div>
+
       </div>
       <div class="col-sm-2"></div>
     </div>
@@ -91,7 +100,9 @@
 
   <script>
     $(document).ready(function() {
+
       absrel("test-data/test.json", "absrel-content");
+
       $('body').scrollspy({
         target: '.bs-docs-sidebar',
         offset: 50
