@@ -145,10 +145,10 @@ var PropChart = React.createClass({
         return self.omega_scale(d.omega);
       })
       .attr("y1", function(d) {
-        return self.proportion_scale(-0.05);
+        return self.proportion_scale(-0.05)+20;
       })
       .attr("y2", function(d) {
-        return self.proportion_scale(d.prop);
+        return self.proportion_scale(d.prop)+20;
       })
       .style("stroke", function(d) {
         var color = _.take(self.colores_g);
@@ -170,8 +170,8 @@ var PropChart = React.createClass({
       }).attr("x2", function(d) {
         return self.omega_scale(d);
       })
-      .attr("y1", 0)
-      .attr("y2", this.plot_height);
+      .attr("y1", 20)
+      .attr("y2", this.plot_height+20);
 
   },
   createXAxis: function() {
@@ -197,7 +197,7 @@ var PropChart = React.createClass({
       x_label = x_axis.select(".axis-label.x-label");
     }
 
-    x_axis.attr("transform", "translate(" + this.margins["left"] + "," + (this.plot_height + this.margins["top"]) + ")")
+    x_axis.attr("transform", "translate(" + this.margins["left"] + "," + (this.plot_height + this.margins["top"]+20) + ")")
       .call(xAxis);
     x_label = x_label.attr("transform", "translate(" + this.plot_width + "," + this.margins["bottom"] + ")")
       .selectAll("text").data(["\u03C9"]);
@@ -226,7 +226,7 @@ var PropChart = React.createClass({
     } else {
       y_label = y_axis.select(".hyphy-axis-label.y-label");
     }
-    y_axis.attr("transform", "translate(" + this.margins["left"] + "," + this.margins["top"] + ")")
+    y_axis.attr("transform", "translate(" + this.margins["left"] + "," + (this.margins["top"]+20) + ")")
       .call(yAxis);
     y_label = y_label.attr("transform", "translate(" + (-this.margins["left"]) + "," + 0 + ")")
       .selectAll("text").data(["Proportion of sites"]);
