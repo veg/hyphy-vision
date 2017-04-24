@@ -293,14 +293,14 @@ var BranchTable = React.createClass({
 
     return (
       <div className="row">
-        <div id="hyphy-branch-table" className="col-md-12">
+        <div id="hyphy-branch-table" className="col-md-7">
           <h4 className="dm-table-header">Detailed results</h4>
           <table className="table table-hover table-condensed dm-table">
             <thead id="table-branch-header"></thead>
             <tbody id="table-branch-table"></tbody>
           </table>
         </div>
-        <div id='primary-omega-tag' className="col-md-12">
+        <div id='primary-omega-tag' className="col-md-5">
           <h4 className="dm-table-header">&omega; distribution</h4>
           <PropChart name={ self.state.current_model_name } omegas={ self.state.current_omegas } settings={ self.state.distro_settings } />
         </div>

@@ -49,8 +49,13 @@ var PropChart = React.createClass({
 
     // clear svg
     d3.select("#prop-chart").html("");
-
     this.data_to_plot = this.state.omegas;
+    if(this.state.omegas){
+      this.data_to_plot.forEach(function(data){
+        if(data.omega < 1e-5) data.omega = 1e-5;
+        if(data.omega > 1e4) data.omega = 1e4;
+      });
+    }
 
     // Set props from settings
     this.svg_id = this.props.settings.svg_id;
@@ -74,9 +79,7 @@ var PropChart = React.createClass({
 
     var domain = this.state.settings["domain"];
 
-    this.omega_scale = (this.do_log_plot ?
-        (this.has_zeros ?
-          d3.scale.pow().exponent(0.2) : d3.scale.log()) : d3.scale.linear())
+    this.omega_scale = (this.do_log_plot ? d3.scale.log() : d3.scale.linear())
       .range([0, this.plot_width]).domain(domain).nice();
 
     this.proportion_scale = d3.scale.linear().range([this.plot_height, 0]).domain([-0.05, 1]).clamp(true);
