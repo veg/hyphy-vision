@@ -9279,10 +9279,6 @@ table.dm-table > thead > th {
     align-items: center; /* align vertical */
 }
 
-#data-circle-div {
-    padding: 5px 5px 5px 5px;
-}
-
 #data-text {
     text-align: center;
 }

@@ -31,21 +31,14 @@ var BSREL = React.createClass({
       data["fits"]["MG94"]["annotation-tag"] = "ω";
       data["fits"]["Full model"]["annotation-tag"] = "ω";
 
-
-      var annotations = data["fits"]["Full model"]["branch-annotations"],
-          json = data,
-          pmid = data["PMID"],
-		      fits = data["fits"],
-		      full_model = fits["Full model"],
-          test_results = data["test results"];
-
       self.setState({
-        annotations : annotations,
-        json : json,
-        pmid : pmid,
-        fits : fits,
-        full_model : full_model,
-        test_results : test_results
+        annotations : data["fits"]["Full model"]["branch-annotations"],
+        json : data,
+        pmid : data["PMID"],
+        fits : data["fits"],
+        full_model : data["fits"]["Full model"],
+        test_results : data["test results"],
+        input_data : data["input_data"]
       });
 
     });
@@ -207,14 +200,15 @@ var BSREL = React.createClass({
 
 
     return {
-              annotations : null,
-              json : null,
-              pmid : null,
-			  model_fits : {},
-              settings : tree_settings,
-              test_results : null,
-              tree : null,
-           };
+      annotations : null,
+      json : null,
+      pmid : null,
+      model_fits : {},
+      settings : tree_settings,
+      test_results : null,
+      input_data : null,
+      tree : null,
+    };
 
   },
 
@@ -319,7 +313,8 @@ var BSREL = React.createClass({
         <div id="results">
             <div id="summary-tab">
                 <BSRELSummary test_results={self.state.test_results}
-                              pmid={self.state.pmid} />
+                              pmid={self.state.pmid}
+                              input_data={self.state.input_data}/>
                 <div className="row">
                     <div id="hyphy-tree-summary" className="col-md-12">
                         <TreeSummary model={self.state.full_model} test_results={self.state.test_results} />
