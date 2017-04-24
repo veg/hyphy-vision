@@ -24603,56 +24603,52 @@ webpackJsonp([0],[
 	  render: function render() {
 	    return React.createElement(
 	      'div',
-	      { id: 'data-circle' },
+	      { id: 'input-info' },
 	      React.createElement(
-	        'div',
-	        { id: 'data-text' },
+	        'h5',
+	        { className: 'hyphy-highlight' },
+	        'INPUT DATA'
+	      ),
+	      React.createElement('br', null),
+	      React.createElement(
+	        'p',
+	        null,
+	        this.state.input_data.filename
+	      ),
+	      React.createElement('br', null),
+	      React.createElement(
+	        'p',
+	        null,
 	        React.createElement(
-	          'h5',
+	          'span',
 	          { className: 'hyphy-highlight' },
-	          'INPUT DATA'
+	          this.state.input_data.sequences
 	        ),
-	        React.createElement('br', null),
+	        ' sequences'
+	      ),
+	      React.createElement('br', null),
+	      React.createElement(
+	        'p',
+	        null,
 	        React.createElement(
-	          'p',
-	          null,
-	          this.state.input_data.filename
+	          'span',
+	          { className: 'hyphy-highlight' },
+	          this.state.input_data.branches
 	        ),
-	        React.createElement('br', null),
+	        ' branches'
+	      ),
+	      React.createElement('br', null),
+	      React.createElement(
+	        'p',
+	        null,
 	        React.createElement(
-	          'p',
-	          null,
-	          React.createElement(
-	            'span',
-	            { className: 'hyphy-highlight' },
-	            this.state.input_data.sequences
-	          ),
-	          ' sequences'
+	          'span',
+	          { className: 'hyphy-highlight' },
+	          this.state.input_data.variants
 	        ),
-	        React.createElement('br', null),
-	        React.createElement(
-	          'p',
-	          null,
-	          React.createElement(
-	            'span',
-	            { className: 'hyphy-highlight' },
-	            this.state.input_data.branches
-	          ),
-	          ' branches'
-	        ),
-	        React.createElement('br', null),
-	        React.createElement(
-	          'p',
-	          null,
-	          React.createElement(
-	            'span',
-	            { className: 'hyphy-highlight' },
-	            this.state.input_data.variants
-	          ),
-	          ' variants'
-	        ),
-	        React.createElement('br', null)
-	      )
+	        ' variants'
+	      ),
+	      React.createElement('br', null)
 	    );
 	  }
 	});

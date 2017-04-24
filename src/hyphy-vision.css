@@ -173,20 +173,23 @@ table.dm-table > thead > th {
     color: #00a99d;
 }
 
-#data-circle {
-    height: 175px;
-    width: 175px;
-    margin: auto;
-    background-image: url("/images/data-circle.svg");
-    background-size: cover;
-    line-height: .3;
-    display: flex;
-    justify-content: center; /* align horizontal */
-    align-items: center; /* align vertical */
+#input-info {
+    line-height: .5;
+    text-align: center;
+    border: 5px solid;
+    border-image: linear-gradient(#03AA9D, #7EC6B3) 10;
+    padding: 10px;
 }
 
-#data-text {
-    text-align: center;
+div#input-info span {
+    font-family: "Montserrat";
+    font-weight: 700;
+}
+
+div#input-info p {
+    font-family: "Montserrat";
+    font-weight: 600;
+    font-size: 14px;
 }
 
 .main-result{
@@ -200,7 +203,8 @@ table.dm-table > thead > th {
 
 div.main-result p {
   font-family: "Noto Sans";
-  color: #222;
+  color: #545454;
+  font-size: 15px;
 }
 
 div.main-result hr {
