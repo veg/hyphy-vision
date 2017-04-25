@@ -20351,7 +20351,7 @@ webpackJsonp([0],[
 	      { className: 'row' },
 	      React.createElement(
 	        'div',
-	        { id: 'hyphy-branch-table', className: 'col-md-7' },
+	        { id: 'hyphy-branch-table', className: 'col-md-6' },
 	        React.createElement(
 	          'h4',
 	          { className: 'dm-table-header' },
@@ -20366,7 +20366,7 @@ webpackJsonp([0],[
 	      ),
 	      React.createElement(
 	        'div',
-	        { id: 'primary-omega-tag', className: 'col-md-5' },
+	        { id: 'primary-omega-tag', className: 'col-md-6' },
 	        React.createElement(
 	          'h4',
 	          { className: 'dm-table-header' },
@@ -20490,7 +20490,7 @@ webpackJsonp([0],[
 	
 	    // compute margins -- circle AREA is proportional to the relative weight
 	    // maximum diameter is (height - text margin)
-	    this.svg = d3.select("#" + this.svg_id).attr("width", dimensions.width + margins['left'] + margins['right']).attr("height", dimensions.height + margins['top'] + margins['bottom']);
+	    this.svg = d3.select("#" + this.svg_id).attr("width", "100%").attr("height", dimensions.height + margins['top'] + margins['bottom']);
 	
 	    this.plot = this.svg.selectAll(".container");
 	

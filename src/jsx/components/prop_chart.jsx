@@ -87,7 +87,7 @@ var PropChart = React.createClass({
     // compute margins -- circle AREA is proportional to the relative weight
     // maximum diameter is (height - text margin)
     this.svg = d3.select("#" + this.svg_id)
-      .attr("width", dimensions.width + margins['left'] + margins['right'])
+      .attr("width", "100%")
       .attr("height", dimensions.height + margins['top'] + margins['bottom']);
 
     this.plot = this.svg.selectAll(".container");
