@@ -21,8 +21,7 @@ var InputInfo = React.createClass({
         <h5 className="hyphy-highlight">INPUT DATA</h5><br/>
         <p>{this.state.input_data.filename}</p><br/>
         <p><span className="hyphy-highlight">{this.state.input_data.sequences}</span> sequences</p><br/>
-        <p><span className="hyphy-highlight">{this.state.input_data.branches}</span> branches</p><br/>
-        <p><span className="hyphy-highlight">{this.state.input_data.variants}</span> variants</p><br/>
+        <p><span className="hyphy-highlight">{this.state.input_data.sites}</span> sites</p><br/>
       </div>
     )
   }

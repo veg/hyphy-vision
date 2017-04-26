@@ -161,7 +161,6 @@
     "input_data": {
       "filename": "mammalian_cd2.fasta",
       "sequences": 16,
-      "branches": 8,
-      "variants": 16
+      "sites": 187
     }
 }

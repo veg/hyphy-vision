@@ -238,15 +238,19 @@ var BSREL = React.createClass({
                       json = data,
                       pmid = data["PMID"],
                       full_model = json["fits"]["Full model"],
-                      test_results = data["test results"];
+                      test_results = data["test results"],
+                      input_data = data["input_data"],
+                      fits = data["fits"];
 
                   self.setState({
-                                  annotations : annotations,
-                                  json : json,
-                                  pmid : pmid,
-                                  full_model : full_model,
-                                  test_results : test_results
-                                });
+                    annotations : annotations,
+                    json : json,
+                    pmid : pmid,
+                    full_model : full_model,
+                    test_results : test_results,
+                    input_data : input_data,
+                    fits : fits
+                  });
 
                 };
             })(f);
