@@ -20572,11 +20572,14 @@ webpackJsonp([0],[
 	    }
 	
 	    x_axis.attr("transform", "translate(" + this.margins["left"] + "," + (this.plot_height + this.margins["top"] + 20) + ")").call(xAxis);
-	    x_label = x_label.attr("transform", "translate(" + this.plot_width + "," + this.margins["bottom"] + ")").selectAll("text").data(['\u03C9']);
+	    x_label = x_label.attr("transform", "translate(" + this.plot_width + "," + (this.margins["bottom"] - 30) + ")").selectAll("text").data(['\u03C9']);
 	    x_label.enter().append("text");
 	    x_label.text(function (d) {
 	      return d;
-	    }).style("text-anchor", "end").attr("dy", "0.0em");
+	    }).style({
+	      "text-anchor": "end",
+	      "font-size": 18
+	    }).attr("dy", "0.0em");
 	  },
 	  createYAxis: function createYAxis() {
 	
@@ -20597,7 +20600,10 @@ webpackJsonp([0],[
 	    y_label.enter().append("text");
 	    y_label.text(function (d) {
 	      return d;
-	    }).style("text-anchor", "start").attr("dy", "-1em");
+	    }).style({
+	      "text-anchor": "start",
+	      "font-size": 18
+	    }).attr("dy", "-1em");
 	  },
 	
 	  componentDidMount: function componentDidMount() {

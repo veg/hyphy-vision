@@ -202,13 +202,16 @@ var PropChart = React.createClass({
 
     x_axis.attr("transform", "translate(" + this.margins["left"] + "," + (this.plot_height + this.margins["top"]+20) + ")")
       .call(xAxis);
-    x_label = x_label.attr("transform", "translate(" + this.plot_width + "," + this.margins["bottom"] + ")")
+    x_label = x_label.attr("transform", "translate(" + this.plot_width + "," + (this.margins["bottom"]-30) + ")")
       .selectAll("text").data(["\u03C9"]);
     x_label.enter().append("text");
     x_label.text(function(d) {
         return d
-      }).style("text-anchor", "end")
-      .attr("dy", "0.0em");
+      }).style({
+        "text-anchor": "end",
+        "font-size": 18
+      })
+      .attr("dy", "0.0em")
 
   },
   createYAxis: function() {
@@ -236,7 +239,10 @@ var PropChart = React.createClass({
     y_label.enter().append("text");
     y_label.text(function(d) {
         return d
-      }).style("text-anchor", "start")
+      }).style({
+        "text-anchor": "start",
+        "font-size": 18
+      })
       .attr("dy", "-1em")
 
   },
