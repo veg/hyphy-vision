@@ -353,6 +353,8 @@ webpackJsonp([0],[
 	
 	var _navbar = __webpack_require__(230);
 	
+	var _scrollspy = __webpack_require__(256);
+	
 	var React = __webpack_require__(47),
 	    ReactDOM = __webpack_require__(78);
 	
@@ -636,6 +638,8 @@ webpackJsonp([0],[
 	
 	    var self = this;
 	
+	    var scrollspy_info = [{ label: "summary", href: "summary-tab" }, { label: "tree", href: "hyphy-tree-summary" }, { label: "table", href: "table-tab" }];
+	
 	    return React.createElement(
 	      'div',
 	      null,
@@ -646,41 +650,7 @@ webpackJsonp([0],[
 	        React.createElement(
 	          'div',
 	          { className: 'row' },
-	          React.createElement(
-	            'nav',
-	            { className: 'col-sm-1 bs-docs-sidebar' },
-	            React.createElement(
-	              'ul',
-	              { className: 'nav nav-pills nav-stacked fixed' },
-	              React.createElement(
-	                'li',
-	                { className: 'active' },
-	                React.createElement(
-	                  'a',
-	                  { href: '#summary-tab', id: '#summary-tab' },
-	                  'summary'
-	                )
-	              ),
-	              React.createElement(
-	                'li',
-	                null,
-	                React.createElement(
-	                  'a',
-	                  { href: '#hyphy-tree-summary' },
-	                  'tree'
-	                )
-	              ),
-	              React.createElement(
-	                'li',
-	                null,
-	                React.createElement(
-	                  'a',
-	                  { href: '#table-tab' },
-	                  'table'
-	                )
-	              )
-	            )
-	          ),
+	          React.createElement(_scrollspy.ScrollSpy, { info: scrollspy_info }),
 	          React.createElement(
 	            'div',
 	            { className: 'col-sm-10' },
@@ -25211,6 +25181,49 @@ webpackJsonp([0],[
 	datamonkey.helpers.filter = datamonkey_filter_list;
 	datamonkey.helpers.map = datamonkey_map_list;
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2), __webpack_require__(2), __webpack_require__(40), __webpack_require__(45)))
+
+/***/ },
+/* 252 */,
+/* 253 */,
+/* 254 */,
+/* 255 */,
+/* 256 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	
+	var React = __webpack_require__(47);
+	
+	var ScrollSpy = React.createClass({
+	  displayName: "ScrollSpy",
+	
+	  render: function render() {
+	    var list_items = this.props.info.map(function (item, index) {
+	      var is_active = index == 0 ? "active" : "",
+	          href = "#" + item.href;
+	      return React.createElement(
+	        "li",
+	        { className: is_active },
+	        React.createElement(
+	          "a",
+	          { href: href },
+	          item.label
+	        )
+	      );
+	    });
+	    return React.createElement(
+	      "nav",
+	      { className: "col-sm-1 bs-docs-sidebar" },
+	      React.createElement(
+	        "ul",
+	        { className: "nav nav-pills nav-stacked fixed" },
+	        list_items
+	      )
+	    );
+	  }
+	});
+	
+	module.exports.ScrollSpy = ScrollSpy;
 
 /***/ }
 ]);

@@ -13,6 +13,7 @@ import {TreeSummary} from "./components/tree_summary.jsx";
 import {Tree} from "./components/tree.jsx";
 import {BranchTable} from "./components/branch_table.jsx";
 import {NavBar} from "./components/navbar.jsx";
+import {ScrollSpy} from "./components/scrollspy.jsx";
 
 var React = require('react');
 
@@ -314,19 +315,21 @@ var BSREL = React.createClass({
 
     var self = this;
 	
+    var scrollspy_info = [
+      { label: "summary", href: "summary-tab"},
+      { label: "tree", href: "hyphy-tree-summary"},
+      { label: "table", href: "table-tab"}
+    ]
+
     return (
       <div>
         <NavBar />
         <div className='container-fluid'>
 
           <div className="row">
-            <nav className="col-sm-1 bs-docs-sidebar">
-              <ul className="nav nav-pills nav-stacked fixed">
-                <li className="active"><a href="#summary-tab" id="#summary-tab">summary</a></li>
-                <li><a href="#hyphy-tree-summary">tree</a></li>
-                <li><a href="#table-tab">table</a></li>
-              </ul>
-            </nav>
+            
+            <ScrollSpy info={scrollspy_info}/>
+
             <div className="col-sm-10">
               <div id='datamonkey-absrel-error' className="alert alert-danger alert-dismissible" role="alert" style={{display: "none"}}>
                 <button type="button" className="close" id='datamonkey-absrel-error-hide'><span aria-hidden="true">&times;</span><span className="sr-only">Close</span></button>
