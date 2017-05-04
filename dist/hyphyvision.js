@@ -20823,6 +20823,14 @@ webpackJsonp([0],[
 	var NavBar = React.createClass({
 	  displayName: "NavBar",
 	
+	  componentDidMount: function componentDidMount() {
+	    // Corrects navbar offset when clicking anchor hash
+	    var shiftWindow = function shiftWindow() {
+	      scrollBy(0, -50);
+	    };
+	    if (location.hash) shiftWindow();
+	    window.addEventListener("hashchange", shiftWindow);
+	  },
 	  render: function render() {
 	    return React.createElement(
 	      "nav",

@@ -38,6 +38,13 @@ var Methods = React.createClass({
 });
 
 var NavBar = React.createClass({
+  componentDidMount: function() {
+    // Corrects navbar offset when clicking anchor hash
+    var shiftWindow = function() { scrollBy(0, -50) };
+    if (location.hash) shiftWindow();
+    window.addEventListener("hashchange", shiftWindow);
+
+  },
   render: function(){
     return (
       <nav className="navbar navbar-default navbar-fixed-top" role="navigation">
