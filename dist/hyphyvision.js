@@ -29,11 +29,11 @@ webpackJsonp([0],[
 	__webpack_require__(39);
 	
 	var absrel = __webpack_require__(43);
-	var busted = __webpack_require__(239);
-	var fade = __webpack_require__(241);
-	var fade_summary = __webpack_require__(242);
-	var relax = __webpack_require__(243);
-	var slac = __webpack_require__(245);
+	var busted = __webpack_require__(240);
+	var fade = __webpack_require__(242);
+	var fade_summary = __webpack_require__(243);
+	var relax = __webpack_require__(244);
+	var slac = __webpack_require__(246);
 	
 	// Create new hyphy-vision export
 	window.absrel = absrel;
@@ -351,15 +351,17 @@ webpackJsonp([0],[
 	
 	var _branch_table = __webpack_require__(228);
 	
+	var _navbar = __webpack_require__(230);
+	
 	var React = __webpack_require__(47),
 	    ReactDOM = __webpack_require__(78);
 	
 	var datamonkey = __webpack_require__(39),
 	    _ = __webpack_require__(45),
-	    busted = __webpack_require__(230);
+	    busted = __webpack_require__(231);
 	
 	__webpack_require__(227);
-	__webpack_require__(237);
+	__webpack_require__(238);
 	
 	
 	var React = __webpack_require__(47);
@@ -636,47 +638,125 @@ webpackJsonp([0],[
 	
 	    return React.createElement(
 	      'div',
-	      { id: 'results' },
+	      null,
+	      React.createElement(_navbar.NavBar, null),
 	      React.createElement(
 	        'div',
-	        { id: 'summary-tab' },
-	        React.createElement(_absrel_summary.BSRELSummary, { test_results: self.state.test_results,
-	          pmid: self.state.pmid,
-	          input_data: self.state.input_data }),
+	        { className: 'container-fluid' },
 	        React.createElement(
 	          'div',
 	          { className: 'row' },
 	          React.createElement(
+	            'nav',
+	            { className: 'col-sm-1 bs-docs-sidebar' },
+	            React.createElement(
+	              'ul',
+	              { className: 'nav nav-pills nav-stacked fixed' },
+	              React.createElement(
+	                'li',
+	                { className: 'active' },
+	                React.createElement(
+	                  'a',
+	                  { href: '#summary-tab', id: '#summary-tab' },
+	                  'summary'
+	                )
+	              ),
+	              React.createElement(
+	                'li',
+	                null,
+	                React.createElement(
+	                  'a',
+	                  { href: '#hyphy-tree-summary' },
+	                  'tree'
+	                )
+	              ),
+	              React.createElement(
+	                'li',
+	                null,
+	                React.createElement(
+	                  'a',
+	                  { href: '#table-tab' },
+	                  'table'
+	                )
+	              )
+	            )
+	          ),
+	          React.createElement(
 	            'div',
-	            { id: 'hyphy-tree-summary', className: 'col-md-12' },
-	            React.createElement(_tree_summary.TreeSummary, { model: self.state.full_model, test_results: self.state.test_results })
-	          )
-	        )
-	      ),
-	      React.createElement(
-	        'div',
-	        { className: 'row' },
-	        React.createElement(
-	          'div',
-	          { id: 'tree-tab', className: 'col-md-12' },
-	          React.createElement(_tree.Tree, { json: self.state.json,
-	            settings: self.state.settings })
-	        )
-	      ),
-	      React.createElement(
-	        'div',
-	        { className: 'row' },
-	        React.createElement(
-	          'div',
-	          { id: 'table-tab', className: 'col-md-12' },
-	          React.createElement(_branch_table.BranchTable, { tree: self.state.tree,
-	            test_results: self.state.test_results,
-	            annotations: self.state.annotations })
-	        ),
-	        React.createElement(
-	          'div',
-	          { id: 'hyphy-model-fits', className: 'col-md-12' },
-	          React.createElement(_shared_summary.DatamonkeyModelTable, { fits: self.state.fits })
+	            { className: 'col-sm-10' },
+	            React.createElement(
+	              'div',
+	              { id: 'datamonkey-absrel-error', className: 'alert alert-danger alert-dismissible', role: 'alert', style: { display: "none" } },
+	              React.createElement(
+	                'button',
+	                { type: 'button', className: 'close', id: 'datamonkey-absrel-error-hide' },
+	                React.createElement(
+	                  'span',
+	                  { 'aria-hidden': 'true' },
+	                  '\xD7'
+	                ),
+	                React.createElement(
+	                  'span',
+	                  { className: 'sr-only' },
+	                  'Close'
+	                )
+	              ),
+	              React.createElement(
+	                'strong',
+	                null,
+	                'Error!'
+	              ),
+	              ' ',
+	              React.createElement('span', { id: 'datamonkey-absrel-error-text' })
+	            ),
+	            React.createElement(
+	              'div',
+	              { id: 'results' },
+	              React.createElement(
+	                'div',
+	                { id: 'summary-tab' },
+	                React.createElement(_absrel_summary.BSRELSummary, { test_results: self.state.test_results,
+	                  pmid: self.state.pmid,
+	                  input_data: self.state.input_data }),
+	                React.createElement(
+	                  'div',
+	                  { className: 'row' },
+	                  React.createElement(
+	                    'div',
+	                    { id: 'hyphy-tree-summary', className: 'col-md-12' },
+	                    React.createElement(_tree_summary.TreeSummary, { model: self.state.full_model, test_results: self.state.test_results })
+	                  )
+	                )
+	              ),
+	              React.createElement(
+	                'div',
+	                { className: 'row' },
+	                React.createElement(
+	                  'div',
+	                  { id: 'tree-tab', className: 'col-md-12' },
+	                  React.createElement(_tree.Tree, { json: self.state.json,
+	                    settings: self.state.settings })
+	                )
+	              ),
+	              React.createElement(
+	                'div',
+	                { className: 'row' },
+	                React.createElement(
+	                  'div',
+	                  { id: 'table-tab', className: 'col-md-12' },
+	                  React.createElement(_branch_table.BranchTable, { tree: self.state.tree,
+	                    test_results: self.state.test_results,
+	                    annotations: self.state.annotations })
+	                ),
+	                React.createElement(
+	                  'div',
+	                  { id: 'hyphy-model-fits', className: 'col-md-12' },
+	                  React.createElement(_shared_summary.DatamonkeyModelTable, { fits: self.state.fits })
+	                )
+	              )
+	            )
+	          ),
+	          React.createElement('div', { className: 'col-sm-1' })
 	        )
 	      )
 	    );
@@ -20691,12 +20771,165 @@ webpackJsonp([0],[
 /* 230 */
 /***/ function(module, exports, __webpack_require__) {
 
+	"use strict";
+	
+	var React = __webpack_require__(47);
+	
+	var Hamburger = React.createClass({
+	  displayName: "Hamburger",
+	
+	  render: function render() {
+	    return React.createElement(
+	      "button",
+	      { type: "button", className: "navbar-toggle", "data-toggle": "collapse", "data-target": "#navbar-collapse-1" },
+	      React.createElement(
+	        "span",
+	        { className: "sr-only" },
+	        "Toggle navigation"
+	      ),
+	      React.createElement("span", { className: "icon-bar" }),
+	      React.createElement("span", { className: "icon-bar" }),
+	      React.createElement("span", { className: "icon-bar" })
+	    );
+	  }
+	});
+	
+	var Methods = React.createClass({
+	  displayName: "Methods",
+	
+	  render: function render() {
+	    return React.createElement(
+	      "ul",
+	      { className: "nav nav-pills navbar-right", id: "navigation_buttons" },
+	      React.createElement(
+	        "li",
+	        { className: "active" },
+	        React.createElement(
+	          "a",
+	          { href: "#", role: "tab" },
+	          "absrel"
+	        )
+	      ),
+	      React.createElement(
+	        "li",
+	        null,
+	        React.createElement(
+	          "a",
+	          { href: "../relax", role: "tab" },
+	          "relax"
+	        )
+	      ),
+	      React.createElement(
+	        "li",
+	        null,
+	        React.createElement(
+	          "a",
+	          { href: "../busted", role: "tab" },
+	          "busted"
+	        )
+	      ),
+	      React.createElement(
+	        "li",
+	        null,
+	        React.createElement(
+	          "a",
+	          { href: "../fade", role: "tab" },
+	          "fade"
+	        )
+	      ),
+	      React.createElement(
+	        "li",
+	        null,
+	        React.createElement(
+	          "a",
+	          { href: "../slac", role: "tab" },
+	          "slac"
+	        )
+	      )
+	    );
+	  }
+	});
+	
+	var NavBar = React.createClass({
+	  displayName: "NavBar",
+	
+	  render: function render() {
+	    return React.createElement(
+	      "nav",
+	      { className: "navbar navbar-default navbar-fixed-top", role: "navigation" },
+	      React.createElement(
+	        "div",
+	        { className: "container-fluid" },
+	        React.createElement(
+	          "div",
+	          { className: "row" },
+	          React.createElement("div", { className: "col-sm-1" }),
+	          React.createElement(
+	            "div",
+	            { className: "col-sm-10" },
+	            React.createElement(
+	              "a",
+	              { href: "#" },
+	              React.createElement("img", { id: "hyphy-logo", src: "../../images/hyphy-logo.svg" })
+	            ),
+	            React.createElement(
+	              "div",
+	              { className: "navbar-header" },
+	              React.createElement(Hamburger, null),
+	              React.createElement(
+	                "a",
+	                { className: "navbar-brand logo", href: "#" },
+	                "HYPHY VISION"
+	              )
+	            ),
+	            React.createElement(
+	              "div",
+	              { className: "collapse navbar-collapse", id: "navbar-collapse-1" },
+	              React.createElement(
+	                "ul",
+	                { className: "nav navbar-nav" },
+	                React.createElement(
+	                  "li",
+	                  { className: "dropdown" },
+	                  React.createElement(
+	                    "a",
+	                    { href: "#", className: "dropdown-toggle", id: "datamonkey-absrel-toggle-here", "data-toggle": "dropdown" },
+	                    "Load file",
+	                    React.createElement("b", { className: "caret" })
+	                  ),
+	                  React.createElement(
+	                    "ul",
+	                    { className: "dropdown-menu" },
+	                    React.createElement(
+	                      "li",
+	                      null,
+	                      React.createElement("input", { type: "file", id: "datamonkey-absrel-json-file" })
+	                    )
+	                  )
+	                )
+	              ),
+	              React.createElement(Methods, null)
+	            )
+	          ),
+	          React.createElement("div", { className: "col-sm-1" })
+	        )
+	      )
+	    );
+	  }
+	});
+	
+	module.exports.NavBar = NavBar;
+
+/***/ },
+/* 231 */
+/***/ function(module, exports, __webpack_require__) {
+
 	/* WEBPACK VAR INJECTION */(function(d3, $) {'use strict';
 	
-	__webpack_require__(231);
+	__webpack_require__(232);
 	
-	var crossfilter = __webpack_require__(233),
-	    dc = __webpack_require__(236),
+	var crossfilter = __webpack_require__(234),
+	    dc = __webpack_require__(237),
 	    datamonkey = __webpack_require__(39);
 	
 	function busted_render_summary(json) {
@@ -21002,45 +21235,45 @@ webpackJsonp([0],[
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(40), __webpack_require__(2)))
 
 /***/ },
-/* 231 */
+/* 232 */
 /***/ function(module, exports) {
 
 	// removed by extract-text-webpack-plugin
 
 /***/ },
-/* 232 */,
 /* 233 */,
 /* 234 */,
 /* 235 */,
 /* 236 */,
-/* 237 */
+/* 237 */,
+/* 238 */
 /***/ function(module, exports) {
 
 	// removed by extract-text-webpack-plugin
 
 /***/ },
-/* 238 */,
-/* 239 */
+/* 239 */,
+/* 240 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(d3, _, $) {"use strict";
 	
 	var _tree = __webpack_require__(226);
 	
-	var _model_fits = __webpack_require__(240);
+	var _model_fits = __webpack_require__(241);
 	
 	var _tree_summary = __webpack_require__(225);
 	
 	var _prop_chart = __webpack_require__(229);
 	
 	__webpack_require__(227);
-	__webpack_require__(237);
+	__webpack_require__(238);
 	
 	var React = __webpack_require__(47),
 	    ReactDOM = __webpack_require__(78);
 	
 	var datamonkey = __webpack_require__(39),
-	    busted = __webpack_require__(230);
+	    busted = __webpack_require__(231);
 	
 	var BUSTED = React.createClass({
 	  displayName: "BUSTED",
@@ -21477,7 +21710,7 @@ webpackJsonp([0],[
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(40), __webpack_require__(45), __webpack_require__(2)))
 
 /***/ },
-/* 240 */
+/* 241 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(d3, _, $) {"use strict";
@@ -21747,7 +21980,7 @@ webpackJsonp([0],[
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(40), __webpack_require__(45), __webpack_require__(2)))
 
 /***/ },
-/* 241 */
+/* 242 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(d3, $) {'use strict';
@@ -22116,7 +22349,7 @@ webpackJsonp([0],[
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(40), __webpack_require__(2)))
 
 /***/ },
-/* 242 */
+/* 243 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(d3) {'use strict';
@@ -22253,18 +22486,18 @@ webpackJsonp([0],[
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(40)))
 
 /***/ },
-/* 243 */
+/* 244 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(d3, $) {"use strict";
 	
-	var _model_fits = __webpack_require__(240);
+	var _model_fits = __webpack_require__(241);
 	
 	var _tree_summary = __webpack_require__(225);
 	
 	var _tree = __webpack_require__(226);
 	
-	var _omega_plots = __webpack_require__(244);
+	var _omega_plots = __webpack_require__(245);
 	
 	var React = __webpack_require__(47),
 	    ReactDOM = __webpack_require__(78),
@@ -22617,7 +22850,7 @@ webpackJsonp([0],[
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(40), __webpack_require__(2)))
 
 /***/ },
-/* 244 */
+/* 245 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(d3) {'use strict';
@@ -23087,25 +23320,25 @@ webpackJsonp([0],[
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(40)))
 
 /***/ },
-/* 245 */
+/* 246 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(d3, $) {'use strict';
 	
 	var _shared_summary = __webpack_require__(224);
 	
-	var _slac_sites = __webpack_require__(246);
+	var _slac_sites = __webpack_require__(247);
 	
-	var _slac_summary = __webpack_require__(247);
+	var _slac_summary = __webpack_require__(248);
 	
-	var _slac_graphs = __webpack_require__(248);
+	var _slac_graphs = __webpack_require__(249);
 	
 	var React = __webpack_require__(47),
 	    ReactDOM = __webpack_require__(78),
 	    _ = __webpack_require__(45);
 	
 	var datamonkey = __webpack_require__(39);
-	__webpack_require__(250);
+	__webpack_require__(251);
 	
 	var SLAC = React.createClass({
 	    displayName: 'SLAC',
@@ -23399,7 +23632,7 @@ webpackJsonp([0],[
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(40), __webpack_require__(2)))
 
 /***/ },
-/* 246 */
+/* 247 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(d3, _) {'use strict';
@@ -24019,7 +24252,7 @@ webpackJsonp([0],[
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(40), __webpack_require__(45)))
 
 /***/ },
-/* 247 */
+/* 248 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(_, d3) {'use strict';
@@ -24191,12 +24424,12 @@ webpackJsonp([0],[
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(45), __webpack_require__(40)))
 
 /***/ },
-/* 248 */
+/* 249 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(_) {'use strict';
 	
-	var _shared_graph = __webpack_require__(249);
+	var _shared_graph = __webpack_require__(250);
 	
 	var React = __webpack_require__(47);
 	var datamonkey = __webpack_require__(39);
@@ -24430,7 +24663,7 @@ webpackJsonp([0],[
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(45)))
 
 /***/ },
-/* 249 */
+/* 250 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(d3, _) {'use strict';
@@ -24687,7 +24920,7 @@ webpackJsonp([0],[
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(40), __webpack_require__(45)))
 
 /***/ },
-/* 250 */
+/* 251 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function($, jQuery, d3, _) {"use strict";

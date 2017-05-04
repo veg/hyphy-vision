@@ -12,6 +12,7 @@ import {DatamonkeyModelTable} from "./components/shared_summary.jsx";
 import {TreeSummary} from "./components/tree_summary.jsx";
 import {Tree} from "./components/tree.jsx";
 import {BranchTable} from "./components/branch_table.jsx";
+import {NavBar} from "./components/navbar.jsx";
 
 var React = require('react');
 
@@ -314,38 +315,61 @@ var BSREL = React.createClass({
     var self = this;
 	
     return (
-        <div id="results">
-            <div id="summary-tab">
-                <BSRELSummary test_results={self.state.test_results}
-                              pmid={self.state.pmid}
-                              input_data={self.state.input_data}/>
-                <div className="row">
-                    <div id="hyphy-tree-summary" className="col-md-12">
-                        <TreeSummary model={self.state.full_model} test_results={self.state.test_results} />
-                    </div>
-                    
-                </div>
-            </div>
+      <div>
+        <NavBar />
+        <div className='container-fluid'>
 
-            <div className="row">
-                <div id="tree-tab" className="col-md-12">
+          <div className="row">
+            <nav className="col-sm-1 bs-docs-sidebar">
+              <ul className="nav nav-pills nav-stacked fixed">
+                <li className="active"><a href="#summary-tab" id="#summary-tab">summary</a></li>
+                <li><a href="#hyphy-tree-summary">tree</a></li>
+                <li><a href="#table-tab">table</a></li>
+              </ul>
+            </nav>
+            <div className="col-sm-10">
+              <div id='datamonkey-absrel-error' className="alert alert-danger alert-dismissible" role="alert" style={{display: "none"}}>
+                <button type="button" className="close" id='datamonkey-absrel-error-hide'><span aria-hidden="true">&times;</span><span className="sr-only">Close</span></button>
+                <strong>Error!</strong> <span id='datamonkey-absrel-error-text'></span>
+              </div>
+
+              <div id="results">
+                <div id="summary-tab">
+                  <BSRELSummary test_results={self.state.test_results}
+                                pmid={self.state.pmid}
+                                input_data={self.state.input_data}/>
+                  <div className="row">
+                    <div id="hyphy-tree-summary" className="col-md-12">
+                      <TreeSummary model={self.state.full_model} test_results={self.state.test_results} />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="row">
+                  <div id="tree-tab" className="col-md-12">
                     <Tree json={self.state.json}
                           settings={self.state.settings} />
+                  </div>
                 </div>
-            </div>
 
-            <div className="row">
-                <div id="table-tab" className="col-md-12">
+                <div className="row">
+                  <div id="table-tab" className="col-md-12">
                     <BranchTable tree={self.state.tree}
                                  test_results={self.state.test_results}
                                  annotations={self.state.annotations} />
+                  </div>
+                  <div id="hyphy-model-fits" className="col-md-12">
+                    <DatamonkeyModelTable fits={self.state.fits} />
+                  </div>
                 </div>
-                <div id="hyphy-model-fits" className="col-md-12">
-                  <DatamonkeyModelTable fits={self.state.fits} />
-                </div>
+
+              </div>
             </div>
+            <div className="col-sm-1"></div>
+          </div>
 
         </div>
+      </div>
         )
   }
 
