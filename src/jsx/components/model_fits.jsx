@@ -247,7 +247,6 @@ var ModelFits = React.createClass({
   render: function() {
 
     return (
-        <div className="col-lg-12">
           <ul className="list-group">
             <li className="list-group-item">
               <h4 className="list-group-item-heading"><i className="fa fa-cubes" styleFormat = 'margin-right: 10px'></i>Model fits</h4>
@@ -257,7 +256,6 @@ var ModelFits = React.createClass({
                </table>
             </li>
           </ul>
-        </div>
       )
   }
 

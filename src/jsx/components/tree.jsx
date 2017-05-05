@@ -638,7 +638,7 @@ var Tree = React.createClass({
     return (
         <div>
           <div className='row'>
-              <div className="cold-md-12">
+              <div className="col-md-12">
                   <div className="input-group input-group-sm">
                       <div className="input-group-btn">
                             <button type="button" className="btn btn-default dropdown-toggle" data-toggle="dropdown">Export<span className="caret"></span></button>
