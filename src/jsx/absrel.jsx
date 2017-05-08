@@ -320,7 +320,7 @@ var BSREL = React.createClass({
       { label: "summary", href: "summary-tab"},
       { label: "tree", href: "hyphy-tree-summary"},
       { label: "table", href: "table-tab"}
-    ]
+    ];
 
     return (
       <div>
