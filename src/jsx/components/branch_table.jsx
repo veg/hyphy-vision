@@ -7,11 +7,10 @@ var BranchTable = React.createClass({
 
     // add the following
     var table_row_data = this.getBranchRows(this.props.tree, this.props.test_results, this.props.annotations),
-      table_columns = this.getBranchColumns(table_row_data),
-      initial_model_name = _.take(_.keys(this.props.annotations)),
-      initial_omegas = this.props.annotations ?
-        this.props.annotations[initial_model_name]["omegas"] :
-        null;
+        initial_model_name = _.take(_.keys(this.props.annotations)),
+        initial_omegas = this.props.annotations ?
+          this.props.annotations[initial_model_name]["omegas"] :
+          null;
 
     var distro_settings = {
       dimensions: {
@@ -37,7 +36,6 @@ var BranchTable = React.createClass({
       test_results: this.props.test_results,
       annotations: this.props.annotations,
       table_row_data: table_row_data,
-      table_columns: table_columns,
       current_model_name: initial_model_name,
       current_omegas: initial_omegas,
       distro_settings: distro_settings
@@ -174,52 +172,15 @@ var BranchTable = React.createClass({
 
   },
 
-  getBranchColumns: function(table_row_data) {
-
-    if (table_row_data.length <= 0) {
-      return null;
-    }
-
-    var name_header = '<th>Name</th>',
-      length_header = '<th><abbr title="Branch Length">B</abbr></th>',
-      lrt_header = '<th><abbr title="Likelihood ratio test statistic">LRT</abbr></th>',
-      pvalue_header = '<th>Test p-value</th>',
-      uncorrected_pvalue_header = '<th>Uncorrected p-value</th>',
-      omega_header = '<th>ω distribution over sites</th>';
-
-    // inspect table_row_data and return header
-    var all_columns = [
-      name_header,
-      length_header,
-      lrt_header,
-      pvalue_header,
-      uncorrected_pvalue_header,
-      omega_header
-    ];
-
-    // validate each table row with its associated header
-
-    // trim columns to length of table_row_data
-    var column_headers = _.take(all_columns, table_row_data[0].length)
-
-    // remove all columns that have 0, null, or undefined rows
-    var items = d3.transpose(table_row_data);
-
-
-    return column_headers;
-
-  },
-
   componentWillReceiveProps: function(nextProps) {
 
     var table_row_data = this.getBranchRows(nextProps.tree,
         nextProps.test_results,
         nextProps.annotations),
-      table_columns = this.getBranchColumns(table_row_data),
-      initial_model_name = _.take(_.keys(nextProps.annotations)),
-      initial_omegas = nextProps.annotations ?
-        nextProps.annotations[initial_model_name]["omegas"] :
-        null;
+        initial_model_name = _.take(_.keys(nextProps.annotations)),
+        initial_omegas = nextProps.annotations ?
+          nextProps.annotations[initial_model_name]["omegas"] :
+          null;
 
     var distro_settings = {
       dimensions: {
@@ -246,7 +207,6 @@ var BranchTable = React.createClass({
         test_results: nextProps.test_results,
         annotations: nextProps.annotations,
         table_row_data: table_row_data,
-        table_columns: table_columns,
         current_model_name: initial_model_name,
         current_omegas: initial_omegas,
         distro_settings: distro_settings
@@ -256,14 +216,6 @@ var BranchTable = React.createClass({
   },
 
   componentDidUpdate: function() {
-
-    var branch_columns = d3.select('#table-branch-header');
-    branch_columns = branch_columns.selectAll("th").data(this.state.table_columns);
-    branch_columns.enter().append("th");
-
-    branch_columns.html(function(d) {
-      return d;
-    });
 
     var branch_rows = d3.select('#table-branch-table').selectAll("tr").data(this.state.table_row_data);
 
@@ -284,7 +236,9 @@ var BranchTable = React.createClass({
 
     this.createDistroChart();
     this.setEvents();
-
+    $(function () {
+      $('[data-toggle="popover"]').popover()
+    })
   },
 
   render: function() {
@@ -294,9 +248,19 @@ var BranchTable = React.createClass({
     return (
       <div className="row">
         <div id="hyphy-branch-table" className="col-md-6">
-          <h4 className="dm-table-header">Detailed results</h4>
+          <h4 className="dm-table-header">
+            Detailed results
+            <span className="glyphicon glyphicon-info-sign" style={{"vertical-align": "middle", "float":"right"}} aria-hidden="true" data-toggle="popover" data-trigger="hover" title="Detailed results" data-html="true" data-content="Bolded rows indicate branches inferred to be under positive selection at the designated p-value threshold.<br/>Click on a row to visualize its inferred rate distribution.<br/>Hover over a column header for a description of its content." data-placement="top"></span>
+          </h4>
           <table className="table table-hover table-condensed dm-table">
-            <thead id="table-branch-header"></thead>
+            <thead id="table-branch-header">
+              <th><span data-toggle="tooltip" title="Branch of interest" data-placement="top">Name</span></th>
+              <th><span data-toggle="tooltip" title="Optimized branch length">B </span></th>
+              <th><span data-toggle="tooltip" title="Likelihood ratio test statistic for selection">LRT</span></th>
+              <th><span data-toggle="tooltip" title="P-value corrected for multiple testing">Test p-value</span></th>
+              <th><span data-toggle="tooltip" title="P-values which have not been corrected for multiple testing">Uncorrected p-value</span></th>
+              <th><span data-toggle="tooltip" title="Inferred ω estimates and respective proportion of sites">ω distribution over sites</span></th>
+            </thead>
             <tbody id="table-branch-table"></tbody>
           </table>
         </div>
@@ -305,7 +269,6 @@ var BranchTable = React.createClass({
           <PropChart name={ self.state.current_model_name } omegas={ self.state.current_omegas } settings={ self.state.distro_settings } />
         </div>
       </div>
-
     )
   }
 

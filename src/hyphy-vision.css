@@ -154,10 +154,14 @@
 }
 
 .dm-table-header {
-    background-color: #00a99d;
+    background: linear-gradient(to right,#03AA9D,#7EC6B3);
     color: #FFF;
     text-align: center;
     padding: 5px 5px 5px 5px;
+}
+
+.popover {
+  color: #111;
 }
 
 table.dm-table > thead > tr > th,
@@ -177,7 +181,7 @@ table.dm-table > thead > th {
     line-height: .5;
     text-align: center;
     border: 5px solid;
-    border-image: linear-gradient(#03AA9D, #7EC6B3) 10;
+    border-image: linear-gradient(to right, #03AA9D, #7EC6B3) 10;
     padding: 10px;
 }
 
