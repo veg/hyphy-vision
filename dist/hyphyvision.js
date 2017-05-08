@@ -29,11 +29,11 @@ webpackJsonp([0],[
 	__webpack_require__(39);
 	
 	var absrel = __webpack_require__(43);
-	var busted = __webpack_require__(240);
-	var fade = __webpack_require__(242);
-	var fade_summary = __webpack_require__(243);
-	var relax = __webpack_require__(244);
-	var slac = __webpack_require__(246);
+	var busted = __webpack_require__(241);
+	var fade = __webpack_require__(243);
+	var fade_summary = __webpack_require__(244);
+	var relax = __webpack_require__(245);
+	var slac = __webpack_require__(247);
 	
 	// Create new hyphy-vision export
 	window.absrel = absrel;
@@ -353,17 +353,17 @@ webpackJsonp([0],[
 	
 	var _navbar = __webpack_require__(230);
 	
-	var _scrollspy = __webpack_require__(256);
+	var _scrollspy = __webpack_require__(231);
 	
 	var React = __webpack_require__(47),
 	    ReactDOM = __webpack_require__(78);
 	
 	var datamonkey = __webpack_require__(39),
 	    _ = __webpack_require__(45),
-	    busted = __webpack_require__(231);
+	    busted = __webpack_require__(232);
 	
 	__webpack_require__(227);
-	__webpack_require__(238);
+	__webpack_require__(239);
 	
 	
 	var React = __webpack_require__(47);
@@ -18949,7 +18949,7 @@ webpackJsonp([0],[
 	  dm_numberFormatter: d3.format(".2f"),
 	
 	  dm_supportedColumns: {
-	    'log likelihood': {
+	    'log-likelihood': {
 	      order: 2,
 	      value: {
 	        "value": "log L",
@@ -20902,12 +20902,51 @@ webpackJsonp([0],[
 /* 231 */
 /***/ function(module, exports, __webpack_require__) {
 
+	"use strict";
+	
+	var React = __webpack_require__(47);
+	
+	var ScrollSpy = React.createClass({
+	  displayName: "ScrollSpy",
+	
+	  render: function render() {
+	    var list_items = this.props.info.map(function (item, index) {
+	      var is_active = index == 0 ? "active" : "",
+	          href = "#" + item.href;
+	      return React.createElement(
+	        "li",
+	        { className: is_active },
+	        React.createElement(
+	          "a",
+	          { href: href },
+	          item.label
+	        )
+	      );
+	    });
+	    return React.createElement(
+	      "nav",
+	      { className: "col-sm-1 bs-docs-sidebar" },
+	      React.createElement(
+	        "ul",
+	        { className: "nav nav-pills nav-stacked fixed" },
+	        list_items
+	      )
+	    );
+	  }
+	});
+	
+	module.exports.ScrollSpy = ScrollSpy;
+
+/***/ },
+/* 232 */
+/***/ function(module, exports, __webpack_require__) {
+
 	/* WEBPACK VAR INJECTION */(function(d3, $) {'use strict';
 	
-	__webpack_require__(232);
+	__webpack_require__(233);
 	
-	var crossfilter = __webpack_require__(234),
-	    dc = __webpack_require__(237),
+	var crossfilter = __webpack_require__(235),
+	    dc = __webpack_require__(238),
 	    datamonkey = __webpack_require__(39);
 	
 	function busted_render_summary(json) {
@@ -21213,45 +21252,45 @@ webpackJsonp([0],[
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(40), __webpack_require__(2)))
 
 /***/ },
-/* 232 */
+/* 233 */
 /***/ function(module, exports) {
 
 	// removed by extract-text-webpack-plugin
 
 /***/ },
-/* 233 */,
 /* 234 */,
 /* 235 */,
 /* 236 */,
 /* 237 */,
-/* 238 */
+/* 238 */,
+/* 239 */
 /***/ function(module, exports) {
 
 	// removed by extract-text-webpack-plugin
 
 /***/ },
-/* 239 */,
-/* 240 */
+/* 240 */,
+/* 241 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(d3, _, $) {"use strict";
 	
 	var _tree = __webpack_require__(226);
 	
-	var _model_fits = __webpack_require__(241);
+	var _model_fits = __webpack_require__(242);
 	
 	var _tree_summary = __webpack_require__(225);
 	
 	var _prop_chart = __webpack_require__(229);
 	
 	__webpack_require__(227);
-	__webpack_require__(238);
+	__webpack_require__(239);
 	
 	var React = __webpack_require__(47),
 	    ReactDOM = __webpack_require__(78);
 	
 	var datamonkey = __webpack_require__(39),
-	    busted = __webpack_require__(231);
+	    busted = __webpack_require__(232);
 	
 	var BUSTED = React.createClass({
 	  displayName: "BUSTED",
@@ -21688,7 +21727,7 @@ webpackJsonp([0],[
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(40), __webpack_require__(45), __webpack_require__(2)))
 
 /***/ },
-/* 241 */
+/* 242 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(d3, _, $) {"use strict";
@@ -21958,7 +21997,7 @@ webpackJsonp([0],[
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(40), __webpack_require__(45), __webpack_require__(2)))
 
 /***/ },
-/* 242 */
+/* 243 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(d3, $) {'use strict';
@@ -22327,7 +22366,7 @@ webpackJsonp([0],[
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(40), __webpack_require__(2)))
 
 /***/ },
-/* 243 */
+/* 244 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(d3) {'use strict';
@@ -22464,18 +22503,18 @@ webpackJsonp([0],[
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(40)))
 
 /***/ },
-/* 244 */
+/* 245 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(d3, $) {"use strict";
 	
-	var _model_fits = __webpack_require__(241);
+	var _model_fits = __webpack_require__(242);
 	
 	var _tree_summary = __webpack_require__(225);
 	
 	var _tree = __webpack_require__(226);
 	
-	var _omega_plots = __webpack_require__(245);
+	var _omega_plots = __webpack_require__(246);
 	
 	var React = __webpack_require__(47),
 	    ReactDOM = __webpack_require__(78),
@@ -22828,7 +22867,7 @@ webpackJsonp([0],[
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(40), __webpack_require__(2)))
 
 /***/ },
-/* 245 */
+/* 246 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(d3) {'use strict';
@@ -23298,25 +23337,25 @@ webpackJsonp([0],[
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(40)))
 
 /***/ },
-/* 246 */
+/* 247 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(d3, $) {'use strict';
 	
 	var _shared_summary = __webpack_require__(224);
 	
-	var _slac_sites = __webpack_require__(247);
+	var _slac_sites = __webpack_require__(248);
 	
-	var _slac_summary = __webpack_require__(248);
+	var _slac_summary = __webpack_require__(249);
 	
-	var _slac_graphs = __webpack_require__(249);
+	var _slac_graphs = __webpack_require__(250);
 	
 	var React = __webpack_require__(47),
 	    ReactDOM = __webpack_require__(78),
 	    _ = __webpack_require__(45);
 	
 	var datamonkey = __webpack_require__(39);
-	__webpack_require__(251);
+	__webpack_require__(252);
 	
 	var SLAC = React.createClass({
 	    displayName: 'SLAC',
@@ -23610,7 +23649,7 @@ webpackJsonp([0],[
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(40), __webpack_require__(2)))
 
 /***/ },
-/* 247 */
+/* 248 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(d3, _) {'use strict';
@@ -24230,7 +24269,7 @@ webpackJsonp([0],[
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(40), __webpack_require__(45)))
 
 /***/ },
-/* 248 */
+/* 249 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(_, d3) {'use strict';
@@ -24402,12 +24441,12 @@ webpackJsonp([0],[
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(45), __webpack_require__(40)))
 
 /***/ },
-/* 249 */
+/* 250 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(_) {'use strict';
 	
-	var _shared_graph = __webpack_require__(250);
+	var _shared_graph = __webpack_require__(251);
 	
 	var React = __webpack_require__(47);
 	var datamonkey = __webpack_require__(39);
@@ -24641,7 +24680,7 @@ webpackJsonp([0],[
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(45)))
 
 /***/ },
-/* 250 */
+/* 251 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(d3, _) {'use strict';
@@ -24898,7 +24937,7 @@ webpackJsonp([0],[
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(40), __webpack_require__(45)))
 
 /***/ },
-/* 251 */
+/* 252 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function($, jQuery, d3, _) {"use strict";
@@ -25189,49 +25228,6 @@ webpackJsonp([0],[
 	datamonkey.helpers.filter = datamonkey_filter_list;
 	datamonkey.helpers.map = datamonkey_map_list;
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2), __webpack_require__(2), __webpack_require__(40), __webpack_require__(45)))
-
-/***/ },
-/* 252 */,
-/* 253 */,
-/* 254 */,
-/* 255 */,
-/* 256 */
-/***/ function(module, exports, __webpack_require__) {
-
-	"use strict";
-	
-	var React = __webpack_require__(47);
-	
-	var ScrollSpy = React.createClass({
-	  displayName: "ScrollSpy",
-	
-	  render: function render() {
-	    var list_items = this.props.info.map(function (item, index) {
-	      var is_active = index == 0 ? "active" : "",
-	          href = "#" + item.href;
-	      return React.createElement(
-	        "li",
-	        { className: is_active },
-	        React.createElement(
-	          "a",
-	          { href: href },
-	          item.label
-	        )
-	      );
-	    });
-	    return React.createElement(
-	      "nav",
-	      { className: "col-sm-1 bs-docs-sidebar" },
-	      React.createElement(
-	        "ul",
-	        { className: "nav nav-pills nav-stacked fixed" },
-	        list_items
-	      )
-	    );
-	  }
-	});
-	
-	module.exports.ScrollSpy = ScrollSpy;
 
 /***/ }
 ]);
