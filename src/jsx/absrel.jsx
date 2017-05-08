@@ -13,6 +13,8 @@ import {DatamonkeyModelTable} from "./components/shared_summary.jsx";
 import {TreeSummary} from "./components/tree_summary.jsx";
 import {Tree} from "./components/tree.jsx";
 import {BranchTable} from "./components/branch_table.jsx";
+import {NavBar} from "./components/navbar.jsx";
+import {ScrollSpy} from "./components/scrollspy.jsx";
 
 var React = require('react');
 
@@ -33,21 +35,14 @@ var BSREL = React.createClass({
       data["fits"]["MG94"]["annotation-tag"] = "ω";
       data["fits"]["Full model"]["annotation-tag"] = "ω";
 
-
-      var annotations = data["fits"]["Full model"]["branch-annotations"],
-          json = data,
-          pmid = data["PMID"],
-		      fits = data["fits"],
-		      full_model = fits["Full model"],
-          test_results = data["test results"];
-
       self.setState({
-        annotations : annotations,
-        json : json,
-        pmid : pmid,
-        fits : fits,
-        full_model : full_model,
-        test_results : test_results
+        annotations : data["fits"]["Full model"]["branch-annotations"],
+        json : data,
+        pmid : data["PMID"],
+        fits : data["fits"],
+        full_model : data["fits"]["Full model"],
+        test_results : data["test results"],
+        input_data : data["input_data"]
       });
 
     });
@@ -209,14 +204,15 @@ var BSREL = React.createClass({
 
 
     return {
-              annotations : null,
-              json : null,
-              pmid : null,
-			  model_fits : {},
-              settings : tree_settings,
-              test_results : null,
-              tree : null,
-           };
+      annotations : null,
+      json : null,
+      pmid : null,
+      model_fits : {},
+      settings : tree_settings,
+      test_results : null,
+      input_data : null,
+      tree : null,
+    };
 
   },
 
@@ -246,15 +242,19 @@ var BSREL = React.createClass({
                       json = data,
                       pmid = data["PMID"],
                       full_model = json["fits"]["Full model"],
-                      test_results = data["test results"];
+                      test_results = data["test results"],
+                      input_data = data["input_data"],
+                      fits = data["fits"];
 
                   self.setState({
-                                  annotations : annotations,
-                                  json : json,
-                                  pmid : pmid,
-                                  full_model : full_model,
-                                  test_results : test_results
-                                });
+                    annotations : annotations,
+                    json : json,
+                    pmid : pmid,
+                    full_model : full_model,
+                    test_results : test_results,
+                    input_data : input_data,
+                    fits : fits
+                  });
 
                 };
             })(f);
@@ -301,46 +301,79 @@ var BSREL = React.createClass({
 
     var model_fits_id = "#hyphy-model-fits",
         omega_plots_id = "#hyphy-omega-plots",
-        summary_id = "#hyphy-relax-summary",
         tree_id = "#tree-tab";
 
+  },
+  
+  componentDidUpdate(prevProps, prevState) {
+    $('body').scrollspy({
+        target: '.bs-docs-sidebar',
+        offset: 50
+      });
   },
 
   render: function() {
 
     var self = this;
 	
-    return (
-        <div id="results">
-            <div id="summary-tab">
-                <BSRELSummary test_results={self.state.test_results}
-                              pmid={self.state.pmid} />
-                <div className="row">
-                    <div id="hyphy-tree-summary" className="col-md-12">
-                        <TreeSummary model={self.state.full_model} test_results={self.state.test_results} />
-                    </div>
-                    <div id="hyphy-model-fits" className="col-md-12">
-                        <DatamonkeyModelTable fits={self.state.fits} />
-                    </div>
-                </div>
-            </div>
+    var scrollspy_info = [
+      { label: "summary", href: "summary-tab"},
+      { label: "tree", href: "hyphy-tree-summary"},
+      { label: "table", href: "table-tab"}
+    ]
 
-            <div className="row">
-                <div id="tree-tab" className="col-md-12">
+    return (
+      <div>
+        <NavBar />
+        <div className='container-fluid'>
+
+          <div className="row">
+            
+            <ScrollSpy info={scrollspy_info}/>
+
+            <div className="col-sm-10">
+              <div id='datamonkey-absrel-error' className="alert alert-danger alert-dismissible" role="alert" style={{display: "none"}}>
+                <button type="button" className="close" id='datamonkey-absrel-error-hide'><span aria-hidden="true">&times;</span><span className="sr-only">Close</span></button>
+                <strong>Error!</strong> <span id='datamonkey-absrel-error-text'></span>
+              </div>
+
+              <div id="results">
+                <div id="summary-tab">
+                  <BSRELSummary test_results={self.state.test_results}
+                                pmid={self.state.pmid}
+                                input_data={self.state.input_data}/>
+                  <div className="row">
+                    <div id="hyphy-tree-summary" className="col-md-12">
+                      <TreeSummary model={self.state.full_model} test_results={self.state.test_results} />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="row">
+                  <div id="tree-tab" className="col-md-12">
                     <Tree json={self.state.json}
                           settings={self.state.settings} />
+                  </div>
                 </div>
-            </div>
 
-            <div className="row">
-                <div id="table-tab" className="col-md-12">
+                <div className="row">
+                  <div id="table-tab" className="col-md-12">
                     <BranchTable tree={self.state.tree}
                                  test_results={self.state.test_results}
                                  annotations={self.state.annotations} />
+                  </div>
+                  <div id="hyphy-model-fits" className="col-md-12">
+                    <DatamonkeyModelTable fits={self.state.fits} />
+                  </div>
                 </div>
+
+              </div>
             </div>
+            <div className="col-sm-1"></div>
+          </div>
 
         </div>
+      </div>
         )
   }
 

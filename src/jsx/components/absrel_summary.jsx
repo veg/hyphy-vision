@@ -1,5 +1,5 @@
 var React = require('react');
-
+import {InputInfo} from './input_info.jsx';
 var BSRELSummary = React.createClass({
 
   float_format : d3.format(".2f"),
@@ -85,16 +85,10 @@ var BSRELSummary = React.createClass({
                     </small>
                 </p>
             </div>
-            <div id="data-circle-div" className="col-md-4">
-                <div id="data-circle">
-                    <div id="data-text">
-                        <h5 className="hyphy-highlight">INPUT DATA</h5><br/>
-                        <p><span className="hyphy-highlight">16</span> sequences</p><br/>
-                        <p><span className="hyphy-highlight">8</span> branches</p><br/>
-                        <p><span className="hyphy-highlight">16</span> variants</p><br/>
-                    </div>
-                </div>
-            </div>
+
+          <div className="col-md-4">
+            <InputInfo input_data={this.props.input_data}/>
+          </div>
         </div>
         )
   }
