@@ -186,7 +186,7 @@ const DatamonkeyTableRow = React.createClass({
 
                         if (_.has (cell, "abbr")) {
                             value = (
-                                <abbr title={cell.abbr}>{value}</abbr>
+                                <span data-toggle="tooltip" data-placement="top" title={cell.abbr}>{value}</span>
                             );
                         }
 
@@ -262,14 +262,22 @@ var DatamonkeyTable = React.createClass({
   getInitialState: function() {
     // either null or [index,
     // bool / to indicate if the sort is ascending (True) or descending (False)]
+    
+    var len = 0;
+    
+    if(this.props.bodyData) {
+      len = this.props.bodyData.length;
+    }
+
     return {
-      rowOrder: _.range(0, this.props.bodyData.length),
+      rowOrder: _.range(0, len),
       headerData: this.props.headerData,
       sortOn: this.props.initialSort ? [this.props.initialSort, true] : null,
     };
   },
 
   componentWillReceiveProps: function(nextProps) {
+
     this.setState({
       rowOrder: _.range(0, nextProps.bodyData.length),
       headerData: nextProps.headerData
@@ -300,6 +308,10 @@ var DatamonkeyTable = React.createClass({
         sortOn: [index, is_ascending]
       });
     }
+  },
+
+  componentDidMount : function() {
+    $('[data-toggle="tooltip"]').tooltip();
   },
 
   render: function() {

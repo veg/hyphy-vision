@@ -71,10 +71,10 @@ var Tree = React.createClass({
     var color_fill = self.settings["tree-options"]["hyphy-tree-fill-color"][0] ? "black" : "red";
 
     var margins = {
-            'bottom': 30,
-            'top': 15,
-            'left': 40,
-            'right': 2
+          'bottom': 30,
+          'top': 15,
+          'left': 40,
+          'right': 2
         };
 
 
