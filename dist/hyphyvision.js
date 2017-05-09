@@ -19387,7 +19387,7 @@ webpackJsonp([0],[
 	        'h4',
 	        { className: 'dm-table-header' },
 	        'Tree',
-	        React.createElement('span', { className: 'glyphicon glyphicon-info-sign', style: { "verticalAlign": "middle", "float": "right" }, 'aria-hidden': 'true', 'data-toggle': 'popover', 'data-trigger': 'hover', title: 'Tree summary', 'data-html': 'true', 'data-content': 'Hover over a branch to see its inferred rates and significance for selection.<br /> Hover over a column header for a description of its content.', 'data-placement': 'bottom' })
+	        React.createElement('span', { className: 'glyphicon glyphicon-info-sign', style: { "verticalAlign": "middle", "float": "right" }, 'aria-hidden': 'true', 'data-toggle': 'popover', 'data-trigger': 'hover', title: 'Tree summary', 'data-html': 'true', 'data-content': '<ul><li>Hover over a branch to see its inferred rates and significance for selection.</li><li>Hover over a column header for a description of its content.</li></ul>', 'data-placement': 'bottom' })
 	      ),
 	      React.createElement(_shared_summary.DatamonkeyTable, { headerData: this.state.table_columns, bodyData: this.state.table_row_data }),
 	      React.createElement(
@@ -20407,7 +20407,7 @@ webpackJsonp([0],[
 	          'h4',
 	          { className: 'dm-table-header' },
 	          'Detailed results',
-	          React.createElement('span', { className: 'glyphicon glyphicon-info-sign', style: { "verticalAlign": "middle", "float": "right" }, 'aria-hidden': 'true', 'data-toggle': 'popover', 'data-trigger': 'hover', title: 'Detailed results', 'data-html': 'true', 'data-content': 'Bolded rows indicate branches inferred to be under positive selection at the designated p-value threshold.<br/>Click on a row to visualize its inferred rate distribution.<br/>Hover over a column header for a description of its content.', 'data-placement': 'bottom' })
+	          React.createElement('span', { className: 'glyphicon glyphicon-info-sign', style: { "verticalAlign": "middle", "float": "right" }, 'aria-hidden': 'true', 'data-toggle': 'popover', 'data-trigger': 'hover', title: 'Detailed results', 'data-html': 'true', 'data-content': '<ul><li>Bolded rows indicate branches inferred to be under positive selection at the designated p-value threshold.</li><li>Click on a row to visualize its inferred rate distribution.</li><li>Hover over a column header for a description of its content.</li></ul>', 'data-placement': 'bottom' })
 	        ),
 	        React.createElement(
 	          'table',

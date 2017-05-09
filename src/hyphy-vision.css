@@ -234,6 +234,10 @@ p.description {
     vertical-align: middle;
 }
 
+.popover {
+  max-width: 100%;
+}
+
 /* Bootstrap-docs scroll spy */
 /* sidebar */
 .bs-docs-sidebar {
