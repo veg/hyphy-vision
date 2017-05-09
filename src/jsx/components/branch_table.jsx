@@ -244,7 +244,7 @@ var BranchTable = React.createClass({
         <div id="hyphy-branch-table" className="col-md-6">
           <h4 className="dm-table-header">
             Detailed results
-            <span className="glyphicon glyphicon-info-sign" style={{"verticalAlign": "middle", "float":"right"}} aria-hidden="true" data-toggle="popover" data-trigger="hover" title="Detailed results" data-html="true" data-content="<ul><li>Bolded rows indicate branches inferred to be under positive selection at the designated p-value threshold.</li><li>Click on a row to visualize its inferred rate distribution.</li><li>Hover over a column header for a description of its content.</li></ul>" data-placement="bottom"></span>
+            <span className="glyphicon glyphicon-info-sign" style={{"verticalAlign": "middle", "float":"right"}} aria-hidden="true" data-toggle="popover" data-trigger="hover" title="Detailed results" data-html="true" data-content="<ul><li>Bolded rows indicate branches inferred to be under positive selection at the designated p-value threshold.</li><li>Click on a row to visualize its inferred rate distribution.</li><li>Hover over a column header for a description of its content.</li><li>Caution: omega distribution should not be interpretted as literal omega estimates at individual sites, but instead reflects fitted parameter values.</li></ul>" data-placement="bottom"></span>
           </h4>
           <table className="table table-hover table-condensed dm-table">
             <thead id="table-branch-header">
