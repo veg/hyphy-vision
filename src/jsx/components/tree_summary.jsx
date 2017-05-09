@@ -177,7 +177,6 @@ var TreeSummary = React.createClass({
   },
 
   render: function() {
-    console.log(this.state.table_columns)
     return (
       <div>
         <h4 className="dm-table-header">

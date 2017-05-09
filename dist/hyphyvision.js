@@ -393,7 +393,8 @@ webpackJsonp([0],[
 	        fits: data["fits"],
 	        full_model: data["fits"]["Full model"],
 	        test_results: data["test results"],
-	        input_data: data["input_data"]
+	        input_data: data["input_data"],
+	        tree: d3.layout.phylotree()(data["fits"]["Full model"]["tree string"])
 	      });
 	    });
 	  },
@@ -19379,7 +19380,6 @@ webpackJsonp([0],[
 	  },
 	
 	  render: function render() {
-	    console.log(this.state.table_columns);
 	    return React.createElement(
 	      'div',
 	      null,
@@ -20212,13 +20212,9 @@ webpackJsonp([0],[
 	    };
 	  },
 	
-	  getBranchLength: function getBranchLength(m) {
+	  getBranchLength: function getBranchLength(m, tree) {
 	
-	    if (!this.state.tree) {
-	      return '';
-	    }
-	
-	    return d3.format(".4f")(this.state.tree.get_node_by_name(m).attribute);
+	    return d3.format(".4f")(tree.get_node_by_name(m).attribute);
 	  },
 	
 	  getLRT: function getLRT(branch) {
@@ -20259,7 +20255,6 @@ webpackJsonp([0],[
 	  },
 	
 	  getBranchRows: function getBranchRows(tree, test_results, annotations) {
-	
 	    var self = this;
 	
 	    var table_row_data = [],
@@ -20271,7 +20266,7 @@ webpackJsonp([0],[
 	      var branch_row = [];
 	      var branch = test_results[m];
 	
-	      branch_row = [m, this.getBranchLength(m), this.getLRT(branch), this.getPVal(branch), this.getUncorrectedPVal(branch), this.getOmegaDistribution(m, annotations)];
+	      branch_row = [m, this.getBranchLength(m, tree), this.getLRT(branch), this.getPVal(branch), this.getUncorrectedPVal(branch), this.getOmegaDistribution(m, annotations)];
 	
 	      table_row_data.push(branch_row);
 	    }
@@ -20368,7 +20363,6 @@ webpackJsonp([0],[
 	  },
 	
 	  componentDidUpdate: function componentDidUpdate() {
-	
 	    var branch_rows = d3.select('#table-branch-table').selectAll("tr").data(this.state.table_row_data);
 	
 	    branch_rows.enter().append('tr');

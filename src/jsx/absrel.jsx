@@ -42,7 +42,8 @@ var BSREL = React.createClass({
         fits : data["fits"],
         full_model : data["fits"]["Full model"],
         test_results : data["test results"],
-        input_data : data["input_data"]
+        input_data : data["input_data"],
+        tree: d3.layout.phylotree()(data["fits"]["Full model"]["tree string"])
       });
 
     });
