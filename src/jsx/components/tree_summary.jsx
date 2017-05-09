@@ -131,12 +131,27 @@ var TreeSummary = React.createClass({
 
     // inspect table_row_data and return header
     var all_columns = [ 
-                    omega_header,
-                    branch_num_header, 
-                    branch_prop_header, 
-                    branch_prop_length_header, 
-                    under_selection_header
-                  ];
+      {
+        value: omega_header,
+        abbr: "Number of ω rate classes inferred"
+      },
+      {
+        value: branch_num_header,
+        abbr: "Number of branches with this many rate classes"
+      },
+      {
+        value: branch_prop_header,
+        abbr: "Percentage of branches with this many rate classes"
+      },
+      {
+        value: branch_prop_length_header,
+        abbr: "Percentage of tree length with this many rate classes"
+      },
+      {
+        value: under_selection_header,
+        abbr: "Number of selected branches with this many rate classes"
+      }
+    ];
 
     // validate each table row with its associated header
     if(table_row_data.length == 0) {
@@ -162,11 +177,15 @@ var TreeSummary = React.createClass({
   },
 
   render: function() {
-
+    console.log(this.state.table_columns)
     return (
       <div>
-        <h4 className="dm-table-header">Tree</h4>
+        <h4 className="dm-table-header">
+          Tree
+          <span className="glyphicon glyphicon-info-sign" style={{"verticalAlign": "middle", "float":"right"}} aria-hidden="true" data-toggle="popover" data-trigger="hover" title="Tree summary" data-html="true" data-content="Hover over a branch to see its inferred rates and significance for selection.<br /> Hover over a column header for a description of its content." data-placement="bottom"></span>
+        </h4>
         <DatamonkeyTable headerData={this.state.table_columns} bodyData={this.state.table_row_data}/>
+        <p className="description">This table contains a summary of the inferred aBSREL model complexity. Each row provides information about the branches that were best described by the given number of ω rate categories.</p>
       </div>
     )
 

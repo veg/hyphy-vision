@@ -365,7 +365,6 @@ webpackJsonp([0],[
 	__webpack_require__(227);
 	__webpack_require__(239);
 	
-	
 	var React = __webpack_require__(47);
 	
 	var BSREL = React.createClass({
@@ -377,6 +376,7 @@ webpackJsonp([0],[
 	  loadFromServer: function loadFromServer() {
 	
 	    var self = this;
+	
 	    d3.json(this.props.url, function (data) {
 	
 	      data["fits"]["MG94"]["branch-annotations"] = self.formatBranchAnnotations(data, "MG94");
@@ -622,7 +622,6 @@ webpackJsonp([0],[
 	
 	    var model_fits_id = "#hyphy-model-fits",
 	        omega_plots_id = "#hyphy-omega-plots",
-	        summary_id = "#hyphy-relax-summary",
 	        tree_id = "#tree-tab";
 	  },
 	
@@ -721,7 +720,12 @@ webpackJsonp([0],[
 	                React.createElement(
 	                  'div',
 	                  { id: 'hyphy-model-fits', className: 'col-md-12' },
-	                  React.createElement(_shared_summary.DatamonkeyModelTable, { fits: self.state.fits })
+	                  React.createElement(_shared_summary.DatamonkeyModelTable, { fits: self.state.fits }),
+	                  React.createElement(
+	                    'p',
+	                    { className: 'description' },
+	                    'This table reports a statistical summary of the models fit to the data.'
+	                  )
 	                )
 	              )
 	            )
@@ -18403,7 +18407,7 @@ webpackJsonp([0],[
 /* 224 */
 /***/ function(module, exports, __webpack_require__) {
 
-	/* WEBPACK VAR INJECTION */(function(_, d3) {'use strict';
+	/* WEBPACK VAR INJECTION */(function(_, $, d3) {'use strict';
 	
 	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 	
@@ -18586,8 +18590,8 @@ webpackJsonp([0],[
 	
 	        if (_.has(cell, "abbr")) {
 	          value = React.createElement(
-	            'abbr',
-	            { title: cell.abbr },
+	            'span',
+	            { 'data-toggle': 'tooltip', 'data-placement': 'top', title: cell.abbr },
 	            value
 	          );
 	        }
@@ -18660,14 +18664,22 @@ webpackJsonp([0],[
 	  getInitialState: function getInitialState() {
 	    // either null or [index,
 	    // bool / to indicate if the sort is ascending (True) or descending (False)]
+	
+	    var len = 0;
+	
+	    if (this.props.bodyData) {
+	      len = this.props.bodyData.length;
+	    }
+	
 	    return {
-	      rowOrder: _.range(0, this.props.bodyData.length),
+	      rowOrder: _.range(0, len),
 	      headerData: this.props.headerData,
 	      sortOn: this.props.initialSort ? [this.props.initialSort, true] : null
 	    };
 	  },
 	
 	  componentWillReceiveProps: function componentWillReceiveProps(nextProps) {
+	
 	    this.setState({
 	      rowOrder: _.range(0, nextProps.bodyData.length),
 	      headerData: nextProps.headerData
@@ -18698,6 +18710,14 @@ webpackJsonp([0],[
 	        sortOn: [index, is_ascending]
 	      });
 	    }
+	  },
+	
+	  componentDidMount: function componentDidMount() {
+	    $('[data-toggle="tooltip"]').tooltip();
+	  },
+	
+	  componentDidUpdate: function componentDidUpdate() {
+	    $('[data-toggle="tooltip"]').tooltip();
 	  },
 	
 	  render: function render() {
@@ -18953,13 +18973,16 @@ webpackJsonp([0],[
 	      order: 2,
 	      value: {
 	        "value": "log L",
-	        "abbr": "log likelihood"
+	        "abbr": "Log likelihood of model fit"
 	      },
 	      display_format: d3.format(".2f")
 	    },
 	    'parameters': {
 	      order: 3,
-	      value: "Parameters"
+	      value: {
+	        value: "Parameters",
+	        abbr: "Number of estimated parameters"
+	      }
 	    },
 	    'AIC-c': {
 	      order: 1,
@@ -19177,7 +19200,7 @@ webpackJsonp([0],[
 	module.exports.DatamonkeyPartitionTable = DatamonkeyPartitionTable;
 	module.exports.DatamonkeyModelTable = DatamonkeyModelTable;
 	module.exports.DatamonkeyTimersTable = DatamonkeyTimersTable;
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(45), __webpack_require__(40)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(45), __webpack_require__(2), __webpack_require__(40)))
 
 /***/ },
 /* 225 */
@@ -19317,7 +19340,22 @@ webpackJsonp([0],[
 	        under_selection_header = '# under selection';
 	
 	    // inspect table_row_data and return header
-	    var all_columns = [omega_header, branch_num_header, branch_prop_header, branch_prop_length_header, under_selection_header];
+	    var all_columns = [{
+	      value: omega_header,
+	      abbr: "Number of ω rate classes inferred"
+	    }, {
+	      value: branch_num_header,
+	      abbr: "Number of branches with this many rate classes"
+	    }, {
+	      value: branch_prop_header,
+	      abbr: "Percentage of branches with this many rate classes"
+	    }, {
+	      value: branch_prop_length_header,
+	      abbr: "Percentage of tree length with this many rate classes"
+	    }, {
+	      value: under_selection_header,
+	      abbr: "Number of selected branches with this many rate classes"
+	    }];
 	
 	    // validate each table row with its associated header
 	    if (table_row_data.length == 0) {
@@ -19341,16 +19379,22 @@ webpackJsonp([0],[
 	  },
 	
 	  render: function render() {
-	
+	    console.log(this.state.table_columns);
 	    return React.createElement(
 	      'div',
 	      null,
 	      React.createElement(
 	        'h4',
 	        { className: 'dm-table-header' },
-	        'Tree'
+	        'Tree',
+	        React.createElement('span', { className: 'glyphicon glyphicon-info-sign', style: { "verticalAlign": "middle", "float": "right" }, 'aria-hidden': 'true', 'data-toggle': 'popover', 'data-trigger': 'hover', title: 'Tree summary', 'data-html': 'true', 'data-content': 'Hover over a branch to see its inferred rates and significance for selection.<br /> Hover over a column header for a description of its content.', 'data-placement': 'bottom' })
 	      ),
-	      React.createElement(_shared_summary.DatamonkeyTable, { headerData: this.state.table_columns, bodyData: this.state.table_row_data })
+	      React.createElement(_shared_summary.DatamonkeyTable, { headerData: this.state.table_columns, bodyData: this.state.table_row_data }),
+	      React.createElement(
+	        'p',
+	        { className: 'description' },
+	        'This table contains a summary of the inferred aBSREL model complexity. Each row provides information about the branches that were best described by the given number of \u03C9 rate categories.'
+	      )
 	    );
 	  }
 	
@@ -20363,7 +20407,7 @@ webpackJsonp([0],[
 	          'h4',
 	          { className: 'dm-table-header' },
 	          'Detailed results',
-	          React.createElement('span', { className: 'glyphicon glyphicon-info-sign', style: { "vertical-align": "middle", "float": "right" }, 'aria-hidden': 'true', 'data-toggle': 'popover', 'data-trigger': 'hover', title: 'Detailed results', 'data-html': 'true', 'data-content': 'Bolded rows indicate branches inferred to be under positive selection at the designated p-value threshold.<br/>Click on a row to visualize its inferred rate distribution.<br/>Hover over a column header for a description of its content.', 'data-placement': 'top' })
+	          React.createElement('span', { className: 'glyphicon glyphicon-info-sign', style: { "verticalAlign": "middle", "float": "right" }, 'aria-hidden': 'true', 'data-toggle': 'popover', 'data-trigger': 'hover', title: 'Detailed results', 'data-html': 'true', 'data-content': 'Bolded rows indicate branches inferred to be under positive selection at the designated p-value threshold.<br/>Click on a row to visualize its inferred rate distribution.<br/>Hover over a column header for a description of its content.', 'data-placement': 'bottom' })
 	        ),
 	        React.createElement(
 	          'table',
@@ -20372,57 +20416,61 @@ webpackJsonp([0],[
 	            'thead',
 	            { id: 'table-branch-header' },
 	            React.createElement(
-	              'th',
+	              'tr',
 	              null,
 	              React.createElement(
-	                'span',
-	                { 'data-toggle': 'tooltip', title: 'Branch of interest', 'data-placement': 'top' },
-	                'Name'
-	              )
-	            ),
-	            React.createElement(
-	              'th',
-	              null,
+	                'th',
+	                null,
+	                React.createElement(
+	                  'span',
+	                  { 'data-toggle': 'tooltip', title: 'Branch of interest', 'data-placement': 'top' },
+	                  'Name'
+	                )
+	              ),
 	              React.createElement(
-	                'span',
-	                { 'data-toggle': 'tooltip', title: 'Optimized branch length' },
-	                'B '
-	              )
-	            ),
-	            React.createElement(
-	              'th',
-	              null,
+	                'th',
+	                null,
+	                React.createElement(
+	                  'span',
+	                  { 'data-toggle': 'tooltip', title: 'Optimized branch length' },
+	                  'B '
+	                )
+	              ),
 	              React.createElement(
-	                'span',
-	                { 'data-toggle': 'tooltip', title: 'Likelihood ratio test statistic for selection' },
-	                'LRT'
-	              )
-	            ),
-	            React.createElement(
-	              'th',
-	              null,
+	                'th',
+	                null,
+	                React.createElement(
+	                  'span',
+	                  { 'data-toggle': 'tooltip', title: 'Likelihood ratio test statistic for selection' },
+	                  'LRT'
+	                )
+	              ),
 	              React.createElement(
-	                'span',
-	                { 'data-toggle': 'tooltip', title: 'P-value corrected for multiple testing' },
-	                'Test p-value'
-	              )
-	            ),
-	            React.createElement(
-	              'th',
-	              null,
+	                'th',
+	                null,
+	                React.createElement(
+	                  'span',
+	                  { 'data-toggle': 'tooltip', title: 'P-value corrected for multiple testing' },
+	                  'Test p-value'
+	                )
+	              ),
 	              React.createElement(
-	                'span',
-	                { 'data-toggle': 'tooltip', title: 'P-values which have not been corrected for multiple testing' },
-	                'Uncorrected p-value'
-	              )
-	            ),
-	            React.createElement(
-	              'th',
-	              null,
+	                'th',
+	                null,
+	                React.createElement(
+	                  'span',
+	                  { 'data-toggle': 'tooltip', title: 'P-values which have not been corrected for multiple testing' },
+	                  'Uncorrected p-value'
+	                )
+	              ),
 	              React.createElement(
-	                'span',
-	                { 'data-toggle': 'tooltip', title: 'Inferred \u03C9 estimates and respective proportion of sites' },
-	                '\u03C9 distribution over sites'
+	                'th',
+	                null,
+	                React.createElement(
+	                  'span',
+	                  { 'data-toggle': 'tooltip', title: 'Inferred \u03C9 estimates and respective proportion of sites' },
+	                  '\u03C9 distribution over sites'
+	                )
 	              )
 	            )
 	          ),
@@ -20438,6 +20486,11 @@ webpackJsonp([0],[
 	          '\u03C9 distribution'
 	        ),
 	        React.createElement(_prop_chart.PropChart, { name: self.state.current_model_name, omegas: self.state.current_omegas, settings: self.state.distro_settings })
+	      ),
+	      React.createElement(
+	        'div',
+	        { className: 'col-md-12' },
+	        React.createElement('p', { className: 'description' })
 	      )
 	    );
 	  }
@@ -20622,6 +20675,11 @@ webpackJsonp([0],[
 	    }).attr("x2", function (d) {
 	      return self.omega_scale(d);
 	    }).attr("y1", 20).attr("y2", this.plot_height + 20);
+	
+	    // Legend
+	    var legend_text = this.svg.append("g").attr("transform", "translate(" + .9 * this.plot_width + ", 25)").append("text").attr("font-size", 14).text("Neutrality (ω=1)");
+	
+	    var legend_line = this.svg.append("g").attr("transform", "translate(" + .825 * this.plot_width + ", 20)").append("line").attr("class", "hyphy-neutral-line").attr("x1", 0).attr("x2", .05 * this.plot_width).attr("y1", 0).attr("y2", 0);
 	  },
 	  createXAxis: function createXAxis() {
 	
@@ -20668,7 +20726,7 @@ webpackJsonp([0],[
 	      y_label = y_axis.select(".hyphy-axis-label.y-label");
 	    }
 	    y_axis.attr("transform", "translate(" + this.margins["left"] + "," + (this.margins["top"] + 20) + ")").call(yAxis);
-	    y_label = y_label.attr("transform", "translate(" + -this.margins["left"] + "," + 0 + ")").selectAll("text").data(["Proportion of sites"]);
+	    y_label = y_label.attr("transform", "translate(" + (-this.margins["left"] + 10) + "," + 0 + ")").selectAll("text").data(["Proportion of sites"]);
 	    y_label.enter().append("text");
 	    y_label.text(function (d) {
 	      return d;
@@ -20710,35 +20768,51 @@ webpackJsonp([0],[
 	        'div',
 	        { className: 'panel-heading' },
 	        React.createElement(
-	          'h3',
-	          { className: 'panel-title' },
-	          React.createElement(
-	            'strong',
-	            null,
-	            this.state.model_name
-	          )
-	        ),
-	        React.createElement(
 	          'div',
-	          { className: 'btn-group' },
+	          { className: 'row' },
 	          React.createElement(
-	            'button',
-	            { id: this.save_svg_id, type: 'button', className: 'btn btn-default btn-sm' },
-	            React.createElement('span', { className: 'glyphicon glyphicon-floppy-save' }),
-	            ' SVG'
+	            'div',
+	            { className: 'col-md-8 v-align' },
+	            React.createElement(
+	              'h1',
+	              { className: 'panel-title' },
+	              React.createElement(
+	                'strong',
+	                null,
+	                this.state.model_name
+	              )
+	            )
 	          ),
 	          React.createElement(
-	            'button',
-	            { id: this.save_png_id, type: 'button', className: 'btn btn-default btn-sm' },
-	            React.createElement('span', { className: 'glyphicon glyphicon-floppy-save' }),
-	            ' PNG'
+	            'div',
+	            { className: 'col-md-4 v-align' },
+	            React.createElement(
+	              'div',
+	              { className: 'btn-group pull-right' },
+	              React.createElement(
+	                'button',
+	                { id: this.save_svg_id, type: 'button', className: 'btn btn-default btn-sm' },
+	                React.createElement('span', { className: 'glyphicon glyphicon-floppy-save' }),
+	                ' SVG'
+	              ),
+	              React.createElement(
+	                'button',
+	                { id: this.save_png_id, type: 'button', className: 'btn btn-default btn-sm' },
+	                React.createElement('span', { className: 'glyphicon glyphicon-floppy-save' }),
+	                ' PNG'
+	              )
+	            )
 	          )
 	        )
 	      ),
 	      React.createElement(
 	        'div',
-	        { className: 'panel-body', style: { "text-align": "center" } },
-	        React.createElement('svg', { id: this.svg_id })
+	        { className: 'row' },
+	        React.createElement(
+	          'div',
+	          { className: 'panel-body col-md-12', style: { "text-align": "center" } },
+	          React.createElement('svg', { id: this.svg_id })
+	        )
 	      )
 	    );
 	  }

@@ -364,6 +364,7 @@ var BSREL = React.createClass({
                   </div>
                   <div id="hyphy-model-fits" className="col-md-12">
                     <DatamonkeyModelTable fits={self.state.fits} />
+                    <p className="description">This table reports a statistical summary of the models fit to the data.</p>
                   </div>
                 </div>
 

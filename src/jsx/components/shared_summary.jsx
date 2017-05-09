@@ -310,7 +310,11 @@ var DatamonkeyTable = React.createClass({
     }
   },
 
-  componentDidMount : function() {
+  componentDidMount: function(){
+    $('[data-toggle="tooltip"]').tooltip();
+  },
+
+  componentDidUpdate: function() {
     $('[data-toggle="tooltip"]').tooltip();
   },
 
@@ -591,13 +595,16 @@ var DatamonkeyModelTable = React.createClass({
       order: 2,
       value: {
         "value": "log L",
-        "abbr": "log likelihood"
+        "abbr": "Log likelihood of model fit"
       },
       display_format: d3.format(".2f")
     },
     'parameters': {
       order: 3,
-      value: "Parameters"
+      value: {
+        value: "Parameters",
+        abbr: "Number of estimated parameters"
+      }
     },
     'AIC-c': {
       order: 1,

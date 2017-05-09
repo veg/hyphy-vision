@@ -221,6 +221,19 @@ tbody > tr {
   background-color: #EEE;
 }
 
+p.description {
+  font-family: "Noto Sans";
+  line-height: 168%;
+  font-size: 15px;
+  color: #545454;
+}
+
+.v-align {
+    float: none;
+    display: inline-block;
+    vertical-align: middle;
+}
+
 /* Bootstrap-docs scroll spy */
 /* sidebar */
 .bs-docs-sidebar {

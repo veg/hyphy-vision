@@ -250,16 +250,18 @@ var BranchTable = React.createClass({
         <div id="hyphy-branch-table" className="col-md-6">
           <h4 className="dm-table-header">
             Detailed results
-            <span className="glyphicon glyphicon-info-sign" style={{"vertical-align": "middle", "float":"right"}} aria-hidden="true" data-toggle="popover" data-trigger="hover" title="Detailed results" data-html="true" data-content="Bolded rows indicate branches inferred to be under positive selection at the designated p-value threshold.<br/>Click on a row to visualize its inferred rate distribution.<br/>Hover over a column header for a description of its content." data-placement="top"></span>
+            <span className="glyphicon glyphicon-info-sign" style={{"verticalAlign": "middle", "float":"right"}} aria-hidden="true" data-toggle="popover" data-trigger="hover" title="Detailed results" data-html="true" data-content="Bolded rows indicate branches inferred to be under positive selection at the designated p-value threshold.<br/>Click on a row to visualize its inferred rate distribution.<br/>Hover over a column header for a description of its content." data-placement="bottom"></span>
           </h4>
           <table className="table table-hover table-condensed dm-table">
             <thead id="table-branch-header">
-              <th><span data-toggle="tooltip" title="Branch of interest" data-placement="top">Name</span></th>
-              <th><span data-toggle="tooltip" title="Optimized branch length">B </span></th>
-              <th><span data-toggle="tooltip" title="Likelihood ratio test statistic for selection">LRT</span></th>
-              <th><span data-toggle="tooltip" title="P-value corrected for multiple testing">Test p-value</span></th>
-              <th><span data-toggle="tooltip" title="P-values which have not been corrected for multiple testing">Uncorrected p-value</span></th>
-              <th><span data-toggle="tooltip" title="Inferred ω estimates and respective proportion of sites">ω distribution over sites</span></th>
+              <tr>
+                <th><span data-toggle="tooltip" title="Branch of interest" data-placement="top">Name</span></th>
+                <th><span data-toggle="tooltip" title="Optimized branch length">B </span></th>
+                <th><span data-toggle="tooltip" title="Likelihood ratio test statistic for selection">LRT</span></th>
+                <th><span data-toggle="tooltip" title="P-value corrected for multiple testing">Test p-value</span></th>
+                <th><span data-toggle="tooltip" title="P-values which have not been corrected for multiple testing">Uncorrected p-value</span></th>
+                <th><span data-toggle="tooltip" title="Inferred ω estimates and respective proportion of sites">ω distribution over sites</span></th>
+              </tr>
             </thead>
             <tbody id="table-branch-table"></tbody>
           </table>
@@ -267,6 +269,11 @@ var BranchTable = React.createClass({
         <div id='primary-omega-tag' className="col-md-6">
           <h4 className="dm-table-header">&omega; distribution</h4>
           <PropChart name={ self.state.current_model_name } omegas={ self.state.current_omegas } settings={ self.state.distro_settings } />
+        </div>
+        <div className="col-md-12">
+          <p className="description">
+            
+          </p>
         </div>
       </div>
     )
