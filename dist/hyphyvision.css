@@ -9370,6 +9370,10 @@ tbody > tr {
   margin-bottom : 20px;
 }
 
+.hyphy-row {
+  margin-top: 20px;
+}
+
 @media print {
  
   #content {

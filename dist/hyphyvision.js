@@ -33,8 +33,8 @@ webpackJsonp([0],[
 	var fade = __webpack_require__(248);
 	var fade_summary = __webpack_require__(249);
 	var fel = __webpack_require__(250);
-	var relax = __webpack_require__(251);
-	var slac = __webpack_require__(253);
+	var relax = __webpack_require__(252);
+	var slac = __webpack_require__(254);
 	
 	// Create new hyphy-vision export
 	window.absrel = absrel;
@@ -18565,7 +18565,7 @@ webpackJsonp([0],[
 /* 229 */
 /***/ function(module, exports, __webpack_require__) {
 
-	/* WEBPACK VAR INJECTION */(function(_, d3) {'use strict';
+	/* WEBPACK VAR INJECTION */(function(_, $, d3) {'use strict';
 	
 	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 	
@@ -18748,8 +18748,8 @@ webpackJsonp([0],[
 	
 	        if (_.has(cell, "abbr")) {
 	          value = React.createElement(
-	            'abbr',
-	            { title: cell.abbr },
+	            'span',
+	            { 'data-toggle': 'tooltip', 'data-placement': 'top', title: cell.abbr },
 	            value
 	          );
 	        }
@@ -18774,7 +18774,6 @@ webpackJsonp([0],[
 	        }
 	
 	        if (this.state.header && this.props.sorter) {
-	          //console.log ("header + sorter", cell);
 	          if (_.has(cell, "sortable")) {
 	            cellProps["onClick"] = _.partial(this.props.sorter, index, this.dm_compareTwoValues_level2);
 	
@@ -18822,14 +18821,22 @@ webpackJsonp([0],[
 	  getInitialState: function getInitialState() {
 	    // either null or [index,
 	    // bool / to indicate if the sort is ascending (True) or descending (False)]
+	
+	    var len = 0;
+	
+	    if (this.props.bodyData) {
+	      len = this.props.bodyData.length;
+	    }
+	
 	    return {
-	      rowOrder: _.range(0, this.props.bodyData.length),
+	      rowOrder: _.range(0, len),
 	      headerData: this.props.headerData,
 	      sortOn: this.props.initialSort ? [this.props.initialSort, true] : null
 	    };
 	  },
 	
 	  componentWillReceiveProps: function componentWillReceiveProps(nextProps) {
+	
 	    this.setState({
 	      rowOrder: _.range(0, nextProps.bodyData.length),
 	      headerData: nextProps.headerData
@@ -18860,6 +18867,14 @@ webpackJsonp([0],[
 	        sortOn: [index, is_ascending]
 	      });
 	    }
+	  },
+	
+	  componentDidMount: function componentDidMount() {
+	    $('[data-toggle="tooltip"]').tooltip();
+	  },
+	
+	  componentDidUpdate: function componentDidUpdate() {
+	    $('[data-toggle="tooltip"]').tooltip();
 	  },
 	
 	  render: function render() {
@@ -19086,27 +19101,26 @@ webpackJsonp([0],[
 	  displayName: 'DatamonkeyModelTable',
 	
 	
-	  /** render a model fit table from a JSON object with entries like this
-	          "Global MG94xREV":{ // model name
-	             "log likelihood":-5453.527975908821,
-	             "parameters":131,
-	             "AIC-c":11172.05569160427,
-	             "rate distributions":{
-	               "non-synonymous/synonymous rate ratio for *background*":[
-	                [0.1701428265961598, 1]
-	                ],
-	               "non-synonymous/synonymous rate ratio for *test*":[
-	                [0.1452686330406915, 1]
-	                ]
-	              },
-	             "display order":0
-	            }
-	     dm_supportedColumns controls which keys from model specification will be consumed;
-	        * 'value' is the cell specification to be consumed by DatamonkeyTableRow
-	        * 'order' is the column order in the resulting table (relative; doesn't have to be sequential)
-	        * 'display_format' is a formatting function for cell entries
-	        * 'transform' is a data trasformation function for cell entries
-	   */
+	  // render a model fit table from a JSON object with entries like this
+	  //     "Global MG94xREV":{  model name
+	  //          "log likelihood":-5453.527975908821,
+	  //          "parameters":131,
+	  //          "AIC-c":11172.05569160427,
+	  //          "rate distributions":{
+	  //            "non-synonymous/synonymous rate ratio for *background*":[
+	  //             [0.1701428265961598, 1]
+	  //             ],
+	  //            "non-synonymous/synonymous rate ratio for *test*":[
+	  //             [0.1452686330406915, 1]
+	  //             ]
+	  //           },
+	  //          "display order":0
+	  //         }
+	  // dm_supportedColumns controls which keys from model specification will be consumed;
+	  //     * 'value' is the cell specification to be consumed by DatamonkeyTableRow
+	  //     * 'order' is the column order in the resulting table (relative; doesn't have to be sequential)
+	  //     * 'display_format' is a formatting function for cell entries
+	  //     * 'transform' is a data trasformation function for cell entries
 	
 	  dm_numberFormatter: d3.format(".2f"),
 	
@@ -19339,7 +19353,7 @@ webpackJsonp([0],[
 	module.exports.DatamonkeyPartitionTable = DatamonkeyPartitionTable;
 	module.exports.DatamonkeyModelTable = DatamonkeyModelTable;
 	module.exports.DatamonkeyTimersTable = DatamonkeyTimersTable;
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(45), __webpack_require__(40)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(45), __webpack_require__(2), __webpack_require__(40)))
 
 /***/ },
 /* 230 */
@@ -22672,6 +22686,8 @@ webpackJsonp([0],[
 	
 	var _shared_summary = __webpack_require__(229);
 	
+	var _shared_graph = __webpack_require__(251);
+	
 	var _navbar = __webpack_require__(235);
 	
 	var _scrollspy = __webpack_require__(236);
@@ -22689,7 +22705,7 @@ webpackJsonp([0],[
 	  displayName: 'FEL',
 	
 	
-	  float_format: d3.format(".2f"),
+	  float_format: d3.format(".3f"),
 	
 	  loadFromServer: function loadFromServer() {
 	
@@ -22697,27 +22713,69 @@ webpackJsonp([0],[
 	
 	    d3.json(this.props.url, function (data) {
 	
-	      //data["fits"]["MG94"]["branch-annotations"] = self.formatBranchAnnotations(data, "MG94");
-	      //data["fits"]["Full model"]["branch-annotations"] = self.formatBranchAnnotations(data, "Full model");
+	      var mle = data["MLE"];
+	      var mle_headers = mle.headers || [];
+	      var mle_content = mle.content[0] || [];
 	
-	      //// GH-#18 Add omega annotation tag
-	      //data["fits"]["MG94"]["annotation-tag"] = "ω";
-	      //data["fits"]["Full model"]["annotation-tag"] = "ω";
+	      mle_headers = self.formatHeadersForTable(mle_headers);
+	      _.each(mle_headers, function (d) {
+	        return d["sortable"] = true;
+	      });
 	
-	      //self.setState({
-	      //  annotations : data["fits"]["Full model"]["branch-annotations"],
-	      //  json : data,
-	      //  pmid : data["PMID"],
-	      //  fits : data["fits"],
-	      //  full_model : data["fits"]["Full model"],
-	      //  test_results : data["test results"],
-	      //  input_data : data["input_data"]
-	      //});
+	      // format content
+	      mle_content = _.map(mle_content, function (d) {
+	        return _.map(d, function (g) {
+	          return self.float_format(g);
+	        });
+	      });
 	
+	      // add a site count to both headers and content
+	      mle_headers = [{ "value": "Site", "sortable": true, "abbr": "Site Position" }].concat(mle_headers);
+	      mle_content = _.map(mle_content, function (d, key) {
+	        var k = key + 1;return [k].concat(d);
+	      });
+	
+	      self.setState({
+	        mle_headers: mle_headers,
+	        mle_content: mle_content
+	      });
 	    });
 	  },
 	
-	  formatForTable: function formatForTable() {},
+	  formatHeadersForTable: function formatHeadersForTable(mle) {
+	    return _.map(mle, function (d) {
+	      return _.object(["value", "abbr"], d);
+	    });
+	  },
+	
+	  definePlotData: function definePlotData(x_label, y_label) {
+	
+	    var self = this;
+	
+	    // get index of label by looking at header
+	    var header_labels = _.map(self.state.mle_headers, function (d) {
+	      return d.value;
+	    });
+	
+	    var x_index = _.indexOf(header_labels, x_label);
+	    var y_index = _.indexOf(header_labels, y_label);
+	
+	    var x = [];
+	    var y = [];
+	
+	    if (x_index == -1 || y_index == -1) {
+	      return { x: x, y: y };
+	    }
+	
+	    x = _.map(self.state.mle_content, function (d) {
+	      return d[x_index];
+	    });
+	    y = _.map(self.state.mle_content, function (d) {
+	      return d[y_index];
+	    });
+	
+	    return { x: x, y: [y] };
+	  },
 	
 	  getDefaultProps: function getDefaultProps() {
 	    return {};
@@ -22726,15 +22784,16 @@ webpackJsonp([0],[
 	  getInitialState: function getInitialState() {
 	
 	    return {
-	      json: null,
-	      pmid: null,
-	      input_data: null
+	      mle_headers: [],
+	      mle_content: [],
+	      xLabel: "Site",
+	      yLabel: "alpha"
 	    };
 	  },
 	
 	  componentWillMount: function componentWillMount() {
 	    this.loadFromServer();
-	    this.setEvents();
+	    //this.setEvents();
 	  },
 	
 	  setEvents: function setEvents() {
@@ -22777,8 +22836,6 @@ webpackJsonp([0],[
 	    //});
 	  },
 	
-	  initialize: function initialize() {},
-	
 	  componentDidUpdate: function componentDidUpdate(prevProps, prevState) {
 	    $('body').scrollspy({
 	      target: '.bs-docs-sidebar',
@@ -22791,7 +22848,11 @@ webpackJsonp([0],[
 	
 	    var self = this;
 	
-	    var scrollspy_info = [{ label: "summary", href: "summary-tab" }, { label: "table", href: "table-tab" }];
+	    var scrollspy_info = [{ label: "summary", href: "summary-tab" }, { label: "plots", href: "plot-tab" }, { label: "table", href: "table-tab" }];
+	
+	    var _self$definePlotData = self.definePlotData(self.state.xLabel, self.state.yLabel),
+	        x = _self$definePlotData.x,
+	        y = _self$definePlotData.y;
 	
 	    return React.createElement(
 	      'div',
@@ -22806,7 +22867,7 @@ webpackJsonp([0],[
 	          React.createElement(_scrollspy.ScrollSpy, { info: scrollspy_info }),
 	          React.createElement(
 	            'div',
-	            { className: 'col-sm-10' },
+	            { id: 'fel-results', className: 'col-sm-10' },
 	            React.createElement(
 	              'div',
 	              { id: 'datamonkey-fel-error', className: 'alert alert-danger alert-dismissible', role: 'alert', style: { display: "none" } },
@@ -22833,13 +22894,74 @@ webpackJsonp([0],[
 	              React.createElement('span', { id: 'datamonkey-fel-error-text' })
 	            ),
 	            React.createElement(
+	              'h3',
+	              { className: 'list-group-item-heading' },
+	              React.createElement(
+	                'span',
+	                { id: 'summary-method-name' },
+	                'FEL - Fixed Effects Likelihood - Results'
+	              )
+	            ),
+	            React.createElement(
 	              'div',
 	              { id: 'results' },
-	              React.createElement('div', { id: 'summary-tab' }),
 	              React.createElement(
 	                'div',
-	                { className: 'row' },
-	                React.createElement('div', { id: 'hyphy-mle-fits', className: 'col-md-12' })
+	                { id: 'summary-tab', className: 'row hyphy-row' },
+	                React.createElement(
+	                  'div',
+	                  { className: 'main-result' },
+	                  React.createElement(
+	                    'p',
+	                    { className: 'list-group-item-text label_and_input' },
+	                    'Evidence',
+	                    React.createElement(
+	                      'sup',
+	                      null,
+	                      '\u2020'
+	                    ),
+	                    ' of episodic diversifying selection was found on',
+	                    React.createElement(
+	                      'span',
+	                      { className: 'hyphy-highlight' },
+	                      React.createElement(
+	                        'strong',
+	                        null,
+	                        ' ',
+	                        self.state.branches_with_evidence
+	                      ),
+	                      ' out of ',
+	                      self.state.test_branches
+	                    ),
+	                    ' tested branches (',
+	                    self.state.total_branches,
+	                    ' total branches).'
+	                  )
+	                )
+	              ),
+	              React.createElement(
+	                'div',
+	                { id: 'plot-tab', className: 'row hyphy-row' },
+	                React.createElement(
+	                  'h3',
+	                  { className: 'dm-table-header' },
+	                  'Plot Summary'
+	                ),
+	                React.createElement(_shared_graph.DatamonkeySeries, { x: x, y: y, marginLeft: 50, width: $("#fel-results").width(), transitions: true, doDots: true })
+	              ),
+	              React.createElement(
+	                'div',
+	                { id: 'table-tab', className: 'row hyphy-row' },
+	                React.createElement(
+	                  'div',
+	                  { id: 'hyphy-mle-fits', className: 'col-md-12' },
+	                  React.createElement(
+	                    'h3',
+	                    { className: 'dm-table-header' },
+	                    'Table Summary'
+	                  ),
+	                  React.createElement(_shared_summary.DatamonkeyTable, { headerData: self.state.mle_headers, bodyData: self.state.mle_content, classes: "table table-condensed" })
+	                )
 	              )
 	            )
 	          )
@@ -22863,6 +22985,380 @@ webpackJsonp([0],[
 /* 251 */
 /***/ function(module, exports, __webpack_require__) {
 
+	/* WEBPACK VAR INJECTION */(function(d3, _) {'use strict';
+	
+	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+	
+	var React = __webpack_require__(47);
+	var datamonkey = __webpack_require__(39);
+	
+	var _dmGraphDefaultColorPallette = d3.scale.category10().domain(_.range(10));
+	
+	var GraphNav = React.createClass({
+	    displayName: 'GraphNav',
+	    getDefaultProps: function getDefaultProps() {
+	        return {
+	            fields: ''
+	        };
+	    },
+	
+	
+	    render: function render() {
+	        return React.createElement(
+	            'nav',
+	            { className: 'navbar' },
+	            React.createElement(
+	                'form',
+	                { className: 'navbar-form ' },
+	                React.createElement(
+	                    'div',
+	                    { className: 'form-group navbar-left' },
+	                    React.createElement(
+	                        'div',
+	                        { className: 'input-group' },
+	                        React.createElement(
+	                            'span',
+	                            { className: 'input-group-addon' },
+	                            'X-axis:'
+	                        ),
+	                        React.createElement(
+	                            'ul',
+	                            { className: 'dropdown-menu' },
+	                            _.map(['Site'].concat(_.pluck(self.props.headers, 0)), function (value) {
+	                                return React.createElement(
+	                                    'li',
+	                                    { key: value },
+	                                    React.createElement(
+	                                        'a',
+	                                        { href: '#', tabIndex: '-1', onClick: _.partial(self.dm_xAxis, value) },
+	                                        value
+	                                    )
+	                                );
+	                            })
+	                        ),
+	                        React.createElement(
+	                            'button',
+	                            { className: 'btn btn-default btn-sm dropdown-toggle form-control', type: 'button', 'data-toggle': 'dropdown', 'aria-haspopup': 'true', 'aria-expanded': 'false' },
+	                            self.state.xLabel,
+	                            React.createElement('span', { className: 'caret' })
+	                        )
+	                    ),
+	                    React.createElement(
+	                        'div',
+	                        { className: 'input-group' },
+	                        React.createElement(
+	                            'span',
+	                            { className: 'input-group-addon' },
+	                            'Y-axis:'
+	                        ),
+	                        React.createElement(
+	                            'ul',
+	                            { className: 'dropdown-menu' },
+	                            _.map(_.pluck(self.props.headers, 0), function (value) {
+	                                return React.createElement(
+	                                    'li',
+	                                    { key: value },
+	                                    React.createElement(
+	                                        'a',
+	                                        { href: '#', tabIndex: '-1', onClick: _.partial(self.dm_yAxis, value) },
+	                                        value
+	                                    )
+	                                );
+	                            })
+	                        ),
+	                        React.createElement(
+	                            'button',
+	                            { className: 'btn btn-default btn-sm dropdown-toggle form-control', type: 'button', 'data-toggle': 'dropdown', 'aria-haspopup': 'true', 'aria-expanded': 'false' },
+	                            self.state.yLabel,
+	                            React.createElement('span', { className: 'caret' })
+	                        )
+	                    ),
+	                    React.createElement(
+	                        'div',
+	                        { className: 'input-group' },
+	                        React.createElement(
+	                            'span',
+	                            { className: 'input-group-addon' },
+	                            'Ambiguities '
+	                        ),
+	                        React.createElement(
+	                            'ul',
+	                            { className: 'dropdown-menu' },
+	                            _.map(this.state.ambigOptions, function (value, index) {
+	                                return React.createElement(
+	                                    'li',
+	                                    { key: index },
+	                                    React.createElement(
+	                                        'a',
+	                                        { href: '#', tabIndex: '-1', onClick: _.partial(self.dm_setAmbigOption, value) },
+	                                        value
+	                                    )
+	                                );
+	                            })
+	                        ),
+	                        React.createElement(
+	                            'button',
+	                            { className: 'btn btn-default btn-sm dropdown-toggle form-control', type: 'button', 'data-toggle': 'dropdown', 'aria-haspopup': 'true', 'aria-expanded': 'false' },
+	                            self.state.ambigHandling,
+	                            ' ',
+	                            React.createElement('span', { className: 'caret' })
+	                        )
+	                    )
+	                )
+	            )
+	        );
+	    }
+	
+	});
+	
+	var _dmGraphBaseDefinitions = {
+	
+	    getDefaultProps: function getDefaultProps() {
+	        return {
+	            width: 800,
+	            height: 400,
+	            marginLeft: 35,
+	            marginRight: 10,
+	            marginTop: 10,
+	            marginBottom: 35,
+	            marginXaxis: 5,
+	            marginYaxis: 5,
+	            graphData: null,
+	            renderStyle: { "axis": { "class": "hyphy-axis" }, "points": { "class": "" } },
+	            xScale: "linear",
+	            yScale: "linear",
+	            xAxis: true,
+	            yAxis: true,
+	            transitions: false,
+	            numberFormat: d3.format(".4r"),
+	            tracker: true,
+	            xLabel: null,
+	            yLabel: null,
+	            x: [],
+	            y: []
+	        };
+	    },
+	
+	    getInitialState: function getInitialState() {
+	        return null;
+	    },
+	
+	    dm_computeRanges: function dm_computeRanges() {
+	        return {
+	            x_range: d3.extent(this.props.x),
+	            y_range: d3.extent(_.flatten(_.map(this.props.y, function (data_point) {
+	                return d3.extent(data_point);
+	            })))
+	        };
+	    },
+	
+	    dm_computeDimensions: function dm_computeDimensions() {
+	        return {
+	            main: { width: this.props.width - this.props.marginLeft - this.props.marginRight,
+	                height: this.props.height - this.props.marginTop - this.props.marginBottom }
+	
+	        };
+	    },
+	
+	    componentWillReceiveProps: function componentWillReceiveProps(nextProps) {},
+	
+	    /*shouldComponentUpdate: function () {
+	        return false;
+	    },*/
+	
+	    componentDidMount: function componentDidMount() {
+	
+	        //this.dm_renderGraph (x_scale, y_scale, ReactDOM.findDOMNode(this));
+	    },
+	
+	    dm_makeTitle: function dm_makeTitle(point) {
+	        return "x = " + this.props.numberFormat(point[0]) + " y = " + this.props.numberFormat(point[1]);
+	    },
+	
+	    dm_setTracker: function dm_setTracker(main_graph, point) {
+	        if (this.props.tracker) {
+	            var tracker = main_graph.selectAll(".graph-tracker").data([[""]]);
+	            tracker.enter().append("g");
+	            tracker.attr("transform", "translate (50,50)").classed("graph-tracker", true);
+	
+	            if (point) {
+	                var text_element = tracker.selectAll("text").data(function (d) {
+	                    return d;
+	                });
+	                text_element.enter().append("text");
+	                text_element.text(this.dm_makeTitle(point)).attr("background-color", "red");
+	            } else {
+	                tracker.selectAll("text").remove();
+	            }
+	        }
+	    },
+	
+	    dm_renderGraph: function dm_renderGraph(x_scale, y_scale, dom_element) {
+	
+	        var main_graph = d3.select(dom_element);
+	        var self = this;
+	        var dot_classes = this.dm_makeClasses("points");
+	
+	        _.each(this.props.y, _.bind(function (y, i) {
+	            var series_color = _dmGraphDefaultColorPallette(i);
+	
+	            var data_points = main_graph.selectAll("circle.series_" + i).data(_.zip(this.props.x, y));
+	            data_points.enter().append("circle");
+	            data_points.exit().remove();
+	
+	            data_points.on("mouseover", function (t) {
+	                self.dm_setTracker(main_graph, t);
+	            }).on("mouseout", function (t) {
+	                self.dm_setTracker(main_graph, null);
+	            });
+	
+	            this.dm_doTransition(data_points.classed("series_" + i, true)).attr("cx", function (d) {
+	                return x_scale(d[0]);
+	            }).attr("cy", function (d) {
+	                return y_scale(d[1]);
+	            }).attr("r", function (d) {
+	                return 3;
+	            }).attr("fill", series_color);
+	        }, this));
+	    },
+	
+	    dm_doTransition: function dm_doTransition(d3sel) {
+	        if (this.props.transitions) {
+	            return d3sel.transition();
+	        }
+	        return d3sel;
+	    },
+	
+	    dm_renderAxis: function dm_renderAxis(scale, location, label, dom_element) {
+	
+	        var xAxis = d3.svg.axis().scale(scale).orient(location); // e.g. bottom
+	
+	        this.dm_doTransition(d3.select(dom_element)).call(xAxis);
+	
+	        if (label) {
+	            var axis_label = dom_element.selectAll(".");
+	        }
+	    },
+	
+	    dm_makeClasses: function dm_makeClasses(key) {
+	        var className = null,
+	            styleDict = null;
+	
+	        if (key in this.props.renderStyle) {
+	            if ("class" in this.props.renderStyle[key]) {
+	                className = this.props.renderStyle[key]["class"];
+	            }
+	            if ("style" in this.props.renderStyle[key]) {
+	                styleDict = this.props.renderStyle[key]["style"];
+	            }
+	        }
+	
+	        return { className: className, style: styleDict };
+	    },
+	
+	    dm_makeScale: function dm_makeScale(type, domain, range) {
+	        var scale;
+	        if (_.isFunction(type)) {
+	            scale = type;
+	        } else {
+	            switch (type) {
+	                case 'linear':
+	                    scale = d3.scale.linear();
+	                    break;
+	                case 'log':
+	                    scale = d3.scale.log();
+	                    break;
+	                default:
+	                    scale = d3.scale.linear();
+	            }
+	        }
+	        return scale.domain(domain).range(range);
+	    },
+	
+	    render: function render() {
+	        var _dm_computeDimensions = this.dm_computeDimensions(),
+	            main = _dm_computeDimensions.main,
+	            _dm_computeRanges = this.dm_computeRanges(),
+	            x_range = _dm_computeRanges.x_range,
+	            y_range = _dm_computeRanges.y_range;
+	
+	        var x_scale = this.dm_makeScale(this.props.xScale, x_range, [0, main.width]),
+	            y_scale = this.dm_makeScale(this.props.yScale, y_range, [main.height, 0]);
+	
+	        return React.createElement(
+	            'svg',
+	            { width: this.props.width, height: this.props.height },
+	            React.createElement('g', { transform: "translate(" + this.props.marginLeft + "," + this.props.marginTop + ")", ref: _.partial(this.dm_renderGraph, x_scale, y_scale) }),
+	            this.props.xAxis ? React.createElement('g', _extends({}, this.dm_makeClasses("axis"), { transform: "translate(" + this.props.marginLeft + "," + (main.height + this.props.marginTop + this.props.marginXaxis) + ")", ref: _.partial(this.dm_renderAxis, x_scale, "bottom", this.props.xLabel) })) : null,
+	            this.props.yAxis ? React.createElement('g', _extends({}, this.dm_makeClasses("axis"), { transform: "translate(" + (this.props.marginLeft - this.props.marginYaxis) + "," + this.props.marginTop + ")", ref: _.partial(this.dm_renderAxis, y_scale, "left", this.props.yLabel) })) : null
+	        );
+	    }
+	};
+	
+	var _dmGraphSeriesDefinitions = _.clone(_dmGraphBaseDefinitions);
+	
+	_dmGraphSeriesDefinitions.dm_renderGraph = function (x_scale, y_scale, dom_element) {
+	
+	    var main_graph = d3.select(dom_element);
+	    var self = this;
+	
+	    _.each(this.props.y, _.bind(function (y, i) {
+	        var series_color = _dmGraphDefaultColorPallette(i);
+	
+	        var series_line = d3.svg.area().interpolate("step").y1(function (d) {
+	            return y_scale(d[1]);
+	        }).x(function (d) {
+	            return x_scale(d[0]);
+	        });
+	
+	        if (y_scale.domain()[0] < 0) {
+	            series_line.y0(function (d) {
+	                return y_scale(0);
+	            });
+	        } else {
+	            series_line.y0(y_scale(y_scale.domain()[0]));
+	        }
+	
+	        var data_points = main_graph.selectAll("path.series_" + i).data([_.zip(this.props.x, y)]);
+	        data_points.enter().append("path");
+	        data_points.exit().remove();
+	
+	        this.dm_doTransition(data_points.classed("series_" + i, true)).attr("d", series_line).attr("fill", series_color).attr("fill-opacity", 0.25).attr("stroke", series_color).attr("stroke-width", "0.5px");
+	
+	        if (this.props.doDots) {
+	
+	            var data_points = main_graph.selectAll("circle.series_" + i).data(_.zip(this.props.x, y));
+	            data_points.enter().append("circle");
+	            data_points.exit().remove();
+	
+	            data_points.on("mouseover", function (t) {
+	                self.dm_setTracker(main_graph, t);
+	            }).on("mouseout", function (t) {
+	                self.dm_setTracker(main_graph, null);
+	            });
+	
+	            this.dm_doTransition(data_points.classed("series_" + i, true)).attr("cx", function (d) {
+	                return x_scale(d[0]);
+	            }).attr("cy", function (d) {
+	                return y_scale(d[1]);
+	            }).attr("r", function (d) {
+	                return 2;
+	            }).attr("fill", series_color);
+	        }
+	    }, this));
+	};
+	
+	var DatamonkeyScatterplot = React.createClass(_dmGraphBaseDefinitions);
+	var DatamonkeySeries = React.createClass(_dmGraphSeriesDefinitions);
+	
+	module.exports.DatamonkeyScatterplot = DatamonkeyScatterplot;
+	module.exports.DatamonkeySeries = DatamonkeySeries;
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(40), __webpack_require__(45)))
+
+/***/ },
+/* 252 */
+/***/ function(module, exports, __webpack_require__) {
+
 	/* WEBPACK VAR INJECTION */(function(d3, $) {"use strict";
 	
 	var _model_fits = __webpack_require__(247);
@@ -22871,7 +23367,7 @@ webpackJsonp([0],[
 	
 	var _tree = __webpack_require__(231);
 	
-	var _omega_plots = __webpack_require__(252);
+	var _omega_plots = __webpack_require__(253);
 	
 	var React = __webpack_require__(47),
 	    ReactDOM = __webpack_require__(82),
@@ -23224,7 +23720,7 @@ webpackJsonp([0],[
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(40), __webpack_require__(2)))
 
 /***/ },
-/* 252 */
+/* 253 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(d3) {'use strict';
@@ -23694,18 +24190,18 @@ webpackJsonp([0],[
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(40)))
 
 /***/ },
-/* 253 */
+/* 254 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(d3, $) {'use strict';
 	
 	var _shared_summary = __webpack_require__(229);
 	
-	var _slac_sites = __webpack_require__(254);
+	var _slac_sites = __webpack_require__(255);
 	
-	var _slac_summary = __webpack_require__(255);
+	var _slac_summary = __webpack_require__(256);
 	
-	var _slac_graphs = __webpack_require__(256);
+	var _slac_graphs = __webpack_require__(257);
 	
 	var React = __webpack_require__(47),
 	    ReactDOM = __webpack_require__(82),
@@ -24006,7 +24502,7 @@ webpackJsonp([0],[
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(40), __webpack_require__(2)))
 
 /***/ },
-/* 254 */
+/* 255 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(d3, _) {'use strict';
@@ -24626,7 +25122,7 @@ webpackJsonp([0],[
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(40), __webpack_require__(45)))
 
 /***/ },
-/* 255 */
+/* 256 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(_, d3) {'use strict';
@@ -24798,12 +25294,12 @@ webpackJsonp([0],[
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(45), __webpack_require__(40)))
 
 /***/ },
-/* 256 */
+/* 257 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(_) {'use strict';
 	
-	var _shared_graph = __webpack_require__(257);
+	var _shared_graph = __webpack_require__(251);
 	
 	var React = __webpack_require__(47);
 	var datamonkey = __webpack_require__(39);
@@ -24877,7 +25373,6 @@ webpackJsonp([0],[
 	                var siteData = self.props.mle[partitionIndex][self.state.ambigHandling][index];
 	
 	                var thisRow = [partitionIndex + 1, site + 1];
-	                //secondRow = doCI ? ['',''] : null;
 	                siteCount++;
 	                if (x_index < 0) {
 	                    x.push(siteCount);
@@ -24888,8 +25383,11 @@ webpackJsonp([0],[
 	                    y[i].push(siteData[ci]);
 	                });
 	            });
+	
 	            partitionIndex++;
 	        }
+	
+	        debugger;
 	
 	        return { x: x, y: y };
 	    },
@@ -25035,263 +25533,6 @@ webpackJsonp([0],[
 	
 	module.exports.SLACGraphs = SLACGraphs;
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(45)))
-
-/***/ },
-/* 257 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/* WEBPACK VAR INJECTION */(function(d3, _) {'use strict';
-	
-	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
-	
-	var React = __webpack_require__(47);
-	var datamonkey = __webpack_require__(39);
-	
-	var _dmGraphDefaultColorPallette = d3.scale.category10().domain(_.range(10));
-	
-	var _dmGraphBaseDefinitions = {
-	
-	    getDefaultProps: function getDefaultProps() {
-	        return {
-	            width: 800,
-	            height: 400,
-	            marginLeft: 35,
-	            marginRight: 10,
-	            marginTop: 10,
-	            marginBottom: 35,
-	            marginXaxis: 5,
-	            marginYaxis: 5,
-	            graphData: null,
-	            renderStyle: { "axis": { "class": "hyphy-axis" }, "points": { "class": "" } },
-	            xScale: "linear",
-	            yScale: "linear",
-	            xAxis: true,
-	            yAxis: true,
-	            transitions: false,
-	            numberFormat: d3.format(".4r"),
-	            tracker: true,
-	            xLabel: null,
-	            yLabel: null,
-	            x: [],
-	            y: []
-	        };
-	    },
-	
-	    getInitialState: function getInitialState() {
-	        return null;
-	    },
-	
-	    dm_computeRanges: function dm_computeRanges() {
-	        return {
-	            x_range: d3.extent(this.props.x),
-	            y_range: d3.extent(_.flatten(_.map(this.props.y, function (data_point) {
-	                return d3.extent(data_point);
-	            })))
-	        };
-	    },
-	
-	    dm_computeDimensions: function dm_computeDimensions() {
-	        return {
-	            main: { width: this.props.width - this.props.marginLeft - this.props.marginRight,
-	                height: this.props.height - this.props.marginTop - this.props.marginBottom }
-	
-	        };
-	    },
-	
-	    componentWillReceiveProps: function componentWillReceiveProps(nextProps) {},
-	
-	    /*shouldComponentUpdate: function () {
-	        return false;
-	    },*/
-	
-	    componentDidMount: function componentDidMount() {
-	
-	        //this.dm_renderGraph (x_scale, y_scale, ReactDOM.findDOMNode(this));
-	    },
-	
-	    dm_makeTitle: function dm_makeTitle(point) {
-	        return "x = " + this.props.numberFormat(point[0]) + " y = " + this.props.numberFormat(point[1]);
-	    },
-	
-	    dm_setTracker: function dm_setTracker(main_graph, point) {
-	        if (this.props.tracker) {
-	            var tracker = main_graph.selectAll(".graph-tracker").data([[""]]);
-	            tracker.enter().append("g");
-	            tracker.attr("transform", "translate (50,50)").classed("graph-tracker", true);
-	
-	            if (point) {
-	                var text_element = tracker.selectAll("text").data(function (d) {
-	                    return d;
-	                });
-	                text_element.enter().append("text");
-	                text_element.text(this.dm_makeTitle(point)).attr("background-color", "red");
-	            } else {
-	                tracker.selectAll("text").remove();
-	            }
-	        }
-	    },
-	
-	    dm_renderGraph: function dm_renderGraph(x_scale, y_scale, dom_element) {
-	
-	        var main_graph = d3.select(dom_element);
-	        var self = this;
-	        var dot_classes = this.dm_makeClasses("points");
-	
-	        _.each(this.props.y, _.bind(function (y, i) {
-	            var series_color = _dmGraphDefaultColorPallette(i);
-	
-	            var data_points = main_graph.selectAll("circle.series_" + i).data(_.zip(this.props.x, y));
-	            data_points.enter().append("circle");
-	            data_points.exit().remove();
-	
-	            data_points.on("mouseover", function (t) {
-	                self.dm_setTracker(main_graph, t);
-	            }).on("mouseout", function (t) {
-	                self.dm_setTracker(main_graph, null);
-	            });
-	
-	            this.dm_doTransition(data_points.classed("series_" + i, true)).attr("cx", function (d) {
-	                return x_scale(d[0]);
-	            }).attr("cy", function (d) {
-	                return y_scale(d[1]);
-	            }).attr("r", function (d) {
-	                return 3;
-	            }).attr("fill", series_color);
-	        }, this));
-	    },
-	
-	    dm_doTransition: function dm_doTransition(d3sel) {
-	        if (this.props.transitions) {
-	            return d3sel.transition();
-	        }
-	        return d3sel;
-	    },
-	
-	    dm_renderAxis: function dm_renderAxis(scale, location, label, dom_element) {
-	
-	        var xAxis = d3.svg.axis().scale(scale).orient(location); // e.g. bottom
-	
-	        this.dm_doTransition(d3.select(dom_element)).call(xAxis);
-	
-	        if (label) {
-	            var axis_label = dom_element.selectAll(".");
-	        }
-	    },
-	
-	    dm_makeClasses: function dm_makeClasses(key) {
-	        var className = null,
-	            styleDict = null;
-	
-	        if (key in this.props.renderStyle) {
-	            if ("class" in this.props.renderStyle[key]) {
-	                className = this.props.renderStyle[key]["class"];
-	            }
-	            if ("style" in this.props.renderStyle[key]) {
-	                styleDict = this.props.renderStyle[key]["style"];
-	            }
-	        }
-	
-	        return { className: className, style: styleDict };
-	    },
-	
-	    dm_makeScale: function dm_makeScale(type, domain, range) {
-	        var scale;
-	        if (_.isFunction(type)) {
-	            scale = type;
-	        } else {
-	            switch (type) {
-	                case 'linear':
-	                    scale = d3.scale.linear();
-	                    break;
-	                case 'log':
-	                    scale = d3.scale.log();
-	                    break;
-	                default:
-	                    scale = d3.scale.linear();
-	            }
-	        }
-	        return scale.domain(domain).range(range);
-	    },
-	
-	    render: function render() {
-	        var _dm_computeDimensions = this.dm_computeDimensions(),
-	            main = _dm_computeDimensions.main,
-	            _dm_computeRanges = this.dm_computeRanges(),
-	            x_range = _dm_computeRanges.x_range,
-	            y_range = _dm_computeRanges.y_range;
-	
-	        var x_scale = this.dm_makeScale(this.props.xScale, x_range, [0, main.width]),
-	            y_scale = this.dm_makeScale(this.props.yScale, y_range, [main.height, 0]);
-	
-	        return React.createElement(
-	            'svg',
-	            { width: this.props.width, height: this.props.height },
-	            React.createElement('g', { transform: "translate(" + this.props.marginLeft + "," + this.props.marginTop + ")", ref: _.partial(this.dm_renderGraph, x_scale, y_scale) }),
-	            this.props.xAxis ? React.createElement('g', _extends({}, this.dm_makeClasses("axis"), { transform: "translate(" + this.props.marginLeft + "," + (main.height + this.props.marginTop + this.props.marginXaxis) + ")", ref: _.partial(this.dm_renderAxis, x_scale, "bottom", this.props.xLabel) })) : null,
-	            this.props.yAxis ? React.createElement('g', _extends({}, this.dm_makeClasses("axis"), { transform: "translate(" + (this.props.marginLeft - this.props.marginYaxis) + "," + this.props.marginTop + ")", ref: _.partial(this.dm_renderAxis, y_scale, "left", this.props.yLabel) })) : null
-	        );
-	    }
-	};
-	
-	var _dmGraphSeriesDefinitions = _.clone(_dmGraphBaseDefinitions);
-	
-	_dmGraphSeriesDefinitions.dm_renderGraph = function (x_scale, y_scale, dom_element) {
-	
-	    var main_graph = d3.select(dom_element);
-	    var self = this;
-	
-	    _.each(this.props.y, _.bind(function (y, i) {
-	        var series_color = _dmGraphDefaultColorPallette(i);
-	
-	        var series_line = d3.svg.area().interpolate("step").y1(function (d) {
-	            return y_scale(d[1]);
-	        }).x(function (d) {
-	            return x_scale(d[0]);
-	        });
-	
-	        if (y_scale.domain()[0] < 0) {
-	            series_line.y0(function (d) {
-	                return y_scale(0);
-	            });
-	        } else {
-	            series_line.y0(y_scale(y_scale.domain()[0]));
-	        }
-	
-	        var data_points = main_graph.selectAll("path.series_" + i).data([_.zip(this.props.x, y)]);
-	        data_points.enter().append("path");
-	        data_points.exit().remove();
-	
-	        this.dm_doTransition(data_points.classed("series_" + i, true)).attr("d", series_line).attr("fill", series_color).attr("fill-opacity", 0.25).attr("stroke", series_color).attr("stroke-width", "0.5px");
-	
-	        if (this.props.doDots) {
-	
-	            var data_points = main_graph.selectAll("circle.series_" + i).data(_.zip(this.props.x, y));
-	            data_points.enter().append("circle");
-	            data_points.exit().remove();
-	
-	            data_points.on("mouseover", function (t) {
-	                self.dm_setTracker(main_graph, t);
-	            }).on("mouseout", function (t) {
-	                self.dm_setTracker(main_graph, null);
-	            });
-	
-	            this.dm_doTransition(data_points.classed("series_" + i, true)).attr("cx", function (d) {
-	                return x_scale(d[0]);
-	            }).attr("cy", function (d) {
-	                return y_scale(d[1]);
-	            }).attr("r", function (d) {
-	                return 2;
-	            }).attr("fill", series_color);
-	        }
-	    }, this));
-	};
-	
-	var DatamonkeyScatterplot = React.createClass(_dmGraphBaseDefinitions);
-	var DatamonkeySeries = React.createClass(_dmGraphSeriesDefinitions);
-	
-	module.exports.DatamonkeyScatterplot = DatamonkeyScatterplot;
-	module.exports.DatamonkeySeries = DatamonkeySeries;
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(40), __webpack_require__(45)))
 
 /***/ },
 /* 258 */
