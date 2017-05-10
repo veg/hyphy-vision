@@ -678,9 +678,9 @@ var DatamonkeyModelTable = React.createClass({
 
       var thisRow = [{
         value: key,
-        style: {
-          fontVariant: "small-caps"
-        }
+        //style: {
+        //  fontVariant: "small-caps"
+        //}
       }];
 
       _.each(columnMapIterator, function(tag) {

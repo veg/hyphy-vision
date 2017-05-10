@@ -109,8 +109,10 @@ var BranchTable = React.createClass({
       table_row_data.push(branch_row);
 
     }
-
+    
     table_row_data.sort(function(a, b) {
+      if (a[2] == "test not run" && b[2] != "test not run") return 1;
+      if (a[2] != "test not run" && b[2] == "test not run") return -1;
 
       if (a[0] == b[0]) {
         return a[1] < b[1] ? -1 : (a[1] == b[1] ? 0 : 1);
