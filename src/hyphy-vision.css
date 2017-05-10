@@ -158,6 +158,7 @@
     color: #FFF;
     text-align: center;
     padding: 5px 5px 5px 5px;
+    font-family: "Noto Sans";
 }
 
 .popover {
@@ -171,6 +172,10 @@ table.dm-table > thead > th {
 
 .hyphy-highlight {
     color: #00a99d;
+}
+
+div.main-result a {
+     color: #00a99d;
 }
 
 #summary-pmid {

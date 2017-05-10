@@ -219,6 +219,9 @@ var BSREL = React.createClass({
 
   componentWillMount: function() {
     this.loadFromServer();
+  },
+
+  componentDidMount: function() {
     this.setEvents();
   },
 

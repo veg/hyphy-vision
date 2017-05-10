@@ -543,6 +543,9 @@ webpackJsonp([0],[
 	
 	  componentWillMount: function componentWillMount() {
 	    this.loadFromServer();
+	  },
+	
+	  componentDidMount: function componentDidMount() {
 	    this.setEvents();
 	  },
 	
@@ -817,7 +820,65 @@ webpackJsonp([0],[
 	
 	  render: function render() {
 	
-	    var self = this;
+	    var self = this,
+	        user_message,
+	        was_evidence = self.state.branches_with_evidence > 0;
+	
+	    if (was_evidence) {
+	      user_message = React.createElement(
+	        'p',
+	        { className: 'list-group-item-text label_and_input' },
+	        'aBSREL ',
+	        React.createElement(
+	          'strong',
+	          { className: 'hyphy-highlight' },
+	          'found evidence'
+	        ),
+	        React.createElement(
+	          'sup',
+	          null,
+	          '\u2020'
+	        ),
+	        ' of episodic diversifying selection on ',
+	        React.createElement(
+	          'span',
+	          { className: 'hyphy-highlight' },
+	          React.createElement(
+	            'strong',
+	            null,
+	            self.state.branches_with_evidence
+	          )
+	        ),
+	        ' out of ',
+	        React.createElement(
+	          'span',
+	          { className: 'hyphy-highlight' },
+	          React.createElement(
+	            'strong',
+	            null,
+	            self.state.test_branches
+	          )
+	        ),
+	        ' branches in your phylogeny.'
+	      );
+	    } else {
+	      user_message = React.createElement(
+	        'p',
+	        { className: 'list-group-item-text label_and_input' },
+	        'aBSREL ',
+	        React.createElement(
+	          'strong',
+	          null,
+	          'found no evidence'
+	        ),
+	        React.createElement(
+	          'sup',
+	          null,
+	          '\u2020'
+	        ),
+	        ' of episodic diversifying selection in your phylogeny.'
+	      );
+	    }
 	
 	    return React.createElement(
 	      'div',
@@ -837,31 +898,29 @@ webpackJsonp([0],[
 	        React.createElement(
 	          'div',
 	          { className: 'main-result' },
+	          user_message,
 	          React.createElement(
 	            'p',
-	            { className: 'list-group-item-text label_and_input' },
-	            'Evidence',
+	            null,
+	            'A total of ',
 	            React.createElement(
-	              'sup',
-	              null,
-	              '\u2020'
-	            ),
-	            ' of episodic diversifying selection was found on',
-	            React.createElement(
-	              'span',
+	              'strong',
 	              { className: 'hyphy-highlight' },
-	              React.createElement(
-	                'strong',
-	                null,
-	                ' ',
-	                self.state.branches_with_evidence
-	              ),
-	              ' out of ',
-	              self.state.test_branches
+	              'X'
 	            ),
-	            ' tested branches (',
-	            self.state.total_branches,
-	            ' total branches).'
+	            ' branches were formally tested for diversifying selection. Significance and number of rate categories inferred at each branch are provided in the ',
+	            React.createElement(
+	              'a',
+	              { href: '#table-tab' },
+	              'detailed results'
+	            ),
+	            ' table. For more information about the aBSREL method, see ',
+	            React.createElement(
+	              'a',
+	              { href: 'http://hyphy.org/methods/selection-methods/#absrel' },
+	              'this link'
+	            ),
+	            '.'
 	          ),
 	          React.createElement('hr', null),
 	          React.createElement(
@@ -19117,7 +19176,8 @@ webpackJsonp([0],[
 	      React.createElement(
 	        'h4',
 	        { className: 'dm-table-header' },
-	        'Model fits'
+	        'Model fits',
+	        React.createElement('span', { className: 'glyphicon glyphicon-info-sign', style: { "verticalAlign": "middle", "float": "right" }, 'aria-hidden': 'true', 'data-toggle': 'popover', 'data-trigger': 'hover', title: 'Tree summary', 'data-html': 'true', 'data-content': '<ul><li>Hover over a column header for a description of its content.</li></ul>', 'data-placement': 'bottom' })
 	      ),
 	      React.createElement(DatamonkeyTable, { headerData: this.state.header, bodyData: this.state.rows })
 	    );
@@ -19386,8 +19446,8 @@ webpackJsonp([0],[
 	      React.createElement(
 	        'h4',
 	        { className: 'dm-table-header' },
-	        'Tree',
-	        React.createElement('span', { className: 'glyphicon glyphicon-info-sign', style: { "verticalAlign": "middle", "float": "right" }, 'aria-hidden': 'true', 'data-toggle': 'popover', 'data-trigger': 'hover', title: 'Tree summary', 'data-html': 'true', 'data-content': '<ul><li>Hover over a branch to see its inferred rates and significance for selection.</li><li>Hover over a column header for a description of its content.</li></ul>', 'data-placement': 'bottom' })
+	        'Tree summary',
+	        React.createElement('span', { className: 'glyphicon glyphicon-info-sign', style: { "verticalAlign": "middle", "float": "right" }, 'aria-hidden': 'true', 'data-toggle': 'popover', 'data-trigger': 'hover', title: 'Tree summary', 'data-html': 'true', 'data-content': '<ul><li>Hover over a column header for a description of its content.</li></ul>', 'data-placement': 'bottom' })
 	      ),
 	      React.createElement(_shared_summary.DatamonkeyTable, { headerData: this.state.table_columns, bodyData: this.state.table_row_data }),
 	      React.createElement(
@@ -19973,6 +20033,12 @@ webpackJsonp([0],[
 	            'div',
 	            null,
 	            React.createElement(
+	                'h4',
+	                { className: 'dm-table-header' },
+	                'Phylogenetic tree',
+	                React.createElement('span', { className: 'glyphicon glyphicon-info-sign', style: { "verticalAlign": "middle", "float": "right" }, 'aria-hidden': 'true', 'data-toggle': 'popover', 'data-trigger': 'hover', title: 'Tree summary', 'data-html': 'true', 'data-content': '<ul><li>Hover over a branch to see its inferred rates and significance for selection.</li><ul>', 'data-placement': 'bottom' })
+	            ),
+	            React.createElement(
 	                'div',
 	                { className: 'row' },
 	                React.createElement(
@@ -20401,7 +20467,7 @@ webpackJsonp([0],[
 	          'h4',
 	          { className: 'dm-table-header' },
 	          'Detailed results',
-	          React.createElement('span', { className: 'glyphicon glyphicon-info-sign', style: { "verticalAlign": "middle", "float": "right" }, 'aria-hidden': 'true', 'data-toggle': 'popover', 'data-trigger': 'hover', title: 'Detailed results', 'data-html': 'true', 'data-content': '<ul><li>Bolded rows indicate branches inferred to be under positive selection at the designated p-value threshold.</li><li>Click on a row to visualize its inferred rate distribution.</li><li>Hover over a column header for a description of its content.</li></ul>', 'data-placement': 'bottom' })
+	          React.createElement('span', { className: 'glyphicon glyphicon-info-sign', style: { "verticalAlign": "middle", "float": "right" }, 'aria-hidden': 'true', 'data-toggle': 'popover', 'data-trigger': 'hover', title: 'Detailed results', 'data-html': 'true', 'data-content': '<ul><li>Bolded rows indicate branches inferred to be under positive selection at the designated p-value threshold.</li><li>Click on a row to visualize its inferred rate distribution.</li><li>Hover over a column header for a description of its content.</li><li>Caution: omega distribution should not be interpretted as literal omega estimates at individual sites, but instead reflects fitted parameter values.</li></ul>', 'data-placement': 'bottom' })
 	        ),
 	        React.createElement(
 	          'table',

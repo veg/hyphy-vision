@@ -738,7 +738,10 @@ var DatamonkeyModelTable = React.createClass({
 
   render: function() {
     return (<div>
-      <h4 className="dm-table-header">Model fits</h4>
+      <h4 className="dm-table-header">
+        Model fits
+        <span className="glyphicon glyphicon-info-sign" style={{"verticalAlign": "middle", "float":"right"}} aria-hidden="true" data-toggle="popover" data-trigger="hover" title="Tree summary" data-html="true" data-content="<ul><li>Hover over a column header for a description of its content.</li></ul>" data-placement="bottom"></span>
+      </h4>
       <DatamonkeyTable headerData={this.state.header} bodyData={this.state.rows}/>
     </div>);
   },
