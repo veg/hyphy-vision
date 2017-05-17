@@ -8,6 +8,7 @@ import {Tree} from "./components/tree.jsx";
 import {ModelFits} from "./components/model_fits.jsx";
 import {TreeSummary} from "./components/tree_summary.jsx";
 import {PropChart} from './components/prop_chart.jsx';
+import {BUSTEDSummary} from './components/busted_summary.jsx';
 
 var datamonkey = require('../datamonkey/datamonkey.js'),
 		busted = require('../busted/busted.js');
@@ -40,19 +41,24 @@ var BUSTED = React.createClass({
           pmid_text = "PubMed ID " + pmid,
           pmid_href = "http://www.ncbi.nlm.nih.gov/pubmed/" + pmid,
           p = json["test results"]["p"],
-          test_result = p <= 0.05 ? "evidence" : "no evidence";
+          statement = p <= 0.05 ? "evidence" : "no evidence";
 
       var fg_rate = json["fits"]["Unconstrained model"]["rate distributions"]["FG"];
       var mapped_omegas = {"omegas" : _.map(fg_rate, function(d) { return _.object(["omega","prop"], d)})};
 
       self.setState({
-                      p : p,
-                      test_result : test_result,
-                      json : json,
-                      omegas : mapped_omegas["omegas"],
-                      pmid_text : pmid_text,
-                      pmid_href : pmid_href
-                    });
+        p : p,
+        test_result : {
+          statement: statement,
+          p: p
+        },
+        json : json,
+        omegas : mapped_omegas["omegas"],
+        pmid : {
+          text: pmid_text,
+          href : pmid_href
+        }
+      });
 
     });
 
@@ -117,11 +123,16 @@ var BUSTED = React.createClass({
   getInitialState: function() {
     return {
       p : null,
-      test_result : null,
+      test_result : {
+        statement : null,
+        p : null
+      },
       json : null,
       omegas : null,
-      pmid_text : null,
-      pmid_href : null
+      pmid : {
+        href : null,
+        text : null
+      }
     }
   },
 
@@ -132,6 +143,9 @@ var BUSTED = React.createClass({
     $("#json_file").on("change", function(e) {
         var files = e.target.files; // FileList object
         if (files.length == 1) {
+
+          module.exports.BUSTEDSummary = BUSTEDSummary
+        ;
             var f = files[0];
             var reader = new FileReader();
             reader.onload = (function(theFile) {
@@ -150,19 +164,24 @@ var BUSTED = React.createClass({
                     pmid_text = "PubMed ID " + pmid,
                     pmid_href = "http://www.ncbi.nlm.nih.gov/pubmed/" + pmid,
                     p = json["test results"]["p"],
-                    test_result = p <= 0.05 ? "evidence" : "no evidence";
+                    statement = p <= 0.05 ? "evidence" : "no evidence";
 
                 var fg_rate = json["fits"]["Unconstrained model"]["rate distributions"]["FG"];
                 var mapped_omegas = {"omegas" : _.map(fg_rate, function(d) { return _.object(["omega","prop"], d)})};
 
                 self.setState({
-                                p : p,
-                                test_result : test_result,
-                                json : json,
-                                omegas : mapped_omegas["omegas"],
-                                pmid_text : pmid_text,
-                                pmid_href : pmid_href
-                              });
+                  p : p,
+                  test_result : {
+                    statement: statement,
+                    p : p
+                  },
+                  json : json,
+                  omegas : mapped_omegas["omegas"],
+                  pmid : {
+                    text: pmid_text,
+                    href : pmid_href
+                  }
+                });
 
               }
             })(f);
@@ -245,19 +264,7 @@ var BUSTED = React.createClass({
       <div className="tab-content">
         <div className="tab-pane active" id="summary_tab">
           <div className="row" styleName="margin-top: 5px">
-            <div className="col-md-12">
-              <ul className="list-group">
-              <li className="list-group-item list-group-item-info">
-                <h3 className="list-group-item-heading">
-                  <i className="fa fa-list" styleName='margin-right: 10px'></i>
-                  <span id="summary-method-name">BUSTED</span> summary</h3>
-                  There is <strong>{this.state.test_result}</strong> of episodic diversifying selection, with LRT p-value of {this.state.p}.
-                  <p>
-                    <small>Please cite <a href={this.state.pmid_href} id='summary-pmid'>{this.state.pmid_text}</a> if you use this result in a publication, presentation, or other scientific work.</small>
-                  </p>
-               </li>
-              </ul>
-            </div>
+            <BUSTEDSummary test_result={this.state.test_result} pmid={this.state.pmid} />
           </div>
 
            <div className="row">

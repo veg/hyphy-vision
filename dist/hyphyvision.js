@@ -30,10 +30,10 @@ webpackJsonp([0],[
 	
 	var absrel = __webpack_require__(43);
 	var busted = __webpack_require__(241);
-	var fade = __webpack_require__(243);
-	var fade_summary = __webpack_require__(244);
-	var relax = __webpack_require__(245);
-	var slac = __webpack_require__(247);
+	var fade = __webpack_require__(244);
+	var fade_summary = __webpack_require__(245);
+	var relax = __webpack_require__(246);
+	var slac = __webpack_require__(248);
 	
 	// Create new hyphy-vision export
 	window.absrel = absrel;
@@ -21438,6 +21438,8 @@ webpackJsonp([0],[
 	
 	var _prop_chart = __webpack_require__(229);
 	
+	var _busted_summary = __webpack_require__(243);
+	
 	__webpack_require__(227);
 	__webpack_require__(239);
 	
@@ -21477,7 +21479,7 @@ webpackJsonp([0],[
 	          pmid_text = "PubMed ID " + pmid,
 	          pmid_href = "http://www.ncbi.nlm.nih.gov/pubmed/" + pmid,
 	          p = json["test results"]["p"],
-	          test_result = p <= 0.05 ? "evidence" : "no evidence";
+	          statement = p <= 0.05 ? "evidence" : "no evidence";
 	
 	      var fg_rate = json["fits"]["Unconstrained model"]["rate distributions"]["FG"];
 	      var mapped_omegas = { "omegas": _.map(fg_rate, function (d) {
@@ -21486,11 +21488,16 @@ webpackJsonp([0],[
 	
 	      self.setState({
 	        p: p,
-	        test_result: test_result,
+	        test_result: {
+	          statement: statement,
+	          p: p
+	        },
 	        json: json,
 	        omegas: mapped_omegas["omegas"],
-	        pmid_text: pmid_text,
-	        pmid_href: pmid_href
+	        pmid: {
+	          text: pmid_text,
+	          href: pmid_href
+	        }
 	      });
 	    });
 	  },
@@ -21547,11 +21554,16 @@ webpackJsonp([0],[
 	  getInitialState: function getInitialState() {
 	    return {
 	      p: null,
-	      test_result: null,
+	      test_result: {
+	        statement: null,
+	        p: null
+	      },
 	      json: null,
 	      omegas: null,
-	      pmid_text: null,
-	      pmid_href: null
+	      pmid: {
+	        href: null,
+	        text: null
+	      }
 	    };
 	  },
 	
@@ -21562,6 +21574,8 @@ webpackJsonp([0],[
 	    $("#json_file").on("change", function (e) {
 	      var files = e.target.files; // FileList object
 	      if (files.length == 1) {
+	
+	        module.exports.BUSTEDSummary = _busted_summary.BUSTEDSummary;
 	        var f = files[0];
 	        var reader = new FileReader();
 	        reader.onload = function (theFile) {
@@ -21580,7 +21594,7 @@ webpackJsonp([0],[
 	                pmid_text = "PubMed ID " + pmid,
 	                pmid_href = "http://www.ncbi.nlm.nih.gov/pubmed/" + pmid,
 	                p = json["test results"]["p"],
-	                test_result = p <= 0.05 ? "evidence" : "no evidence";
+	                statement = p <= 0.05 ? "evidence" : "no evidence";
 	
 	            var fg_rate = json["fits"]["Unconstrained model"]["rate distributions"]["FG"];
 	            var mapped_omegas = { "omegas": _.map(fg_rate, function (d) {
@@ -21589,11 +21603,16 @@ webpackJsonp([0],[
 	
 	            self.setState({
 	              p: p,
-	              test_result: test_result,
+	              test_result: {
+	                statement: statement,
+	                p: p
+	              },
 	              json: json,
 	              omegas: mapped_omegas["omegas"],
-	              pmid_text: pmid_text,
-	              pmid_href: pmid_href
+	              pmid: {
+	                text: pmid_text,
+	                href: pmid_href
+	              }
 	            });
 	          };
 	        }(f);
@@ -21679,53 +21698,7 @@ webpackJsonp([0],[
 	        React.createElement(
 	          "div",
 	          { className: "row", styleName: "margin-top: 5px" },
-	          React.createElement(
-	            "div",
-	            { className: "col-md-12" },
-	            React.createElement(
-	              "ul",
-	              { className: "list-group" },
-	              React.createElement(
-	                "li",
-	                { className: "list-group-item list-group-item-info" },
-	                React.createElement(
-	                  "h3",
-	                  { className: "list-group-item-heading" },
-	                  React.createElement("i", { className: "fa fa-list", styleName: "margin-right: 10px" }),
-	                  React.createElement(
-	                    "span",
-	                    { id: "summary-method-name" },
-	                    "BUSTED"
-	                  ),
-	                  " summary"
-	                ),
-	                "There is ",
-	                React.createElement(
-	                  "strong",
-	                  null,
-	                  this.state.test_result
-	                ),
-	                " of episodic diversifying selection, with LRT p-value of ",
-	                this.state.p,
-	                ".",
-	                React.createElement(
-	                  "p",
-	                  null,
-	                  React.createElement(
-	                    "small",
-	                    null,
-	                    "Please cite ",
-	                    React.createElement(
-	                      "a",
-	                      { href: this.state.pmid_href, id: "summary-pmid" },
-	                      this.state.pmid_text
-	                    ),
-	                    " if you use this result in a publication, presentation, or other scientific work."
-	                  )
-	                )
-	              )
-	            )
-	          )
+	          React.createElement(_busted_summary.BUSTEDSummary, { test_result: this.state.test_result, pmid: this.state.pmid })
 	        ),
 	        React.createElement(
 	          "div",
@@ -22155,6 +22128,73 @@ webpackJsonp([0],[
 /* 243 */
 /***/ function(module, exports, __webpack_require__) {
 
+	'use strict';
+	
+	var _input_info = __webpack_require__(46);
+	
+	var React = __webpack_require__(47);
+	
+	
+	var BUSTEDSummary = React.createClass({
+	  displayName: 'BUSTEDSummary',
+	
+	  render: function render() {
+	    return React.createElement(
+	      'div',
+	      { className: 'col-md-12' },
+	      React.createElement(
+	        'ul',
+	        { className: 'list-group' },
+	        React.createElement(
+	          'li',
+	          { className: 'list-group-item list-group-item-info' },
+	          React.createElement(
+	            'h3',
+	            { className: 'list-group-item-heading' },
+	            React.createElement('i', { className: 'fa fa-list', styleName: 'margin-right: 10px' }),
+	            React.createElement(
+	              'span',
+	              { id: 'summary-method-name' },
+	              'BUSTED'
+	            ),
+	            ' summary'
+	          ),
+	          'There is ',
+	          React.createElement(
+	            'strong',
+	            null,
+	            this.props.test_result.statement
+	          ),
+	          ' of episodic diversifying selection, with LRT p-value of ',
+	          this.props.test_result.p,
+	          '.',
+	          React.createElement(
+	            'p',
+	            null,
+	            React.createElement(
+	              'small',
+	              null,
+	              'Please cite ',
+	              React.createElement(
+	                'a',
+	                { href: this.props.pmid.href, id: 'summary-pmid' },
+	                this.props.pmid.text
+	              ),
+	              ' if you use this result in a publication, presentation, or other scientific work.'
+	            )
+	          )
+	        )
+	      )
+	    );
+	  }
+	});
+	
+	module.exports.BUSTEDSummary = BUSTEDSummary;
+
+/***/ },
+/* 244 */
+/***/ function(module, exports, __webpack_require__) {
+
 	/* WEBPACK VAR INJECTION */(function(d3, $) {'use strict';
 	
 	var datamonkey_fade = function datamonkey_fade(json) {
@@ -22521,7 +22561,7 @@ webpackJsonp([0],[
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(40), __webpack_require__(2)))
 
 /***/ },
-/* 244 */
+/* 245 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(d3) {'use strict';
@@ -22658,7 +22698,7 @@ webpackJsonp([0],[
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(40)))
 
 /***/ },
-/* 245 */
+/* 246 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(d3, $) {"use strict";
@@ -22669,7 +22709,7 @@ webpackJsonp([0],[
 	
 	var _tree = __webpack_require__(226);
 	
-	var _omega_plots = __webpack_require__(246);
+	var _omega_plots = __webpack_require__(247);
 	
 	var React = __webpack_require__(47),
 	    ReactDOM = __webpack_require__(78),
@@ -23022,7 +23062,7 @@ webpackJsonp([0],[
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(40), __webpack_require__(2)))
 
 /***/ },
-/* 246 */
+/* 247 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(d3) {'use strict';
@@ -23492,25 +23532,25 @@ webpackJsonp([0],[
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(40)))
 
 /***/ },
-/* 247 */
+/* 248 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(d3, $) {'use strict';
 	
 	var _shared_summary = __webpack_require__(224);
 	
-	var _slac_sites = __webpack_require__(248);
+	var _slac_sites = __webpack_require__(249);
 	
-	var _slac_summary = __webpack_require__(249);
+	var _slac_summary = __webpack_require__(250);
 	
-	var _slac_graphs = __webpack_require__(250);
+	var _slac_graphs = __webpack_require__(251);
 	
 	var React = __webpack_require__(47),
 	    ReactDOM = __webpack_require__(78),
 	    _ = __webpack_require__(45);
 	
 	var datamonkey = __webpack_require__(39);
-	__webpack_require__(252);
+	__webpack_require__(253);
 	
 	var SLAC = React.createClass({
 	    displayName: 'SLAC',
@@ -23804,7 +23844,7 @@ webpackJsonp([0],[
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(40), __webpack_require__(2)))
 
 /***/ },
-/* 248 */
+/* 249 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(d3, _) {'use strict';
@@ -24424,7 +24464,7 @@ webpackJsonp([0],[
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(40), __webpack_require__(45)))
 
 /***/ },
-/* 249 */
+/* 250 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(_, d3) {'use strict';
@@ -24596,12 +24636,12 @@ webpackJsonp([0],[
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(45), __webpack_require__(40)))
 
 /***/ },
-/* 250 */
+/* 251 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(_) {'use strict';
 	
-	var _shared_graph = __webpack_require__(251);
+	var _shared_graph = __webpack_require__(252);
 	
 	var React = __webpack_require__(47);
 	var datamonkey = __webpack_require__(39);
@@ -24835,7 +24875,7 @@ webpackJsonp([0],[
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(45)))
 
 /***/ },
-/* 251 */
+/* 252 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(d3, _) {'use strict';
@@ -25092,7 +25132,7 @@ webpackJsonp([0],[
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(40), __webpack_require__(45)))
 
 /***/ },
-/* 252 */
+/* 253 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function($, jQuery, d3, _) {"use strict";

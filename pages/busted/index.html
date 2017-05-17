@@ -55,56 +55,13 @@
   </div><!-- /.container-fluid -->
 </nav>
 
-<div id='busted-content' class='container-fluid'>
-</div>
+  <div id='busted-content' class='container-fluid'></div>
 
-<img id="hyphy-chart-image" />
-<canvas id="hyphy-chart-canvas"></canvas>
-
-<!--
-###############################################################################################################################
--->
-
-
-<script>
-
-$( document ).ready( function () {
-
-  // *** HANDLERS ***
-//  $("#json_file").on ("change", function (e) {
-//    var files = e.target.files; // FileList object
-//
-//    if (files.length == 1) {
-//      var f = files[0];
-//      var reader = new FileReader();
-//
-//      reader.onload = (function(theFile) {
-//        return function(e) {
-//            var container_id = '#tree_container';
-//            analysis_data = JSON.parse (e.target.result);
-//            init(analysis_data);
-//        };
-//      })(f);
-//      reader.readAsText(f);
-//    }
-//  });
-
-
-  $(".content").addClass('hidden');
-  busted("test-data/lysin.nex.BUSTED.json", "busted-content")
-
-//  d3.json ("test-data/lysin.nex.BUSTED.json", function (json) {
-//
-//    init(json);
-//
-//    $(".loader").addClass('hidden');
-//    $(".content").removeClass('hidden');
-//
-//  }); 
-
-});
-
-</script>
+  <script>
+    $( document ).ready( function () {
+      busted("test-data/lysin.nex.BUSTED.json", "busted-content")
+    });
+  </script>
 
 </body>
 </html>
