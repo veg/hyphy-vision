@@ -18,12 +18,10 @@ var RELAX = React.createClass({
     var self = this;
 
     d3.json(this.props.url, function(data) {
-
-      data["fits"]["Partitioned MG94xREV"]["branch-annotations"] = self.formatBranchAnnotations(data, "Partitioned MG94xREV");
-      data["fits"]["General Descriptive"]["branch-annotations"] = self.formatBranchAnnotations(data, "General Descriptive");
-      data["fits"]["Null"]["branch-annotations"] = self.formatBranchAnnotations(data, "Null");
-      data["fits"]["Alternative"]["branch-annotations"] = self.formatBranchAnnotations(data, "Alternative");
-      data["fits"]["Partitioned Exploratory"]["branch-annotations"] = self.formatBranchAnnotations(data, "Partitioned Exploratory");
+      var models = ["Partitioned MG94xREV", "General Descriptive", "Null", "Alternative", "Partitioned Exploratory"];
+      models.forEach(function(model){
+        if (data["fits"][model]) data["fits"][model]["branch-annotations"] = self.formatBranchAnnotations(data, model);
+      });
 
       var annotations = data["fits"]["Partitioned MG94xREV"]["branch-annotations"],
           json = data,
@@ -175,11 +173,10 @@ var RELAX = React.createClass({
               return function(e) {
 
                 var data = JSON.parse(this.result);
-                data["fits"]["Partitioned MG94xREV"]["branch-annotations"] = self.formatBranchAnnotations(data, "Partitioned MG94xREV");
-                data["fits"]["General Descriptive"]["branch-annotations"] = self.formatBranchAnnotations(data, "General Descriptive");
-                data["fits"]["Null"]["branch-annotations"] = self.formatBranchAnnotations(data, "Null");
-                data["fits"]["Alternative"]["branch-annotations"] = self.formatBranchAnnotations(data, "Alternative");
-                data["fits"]["Partitioned Exploratory"]["branch-annotations"] = self.formatBranchAnnotations(data, "Partitioned Exploratory");
+                var models = ["Partitioned MG94xREV", "General Descriptive", "Null", "Alternative", "Partitioned Exploratory"];
+                models.forEach(function(model){
+                  if (data["fits"][model]) data["fits"][model]["branch-annotations"] = self.formatBranchAnnotations(data, model);
+                });
 
                 var annotations = data["fits"]["Partitioned MG94xREV"]["branch-annotations"],
                     json = data,
