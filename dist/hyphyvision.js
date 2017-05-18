@@ -30,10 +30,10 @@ webpackJsonp([0],[
 	
 	var absrel = __webpack_require__(43);
 	var busted = __webpack_require__(241);
-	var fade = __webpack_require__(244);
-	var fade_summary = __webpack_require__(245);
-	var relax = __webpack_require__(246);
-	var slac = __webpack_require__(248);
+	var fade = __webpack_require__(242);
+	var fade_summary = __webpack_require__(243);
+	var relax = __webpack_require__(244);
+	var slac = __webpack_require__(247);
 	
 	// Create new hyphy-vision export
 	window.absrel = absrel;
@@ -21321,7 +21321,7 @@ webpackJsonp([0],[
 	
 	    var composite = dc.compositeChart(c);
 	
-	    composite.width($(window).width()).height(300).dimension(site_index).x(d3.scale.linear().domain([1, erc.length])).yAxisLabel("2 * Ln Evidence Ratio").xAxisLabel("Site Location").legend(dc.legend().x($(window).width() - 150).y(20).itemHeight(13).gap(5)).renderHorizontalGridLines(true).compose([dc.lineChart(composite).group(sitesByConstrained, "Constrained").colors(d3.scale.ordinal().range(['green'])).valueAccessor(function (d) {
+	    composite.width($(window).width() * .8).height(300).dimension(site_index).x(d3.scale.linear().domain([1, erc.length])).yAxisLabel("2 * Ln Evidence Ratio").xAxisLabel("Site Location").legend(dc.legend().x($(window).width() * .8 - 150).y(20).itemHeight(13).gap(5)).renderHorizontalGridLines(true).compose([dc.lineChart(composite).group(sitesByConstrained, "Constrained").colors(d3.scale.ordinal().range(['green'])).valueAccessor(function (d) {
 	        return 2 * d.value.constrained_evidence;
 	    }).keyAccessor(function (d) {
 	        return d.key;
@@ -21432,13 +21432,17 @@ webpackJsonp([0],[
 	
 	var _tree = __webpack_require__(226);
 	
-	var _model_fits = __webpack_require__(242);
+	var _model_fits = __webpack_require__(245);
 	
 	var _tree_summary = __webpack_require__(225);
 	
 	var _prop_chart = __webpack_require__(229);
 	
-	var _busted_summary = __webpack_require__(243);
+	var _busted_summary = __webpack_require__(257);
+	
+	var _navbar = __webpack_require__(230);
+	
+	var _scrollspy = __webpack_require__(231);
 	
 	__webpack_require__(227);
 	__webpack_require__(239);
@@ -21497,7 +21501,8 @@ webpackJsonp([0],[
 	        pmid: {
 	          text: pmid_text,
 	          href: pmid_href
-	        }
+	        },
+	        input_data: data["input_data"]
 	      });
 	    });
 	  },
@@ -21563,7 +21568,8 @@ webpackJsonp([0],[
 	      pmid: {
 	        href: null,
 	        text: null
-	      }
+	      },
+	      input_data: null
 	    };
 	  },
 	
@@ -21571,11 +21577,12 @@ webpackJsonp([0],[
 	
 	    var self = this;
 	
-	    $("#json_file").on("change", function (e) {
+	    $("#json-file").on("change", function (e) {
+	      console.log('inside');
+	      debugger;
 	      var files = e.target.files; // FileList object
 	      if (files.length == 1) {
 	
-	        module.exports.BUSTEDSummary = _busted_summary.BUSTEDSummary;
 	        var f = files[0];
 	        var reader = new FileReader();
 	        reader.onload = function (theFile) {
@@ -21612,13 +21619,14 @@ webpackJsonp([0],[
 	              pmid: {
 	                text: pmid_text,
 	                href: pmid_href
-	              }
+	              },
+	              input_data: data["input_data"]
 	            });
 	          };
 	        }(f);
 	        reader.readAsText(f);
 	      }
-	      $("#datamonkey-absrel-toggle-here").dropdown("toggle");
+	      $("#json-file").dropdown("toggle");
 	      e.preventDefault();
 	    });
 	  },
@@ -21688,157 +21696,175 @@ webpackJsonp([0],[
 	
 	    var self = this;
 	    self.initialize();
+	    var scrollspy_info = [{ label: "summary", href: "summary-div" }, { label: "model statistics", href: "" }, { label: "input tree", href: "" }, { label: "ω distribution", href: "" }];
 	
 	    return React.createElement(
 	      "div",
-	      { className: "tab-content" },
+	      null,
+	      React.createElement(_navbar.NavBar, null),
 	      React.createElement(
 	        "div",
-	        { className: "tab-pane active", id: "summary_tab" },
-	        React.createElement(
-	          "div",
-	          { className: "row", styleName: "margin-top: 5px" },
-	          React.createElement(_busted_summary.BUSTEDSummary, { test_result: this.state.test_result, pmid: this.state.pmid })
-	        ),
+	        { className: "container-fluid" },
 	        React.createElement(
 	          "div",
 	          { className: "row" },
+	          React.createElement(_scrollspy.ScrollSpy, { info: scrollspy_info }),
 	          React.createElement(
 	            "div",
-	            { id: "hyphy-model-fits", className: "col-lg-12" },
-	            React.createElement(_model_fits.ModelFits, { json: self.state.json })
-	          )
-	        ),
-	        React.createElement(
-	          "button",
-	          { id: "export-chart-svg", type: "button", className: "btn btn-default btn-sm pull-right btn-export" },
-	          React.createElement("span", { className: "glyphicon glyphicon-floppy-save" }),
-	          " Export Chart to SVG"
-	        ),
-	        React.createElement(
-	          "button",
-	          { id: "export-chart-png", type: "button", className: "btn btn-default btn-sm pull-right btn-export" },
-	          React.createElement("span", { className: "glyphicon glyphicon-floppy-save" }),
-	          " Export Chart to PNG"
-	        ),
-	        React.createElement(
-	          "div",
-	          { className: "row hyphy-busted-site-table" },
-	          React.createElement(
-	            "div",
-	            { id: "chart-id", className: "col-lg-8" },
+	            { className: "col-lg-10" },
+	            React.createElement(_busted_summary.BUSTEDSummary, { test_result: this.state.test_result,
+	              pmid: this.state.pmid,
+	              input_data: self.state.input_data }),
 	            React.createElement(
-	              "strong",
-	              null,
-	              "Model Evidence Ratios Per Site"
-	            ),
-	            React.createElement("div", { className: "clearfix" })
-	          )
-	        ),
-	        React.createElement(
-	          "div",
-	          { className: "row site-table" },
-	          React.createElement(
-	            "div",
-	            { className: "col-lg-12" },
-	            React.createElement(
-	              "form",
-	              { id: "er-thresholds" },
+	              "div",
+	              { className: "row" },
 	              React.createElement(
 	                "div",
-	                { className: "form-group" },
+	                { id: "hyphy-model-fits", className: "col-lg-12" },
+	                React.createElement(_model_fits.ModelFits, { json: self.state.json })
+	              )
+	            ),
+	            React.createElement(
+	              "div",
+	              { className: "row hyphy-busted-site-table" },
+	              React.createElement(
+	                "div",
+	                { id: "chart-id", className: "col-lg-8" },
 	                React.createElement(
-	                  "label",
-	                  { "for": "er-constrained-threshold" },
-	                  "Constrained Evidence Ratio Threshold:"
-	                ),
-	                React.createElement("input", { type: "text", className: "form-control", id: "er-constrained-threshold", defaultValue: this.props.constrained_threshold })
+	                  "strong",
+	                  null,
+	                  "Model Evidence Ratios Per Site"
+	                )
 	              ),
 	              React.createElement(
 	                "div",
-	                { className: "form-group" },
+	                { className: "col-lg-4" },
 	                React.createElement(
-	                  "label",
-	                  { "for": "er-optimized-null-threshold" },
-	                  "Optimized Null Evidence Ratio Threshold:"
+	                  "button",
+	                  { id: "export-chart-svg", type: "button", className: "btn btn-default btn-sm pull-right btn-export" },
+	                  React.createElement("span", { className: "glyphicon glyphicon-floppy-save" }),
+	                  " Export Chart to SVG"
 	                ),
-	                React.createElement("input", { type: "text", className: "form-control", id: "er-optimized-null-threshold", defaultValue: this.props.null_threshold })
+	                React.createElement(
+	                  "button",
+	                  { id: "export-chart-png", type: "button", className: "btn btn-default btn-sm pull-right btn-export" },
+	                  React.createElement("span", { className: "glyphicon glyphicon-floppy-save" }),
+	                  " Export Chart to PNG"
+	                )
+	              ),
+	              React.createElement(
+	                "div",
+	                { className: "col-lg-12" },
+	                React.createElement("div", { className: "clearfix" })
 	              )
 	            ),
 	            React.createElement(
-	              "button",
-	              { id: "export-csv", type: "button", className: "btn btn-default btn-sm pull-right hyphy-busted-btn-export" },
-	              React.createElement("span", { className: "glyphicon glyphicon-floppy-save" }),
-	              " Export Table to CSV"
-	            ),
-	            React.createElement(
-	              "button",
-	              { id: "apply-thresholds", type: "button", className: "btn btn-default btn-sm pull-right hyphy-busted-btn-export" },
-	              "Apply Thresholds"
-	            ),
-	            React.createElement(
-	              "table",
-	              { id: "sites", className: "table sites dc-data-table" },
+	              "div",
+	              { className: "row site-table" },
 	              React.createElement(
-	                "thead",
-	                null,
+	                "div",
+	                { className: "col-lg-12" },
 	                React.createElement(
-	                  "tr",
-	                  { className: "header" },
+	                  "form",
+	                  { id: "er-thresholds" },
 	                  React.createElement(
-	                    "th",
-	                    null,
-	                    "Site Index"
+	                    "div",
+	                    { className: "form-group" },
+	                    React.createElement(
+	                      "label",
+	                      { "for": "er-constrained-threshold" },
+	                      "Constrained Evidence Ratio Threshold:"
+	                    ),
+	                    React.createElement("input", { type: "text", className: "form-control", id: "er-constrained-threshold", defaultValue: this.props.constrained_threshold })
 	                  ),
 	                  React.createElement(
-	                    "th",
-	                    null,
-	                    "Unconstrained Likelihood"
-	                  ),
+	                    "div",
+	                    { className: "form-group" },
+	                    React.createElement(
+	                      "label",
+	                      { "for": "er-optimized-null-threshold" },
+	                      "Optimized Null Evidence Ratio Threshold:"
+	                    ),
+	                    React.createElement("input", { type: "text", className: "form-control", id: "er-optimized-null-threshold", defaultValue: this.props.null_threshold })
+	                  )
+	                ),
+	                React.createElement(
+	                  "button",
+	                  { id: "export-csv", type: "button", className: "btn btn-default btn-sm pull-right hyphy-busted-btn-export" },
+	                  React.createElement("span", { className: "glyphicon glyphicon-floppy-save" }),
+	                  " Export Table to CSV"
+	                ),
+	                React.createElement(
+	                  "button",
+	                  { id: "apply-thresholds", type: "button", className: "btn btn-default btn-sm pull-right hyphy-busted-btn-export" },
+	                  "Apply Thresholds"
+	                ),
+	                React.createElement(
+	                  "table",
+	                  { id: "sites", className: "table sites dc-data-table" },
 	                  React.createElement(
-	                    "th",
+	                    "thead",
 	                    null,
-	                    "Constrained Likelihood"
-	                  ),
-	                  React.createElement(
-	                    "th",
-	                    null,
-	                    "Optimized Null Likelihood"
-	                  ),
-	                  React.createElement(
-	                    "th",
-	                    null,
-	                    "Constrained Evidence Ratio"
-	                  ),
-	                  React.createElement(
-	                    "th",
-	                    null,
-	                    "Optimized Null Evidence Ratio"
+	                    React.createElement(
+	                      "tr",
+	                      { className: "header" },
+	                      React.createElement(
+	                        "th",
+	                        null,
+	                        "Site Index"
+	                      ),
+	                      React.createElement(
+	                        "th",
+	                        null,
+	                        "Unconstrained Likelihood"
+	                      ),
+	                      React.createElement(
+	                        "th",
+	                        null,
+	                        "Constrained Likelihood"
+	                      ),
+	                      React.createElement(
+	                        "th",
+	                        null,
+	                        "Optimized Null Likelihood"
+	                      ),
+	                      React.createElement(
+	                        "th",
+	                        null,
+	                        "Constrained Evidence Ratio"
+	                      ),
+	                      React.createElement(
+	                        "th",
+	                        null,
+	                        "Optimized Null Evidence Ratio"
+	                      )
+	                    )
 	                  )
 	                )
 	              )
+	            ),
+	            React.createElement(
+	              "div",
+	              { className: "row" },
+	              React.createElement(
+	                "div",
+	                { className: "col-md-12" },
+	                React.createElement(_tree.Tree, { json: self.state.json,
+	                  settings: self.props.tree_settings })
+	              ),
+	              React.createElement(
+	                "div",
+	                { className: "col-md-12" },
+	                React.createElement(
+	                  "div",
+	                  { id: "primary-omega-dist", className: "panel-body" },
+	                  React.createElement(_prop_chart.PropChart, { name: self.props.model_name, omegas: self.state.omegas,
+	                    settings: self.props.distro_settings })
+	                )
+	              )
 	            )
-	          )
-	        )
-	      ),
-	      React.createElement(
-	        "div",
-	        { className: "tab-pane", id: "tree_tab" },
-	        React.createElement(
-	          "div",
-	          { className: "col-md-12" },
-	          React.createElement(_tree.Tree, { json: self.state.json,
-	            settings: self.props.tree_settings })
-	        ),
-	        React.createElement(
-	          "div",
-	          { className: "col-md-12" },
-	          React.createElement(
-	            "div",
-	            { id: "primary-omega-dist", className: "panel-body" },
-	            React.createElement(_prop_chart.PropChart, { name: self.props.model_name, omegas: self.state.omegas,
-	              settings: self.props.distro_settings })
-	          )
+	          ),
+	          React.createElement("div", { className: "col-lg-1" })
 	        )
 	      )
 	    );
@@ -21856,343 +21882,6 @@ webpackJsonp([0],[
 
 /***/ },
 /* 242 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/* WEBPACK VAR INJECTION */(function(d3, _, $) {"use strict";
-	
-	var React = __webpack_require__(47);
-	
-	var ModelFits = React.createClass({
-	  displayName: "ModelFits",
-	
-	
-	  getInitialState: function getInitialState() {
-	    var table_row_data = this.getModelRows(this.props.json),
-	        table_columns = this.getModelColumns(table_row_data);
-	
-	    return {
-	      table_row_data: table_row_data,
-	      table_columns: table_columns
-	    };
-	  },
-	
-	  formatRuntime: function formatRuntime(seconds) {
-	    var duration_string = "",
-	        seconds = parseFloat(seconds);
-	
-	    var split_array = [Math.floor(seconds / (24 * 3600)), Math.floor(seconds / 3600) % 24, Math.floor(seconds / 60) % 60, seconds % 60],
-	        quals = ["d.", "hrs.", "min.", "sec."];
-	
-	    split_array.forEach(function (d, i) {
-	      if (d) {
-	        duration_string += " " + d + " " + quals[i];
-	      }
-	    });
-	
-	    return duration_string;
-	  },
-	
-	  getLogLikelihood: function getLogLikelihood(this_model) {
-	    return d3.format(".2f")(this_model['log-likelihood']);
-	  },
-	
-	  getAIC: function getAIC(this_model) {
-	    return d3.format(".2f")(this_model['AIC-c']);
-	  },
-	
-	  getNumParameters: function getNumParameters(this_model) {
-	    return this_model['parameters'];
-	  },
-	
-	  getBranchLengths: function getBranchLengths(this_model) {
-	
-	    if (this_model["tree length"]) {
-	      return d3.format(".2f")(this_model["tree length"]);
-	    } else {
-	      return d3.format(".2f")(d3.values(this_model["branch-lengths"]).reduce(function (p, c) {
-	        return p + c;
-	      }, 0));
-	    }
-	  },
-	
-	  getRuntime: function getRuntime(this_model) {
-	    //return this.formatRuntime(this_model['runtime']);
-	    return this.formatRuntime(this_model['runtime']);
-	  },
-	
-	  getDistributions: function getDistributions(m, this_model) {
-	
-	    var omega_distributions = {};
-	    omega_distributions[m] = {};
-	
-	    var omega_format = d3.format(".3r"),
-	        prop_format = d3.format(".2p"),
-	        p_value_format = d3.format(".4f");
-	
-	    var distributions = [];
-	
-	    for (var d in this_model["rate-distributions"]) {
-	
-	      var this_distro = this_model["rate-distributions"][d];
-	      var this_distro_entry = [d, "", "", ""];
-	
-	      omega_distributions[m][d] = this_distro.map(function (d) {
-	        return {
-	          'omega': d[0],
-	          'weight': d[1]
-	        };
-	      });
-	
-	      for (var k = 0; k < this_distro.length; k++) {
-	        this_distro_entry[k + 1] = omega_format(this_distro[k][0]) + " (" + prop_format(this_distro[k][1]) + ")";
-	      }
-	
-	      distributions.push(this_distro_entry);
-	    }
-	
-	    distributions.sort(function (a, b) {
-	      return a[0] < b[0] ? -1 : a[0] == b[0] ? 0 : 1;
-	    });
-	
-	    return distributions;
-	  },
-	
-	  getModelRows: function getModelRows(json) {
-	
-	    if (!json) {
-	      return [];
-	    }
-	
-	    var table_row_data = [];
-	    var omega_format = d3.format(".3r");
-	    var prop_format = d3.format(".2p");
-	    var p_value_format = d3.format(".4f");
-	
-	    for (var m in json["fits"]) {
-	
-	      var this_model_row = [],
-	          this_model = json["fits"][m];
-	
-	      this_model_row = [this_model['display-order'], "", m, this.getLogLikelihood(this_model), this.getNumParameters(this_model), this.getAIC(this_model), this.getRuntime(this_model), this.getBranchLengths(this_model)];
-	
-	      var distributions = this.getDistributions(m, this_model);
-	
-	      if (distributions.length) {
-	
-	        this_model_row = this_model_row.concat(distributions[0]);
-	        this_model_row[1] = distributions[0][0];
-	
-	        table_row_data.push(this_model_row);
-	
-	        for (var d = 1; d < distributions.length; d++) {
-	
-	          var this_distro_entry = this_model_row.map(function (d, i) {
-	            if (i) return "";
-	            return d;
-	          });
-	
-	          this_distro_entry[1] = distributions[d][0];
-	
-	          for (var k = this_distro_entry.length - 4; k < this_distro_entry.length; k++) {
-	            this_distro_entry[k] = distributions[d][k - this_distro_entry.length + 4];
-	          }
-	
-	          table_row_data.push(this_distro_entry);
-	        }
-	      } else {
-	        table_row_data.push(this_model_row);
-	      }
-	    }
-	
-	    table_row_data.sort(function (a, b) {
-	      if (a[0] == b[0]) {
-	        return a[1] < b[1] ? -1 : a[1] == b[1] ? 0 : 1;
-	      }
-	      return a[0] - b[0];
-	    });
-	
-	    table_row_data = table_row_data.map(function (r) {
-	      return r.slice(2);
-	    });
-	
-	    return table_row_data;
-	  },
-	
-	  getModelColumns: function getModelColumns(table_row_data) {
-	
-	    var model_header = '<th>Model</th>',
-	        logl_header = '<th><em> log </em>L</th>',
-	        num_params_header = '<th><abbr title="Number of estimated model parameters"># par.</abbr></th>',
-	        aic_header = '<th><abbr title="Small Sample AIC">AIC<sub>c</sub></abbr></th>',
-	        runtime_header = '<th>Time to fit</th>',
-	        branch_lengths_header = '<th><abbr title="Total tree length, expected substitutions/site">L<sub>tree</sub></abbr></th>',
-	        branch_set_header = '<th>Branch set</th>',
-	        omega_1_header = '<th>&omega;<sub>1</sub></th>',
-	        omega_2_header = '<th>&omega;<sub>2</sub></th>',
-	        omega_3_header = '<th>&omega;<sub>3</sub></th>';
-	
-	    // inspect table_row_data and return header
-	    var all_columns = [model_header, logl_header, num_params_header, aic_header, runtime_header, branch_lengths_header, branch_set_header, omega_1_header, omega_2_header, omega_3_header];
-	
-	    // validate each table row with its associated header
-	    if (table_row_data.length == 0) {
-	      return [];
-	    }
-	
-	    // trim columns to length of table_row_data
-	    var column_headers = _.take(all_columns, table_row_data[0].length);
-	
-	    // remove all columns that have 0, null, or undefined rows
-	    var items = d3.transpose(table_row_data);
-	
-	    return column_headers;
-	  },
-	
-	  componentDidUpdate: function componentDidUpdate() {
-	
-	    var model_columns = d3.select('#summary-model-header1');
-	    model_columns = model_columns.selectAll("th").data(this.state.table_columns);
-	    model_columns.enter().append("th");
-	    model_columns.html(function (d) {
-	      return d;
-	    });
-	
-	    var model_rows = d3.select('#summary-model-table').selectAll("tr").data(this.state.table_row_data);
-	    model_rows.enter().append('tr');
-	    model_rows.exit().remove();
-	    model_rows = model_rows.selectAll("td").data(function (d) {
-	      return d;
-	    });
-	    model_rows.enter().append("td");
-	    model_rows.html(function (d) {
-	      return d;
-	    });
-	  },
-	
-	  componentWillReceiveProps: function componentWillReceiveProps(nextProps) {
-	
-	    var table_row_data = this.getModelRows(nextProps.json),
-	        table_columns = this.getModelColumns(table_row_data);
-	
-	    this.setState({
-	      table_row_data: table_row_data,
-	      table_columns: table_columns
-	    });
-	  },
-	
-	  render: function render() {
-	
-	    return React.createElement(
-	      "ul",
-	      { className: "list-group" },
-	      React.createElement(
-	        "li",
-	        { className: "list-group-item" },
-	        React.createElement(
-	          "h4",
-	          { className: "list-group-item-heading" },
-	          React.createElement("i", { className: "fa fa-cubes", styleFormat: "margin-right: 10px" }),
-	          "Model fits"
-	        ),
-	        React.createElement(
-	          "table",
-	          { className: "table table-hover table-condensed list-group-item-text", styleFormat: "margin-top:0.5em;" },
-	          React.createElement("thead", { id: "summary-model-header1" }),
-	          React.createElement("tbody", { id: "summary-model-table" })
-	        )
-	      )
-	    );
-	  }
-	
-	});
-	
-	// Will need to make a call to this
-	// omega distributions
-	function render_model_fits(json, element) {
-	  React.render(React.createElement(ModelFits, { json: json }), $(element)[0]);
-	}
-	
-	// Will need to make a call to this
-	// omega distributions
-	function rerender_model_fits(json, element) {
-	  $(element).empty();
-	  render_model_fits(json, element);
-	}
-	
-	module.exports.ModelFits = ModelFits;
-	module.exports.render_model_fits = render_model_fits;
-	module.exports.rerender_model_fits = rerender_model_fits;
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(40), __webpack_require__(45), __webpack_require__(2)))
-
-/***/ },
-/* 243 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	var _input_info = __webpack_require__(46);
-	
-	var React = __webpack_require__(47);
-	
-	
-	var BUSTEDSummary = React.createClass({
-	  displayName: 'BUSTEDSummary',
-	
-	  render: function render() {
-	    return React.createElement(
-	      'div',
-	      { className: 'col-md-12' },
-	      React.createElement(
-	        'ul',
-	        { className: 'list-group' },
-	        React.createElement(
-	          'li',
-	          { className: 'list-group-item list-group-item-info' },
-	          React.createElement(
-	            'h3',
-	            { className: 'list-group-item-heading' },
-	            React.createElement('i', { className: 'fa fa-list', styleName: 'margin-right: 10px' }),
-	            React.createElement(
-	              'span',
-	              { id: 'summary-method-name' },
-	              'BUSTED'
-	            ),
-	            ' summary'
-	          ),
-	          'There is ',
-	          React.createElement(
-	            'strong',
-	            null,
-	            this.props.test_result.statement
-	          ),
-	          ' of episodic diversifying selection, with LRT p-value of ',
-	          this.props.test_result.p,
-	          '.',
-	          React.createElement(
-	            'p',
-	            null,
-	            React.createElement(
-	              'small',
-	              null,
-	              'Please cite ',
-	              React.createElement(
-	                'a',
-	                { href: this.props.pmid.href, id: 'summary-pmid' },
-	                this.props.pmid.text
-	              ),
-	              ' if you use this result in a publication, presentation, or other scientific work.'
-	            )
-	          )
-	        )
-	      )
-	    );
-	  }
-	});
-	
-	module.exports.BUSTEDSummary = BUSTEDSummary;
-
-/***/ },
-/* 244 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(d3, $) {'use strict';
@@ -22561,7 +22250,7 @@ webpackJsonp([0],[
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(40), __webpack_require__(2)))
 
 /***/ },
-/* 245 */
+/* 243 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(d3) {'use strict';
@@ -22698,18 +22387,18 @@ webpackJsonp([0],[
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(40)))
 
 /***/ },
-/* 246 */
+/* 244 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(d3, $) {"use strict";
 	
-	var _model_fits = __webpack_require__(242);
+	var _model_fits = __webpack_require__(245);
 	
 	var _tree_summary = __webpack_require__(225);
 	
 	var _tree = __webpack_require__(226);
 	
-	var _omega_plots = __webpack_require__(247);
+	var _omega_plots = __webpack_require__(246);
 	
 	var React = __webpack_require__(47),
 	    ReactDOM = __webpack_require__(78),
@@ -23062,7 +22751,273 @@ webpackJsonp([0],[
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(40), __webpack_require__(2)))
 
 /***/ },
-/* 247 */
+/* 245 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(d3, _, $) {"use strict";
+	
+	var React = __webpack_require__(47);
+	
+	var ModelFits = React.createClass({
+	  displayName: "ModelFits",
+	
+	
+	  getInitialState: function getInitialState() {
+	    var table_row_data = this.getModelRows(this.props.json),
+	        table_columns = this.getModelColumns(table_row_data);
+	
+	    return {
+	      table_row_data: table_row_data,
+	      table_columns: table_columns
+	    };
+	  },
+	
+	  formatRuntime: function formatRuntime(seconds) {
+	    var duration_string = "",
+	        seconds = parseFloat(seconds);
+	
+	    var split_array = [Math.floor(seconds / (24 * 3600)), Math.floor(seconds / 3600) % 24, Math.floor(seconds / 60) % 60, seconds % 60],
+	        quals = ["d.", "hrs.", "min.", "sec."];
+	
+	    split_array.forEach(function (d, i) {
+	      if (d) {
+	        duration_string += " " + d + " " + quals[i];
+	      }
+	    });
+	
+	    return duration_string;
+	  },
+	
+	  getLogLikelihood: function getLogLikelihood(this_model) {
+	    return d3.format(".2f")(this_model['log-likelihood']);
+	  },
+	
+	  getAIC: function getAIC(this_model) {
+	    return d3.format(".2f")(this_model['AIC-c']);
+	  },
+	
+	  getNumParameters: function getNumParameters(this_model) {
+	    return this_model['parameters'];
+	  },
+	
+	  getBranchLengths: function getBranchLengths(this_model) {
+	
+	    if (this_model["tree length"]) {
+	      return d3.format(".2f")(this_model["tree length"]);
+	    } else {
+	      return d3.format(".2f")(d3.values(this_model["branch-lengths"]).reduce(function (p, c) {
+	        return p + c;
+	      }, 0));
+	    }
+	  },
+	
+	  getRuntime: function getRuntime(this_model) {
+	    //return this.formatRuntime(this_model['runtime']);
+	    return this.formatRuntime(this_model['runtime']);
+	  },
+	
+	  getDistributions: function getDistributions(m, this_model) {
+	
+	    var omega_distributions = {};
+	    omega_distributions[m] = {};
+	
+	    var omega_format = d3.format(".3r"),
+	        prop_format = d3.format(".2p"),
+	        p_value_format = d3.format(".4f");
+	
+	    var distributions = [];
+	
+	    for (var d in this_model["rate-distributions"]) {
+	
+	      var this_distro = this_model["rate-distributions"][d];
+	      var this_distro_entry = [d, "", "", ""];
+	
+	      omega_distributions[m][d] = this_distro.map(function (d) {
+	        return {
+	          'omega': d[0],
+	          'weight': d[1]
+	        };
+	      });
+	
+	      for (var k = 0; k < this_distro.length; k++) {
+	        this_distro_entry[k + 1] = omega_format(this_distro[k][0]) + " (" + prop_format(this_distro[k][1]) + ")";
+	      }
+	
+	      distributions.push(this_distro_entry);
+	    }
+	
+	    distributions.sort(function (a, b) {
+	      return a[0] < b[0] ? -1 : a[0] == b[0] ? 0 : 1;
+	    });
+	
+	    return distributions;
+	  },
+	
+	  getModelRows: function getModelRows(json) {
+	
+	    if (!json) {
+	      return [];
+	    }
+	
+	    var table_row_data = [];
+	    var omega_format = d3.format(".3r");
+	    var prop_format = d3.format(".2p");
+	    var p_value_format = d3.format(".4f");
+	
+	    for (var m in json["fits"]) {
+	
+	      var this_model_row = [],
+	          this_model = json["fits"][m];
+	
+	      this_model_row = [this_model['display-order'], "", m, this.getLogLikelihood(this_model), this.getNumParameters(this_model), this.getAIC(this_model), this.getRuntime(this_model), this.getBranchLengths(this_model)];
+	
+	      var distributions = this.getDistributions(m, this_model);
+	
+	      if (distributions.length) {
+	
+	        this_model_row = this_model_row.concat(distributions[0]);
+	        this_model_row[1] = distributions[0][0];
+	
+	        table_row_data.push(this_model_row);
+	
+	        for (var d = 1; d < distributions.length; d++) {
+	
+	          var this_distro_entry = this_model_row.map(function (d, i) {
+	            if (i) return "";
+	            return d;
+	          });
+	
+	          this_distro_entry[1] = distributions[d][0];
+	
+	          for (var k = this_distro_entry.length - 4; k < this_distro_entry.length; k++) {
+	            this_distro_entry[k] = distributions[d][k - this_distro_entry.length + 4];
+	          }
+	
+	          table_row_data.push(this_distro_entry);
+	        }
+	      } else {
+	        table_row_data.push(this_model_row);
+	      }
+	    }
+	
+	    table_row_data.sort(function (a, b) {
+	      if (a[0] == b[0]) {
+	        return a[1] < b[1] ? -1 : a[1] == b[1] ? 0 : 1;
+	      }
+	      return a[0] - b[0];
+	    });
+	
+	    table_row_data = table_row_data.map(function (r) {
+	      return r.slice(2);
+	    });
+	
+	    return table_row_data;
+	  },
+	
+	  getModelColumns: function getModelColumns(table_row_data) {
+	
+	    var model_header = '<th>Model</th>',
+	        logl_header = '<th><em> log </em>L</th>',
+	        num_params_header = '<th><abbr title="Number of estimated model parameters"># par.</abbr></th>',
+	        aic_header = '<th><abbr title="Small Sample AIC">AIC<sub>c</sub></abbr></th>',
+	        runtime_header = '<th>Time to fit</th>',
+	        branch_lengths_header = '<th><abbr title="Total tree length, expected substitutions/site">L<sub>tree</sub></abbr></th>',
+	        branch_set_header = '<th>Branch set</th>',
+	        omega_1_header = '<th>&omega;<sub>1</sub></th>',
+	        omega_2_header = '<th>&omega;<sub>2</sub></th>',
+	        omega_3_header = '<th>&omega;<sub>3</sub></th>';
+	
+	    // inspect table_row_data and return header
+	    var all_columns = [model_header, logl_header, num_params_header, aic_header, runtime_header, branch_lengths_header, branch_set_header, omega_1_header, omega_2_header, omega_3_header];
+	
+	    // validate each table row with its associated header
+	    if (table_row_data.length == 0) {
+	      return [];
+	    }
+	
+	    // trim columns to length of table_row_data
+	    var column_headers = _.take(all_columns, table_row_data[0].length);
+	
+	    // remove all columns that have 0, null, or undefined rows
+	    var items = d3.transpose(table_row_data);
+	
+	    return column_headers;
+	  },
+	
+	  componentDidUpdate: function componentDidUpdate() {
+	
+	    var model_columns = d3.select('#summary-model-header1');
+	    model_columns = model_columns.selectAll("th").data(this.state.table_columns);
+	    model_columns.enter().append("th");
+	    model_columns.html(function (d) {
+	      return d;
+	    });
+	
+	    var model_rows = d3.select('#summary-model-table').selectAll("tr").data(this.state.table_row_data);
+	    model_rows.enter().append('tr');
+	    model_rows.exit().remove();
+	    model_rows = model_rows.selectAll("td").data(function (d) {
+	      return d;
+	    });
+	    model_rows.enter().append("td");
+	    model_rows.html(function (d) {
+	      return d;
+	    });
+	  },
+	
+	  componentWillReceiveProps: function componentWillReceiveProps(nextProps) {
+	
+	    var table_row_data = this.getModelRows(nextProps.json),
+	        table_columns = this.getModelColumns(table_row_data);
+	
+	    this.setState({
+	      table_row_data: table_row_data,
+	      table_columns: table_columns
+	    });
+	  },
+	
+	  render: function render() {
+	
+	    return React.createElement(
+	      "div",
+	      null,
+	      React.createElement(
+	        "h4",
+	        { className: "dm-table-header" },
+	        "Model fits",
+	        React.createElement("span", { className: "glyphicon glyphicon-info-sign", style: { "verticalAlign": "middle", "float": "right" }, "aria-hidden": "true", "data-toggle": "popover", "data-trigger": "hover", title: "Tree summary", "data-html": "true", "data-content": "<ul><li>Hover over a column header for a description of its content.</li></ul>", "data-placement": "bottom" })
+	      ),
+	      React.createElement(
+	        "table",
+	        { className: "table table-hover table-condensed list-group-item-text", styleFormat: "margin-top:0.5em;" },
+	        React.createElement("thead", { id: "summary-model-header1" }),
+	        React.createElement("tbody", { id: "summary-model-table" })
+	      )
+	    );
+	  }
+	
+	});
+	
+	// Will need to make a call to this
+	// omega distributions
+	function render_model_fits(json, element) {
+	  React.render(React.createElement(ModelFits, { json: json }), $(element)[0]);
+	}
+	
+	// Will need to make a call to this
+	// omega distributions
+	function rerender_model_fits(json, element) {
+	  $(element).empty();
+	  render_model_fits(json, element);
+	}
+	
+	module.exports.ModelFits = ModelFits;
+	module.exports.render_model_fits = render_model_fits;
+	module.exports.rerender_model_fits = rerender_model_fits;
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(40), __webpack_require__(45), __webpack_require__(2)))
+
+/***/ },
+/* 246 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(d3) {'use strict';
@@ -23532,25 +23487,25 @@ webpackJsonp([0],[
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(40)))
 
 /***/ },
-/* 248 */
+/* 247 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(d3, $) {'use strict';
 	
 	var _shared_summary = __webpack_require__(224);
 	
-	var _slac_sites = __webpack_require__(249);
+	var _slac_sites = __webpack_require__(248);
 	
-	var _slac_summary = __webpack_require__(250);
+	var _slac_summary = __webpack_require__(249);
 	
-	var _slac_graphs = __webpack_require__(251);
+	var _slac_graphs = __webpack_require__(250);
 	
 	var React = __webpack_require__(47),
 	    ReactDOM = __webpack_require__(78),
 	    _ = __webpack_require__(45);
 	
 	var datamonkey = __webpack_require__(39);
-	__webpack_require__(253);
+	__webpack_require__(252);
 	
 	var SLAC = React.createClass({
 	    displayName: 'SLAC',
@@ -23844,7 +23799,7 @@ webpackJsonp([0],[
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(40), __webpack_require__(2)))
 
 /***/ },
-/* 249 */
+/* 248 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(d3, _) {'use strict';
@@ -24464,7 +24419,7 @@ webpackJsonp([0],[
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(40), __webpack_require__(45)))
 
 /***/ },
-/* 250 */
+/* 249 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(_, d3) {'use strict';
@@ -24636,12 +24591,12 @@ webpackJsonp([0],[
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(45), __webpack_require__(40)))
 
 /***/ },
-/* 251 */
+/* 250 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(_) {'use strict';
 	
-	var _shared_graph = __webpack_require__(252);
+	var _shared_graph = __webpack_require__(251);
 	
 	var React = __webpack_require__(47);
 	var datamonkey = __webpack_require__(39);
@@ -24875,7 +24830,7 @@ webpackJsonp([0],[
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(45)))
 
 /***/ },
-/* 252 */
+/* 251 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(d3, _) {'use strict';
@@ -25132,7 +25087,7 @@ webpackJsonp([0],[
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(40), __webpack_require__(45)))
 
 /***/ },
-/* 253 */
+/* 252 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function($, jQuery, d3, _) {"use strict";
@@ -25423,6 +25378,84 @@ webpackJsonp([0],[
 	datamonkey.helpers.filter = datamonkey_filter_list;
 	datamonkey.helpers.map = datamonkey_map_list;
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2), __webpack_require__(2), __webpack_require__(40), __webpack_require__(45)))
+
+/***/ },
+/* 253 */,
+/* 254 */,
+/* 255 */,
+/* 256 */,
+/* 257 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var _input_info = __webpack_require__(46);
+	
+	var React = __webpack_require__(47);
+	
+	
+	var BUSTEDSummary = React.createClass({
+	  displayName: 'BUSTEDSummary',
+	
+	  render: function render() {
+	    return React.createElement(
+	      'div',
+	      { className: 'row', id: 'summary-div' },
+	      React.createElement(
+	        'div',
+	        { className: 'col-md-8' },
+	        React.createElement(
+	          'h3',
+	          { className: 'list-group-item-heading' },
+	          React.createElement(
+	            'span',
+	            { id: 'summary-method-name' },
+	            'BUSTED summary'
+	          )
+	        ),
+	        React.createElement(
+	          'div',
+	          { className: 'main-result' },
+	          React.createElement(
+	            'p',
+	            null,
+	            'BUSTED found ',
+	            React.createElement(
+	              'strong',
+	              null,
+	              this.props.test_result.statement
+	            ),
+	            ' of episodic diversifying selection, with LRT p-value of ',
+	            this.props.test_result.p,
+	            '.'
+	          ),
+	          React.createElement(
+	            'p',
+	            null,
+	            React.createElement(
+	              'small',
+	              null,
+	              'Please cite ',
+	              React.createElement(
+	                'a',
+	                { href: this.props.pmid.href, id: 'summary-pmid' },
+	                this.props.pmid.text
+	              ),
+	              ' if you use this result in a publication, presentation, or other scientific work.'
+	            )
+	          )
+	        )
+	      ),
+	      React.createElement(
+	        'div',
+	        { className: 'col-md-4' },
+	        React.createElement(_input_info.InputInfo, { input_data: this.props.input_data })
+	      )
+	    );
+	  }
+	});
+	
+	module.exports.BUSTEDSummary = BUSTEDSummary;
 
 /***/ }
 ]);

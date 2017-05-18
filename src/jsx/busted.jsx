@@ -9,6 +9,8 @@ import {ModelFits} from "./components/model_fits.jsx";
 import {TreeSummary} from "./components/tree_summary.jsx";
 import {PropChart} from './components/prop_chart.jsx';
 import {BUSTEDSummary} from './components/busted_summary.jsx';
+import {NavBar} from "./components/navbar.jsx";
+import {ScrollSpy} from "./components/scrollspy.jsx";
 
 var datamonkey = require('../datamonkey/datamonkey.js'),
 		busted = require('../busted/busted.js');
@@ -57,7 +59,8 @@ var BUSTED = React.createClass({
         pmid : {
           text: pmid_text,
           href : pmid_href
-        }
+        },
+        input_data : data["input_data"]
       });
 
     });
@@ -132,7 +135,8 @@ var BUSTED = React.createClass({
       pmid : {
         href : null,
         text : null
-      }
+      },
+      input_data : null
     }
   },
 
@@ -140,12 +144,12 @@ var BUSTED = React.createClass({
 
     var self = this;
 
-    $("#json_file").on("change", function(e) {
+    $("#json-file").on("change", function(e) {
+      console.log('inside');
+      debugger;
         var files = e.target.files; // FileList object
         if (files.length == 1) {
 
-          module.exports.BUSTEDSummary = BUSTEDSummary
-        ;
             var f = files[0];
             var reader = new FileReader();
             reader.onload = (function(theFile) {
@@ -180,14 +184,15 @@ var BUSTED = React.createClass({
                   pmid : {
                     text: pmid_text,
                     href : pmid_href
-                  }
+                  },
+                  input_data : data["input_data"]
                 });
 
               }
             })(f);
             reader.readAsText(f);
         }
-        $("#datamonkey-absrel-toggle-here").dropdown("toggle");
+        $("#json-file").dropdown("toggle");
         e.preventDefault();
     });
 
@@ -258,96 +263,106 @@ var BUSTED = React.createClass({
 
     var self = this;
     self.initialize();
+    var scrollspy_info = [
+      {label: "summary", href:"summary-div"},
+      {label: "model statistics", href:""},
+      {label: "input tree", href:""},
+      {label: "ω distribution", href:""}
+    ];
 
     return (
+      <div>
+        <NavBar />
+        <div className="container-fluid">
+          <div className="row">
 
-      <div className="tab-content">
-        <div className="tab-pane active" id="summary_tab">
-          <div className="row" styleName="margin-top: 5px">
-            <BUSTEDSummary test_result={this.state.test_result} pmid={this.state.pmid} />
-          </div>
+            <ScrollSpy info={scrollspy_info}/>
+      
+            <div className="col-lg-10">
+              <BUSTEDSummary test_result={this.state.test_result}
+                             pmid={this.state.pmid}
+                             input_data={self.state.input_data}/>
 
-           <div className="row">
-              <div id="hyphy-model-fits" className="col-lg-12">
-                <ModelFits json={self.state.json} />
+              <div className="row">
+                <div id="hyphy-model-fits" className="col-lg-12">
+                  <ModelFits json={self.state.json} />
+                </div>
               </div>
-          </div>
 
-          <button id="export-chart-svg" type="button" className="btn btn-default btn-sm pull-right btn-export">
-            <span className="glyphicon glyphicon-floppy-save"></span> Export Chart to SVG
-          </button>
-
-          <button id="export-chart-png" type="button" className="btn btn-default btn-sm pull-right btn-export">
-            <span className="glyphicon glyphicon-floppy-save"></span> Export Chart to PNG
-          </button>
-
-          <div className='row hyphy-busted-site-table'>
-            <div id="chart-id" className="col-lg-8">
-              <strong>Model Evidence Ratios Per Site</strong>
-              <div className="clearfix"></div>
-            </div>
-          </div>
-
-
-          <div className='row site-table'>
-
-            <div className="col-lg-12">
-
-              <form id="er-thresholds">
-                <div className="form-group">
-                  <label for="er-constrained-threshold">Constrained Evidence Ratio Threshold:</label>
-                  <input type="text" className="form-control" id="er-constrained-threshold" defaultValue={this.props.constrained_threshold}>
-                  </input>
+              <div className='row hyphy-busted-site-table'>
+                <div id="chart-id" className="col-lg-8">
+                  <strong>Model Evidence Ratios Per Site</strong>
                 </div>
-                <div className="form-group">
-                  <label for="er-optimized-null-threshold">Optimized Null Evidence Ratio Threshold:</label>
-                  <input type="text" className="form-control" id="er-optimized-null-threshold" defaultValue={this.props.null_threshold}>
-                  </input>
+                <div className="col-lg-4">
+                  <button id="export-chart-svg" type="button" className="btn btn-default btn-sm pull-right btn-export">
+                    <span className="glyphicon glyphicon-floppy-save"></span> Export Chart to SVG
+                  </button>
+                  <button id="export-chart-png" type="button" className="btn btn-default btn-sm pull-right btn-export">
+                    <span className="glyphicon glyphicon-floppy-save"></span> Export Chart to PNG
+                  </button>
                 </div>
-              </form>
+                <div className="col-lg-12">
+                  <div className="clearfix"></div>
+                </div>
+              </div>
 
-              <button id="export-csv" type="button" className="btn btn-default btn-sm pull-right hyphy-busted-btn-export">
-                <span className="glyphicon glyphicon-floppy-save"></span> Export Table to CSV
-              </button>
+              <div className='row site-table'>
+                <div className="col-lg-12">
+                  <form id="er-thresholds">
+                    <div className="form-group">
+                      <label for="er-constrained-threshold">Constrained Evidence Ratio Threshold:</label>
+                      <input type="text" className="form-control" id="er-constrained-threshold" defaultValue={this.props.constrained_threshold}>
+                      </input>
+                    </div>
+                    <div className="form-group">
+                      <label for="er-optimized-null-threshold">Optimized Null Evidence Ratio Threshold:</label>
+                      <input type="text" className="form-control" id="er-optimized-null-threshold" defaultValue={this.props.null_threshold}>
+                      </input>
+                    </div>
+                  </form>
+                  <button id="export-csv" type="button" className="btn btn-default btn-sm pull-right hyphy-busted-btn-export">
+                    <span className="glyphicon glyphicon-floppy-save"></span> Export Table to CSV
+                  </button>
 
-              <button id="apply-thresholds" type="button" className="btn btn-default btn-sm pull-right hyphy-busted-btn-export">
-                Apply Thresholds
-              </button>
+                  <button id="apply-thresholds" type="button" className="btn btn-default btn-sm pull-right hyphy-busted-btn-export">
+                    Apply Thresholds
+                  </button>
+                  <table id="sites" className="table sites dc-data-table">
+                    <thead>
+                      <tr className="header">
+                        <th>Site Index</th>
+                        <th>Unconstrained Likelihood</th>
+                        <th>Constrained Likelihood</th>
+                        <th>Optimized Null Likelihood</th>
+                        <th>Constrained Evidence Ratio</th>
+                        <th>Optimized Null Evidence Ratio</th>
+                      </tr>
+                    </thead>
+                  </table>
+                </div>
+              </div>
 
-
-              <table id="sites" className="table sites dc-data-table">
-                <thead>
-                  <tr className="header">
-                    <th>Site Index</th>
-                    <th>Unconstrained Likelihood</th>
-                    <th>Constrained Likelihood</th>
-                    <th>Optimized Null Likelihood</th>
-                    <th>Constrained Evidence Ratio</th>
-                    <th>Optimized Null Evidence Ratio</th>
-                  </tr>
-                </thead>
-              </table>
+              <div className="row">
+                <div className="col-md-12">
+                  <Tree json={self.state.json} 
+                       settings={self.props.tree_settings} />
+                </div>
+                <div className="col-md-12">
+                  <div id="primary-omega-dist" className="panel-body">
+                    <PropChart name={self.props.model_name} omegas={self.state.omegas} 
+                     settings={self.props.distro_settings} />
+                  </div>
+                </div>
+              </div>
             </div>
-          </div>
 
-        </div>
-
-        <div className="tab-pane" id="tree_tab">
-
-          <div className="col-md-12">
-            <Tree json={self.state.json} 
-                 settings={self.props.tree_settings} />
-          </div>
-
-          <div className="col-md-12">
-            <div id="primary-omega-dist" className="panel-body">
-              <PropChart name={self.props.model_name} omegas={self.state.omegas} 
-               settings={self.props.distro_settings} />
+            <div className="col-lg-1">
             </div>
-          </div>
 
+          </div>
         </div>
       </div>
+
     )
   }
 });
