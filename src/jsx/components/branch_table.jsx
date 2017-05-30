@@ -232,9 +232,6 @@ var BranchTable = React.createClass({
 
     this.createDistroChart();
     this.setEvents();
-    $(function () {
-      $('[data-toggle="popover"]').popover()
-    })
   },
 
   render: function() {

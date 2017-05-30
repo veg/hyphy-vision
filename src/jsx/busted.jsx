@@ -259,15 +259,23 @@ var BUSTED = React.createClass({
     this.setEvents();
   },
 
+  componentDidUpdate(prevProps, prevState) {
+    $('body').scrollspy({
+      target: '.bs-docs-sidebar',
+      offset: 50
+    });
+    $('[data-toggle="popover"]').popover()
+  },
+
   render: function() {
 
     var self = this;
     self.initialize();
     var scrollspy_info = [
       {label: "summary", href:"summary-div"},
-      {label: "model statistics", href:""},
-      {label: "input tree", href:""},
-      {label: "ω distribution", href:""}
+      {label: "model statistics", href:"hyphy-model-fits"},
+      {label: "input tree", href:"phylogenetic-tree"},
+      {label: "ω distribution", href:"primary-omega-dist"}
     ];
 
     return (
@@ -290,16 +298,21 @@ var BUSTED = React.createClass({
               </div>
 
               <div className='row hyphy-busted-site-table'>
-                <div id="chart-id" className="col-lg-8">
-                  <strong>Model Evidence Ratios Per Site</strong>
+                <div className="col-md-12">
+                  <h4 className="dm-table-header">
+                    Model Evidence Ratios Per Site
+                    <span className="glyphicon glyphicon-info-sign" style={{"verticalAlign": "middle", "float":"right"}} aria-hidden="true" data-toggle="popover" data-trigger="hover" title="Tree summary" data-html="true" data-content="<ul><li>Hover over a column header for a description of its content.</li></ul>" data-placement="bottom"></span>
+                  </h4>
                 </div>
-                <div className="col-lg-4">
+                <div className="col-lg-12">
                   <button id="export-chart-svg" type="button" className="btn btn-default btn-sm pull-right btn-export">
                     <span className="glyphicon glyphicon-floppy-save"></span> Export Chart to SVG
                   </button>
                   <button id="export-chart-png" type="button" className="btn btn-default btn-sm pull-right btn-export">
                     <span className="glyphicon glyphicon-floppy-save"></span> Export Chart to PNG
                   </button>
+                </div>
+                <div id="chart-id" className="col-lg-12">
                 </div>
                 <div className="col-lg-12">
                   <div className="clearfix"></div>
@@ -343,11 +356,12 @@ var BUSTED = React.createClass({
               </div>
 
               <div className="row">
-                <div className="col-md-12">
+                <div className="col-md-12" id="phylogenetic-tree">
                   <Tree json={self.state.json} 
                        settings={self.props.tree_settings} />
                 </div>
                 <div className="col-md-12">
+                  <h4 className="dm-table-header">&omega; distribution</h4>
                   <div id="primary-omega-dist" className="panel-body">
                     <PropChart name={self.props.model_name} omegas={self.state.omegas} 
                      settings={self.props.distro_settings} />

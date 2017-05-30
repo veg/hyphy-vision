@@ -311,9 +311,10 @@ var BSREL = React.createClass({
   
   componentDidUpdate(prevProps, prevState) {
     $('body').scrollspy({
-        target: '.bs-docs-sidebar',
-        offset: 50
-      });
+      target: '.bs-docs-sidebar',
+      offset: 50
+    });
+    $('[data-toggle="popover"]').popover()
   },
 
   render: function() {

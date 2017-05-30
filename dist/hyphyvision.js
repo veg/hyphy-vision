@@ -634,6 +634,7 @@ webpackJsonp([0],[
 	      target: '.bs-docs-sidebar',
 	      offset: 50
 	    });
+	    $('[data-toggle="popover"]').popover();
 	  },
 	
 	
@@ -20447,9 +20448,6 @@ webpackJsonp([0],[
 	
 	    this.createDistroChart();
 	    this.setEvents();
-	    $(function () {
-	      $('[data-toggle="popover"]').popover();
-	    });
 	  },
 	
 	  render: function render() {
@@ -21692,11 +21690,20 @@ webpackJsonp([0],[
 	    this.setEvents();
 	  },
 	
+	  componentDidUpdate: function componentDidUpdate(prevProps, prevState) {
+	    $('body').scrollspy({
+	      target: '.bs-docs-sidebar',
+	      offset: 50
+	    });
+	    $('[data-toggle="popover"]').popover();
+	  },
+	
+	
 	  render: function render() {
 	
 	    var self = this;
 	    self.initialize();
-	    var scrollspy_info = [{ label: "summary", href: "summary-div" }, { label: "model statistics", href: "" }, { label: "input tree", href: "" }, { label: "ω distribution", href: "" }];
+	    var scrollspy_info = [{ label: "summary", href: "summary-div" }, { label: "model statistics", href: "hyphy-model-fits" }, { label: "input tree", href: "phylogenetic-tree" }, { label: "ω distribution", href: "primary-omega-dist" }];
 	
 	    return React.createElement(
 	      "div",
@@ -21729,16 +21736,17 @@ webpackJsonp([0],[
 	              { className: "row hyphy-busted-site-table" },
 	              React.createElement(
 	                "div",
-	                { id: "chart-id", className: "col-lg-8" },
+	                { className: "col-md-12" },
 	                React.createElement(
-	                  "strong",
-	                  null,
-	                  "Model Evidence Ratios Per Site"
+	                  "h4",
+	                  { className: "dm-table-header" },
+	                  "Model Evidence Ratios Per Site",
+	                  React.createElement("span", { className: "glyphicon glyphicon-info-sign", style: { "verticalAlign": "middle", "float": "right" }, "aria-hidden": "true", "data-toggle": "popover", "data-trigger": "hover", title: "Tree summary", "data-html": "true", "data-content": "<ul><li>Hover over a column header for a description of its content.</li></ul>", "data-placement": "bottom" })
 	                )
 	              ),
 	              React.createElement(
 	                "div",
-	                { className: "col-lg-4" },
+	                { className: "col-lg-12" },
 	                React.createElement(
 	                  "button",
 	                  { id: "export-chart-svg", type: "button", className: "btn btn-default btn-sm pull-right btn-export" },
@@ -21752,6 +21760,7 @@ webpackJsonp([0],[
 	                  " Export Chart to PNG"
 	                )
 	              ),
+	              React.createElement("div", { id: "chart-id", className: "col-lg-12" }),
 	              React.createElement(
 	                "div",
 	                { className: "col-lg-12" },
@@ -21848,13 +21857,18 @@ webpackJsonp([0],[
 	              { className: "row" },
 	              React.createElement(
 	                "div",
-	                { className: "col-md-12" },
+	                { className: "col-md-12", id: "phylogenetic-tree" },
 	                React.createElement(_tree.Tree, { json: self.state.json,
 	                  settings: self.props.tree_settings })
 	              ),
 	              React.createElement(
 	                "div",
 	                { className: "col-md-12" },
+	                React.createElement(
+	                  "h4",
+	                  { className: "dm-table-header" },
+	                  "\u03C9 distribution"
+	                ),
 	                React.createElement(
 	                  "div",
 	                  { id: "primary-omega-dist", className: "panel-body" },
