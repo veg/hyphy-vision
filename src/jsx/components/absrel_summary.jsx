@@ -65,8 +65,8 @@ var BSRELSummary = React.createClass({
     if(was_evidence){
       user_message = (
         <p className="list-group-item-text label_and_input">
-          aBSREL <strong className="hyphy-highlight">found evidence</strong><sup>†</sup> of episodic diversifying selection on <span className="hyphy-highlight"><strong>{self.state.branches_with_evidence}</strong></span> out 
-          of <span className="hyphy-highlight"><strong>{self.state.test_branches}</strong></span> branches in your phylogeny.
+          aBSREL <strong className="hyphy-highlight">found evidence</strong> of episodic diversifying selection on <span className="hyphy-highlight"><strong>{self.state.branches_with_evidence}</strong></span> out 
+          of <span className="hyphy-highlight"><strong>{self.state.total_branches}</strong></span> branches in your phylogeny.
         </p>
       );
     }else{
@@ -86,20 +86,18 @@ var BSRELSummary = React.createClass({
           <div className="main-result">
             {user_message}
             <p>
-              A total of <strong className="hyphy-highlight">X</strong> branches were formally tested for diversifying selection.
+              A total of <strong className="hyphy-highlight">{self.state.test_branches}</strong> branches were formally tested for diversifying selection.
               Significance and number of rate categories inferred at each branch are provided in the <a href="#table-tab">detailed results</a> table.
-              For more information about the aBSREL method, see <a href="http://hyphy.org/methods/selection-methods/#absrel">this link</a>.
             </p>
             <hr/>
             <p>
-              <small>
-                <sup>†</sup><abbr title="Likelihood Ratio Test">LRT</abbr> p ≤ 0.05, corrected for multiple testing.
-              </small>
+              <small>See <a href="http://hyphy.org/methods/selection-methods/#absrel">here</a> for more information about the aBSREL method.
+              <br/>Please cite <a href="http://www.ncbi.nlm.nih.gov/pubmed/25697341" id="summary-pmid" target="_blank">PMID 25697341</a> if you use this result in a publication, presentation, or other scientific work.
+            </small>
             </p>
           </div>
           <p>
             <small>
-              Please cite <a href="http://www.ncbi.nlm.nih.gov/pubmed/25697341" id="summary-pmid" target="_blank">PMID 25697341</a> if you use this result in a publication, presentation, or other scientific work.
             </small>
           </p>
         </div>
