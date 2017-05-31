@@ -30,10 +30,10 @@ webpackJsonp([0],[
 	
 	var absrel = __webpack_require__(43);
 	var busted = __webpack_require__(241);
-	var fade = __webpack_require__(242);
-	var fade_summary = __webpack_require__(243);
-	var relax = __webpack_require__(244);
-	var slac = __webpack_require__(247);
+	var fade = __webpack_require__(244);
+	var fade_summary = __webpack_require__(245);
+	var relax = __webpack_require__(246);
+	var slac = __webpack_require__(248);
 	
 	// Create new hyphy-vision export
 	window.absrel = absrel;
@@ -21430,13 +21430,13 @@ webpackJsonp([0],[
 	
 	var _tree = __webpack_require__(226);
 	
-	var _model_fits = __webpack_require__(245);
+	var _model_fits = __webpack_require__(242);
 	
 	var _tree_summary = __webpack_require__(225);
 	
 	var _prop_chart = __webpack_require__(229);
 	
-	var _busted_summary = __webpack_require__(257);
+	var _busted_summary = __webpack_require__(243);
 	
 	var _navbar = __webpack_require__(230);
 	
@@ -21898,6 +21898,346 @@ webpackJsonp([0],[
 /* 242 */
 /***/ function(module, exports, __webpack_require__) {
 
+	/* WEBPACK VAR INJECTION */(function(d3, _, $) {"use strict";
+	
+	var React = __webpack_require__(47);
+	
+	var ModelFits = React.createClass({
+	  displayName: "ModelFits",
+	
+	
+	  getInitialState: function getInitialState() {
+	    var table_row_data = this.getModelRows(this.props.json),
+	        table_columns = this.getModelColumns(table_row_data);
+	
+	    return {
+	      table_row_data: table_row_data,
+	      table_columns: table_columns
+	    };
+	  },
+	
+	  formatRuntime: function formatRuntime(seconds) {
+	    var duration_string = "",
+	        seconds = parseFloat(seconds);
+	
+	    var split_array = [Math.floor(seconds / (24 * 3600)), Math.floor(seconds / 3600) % 24, Math.floor(seconds / 60) % 60, seconds % 60],
+	        quals = ["d.", "hrs.", "min.", "sec."];
+	
+	    split_array.forEach(function (d, i) {
+	      if (d) {
+	        duration_string += " " + d + " " + quals[i];
+	      }
+	    });
+	
+	    return duration_string;
+	  },
+	
+	  getLogLikelihood: function getLogLikelihood(this_model) {
+	    return d3.format(".2f")(this_model['log-likelihood']);
+	  },
+	
+	  getAIC: function getAIC(this_model) {
+	    return d3.format(".2f")(this_model['AIC-c']);
+	  },
+	
+	  getNumParameters: function getNumParameters(this_model) {
+	    return this_model['parameters'];
+	  },
+	
+	  getBranchLengths: function getBranchLengths(this_model) {
+	
+	    if (this_model["tree length"]) {
+	      return d3.format(".2f")(this_model["tree length"]);
+	    } else {
+	      return d3.format(".2f")(d3.values(this_model["branch-lengths"]).reduce(function (p, c) {
+	        return p + c;
+	      }, 0));
+	    }
+	  },
+	
+	  getRuntime: function getRuntime(this_model) {
+	    //return this.formatRuntime(this_model['runtime']);
+	    return this.formatRuntime(this_model['runtime']);
+	  },
+	
+	  getDistributions: function getDistributions(m, this_model) {
+	
+	    var omega_distributions = {};
+	    omega_distributions[m] = {};
+	
+	    var omega_format = d3.format(".3r"),
+	        prop_format = d3.format(".2p"),
+	        p_value_format = d3.format(".4f");
+	
+	    var distributions = [];
+	
+	    for (var d in this_model["rate-distributions"]) {
+	
+	      var this_distro = this_model["rate-distributions"][d];
+	      var this_distro_entry = [d, "", "", ""];
+	
+	      omega_distributions[m][d] = this_distro.map(function (d) {
+	        return {
+	          'omega': d[0],
+	          'weight': d[1]
+	        };
+	      });
+	
+	      for (var k = 0; k < this_distro.length; k++) {
+	        this_distro_entry[k + 1] = omega_format(this_distro[k][0]) + " (" + prop_format(this_distro[k][1]) + ")";
+	      }
+	
+	      distributions.push(this_distro_entry);
+	    }
+	
+	    distributions.sort(function (a, b) {
+	      return a[0] < b[0] ? -1 : a[0] == b[0] ? 0 : 1;
+	    });
+	
+	    return distributions;
+	  },
+	
+	  getModelRows: function getModelRows(json) {
+	
+	    if (!json) {
+	      return [];
+	    }
+	
+	    var table_row_data = [];
+	    var omega_format = d3.format(".3r");
+	    var prop_format = d3.format(".2p");
+	    var p_value_format = d3.format(".4f");
+	
+	    for (var m in json["fits"]) {
+	
+	      var this_model_row = [],
+	          this_model = json["fits"][m];
+	
+	      this_model_row = [this_model['display-order'], "", m, this.getLogLikelihood(this_model), this.getNumParameters(this_model), this.getAIC(this_model), this.getRuntime(this_model), this.getBranchLengths(this_model)];
+	
+	      var distributions = this.getDistributions(m, this_model);
+	
+	      if (distributions.length) {
+	
+	        this_model_row = this_model_row.concat(distributions[0]);
+	        this_model_row[1] = distributions[0][0];
+	
+	        table_row_data.push(this_model_row);
+	
+	        for (var d = 1; d < distributions.length; d++) {
+	
+	          var this_distro_entry = this_model_row.map(function (d, i) {
+	            if (i) return "";
+	            return d;
+	          });
+	
+	          this_distro_entry[1] = distributions[d][0];
+	
+	          for (var k = this_distro_entry.length - 4; k < this_distro_entry.length; k++) {
+	            this_distro_entry[k] = distributions[d][k - this_distro_entry.length + 4];
+	          }
+	
+	          table_row_data.push(this_distro_entry);
+	        }
+	      } else {
+	        table_row_data.push(this_model_row);
+	      }
+	    }
+	
+	    table_row_data.sort(function (a, b) {
+	      if (a[0] == b[0]) {
+	        return a[1] < b[1] ? -1 : a[1] == b[1] ? 0 : 1;
+	      }
+	      return a[0] - b[0];
+	    });
+	
+	    table_row_data = table_row_data.map(function (r) {
+	      return r.slice(2);
+	    });
+	
+	    return table_row_data;
+	  },
+	
+	  getModelColumns: function getModelColumns(table_row_data) {
+	
+	    var model_header = '<th>Model</th>',
+	        logl_header = '<th><em> log </em>L</th>',
+	        num_params_header = '<th><abbr title="Number of estimated model parameters"># par.</abbr></th>',
+	        aic_header = '<th><abbr title="Small Sample AIC">AIC<sub>c</sub></abbr></th>',
+	        runtime_header = '<th>Time to fit</th>',
+	        branch_lengths_header = '<th><abbr title="Total tree length, expected substitutions/site">L<sub>tree</sub></abbr></th>',
+	        branch_set_header = '<th>Branch set</th>',
+	        omega_1_header = '<th>&omega;<sub>1</sub></th>',
+	        omega_2_header = '<th>&omega;<sub>2</sub></th>',
+	        omega_3_header = '<th>&omega;<sub>3</sub></th>';
+	
+	    // inspect table_row_data and return header
+	    var all_columns = [model_header, logl_header, num_params_header, aic_header, runtime_header, branch_lengths_header, branch_set_header, omega_1_header, omega_2_header, omega_3_header];
+	
+	    // validate each table row with its associated header
+	    if (table_row_data.length == 0) {
+	      return [];
+	    }
+	
+	    // trim columns to length of table_row_data
+	    var column_headers = _.take(all_columns, table_row_data[0].length);
+	
+	    // remove all columns that have 0, null, or undefined rows
+	    var items = d3.transpose(table_row_data);
+	
+	    return column_headers;
+	  },
+	
+	  componentDidUpdate: function componentDidUpdate() {
+	
+	    var model_columns = d3.select('#summary-model-header1');
+	    model_columns = model_columns.selectAll("th").data(this.state.table_columns);
+	    model_columns.enter().append("th");
+	    model_columns.html(function (d) {
+	      return d;
+	    });
+	
+	    var model_rows = d3.select('#summary-model-table').selectAll("tr").data(this.state.table_row_data);
+	    model_rows.enter().append('tr');
+	    model_rows.exit().remove();
+	    model_rows = model_rows.selectAll("td").data(function (d) {
+	      return d;
+	    });
+	    model_rows.enter().append("td");
+	    model_rows.html(function (d) {
+	      return d;
+	    });
+	  },
+	
+	  componentWillReceiveProps: function componentWillReceiveProps(nextProps) {
+	
+	    var table_row_data = this.getModelRows(nextProps.json),
+	        table_columns = this.getModelColumns(table_row_data);
+	
+	    this.setState({
+	      table_row_data: table_row_data,
+	      table_columns: table_columns
+	    });
+	  },
+	
+	  render: function render() {
+	
+	    return React.createElement(
+	      "div",
+	      null,
+	      React.createElement(
+	        "h4",
+	        { className: "dm-table-header" },
+	        "Model fits",
+	        React.createElement("span", { className: "glyphicon glyphicon-info-sign", style: { "verticalAlign": "middle", "float": "right" }, "aria-hidden": "true", "data-toggle": "popover", "data-trigger": "hover", title: "Tree summary", "data-html": "true", "data-content": "<ul><li>Hover over a column header for a description of its content.</li></ul>", "data-placement": "bottom" })
+	      ),
+	      React.createElement(
+	        "table",
+	        { className: "table table-hover table-condensed list-group-item-text", styleFormat: "margin-top:0.5em;" },
+	        React.createElement("thead", { id: "summary-model-header1" }),
+	        React.createElement("tbody", { id: "summary-model-table" })
+	      )
+	    );
+	  }
+	
+	});
+	
+	// Will need to make a call to this
+	// omega distributions
+	function render_model_fits(json, element) {
+	  React.render(React.createElement(ModelFits, { json: json }), $(element)[0]);
+	}
+	
+	// Will need to make a call to this
+	// omega distributions
+	function rerender_model_fits(json, element) {
+	  $(element).empty();
+	  render_model_fits(json, element);
+	}
+	
+	module.exports.ModelFits = ModelFits;
+	module.exports.render_model_fits = render_model_fits;
+	module.exports.rerender_model_fits = rerender_model_fits;
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(40), __webpack_require__(45), __webpack_require__(2)))
+
+/***/ },
+/* 243 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var _input_info = __webpack_require__(46);
+	
+	var React = __webpack_require__(47);
+	
+	
+	var BUSTEDSummary = React.createClass({
+	  displayName: 'BUSTEDSummary',
+	
+	  render: function render() {
+	    return React.createElement(
+	      'div',
+	      { className: 'row', id: 'summary-div' },
+	      React.createElement(
+	        'div',
+	        { className: 'col-md-8' },
+	        React.createElement(
+	          'h3',
+	          { className: 'list-group-item-heading' },
+	          React.createElement(
+	            'span',
+	            { id: 'summary-method-name' },
+	            'BUSTED summary'
+	          )
+	        ),
+	        React.createElement(
+	          'div',
+	          { className: 'main-result' },
+	          React.createElement(
+	            'p',
+	            null,
+	            'BUSTED found ',
+	            React.createElement(
+	              'strong',
+	              null,
+	              this.props.test_result.statement
+	            ),
+	            ' of episodic diversifying selection, with LRT p-value of ',
+	            this.props.test_result.p,
+	            '.'
+	          ),
+	          React.createElement(
+	            'p',
+	            null,
+	            React.createElement(
+	              'small',
+	              null,
+	              'Please cite ',
+	              React.createElement(
+	                'a',
+	                { href: this.props.pmid.href, id: 'summary-pmid' },
+	                this.props.pmid.text
+	              ),
+	              ' if you use this result in a publication, presentation, or other scientific work.'
+	            )
+	          )
+	        )
+	      ),
+	      React.createElement(
+	        'div',
+	        { className: 'col-md-4' },
+	        React.createElement(_input_info.InputInfo, { input_data: this.props.input_data })
+	      )
+	    );
+	  }
+	});
+	
+	module.exports.BUSTEDSummary = BUSTEDSummary;
+
+/***/ },
+/* 244 */
+/***/ function(module, exports, __webpack_require__) {
+
 	/* WEBPACK VAR INJECTION */(function(d3, $) {'use strict';
 	
 	var datamonkey_fade = function datamonkey_fade(json) {
@@ -22264,7 +22604,7 @@ webpackJsonp([0],[
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(40), __webpack_require__(2)))
 
 /***/ },
-/* 243 */
+/* 245 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(d3) {'use strict';
@@ -22401,18 +22741,18 @@ webpackJsonp([0],[
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(40)))
 
 /***/ },
-/* 244 */
+/* 246 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(d3, $) {"use strict";
 	
-	var _model_fits = __webpack_require__(245);
+	var _model_fits = __webpack_require__(242);
 	
 	var _tree_summary = __webpack_require__(225);
 	
 	var _tree = __webpack_require__(226);
 	
-	var _omega_plots = __webpack_require__(246);
+	var _omega_plots = __webpack_require__(247);
 	
 	var React = __webpack_require__(47),
 	    ReactDOM = __webpack_require__(78),
@@ -22765,273 +23105,7 @@ webpackJsonp([0],[
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(40), __webpack_require__(2)))
 
 /***/ },
-/* 245 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/* WEBPACK VAR INJECTION */(function(d3, _, $) {"use strict";
-	
-	var React = __webpack_require__(47);
-	
-	var ModelFits = React.createClass({
-	  displayName: "ModelFits",
-	
-	
-	  getInitialState: function getInitialState() {
-	    var table_row_data = this.getModelRows(this.props.json),
-	        table_columns = this.getModelColumns(table_row_data);
-	
-	    return {
-	      table_row_data: table_row_data,
-	      table_columns: table_columns
-	    };
-	  },
-	
-	  formatRuntime: function formatRuntime(seconds) {
-	    var duration_string = "",
-	        seconds = parseFloat(seconds);
-	
-	    var split_array = [Math.floor(seconds / (24 * 3600)), Math.floor(seconds / 3600) % 24, Math.floor(seconds / 60) % 60, seconds % 60],
-	        quals = ["d.", "hrs.", "min.", "sec."];
-	
-	    split_array.forEach(function (d, i) {
-	      if (d) {
-	        duration_string += " " + d + " " + quals[i];
-	      }
-	    });
-	
-	    return duration_string;
-	  },
-	
-	  getLogLikelihood: function getLogLikelihood(this_model) {
-	    return d3.format(".2f")(this_model['log-likelihood']);
-	  },
-	
-	  getAIC: function getAIC(this_model) {
-	    return d3.format(".2f")(this_model['AIC-c']);
-	  },
-	
-	  getNumParameters: function getNumParameters(this_model) {
-	    return this_model['parameters'];
-	  },
-	
-	  getBranchLengths: function getBranchLengths(this_model) {
-	
-	    if (this_model["tree length"]) {
-	      return d3.format(".2f")(this_model["tree length"]);
-	    } else {
-	      return d3.format(".2f")(d3.values(this_model["branch-lengths"]).reduce(function (p, c) {
-	        return p + c;
-	      }, 0));
-	    }
-	  },
-	
-	  getRuntime: function getRuntime(this_model) {
-	    //return this.formatRuntime(this_model['runtime']);
-	    return this.formatRuntime(this_model['runtime']);
-	  },
-	
-	  getDistributions: function getDistributions(m, this_model) {
-	
-	    var omega_distributions = {};
-	    omega_distributions[m] = {};
-	
-	    var omega_format = d3.format(".3r"),
-	        prop_format = d3.format(".2p"),
-	        p_value_format = d3.format(".4f");
-	
-	    var distributions = [];
-	
-	    for (var d in this_model["rate-distributions"]) {
-	
-	      var this_distro = this_model["rate-distributions"][d];
-	      var this_distro_entry = [d, "", "", ""];
-	
-	      omega_distributions[m][d] = this_distro.map(function (d) {
-	        return {
-	          'omega': d[0],
-	          'weight': d[1]
-	        };
-	      });
-	
-	      for (var k = 0; k < this_distro.length; k++) {
-	        this_distro_entry[k + 1] = omega_format(this_distro[k][0]) + " (" + prop_format(this_distro[k][1]) + ")";
-	      }
-	
-	      distributions.push(this_distro_entry);
-	    }
-	
-	    distributions.sort(function (a, b) {
-	      return a[0] < b[0] ? -1 : a[0] == b[0] ? 0 : 1;
-	    });
-	
-	    return distributions;
-	  },
-	
-	  getModelRows: function getModelRows(json) {
-	
-	    if (!json) {
-	      return [];
-	    }
-	
-	    var table_row_data = [];
-	    var omega_format = d3.format(".3r");
-	    var prop_format = d3.format(".2p");
-	    var p_value_format = d3.format(".4f");
-	
-	    for (var m in json["fits"]) {
-	
-	      var this_model_row = [],
-	          this_model = json["fits"][m];
-	
-	      this_model_row = [this_model['display-order'], "", m, this.getLogLikelihood(this_model), this.getNumParameters(this_model), this.getAIC(this_model), this.getRuntime(this_model), this.getBranchLengths(this_model)];
-	
-	      var distributions = this.getDistributions(m, this_model);
-	
-	      if (distributions.length) {
-	
-	        this_model_row = this_model_row.concat(distributions[0]);
-	        this_model_row[1] = distributions[0][0];
-	
-	        table_row_data.push(this_model_row);
-	
-	        for (var d = 1; d < distributions.length; d++) {
-	
-	          var this_distro_entry = this_model_row.map(function (d, i) {
-	            if (i) return "";
-	            return d;
-	          });
-	
-	          this_distro_entry[1] = distributions[d][0];
-	
-	          for (var k = this_distro_entry.length - 4; k < this_distro_entry.length; k++) {
-	            this_distro_entry[k] = distributions[d][k - this_distro_entry.length + 4];
-	          }
-	
-	          table_row_data.push(this_distro_entry);
-	        }
-	      } else {
-	        table_row_data.push(this_model_row);
-	      }
-	    }
-	
-	    table_row_data.sort(function (a, b) {
-	      if (a[0] == b[0]) {
-	        return a[1] < b[1] ? -1 : a[1] == b[1] ? 0 : 1;
-	      }
-	      return a[0] - b[0];
-	    });
-	
-	    table_row_data = table_row_data.map(function (r) {
-	      return r.slice(2);
-	    });
-	
-	    return table_row_data;
-	  },
-	
-	  getModelColumns: function getModelColumns(table_row_data) {
-	
-	    var model_header = '<th>Model</th>',
-	        logl_header = '<th><em> log </em>L</th>',
-	        num_params_header = '<th><abbr title="Number of estimated model parameters"># par.</abbr></th>',
-	        aic_header = '<th><abbr title="Small Sample AIC">AIC<sub>c</sub></abbr></th>',
-	        runtime_header = '<th>Time to fit</th>',
-	        branch_lengths_header = '<th><abbr title="Total tree length, expected substitutions/site">L<sub>tree</sub></abbr></th>',
-	        branch_set_header = '<th>Branch set</th>',
-	        omega_1_header = '<th>&omega;<sub>1</sub></th>',
-	        omega_2_header = '<th>&omega;<sub>2</sub></th>',
-	        omega_3_header = '<th>&omega;<sub>3</sub></th>';
-	
-	    // inspect table_row_data and return header
-	    var all_columns = [model_header, logl_header, num_params_header, aic_header, runtime_header, branch_lengths_header, branch_set_header, omega_1_header, omega_2_header, omega_3_header];
-	
-	    // validate each table row with its associated header
-	    if (table_row_data.length == 0) {
-	      return [];
-	    }
-	
-	    // trim columns to length of table_row_data
-	    var column_headers = _.take(all_columns, table_row_data[0].length);
-	
-	    // remove all columns that have 0, null, or undefined rows
-	    var items = d3.transpose(table_row_data);
-	
-	    return column_headers;
-	  },
-	
-	  componentDidUpdate: function componentDidUpdate() {
-	
-	    var model_columns = d3.select('#summary-model-header1');
-	    model_columns = model_columns.selectAll("th").data(this.state.table_columns);
-	    model_columns.enter().append("th");
-	    model_columns.html(function (d) {
-	      return d;
-	    });
-	
-	    var model_rows = d3.select('#summary-model-table').selectAll("tr").data(this.state.table_row_data);
-	    model_rows.enter().append('tr');
-	    model_rows.exit().remove();
-	    model_rows = model_rows.selectAll("td").data(function (d) {
-	      return d;
-	    });
-	    model_rows.enter().append("td");
-	    model_rows.html(function (d) {
-	      return d;
-	    });
-	  },
-	
-	  componentWillReceiveProps: function componentWillReceiveProps(nextProps) {
-	
-	    var table_row_data = this.getModelRows(nextProps.json),
-	        table_columns = this.getModelColumns(table_row_data);
-	
-	    this.setState({
-	      table_row_data: table_row_data,
-	      table_columns: table_columns
-	    });
-	  },
-	
-	  render: function render() {
-	
-	    return React.createElement(
-	      "div",
-	      null,
-	      React.createElement(
-	        "h4",
-	        { className: "dm-table-header" },
-	        "Model fits",
-	        React.createElement("span", { className: "glyphicon glyphicon-info-sign", style: { "verticalAlign": "middle", "float": "right" }, "aria-hidden": "true", "data-toggle": "popover", "data-trigger": "hover", title: "Tree summary", "data-html": "true", "data-content": "<ul><li>Hover over a column header for a description of its content.</li></ul>", "data-placement": "bottom" })
-	      ),
-	      React.createElement(
-	        "table",
-	        { className: "table table-hover table-condensed list-group-item-text", styleFormat: "margin-top:0.5em;" },
-	        React.createElement("thead", { id: "summary-model-header1" }),
-	        React.createElement("tbody", { id: "summary-model-table" })
-	      )
-	    );
-	  }
-	
-	});
-	
-	// Will need to make a call to this
-	// omega distributions
-	function render_model_fits(json, element) {
-	  React.render(React.createElement(ModelFits, { json: json }), $(element)[0]);
-	}
-	
-	// Will need to make a call to this
-	// omega distributions
-	function rerender_model_fits(json, element) {
-	  $(element).empty();
-	  render_model_fits(json, element);
-	}
-	
-	module.exports.ModelFits = ModelFits;
-	module.exports.render_model_fits = render_model_fits;
-	module.exports.rerender_model_fits = rerender_model_fits;
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(40), __webpack_require__(45), __webpack_require__(2)))
-
-/***/ },
-/* 246 */
+/* 247 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(d3) {'use strict';
@@ -23501,319 +23575,292 @@ webpackJsonp([0],[
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(40)))
 
 /***/ },
-/* 247 */
+/* 248 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(d3, $) {'use strict';
 	
 	var _shared_summary = __webpack_require__(224);
 	
-	var _slac_sites = __webpack_require__(248);
+	var _slac_sites = __webpack_require__(249);
 	
-	var _slac_summary = __webpack_require__(249);
+	var _slac_summary = __webpack_require__(250);
 	
-	var _slac_graphs = __webpack_require__(250);
+	var _slac_graphs = __webpack_require__(251);
+	
+	var _navbar = __webpack_require__(230);
+	
+	var _scrollspy = __webpack_require__(231);
 	
 	var React = __webpack_require__(47),
 	    ReactDOM = __webpack_require__(78),
 	    _ = __webpack_require__(45);
 	
 	var datamonkey = __webpack_require__(39);
-	__webpack_require__(252);
+	__webpack_require__(253);
 	
 	var SLAC = React.createClass({
-	    displayName: 'SLAC',
+	  displayName: 'SLAC',
 	
 	
-	    float_format: d3.format(".2f"),
+	  float_format: d3.format(".2f"),
 	
-	    dm_loadFromServer: function dm_loadFromServer() {
-	        /* 20160721 SLKP: prefixing all custom (i.e. not defined by REACT) with dm_
-	           to make it easier to recognize scoping immediately */
+	  dm_loadFromServer: function dm_loadFromServer() {
+	    /* 20160721 SLKP: prefixing all custom (i.e. not defined by REACT) with dm_
+	       to make it easier to recognize scoping immediately */
 	
-	        var self = this;
+	    var self = this;
 	
-	        d3.json(self.props.url, function (request_error, data) {
+	    d3.json(self.props.url, function (request_error, data) {
 	
-	            if (!data) {
-	                var error_message_text = request_error.status == 404 ? self.props.url + " could not be loaded" : request_error.statusText;
-	                self.setState({ error_message: error_message_text });
-	            } else {
-	                self.dm_initializeFromJSON(data);
+	      if (!data) {
+	        var error_message_text = request_error.status == 404 ? self.props.url + " could not be loaded" : request_error.statusText;
+	        self.setState({ error_message: error_message_text });
+	      } else {
+	        self.dm_initializeFromJSON(data);
+	      }
+	    });
+	  },
+	
+	  dm_initializeFromJSON: function dm_initializeFromJSON(data) {
+	    this.setState({ analysis_results: data });
+	  },
+	
+	  getDefaultProps: function getDefaultProps() {
+	    /* default properties for the component */
+	
+	    return {
+	      url: "#"
+	    };
+	  },
+	
+	  getInitialState: function getInitialState() {
+	
+	    return {
+	      analysis_results: null,
+	      error_message: null,
+	      pValue: 0.1,
+	      input_data: null
+	    };
+	  },
+	
+	  componentWillMount: function componentWillMount() {
+	    this.dm_loadFromServer();
+	    this.dm_setEvents();
+	  },
+	
+	  dm_setEvents: function dm_setEvents() {
+	
+	    var self = this;
+	
+	    $("#datamonkey-json-file").on("change", function (e) {
+	
+	      var files = e.target.files; // FileList object
+	
+	      if (files.length == 1) {
+	        var f = files[0];
+	        var reader = new FileReader();
+	
+	        reader.onload = function (theFile) {
+	          return function (e) {
+	            try {
+	              self.dm_initializeFromJSON(JSON.parse(this.result));
+	            } catch (error) {
+	              self.setState({ error_message: error.toString() });
 	            }
-	        });
-	    },
+	          };
+	        }(f);
 	
-	    dm_initializeFromJSON: function dm_initializeFromJSON(data) {
-	        this.setState({ analysis_results: data });
-	    },
+	        reader.readAsText(f);
+	      }
 	
-	    getDefaultProps: function getDefaultProps() {
-	        /* default properties for the component */
+	      $("#datamonkey-json-file-toggle").dropdown("toggle");
+	    });
+	  },
 	
-	        return {
-	            url: "#"
-	        };
-	    },
+	  dm_adjustPvalue: function dm_adjustPvalue(event) {
+	    this.setState({ pValue: parseFloat(event.target.value) });
+	  },
 	
-	    getInitialState: function getInitialState() {
+	  componentDidUpdate: function componentDidUpdate(prevProps, prevState) {
+	    $('body').scrollspy({
+	      target: '.bs-docs-sidebar',
+	      offset: 50
+	    });
+	    $('[data-toggle="popover"]').popover();
+	  },
 	
-	        return {
-	            analysis_results: null,
-	            error_message: null,
-	            pValue: 0.1
-	        };
-	    },
 	
-	    componentWillMount: function componentWillMount() {
-	        this.dm_loadFromServer();
-	        this.dm_setEvents();
-	    },
+	  render: function render() {
 	
-	    dm_setEvents: function dm_setEvents() {
+	    var self = this;
 	
-	        var self = this;
-	
-	        $("#datamonkey-json-file").on("change", function (e) {
-	
-	            var files = e.target.files; // FileList object
-	
-	            if (files.length == 1) {
-	                var f = files[0];
-	                var reader = new FileReader();
-	
-	                reader.onload = function (theFile) {
-	                    return function (e) {
-	                        try {
-	                            self.dm_initializeFromJSON(JSON.parse(this.result));
-	                        } catch (error) {
-	                            self.setState({ error_message: error.toString() });
-	                        }
-	                    };
-	                }(f);
-	
-	                reader.readAsText(f);
-	            }
-	
-	            $("#datamonkey-json-file-toggle").dropdown("toggle");
-	        });
-	    },
-	
-	    dm_adjustPvalue: function dm_adjustPvalue(event) {
-	        this.setState({ pValue: parseFloat(event.target.value) });
-	    },
-	
-	    render: function render() {
-	
-	        var self = this;
-	
-	        if (self.state.error_message) {
-	            return React.createElement(
-	                'div',
-	                { id: 'datamonkey-error', className: 'alert alert-danger alert-dismissible', role: 'alert' },
-	                React.createElement(
-	                    'button',
-	                    { type: 'button', className: 'close', 'data-dismiss': 'alert', 'aria-label': 'Close' },
-	                    React.createElement(
-	                        'span',
-	                        { 'aria-hidden': 'true' },
-	                        '\xD7'
-	                    )
-	                ),
-	                React.createElement(
-	                    'strong',
-	                    null,
-	                    self.state.error_message
-	                ),
-	                ' ',
-	                React.createElement('span', { id: 'datamonkey-error-text' })
-	            );
-	        }
-	
-	        if (self.state.analysis_results) {
-	
-	            return React.createElement(
-	                'div',
-	                { className: 'tab-content' },
-	                React.createElement(
-	                    'div',
-	                    { className: 'tab-pane', id: 'summary_tab' },
-	                    React.createElement(
-	                        'div',
-	                        { className: 'row' },
-	                        React.createElement(
-	                            'div',
-	                            { id: 'summary-div', className: 'col-md-12' },
-	                            React.createElement(_slac_summary.SLACBanner, { analysis_results: self.state.analysis_results, pValue: self.state.pValue, pAdjuster: _.bind(self.dm_adjustPvalue, self) })
-	                        )
-	                    ),
-	                    React.createElement(
-	                        'div',
-	                        { className: 'row hidden-print' },
-	                        React.createElement(
-	                            'div',
-	                            { id: 'datamonkey-slac-tree-summary', className: 'col-lg-4 col-md-6 col-sm-12' },
-	                            React.createElement(
-	                                'div',
-	                                { className: 'panel panel-default' },
-	                                React.createElement(
-	                                    'div',
-	                                    { className: 'panel-heading' },
-	                                    React.createElement(
-	                                        'h3',
-	                                        { className: 'panel-title' },
-	                                        React.createElement('i', { className: 'fa fa-puzzle-piece' }),
-	                                        ' Partition information'
-	                                    )
-	                                ),
-	                                React.createElement(
-	                                    'div',
-	                                    { className: 'panel-body' },
-	                                    React.createElement(
-	                                        'small',
-	                                        null,
-	                                        React.createElement(_shared_summary.DatamonkeyPartitionTable, {
-	                                            pValue: self.state.pValue,
-	                                            trees: self.state.analysis_results.trees,
-	                                            partitions: self.state.analysis_results.partitions,
-	                                            branchAttributes: self.state.analysis_results['branch attributes'],
-	                                            siteResults: self.state.analysis_results.MLE,
-	                                            accessorPositive: function accessorPositive(json, partition) {
-	                                                return _.map(json["content"][partition]["by-site"]["AVERAGED"], function (v) {
-	                                                    return v[8];
-	                                                });
-	                                            },
-	                                            accessorNegative: function accessorNegative(json, partition) {
-	                                                return _.map(json["content"][partition]["by-site"]["AVERAGED"], function (v) {
-	                                                    return v[9];
-	                                                });
-	                                            }
-	                                        })
-	                                    )
-	                                )
-	                            )
-	                        ),
-	                        React.createElement(
-	                            'div',
-	                            { id: 'datamonkey-slac-model-fits', className: 'col-lg-5 col-md-6 col-sm-12' },
-	                            React.createElement(
-	                                'div',
-	                                { className: 'panel panel-default' },
-	                                React.createElement(
-	                                    'div',
-	                                    { className: 'panel-heading' },
-	                                    React.createElement(
-	                                        'h3',
-	                                        { className: 'panel-title' },
-	                                        React.createElement('i', { className: 'fa fa-table' }),
-	                                        ' Model fits'
-	                                    )
-	                                ),
-	                                React.createElement(
-	                                    'div',
-	                                    { className: 'panel-body' },
-	                                    React.createElement(
-	                                        'small',
-	                                        null,
-	                                        React.createElement(_shared_summary.DatamonkeyModelTable, { fits: self.state.analysis_results.fits })
-	                                    )
-	                                )
-	                            )
-	                        ),
-	                        React.createElement(
-	                            'div',
-	                            { id: 'datamonkey-slac-timers', className: 'col-lg-3 col-md-3 col-sm-12' },
-	                            React.createElement(
-	                                'div',
-	                                { className: 'panel panel-default' },
-	                                React.createElement(
-	                                    'div',
-	                                    { className: 'panel-heading' },
-	                                    React.createElement(
-	                                        'h3',
-	                                        { className: 'panel-title' },
-	                                        React.createElement('i', { className: 'fa fa-clock-o' }),
-	                                        ' Execution time'
-	                                    )
-	                                ),
-	                                React.createElement(
-	                                    'div',
-	                                    { className: 'panel-body' },
-	                                    React.createElement(
-	                                        'small',
-	                                        null,
-	                                        React.createElement(_shared_summary.DatamonkeyTimersTable, { timers: self.state.analysis_results.timers, totalTime: "Total time" })
-	                                    )
-	                                )
-	                            )
-	                        )
-	                    )
-	                ),
-	                React.createElement(
-	                    'div',
-	                    { className: 'tab-pane', id: 'sites_tab' },
-	                    React.createElement(
-	                        'div',
-	                        { className: 'row' },
-	                        React.createElement(
-	                            'div',
-	                            { className: 'col-md-12' },
-	                            React.createElement(_slac_sites.SLACSites, {
-	                                headers: self.state.analysis_results.MLE.headers,
-	                                mle: datamonkey.helpers.map(datamonkey.helpers.filter(self.state.analysis_results.MLE.content, function (value, key) {
-	                                    return _.has(value, "by-site");
-	                                }), function (value, key) {
-	                                    return value["by-site"];
-	                                }),
-	                                sample25: self.state.analysis_results["sample-2.5"],
-	                                sampleMedian: self.state.analysis_results["sample-median"],
-	                                sample975: self.state.analysis_results["sample-97.5"],
-	                                partitionSites: self.state.analysis_results.partitions
-	                            })
-	                        )
-	                    )
-	                ),
-	                React.createElement(
-	                    'div',
-	                    { className: 'tab-pane active', id: 'graphs_tab' },
-	                    React.createElement(
-	                        'div',
-	                        { className: 'row' },
-	                        React.createElement(
-	                            'div',
-	                            { className: 'col-md-12' },
-	                            React.createElement(_slac_graphs.SLACGraphs, {
-	                                mle: datamonkey.helpers.map(datamonkey.helpers.filter(self.state.analysis_results.MLE.content, function (value, key) {
-	                                    return _.has(value, "by-site");
-	                                }), function (value, key) {
-	                                    return value["by-site"];
-	                                }),
-	                                partitionSites: self.state.analysis_results.partitions,
-	                                headers: self.state.analysis_results.MLE.headers
-	                            })
-	                        )
-	                    )
-	                ),
-	                React.createElement('div', { className: 'tab-pane', id: 'tree_tab' }),
-	                React.createElement('div', { className: 'tab-pane', id: 'tree_tab' })
-	            );
-	        }
-	        return null;
+	    if (self.state.error_message) {
+	      return React.createElement(
+	        'div',
+	        { id: 'datamonkey-error', className: 'alert alert-danger alert-dismissible', role: 'alert' },
+	        React.createElement(
+	          'button',
+	          { type: 'button', className: 'close', 'data-dismiss': 'alert', 'aria-label': 'Close' },
+	          React.createElement(
+	            'span',
+	            { 'aria-hidden': 'true' },
+	            '\xD7'
+	          )
+	        ),
+	        React.createElement(
+	          'strong',
+	          null,
+	          self.state.error_message
+	        ),
+	        ' ',
+	        React.createElement('span', { id: 'datamonkey-error-text' })
+	      );
 	    }
+	
+	    if (self.state.analysis_results) {
+	      var scrollspy_info = [{ label: "summary", href: "slac-summary" }, { label: "information", href: "datamonkey-slac-tree-summary" }, { label: "table", href: "slac-table" }, { label: "graph", href: "slac-graph" }];
+	      return React.createElement(
+	        'div',
+	        null,
+	        React.createElement(_navbar.NavBar, null),
+	        React.createElement(
+	          'div',
+	          { className: 'container-fluid' },
+	          React.createElement(
+	            'div',
+	            { className: 'row' },
+	            React.createElement(_scrollspy.ScrollSpy, { info: scrollspy_info }),
+	            React.createElement(
+	              'div',
+	              { className: 'col-md-10' },
+	              React.createElement(_slac_summary.SLACBanner, { analysis_results: self.state.analysis_results, pValue: self.state.pValue, pAdjuster: _.bind(self.dm_adjustPvalue, self) }),
+	              React.createElement(
+	                'div',
+	                { className: 'row hidden-print' },
+	                React.createElement(
+	                  'div',
+	                  { id: 'datamonkey-slac-tree-summary', className: 'col-lg-4 col-md-6 col-sm-12' },
+	                  React.createElement(
+	                    'h4',
+	                    { className: 'dm-table-header' },
+	                    'Partition information'
+	                  ),
+	                  React.createElement(
+	                    'small',
+	                    null,
+	                    React.createElement(_shared_summary.DatamonkeyPartitionTable, {
+	                      pValue: self.state.pValue,
+	                      trees: self.state.analysis_results.trees,
+	                      partitions: self.state.analysis_results.partitions,
+	                      branchAttributes: self.state.analysis_results['branch attributes'],
+	                      siteResults: self.state.analysis_results.MLE,
+	                      accessorPositive: function accessorPositive(json, partition) {
+	                        return _.map(json["content"][partition]["by-site"]["AVERAGED"], function (v) {
+	                          return v[8];
+	                        });
+	                      },
+	                      accessorNegative: function accessorNegative(json, partition) {
+	                        return _.map(json["content"][partition]["by-site"]["AVERAGED"], function (v) {
+	                          return v[9];
+	                        });
+	                      }
+	                    })
+	                  )
+	                ),
+	                React.createElement(
+	                  'div',
+	                  { id: 'datamonkey-slac-model-fits', className: 'col-lg-5 col-md-6 col-sm-12' },
+	                  React.createElement(
+	                    'small',
+	                    null,
+	                    React.createElement(_shared_summary.DatamonkeyModelTable, { fits: self.state.analysis_results.fits })
+	                  )
+	                ),
+	                React.createElement(
+	                  'div',
+	                  { id: 'datamonkey-slac-timers', className: 'col-lg-3 col-md-3 col-sm-12' },
+	                  React.createElement(
+	                    'h4',
+	                    { className: 'dm-table-header' },
+	                    'Execution time'
+	                  ),
+	                  React.createElement(
+	                    'small',
+	                    null,
+	                    React.createElement(_shared_summary.DatamonkeyTimersTable, { timers: self.state.analysis_results.timers, totalTime: "Total time" })
+	                  )
+	                )
+	              ),
+	              React.createElement(
+	                'div',
+	                { className: 'row' },
+	                React.createElement(
+	                  'div',
+	                  { className: 'col-md-12', id: 'slac-table' },
+	                  React.createElement(
+	                    'h4',
+	                    { className: 'dm-table-header' },
+	                    'Site table'
+	                  ),
+	                  React.createElement(_slac_sites.SLACSites, {
+	                    headers: self.state.analysis_results.MLE.headers,
+	                    mle: datamonkey.helpers.map(datamonkey.helpers.filter(self.state.analysis_results.MLE.content, function (value, key) {
+	                      return _.has(value, "by-site");
+	                    }), function (value, key) {
+	                      return value["by-site"];
+	                    }),
+	                    sample25: self.state.analysis_results["sample-2.5"],
+	                    sampleMedian: self.state.analysis_results["sample-median"],
+	                    sample975: self.state.analysis_results["sample-97.5"],
+	                    partitionSites: self.state.analysis_results.partitions
+	                  })
+	                )
+	              ),
+	              React.createElement(
+	                'div',
+	                { className: 'row' },
+	                React.createElement(
+	                  'div',
+	                  { className: 'col-md-12', i: true, id: 'slac-graph' },
+	                  React.createElement(
+	                    'h4',
+	                    { className: 'dm-table-header' },
+	                    'Site graph'
+	                  ),
+	                  React.createElement(_slac_graphs.SLACGraphs, {
+	                    mle: datamonkey.helpers.map(datamonkey.helpers.filter(self.state.analysis_results.MLE.content, function (value, key) {
+	                      return _.has(value, "by-site");
+	                    }), function (value, key) {
+	                      return value["by-site"];
+	                    }),
+	                    partitionSites: self.state.analysis_results.partitions,
+	                    headers: self.state.analysis_results.MLE.headers
+	                  })
+	                )
+	              )
+	            ),
+	            React.createElement('div', { className: 'col-md-1' })
+	          )
+	        )
+	      );
+	    }
+	    return null;
+	  }
 	
 	});
 	
 	// Will need to make a call to this
 	// omega distributions
 	function render_slac(url, element) {
-	    ReactDOM.render(React.createElement(SLAC, { url: url }), document.getElementById(element));
+	  ReactDOM.render(React.createElement(SLAC, { url: url }), document.getElementById(element));
 	}
 	
 	module.exports = render_slac;
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(40), __webpack_require__(2)))
 
 /***/ },
-/* 248 */
+/* 249 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(d3, _) {'use strict';
@@ -24433,13 +24480,16 @@ webpackJsonp([0],[
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(40), __webpack_require__(45)))
 
 /***/ },
-/* 249 */
+/* 250 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(_, d3) {'use strict';
 	
+	var _input_info = __webpack_require__(46);
+	
 	var React = __webpack_require__(47);
 	var datamonkey = __webpack_require__(39);
+	
 	
 	var SLACBanner = React.createClass({
 	  displayName: 'SLACBanner',
@@ -24485,117 +24535,120 @@ webpackJsonp([0],[
 	  },
 	
 	  render: function render() {
-	
 	    return React.createElement(
 	      'div',
-	      { className: 'panel panel-primary' },
+	      { className: 'row' },
 	      React.createElement(
 	        'div',
-	        { className: 'panel-heading' },
+	        { className: 'col-md-8', id: 'slac-summary' },
 	        React.createElement(
 	          'h3',
-	          { className: 'panel-title' },
-	          React.createElement(
-	            'abbr',
-	            { title: 'Single Likelihood Ancestor Counting' },
-	            'SLAC'
-	          ),
-	          ' analysis summary'
-	        )
-	      ),
-	      React.createElement(
-	        'div',
-	        { className: 'panel-body' },
-	        React.createElement(
-	          'span',
-	          { className: 'lead' },
-	          'Evidence',
-	          React.createElement(
-	            'sup',
-	            null,
-	            '\u2020'
-	          ),
-	          ' of pervasive ',
+	          { className: 'list-group-item-heading' },
 	          React.createElement(
 	            'span',
-	            { className: 'hyphy-red' },
-	            'diversifying'
-	          ),
-	          ' / ',
-	          React.createElement(
-	            'span',
-	            { className: 'hyphy-navy' },
-	            'purifying'
-	          ),
-	          ' selection was found at',
-	          React.createElement(
-	            'strong',
-	            { className: 'hyphy-red' },
-	            ' ',
-	            this.state.sites.positive
-	          ),
-	          ' / ',
-	          React.createElement(
-	            'strong',
-	            { className: 'hyphy-navy' },
-	            this.state.sites.negative
-	          ),
-	          ' sites among ',
-	          this.state.sites.all,
-	          ' tested sites'
+	            { id: 'summary-method-name' },
+	            'SLAC analysis summary'
+	          )
 	        ),
 	        React.createElement(
 	          'div',
-	          { style: { marginBottom: '0em' } },
+	          { className: 'main-result' },
 	          React.createElement(
-	            'small',
+	            'p',
 	            null,
+	            'Evidence',
 	            React.createElement(
 	              'sup',
 	              null,
 	              '\u2020'
 	            ),
-	            'Extended binomial test, p \u2264 ',
-	            this.dm_formatP(this.props.pValue),
+	            ' of pervasive ',
 	            React.createElement(
-	              'div',
-	              { className: 'dropdown hidden-print', style: { display: 'inline', marginLeft: '0.25em' } },
+	              'span',
+	              { className: 'hyphy-highlight' },
+	              'diversifying'
+	            ),
+	            '/',
+	            React.createElement(
+	              'span',
+	              { className: 'hyphy-highlight' },
+	              'purifying'
+	            ),
+	            ' selection was found at',
+	            React.createElement(
+	              'strong',
+	              { className: 'hyphy-highlight' },
+	              ' ',
+	              this.state.sites.positive
+	            ),
+	            ' / ',
+	            React.createElement(
+	              'strong',
+	              { className: 'hyphy-navy' },
+	              this.state.sites.negative
+	            ),
+	            ' sites among ',
+	            this.state.sites.all,
+	            ' tested sites.'
+	          ),
+	          React.createElement(
+	            'div',
+	            { style: { marginBottom: '0em' } },
+	            React.createElement(
+	              'small',
+	              null,
 	              React.createElement(
-	                'button',
-	                { id: 'dm.pvalue.slider', type: 'button', className: 'btn btn-primary btn-xs dropdown-toggle', 'data-toggle': 'dropdown', 'aria-haspopup': 'true', 'aria-expanded': 'false' },
-	                React.createElement('span', { className: 'caret' })
+	                'sup',
+	                null,
+	                '\u2020'
 	              ),
+	              'Extended binomial test, p \u2264 ',
+	              this.dm_formatP(this.props.pValue),
 	              React.createElement(
-	                'ul',
-	                { className: 'dropdown-menu', 'aria-labelledby': 'dm.pvalue.slider' },
+	                'div',
+	                { className: 'dropdown hidden-print', style: { display: 'inline', marginLeft: '0.25em' } },
 	                React.createElement(
-	                  'li',
-	                  null,
+	                  'button',
+	                  { id: 'dm.pvalue.slider', type: 'button', className: 'btn btn-primary btn-xs dropdown-toggle', 'data-toggle': 'dropdown', 'aria-haspopup': 'true', 'aria-expanded': 'false' },
+	                  React.createElement('span', { className: 'caret' })
+	                ),
+	                React.createElement(
+	                  'ul',
+	                  { className: 'dropdown-menu', 'aria-labelledby': 'dm.pvalue.slider' },
 	                  React.createElement(
-	                    'a',
-	                    { href: '#' },
-	                    React.createElement('input', { type: 'range', min: '0', max: '1', value: this.props.pValue, step: '0.01', onChange: this.props.pAdjuster })
+	                    'li',
+	                    null,
+	                    React.createElement(
+	                      'a',
+	                      { href: '#' },
+	                      React.createElement('input', { type: 'range', min: '0', max: '1', value: this.props.pValue, step: '0.01', onChange: this.props.pAdjuster })
+	                    )
 	                  )
 	                )
-	              )
-	            ),
-	            React.createElement(
-	              'emph',
-	              null,
-	              ' not'
-	            ),
-	            ' corrected for multiple testing; ambiguous characters resolved to minimize substitution counts.',
-	            React.createElement('br', null),
-	            React.createElement('i', { className: 'fa fa-exclamation-circle' }),
-	            ' Please cite ',
-	            React.createElement(
-	              'a',
-	              { href: 'http://www.ncbi.nlm.nih.gov/pubmed/15703242', target: '_blank' },
-	              'PMID 15703242'
-	            ),
-	            ' if you use this result in a publication, presentation, or other scientific work.'
+	              ),
+	              React.createElement(
+	                'emph',
+	                null,
+	                ' not'
+	              ),
+	              ' corrected for multiple testing; ambiguous characters resolved to minimize substitution counts.',
+	              React.createElement('br', null),
+	              React.createElement('i', { className: 'fa fa-exclamation-circle' }),
+	              ' Please cite ',
+	              React.createElement(
+	                'a',
+	                { href: 'http://www.ncbi.nlm.nih.gov/pubmed/15703242', target: '_blank' },
+	                'PMID 15703242'
+	              ),
+	              ' if you use this result in a publication, presentation, or other scientific work.'
+	            )
 	          )
 	        )
+	      ),
+	      React.createElement(
+	        'div',
+	        { className: 'col-md-4' },
+	        React.createElement(_input_info.InputInfo, { input_data: this.props.analysis_results.input_data })
 	      )
 	    );
 	  }
@@ -24605,12 +24658,12 @@ webpackJsonp([0],[
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(45), __webpack_require__(40)))
 
 /***/ },
-/* 250 */
+/* 251 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(_) {'use strict';
 	
-	var _shared_graph = __webpack_require__(251);
+	var _shared_graph = __webpack_require__(252);
 	
 	var React = __webpack_require__(47);
 	var datamonkey = __webpack_require__(39);
@@ -24844,7 +24897,7 @@ webpackJsonp([0],[
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(45)))
 
 /***/ },
-/* 251 */
+/* 252 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(d3, _) {'use strict';
@@ -25101,7 +25154,7 @@ webpackJsonp([0],[
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(40), __webpack_require__(45)))
 
 /***/ },
-/* 252 */
+/* 253 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function($, jQuery, d3, _) {"use strict";
@@ -25392,84 +25445,6 @@ webpackJsonp([0],[
 	datamonkey.helpers.filter = datamonkey_filter_list;
 	datamonkey.helpers.map = datamonkey_map_list;
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2), __webpack_require__(2), __webpack_require__(40), __webpack_require__(45)))
-
-/***/ },
-/* 253 */,
-/* 254 */,
-/* 255 */,
-/* 256 */,
-/* 257 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	var _input_info = __webpack_require__(46);
-	
-	var React = __webpack_require__(47);
-	
-	
-	var BUSTEDSummary = React.createClass({
-	  displayName: 'BUSTEDSummary',
-	
-	  render: function render() {
-	    return React.createElement(
-	      'div',
-	      { className: 'row', id: 'summary-div' },
-	      React.createElement(
-	        'div',
-	        { className: 'col-md-8' },
-	        React.createElement(
-	          'h3',
-	          { className: 'list-group-item-heading' },
-	          React.createElement(
-	            'span',
-	            { id: 'summary-method-name' },
-	            'BUSTED summary'
-	          )
-	        ),
-	        React.createElement(
-	          'div',
-	          { className: 'main-result' },
-	          React.createElement(
-	            'p',
-	            null,
-	            'BUSTED found ',
-	            React.createElement(
-	              'strong',
-	              null,
-	              this.props.test_result.statement
-	            ),
-	            ' of episodic diversifying selection, with LRT p-value of ',
-	            this.props.test_result.p,
-	            '.'
-	          ),
-	          React.createElement(
-	            'p',
-	            null,
-	            React.createElement(
-	              'small',
-	              null,
-	              'Please cite ',
-	              React.createElement(
-	                'a',
-	                { href: this.props.pmid.href, id: 'summary-pmid' },
-	                this.props.pmid.text
-	              ),
-	              ' if you use this result in a publication, presentation, or other scientific work.'
-	            )
-	          )
-	        )
-	      ),
-	      React.createElement(
-	        'div',
-	        { className: 'col-md-4' },
-	        React.createElement(_input_info.InputInfo, { input_data: this.props.input_data })
-	      )
-	    );
-	  }
-	});
-	
-	module.exports.BUSTEDSummary = BUSTEDSummary;
 
 /***/ }
 ]);
