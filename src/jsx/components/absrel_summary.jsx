@@ -72,7 +72,7 @@ var BSRELSummary = React.createClass({
     }else{
       user_message = (
         <p className="list-group-item-text label_and_input">
-          aBSREL <strong>found no evidence</strong><sup>†</sup> of episodic diversifying selection in your phylogeny.
+          aBSREL <strong>found no evidence</strong> of episodic diversifying selection in your phylogeny.
         </p>
       )
     }
@@ -86,20 +86,17 @@ var BSRELSummary = React.createClass({
           <div className="main-result">
             {user_message}
             <p>
-              A total of <strong className="hyphy-highlight">{self.state.test_branches}</strong> branches were formally tested for diversifying selection.
+              A total of <strong className="hyphy-highlight">{self.state.test_branches}</strong> branches were formally tested for diversifying selection. Significance was assessed using the Likelihood Ratio Test at a threshold of p ≤ 0.05, after correcting for multiple testing.
               Significance and number of rate categories inferred at each branch are provided in the <a href="#table-tab">detailed results</a> table.
             </p>
             <hr/>
             <p>
-              <small>See <a href="http://hyphy.org/methods/selection-methods/#absrel">here</a> for more information about the aBSREL method.
+              <small>
+              See <a href="http://hyphy.org/methods/selection-methods/#absrel">here</a> for more information about the aBSREL method.
               <br/>Please cite <a href="http://www.ncbi.nlm.nih.gov/pubmed/25697341" id="summary-pmid" target="_blank">PMID 25697341</a> if you use this result in a publication, presentation, or other scientific work.
             </small>
             </p>
           </div>
-          <p>
-            <small>
-            </small>
-          </p>
         </div>
 
         <div className="col-md-4">
