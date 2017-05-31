@@ -639,7 +639,7 @@ var Tree = React.createClass({
         <div>
         <h4 className="dm-table-header">
           Fitted tree
-          <span className="glyphicon glyphicon-info-sign" style={{"verticalAlign": "middle", "float":"right"}} aria-hidden="true" data-toggle="popover" data-trigger="hover" title="Tree summary" data-html="true" data-content="<ul><li>Hover over a branch to see its inferred rates and significance for selection.</li><ul>" data-placement="bottom"></span>
+          <span className="glyphicon glyphicon-info-sign" style={{"verticalAlign": "middle", "float":"right"}} aria-hidden="true" data-toggle="popover" data-trigger="hover" title="Actions" data-html="true" data-content="<ul><li>Hover over a branch to see its inferred rates and significance for selection.</li><ul>" data-placement="bottom"></span>
 
         </h4>
           <div className='row'>

@@ -294,6 +294,7 @@ var BUSTED = React.createClass({
               <div className="row">
                 <div id="hyphy-model-fits" className="col-lg-12">
                   <ModelFits json={self.state.json} />
+                <p className="description">This table reports a statistical summary of the models fit to the data. Here, <strong>Unconstrained model</strong> refers to the BUSTED alternative model for selection, and <strong>Constrained model</strong> refers to the BUSTED null model for selection.</p>
                 </div>
               </div>
 

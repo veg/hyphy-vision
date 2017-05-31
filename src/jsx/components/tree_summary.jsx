@@ -181,7 +181,7 @@ var TreeSummary = React.createClass({
       <div>
         <h4 className="dm-table-header">
           Tree summary
-          <span className="glyphicon glyphicon-info-sign" style={{"verticalAlign": "middle", "float":"right"}} aria-hidden="true" data-toggle="popover" data-trigger="hover" title="Tree summary" data-html="true" data-content="<ul><li>Hover over a column header for a description of its content.</li></ul>" data-placement="bottom"></span>
+          <span className="glyphicon glyphicon-info-sign" style={{"verticalAlign": "middle", "float":"right"}} aria-hidden="true" data-toggle="popover" data-trigger="hover" title="Actions" data-html="true" data-content="<ul><li>Hover over a column header for a description of its content.</li></ul>" data-placement="bottom"></span>
         </h4>
         <DatamonkeyTable headerData={this.state.table_columns} bodyData={this.state.table_row_data}/>
         <p className="description">This table contains a summary of the inferred aBSREL model complexity. Each row provides information about the branches that were best described by the given number of ω rate categories.</p>
