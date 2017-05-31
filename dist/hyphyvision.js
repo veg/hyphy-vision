@@ -729,7 +729,19 @@ webpackJsonp([0],[
 	                  React.createElement(
 	                    'p',
 	                    { className: 'description' },
-	                    'This table reports a statistical summary of the models fit to the data.'
+	                    'This table reports a statistical summary of the models fit to the data. Here, ',
+	                    React.createElement(
+	                      'strong',
+	                      null,
+	                      'MG94'
+	                    ),
+	                    ' refers to the MG94xREV baseline model that infers a single \u03C9 rate category per branch. ',
+	                    React.createElement(
+	                      'strong',
+	                      null,
+	                      'Full Model'
+	                    ),
+	                    ' refers to the adaptive aBSREL model that infers an optimized number of \u03C9 rate categories per branch.'
 	                  )
 	                )
 	              )
@@ -835,11 +847,6 @@ webpackJsonp([0],[
 	          { className: 'hyphy-highlight' },
 	          'found evidence'
 	        ),
-	        React.createElement(
-	          'sup',
-	          null,
-	          '\u2020'
-	        ),
 	        ' of episodic diversifying selection on ',
 	        React.createElement(
 	          'span',
@@ -857,7 +864,7 @@ webpackJsonp([0],[
 	          React.createElement(
 	            'strong',
 	            null,
-	            self.state.test_branches
+	            self.state.total_branches
 	          )
 	        ),
 	        ' branches in your phylogeny.'
@@ -871,11 +878,6 @@ webpackJsonp([0],[
 	          'strong',
 	          null,
 	          'found no evidence'
-	        ),
-	        React.createElement(
-	          'sup',
-	          null,
-	          '\u2020'
 	        ),
 	        ' of episodic diversifying selection in your phylogeny.'
 	      );
@@ -907,21 +909,15 @@ webpackJsonp([0],[
 	            React.createElement(
 	              'strong',
 	              { className: 'hyphy-highlight' },
-	              'X'
+	              self.state.test_branches
 	            ),
-	            ' branches were formally tested for diversifying selection. Significance and number of rate categories inferred at each branch are provided in the ',
+	            ' branches were formally tested for diversifying selection. Significance was assessed using the Likelihood Ratio Test at a threshold of p \u2264 0.05, after correcting for multiple testing. Significance and number of rate categories inferred at each branch are provided in the ',
 	            React.createElement(
 	              'a',
 	              { href: '#table-tab' },
 	              'detailed results'
 	            ),
-	            ' table. For more information about the aBSREL method, see ',
-	            React.createElement(
-	              'a',
-	              { href: 'http://hyphy.org/methods/selection-methods/#absrel' },
-	              'this link'
-	            ),
-	            '.'
+	            ' table.'
 	          ),
 	          React.createElement('hr', null),
 	          React.createElement(
@@ -930,33 +926,22 @@ webpackJsonp([0],[
 	            React.createElement(
 	              'small',
 	              null,
+	              'See ',
 	              React.createElement(
-	                'sup',
-	                null,
-	                '\u2020'
+	                'a',
+	                { href: 'http://hyphy.org/methods/selection-methods/#absrel' },
+	                'here'
 	              ),
+	              ' for more information about the aBSREL method.',
+	              React.createElement('br', null),
+	              'Please cite ',
 	              React.createElement(
-	                'abbr',
-	                { title: 'Likelihood Ratio Test' },
-	                'LRT'
+	                'a',
+	                { href: 'http://www.ncbi.nlm.nih.gov/pubmed/25697341', id: 'summary-pmid', target: '_blank' },
+	                'PMID 25697341'
 	              ),
-	              ' p \u2264 0.05, corrected for multiple testing.'
+	              ' if you use this result in a publication, presentation, or other scientific work.'
 	            )
-	          )
-	        ),
-	        React.createElement(
-	          'p',
-	          null,
-	          React.createElement(
-	            'small',
-	            null,
-	            'Please cite ',
-	            React.createElement(
-	              'a',
-	              { href: 'http://www.ncbi.nlm.nih.gov/pubmed/25697341', id: 'summary-pmid', target: '_blank' },
-	              'PMID 25697341'
-	            ),
-	            ' if you use this result in a publication, presentation, or other scientific work.'
 	          )
 	        )
 	      ),
@@ -19175,7 +19160,7 @@ webpackJsonp([0],[
 	        'h4',
 	        { className: 'dm-table-header' },
 	        'Model fits',
-	        React.createElement('span', { className: 'glyphicon glyphicon-info-sign', style: { "verticalAlign": "middle", "float": "right" }, 'aria-hidden': 'true', 'data-toggle': 'popover', 'data-trigger': 'hover', title: 'Tree summary', 'data-html': 'true', 'data-content': '<ul><li>Hover over a column header for a description of its content.</li></ul>', 'data-placement': 'bottom' })
+	        React.createElement('span', { className: 'glyphicon glyphicon-info-sign', style: { "verticalAlign": "middle", "float": "right" }, 'aria-hidden': 'true', 'data-toggle': 'popover', 'data-trigger': 'hover', title: 'Actions', 'data-html': 'true', 'data-content': '<ul><li>Hover over a column header for a description of its content.</li></ul>', 'data-placement': 'bottom' })
 	      ),
 	      React.createElement(DatamonkeyTable, { headerData: this.state.header, bodyData: this.state.rows })
 	    );
@@ -19445,7 +19430,7 @@ webpackJsonp([0],[
 	        'h4',
 	        { className: 'dm-table-header' },
 	        'Tree summary',
-	        React.createElement('span', { className: 'glyphicon glyphicon-info-sign', style: { "verticalAlign": "middle", "float": "right" }, 'aria-hidden': 'true', 'data-toggle': 'popover', 'data-trigger': 'hover', title: 'Tree summary', 'data-html': 'true', 'data-content': '<ul><li>Hover over a column header for a description of its content.</li></ul>', 'data-placement': 'bottom' })
+	        React.createElement('span', { className: 'glyphicon glyphicon-info-sign', style: { "verticalAlign": "middle", "float": "right" }, 'aria-hidden': 'true', 'data-toggle': 'popover', 'data-trigger': 'hover', title: 'Actions', 'data-html': 'true', 'data-content': '<ul><li>Hover over a column header for a description of its content.</li></ul>', 'data-placement': 'bottom' })
 	      ),
 	      React.createElement(_shared_summary.DatamonkeyTable, { headerData: this.state.table_columns, bodyData: this.state.table_row_data }),
 	      React.createElement(
@@ -20034,7 +20019,7 @@ webpackJsonp([0],[
 	                'h4',
 	                { className: 'dm-table-header' },
 	                'Fitted tree',
-	                React.createElement('span', { className: 'glyphicon glyphicon-info-sign', style: { "verticalAlign": "middle", "float": "right" }, 'aria-hidden': 'true', 'data-toggle': 'popover', 'data-trigger': 'hover', title: 'Tree summary', 'data-html': 'true', 'data-content': '<ul><li>Hover over a branch to see its inferred rates and significance for selection.</li><ul>', 'data-placement': 'bottom' })
+	                React.createElement('span', { className: 'glyphicon glyphicon-info-sign', style: { "verticalAlign": "middle", "float": "right" }, 'aria-hidden': 'true', 'data-toggle': 'popover', 'data-trigger': 'hover', title: 'Actions', 'data-html': 'true', 'data-content': '<ul><li>Hover over a branch to see its inferred rates and significance for selection.</li><ul>', 'data-placement': 'bottom' })
 	            ),
 	            React.createElement(
 	                'div',
@@ -20464,7 +20449,7 @@ webpackJsonp([0],[
 	          'h4',
 	          { className: 'dm-table-header' },
 	          'Detailed results',
-	          React.createElement('span', { className: 'glyphicon glyphicon-info-sign', style: { "verticalAlign": "middle", "float": "right" }, 'aria-hidden': 'true', 'data-toggle': 'popover', 'data-trigger': 'hover', title: 'Detailed results', 'data-html': 'true', 'data-content': '<ul><li>Bolded rows indicate branches inferred to be under positive selection at the designated p-value threshold.</li><li>Click on a row to visualize its inferred rate distribution.</li><li>Hover over a column header for a description of its content.</li><li>Caution: omega distribution should not be interpretted as literal omega estimates at individual sites, but instead reflects fitted parameter values.</li></ul>', 'data-placement': 'bottom' })
+	          React.createElement('span', { className: 'glyphicon glyphicon-info-sign', style: { "verticalAlign": "middle", "float": "right" }, 'aria-hidden': 'true', 'data-toggle': 'popover', 'data-trigger': 'hover', title: 'Detailed results', 'data-html': 'true', 'data-content': '<ul><li><strong>Bolded rows</strong> correspond to positively-selected branches at P \u2264 0.05.</li><li>Click on a row to visualize its inferred rate distribution.</li><li>Hover over a column header for a description of its content.</li></ul>', 'data-placement': 'bottom' })
 	        ),
 	        React.createElement(
 	          'table',
@@ -20516,7 +20501,7 @@ webpackJsonp([0],[
 	                null,
 	                React.createElement(
 	                  'span',
-	                  { 'data-toggle': 'tooltip', title: 'P-values which have not been corrected for multiple testing' },
+	                  { 'data-toggle': 'tooltip', title: 'Raw P-value without correction for multiple testing' },
 	                  'Uncorrected p-value'
 	                )
 	              ),
@@ -21728,7 +21713,24 @@ webpackJsonp([0],[
 	              React.createElement(
 	                "div",
 	                { id: "hyphy-model-fits", className: "col-lg-12" },
-	                React.createElement(_model_fits.ModelFits, { json: self.state.json })
+	                React.createElement(_model_fits.ModelFits, { json: self.state.json }),
+	                React.createElement(
+	                  "p",
+	                  { className: "description" },
+	                  "This table reports a statistical summary of the models fit to the data. Here, ",
+	                  React.createElement(
+	                    "strong",
+	                    null,
+	                    "Unconstrained model"
+	                  ),
+	                  " refers to the BUSTED alternative model for selection, and ",
+	                  React.createElement(
+	                    "strong",
+	                    null,
+	                    "Constrained model"
+	                  ),
+	                  " refers to the BUSTED null model for selection."
+	                )
 	              )
 	            ),
 	            React.createElement(
@@ -21741,7 +21743,7 @@ webpackJsonp([0],[
 	                  "h4",
 	                  { className: "dm-table-header" },
 	                  "Model Evidence Ratios Per Site",
-	                  React.createElement("span", { className: "glyphicon glyphicon-info-sign", style: { "verticalAlign": "middle", "float": "right" }, "aria-hidden": "true", "data-toggle": "popover", "data-trigger": "hover", title: "Tree summary", "data-html": "true", "data-content": "<ul><li>Hover over a column header for a description of its content.</li></ul>", "data-placement": "bottom" })
+	                  React.createElement("span", { className: "glyphicon glyphicon-info-sign", style: { "verticalAlign": "middle", "float": "right" }, "aria-hidden": "true", "data-toggle": "popover", "data-trigger": "hover", title: "Actions", "data-html": "true", "data-content": "<ul><li>Hover over a column header for a description of its content.</li></ul>", "data-placement": "bottom" })
 	                )
 	              ),
 	              React.createElement(
@@ -22129,7 +22131,7 @@ webpackJsonp([0],[
 	        "h4",
 	        { className: "dm-table-header" },
 	        "Model fits",
-	        React.createElement("span", { className: "glyphicon glyphicon-info-sign", style: { "verticalAlign": "middle", "float": "right" }, "aria-hidden": "true", "data-toggle": "popover", "data-trigger": "hover", title: "Tree summary", "data-html": "true", "data-content": "<ul><li>Hover over a column header for a description of its content.</li></ul>", "data-placement": "bottom" })
+	        React.createElement("span", { className: "glyphicon glyphicon-info-sign", style: { "verticalAlign": "middle", "float": "right" }, "aria-hidden": "true", "data-toggle": "popover", "data-trigger": "hover", title: "Actions", "data-html": "true", "data-content": "<ul><li>Hover over a column header for a description of its content.</li></ul>", "data-placement": "bottom" })
 	      ),
 	      React.createElement(
 	        "table",
@@ -22196,27 +22198,49 @@ webpackJsonp([0],[
 	          React.createElement(
 	            'p',
 	            null,
-	            'BUSTED found ',
+	            'BUSTED ',
 	            React.createElement(
 	              'strong',
-	              null,
+	              { className: 'hyphy-highlight' },
+	              'found ',
 	              this.props.test_result.statement
 	            ),
-	            ' of episodic diversifying selection, with LRT p-value of ',
+	            React.createElement(
+	              'sup',
+	              null,
+	              '\u2020'
+	            ),
+	            ' of episodic diversifying selection (LRT P-value=',
 	            this.props.test_result.p,
-	            '.'
+	            ') in the selected foreground of your phylogeny. Therefore, there is evidence that at least one site on at least one foreground branch has experienced diversifying selection.'
 	          ),
+	          React.createElement('hr', null),
 	          React.createElement(
 	            'p',
 	            null,
 	            React.createElement(
 	              'small',
 	              null,
+	              React.createElement(
+	                'sup',
+	                null,
+	                '\u2020'
+	              ),
+	              ' LRT, p \u2264 0.05.',
+	              React.createElement('br', null),
+	              'See ',
+	              React.createElement(
+	                'a',
+	                { href: 'http://hyphy.org/methods/selection-methods/#busted' },
+	                'here'
+	              ),
+	              ' for more information about the BUSTED method.',
+	              React.createElement('br', null),
 	              'Please cite ',
 	              React.createElement(
 	                'a',
-	                { href: this.props.pmid.href, id: 'summary-pmid' },
-	                this.props.pmid.text
+	                { href: 'http://www.ncbi.nlm.nih.gov/pubmed/25701167', id: 'summary-pmid', target: '_blank' },
+	                'PMID 25701167'
 	              ),
 	              ' if you use this result in a publication, presentation, or other scientific work.'
 	            )
