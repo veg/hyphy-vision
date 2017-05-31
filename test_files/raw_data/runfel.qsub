@@ -1,0 +1,26 @@
+#!/bin/bash
+#PBS -N busting
+#PBS -l nodes=1:ppn=64
+#PBS -e e.$PBS_JOBNAME-$PBS_JOBID
+#PBS -o o.$PBS_JOBNAME-$PBS_JOBID
+
+module load hyphy/2.2.6 
+DATADIR=/home/sjspielman/raw_data
+cd $DATADIR
+
+INFILE=$DATADIR/$1
+CWD=/opt/hyphy-2.2.6/res/TemplateBatchFiles/
+GC=1
+
+
+## All FG
+(echo $GC; echo $INFILE; echo "Y"; echo "1"; echo "d";) | HYPHYMP LIBPATH=$HYPHY_LIB_DIRECTORY $CWD/SelectionAnalyses/FEL.bf
+mv $INFILE.BUSTED.json $INFILE-fullFG.BUSTED.json
+
+
+## Some FG
+(echo $GC; echo $INFILE; echo "Y"; echo "2"; echo "d";) | HYPHYMP LIBPATH=$HYPHY_LIB_DIRECTORY $CWD/BUSTED.bf
+mv $INFILE.BUSTED.json $INFILE-partialFG.BUSTED.json
+
+
+/home/sjspielman/raw_data/sim_length50.dat
