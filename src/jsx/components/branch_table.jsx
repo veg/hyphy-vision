@@ -252,7 +252,7 @@ var BranchTable = React.createClass({
                 <th><span data-toggle="tooltip" title="Optimized branch length">B </span></th>
                 <th><span data-toggle="tooltip" title="Likelihood ratio test statistic for selection">LRT</span></th>
                 <th><span data-toggle="tooltip" title="P-value corrected for multiple testing">Test p-value</span></th>
-                <th><span data-toggle="tooltip" title="P-values which have not been corrected for multiple testing">Uncorrected p-value</span></th>
+                <th><span data-toggle="tooltip" title="Raw P-value without correction for multiple testing">Uncorrected p-value</span></th>
                 <th><span data-toggle="tooltip" title="Inferred ω estimates and respective proportion of sites">ω distribution over sites</span></th>
               </tr>
             </thead>
