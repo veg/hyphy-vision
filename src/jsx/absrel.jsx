@@ -369,7 +369,7 @@ var BSREL = React.createClass({
                   </div>
                   <div id="hyphy-model-fits" className="col-md-12">
                     <DatamonkeyModelTable fits={self.state.fits} />
-                    <p className="description">This table reports a statistical summary of the models fit to the data.</p>
+                    <p className="description">This table reports a statistical summary of the models fit to the data. Here, <strong>MG94</strong> refers to the MG94xREV baseline model that infers a single &omega; rate category per branch. <strong>Full Model</strong> refers to the adaptive aBSREL model that infers an optimized number of &omega; rate categories per branch.</p>
                   </div>
                 </div>
 
