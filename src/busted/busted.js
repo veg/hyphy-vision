@@ -223,13 +223,13 @@ function busted_render_histogram(c, json) {
   var composite = dc.compositeChart(c);
 
   composite
-      .width($(window).width())
+      .width($(window).width()*.8)
       .height(300)
       .dimension(site_index)
       .x(d3.scale.linear().domain([1, erc.length]))
       .yAxisLabel("2 * Ln Evidence Ratio")
       .xAxisLabel("Site Location")
-      .legend(dc.legend().x($(window).width() - 150).y(20).itemHeight(13).gap(5))
+      .legend(dc.legend().x($(window).width()*.8 - 150).y(20).itemHeight(13).gap(5))
       .renderHorizontalGridLines(true)
       .compose([
         dc.lineChart(composite)
