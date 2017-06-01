@@ -71,10 +71,10 @@ var Tree = React.createClass({
     var color_fill = self.settings["tree-options"]["hyphy-tree-fill-color"][0] ? "black" : "red";
 
     var margins = {
-            'bottom': 30,
-            'top': 15,
-            'left': 40,
-            'right': 2
+          'bottom': 30,
+          'top': 15,
+          'left': 40,
+          'right': 2
         };
 
 
@@ -637,8 +637,13 @@ var Tree = React.createClass({
 
     return (
         <div>
+        <h4 className="dm-table-header">
+          Fitted tree
+          <span className="glyphicon glyphicon-info-sign" style={{"verticalAlign": "middle", "float":"right"}} aria-hidden="true" data-toggle="popover" data-trigger="hover" title="Actions" data-html="true" data-content="<ul><li>Hover over a branch to see its inferred rates and significance for selection.</li><ul>" data-placement="bottom"></span>
+
+        </h4>
           <div className='row'>
-              <div className="cold-md-12">
+              <div className="col-md-12">
                   <div className="input-group input-group-sm">
                       <div className="input-group-btn">
                             <button type="button" className="btn btn-default dropdown-toggle" data-toggle="dropdown">Export<span className="caret"></span></button>

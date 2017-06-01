@@ -247,18 +247,17 @@ var ModelFits = React.createClass({
   render: function() {
 
     return (
-        <div className="col-lg-12">
-          <ul className="list-group">
-            <li className="list-group-item">
-              <h4 className="list-group-item-heading"><i className="fa fa-cubes" style = {{marginRight: "10px"}}></i>Model fits</h4>
-               <table className="table table-hover table-condensed list-group-item-text" style = {{marginTop:"0.5em"}} >
-                  <thead id='summary-model-header1'></thead>
-                  <tbody id='summary-model-table'></tbody>
-               </table>
-            </li>
-          </ul>
-        </div>
-      )
+      <div>
+        <h4 className="dm-table-header">
+          Model fits
+          <span className="glyphicon glyphicon-info-sign" style={{"verticalAlign": "middle", "float":"right"}} aria-hidden="true" data-toggle="popover" data-trigger="hover" title="Actions" data-html="true" data-content="<ul><li>Hover over a column header for a description of its content.</li></ul>" data-placement="bottom"></span>
+        </h4>
+        <table className="table table-hover table-condensed list-group-item-text" styleFormat ="margin-top:0.5em;">
+           <thead id='summary-model-header1'></thead>
+           <tbody id='summary-model-table'></tbody>
+        </table>
+      </div>
+    )
   }
 
 });

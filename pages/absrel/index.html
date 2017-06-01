@@ -2,76 +2,29 @@
 <html lang='en'>
 
 <head>
-    <meta charset="utf-8">
-    <link rel="stylesheet" href="../../dist/hyphyvision.css">
-    <script src="../../dist/vendor.js"></script>
-    <script src="../../dist/hyphyvision.js"></script>
+  <meta charset="utf-8">
+  <link rel="shortcut icon" href="/images/favicon.ico" type="image/x-icon">
+  <!-- Latest compiled and minified CSS -->
+  <link rel="stylesheet" href="../../dist/hyphyvision.css">
+  <!-- Fonts -->
+  <link href='//fonts.googleapis.com/css?family=Montserrat' rel='stylesheet'>
+  <link href='//fonts.googleapis.com/css?family=Noto Sans' rel='stylesheet'>
+  <!-- Latest compiled and minified JavaScript -->
+  <script src="../../dist/vendor.js"></script>
+  <script src="../../dist/hyphyvision.js"></script>
+
+  <title>aBSREL analysis result</title>
 </head>
 
 <body style='padding-top: 70px;'>
+  
+  <div id="absrel-content"></div>
 
-    <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
-
-        <div class="container-fluid">
-            <!-- Brand and toggle get grouped for better mobile display -->
-            <div class="navbar-header">
-                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar-collapse-1">
-                    <span class="sr-only">Toggle navigation</span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
-                <a class="navbar-brand" href="#">BS-REL results</a>
-            </div>
-
-
-            <!-- Collect the nav links, forms, and other content for toggling -->
-            <div class="collapse navbar-collapse" id="navbar-collapse-1">
-
-                <ul class="nav nav-pills navbar-right" role="tablist" id='navigation_buttons'>
-                    <li class="active"><a href="#summary-tab" role="tab" data-toggle="tab"><i class="fa fa-list" style = 'margin-right: 5px'></i>Summary</a></li>
-                    <li><a class="tree-tab-btn" href="#tree-tab" role="tab" data-toggle="tab"><i class="fa fa-tree" style = 'margin-right: 5px'></i> Tree</a></li>
-                    <li><a href="#table_tab" role="tab" data-toggle="tab"><i class="fa fa-table" style = 'margin-right: 5px'></i> Table</a></li>
-                </ul>
-
-                <ul class="nav navbar-nav">
-                    <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" id = "datamonkey-absrel-toggle-here" data-toggle="dropdown">Load file<b class="caret"></b></a>
-                        <ul class="dropdown-menu">
-                            <li>
-                                <input type="file" id="datamonkey-absrel-json-file">
-                            </li>
-                        </ul>
-                    </li>
-                 </ul>
-
-
-            </div>
-            <!-- /.navbar-collapse -->
-        </div>
-        <!-- /.container-fluid -->
-    </nav>
-
-    <div class='container-fluid'>
-
-        <div id='datamonkey-absrel-error' class="alert alert-danger alert-dismissible" role="alert" style="display:none;">
-            <button type="button" class="close" id='datamonkey-absrel-error-hide'><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-            <strong>Error!</strong> <span id='datamonkey-absrel-error-text'></span>
-        </div>
-
-        <div id="absrel-content" class="tab-content"></div>
-
-    </div>
-
-    <img id="hyphy-chart-image" />
-    <canvas id="hyphy-chart-canvas"></canvas>
-
-
-    <script>
-      $(document).ready(function() {
-        absrel("test-data/test.json", "absrel-content");
-      });
-    </script>
+  <script>
+    $(document).ready(function() {
+      absrel("test-data/test.json", "absrel-content");
+    });
+  </script>
 
 </body>
 
