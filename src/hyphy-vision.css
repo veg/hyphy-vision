@@ -154,10 +154,15 @@
 }
 
 .dm-table-header {
-    background-color: #00a99d;
+    background: linear-gradient(to right,#03AA9D,#7EC6B3);
     color: #FFF;
     text-align: center;
     padding: 5px 5px 5px 5px;
+    font-family: "Noto Sans";
+}
+
+.popover {
+  color: #111;
 }
 
 table.dm-table > thead > tr > th,
@@ -169,6 +174,10 @@ table.dm-table > thead > th {
     color: #00a99d;
 }
 
+div.main-result a {
+     color: #00a99d;
+}
+
 #summary-pmid {
     color: #00a99d;
 }
@@ -177,7 +186,7 @@ table.dm-table > thead > th {
     line-height: .5;
     text-align: center;
     border: 5px solid;
-    border-image: linear-gradient(#03AA9D, #7EC6B3) 10;
+    border-image: linear-gradient(to right, #03AA9D, #7EC6B3) 10;
     padding: 10px;
 }
 
@@ -215,6 +224,23 @@ div.main-result hr {
 
 tbody > tr {
   background-color: #EEE;
+}
+
+p.description {
+  font-family: "Noto Sans";
+  line-height: 168%;
+  font-size: 15px;
+  color: #545454;
+}
+
+.v-align {
+    float: none;
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.popover {
+  max-width: 100%;
 }
 
 /* Bootstrap-docs scroll spy */

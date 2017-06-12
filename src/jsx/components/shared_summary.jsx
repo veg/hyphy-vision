@@ -310,7 +310,11 @@ var DatamonkeyTable = React.createClass({
     }
   },
 
-  componentDidMount : function() {
+  componentDidMount: function(){
+    $('[data-toggle="tooltip"]').tooltip();
+  },
+
+  componentDidUpdate: function() {
     $('[data-toggle="tooltip"]').tooltip();
   },
 
@@ -587,17 +591,20 @@ var DatamonkeyModelTable = React.createClass({
   dm_numberFormatter: d3.format(".2f"),
 
   dm_supportedColumns: {
-    'log likelihood': {
+    'log-likelihood': {
       order: 2,
       value: {
         "value": "log L",
-        "abbr": "log likelihood"
+        "abbr": "Log likelihood of model fit"
       },
       display_format: d3.format(".2f")
     },
     'parameters': {
       order: 3,
-      value: "Parameters"
+      value: {
+        value: "Parameters",
+        abbr: "Number of estimated parameters"
+      }
     },
     'AIC-c': {
       order: 1,
@@ -671,9 +678,9 @@ var DatamonkeyModelTable = React.createClass({
 
       var thisRow = [{
         value: key,
-        style: {
-          fontVariant: "small-caps"
-        }
+        //style: {
+        //  fontVariant: "small-caps"
+        //}
       }];
 
       _.each(columnMapIterator, function(tag) {
@@ -731,7 +738,10 @@ var DatamonkeyModelTable = React.createClass({
 
   render: function() {
     return (<div>
-      <h4 className="dm-table-header">Model fits</h4>
+      <h4 className="dm-table-header">
+        Model fits
+        <span className="glyphicon glyphicon-info-sign" style={{"verticalAlign": "middle", "float":"right"}} aria-hidden="true" data-toggle="popover" data-trigger="hover" title="Actions" data-html="true" data-content="<ul><li>Hover over a column header for a description of its content.</li></ul>" data-placement="bottom"></span>
+      </h4>
       <DatamonkeyTable headerData={this.state.header} bodyData={this.state.rows}/>
     </div>);
   },

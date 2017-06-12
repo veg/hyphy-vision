@@ -88,6 +88,8 @@ var PropChart = React.createClass({
     // maximum diameter is (height - text margin)
     this.svg = d3.select("#" + this.svg_id)
       .attr("width", "100%")
+      .attr("preserveAspectRatio","xMinYMin meet")
+      .attr("viewBox", "0 0 " + this.dimensions.width + " " + this.dimensions.height)
       .attr("height", dimensions.height + margins['top'] + margins['bottom']);
 
     this.plot = this.svg.selectAll(".container");
@@ -175,7 +177,22 @@ var PropChart = React.createClass({
       })
       .attr("y1", 20)
       .attr("y2", this.plot_height+20);
+  
+    // Legend
+    var legend_text = this.svg.append("g")
+      .attr("transform", "translate(" + .9*this.plot_width + ", 25)")
+      .append("text")
+        .attr("font-size", 14)
+        .text("Neutrality (ω=1)");
 
+    var legend_line = this.svg.append("g")
+      .attr("transform", "translate(" + .825*this.plot_width + ", 20)")
+      .append("line")
+        .attr("class", "hyphy-neutral-line")
+        .attr("x1", 0)
+        .attr("x2", .05*this.plot_width)
+        .attr("y1", 0)
+        .attr("y2", 0)
   },
   createXAxis: function() {
 
@@ -234,7 +251,7 @@ var PropChart = React.createClass({
     }
     y_axis.attr("transform", "translate(" + this.margins["left"] + "," + (this.margins["top"]+20) + ")")
       .call(yAxis);
-    y_label = y_label.attr("transform", "translate(" + (-this.margins["left"]) + "," + 0 + ")")
+    y_label = y_label.attr("transform", "translate(" + (-this.margins["left"]+10) + "," + 0 + ")")
       .selectAll("text").data(["Proportion of sites"]);
     y_label.enter().append("text");
     y_label.text(function(d) {
@@ -277,18 +294,26 @@ var PropChart = React.createClass({
     return (
       <div className="panel panel-default" id={ this.state.model_name }>
         <div className="panel-heading">
-          <h3 className="panel-title"><strong>{ this.state.model_name }</strong></h3>
-          <div className="btn-group">
-            <button id={ this.save_svg_id } type="button" className="btn btn-default btn-sm">
-              <span className="glyphicon glyphicon-floppy-save"></span> SVG
-            </button>
-            <button id={ this.save_png_id } type="button" className="btn btn-default btn-sm">
-              <span className="glyphicon glyphicon-floppy-save"></span> PNG
-            </button>
+          <div className="row">
+            <div className="col-md-8 v-align">
+              <h1 className="panel-title"><strong>{ this.state.model_name }</strong></h1>
+            </div>
+            <div className="col-md-4 v-align">
+              <div className="btn-group pull-right">
+                <button id={ this.save_svg_id } type="button" className="btn btn-default btn-sm">
+                  <span className="glyphicon glyphicon-floppy-save"></span> SVG
+                </button>
+                <button id={ this.save_png_id } type="button" className="btn btn-default btn-sm">
+                  <span className="glyphicon glyphicon-floppy-save"></span> PNG
+                </button>
+              </div>
+            </div>
           </div>
         </div>
-        <div className="panel-body" style={{"text-align":"center"}}>
-          <svg id={ this.svg_id } />
+        <div className="row">
+          <div className="panel-body col-md-12" style={{"text-align":"center"}}>
+            <svg id={ this.svg_id } />
+          </div>
         </div>
       </div>
     );
