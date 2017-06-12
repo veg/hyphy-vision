@@ -20650,7 +20650,7 @@ webpackJsonp([0],[
 	
 	    // compute margins -- circle AREA is proportional to the relative weight
 	    // maximum diameter is (height - text margin)
-	    this.svg = d3.select("#" + this.svg_id).attr("width", "100%").attr("height", dimensions.height + margins['top'] + margins['bottom']);
+	    this.svg = d3.select("#" + this.svg_id).attr("width", "100%").attr("preserveAspectRatio", "xMinYMin meet").attr("viewBox", "0 0 " + this.dimensions.width + " " + this.dimensions.height).attr("height", dimensions.height + margins['top'] + margins['bottom']);
 	
 	    this.plot = this.svg.selectAll(".container");
 	
