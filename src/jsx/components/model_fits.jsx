@@ -174,10 +174,10 @@ var ModelFits = React.createClass({
 
     var model_header = '<th>Model</th>',
         logl_header = '<th><em> log </em>L</th>',
-        num_params_header = '<th><abbr title="Number of estimated model parameters"># par.</abbr></th>',
-        aic_header = '<th><abbr title="Small Sample AIC">AIC<sub>c</sub></abbr></th>',
+        num_params_header = '<th># par.</th>',
+        aic_header = '<th>AIC<sub>c</sub></abbr></th>',
         runtime_header = '<th>Time to fit</th>',
-        branch_lengths_header = '<th><abbr title="Total tree length, expected substitutions/site">L<sub>tree</sub></abbr></th>',
+        branch_lengths_header = '<th>L<sub>tree</sub></abbr></th>',
         branch_set_header = '<th>Branch set</th>',
         omega_1_header = '<th>&omega;<sub>1</sub></th>',
         omega_2_header = '<th>&omega;<sub>2</sub></th>',
@@ -185,17 +185,17 @@ var ModelFits = React.createClass({
 
     // inspect table_row_data and return header
     var all_columns = [ 
-                    model_header,
-                    logl_header, 
-                    num_params_header, 
-                    aic_header, 
-                    runtime_header, 
-                    branch_lengths_header,  
-                    branch_set_header,
-                    omega_1_header,
-                    omega_2_header,
-                    omega_3_header
-                  ];
+      model_header,
+      logl_header, 
+      num_params_header, 
+      aic_header, 
+      runtime_header, 
+      branch_lengths_header,  
+      branch_set_header,
+      omega_1_header,
+      omega_2_header,
+      omega_3_header
+    ];
 
     // validate each table row with its associated header
     if(table_row_data.length == 0) {
@@ -239,9 +239,9 @@ var ModelFits = React.createClass({
         table_columns = this.getModelColumns(table_row_data);
 
     this.setState({
-             table_row_data: table_row_data, 
-             table_columns: table_columns
-           });
+      table_row_data: table_row_data, 
+      table_columns: table_columns
+    });
   },
 
   render: function() {
@@ -252,7 +252,7 @@ var ModelFits = React.createClass({
           Model fits
           <span className="glyphicon glyphicon-info-sign" style={{"verticalAlign": "middle", "float":"right"}} aria-hidden="true" data-toggle="popover" data-trigger="hover" title="Actions" data-html="true" data-content="<ul><li>Hover over a column header for a description of its content.</li></ul>" data-placement="bottom"></span>
         </h4>
-        <table className="table table-hover table-condensed list-group-item-text" style={{marginTop :"0.5em"}}>
+        <table className="dm-table table table-hover table-condensed list-group-item-text" style={{marginTop :"0.5em"}}>
            <thead id='summary-model-header1'></thead>
            <tbody id='summary-model-table'></tbody>
         </table>
