@@ -3,6 +3,87 @@ var datamonkey = require('../../datamonkey/datamonkey.js');
 
 var _dmGraphDefaultColorPallette = d3.scale.category10().domain (_.range (10));
 
+var GraphNav = React.createClass({
+
+  getDefaultProps() {
+    return {
+      fields: ''  
+    }
+  },
+
+  render: function() {
+    return(<nav className="navbar">
+        <form className="navbar-form ">
+          <div className="form-group navbar-left">
+              <div className="input-group">
+                 <span className="input-group-addon">X-axis:</span>
+                  <ul className="dropdown-menu">
+                   {_.map(['Site'].concat(_.pluck (self.props.headers,0)), function (value) {
+                        return (
+                        <li key = {value}>
+                            <a href="#" tabIndex="-1" onClick={_.partial(self.dm_xAxis,value)}>
+                                {value}
+                             </a>
+                        </li>
+                        );
+                        }
+                    )
+                    }
+                  </ul>
+                  <button className="btn btn-default btn-sm dropdown-toggle form-control" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    {self.state.xLabel}
+                    <span className="caret"></span>
+                  </button>
+                </div>
+              <div className="input-group">
+                 <span className="input-group-addon">Y-axis:</span>
+
+                   <ul className="dropdown-menu">
+                   {_.map (_.pluck (self.props.headers,0), function (value) {
+                        return (
+                        <li key = {value}>
+                            <a href="#" tabIndex="-1" onClick={_.partial(self.dm_yAxis,value)}>
+                                {value}
+                             </a>
+                        </li>
+                        );
+                        }
+                    )
+                    }
+                  </ul>
+                  <button className="btn btn-default btn-sm dropdown-toggle form-control" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    {self.state.yLabel}
+                    <span className="caret"></span>
+                  </button>
+              </div>
+              <div className="input-group">
+                  <span className="input-group-addon">Ambiguities </span>
+                      <ul className="dropdown-menu">
+                            {
+                                _.map (this.state.ambigOptions, function (value, index) {
+                                    return (
+                                        <li key={index}>
+                                            <a href="#" tabIndex="-1" onClick={_.partial(self.dm_setAmbigOption,value)}>
+                                                {value}
+                                            </a>
+                                        </li>
+                                    );
+                                })
+                            }
+                      </ul>
+                  <button className="btn btn-default btn-sm dropdown-toggle form-control" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    {self.state.ambigHandling} <span className="caret"></span>
+                  </button>
+
+            </div>
+            </div>
+
+        </form>
+    </nav>);
+  }
+
+});
+
 var _dmGraphBaseDefinitions = {
 
 
@@ -201,13 +282,10 @@ var _dmGraphBaseDefinitions = {
 
 var _dmGraphSeriesDefinitions = _.clone (_dmGraphBaseDefinitions);
 
-
 _dmGraphSeriesDefinitions.dm_renderGraph = function (x_scale, y_scale, dom_element) {
 
         var main_graph  = d3.select (dom_element);
         var self = this;
-
-
 
        _.each (this.props.y, _.bind (function (y, i) {
             var series_color = _dmGraphDefaultColorPallette (i);
