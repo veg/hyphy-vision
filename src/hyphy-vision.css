@@ -22,7 +22,7 @@
     opacity: 1;
 }
 
-/* aBSRESL */
+/* aBSREL */
 .hyphy-omega-bar line, .hyphy-omega-bar path {
     fill: none;
     stroke: #000;
@@ -154,6 +154,8 @@
 }
 
 .dm-table-header {
+    background-color: #00a99d;
+    font-family: "Noto Sans";
     background: linear-gradient(to right,#03AA9D,#7EC6B3);
     color: #FFF;
     text-align: center;
@@ -300,6 +302,10 @@ p.description {
 .bs-docs-example {
   margin-top : 20px;
   margin-bottom : 20px;
+}
+
+.hyphy-row {
+  margin-top: 20px;
 }
 
 @media print {

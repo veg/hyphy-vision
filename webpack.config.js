@@ -5,8 +5,6 @@ var path = require('path'),
 var ExtractTextPlugin = require("extract-text-webpack-plugin");
 
 config = {
-
-  debug: true,
   devtool: 'source-map',
   entry: {
     hyphyvision : ['./src/entry.js'],
@@ -31,34 +29,48 @@ config = {
 		"jsdom":"window"
 	},
   module: {
-    loaders: [{
-      test: /\.js?$/,
+    rules: [
+    {
+      test: /\.(js|jsx)?$/,
       exclude: /node_modules/,
-      loader: 'babel',
+      loaders: 'babel-loader',
       query : {
         presets:['react']
       }
-    }, {
-      test: /\.jsx?$/,
-      exclude: /node_modules/,
-      loader: 'babel',
-      query : {
-        presets:['react']
-      }
-
     },
-		{ test: /\.css$/, loader: ExtractTextPlugin.extract("style-loader", "css-loader")},
-		{ test: /jquery/, loader: 'expose?$!expose?jQuery' },
-		{ test: /d3/, loader: 'expose?$!expose?d3' },
-		{ test: /\.(woff|woff2)(\?v=\d+\.\d+\.\d+)?$/, loader: 'url?limit=10000&mimetype=application/font-woff'},
-		{ test: /\.ttf(\?v=\d+\.\d+\.\d+)?$/, loader: 'url?limit=10000&mimetype=application/octet-stream'},
-		{ test: /\.eot(\?v=\d+\.\d+\.\d+)?$/, loader: 'file'},
-		{ test: /\.svg(\?v=\d+\.\d+\.\d+)?$/, loader: 'url?limit=10000&mimetype=image/svg+xml'},
+    { test: /\.css$/, loader: ExtractTextPlugin.extract({fallback:"style-loader", use:"css-loader"})},
+		{
+			test: require.resolve('jquery'),
+			use: [
+				{
+					loader: 'expose-loader',
+					query: 'jQuery'
+				},
+				{
+					loader: 'expose-loader',
+					query: '$'
+				}
+			]
+		},
+		{
+			test: require.resolve('d3'),
+			use: [
+				{
+					loader: 'expose-loader',
+					query: 'd3'
+				},
+			]
+		},
+    { test: /\.(woff|woff2)(\?v=\d+\.\d+\.\d+)?$/, loader: 'url-loader', options: {limit: 10000, mimetype:'application/font-woff'}},
+    { test: /\.ttf(\?v=\d+\.\d+\.\d+)?$/,  loader: 'url-loader', options : { limit: 10000, mimetype: 'application/octet-stream'}},
+    { test: /\.eot(\?v=\d+\.\d+\.\d+)?$/, loaders: 'file-loader'},
+    { test: /\.svg(\?v=\d+\.\d+\.\d+)?$/, loaders: 'url-loader', options : {limit:10000, mimetype:'image/svg+xml'}},
 		],
 
   },
   plugins: [
-		new webpack.optimize.CommonsChunkPlugin("vendor", "vendor.js"),
+    new webpack.LoaderOptionsPlugin({debug:true}),
+		new webpack.optimize.CommonsChunkPlugin({name: "vendor", filename: "vendor.js"}),
 		new webpack.ProvidePlugin({
 				$ : "jquery",
 				jQuery : "jquery",
@@ -77,34 +89,13 @@ config = {
 			'dc.css' : __dirname + '/node_modules/dc/dc.min.css',
 			'phylotree.css' : __dirname + '/node_modules/phylotree/phylotree.css'
 		},
-    modulesDirectories: [
+    modules : [
       'src',
       'node_modules'
     ],
-    extensions: ['', '.json', '.js', '.jsx']
+    extensions: ['.json', '.js', '.jsx']
 	},
 };
-
-// Hot mode
-if (process.env.HOT) {
-  config.devtool = 'eval';
-  config.entry.bundle.unshift('react-native-webpack-server/hot/entry');
-  config.entry.bundle.unshift('webpack/hot/only-dev-server');
-  config.entry.bundle.unshift('webpack-dev-server/client?http://localhost:8082');
-  config.output.publicPath = 'http://localhost:8082/';
-  config.plugins.unshift(new webpack.HotModuleReplacementPlugin());
-
-  // Note: enabling React Transform and React Transform HMR:
-
-  config.module.loaders[0].query.plugins.push('react-transform');
-  config.module.loaders[0].query.extra = {
-    'react-transform': [{
-      target: 'react-transform-hmr',
-      imports: ['react-native'],
-      locals: ['module'],
-    }],
-  };
-}
 
 if (process.env.NODE_ENV === 'production') {
   config.devtool = false;

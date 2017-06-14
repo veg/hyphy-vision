@@ -77,7 +77,6 @@ var SLACGraphs = React.createClass({
 
 
             var thisRow   = [partitionIndex+1, site+1];
-                    //secondRow = doCI ? ['',''] : null;
                 siteCount++;
                 if (x_index < 0) {
                     x.push (siteCount);
@@ -90,12 +89,15 @@ var SLACGraphs = React.createClass({
 
 
         });
+
         partitionIndex++;
 
     }
 
+    debugger;
 
     return {x: x, y: y};
+
   },
 
   dm_xAxis : function (column) {

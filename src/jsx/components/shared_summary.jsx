@@ -210,7 +210,6 @@ const DatamonkeyTableRow = React.createClass({
                         }
 
                         if (this.state.header && this.props.sorter) {
-                          //console.log ("header + sorter", cell);
                           if (_.has (cell, "sortable")) {
                             cellProps ["onClick"] = _.partial ( this.props.sorter, index, this.dm_compareTwoValues_level2);
 
@@ -315,6 +314,10 @@ var DatamonkeyTable = React.createClass({
   },
 
   componentDidUpdate: function() {
+    $('[data-toggle="tooltip"]').tooltip();
+  },
+
+  componentDidUpdate : function() {
     $('[data-toggle="tooltip"]').tooltip();
   },
 
@@ -562,31 +565,26 @@ var DatamonkeyPartitionTable = React.createClass({
 
 var DatamonkeyModelTable = React.createClass({
 
-  /** render a model fit table from a JSON object with entries like this
-
-
-        "Global MG94xREV":{ // model name
-             "log likelihood":-5453.527975908821,
-             "parameters":131,
-             "AIC-c":11172.05569160427,
-             "rate distributions":{
-               "non-synonymous/synonymous rate ratio for *background*":[
-                [0.1701428265961598, 1]
-                ],
-               "non-synonymous/synonymous rate ratio for *test*":[
-                [0.1452686330406915, 1]
-                ]
-              },
-             "display order":0
-            }
-
-    dm_supportedColumns controls which keys from model specification will be consumed;
-        * 'value' is the cell specification to be consumed by DatamonkeyTableRow
-        * 'order' is the column order in the resulting table (relative; doesn't have to be sequential)
-        * 'display_format' is a formatting function for cell entries
-        * 'transform' is a data trasformation function for cell entries
-
-  */
+  // render a model fit table from a JSON object with entries like this
+  //     "Global MG94xREV":{  model name
+  //          "log likelihood":-5453.527975908821,
+  //          "parameters":131,
+  //          "AIC-c":11172.05569160427,
+  //          "rate distributions":{
+  //            "non-synonymous/synonymous rate ratio for *background*":[
+  //             [0.1701428265961598, 1]
+  //             ],
+  //            "non-synonymous/synonymous rate ratio for *test*":[
+  //             [0.1452686330406915, 1]
+  //             ]
+  //           },
+  //          "display order":0
+  //         }
+  // dm_supportedColumns controls which keys from model specification will be consumed;
+  //     * 'value' is the cell specification to be consumed by DatamonkeyTableRow
+  //     * 'order' is the column order in the resulting table (relative; doesn't have to be sequential)
+  //     * 'display_format' is a formatting function for cell entries
+  //     * 'transform' is a data trasformation function for cell entries
 
   dm_numberFormatter: d3.format(".2f"),
 
