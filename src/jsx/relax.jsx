@@ -254,10 +254,10 @@ var RELAX = React.createClass({
                   <ul className="list-group">
                       <li className="list-group-item list-group-item-info">
                           <h3 className="list-group-item-heading">
-                            <i className="fa fa-list" styleFormat='margin-right: 10px'></i>
+                            <i className="fa fa-list" style={{ marginRight : '10px'}} ></i>
                             <span id='summary-method-name'>RELAX(ed selection test)</span> summary
                           </h3>
-                          <p className="list-group-item-text lead" styleFormat="margin-top:0.5em; ">
+                          <p className="list-group-item-text lead" style={{marginTop:"0.5em"}} >
                             Test for selection <strong id='summary-direction'>{this.state.direction}</strong> 
                             (<abbr title="Relaxation coefficient">K</abbr> = <strong id='summary-K'>{this.state.summary_k}</strong>) was <strong id='summary-evidence'>{this.state.evidence}</strong> 
                             (p = <strong id='summary-pvalue'>{this.state.p}</strong>, <abbr title="Likelihood ratio statistic">LR</abbr> = <strong id='summary-LRT'>{this.state.lrt}</strong>)
