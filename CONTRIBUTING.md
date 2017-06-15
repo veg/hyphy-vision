@@ -10,3 +10,8 @@ While developing, use the command `webpack -w` to update `hyphy-vision.js` and
 When generating a new release, we follow [Semantic
 Versioning](http://semver.org/) and submit the latest releases to
 [npm](https://www.npmjs.com/package/hyphy-vision).
+
+## React recommendations
+
+- Method that return elements should have a name with Element suffix
+

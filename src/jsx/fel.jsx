@@ -97,41 +97,6 @@ var FEL = React.createClass({
 
     var self = this;
 
-    // 20170508 : We can probably abstract this out
-    //$("#datamonkey-absrel-json-file").on("change", function(e) {
-    //    var files = e.target.files; // FileList object
-    //    if (files.length == 1) {
-    //        var f = files[0];
-    //        var reader = new FileReader();
-    //        reader.onload = (function(theFile) {
-    //            return function(e) {
-    //              var data = JSON.parse(this.result);
-    //              data["fits"]["MG94"]["branch-annotations"] = self.formatBranchAnnotations(data, "MG94");
-    //              data["fits"]["Full model"]["branch-annotations"] = self.formatBranchAnnotations(data, "Full model");
-    //              var annotations = data["fits"]["Full model"]["branch-annotations"],
-    //                  json = data,
-    //                  pmid = data["PMID"],
-    //                  full_model = json["fits"]["Full model"],
-    //                  test_results = data["test results"],
-    //                  input_data = data["input_data"],
-    //                  fits = data["fits"];
-    //              self.setState({
-    //                annotations : annotations,
-    //                json : json,
-    //                pmid : pmid,
-    //                full_model : full_model,
-    //                test_results : test_results,
-    //                input_data : input_data,
-    //                fits : fits
-    //              });
-    //            };
-    //        })(f);
-    //        reader.readAsText(f);
-    //    }
-    //    $("#datamonkey-absrel-toggle-here").dropdown("toggle");
-    //    e.preventDefault();
-    //});
-
   },
 
   componentDidUpdate(prevProps, prevState) {
@@ -154,50 +119,49 @@ var FEL = React.createClass({
     var {x: x, y: y} = self.definePlotData(self.state.xLabel, self.state.yLabel);
 
     return (
-    <div>
-      <NavBar />
-      <div className='container-fluid'>
-        <div className="row">
-          <ScrollSpy info={scrollspy_info}/>
-          <div id="fel-results" className="col-sm-10">
-            <div id='datamonkey-fel-error' className="alert alert-danger alert-dismissible" role="alert" style={{display: "none"}}>
-              <button type="button" className="close" id='datamonkey-fel-error-hide'><span aria-hidden="true">&times;</span><span className="sr-only">Close</span></button>
-              <strong>Error!</strong> <span id='datamonkey-fel-error-text'></span>
-            </div>
+			<div>
+				<NavBar />
+				<div className='container-fluid'>
+					<div className="row">
+						<ScrollSpy info={scrollspy_info} />
+						<div id="fel-results" className="col-sm-10">
+							<div id='datamonkey-fel-error' className="alert alert-danger alert-dismissible" role="alert" style={{display: "none"}}>
+								<button type="button" className="close" id='datamonkey-fel-error-hide'><span aria-hidden="true">&times;</span><span className="sr-only">Close</span></button>
+								<strong>Error!</strong> <span id='datamonkey-fel-error-text'></span>
+							</div>
 
-            <h3 className="list-group-item-heading">
-                <span id="summary-method-name">FEL - Fixed Effects Likelihood - Results</span> 
-            </h3>
+							<h3 className="list-group-item-heading">
+								<span id="summary-method-name">FEL - Fixed Effects Likelihood - Results</span> 
+							</h3>
 
-            <div id="results">
+							<div id="results">
 
-              <div id="summary-tab" className="row hyphy-row">
-                <div className="main-result">
-                  <p className="list-group-item-text label_and_input">
-                     Evidence<sup>†</sup> of episodic diversifying selection was found on
-                     <span className="hyphy-highlight"><strong> {self.state.branches_with_evidence}</strong> out 
-                     of {self.state.test_branches}</span> tested branches ({self.state.total_branches} total branches).
-                  </p>
-                </div>
-              </div>
+								<div id="summary-tab" className="row hyphy-row">
+									<div className="main-result">
+										<p className="list-group-item-text label_and_input">
+											 Evidence<sup>†</sup> of episodic diversifying selection was found on
+											 <span className="hyphy-highlight"><strong> {self.state.branches_with_evidence}</strong> out 
+											 of {self.state.test_branches}</span> tested branches ({self.state.total_branches} total branches).
+										</p>
+									</div>
+								</div>
 
-              <div id="plot-tab" className="row hyphy-row">
-                <h3 className="dm-table-header">Plot Summary</h3>
-                <DatamonkeySeries x={x} y={y} marginLeft={50} width={$("#fel-results").width()} transitions={true} doDots={true}/>
-              </div>
+								<div id="plot-tab" className="row hyphy-row">
+									<h3 className="dm-table-header">Plot Summary</h3>
+									<DatamonkeySeries headers={_.map(self.state.mle_headers, function(d) { return d.value })} x={x} y={y} marginLeft={50} width={$("#fel-results").width()} transitions={true} doDots={true}/>
+								</div>
 
-              <div id="table-tab" className="row hyphy-row">
-                <div id="hyphy-mle-fits" className="col-md-12">
-                  <h3 className="dm-table-header">Table Summary</h3>
-                  <DatamonkeyTable headerData={self.state.mle_headers} bodyData={self.state.mle_content} classes = {"table table-condensed"}/>
-                </div>
-              </div>
-
-            </div>
-          </div>
-        </div>
-      </div>
-      </div>
+								<div id="table-tab" className="row hyphy-row">
+									<div id="hyphy-mle-fits" className="col-md-12">
+										<h3 className="dm-table-header">Table Summary</h3>
+										<DatamonkeyTable headerData={self.state.mle_headers} bodyData={self.state.mle_content} classes = {"table table-condensed"}/>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				</div>
       )
   }
 
