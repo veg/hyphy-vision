@@ -1,7 +1,7 @@
 var React = require('react');
 var datamonkey = require('../../datamonkey/datamonkey.js');
 
-import {DatamonkeyScatterplot,DatamonkeySeries} from "./shared_graph.jsx";
+import {DatamonkeyScatterplot,DatamonkeySeries} from "./graphs.jsx";
 
 
 var SLACGraphs = React.createClass({
@@ -35,9 +35,8 @@ var SLACGraphs = React.createClass({
   componentWillReceiveProps: function(nextProps) {
         this.setState (
            {
-
-                ambigOptions: this.dm_AmbigOptions (nextProps),
-                ambigHandling: nextProps.initialAmbigHandling,
+              ambigOptions: this.dm_AmbigOptions (nextProps),
+              ambigHandling: nextProps.initialAmbigHandling
            }
         );
   },
@@ -93,8 +92,6 @@ var SLACGraphs = React.createClass({
         partitionIndex++;
 
     }
-
-    debugger;
 
     return {x: x, y: y};
 

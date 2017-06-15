@@ -65,6 +65,12 @@ config = {
     { test: /\.ttf(\?v=\d+\.\d+\.\d+)?$/,  loader: 'url-loader', options : { limit: 10000, mimetype: 'application/octet-stream'}},
     { test: /\.eot(\?v=\d+\.\d+\.\d+)?$/, loaders: 'file-loader'},
     { test: /\.svg(\?v=\d+\.\d+\.\d+)?$/, loaders: 'url-loader', options : {limit:10000, mimetype:'image/svg+xml'}},
+		{
+			test: /\.(js|jsx)?$/,
+			exclude: /node_modules/,
+			loader: "eslint-loader",
+			options: {}
+		}
 		],
 
   },
