@@ -1,5 +1,4 @@
 var React = require("react");
-var datamonkey = require("../../datamonkey/datamonkey.js");
 var graphDefaultColorPallette = d3.scale.category10().domain(_.range(10));
 
 class BaseGraph extends React.Component {
@@ -12,8 +11,6 @@ class BaseGraph extends React.Component {
   }
 
   dimensionOptionElement(axis, value) {
-    var self = this;
-
     return (
       <li key={value}>
         <a href="#" tabIndex="-1" onClick={_.partial(axis, value)}>
@@ -102,9 +99,6 @@ class BaseGraph extends React.Component {
 
     self.doTransition(d3.select(dom_element)).call(xAxis);
 
-    if (label) {
-      var axis_label = dom_element.selectAll(".");
-    }
   }
 
   //TODO : See if this can be removed
@@ -291,8 +285,8 @@ BaseGraph.defaultProps = {
 class ScatterPlot extends BaseGraph {
   renderGraph(x_scale, y_scale, dom_element) {
     var self = this,
-      main_graph = d3.select(dom_element),
-      dot_classes = this.makeClasses("points");
+      main_graph = d3.select(dom_element);
+      //dot_classes = this.makeClasses("points");
 
     _.each(
       this.props.y,
