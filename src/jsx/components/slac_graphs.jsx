@@ -1,7 +1,7 @@
 var React = require('react');
 var datamonkey = require('../../datamonkey/datamonkey.js');
 
-import {DatamonkeyScatterplot,DatamonkeySeries} from "./shared_graph.jsx";
+import {DatamonkeyScatterplot,DatamonkeySeries} from "./graphs.jsx";
 
 
 var SLACGraphs = React.createClass({

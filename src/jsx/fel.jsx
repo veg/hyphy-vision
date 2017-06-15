@@ -6,7 +6,7 @@ var datamonkey = require('../datamonkey/datamonkey.js'),
 		busted = require('../busted/busted.js');
 
 import {DatamonkeyTable} from "./components/shared_summary.jsx";
-import {DatamonkeySeries} from "./components/shared_graph.jsx";
+import {DatamonkeySeries} from "./components/graphs.jsx";
 import {NavBar} from "./components/navbar.jsx";
 import {ScrollSpy} from "./components/scrollspy.jsx";
 
