@@ -99,7 +99,7 @@ const DatamonkeyTableRow = React.createClass({
 
   getInitialState: function() {
     return {
-      header: []
+      header: this.props.header
     }
   },
 
@@ -186,7 +186,7 @@ const DatamonkeyTableRow = React.createClass({
 
                         if (_.has (cell, "abbr")) {
                             value = (
-                                <span data-toggle="tooltip" data-placement="top" title={cell.abbr}>{value}</span>
+                                <span data-toggle="tooltip" data-placement="top" data-html="true" title={cell.abbr}>{value}</span>
                             );
                         }
 
@@ -272,6 +272,7 @@ var DatamonkeyTable = React.createClass({
       rowOrder: _.range(0, len),
       headerData: this.props.headerData,
       sortOn: this.props.initialSort ? [this.props.initialSort, true] : null,
+      current: 0
     };
   },
 
@@ -281,6 +282,48 @@ var DatamonkeyTable = React.createClass({
       rowOrder: _.range(0, nextProps.bodyData.length),
       headerData: nextProps.headerData
     });
+  },
+
+  regress: function(){
+    if(this.state.current >= this.props.paginate){
+      this.setState({
+        current: this.state.current-this.props.paginate
+      });
+    }else{
+      this.setState({
+        current:0
+      });
+    }
+  },
+
+  decrement: function(){
+    if(this.state.current > 0){
+      var new_current = this.state.current-1;
+      this.setState({
+        current: new_current
+      });
+    }
+  },
+
+  increment: function(){
+    if(this.state.current < this.state.rowOrder.length - this.props.paginate){
+      var new_current = this.state.current+1;
+      this.setState({
+        current: new_current
+      });
+    }
+  },
+
+  advance: function(){
+    if(this.state.current < this.state.rowOrder.length - 2*this.props.paginate){
+      this.setState({
+        current: this.state.current+this.props.paginate
+      });
+    }else{
+      this.setState({
+        current: this.state.rowOrder.length - this.props.paginate
+      });
+    }
   },
 
   dm_sortOnColumn: function(index, compare_function) {
@@ -323,50 +366,90 @@ var DatamonkeyTable = React.createClass({
 
   render: function() {
     const children = [];
-
-    var self = this;
-
+    var self = this,
+        paginatorControls,
+        rowIndices;
+    if (this.props.paginate){
+      paginatorControls = (<div>
+        <div className="col-md-9">
+          <p>Showing entries {this.state.current+1} through {this.state.current+this.props.paginate} out of {this.state.rowOrder.length}.</p>
+        </div>
+        <div className="col-md-3">
+          <div className="btn-group btn-group-justified" role="group" aria-label="...">
+            <div className="btn-group" role="group">
+              <button type="button" className="btn btn-default" onClick={self.regress} data-toggle="tooltip" title={"Move backwards " + this.props.paginate + " rows."}>
+                <span className="glyphicon glyphicon-backward" aria-hidden="true"></span>
+              </button>
+            </div>
+            <div className="btn-group" role="group">
+              <button type="button" className="btn btn-default" onClick={self.decrement} data-toggle="tooltip" title="Move backwards one row.">
+                <span className="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+              </button>
+            </div>
+            <div className="btn-group" role="group">
+              <button type="button" className="btn btn-default" onClick={self.increment} data-toggle="tooltip" title="Move forwards one row.">
+                <span className="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+              </button>
+            </div>
+            <div className="btn-group" role="group">
+              <button type="button" className="btn btn-default" onClick={self.advance} data-toggle="tooltip" title={"Move forwards " + this.props.paginate + " rows."}>
+                <span className="glyphicon glyphicon-forward" aria-hidden="true"></span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>);
+    }else{
+      paginatorControls = '';
+    }
+ 
     if (this.state.headerData) {
       // check if header will be multiple rows by checking if headerData is an array of arrays
       if (_.isArray(this.props.headerData[0])) {
         children.push(
           <thead key = {0}>
-                        {
-                            _.map (this.state.headerData, function (row, index) {
-                                return (
-                                    <DatamonkeyTableRow rowData={row} header={true} key={index} sorter={_.bind (self.dm_sortOnColumn, self)} sortOn = {self.state.sortOn}/>
-                                );
-                            })
-                        }
-                    </thead>
+            {
+              _.map (this.state.headerData, function (row, index) {
+                return (
+                  <DatamonkeyTableRow rowData={row} header={true} key={index} sorter={_.bind (self.dm_sortOnColumn, self)} sortOn = {self.state.sortOn}/>
+                );
+              })
+            }
+          </thead>
         );
       } else {
         children.push((
           <thead key = {0}>
-                        <DatamonkeyTableRow rowData={this.state.headerData} header={true} sorter={_.bind (self.dm_sortOnColumn, self)} sortOn = {self.state.sortOn}/>
-                    </thead>
+            <DatamonkeyTableRow rowData={this.state.headerData} header={true} sorter={_.bind (self.dm_sortOnColumn, self)} sortOn = {self.state.sortOn}/>
+          </thead>
         ));
       }
     }
-
-
-
+    if(this.props.paginate){
+      rowIndices = this.state.rowOrder.slice(this.state.current, this.state.current+this.props.paginate);
+    }else{
+      rowIndices = this.state.rowOrder;
+    }
     children.push(React.createElement("tbody", {
         key: 1
       },
-      _.map(this.state.rowOrder, _.bind(function(row_index) {
+      _.map(rowIndices, _.bind(function(row_index) {
         var componentData = this.props.bodyData[row_index];
 
         return (
           <DatamonkeyTableRow rowData={componentData} key={this.props.rowHash ? this.props.rowHash (componentData) : row_index} header={false}/>
         );
       }, this))));
+    //if (this.props.paginate){debugger;}
+    return (<div className="row">
+      {paginatorControls}
+      <div className="col-md-12">
+        <table className={this.props.classes}>
+          {children}
+        </table>
+      </div>
+    </div>);
 
-
-
-    return React.createElement("table", {
-      className: this.props.classes
-    }, children);
   }
 });
 

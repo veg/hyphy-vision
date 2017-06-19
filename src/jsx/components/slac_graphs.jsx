@@ -94,7 +94,6 @@ var SLACGraphs = React.createClass({
 
     }
 
-    debugger;
 
     return {x: x, y: y};
 
