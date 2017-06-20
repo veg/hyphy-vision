@@ -73,9 +73,6 @@ var SLACGraphs = React.createClass({
 
         _.each (self.props.partitionSites [partitionIndex].coverage[0], function (site, index) {
             var siteData = self.props.mle[partitionIndex][self.state.ambigHandling][index];
-
-
-            var thisRow   = [partitionIndex+1, site+1];
                 siteCount++;
                 if (x_index < 0) {
                     x.push (siteCount);
@@ -204,9 +201,6 @@ var SLACGraphs = React.createClass({
 
             </div>
         )
-
-        return null;
-
 
   }
 });

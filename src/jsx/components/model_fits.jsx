@@ -63,8 +63,7 @@ var ModelFits = React.createClass({
     omega_distributions[m] = {};
 
     var omega_format = d3.format(".3r"),
-        prop_format = d3.format(".2p"),
-        p_value_format = d3.format(".4f");
+        prop_format = d3.format(".2p");
 
 
     var distributions = [];
@@ -103,9 +102,6 @@ var ModelFits = React.createClass({
     }
 
     var table_row_data = [];
-    var omega_format = d3.format(".3r");
-    var prop_format = d3.format(".2p");
-    var p_value_format = d3.format(".4f");
 
     for (var m in json["fits"]) {
 
@@ -204,9 +200,6 @@ var ModelFits = React.createClass({
 
     // trim columns to length of table_row_data
     var column_headers = _.take(all_columns, table_row_data[0].length);
-
-    // remove all columns that have 0, null, or undefined rows
-    var items = d3.transpose(table_row_data);
 
     return column_headers;
   },

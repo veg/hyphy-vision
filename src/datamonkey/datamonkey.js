@@ -97,33 +97,6 @@ datamonkey.save_image = function(type, container) {
 
   }
 
-  var convert_svg_to_png = function(image_string) {
-
-    var image = document.getElementById("hyphy-chart-image");
-
-    image.onload = function() {
-
-      var canvas = document.getElementById("hyphy-chart-canvas");
-      canvas.width = image.width;
-      canvas.height = image.height;
-      var context = canvas.getContext("2d");
-      context.fillStyle = "#FFFFFF";
-      context.fillRect(0,0,image.width,image.height);
-      context.drawImage(image, 0, 0);
-      var img = canvas.toDataURL("image/png");
-      var pom = document.createElement('a');
-      pom.setAttribute('download', 'image.png');
-      pom.href = canvas.toDataURL("image/png");     
-      $("body").append(pom);
-      pom.click();
-      pom.remove();
-
-    };
-
-    image.src = image_string;
-
-  };
-
   var svg = $(container).find("svg")[0];
   if (!svg) {
     svg = $(container)[0];
@@ -155,7 +128,6 @@ datamonkey.save_image = function(type, container) {
   }
 
   var source = (new XMLSerializer()).serializeToString(svg).replace('</style>', '<![CDATA[' + styles + ']]></style>');
-  var rect = svg.getBoundingClientRect();
   var doctype = '<?xml version="1.0" standalone="no"?><!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">';
   var to_download = [doctype + source];
   var image_string = 'data:image/svg+xml;base66,' + encodeURIComponent(to_download);

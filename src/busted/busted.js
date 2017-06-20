@@ -66,8 +66,6 @@ function busted_render_summary(json) {
   }
   
   // render summary data
-  var total_tree_length = d3.format("g")(json["fits"]["Unconstrained model"]["tree length"]); 
-  
   for_branch_table = for_branch_table.sort (function (a,b) {return a[4]-b[4];});
 
   d3.select ('#summary-test-result').text (json['test results']['p'] <= 0.05 ? "evidence" : "no evidence");
@@ -164,8 +162,6 @@ function busted_render_histogram(c, json) {
 
   var erc = json["evidence ratios"]["constrained"][0];
   erc = erc.map(function(d) { return Math.log(d)})
-
-  var test_set = json["test set"].split(",");
   var model_results = [];
 
   erc.forEach(function(elem, i) { 

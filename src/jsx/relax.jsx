@@ -1,5 +1,4 @@
 import {ModelFits} from "./components/model_fits.jsx";
-import {TreeSummary} from "./components/tree_summary.jsx";
 import {Tree} from "./components/tree.jsx";
 import {OmegaPlotGrid} from "./components/omega_plots.jsx";
 
@@ -111,11 +110,6 @@ var RELAX = React.createClass({
   },
 
   getInitialState: function() {
-
-    var model_fits_id = "#hyphy-model-fits",
-        omega_plots_id = "#hyphy-omega-plots",
-        summary_id = "#hyphy-relax-summary",
-        tree_id = "#tree-tab";
 
     var tree_settings = {
         'omegaPlot': {},

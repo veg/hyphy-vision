@@ -15,24 +15,15 @@ var BSRELSummary = React.createClass({
   },
 
   getBranchesWithEvidence : function(test_results) {
-
-    var self = this;
     return _.filter(test_results, function(d) { return d.p <= 0.05 }).length;
-
   },
 
   getTestBranches : function(test_results) {
-
-    var self = this;
     return _.filter(test_results, function(d) { return d.tested > 0 }).length;
-
   },
 
   getTotalBranches : function(test_results) {
-
-    var self = this;
     return _.keys(test_results).length;
-
   },
 
   getInitialState: function() {

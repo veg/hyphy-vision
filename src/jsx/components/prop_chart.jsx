@@ -132,7 +132,6 @@ var PropChart = React.createClass({
   createOmegaLine: function(omegas) {
 
     var self = this;
-    var data_to_plot = this.data_to_plot;
 
     // generate color wheel from omegas
     self.colores_g = _.shuffle(["#1f77b4", "#ff7f0e", "#2ca02c", "#d62728", "#9467bd", "#8c564b", "#e377c2", "#7f7f7f", "#bcbd22", "#17becf"]);
@@ -179,13 +178,13 @@ var PropChart = React.createClass({
       .attr("y2", this.plot_height+20);
   
     // Legend
-    var legend_text = this.svg.append("g")
+    this.svg.append("g")
       .attr("transform", "translate(" + .9*this.plot_width + ", 25)")
       .append("text")
         .attr("font-size", 14)
         .text("Neutrality (ω=1)");
 
-    var legend_line = this.svg.append("g")
+    this.svg.append("g")
       .attr("transform", "translate(" + .825*this.plot_width + ", 20)")
       .append("line")
         .attr("class", "hyphy-neutral-line")

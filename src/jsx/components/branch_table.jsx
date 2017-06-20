@@ -86,11 +86,8 @@ var BranchTable = React.createClass({
   },
 
   getBranchRows: function(tree, test_results, annotations) {
-    var self = this;
 
-    var table_row_data = [],
-      omega_format = d3.format(".3r"),
-      prop_format = d3.format(".2p");
+    var table_row_data = [];
 
     for (var m in test_results) {
 
@@ -145,8 +142,6 @@ var BranchTable = React.createClass({
   },
 
   createDistroChart: function() {
-
-    var self = this;
 
     this.settings = {
       dimensions: {

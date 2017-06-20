@@ -46,8 +46,6 @@ var TreeSummary = React.createClass({
 
   getBranchLengthProportion : function(model, rate_classes, branch_annotations, total_branch_length) {
 
-    var self = this;
-
     // get branch lengths of each rate distribution
     //return prop_format(d[2] / total_tree_length
     if(_.has(model,"tree string")) {
@@ -81,8 +79,6 @@ var TreeSummary = React.createClass({
   },
 
   getSummaryRows : function(model, test_results) {
-
-    var self = this;
 
     if(!model || !test_results) {
       return [];

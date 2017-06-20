@@ -647,7 +647,7 @@ var DatamonkeyModelTable = React.createClass({
   },
 
   dm_extractFitsTable: function(jsonTable) {
-    var modelList = [];
+
     var columnMap = null;
     var columnMapIterator = [];
     var valueFormat = {};
@@ -784,7 +784,7 @@ var DatamonkeyTimersTable = React.createClass({
     });
 
     formattedRows = _.map(formattedRows, _.bind(function(row) {
-      var fraction = null;
+
       if (this.props.totalTime === null || this.props.totalTime != row[0]) {
         row[2] = {
           "value": row[1] / totalTime,

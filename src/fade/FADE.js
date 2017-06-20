@@ -1,13 +1,6 @@
 var datamonkey_fade = function(json) { 
   
-  var _colorizerB = d3.interpolateRgb  (d3.rgb(0,0,255),d3.rgb(255,255,255));
-  var _colorizerR = d3.interpolateRgb  (d3.rgb(255,255,255),d3.rgb(255,0,0));
   var _use_BF = false;
-
-  var fade_headers = [
-    ['Site','A','C','D','E','F','G','H','I','K','L','M','N','P','Q','R','S','T','V','W','Y'],
-    ['Site','Alanine','Cysteine','Aspartic acid','Glutamic acid','Phenylalanine','Glycine','Histidine','Isoleucine','Lysine','Leucine','Methionine', 'Asparagine','Proline','Glutamine','Arginine','Serine','Threonine','Valine', 'Tryptophan','Tyrosin']
-  ];
 
   var fade_results = json['results']["FADE"];
 
@@ -63,7 +56,6 @@ var datamonkey_fade = function(json) {
 
 
   var initial_display = function() {
-      //load_data_summary ("summary_div", data_summary);
       $('#filter_on_pvalue').trigger ('submit');
       plot_property_graphs("property_plot_svg",fade_results); //Using a matrix from html
   };
@@ -268,7 +260,7 @@ var datamonkey_fade = function(json) {
                 .style("text-anchor", "start")
                 .text("Low Posteriors");  
 
-          var legend = svg.selectAll(".legend")
+          svg.selectAll(".legend")
                 .data(color.domain())
               .enter().append("g")
                 .attr("class", "legend")
@@ -322,37 +314,6 @@ var datamonkey_fade = function(json) {
           
   };
 
-  var load_data_summary = function(id, json_object) {
-      //if (error) return console.warn(error);
-      reportable_entries = [];
-      warnings = [];
-      for (var k in json_object) {
-          if (k == 'Warnings') {
-              warnings = json_object[k];
-          } else {
-              reportable_entries.push ({"Phase": k, "Information": json_object[k]});
-          }
-      }
-      info_container = d3.select ("#" + id);
-      items = info_container.selectAll("dt").data(reportable_entries);
-      items.enter().append("dt").text (function (d) {return d["Phase"]});
-      item_count = items[0].length;
-      current_child = 2;
-      for (z = 1; z <= item_count; z++) { 
-          info = dict_to_array(reportable_entries[z-1]["Information"]);
-          for (y = 0; y < info.length; y++) {
-              info_container.insert ("dd",":nth-child("+current_child+")").data([info[y]]).text (function (d) {return d;});
-          }
-          key = reportable_entries[z-1]["Phase"];
-          if (key in warnings) {
-              current_child++;
-              info_container.insert ("dd",":nth-child("+current_child+")").selectAll("div").data([warnings[key]]).enter().append("div").classed("alert",true).html (function (d) {return d;})
-          }
-          current_child += info.length+1;
-      }
-      return 0;
-  };
-      
   var load_analysis_results = function (id, headers, matrix, column_selector, condition) {    
       var header_element = d3.select ('#' + id).select("thead");
       header_element.selectAll("th").remove();
@@ -384,31 +345,6 @@ var datamonkey_fade = function(json) {
       d3.select ('#' + id).classed ("table-striped table-hover", true);
       $('a').tooltip(); 
       return [filtered_matrix.length, conserved];
-  };
-
-
-  var numberToColor = function(value) {
-      if (typeof (value) == "string") {
-          return "rgba (1,0,0,1)";
-      }
-      rate_value = Math.min(20,Math.max(-20,Math.log (value)/Math.LN20));
-      if (rate_value < 0) {
-          return _colorizerB ((20+rate_value)/20.0);
-      }
-      return _colorizerR ((rate_value)/20.0);
-  };
-
-  var fgColor = function(value, normalizer) {
-      if (typeof (value) == "string") {
-          return "rgba (1,1,1,1)";
-      }
-      
-      var score = 1-Math.exp(-20*value/normalizer);
-      
-      if (score > 0.45) {
-          return "white";
-      }
-      return "black";
   };
 
   set_handlers('test');

@@ -6,7 +6,6 @@ var React = require('react'),
 
 import {Tree} from "./components/tree.jsx";
 import {ModelFits} from "./components/model_fits.jsx";
-import {TreeSummary} from "./components/tree_summary.jsx";
 import {PropChart} from './components/prop_chart.jsx';
 import {BUSTEDSummary} from './components/busted_summary.jsx';
 import {NavBar} from "./components/navbar.jsx";
@@ -145,8 +144,7 @@ var BUSTED = React.createClass({
     var self = this;
 
     $("#json-file").on("change", function(e) {
-      console.log('inside');
-      debugger;
+
         var files = e.target.files; // FileList object
         if (files.length == 1) {
 
@@ -231,17 +229,6 @@ var BUSTED = React.createClass({
 
     // delete existing tree
     d3.select('#tree_container').select("svg").remove();
-
-    var fg_rate = json["fits"]["Unconstrained model"]["rate distributions"]["FG"],
-        omegas  = fg_rate.map(function (r) {return r[0];}),
-        weights = fg_rate.map(function (r) {return r[1];});
-
-    var dsettings = { 
-      'log'       : true,
-      'legend'    : false,
-      'domain'    : [0.00001, 20],
-      'dimensions': {'width' : 325, 'height' : 300}
-    }
 
     $("#export-dist-svg").on('click', function(e) { 
       datamonkey.save_image("svg", "#primary-omega-dist"); 

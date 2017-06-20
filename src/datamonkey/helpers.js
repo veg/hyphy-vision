@@ -55,8 +55,6 @@ function datamonkey_convert_svg_to_png(image_string) {
     context.fillStyle = "#FFFFFF";
     context.fillRect(0,0,image.width,image.height);
     context.drawImage(image, 0, 0);
-    var img = canvas.toDataURL("image/png");
-
     var pom = document.createElement('a');
     pom.setAttribute('download', 'phylotree.png');
     pom.href = canvas.toDataURL("image/png");
@@ -74,7 +72,6 @@ function datamonkey_save_newick_tree(type) {
     svg: "http://www.w3.org/2000/svg"
   }
 
-  var tree_container = "#tree_container";
   var svg = $("#tree_container").find("svg")[0];
   var styles = datamonkey_get_styles(window.document);
 
@@ -102,7 +99,6 @@ function datamonkey_save_newick_tree(type) {
   }
 
   var source = (new XMLSerializer()).serializeToString(svg).replace('</style>', '<![CDATA[' + styles + ']]></style>');
-  var rect = svg.getBoundingClientRect();
   var doctype = '<?xml version="1.0" standalone="no"?><!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">';
   var to_download = [doctype + source]
   var image_string = 'data:image/svg+xml;base66,' + encodeURIComponent(to_download);
@@ -133,7 +129,7 @@ function datamonkey_validate_email(email) {
       $(this).removeClass('has-error');
       $(this).removeClass('has-success');
       $(this).addClass('has-error');
-      var span = jQuery('<span/>', {
+      jQuery('<span/>', {
             class: 'help-block col-lg-9 pull-right',
             text : 'Invalid Email'
         }).insertAfter($(this));

@@ -1,9 +1,6 @@
 var React = require('react'),
-		ReactDOM = require('react-dom');
-
-var datamonkey = require('../datamonkey/datamonkey.js'),
-    _ = require('underscore'),
-		busted = require('../busted/busted.js');
+		ReactDOM = require('react-dom'),
+    _ = require('underscore');
 
 require("phylotree");
 require("phylotree.css");
@@ -68,9 +65,7 @@ var BSREL = React.createClass({
 
         var scaling_exponent = 1.0/3,
             omega_format = d3.format(".3r"),
-            prop_format = d3.format(".2p"),
-            fit_format = d3.format(".2f"),
-            p_value_format = d3.format(".4f");
+            prop_format = d3.format(".2p");
 
         self.omega_color = d3.scale.pow().exponent(scaling_exponent)
             .domain([0, 0.25, 1, 5, 10])
@@ -124,9 +119,7 @@ var BSREL = React.createClass({
 
         var annotations = data.target.annotations,
             alpha_level = 0.05,
-            tooltip = "<b>" + data.target.name + "</b>",
-            reference_omega_weight =  prop_format(0),
-            distro = '';
+            tooltip = "<b>" + data.target.name + "</b>";
 
         if (annotations) {
 
@@ -301,14 +294,6 @@ var BSREL = React.createClass({
 
   },
 
-  initialize : function() {
-
-    var model_fits_id = "#hyphy-model-fits",
-        omega_plots_id = "#hyphy-omega-plots",
-        tree_id = "#tree-tab";
-
-  },
-  
   componentDidUpdate(prevProps, prevState) {
     $('body').scrollspy({
       target: '.bs-docs-sidebar',

@@ -185,7 +185,6 @@ var Tree = React.createClass({
         scale_bar.selectAll("text")
             .style("text-anchor", "right");
 
-				var _label = '';
         var x_label = _label = scale_bar.append("g").attr("class", "hyphy-omega-bar");
         x_label = x_label.selectAll("text").data([attr_name]);
         x_label.enter().append("text");
@@ -399,8 +398,6 @@ var Tree = React.createClass({
 
   initialize : function() {
 
-    var self = this;
-
     this.settings = this.state.settings;
 
     if(!this.settings) {
@@ -418,9 +415,6 @@ var Tree = React.createClass({
     this.prop_format = d3.format(".2p");
     this.fit_format = d3.format(".2f");
     this.p_value_format = d3.format(".4f");
-
-    var json =  this.state.json;
-    var analysis_data = json;
 
     this.width = 800;
     this.height = 600;
@@ -442,9 +436,7 @@ var Tree = React.createClass({
     var analysis_data = self.state.json;
 
     var width = this.width,
-        height = this.height,
-        alpha_level = 0.05,
-        branch_lengths = [];
+        height = this.height;
 
     if(!this.tree) {
       this.tree = d3.layout.phylotree("body")
