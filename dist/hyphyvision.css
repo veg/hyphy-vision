@@ -4,6 +4,12 @@
  * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
  */
 /*! normalize.css v3.0.3 | MIT License | github.com/necolas/normalize.css */
+
+
+@import url('https://fonts.googleapis.com/css?family=Montserrat:100,100i,200,200i,300,300i,400,400i,500,500i,600,600i,700,700i,800,800i,900,900i|Noto+Sans:400,400i,700,700i');
+
+
+
 html {
   font-family: sans-serif;
   -webkit-text-size-adjust: 100%;
@@ -269,11 +275,12 @@ th {
 .glyphicon {
   position: relative;
   top: 1px;
+  right: 10px;
   display: inline-block;
   font-family: 'Glyphicons Halflings';
   font-style: normal;
   font-weight: normal;
-  line-height: 1;
+  line-height: 1.1;
 
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -1078,15 +1085,15 @@ th {
 }
 html {
   font-size: 10px;
-
+  margin-bottom: 350px;
   -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
 }
 body {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-size: 14px;
-  line-height: 1.42857143;
-  color: #333;
-  background-color: #fff;
+  line-height: 1.5;
+  color: #555;
+  background-color: #f9fafb;
 }
 input,
 button,
@@ -1097,12 +1104,12 @@ textarea {
   line-height: inherit;
 }
 a {
-  color: #337ab7;
+  color: #555;
   text-decoration: none;
 }
 a:hover,
 a:focus {
-  color: #23527c;
+  color: #00a99d;
   text-decoration: underline;
 }
 a:focus {
@@ -1245,8 +1252,8 @@ h5,
 .h5,
 h6,
 .h6 {
-  margin-top: 10px;
-  margin-bottom: 10px;
+  margin-top: 25px;
+  margin-bottom: 0px;
 }
 h4 small,
 .h4 small,
@@ -1302,7 +1309,7 @@ p {
 }
 small,
 .small {
-  font-size: 85%;
+  font-size: 80%;
 }
 mark,
 .mark {
@@ -1600,6 +1607,7 @@ pre code {
 @media (min-width: 1200px) {
   .container {
     width: 1170px;
+    height: 70px;
   }
 }
 .container-fluid {
@@ -2274,11 +2282,10 @@ th {
   padding: 8px;
   line-height: 1.42857143;
   vertical-align: top;
-  border-top: 1px solid #ddd;
 }
 .table > thead > tr > th {
   vertical-align: bottom;
-  border-bottom: 2px solid #ddd;
+  border-bottom: 2px solid #a1c6b3;
 }
 .table > caption + thead > tr:first-child > th,
 .table > colgroup + thead > tr:first-child > th,
@@ -2300,7 +2307,8 @@ th {
 .table-condensed > thead > tr > td,
 .table-condensed > tbody > tr > td,
 .table-condensed > tfoot > tr > td {
-  padding: 5px;
+  padding: 10px;
+  text-align: center;
 }
 .table-bordered {
   border: 1px solid #ddd;
@@ -2321,7 +2329,7 @@ th {
   background-color: #f9f9f9;
 }
 .table-hover > tbody > tr:hover {
-  background-color: #f5f5f5;
+  background-color: #bfbfbf;
 }
 table col[class*="col-"] {
   position: static;
@@ -3002,12 +3010,15 @@ select[multiple].input-lg {
 }
 .btn {
   display: inline-block;
-  padding: 6px 12px;
+  padding: 0px 24px;
   margin-bottom: 0;
-  font-size: 14px;
+  font-family: "Montserrat", sans-serif;
+  font-size: 13.5px;
   font-weight: normal;
-  line-height: 1.42857143;
   text-align: center;
+  height: 38px;
+  letter-spacing: 0.25px;
+  font-weight: 500;
   white-space: nowrap;
   vertical-align: middle;
   -ms-touch-action: manipulation;
@@ -3018,8 +3029,7 @@ select[multiple].input-lg {
       -ms-user-select: none;
           user-select: none;
   background-image: none;
-  border: 1px solid transparent;
-  border-radius: 4px;
+  border: none;
 }
 .btn:focus,
 .btn:active:focus,
@@ -3115,26 +3125,22 @@ fieldset[disabled] .btn-default.focus {
 }
 .btn-primary {
   color: #fff;
-  background-color: #337ab7;
-  border-color: #2e6da4;
+  background-color: #00a99d;
 }
 .btn-primary:focus,
 .btn-primary.focus {
   color: #fff;
-  background-color: #286090;
-  border-color: #122b40;
+  background-color: #038c7f;
 }
 .btn-primary:hover {
   color: #fff;
-  background-color: #286090;
-  border-color: #204d74;
+  background-color: #038c7f;
 }
 .btn-primary:active,
 .btn-primary.active,
 .open > .dropdown-toggle.btn-primary {
   color: #fff;
-  background-color: #286090;
-  border-color: #204d74;
+  background-color: #038c7f;
 }
 .btn-primary:active:hover,
 .btn-primary.active:hover,
@@ -3146,8 +3152,7 @@ fieldset[disabled] .btn-default.focus {
 .btn-primary.active.focus,
 .open > .dropdown-toggle.btn-primary.focus {
   color: #fff;
-  background-color: #204d74;
-  border-color: #122b40;
+  background-color: #038c7f;
 }
 .btn-primary:active,
 .btn-primary.active,
@@ -3163,11 +3168,10 @@ fieldset[disabled] .btn-primary:focus,
 .btn-primary.disabled.focus,
 .btn-primary[disabled].focus,
 fieldset[disabled] .btn-primary.focus {
-  background-color: #337ab7;
-  border-color: #2e6da4;
+  background-color: #038c7f;
 }
 .btn-primary .badge {
-  color: #337ab7;
+  color: #038c7f;
   background-color: #fff;
 }
 .btn-success {
@@ -3510,16 +3514,25 @@ tbody.collapse.in {
   border-right: 4px solid transparent;
   border-left: 4px solid transparent;
 }
+
+.dropdown::before {
+  content: "";
+  height: 68px;
+  display: inline-block;
+  vertical-align: middle;
+}
+
 .dropup,
 .dropdown {
   position: relative;
+  float: right;
 }
 .dropdown-toggle:focus {
   outline: 0;
 }
 .dropdown-menu {
   position: absolute;
-  top: 100%;
+  top: 75%;
   left: 0;
   z-index: 1000;
   display: none;
@@ -3535,7 +3548,6 @@ tbody.collapse.in {
           background-clip: padding-box;
   border: 1px solid #ccc;
   border: 1px solid rgba(0, 0, 0, .15);
-  border-radius: 4px;
   -webkit-box-shadow: 0 6px 12px rgba(0, 0, 0, .175);
           box-shadow: 0 6px 12px rgba(0, 0, 0, .175);
 }
@@ -3553,9 +3565,11 @@ tbody.collapse.in {
   display: block;
   padding: 3px 20px;
   clear: both;
-  font-weight: normal;
+  font-family: "Montserrat", sans-serif;
+  font-weight: 500;
+  font-size: 13.5px;
   line-height: 1.42857143;
-  color: #333;
+  color: #444;
   white-space: nowrap;
 }
 .dropdown-menu > li > a:hover,
@@ -3983,8 +3997,16 @@ select[multiple].input-group-sm > .input-group-btn > .btn {
 .nav > li > a {
   position: relative;
   display: block;
-  padding: 10px 15px;
+  padding: 10px 25px;
 }
+
+.nav-stacked > li > a {
+  position: relative;
+  display: block;
+  padding: 7px 50px 7px 25px;
+}
+
+
 .nav > li > a:hover,
 .nav > li > a:focus {
   text-decoration: none;
@@ -4088,7 +4110,6 @@ select[multiple].input-group-sm > .input-group-btn > .btn {
   float: left;
 }
 .nav-pills > li > a {
-  border-radius: 4px;
 }
 .nav-pills > li + li {
   margin-left: 2px;
@@ -4103,8 +4124,7 @@ select[multiple].input-group-sm > .input-group-btn > .btn {
   float: none;
 }
 .nav-stacked > li + li {
-  margin-top: 2px;
-  margin-left: 0;
+  margin: 0;
 }
 .nav-justified {
   width: 100%;
@@ -4166,7 +4186,6 @@ select[multiple].input-group-sm > .input-group-btn > .btn {
 .navbar {
   position: relative;
   min-height: 50px;
-  margin-bottom: 20px;
   border: 1px solid transparent;
 }
 @media (min-width: 768px) {
@@ -4352,8 +4371,16 @@ select[multiple].input-group-sm > .input-group-btn > .btn {
   }
 }
 @media (min-width: 768px) {
+  
+  .navbar-nav::before {
+    content: "";
+    display: inline-block !important;
+    vertical-align: middle;
+    height: 68px;
+  }
+  
   .navbar-nav {
-    float: left;
+    float: right;
     margin: 0;
   }
   .navbar-nav > li {
@@ -4486,15 +4513,15 @@ select[multiple].input-group-sm > .input-group-btn > .btn {
   }
   .navbar-right {
     float: right !important;
-    margin-right: -15px;
   }
   .navbar-right ~ .navbar-right {
     margin-right: 0;
   }
 }
 .navbar-default {
-  background-color: #f8f8f8;
-  border-color: #e7e7e7;
+  background-color: #fff;
+  border-bottom: 2px solid #00a99d;
+  height: 70px;
 }
 .navbar-default .navbar-brand {
   color: #777;
@@ -5440,8 +5467,8 @@ button.list-group-item-danger.active:focus {
   border-color: #a94442;
 }
 .list-group-item-heading {
-  margin-top: 0;
-  margin-bottom: 5px;
+  margin-top: 69px;
+  margin-bottom: 15px;
 }
 .list-group-item-text {
   margin-bottom: 0;
@@ -9116,7 +9143,7 @@ button.close {
     opacity: 1;
 }
 
-/* aBSRESL */
+/* aBSREL */
 .hyphy-omega-bar line, .hyphy-omega-bar path {
     fill: none;
     stroke: #000;
@@ -9209,10 +9236,10 @@ button.close {
 }
 
 #hyphy-logo {
-  width: 50px;
+  width: 250px;
   height: 50px;
   float: left;
-  margin-right: 15px;
+  margin-top: 8px;
 }
 
 .logo {
@@ -9248,11 +9275,14 @@ button.close {
 }
 
 .dm-table-header {
+    background-color: #00a99d;
     background: linear-gradient(to right,#03AA9D,#7EC6B3);
     color: #FFF;
     text-align: center;
-    padding: 5px 5px 5px 5px;
-    font-family: "Noto Sans";
+    padding: 12px 5px 13px 5px;
+    font-family: "Noto Sans", sans-serif;
+    font-size: 15px;
+    font-weight: 600;
 }
 
 .popover {
@@ -9261,6 +9291,7 @@ button.close {
 
 table.dm-table > thead > tr > th,
 table.dm-table > thead > th {
+    font-family: "Noto Sans", sans-serif;
     color: #00a99d;
 }
 
@@ -9277,11 +9308,10 @@ div.main-result a {
 }
 
 #input-info {
-    line-height: .5;
-    text-align: center;
-    border: 5px solid;
-    border-image: linear-gradient(to right, #03AA9D, #7EC6B3) 10;
-    padding: 10px;
+    line-height: 0;
+    padding: 18px 20px 24px 23px;
+    font-family: "Montserrat", sans-serif;
+    font-weight: 500;
 }
 
 div#input-info span {
@@ -9296,35 +9326,36 @@ div#input-info p {
 }
 
 .main-result{
-  background-color: #EEE;
+  background-color: #fff;
   border-style: solid;
-  border-radius: 5px;
-  border-width: 2px;
+  border-width: 3px;
   border-color: #00A99D;
-  padding: 10px 10px 10px 10px;
+  padding: 20px 20px 10px 20px;
 }
 
 div.main-result p {
   font-family: "Noto Sans";
   color: #545454;
-  font-size: 15px;
+  font-size: 17px;
 }
 
 div.main-result hr {
-  border-top: 1px solid #AAA;
+  border-top: 2px solid #a1c6b3;
   margin-top: 10px;
   margin-bottom: 10px;
 }
 
 tbody > tr {
-  background-color: #EEE;
+  background-color: #dddedf;
 }
 
 p.description {
   font-family: "Noto Sans";
-  line-height: 168%;
+  line-height: 1.5;
   font-size: 15px;
   color: #545454;
+  padding: 0px 20px;
+  margin: 0px 0px 20px 0px;
 }
 
 .v-align {
@@ -9340,39 +9371,56 @@ p.description {
 /* Bootstrap-docs scroll spy */
 /* sidebar */
 .bs-docs-sidebar {
-  padding-left: 20px;
-  margin-top: 20px;
-  margin-bottom: 20px;
+
 }
 /* all links */
 .bs-docs-sidebar .nav>li>a {
-  color: #999;
-  border-left: 2px solid transparent;
-  padding: 4px 20px;
-  font-size: 13px;
-  font-weight: 400;
+  font-family: "Montserrat", sans-serif;
+  font-size: 15px;
+  font-weight: 500;
+  color: #777;
+  letter-spacing: 0.75px;
+  border-right: 3px solid #ccc;
 }
 /* nested links */
 .bs-docs-sidebar .nav .nav>li>a {
   padding-top: 1px;
   padding-bottom: 1px;
   padding-left: 30px;
-  font-size: 12px;
+  font-family: "Montserrat", sans-serif;
+  font-size: 15px;
 }
+
+
 /* active & hover links */
 .bs-docs-sidebar .nav>.active>a,
 .bs-docs-sidebar .nav>li>a:hover,
 .bs-docs-sidebar .nav>li>a:focus {
+  font-family: "Montserrat", sans-serif;
+  font-size: 15px;
   color: #00a99d;
   text-decoration: none;
   background-color: transparent;
-  border-left-color: #00a99d;
+  border-right-color: #00a99d;
 }
+
+.bs-docs-sidebar .nav>li>a:hover {
+  font-family: "Montserrat", sans-serif;
+  font-size: 15px;
+  color: #00a99d;
+  text-decoration: none;
+  background-color: transparent;
+  border-right-color: #aaa;
+}
+
+
 /* all active links */
 .bs-docs-sidebar .nav>.active>a,
 .bs-docs-sidebar .nav>.active:hover>a,
 .bs-docs-sidebar .nav>.active:focus>a {
-  font-weight: 700;
+  font-family: "Montserrat", sans-serif;
+  font-size: 15px;
+  font-weight: 500;
 }
 /* nested active links */
 .bs-docs-sidebar .nav .nav>.active>a,
@@ -9394,6 +9442,10 @@ p.description {
 .bs-docs-example {
   margin-top : 20px;
   margin-bottom : 20px;
+}
+
+.hyphy-row {
+  margin-top: 20px;
 }
 
 @media print {
@@ -9497,8 +9549,7 @@ p.description {
     display:none;
   }
       
-}
-.axis path,
+}.axis path,
 .axis line {
   fill: none;
   stroke: #000;
@@ -9712,5 +9763,95 @@ stroke: #CCC;
 }
 
 .tree-widget {
+  text-align: center;
 }
-/*# sourceMappingURL=hyphyvision.css.map*/
+
+
+
+
+
+.summary-method-name {
+  font-family: "Montserrat", sans-serif;
+  font-size: 21px;
+  color: #00a99d;
+}
+.results-summary {
+  font-family: "Montserrat", sans-serif;
+  font-size: 48px;
+  color: #00a99d;
+  font-weight: 600;
+  line-height: 1;
+}
+.nav-stacked {
+  padding-top: 45px;
+}
+a:hover {
+  transition: ease-in-out 175ms; 
+}
+
+li.active > a:hover {
+  border-right: 3px solid #00a99d !important;
+}
+
+#tree-tab {
+  margin-bottom: 20px;
+}
+
+#summary-tab {
+  margin-top: -20px;
+}
+
+
+
+g > text {
+  font-family: "Noto Sans", sans-serif;
+  font-size: 15px !important;
+  font-weight: 600;
+  color: #545454 !important;
+}
+
+
+
+.nav-button {
+  display: inline-block;
+  padding: 0px 24px;
+  height: 38px;
+  margin-left: 7px;
+  background-color: transparent;
+  font-family: "Montserrat", sans-serif;
+  font-size: 13.5px;
+  font-weight: 500;
+  line-height: 38px;
+  vertical-align: middle;
+  letter-spacing: 0.25px;
+  color: #00a99d;
+  box-sizing: border-box;
+  border: 1px solid #27c1a7;
+}
+
+.nav-button:active,
+.nav-button:focus,
+.nav-button:hover {
+  background-color: #00a99d;
+  text-decoration: none;
+  color: #fff;
+  border: 1px solid transparent;
+}
+
+/*
+.nav-button::before {
+  content: "";
+  display: inline-block;
+  vertical-align: middle;
+  background-color: transparent;
+}
+*/
+
+
+
+.divider {
+  font-size: 21px;
+  padding: 0px 10px;
+  color: #91cec2;
+  vertical-align: sub;
+}
