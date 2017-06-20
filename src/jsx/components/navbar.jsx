@@ -16,26 +16,36 @@ var Hamburger = React.createClass({
 var Methods = React.createClass({
   render: function(){
     return (
-      <ul className="nav nav-pills navbar-right" id='navigation_buttons'>
-        <li className="active">
-          <a href="#" role="tab">absrel</a>
-        </li>
-        <li>
-          <a href="../relax" role="tab">relax</a>
-        </li>
-        <li>
-          <a href="../busted" role="tab">busted</a>
-        </li>
-        <li>
-          <a href="../fade" role="tab">fade</a>
-        </li>
-        <li>
-          <a href="../slac" role="tab">slac</a>
-        </li>
-      </ul>
+    
+      <div className="dropdown">
+        <button className="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Tools
+        <span className="caret"></span></button>
+        <ul className="dropdown-menu">
+          <li><a href="#">aBSREL</a></li>
+          <li><a href="../relax">RELAX</a></li>
+          <li><a href="../busted">BUSTED</a></li>
+          <li><a href="../fade">FADE</a></li>
+          <li><a href="../slac">SLAC</a></li>
+        </ul>
+      </div>
+      
     )
   }
 });
+
+
+<div className="dropdown">
+  <button className="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Dropdown Example
+  <span className="caret"></span></button>
+  <ul className="dropdown-menu">
+    <li><a href="#">HTML</a></li>
+    <li><a href="#">CSS</a></li>
+    <li><a href="#">JavaScript</a></li>
+  </ul>
+</div>
+
+
+
 
 var NavBar = React.createClass({
   componentDidMount: function() {
@@ -48,37 +58,29 @@ var NavBar = React.createClass({
   render: function(){
     return (
       <nav className="navbar navbar-default navbar-fixed-top" role="navigation">
-        <div className="container-fluid">
+        <div className="container">
           <div className="row">
-
-            <div className="col-sm-1"></div>
-
-            <div className="col-sm-10">
+          
+            <div className="col-sm-12">
               <a href='#'><img id="hyphy-logo" src="../../images/hyphy-logo.svg" /></a>
               <div className="navbar-header">
                 <Hamburger />
-                <a className="navbar-brand logo" href="#">HYPHY VISION</a>
               </div>
 
               <div className="collapse navbar-collapse" id="navbar-collapse-1">
 
+
                 <ul className="nav navbar-nav">
-                  <li className="dropdown">
-                    <a href="#" className="dropdown-toggle" id="datamonkey-absrel-toggle-here" data-toggle="dropdown">Load file<b className="caret"></b></a>
-                    <ul className="dropdown-menu">
-                      <li>
-                        <input type="file" id="datamonkey-absrel-json-file" />
-                      </li>
-                    </ul>
-                  </li>
+                  <a href="#" className="nav-button" role="button">Load</a>
+                  <a href="#" className="nav-button" role="button">Export</a>
                 </ul>
+
 
               <Methods />
                 
               </div>
             </div>
 
-            <div className="col-sm-1"></div>
 
           </div>
         </div>

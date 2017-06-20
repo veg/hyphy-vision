@@ -240,7 +240,7 @@ var BranchTable = React.createClass({
 
     return (
       <div className="row">
-        <div id="hyphy-branch-table" className="col-md-6">
+        <div id="hyphy-branch-table" className="col-md-12">
           <h4 className="dm-table-header">
             Detailed results
             <span className="glyphicon glyphicon-info-sign" style={{"verticalAlign": "middle", "float":"right"}} aria-hidden="true" data-toggle="popover" data-trigger="hover" title="Detailed results" data-html="true" data-content="<ul><li><strong>Bolded rows</strong> correspond to positively-selected branches at P ≤ 0.05.</li><li>Click on a row to visualize its inferred rate distribution.</li><li>Hover over a column header for a description of its content.</li></ul>" data-placement="bottom"></span>
@@ -259,7 +259,7 @@ var BranchTable = React.createClass({
             <tbody id="table-branch-table"></tbody>
           </table>
         </div>
-        <div id='primary-omega-tag' className="col-md-6">
+        <div id='primary-omega-tag' className="col-md-6 hidden">
           <h4 className="dm-table-header">&omega; distribution</h4>
           <PropChart name={ self.state.current_model_name } omegas={ self.state.current_omegas } settings={ self.state.distro_settings } />
         </div>

@@ -330,7 +330,7 @@ var BSREL = React.createClass({
     return (
       <div>
         <NavBar />
-        <div className='container-fluid'>
+        <div className='container'>
 
           <div className="row">
             
@@ -375,7 +375,6 @@ var BSREL = React.createClass({
 
               </div>
             </div>
-            <div className="col-sm-1"></div>
           </div>
 
         </div>
