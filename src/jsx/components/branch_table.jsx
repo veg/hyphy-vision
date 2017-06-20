@@ -43,8 +43,9 @@ var BranchTable = React.createClass({
   },
 
   getBranchLength: function(m, tree) {
-
-    return d3.format(".4f")(tree.get_node_by_name(m).attribute);
+    if(tree.get_node_by_name(m))
+      return d3.format(".4f")(tree.get_node_by_name(m).attribute);
+    return '';
   },
 
   getLRT: function(branch) {
