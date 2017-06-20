@@ -324,12 +324,12 @@ var BUSTED = React.createClass({
                 <div className="col-lg-12">
                   <form id="er-thresholds">
                     <div className="form-group">
-                      <label for="er-constrained-threshold">Constrained Evidence Ratio Threshold:</label>
+                      <label htmlFor="er-constrained-threshold">Constrained Evidence Ratio Threshold:</label>
                       <input type="text" className="form-control" id="er-constrained-threshold" defaultValue={this.props.constrained_threshold}>
                       </input>
                     </div>
                     <div className="form-group">
-                      <label for="er-optimized-null-threshold">Optimized Null Evidence Ratio Threshold:</label>
+                      <label htmlFor="er-optimized-null-threshold">Optimized Null Evidence Ratio Threshold:</label>
                       <input type="text" className="form-control" id="er-optimized-null-threshold" defaultValue={this.props.null_threshold}>
                       </input>
                     </div>

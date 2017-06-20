@@ -121,12 +121,6 @@ var PropChart = React.createClass({
     this.createYAxis();
     this.setEvents();
     this.createOmegaLine(this.state.omegas);
-    console.log('initialized everything');
-    //_.map(this.props.omegas, function(d) { return this.createOmegaLine(d["omega"],d["prop"]); });
-
-    console.log(this.svg);
-
-
   },
 
   createOmegaLine: function(omegas) {
@@ -311,7 +305,7 @@ var PropChart = React.createClass({
           </div>
         </div>
         <div className="row">
-          <div className="panel-body col-md-12" style={{"text-align":"center"}}>
+          <div className="panel-body col-md-12" style={{"textAlign":"center"}}>
             <svg id={ this.svg_id } />
           </div>
         </div>

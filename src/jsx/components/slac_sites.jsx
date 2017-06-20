@@ -522,7 +522,7 @@ var SLACSites = React.createClass({
                     </div>
                     ) : null}
 
-                <DatamonkeyTable headerData = {headers} bodyData = {rows} initialSort={1}/>
+                <DatamonkeyTable headerData = {headers} bodyData = {rows} initialSort={1} paginate={20}/>
             </div>);
 
 
