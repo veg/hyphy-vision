@@ -371,15 +371,15 @@ var DatamonkeyTable = React.createClass({
   },
 
   componentDidMount: function() {
-    $('[data-toggle="tooltip"]').tooltip();
+    $('[data-toggle="tooltip"]').tooltip({
+      trigger: 'hover'
+    });
   },
 
   componentDidUpdate: function() {
-    $('[data-toggle="tooltip"]').tooltip();
-  },
-
-  componentDidUpdate: function() {
-    $('[data-toggle="tooltip"]').tooltip();
+    $('[data-toggle="tooltip"]').tooltip({
+      trigger: 'hover'
+    });
   },
 
   render: function() {
