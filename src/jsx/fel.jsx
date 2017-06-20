@@ -4,7 +4,7 @@ var React = require("react"),
 var _ = require("underscore");
 
 import { DatamonkeyTable } from "./components/shared_summary.jsx";
-import { DatamonkeySeries } from "./components/graphs.jsx";
+import { DatamonkeySeries, DatamonkeyGraphMenu } from "./components/graphs.jsx";
 import { NavBar } from "./components/navbar.jsx";
 import { ScrollSpy } from "./components/scrollspy.jsx";
 
@@ -14,14 +14,17 @@ var FEL = React.createClass({
   float_format: d3.format(".3f"),
 
   loadFromServer: function() {
+
     var self = this;
 
     d3.json(this.props.url, function(data) {
+
       var mle = data["MLE"];
       var mle_headers = mle.headers || [];
       var mle_content = mle.content[0] || [];
 
       mle_headers = self.formatHeadersForTable(mle_headers);
+
       _.each(mle_headers, function(d) {
         return (d["sortable"] = true);
       });
@@ -98,7 +101,6 @@ var FEL = React.createClass({
 
   componentWillMount: function() {
     this.loadFromServer();
-    //this.setEvents();
   },
 
   setEvents: function() {},
@@ -111,6 +113,7 @@ var FEL = React.createClass({
   },
 
   render: function() {
+
     var self = this;
 
     var scrollspy_info = [
@@ -157,6 +160,7 @@ var FEL = React.createClass({
               <div id="results">
 
                 <div id="summary-tab" className="row hyphy-row">
+
                   <div className="main-result">
                     <p className="list-group-item-text label_and_input">
                       Evidence<sup>†</sup> of episodic diversifying selection
@@ -175,7 +179,15 @@ var FEL = React.createClass({
                 </div>
 
                 <div id="plot-tab" className="row hyphy-row">
+
                   <h3 className="dm-table-header">Plot Summary</h3>
+
+                  <DatamonkeyGraphMenu
+                    headers={_.map(self.state.mle_headers, function(d) {
+                      return d.value;
+                    })}
+                  />
+
                   <DatamonkeySeries
                     headers={_.map(self.state.mle_headers, function(d) {
                       return d.value;
@@ -187,6 +199,7 @@ var FEL = React.createClass({
                     transitions={true}
                     doDots={true}
                   />
+
                 </div>
 
                 <div id="table-tab" className="row hyphy-row">

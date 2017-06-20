@@ -1,7 +1,8 @@
 var React = require("react");
 var graphDefaultColorPallette = d3.scale.category10().domain(_.range(10));
 
-class BaseGraph extends React.Component {
+class GraphMenu extends React.Component {
+
   constructor(props) {
     super(props);
     this.state = {
@@ -18,6 +19,81 @@ class BaseGraph extends React.Component {
         </a>
       </li>
     );
+  }
+
+  render() {
+
+    var self = this;
+
+    var XDimensionOptions = _.map(
+      ["Site"].concat(self.props.headers),
+      function(value) {
+        return self.dimensionOptionElement(self.xAxis, value);
+      },
+      self
+    );
+
+    var YDimensionOptions = _.map(
+      ["Site"].concat(self.props.headers),
+      function(value) {
+        return self.dimensionOptionElement(self.yAxis, value);
+      },
+      self
+    );
+
+    return (
+      <nav className="navbar">
+        <form className="navbar-form">
+          <div className="form-group navbar-left">
+            <div className="input-group">
+              <span className="input-group-addon">X-axis: </span>
+              <ul className="dropdown-menu">
+                {XDimensionOptions}
+              </ul>
+              <button
+                className="btn btn-default btn-sm dropdown-toggle form-control"
+                type="button"
+                data-toggle="dropdown"
+                aria-haspopup="true"
+                aria-expanded="false"
+              >
+                {self.state.xLabel}
+                <span className="caret" />
+              </button>
+            </div>
+            <div className="input-group">
+              <span className="input-group-addon">Y-axis:</span>
+              <ul className="dropdown-menu">
+                {YDimensionOptions}
+              </ul>
+              <button
+                className="btn btn-default btn-sm dropdown-toggle form-control"
+                type="button"
+                data-toggle="dropdown"
+                aria-haspopup="true"
+                aria-expanded="false"
+              >
+                {self.state.yLabel}
+                <span className="caret" />
+              </button>
+            </div>
+          </div>
+        </form>
+      </nav>
+    );
+
+  }
+
+}
+
+class BaseGraph extends React.Component {
+
+  constructor(props) {
+    super(props);
+    this.state = {
+      xLabel: "Site",
+      yLabel: "dN-dS"
+    };
   }
 
   setXAxis(column) {
@@ -93,15 +169,16 @@ class BaseGraph extends React.Component {
   }
 
   renderAxis(scale, location, label, dom_element) {
+
     var self = this;
-
     var xAxis = d3.svg.axis().scale(scale).orient(location); // e.g. bottom
-
     self.doTransition(d3.select(dom_element)).call(xAxis);
+
   }
 
   //TODO : See if this can be removed
   makeClasses(key) {
+
     var className = null,
       styleDict = null;
 
@@ -115,6 +192,7 @@ class BaseGraph extends React.Component {
     }
 
     return { className: className, style: styleDict };
+
   }
 
   makeScale(type, domain, range) {
@@ -137,118 +215,64 @@ class BaseGraph extends React.Component {
   }
 
   render() {
+
     var self = this;
 
     var main = self.computeDimensions(),
-      { x_range, y_range } = this.computeRanges();
+      { x_range, y_range } = self.computeRanges();
 
-    var x_scale = this.makeScale(this.props.xScale, x_range, [0, main.width]),
-      y_scale = this.makeScale(this.props.yScale, y_range, [main.height, 0]);
-
-    var XDimensionOptions = _.map(
-      ["Site"].concat(self.props.headers),
-      function(value) {
-        return self.dimensionOptionElement(self.xAxis, value);
-      },
-      self
-    );
-
-    var YDimensionOptions = _.map(
-      ["Site"].concat(self.props.headers),
-      function(value) {
-        return self.dimensionOptionElement(self.yAxis, value);
-      },
-      self
-    );
+    var x_scale = self.makeScale(self.props.xScale, x_range, [0, main.width]),
+        y_scale = self.makeScale(self.props.yScale, y_range, [main.height, 0]);
 
     return (
       <div>
-        <nav className="navbar">
-          <form className="navbar-form">
-            <div className="form-group navbar-left">
-              <div className="input-group">
-                <span className="input-group-addon">X-axis: </span>
-                <ul className="dropdown-menu">
-                  {XDimensionOptions}
-                </ul>
-                <button
-                  className="btn btn-default btn-sm dropdown-toggle form-control"
-                  type="button"
-                  data-toggle="dropdown"
-                  aria-haspopup="true"
-                  aria-expanded="false"
-                >
-                  {self.state.xLabel}
-                  <span className="caret" />
-                </button>
-              </div>
-              <div className="input-group">
-                <span className="input-group-addon">Y-axis:</span>
-                <ul className="dropdown-menu">
-                  {YDimensionOptions}
-                </ul>
-                <button
-                  className="btn btn-default btn-sm dropdown-toggle form-control"
-                  type="button"
-                  data-toggle="dropdown"
-                  aria-haspopup="true"
-                  aria-expanded="false"
-                >
-                  {self.state.yLabel}
-                  <span className="caret" />
-                </button>
-              </div>
-            </div>
-          </form>
-        </nav>
-
-        <svg width={this.props.width} height={this.props.height}>
+        <svg width={self.props.width} height={self.props.height}>
           <g
             transform={
               "translate(" +
-              this.props.marginLeft +
+              self.props.marginLeft +
               "," +
-              this.props.marginTop +
+              self.props.marginTop +
               ")"
             }
-            ref={_.partial(this.renderGraph, x_scale, y_scale).bind(this)}
+            ref={_.partial(self.renderGraph, x_scale, y_scale).bind(self)}
           />
-          {this.props.xAxis
+          {self.props.xAxis
             ? <g
-                {...this.makeClasses("axis")}
+                {...self.makeClasses("axis")}
                 transform={
                   "translate(" +
-                  this.props.marginLeft +
+                  self.props.marginLeft +
                   "," +
                   (main.height +
-                    this.props.marginTop +
-                    this.props.marginXaxis) +
+                    self.props.marginTop +
+                    self.props.marginXaxis) +
                   ")"
                 }
                 ref={_.partial(
-                  this.renderAxis,
+                  self.renderAxis,
                   x_scale,
                   "bottom",
-                  this.props.xLabel
-                ).bind(this)}
+                  self.props.xLabel
+                ).bind(self)}
               />
             : null}
-          {this.props.yAxis
+          {self.props.yAxis
             ? <g
-                {...this.makeClasses("axis")}
+                {...self.makeClasses("axis")}
                 transform={
                   "translate(" +
-                  (this.props.marginLeft - this.props.marginYaxis) +
+                  (self.props.marginLeft - self.props.marginYaxis) +
                   "," +
-                  this.props.marginTop +
+                  self.props.marginTop +
                   ")"
                 }
                 ref={_.partial(
-                  this.renderAxis,
+                  self.renderAxis,
                   y_scale,
                   "left",
-                  this.props.yLabel
-                ).bind(this)}
+                  self.props.yLabel
+                ).bind(self)}
               />
             : null}
         </svg>
@@ -282,10 +306,11 @@ BaseGraph.defaultProps = {
 };
 
 class ScatterPlot extends BaseGraph {
+
   renderGraph(x_scale, y_scale, dom_element) {
+
     var self = this,
-      main_graph = d3.select(dom_element);
-    //dot_classes = this.makeClasses("points");
+        main_graph = d3.select(dom_element);
 
     _.each(
       this.props.y,
@@ -394,5 +419,6 @@ class Series extends BaseGraph {
   }
 }
 
+module.exports.DatamonkeyGraphMenu = GraphMenu;
 module.exports.DatamonkeyScatterplot = ScatterPlot;
 module.exports.DatamonkeySeries = Series;
