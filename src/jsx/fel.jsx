@@ -1,7 +1,7 @@
 var React = require("react"),
   ReactDOM = require("react-dom");
 
-var  _ = require("underscore");
+var _ = require("underscore");
 
 import { DatamonkeyTable } from "./components/shared_summary.jsx";
 import { DatamonkeySeries } from "./components/graphs.jsx";
@@ -11,11 +11,9 @@ import { ScrollSpy } from "./components/scrollspy.jsx";
 var React = require("react");
 
 var FEL = React.createClass({
-
   float_format: d3.format(".3f"),
 
   loadFromServer: function() {
-
     var self = this;
 
     d3.json(this.props.url, function(data) {
@@ -103,8 +101,7 @@ var FEL = React.createClass({
     //this.setEvents();
   },
 
-  setEvents: function() {
-  },
+  setEvents: function() {},
 
   componentDidUpdate(prevProps) {
     $("body").scrollspy({

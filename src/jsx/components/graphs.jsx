@@ -98,7 +98,6 @@ class BaseGraph extends React.Component {
     var xAxis = d3.svg.axis().scale(scale).orient(location); // e.g. bottom
 
     self.doTransition(d3.select(dom_element)).call(xAxis);
-
   }
 
   //TODO : See if this can be removed
@@ -286,7 +285,7 @@ class ScatterPlot extends BaseGraph {
   renderGraph(x_scale, y_scale, dom_element) {
     var self = this,
       main_graph = d3.select(dom_element);
-      //dot_classes = this.makeClasses("points");
+    //dot_classes = this.makeClasses("points");
 
     _.each(
       this.props.y,

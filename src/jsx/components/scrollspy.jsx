@@ -1,13 +1,15 @@
-var React = require('react');
+var React = require("react");
 
 var ScrollSpy = React.createClass({
-  render: function(){
-    var list_items = this.props.info.map(function(item, index){
+  render: function() {
+    var list_items = this.props.info.map(function(item, index) {
       var is_active = index == 0 ? "active" : "",
-          href = "#" + item.href;
-      return (<li className={is_active} key={item.label}>
-        <a href={href}>{item.label}</a>
-      </li>)
+        href = "#" + item.href;
+      return (
+        <li className={is_active} key={item.label}>
+          <a href={href}>{item.label}</a>
+        </li>
+      );
     });
     return (
       <nav className="col-sm-1 bs-docs-sidebar">
@@ -15,9 +17,8 @@ var ScrollSpy = React.createClass({
           {list_items}
         </ul>
       </nav>
-    )
+    );
   }
 });
 
 module.exports.ScrollSpy = ScrollSpy;
-
