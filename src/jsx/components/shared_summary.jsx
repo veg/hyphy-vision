@@ -364,6 +364,7 @@ var DatamonkeyTable = React.createClass({
       })
     ) {
       this.setState({
+        current: 0,
         rowOrder: new_order,
         sortOn: [index, is_ascending]
       });
