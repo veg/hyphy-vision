@@ -1,0 +1,126 @@
+@import "bootstrap";
+@import url('https://fonts.googleapis.com/css?family=Montserrat:100,100i,200,200i,300,300i,400,400i,500,500i,600,600i,700,700i,800,800i,900,900i|Noto+Sans:400,400i,700,700i');
+
+/* Bootstrap Variables */
+@body-bg : #f9fafb;
+@body-color: #555;
+@table-condensed-cell-padding: 10px;
+@table-bg-hover: #bfbfbf;
+
+@btn-border-radius-base: none;
+@btn-font-weight: 500;
+@btn-primary-color: #fff;
+@btn-primary-bg: #00a99d;
+
+@dropdown-link-hover-color: #038c7f;
+@dropdown-link-color: #444;
+
+@badge-color: #038c7f;
+@badge-bg: #fff;
+
+@nav-link-padding: 10px 25px;
+@nav-pills-border-radius: @border-radius-base;
+
+@navbar-default-color: #fff;
+@navbar-height: 50px;
+@navbar-default-border: 2px solid #00a99d;
+
+/* mli edits */
+html {
+  margin-bottom: 350px;
+}
+
+body {
+  line-height: 1.5;
+}
+
+a {
+  color: #555;
+}
+
+a:focus {
+  color: #00a99d;
+}
+
+h6,
+.h6 {
+  margin-top: 25px;
+  margin-bottom: 0px;
+}
+
+.glyphicon {
+  right: 10px;
+  line-height: 1.1;
+}
+
+.table > thead > tr > th {
+  border-bottom: 2px solid #a1c6b3;
+}
+
+.table-condensed > tfoot > tr > td {
+  text-align: center;
+}
+
+@media (min-width: 1200px) {
+  .container {
+    height: 70px;
+  }
+}
+
+.btn {
+  padding: 0px 24px;
+  font-family: "Montserrat", sans-serif;
+  height: 38px;
+  letter-spacing: 0.25px;
+}
+
+.dropdown::before {
+  content: "";
+  height: 68px;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.dropup,
+.dropdown {
+  position: relative;
+  float: right;
+}
+
+.dropdown-menu {
+  top: 75%;
+}
+
+.dropdown-menu {
+  border-radius:0px;
+}
+
+.dropdown-menu > li > a {
+
+  font-family: "Montserrat", sans-serif;
+  font-weight: 500;
+  font-size: 13.5px;
+
+}
+
+.nav-stacked > li + li {
+  margin: 0;
+}
+
+@media (min-width: 768px) {
+  
+  .navbar-nav {
+    float: right;
+    margin: 0;
+  }
+
+  .navbar-nav > li {
+    float: left;
+  }
+
+  .navbar-nav > li > a {
+    padding-top: 15px;
+    padding-bottom: 15px;
+  }
+
+}
