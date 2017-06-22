@@ -410,3 +410,9 @@ p.description {
   }
       
 }
+
+.brush .extent {
+  stroke: #fff;
+  fill-opacity: .125;
+  shape-rendering: crispEdges;
+}
