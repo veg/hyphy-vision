@@ -38,6 +38,7 @@ config = {
         presets:['react']
       }
     },
+<<<<<<< Updated upstream
     { test: /\.css$/, loader: ExtractTextPlugin.extract({fallback:"style-loader", use:"css-loader"})},
 		{
 			test: require.resolve('jquery'),
@@ -71,6 +72,23 @@ config = {
 			loader: "eslint-loader",
 			options: {}
 		}
+=======
+    { test: /\.css$/, loader: ExtractTextPlugin.extract("style-loader", "css-loader")},
+		{
+			test: /\.less?$/,
+      include: './src',
+      use: ExtractTextPlugin.extract({
+          fallbackLoader: 'style-loader',
+          loader: ["css-loader", "less-loader"],
+        })
+		},
+		{ test: /jquery/, loader: 'expose?$!expose?jQuery' },
+		{ test: /d3/, loader: 'expose?$!expose?d3' },
+		{ test: /\.(woff|woff2)(\?v=\d+\.\d+\.\d+)?$/, loader: 'url?limit=10000&mimetype=application/font-woff'},
+		{ test: /\.ttf(\?v=\d+\.\d+\.\d+)?$/, loader: 'url?limit=10000&mimetype=application/octet-stream'},
+		{ test: /\.eot(\?v=\d+\.\d+\.\d+)?$/, loader: 'file'},
+		{ test: /\.svg(\?v=\d+\.\d+\.\d+)?$/, loader: 'url?limit=10000&mimetype=image/svg+xml'},
+>>>>>>> Stashed changes
 		],
 
   },
@@ -99,7 +117,11 @@ config = {
       'src',
       'node_modules'
     ],
+<<<<<<< Updated upstream
     extensions: ['.json', '.js', '.jsx']
+=======
+    extensions: ['', '.json', '.js', '.jsx', '.less']
+>>>>>>> Stashed changes
 	},
 };
 
