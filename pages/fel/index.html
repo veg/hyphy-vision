@@ -13,26 +13,19 @@
   <script src="../../dist/vendor.js"></script>
   <script src="../../dist/hyphyvision.js"></script>
 
-  <title>BUSTED analysis result</title>
-
+  <title>FEL</title>
 </head>
 
-<body style="padding-top: 70px;">
-
-<!--
-###############################################################################################################################
--->
-
-  <div id='busted-content' class='container-fluid'></div>
-  <img id="hyphy-chart-image" />
-  <canvas id="hyphy-chart-canvas"></canvas>
+<body style='padding-top: 70px;'>
+  
+  <div id="fel-content" class="tab-content"></div>
 
   <script>
-    $( document ).ready( function () {
-      busted("test-data/lysin.nex.BUSTED.json", "busted-content")
+    $(document).ready(function() {
+      fel("test-data/test.json", "fel-content");
     });
   </script>
 
 </body>
-</html>
 
+</html>

@@ -156,6 +156,7 @@
 
 .dm-table-header {
     background-color: #00a99d;
+    font-family: "Noto Sans";
     background: linear-gradient(to right,#03AA9D,#7EC6B3);
     color: #FFF;
     text-align: center;
