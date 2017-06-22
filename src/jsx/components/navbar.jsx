@@ -65,19 +65,8 @@ var NavBar = React.createClass({
       <nav className="navbar navbar-default navbar-fixed-top" role="navigation">
         <div className="container">
           <div className="row">
-<<<<<<< HEAD
-          
             <div className="col-sm-12">
               <a href='#'><img id="hyphy-logo" src="../../images/hyphy-logo.svg" /></a>
-=======
-
-            <div className="col-sm-1" />
-
-            <div className="col-sm-10">
-              <a href="#">
-                <img id="hyphy-logo" src="../../images/hyphy-logo.svg" />
-              </a>
->>>>>>> b6dbf48a1b7267c2ef19f387398123c0bd12f950
               <div className="navbar-header">
                 <Hamburger />
               </div>
@@ -86,7 +75,6 @@ var NavBar = React.createClass({
 
 
                 <ul className="nav navbar-nav">
-<<<<<<< HEAD
                   <a href="#" className="nav-button" role="button">Load</a>
                   <a href="#" className="nav-button" role="button">Export</a>
                 </ul>
@@ -96,32 +84,6 @@ var NavBar = React.createClass({
                 
               </div>
             </div>
-
-=======
-                  <li className="dropdown">
-                    <a
-                      href="#"
-                      className="dropdown-toggle"
-                      id="datamonkey-absrel-toggle-here"
-                      data-toggle="dropdown"
-                    >
-                      Load file<b className="caret" />
-                    </a>
-                    <ul className="dropdown-menu">
-                      <li>
-                        <input type="file" id="datamonkey-absrel-json-file" />
-                      </li>
-                    </ul>
-                  </li>
-                </ul>
-
-                <Methods />
-
-              </div>
-            </div>
-
-            <div className="col-sm-1" />
->>>>>>> b6dbf48a1b7267c2ef19f387398123c0bd12f950
 
           </div>
         </div>

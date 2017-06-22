@@ -2,7 +2,7 @@
 @import url('https://fonts.googleapis.com/css?family=Montserrat:100,100i,200,200i,300,300i,400,400i,500,500i,600,600i,700,700i,800,800i,900,900i|Noto+Sans:400,400i,700,700i');
 
 /* Bootstrap Variables */
-@body-bg : #f9fafb;
+@body-bg : #fff;
 @body-color: #555;
 @table-condensed-cell-padding: 10px;
 @table-bg-hover: #bfbfbf;
@@ -18,14 +18,23 @@
 @badge-color: #038c7f;
 @badge-bg: #fff;
 
+@border-radius-base: 0px;
 @nav-link-padding: 10px 25px;
 @nav-pills-border-radius: @border-radius-base;
 
-@navbar-default-color: #fff;
+@navbar-default-bg: #fff;
 @navbar-height: 50px;
-@navbar-default-border: 2px solid #00a99d;
+//@navbar-default-border: 2px solid #00a99d;
+@navbar-default-border: #00a99d;
 
-/* mli edits */
+.navbar {
+  border-bottom: 2px solid @navbar-default-border;
+}
+
+.navbar-nav {
+  padding-top: 15px;
+}
+
 html {
   margin-bottom: 350px;
 }

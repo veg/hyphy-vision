@@ -132,10 +132,6 @@ var BSRELSummary = React.createClass({
             </p>
           </div>
         </div>
-
-        <div className="col-md-4">
-          <InputInfo input_data={this.props.input_data} />
-        </div>
       </div>
     );
   }
