@@ -80,13 +80,22 @@ var BSRELSummary = React.createClass({
     }
 
     return (
-      <div className="row" id="summary-div">
-        <div className="col-md-8">
+      <div className="row" id="summary-div" >
+        <div className="col-md-12">
           <h3 className="list-group-item-heading">
-            <span id="summary-method-name">
-              adaptive Branch Site REL - Results summary
-            </span>
+            <span className="summary-method-name">adaptive Branch Site REL</span>
+            <br />
+            <span className="results-summary">results summary</span>
           </h3>
+      </div>
+      
+      
+        <div className="col-md-12">
+          <InputInfo input_data={this.props.input_data}/>
+        </div>
+      
+      
+        <div className="col-md-12">
           <div className="main-result">
             {user_message}
             <p>
@@ -122,10 +131,6 @@ var BSRELSummary = React.createClass({
               </small>
             </p>
           </div>
-        </div>
-
-        <div className="col-md-4">
-          <InputInfo input_data={this.props.input_data} />
         </div>
       </div>
     );

@@ -1,6 +1,7 @@
 window.jQuery = window.$ = $; 
-import Bootstrap from 'bootstrap/dist/css/bootstrap.css';
+
 require("font-awesome/css/font-awesome.css");
+require('./application.less');
 require('./hyphy-vision.css');
 require('./fade/FADE.css');
 

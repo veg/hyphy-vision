@@ -70,6 +70,13 @@ config = {
 			exclude: /node_modules/,
 			loader: "eslint-loader",
 			options: {}
+		},
+		{
+			test: /\.less?$/,
+      use: ExtractTextPlugin.extract({
+          fallback: 'style-loader',
+          use: ["css-loader", "less-loader"],
+        })
 		}
 		],
 
@@ -99,7 +106,7 @@ config = {
       'src',
       'node_modules'
     ],
-    extensions: ['.json', '.js', '.jsx']
+    extensions: ['.json', '.js', '.jsx', '.less']
 	},
 };
 
@@ -110,9 +117,4 @@ if (process.env.NODE_ENV === 'production') {
   config.plugins.push(new webpack.optimize.UglifyJsPlugin());
 }
 
-//var minimized = cloneDeep(config);
-//minimized.plugins.push(new webpack.optimize.UglifyJsPlugin());
-//minimized.output.filename = 'hyphyvision.min.js';
-
-//module.exports = [config,minimized];
 module.exports = [config];

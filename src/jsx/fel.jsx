@@ -4,7 +4,7 @@ var React = require("react"),
 var _ = require("underscore");
 
 import { DatamonkeyTable } from "./components/shared_summary.jsx";
-import { DatamonkeySeries } from "./components/graphs.jsx";
+import { DatamonkeySeries, DatamonkeyGraphMenu } from "./components/graphs.jsx";
 import { NavBar } from "./components/navbar.jsx";
 import { ScrollSpy } from "./components/scrollspy.jsx";
 
@@ -14,14 +14,17 @@ var FEL = React.createClass({
   float_format: d3.format(".3f"),
 
   loadFromServer: function() {
+
     var self = this;
 
     d3.json(this.props.url, function(data) {
+
       var mle = data["MLE"];
       var mle_headers = mle.headers || [];
       var mle_content = mle.content[0] || [];
 
       mle_headers = self.formatHeadersForTable(mle_headers);
+
       _.each(mle_headers, function(d) {
         return (d["sortable"] = true);
       });
@@ -37,15 +40,21 @@ var FEL = React.createClass({
       mle_headers = [
         { value: "Site", sortable: true, abbr: "Site Position" }
       ].concat(mle_headers);
+
       mle_content = _.map(mle_content, function(d, key) {
         var k = key + 1;
         return [k].concat(d);
       });
 
+      // zip both headers and content
+      var mle_results = _.zip(mle.headers, mle_content);
+
       self.setState({
         mle_headers: mle_headers,
-        mle_content: mle_content
+        mle_content: mle_content,
+        mle_results : mle_results
       });
+
     });
   },
 
@@ -56,31 +65,22 @@ var FEL = React.createClass({
   },
 
   definePlotData: function(x_label, y_label) {
+
     var self = this;
 
-    // get index of label by looking at header
-    var header_labels = _.map(self.state.mle_headers, function(d) {
-      return d.value;
+    var x = _.map(self.state.mle_content, function(d) {
+      return d[x_label];
     });
 
-    var x_index = _.indexOf(header_labels, x_label);
-    var y_index = _.indexOf(header_labels, y_label);
-
-    var x = [];
-    var y = [];
-
-    if (x_index == -1 || y_index == -1) {
-      return { x: x, y: y };
-    }
-
-    x = _.map(self.state.mle_content, function(d) {
-      return d[x_index];
+    var y = _.map(self.state.mle_content, function(d) {
+      return d[y_label];
     });
-    y = _.map(self.state.mle_content, function(d) {
-      return d[y_index];
-    });
+
+    console.log(x);
+    console.log(y);
 
     return { x: x, y: [y] };
+
   },
 
   getDefaultProps: function() {
@@ -91,14 +91,13 @@ var FEL = React.createClass({
     return {
       mle_headers: [],
       mle_content: [],
-      xLabel: "Site",
-      yLabel: "alpha"
+      xaxis: "site",
+      yaxis: "alpha"
     };
   },
 
   componentWillMount: function() {
     this.loadFromServer();
-    //this.setEvents();
   },
 
   setEvents: function() {},
@@ -110,7 +109,19 @@ var FEL = React.createClass({
     });
   },
 
+  updateAxisSelection: function(e) {
+
+    var state_to_update  = {};
+    var dimension = $(e.target).data("dimension");
+    var axis = $(e.target).data("axis");
+
+    state_to_update[axis] = dimension;
+    this.setState(state_to_update);
+
+  },
+
   render: function() {
+
     var self = this;
 
     var scrollspy_info = [
@@ -120,9 +131,14 @@ var FEL = React.createClass({
     ];
 
     var { x: x, y: y } = self.definePlotData(
-      self.state.xLabel,
-      self.state.yLabel
+      self.state.xaxis,
+      self.state.yaxis
     );
+
+    console.log(self.state.xaxis);
+    console.log(self.state.yaxis);
+    console.log(x);
+    console.log(y);
 
     return (
       <div>
@@ -157,6 +173,7 @@ var FEL = React.createClass({
               <div id="results">
 
                 <div id="summary-tab" className="row hyphy-row">
+
                   <div className="main-result">
                     <p className="list-group-item-text label_and_input">
                       Evidence<sup>†</sup> of episodic diversifying selection
@@ -175,11 +192,17 @@ var FEL = React.createClass({
                 </div>
 
                 <div id="plot-tab" className="row hyphy-row">
+
                   <h3 className="dm-table-header">Plot Summary</h3>
-                  <DatamonkeySeries
-                    headers={_.map(self.state.mle_headers, function(d) {
+
+                  <DatamonkeyGraphMenu
+                    headers={_.map(self.state.mle_content, function(d) {
                       return d.value;
                     })}
+                    axisSelectionEvent={self.updateAxisSelection}
+                  />
+
+                  <DatamonkeySeries
                     x={x}
                     y={y}
                     marginLeft={50}
@@ -187,6 +210,7 @@ var FEL = React.createClass({
                     transitions={true}
                     doDots={true}
                   />
+
                 </div>
 
                 <div id="table-tab" className="row hyphy-row">
