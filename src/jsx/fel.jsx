@@ -1,16 +1,14 @@
 var React = require("react"),
-  ReactDOM = require("react-dom");
-
-var _ = require("underscore");
+    ReactDOM = require("react-dom"),
+    _ = require("underscore");
 
 import { DatamonkeyTable } from "./components/shared_summary.jsx";
 import { DatamonkeySeries, DatamonkeyGraphMenu } from "./components/graphs.jsx";
 import { NavBar } from "./components/navbar.jsx";
 import { ScrollSpy } from "./components/scrollspy.jsx";
 
-var React = require("react");
-
 var FEL = React.createClass({
+
   float_format: d3.format(".3f"),
 
   loadFromServer: function() {
@@ -46,12 +44,13 @@ var FEL = React.createClass({
         return [k].concat(d);
       });
 
-      // zip both headers and content
-      var mle_results = _.zip(mle.headers, mle_content);
+      // Create datatype that is a bit more manageable
+      var mle_header_values = _.map(mle_headers, function(d) { return d.value });
+      var mle_results = _.map(mle_content, function(c) { return _.object(mle_header_values, c)});
 
       self.setState({
-        mle_headers: mle_headers,
-        mle_content: mle_content,
+        mle_headers : mle_headers,
+        mle_content : mle_content,
         mle_results : mle_results
       });
 
@@ -68,16 +67,13 @@ var FEL = React.createClass({
 
     var self = this;
 
-    var x = _.map(self.state.mle_content, function(d) {
+    var x = _.map(self.state.mle_results, function(d) {
       return d[x_label];
     });
 
-    var y = _.map(self.state.mle_content, function(d) {
+    var y = _.map(self.state.mle_results, function(d) {
       return d[y_label];
     });
-
-    console.log(x);
-    console.log(y);
 
     return { x: x, y: [y] };
 
@@ -91,7 +87,7 @@ var FEL = React.createClass({
     return {
       mle_headers: [],
       mle_content: [],
-      xaxis: "site",
+      xaxis: "Site",
       yaxis: "alpha"
     };
   },
@@ -111,9 +107,9 @@ var FEL = React.createClass({
 
   updateAxisSelection: function(e) {
 
-    var state_to_update  = {};
-    var dimension = $(e.target).data("dimension");
-    var axis = $(e.target).data("axis");
+    var state_to_update  = {},
+        dimension = e.target.dataset.dimension,
+        axis = e.target.dataset.axis;
 
     state_to_update[axis] = dimension;
     this.setState(state_to_update);
@@ -135,18 +131,23 @@ var FEL = React.createClass({
       self.state.yaxis
     );
 
-    console.log(self.state.xaxis);
-    console.log(self.state.yaxis);
-    console.log(x);
-    console.log(y);
+    var x_options = "Site";
+    var y_options = _.filter(_.map(self.state.mle_headers, function(d) {
+                      return d.value;
+                    }), function(d) { return d != "Site"});
 
     return (
       <div>
+
         <NavBar />
-        <div className="container-fluid">
+        <div className="container">
+
           <div className="row">
+
             <ScrollSpy info={scrollspy_info} />
-            <div id="fel-results" className="col-sm-10">
+
+            <div className="col-sm-10">
+
               <div
                 id="datamonkey-fel-error"
                 className="alert alert-danger alert-dismissible"
@@ -164,16 +165,15 @@ var FEL = React.createClass({
                 <strong>Error!</strong> <span id="datamonkey-fel-error-text" />
               </div>
 
-              <h3 className="list-group-item-heading">
-                <span id="summary-method-name">
-                  FEL - Fixed Effects Likelihood - Results
-                </span>
-              </h3>
-
               <div id="results">
 
-                <div id="summary-tab" className="row hyphy-row">
+                <h3 className="list-group-item-heading">
+                  <span id="summary-method-name">
+                    FEL - Fixed Effects Likelihood
+                  </span>
+                </h3>
 
+                <div>
                   <div className="main-result">
                     <p className="list-group-item-text label_and_input">
                       Evidence<sup>†</sup> of episodic diversifying selection
@@ -185,7 +185,7 @@ var FEL = React.createClass({
                         out
                         of {self.state.test_branches}
                       </span>{" "}
-                      tested branches ({self.state.total_branches} total
+                      tested branches({self.state.total_branches} total
                       branches).
                     </p>
                   </div>
@@ -196,9 +196,8 @@ var FEL = React.createClass({
                   <h3 className="dm-table-header">Plot Summary</h3>
 
                   <DatamonkeyGraphMenu
-                    headers={_.map(self.state.mle_content, function(d) {
-                      return d.value;
-                    })}
+                    x_options={x_options}
+                    y_options={y_options}
                     axisSelectionEvent={self.updateAxisSelection}
                   />
 
@@ -206,7 +205,7 @@ var FEL = React.createClass({
                     x={x}
                     y={y}
                     marginLeft={50}
-                    width={$("#fel-results").width()}
+                    width={$("#results").width()}
                     transitions={true}
                     doDots={true}
                   />
