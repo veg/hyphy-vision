@@ -16,22 +16,10 @@ var InputInfo = React.createClass({
   render() {
     return (
       <div id="input-info">
-        <h5 className="hyphy-highlight">INPUT DATA</h5><br />
-        <p>{this.state.input_data.filename}</p><br />
-        <p>
-          <span className="hyphy-highlight">
-            {this.state.input_data.sequences}
-          </span>{" "}
-          sequences
-        </p>
-        <br />
-        <p>
-          <span className="hyphy-highlight">
-            {this.state.input_data.sites}
-          </span>{" "}
-          sites
-        </p>
-        <br />
+        <span className="hyphy-highlight">INPUT DATA</span> <span className="divider">/</span>
+        <a href="#">{this.state.input_data.filename}</a> <span className="divider">/</span>
+        <span className="hyphy-highlight">{this.state.input_data.sequences}</span> sequences <span className="divider">/</span>
+        <span className="hyphy-highlight">{this.state.input_data.sites}</span> sites
       </div>
     );
   }

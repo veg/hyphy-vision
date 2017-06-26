@@ -236,7 +236,7 @@ var BranchTable = React.createClass({
 
     return (
       <div className="row">
-        <div id="hyphy-branch-table" className="col-md-6">
+        <div id="hyphy-branch-table" className="col-md-12">
           <h4 className="dm-table-header">
             Detailed results
             <span
@@ -305,7 +305,7 @@ var BranchTable = React.createClass({
             <tbody id="table-branch-table" />
           </table>
         </div>
-        <div id="primary-omega-tag" className="col-md-6">
+        <div id='primary-omega-tag' className="col-md-6 hidden">
           <h4 className="dm-table-header">&omega; distribution</h4>
           <PropChart
             name={self.state.current_model_name}
