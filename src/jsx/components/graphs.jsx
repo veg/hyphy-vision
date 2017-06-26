@@ -78,11 +78,10 @@ class GraphMenu extends React.Component {
   render() {
 
     var self = this;
-
     var XAxisButton = self.AxisButton(self.props.x_options, self.state.xaxis, 'xaxis', 'X-axis');
     var YAxisButton = self.AxisButton(self.props.y_options, self.state.yaxis, 'yaxis', 'Y-axis');
 
-    var navStyle = {borderBottom: 'none'};
+    var navStyle = { borderBottom: 'none' };
 
     return (
       <nav className="navbar" style={navStyle}>
