@@ -31,6 +31,7 @@ var FEL = React.createClass({
       // format content
       mle_content = _.map(mle_content, function(d) {
         return _.map(d, function(g) {
+          //return self.float_format(g);
           return self.float_format(g);
         });
       });
@@ -139,6 +140,9 @@ var FEL = React.createClass({
         return d != "Site";
       }
     );
+
+    console.log(JSON.stringify(self.state.mle_headers));
+    console.log(JSON.stringify(self.state.mle_content));
 
     return (
       <div>

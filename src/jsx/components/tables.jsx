@@ -1,4 +1,7 @@
-var React = require("react");
+var React = require("react"),
+    _ = require("underscore"),
+    d3 = require("d3");
+
 var datamonkey = require("../../datamonkey/datamonkey.js");
 
 const DatamonkeyTableRow = React.createClass({
@@ -49,6 +52,14 @@ const DatamonkeyTableRow = React.createClass({
       self = this;
 
     if (myType == typeof b) {
+
+      // Parse as float if possible
+      var parsed_a = parseFloat(a);
+      var parsed_b = parseFloat(b);
+
+      a = _.isNaN(parsed_a) ? a : parsed_a;
+      b = _.isNaN(parsed_b) ? b : parsed_b;
+
       if (myType == "string" || myType == "number") {
         return a == b ? 0 : a > b ? 2 : 1;
       }
@@ -91,7 +102,6 @@ const DatamonkeyTableRow = React.createClass({
   },
 
   dm_log100times: _.before(100, function(v) {
-    console.log(v);
     return 0;
   }),
 
@@ -743,7 +753,6 @@ var DatamonkeyModelTable = React.createClass({
   },
 
   dm_extractFitsTable: function(jsonTable) {
-    var modelList = [];
     var columnMap = null;
     var columnMapIterator = [];
     var valueFormat = {};
@@ -900,7 +909,6 @@ var DatamonkeyTimersTable = React.createClass({
     formattedRows = _.map(
       formattedRows,
       _.bind(function(row) {
-        var fraction = null;
         if (this.props.totalTime === null || this.props.totalTime != row[0]) {
           row[2] = {
             value: row[1] / totalTime,
