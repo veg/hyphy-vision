@@ -1,5 +1,5 @@
-var React = require('react');
-var datamonkey = require('../../datamonkey/datamonkey.js');
+var React = require("react");
+var datamonkey = require("../../datamonkey/datamonkey.js");
 
 const DatamonkeyTableRow = React.createClass({
   /**
@@ -50,11 +50,10 @@ const DatamonkeyTableRow = React.createClass({
 
     if (myType == typeof b) {
       if (myType == "string" || myType == "number") {
-        return a == b ? 0 : (a > b) ? 2 : 1;
+        return a == b ? 0 : a > b ? 2 : 1;
       }
 
       if (_.isArray(a) && _.isArray(b)) {
-
         if (a.length != b.length) {
           return a.length > b.length ? 2 : 1;
         }
@@ -89,7 +88,6 @@ const DatamonkeyTableRow = React.createClass({
     }
 
     return compare;
-
   },
 
   dm_log100times: _.before(100, function(v) {
@@ -100,11 +98,10 @@ const DatamonkeyTableRow = React.createClass({
   getInitialState: function() {
     return {
       header: []
-    }
+    };
   },
 
   shouldComponentUpdate: function(nextProps) {
-
     var self = this;
 
     if (this.state.header !== nextProps.header) {
@@ -124,24 +121,28 @@ const DatamonkeyTableRow = React.createClass({
         return false;
       }
 
-      var compare = self.dm_compareTwoValues_level2(value, nextProps.rowData[index]);
+      var compare = self.dm_compareTwoValues_level2(
+        value,
+        nextProps.rowData[index]
+      );
       if (compare >= 0) {
-        if (compare == 0) { // values match, compare properties
+        if (compare == 0) {
+          // values match, compare properties
           var existing_keys = _.keys(value),
             new_keys = _.keys(nextProps.rowData[index]),
             shared = _.intersection(existing_keys, new_keys);
 
-          if (shared.length < new_keys.length || shared.length < existing_keys.length) {
+          if (
+            shared.length < new_keys.length ||
+            shared.length < existing_keys.length
+          ) {
             return true;
           }
 
           return false;
-
-
         } else {
           return true;
         }
-
       }
 
       return true;
@@ -151,90 +152,101 @@ const DatamonkeyTableRow = React.createClass({
   },
 
   componentWillReceiveProps: function(nextProps) {
-
     this.setState({
       header: nextProps.header
-    })
-
+    });
   },
 
   render: function() {
-
     return (
       <tr>
-            {
-                this.props.rowData.map (_.bind(function (cell, index) {
+        {this.props.rowData.map(
+          _.bind(function(cell, index) {
+            var value = _.has(cell, "value") ? cell.value : cell;
 
-                        var value = _.has (cell, "value") ? cell.value : cell;
-
-                        if (_.isArray (value)) {
-                            if (!_.has (cell, "format")) {
-                                return value;
-                            }
-                        } else {
-                            if (_.isObject (value)) {
-                                if (!React.isValidElement (value)) {
-                                    return null;
-                                }
-                            }
-                        }
-
-                        if (_.has (cell, "format")) {
-                            value = cell.format (value);
-                        }
-
-
-                        if (_.has (cell, "abbr")) {
-                            value = (
-                                <span data-toggle="tooltip" data-placement="top" title={cell.abbr}>{value}</span>
-                            );
-                        }
-
-                        var cellProps = {key: index};
-
-                        if (_.has (cell, "span")) {
-                            cellProps["colSpan"] = cell.span;
-                        }
-
-                        if (_.has (cell, "style")) {
-                            cellProps["style"] = cell.style;
-                        }
-
-                        if (_.has (cell, "tooltip")) {
-                            cellProps["title"] = cell.tooltip;
-                            //this.dm_log100times (cellProps);
-                        }
-
-                        if (_.has (cell, "classes")) {
-                            cellProps["className"] = cell.classes;
-                        }
-
-                        if (this.state.header && this.props.sorter) {
-                          if (_.has (cell, "sortable")) {
-                            cellProps ["onClick"] = _.partial ( this.props.sorter, index, this.dm_compareTwoValues_level2);
-
-                            var sortedness_state = "fa fa-sort";
-                            if (this.props.sortOn && this.props.sortOn [0] == index) {
-                                sortedness_state = this.props.sortOn[1] ? "fa fa-sort-amount-asc" : "fa fa-sort-amount-desc";
-                            }
-
-                            value = (
-                                <div>
-                                    {value}
-                                    <i className={sortedness_state} aria-hidden="true" style={{marginLeft : "0.5em"}}></i>
-                                </div>
-                            );
-                          }
-                        }
-
-                        return React.createElement (this.state.header ? "th" : "td" ,
-                                                    cellProps,
-                                                    value);
-
-
-                    },this))
+            if (_.isArray(value)) {
+              if (!_.has(cell, "format")) {
+                return value;
+              }
+            } else {
+              if (_.isObject(value)) {
+                if (!React.isValidElement(value)) {
+                  return null;
+                }
+              }
             }
-            </tr>
+
+            if (_.has(cell, "format")) {
+              value = cell.format(value);
+            }
+
+            if (_.has(cell, "abbr")) {
+              value = (
+                <span
+                  data-toggle="tooltip"
+                  data-placement="top"
+                  title={cell.abbr}
+                >
+                  {value}
+                </span>
+              );
+            }
+
+            var cellProps = { key: index };
+
+            if (_.has(cell, "span")) {
+              cellProps["colSpan"] = cell.span;
+            }
+
+            if (_.has(cell, "style")) {
+              cellProps["style"] = cell.style;
+            }
+
+            if (_.has(cell, "tooltip")) {
+              cellProps["title"] = cell.tooltip;
+              //this.dm_log100times (cellProps);
+            }
+
+            if (_.has(cell, "classes")) {
+              cellProps["className"] = cell.classes;
+            }
+
+            if (this.state.header && this.props.sorter) {
+              if (_.has(cell, "sortable")) {
+                cellProps["onClick"] = _.partial(
+                  this.props.sorter,
+                  index,
+                  this.dm_compareTwoValues_level2
+                );
+
+                var sortedness_state = "fa fa-sort";
+                if (this.props.sortOn && this.props.sortOn[0] == index) {
+                  sortedness_state = this.props.sortOn[1]
+                    ? "fa fa-sort-amount-asc"
+                    : "fa fa-sort-amount-desc";
+                }
+
+                value = (
+                  <div>
+                    {value}
+                    <i
+                      className={sortedness_state}
+                      aria-hidden="true"
+                      style={{ marginLeft: "0.5em" }}
+                    />
+                  </div>
+                );
+              }
+            }
+
+            return React.createElement(
+              this.state.header ? "th" : "td",
+              cellProps,
+              value
+            );
+          }, this)
+        )}
+      </tr>
     );
   }
 });
@@ -250,7 +262,6 @@ const DatamonkeyTableRow = React.createClass({
  *         [{"value":"Full model","style":{"fontVariant":"small-caps"}},{"value":6954.016129926898},60]]
  */
 var DatamonkeyTable = React.createClass({
-
   getDefaultProps: function() {
     return {
       classes: "dm-table table table-condensed table-hover",
@@ -261,22 +272,21 @@ var DatamonkeyTable = React.createClass({
   getInitialState: function() {
     // either null or [index,
     // bool / to indicate if the sort is ascending (True) or descending (False)]
-    
+
     var len = 0;
-    
-    if(this.props.bodyData) {
+
+    if (this.props.bodyData) {
       len = this.props.bodyData.length;
     }
 
     return {
       rowOrder: _.range(0, len),
       headerData: this.props.headerData,
-      sortOn: this.props.initialSort ? [this.props.initialSort, true] : null,
+      sortOn: this.props.initialSort ? [this.props.initialSort, true] : null
     };
   },
 
   componentWillReceiveProps: function(nextProps) {
-
     this.setState({
       rowOrder: _.range(0, nextProps.bodyData.length),
       headerData: nextProps.headerData
@@ -284,7 +294,6 @@ var DatamonkeyTable = React.createClass({
   },
 
   dm_sortOnColumn: function(index, compare_function) {
-
     var self = this;
     var is_ascending = true;
     if (this.state.sortOn && this.state.sortOn[0] == index) {
@@ -292,16 +301,21 @@ var DatamonkeyTable = React.createClass({
     }
 
     var new_order = _.map(this.state.rowOrder, _.identity).sort(function(i, j) {
-      var comp_value = compare_function(self.props.bodyData[i][index], self.props.bodyData[j][index]);
+      var comp_value = compare_function(
+        self.props.bodyData[i][index],
+        self.props.bodyData[j][index]
+      );
       if (comp_value > 0) {
-        return is_ascending ? (2 * comp_value - 3) : (3 - 2 * comp_value);
+        return is_ascending ? 2 * comp_value - 3 : 3 - 2 * comp_value;
       }
       return 0;
     });
 
-    if (_.some(new_order, function(value, index) {
+    if (
+      _.some(new_order, function(value, index) {
         return value != self.state.rowOrder[index];
-      })) {
+      })
+    ) {
       this.setState({
         rowOrder: new_order,
         sortOn: [index, is_ascending]
@@ -309,7 +323,7 @@ var DatamonkeyTable = React.createClass({
     }
   },
 
-  componentDidMount: function(){
+  componentDidMount: function() {
     $('[data-toggle="tooltip"]').tooltip();
   },
 
@@ -317,7 +331,7 @@ var DatamonkeyTable = React.createClass({
     $('[data-toggle="tooltip"]').tooltip();
   },
 
-  componentDidUpdate : function() {
+  componentDidUpdate: function() {
     $('[data-toggle="tooltip"]').tooltip();
   },
 
@@ -330,49 +344,72 @@ var DatamonkeyTable = React.createClass({
       // check if header will be multiple rows by checking if headerData is an array of arrays
       if (_.isArray(this.props.headerData[0])) {
         children.push(
-          <thead key = {0}>
-                        {
-                            _.map (this.state.headerData, function (row, index) {
-                                return (
-                                    <DatamonkeyTableRow rowData={row} header={true} key={index} sorter={_.bind (self.dm_sortOnColumn, self)} sortOn = {self.state.sortOn}/>
-                                );
-                            })
-                        }
-                    </thead>
+          <thead key={0}>
+            {_.map(this.state.headerData, function(row, index) {
+              return (
+                <DatamonkeyTableRow
+                  rowData={row}
+                  header={true}
+                  key={index}
+                  sorter={_.bind(self.dm_sortOnColumn, self)}
+                  sortOn={self.state.sortOn}
+                />
+              );
+            })}
+          </thead>
         );
       } else {
-        children.push((
-          <thead key = {0}>
-                        <DatamonkeyTableRow rowData={this.state.headerData} header={true} sorter={_.bind (self.dm_sortOnColumn, self)} sortOn = {self.state.sortOn}/>
-                    </thead>
-        ));
+        children.push(
+          <thead key={0}>
+            <DatamonkeyTableRow
+              rowData={this.state.headerData}
+              header={true}
+              sorter={_.bind(self.dm_sortOnColumn, self)}
+              sortOn={self.state.sortOn}
+            />
+          </thead>
+        );
       }
     }
 
+    children.push(
+      React.createElement(
+        "tbody",
+        {
+          key: 1
+        },
+        _.map(
+          this.state.rowOrder,
+          _.bind(function(row_index) {
+            var componentData = this.props.bodyData[row_index];
 
+            return (
+              <DatamonkeyTableRow
+                rowData={componentData}
+                key={
+                  this.props.rowHash
+                    ? this.props.rowHash(componentData)
+                    : row_index
+                }
+                header={false}
+              />
+            );
+          }, this)
+        )
+      )
+    );
 
-    children.push(React.createElement("tbody", {
-        key: 1
+    return React.createElement(
+      "table",
+      {
+        className: this.props.classes
       },
-      _.map(this.state.rowOrder, _.bind(function(row_index) {
-        var componentData = this.props.bodyData[row_index];
-
-        return (
-          <DatamonkeyTableRow rowData={componentData} key={this.props.rowHash ? this.props.rowHash (componentData) : row_index} header={false}/>
-        );
-      }, this))));
-
-
-
-    return React.createElement("table", {
-      className: this.props.classes
-    }, children);
+      children
+    );
   }
 });
 
-
 var DatamonkeyRateDistributionTable = React.createClass({
-
   /** render a rate distribution table from JSON formatted like this
   {
        "non-synonymous/synonymous rate ratio for *background*":[ // name of distribution
@@ -386,7 +423,7 @@ var DatamonkeyRateDistributionTable = React.createClass({
   */
 
   propTypes: {
-    distribution: React.PropTypes.object.isRequired,
+    distribution: React.PropTypes.object.isRequired
   },
 
   dm_formatterRate: d3.format(".3r"),
@@ -396,34 +433,41 @@ var DatamonkeyRateDistributionTable = React.createClass({
     var rowData = [];
     var self = this;
     _.each(jsonRates, function(value, key) {
-      rowData.push([{
-        value: key,
-        span: 3,
-        classes: "info"
-      }]);
+      rowData.push([
+        {
+          value: key,
+          span: 3,
+          classes: "info"
+        }
+      ]);
       _.each(value, function(rate, index) {
-        rowData.push([{
-          value: rate[1],
-          format: self.dm_formatterProp
-        }, '@', {
-          value: rate[0],
-          format: self.dm_formatterRate
-        }]);
-      })
+        rowData.push([
+          {
+            value: rate[1],
+            format: self.dm_formatterProp
+          },
+          "@",
+          {
+            value: rate[0],
+            format: self.dm_formatterRate
+          }
+        ]);
+      });
     });
     return rowData;
   },
 
   render: function() {
     return (
-      (<DatamonkeyTable bodyData = {this.dm_createDistributionTable(this.props.distribution)} classes = {"table table-condensed"}/>)
+      <DatamonkeyTable
+        bodyData={this.dm_createDistributionTable(this.props.distribution)}
+        classes={"table table-condensed"}
+      />
     );
-  },
-
+  }
 });
 
 var DatamonkeyPartitionTable = React.createClass({
-
   dm_formatterFloat: d3.format(".3r"),
   dm_formatterProp: d3.format(".3p"),
 
@@ -434,21 +478,27 @@ var DatamonkeyPartitionTable = React.createClass({
     siteResults: React.PropTypes.object.isRequired,
     accessorNegative: React.PropTypes.func.isRequired,
     accessorPositive: React.PropTypes.func.isRequired,
-    pValue: React.PropTypes.number.isRequired,
+    pValue: React.PropTypes.number.isRequired
   },
 
-  dm_computePartitionInformation: function(trees, partitions, attributes, pValue) {
-
+  dm_computePartitionInformation: function(
+    trees,
+    partitions,
+    attributes,
+    pValue
+  ) {
     var partitionKeys = _.sortBy(_.keys(partitions), function(v) {
-        return v;
-      }),
+      return v;
+    }),
       matchingKey = null,
       self = this;
 
-    var extractBranchLength = this.props.extractOn || _.find(attributes.attributes, function(value, key) {
-      matchingKey = key;
-      return value["attribute type"] == "branch length";
-    });
+    var extractBranchLength =
+      this.props.extractOn ||
+      _.find(attributes.attributes, function(value, key) {
+        matchingKey = key;
+        return value["attribute type"] == "branch length";
+      });
     if (matchingKey) {
       extractBranchLength = matchingKey;
     }
@@ -457,114 +507,163 @@ var DatamonkeyPartitionTable = React.createClass({
       var treeBranches = trees.tested[key],
         tested = {};
 
-
       _.each(treeBranches, function(value, key) {
         if (value == "test") tested[key] = 1;
       });
 
-      var testedLength = extractBranchLength ? datamonkey.helpers.sum(attributes[key], function(v, k) {
-        if (tested[k.toUpperCase()]) {
-          return v[extractBranchLength]
-        }
-        return 0;
-      }) : 0;
-      var totalLength = extractBranchLength ? datamonkey.helpers.sum(attributes[key], function(v) {
-        return v[extractBranchLength] || 0;
-      }) : 0; // || 0 is to resolve root node missing length
-
-
-      return _.map([index + 1, // 1-based partition index
-        partitions[key].coverage[0].length, // number of sites in the partition
-        _.size(tested), // tested branches
-        _.keys(treeBranches).length, // total branches
-        testedLength,
-        testedLength / totalLength,
-        totalLength,
-        _.filter(self.props.accessorPositive(self.props.siteResults, key), function(p) {
-          return p <= pValue;
-        }).length,
-        _.filter(self.props.accessorNegative(self.props.siteResults, key), function(p) {
-          return p <= pValue;
-        }).length,
-
-      ], function(cell, index) {
-        if (index > 1) {
-          var attributedCell = {
-            value: cell,
-            style: {
-              textAlign: 'center'
+      var testedLength = extractBranchLength
+        ? datamonkey.helpers.sum(attributes[key], function(v, k) {
+            if (tested[k.toUpperCase()]) {
+              return v[extractBranchLength];
             }
-          };
+            return 0;
+          })
+        : 0;
+      var totalLength = extractBranchLength
+        ? datamonkey.helpers.sum(attributes[key], function(v) {
+            return v[extractBranchLength] || 0;
+          })
+        : 0; // || 0 is to resolve root node missing length
 
-          if (index == 4 || index == 6) {
-            _.extend(attributedCell, {
-              'format': self.dm_formatterFloat
-            });
-          }
-          if (index == 5) {
-            _.extend(attributedCell, {
-              'format': self.dm_formatterProp
-            });
-          }
+      return _.map(
+        [
+          index + 1, // 1-based partition index
+          partitions[key].coverage[0].length, // number of sites in the partition
+          _.size(tested), // tested branches
+          _.keys(treeBranches).length, // total branches
+          testedLength,
+          testedLength / totalLength,
+          totalLength,
+          _.filter(
+            self.props.accessorPositive(self.props.siteResults, key),
+            function(p) {
+              return p <= pValue;
+            }
+          ).length,
+          _.filter(
+            self.props.accessorNegative(self.props.siteResults, key),
+            function(p) {
+              return p <= pValue;
+            }
+          ).length
+        ],
+        function(cell, index) {
+          if (index > 1) {
+            var attributedCell = {
+              value: cell,
+              style: {
+                textAlign: "center"
+              }
+            };
 
-          return attributedCell;
+            if (index == 4 || index == 6) {
+              _.extend(attributedCell, {
+                format: self.dm_formatterFloat
+              });
+            }
+            if (index == 5) {
+              _.extend(attributedCell, {
+                format: self.dm_formatterProp
+              });
+            }
+
+            return attributedCell;
+          }
+          return cell;
         }
-        return cell;
-      });
+      );
     });
-
   },
 
   dm_makeHeaderRow: function(pValue) {
     return [
-      _.map(["Partition", "Sites", "Branches", "Branch Length", "Selected at p" + String.fromCharCode(parseInt("2264", 16)) + pValue], function(d, i) {
-        return _.extend({
-          value: d,
-          style: {
-            borderBottom: 0,
-            textAlign: (i > 1 ? 'center' : 'left')
-          }
-        }, i > 1 ? {
-          'span': i == 3 ? 3 : 2
-        } : {});
-      }),
       _.map(
-        ["", "", "Tested", "Total", "Tested", "% of total", "Total", "Positive", "Negative"],
+        [
+          "Partition",
+          "Sites",
+          "Branches",
+          "Branch Length",
+          "Selected at p" + String.fromCharCode(parseInt("2264", 16)) + pValue
+        ],
+        function(d, i) {
+          return _.extend(
+            {
+              value: d,
+              style: {
+                borderBottom: 0,
+                textAlign: i > 1 ? "center" : "left"
+              }
+            },
+            i > 1
+              ? {
+                  span: i == 3 ? 3 : 2
+                }
+              : {}
+          );
+        }
+      ),
+      _.map(
+        [
+          "",
+          "",
+          "Tested",
+          "Total",
+          "Tested",
+          "% of total",
+          "Total",
+          "Positive",
+          "Negative"
+        ],
         function(d, i) {
           return {
             value: d,
             style: {
               borderTop: 0,
-              textAlign: (i > 1 ? 'center' : 'left')
+              textAlign: i > 1 ? "center" : "left"
             }
           };
-        })
+        }
+      )
     ];
   },
 
   getInitialState: function() {
     return {
       header: this.dm_makeHeaderRow(this.props.pValue),
-      rows: this.dm_computePartitionInformation(this.props.trees, this.props.partitions, this.props.branchAttributes, this.props.pValue),
-    }
+      rows: this.dm_computePartitionInformation(
+        this.props.trees,
+        this.props.partitions,
+        this.props.branchAttributes,
+        this.props.pValue
+      )
+    };
   },
 
   componentWillReceiveProps: function(nextProps) {
     this.setState({
       header: this.dm_makeHeaderRow(nextProps.pValue),
-      rows: this.dm_computePartitionInformation(nextProps.trees, nextProps.partitions, nextProps.branchAttributes, nextProps.pValue),
+      rows: this.dm_computePartitionInformation(
+        nextProps.trees,
+        nextProps.partitions,
+        nextProps.branchAttributes,
+        nextProps.pValue
+      )
     });
   },
 
   render: function() {
-    return (<div className="table-responsive">
-                    <DatamonkeyTable headerData = {this.state.header} bodyData = {this.state.rows}/>
-                </div>);
+    return (
+      <div className="table-responsive">
+        <DatamonkeyTable
+          headerData={this.state.header}
+          bodyData={this.state.rows}
+        />
+      </div>
+    );
   }
 });
 
 var DatamonkeyModelTable = React.createClass({
-
   // render a model fit table from a JSON object with entries like this
   //     "Global MG94xREV":{  model name
   //          "log likelihood":-5453.527975908821,
@@ -589,30 +688,30 @@ var DatamonkeyModelTable = React.createClass({
   dm_numberFormatter: d3.format(".2f"),
 
   dm_supportedColumns: {
-    'log-likelihood': {
+    "log-likelihood": {
       order: 2,
       value: {
-        "value": "log L",
-        "abbr": "Log likelihood of model fit"
+        value: "log L",
+        abbr: "Log likelihood of model fit"
       },
       display_format: d3.format(".2f")
     },
-    'parameters': {
+    parameters: {
       order: 3,
       value: {
         value: "Parameters",
         abbr: "Number of estimated parameters"
       }
     },
-    'AIC-c': {
+    "AIC-c": {
       order: 1,
       value: {
-        value: React.createElement('span', null, ['AIC', (<sub key="0">C</sub>)]),
+        value: React.createElement("span", null, ["AIC", <sub key="0">C</sub>]),
         abbr: "Small-sample corrected Akaike Information Score"
       },
       display_format: d3.format(".2f")
     },
-    'rate distributions': {
+    "rate distributions": {
       order: 4,
       value: "Rate distributions",
       transform: function(value) {
@@ -620,19 +719,16 @@ var DatamonkeyModelTable = React.createClass({
           distribution: value
         });
       }
-    },
+    }
   },
 
-
-
-
   propTypes: {
-    fits: React.PropTypes.object.isRequired,
+    fits: React.PropTypes.object.isRequired
   },
 
   getDefaultProps: function() {
     return {
-      orderOn: "display order",
+      orderOn: "display order"
     };
   },
 
@@ -662,60 +758,68 @@ var DatamonkeyModelTable = React.createClass({
           if (self.dm_supportedColumns[cellName]) {
             columnMap[cellName] = self.dm_supportedColumns[cellName];
             columnMapIterator[columnMap[cellName].order] = cellName;
-            valueFormat[cellName] = self.dm_supportedColumns[cellName]["display_format"];
+            valueFormat[cellName] =
+              self.dm_supportedColumns[cellName]["display_format"];
             if (_.isFunction(self.dm_supportedColumns[cellName]["transform"])) {
-              valueTransform[cellName] = self.dm_supportedColumns[cellName]["transform"];
+              valueTransform[cellName] =
+                self.dm_supportedColumns[cellName]["transform"];
             }
           }
         });
         columnMapIterator = _.filter(columnMapIterator, function(v) {
           return v;
-        })
+        });
       }
 
-
-      var thisRow = [{
-        value: key,
-        //style: {
-        //  fontVariant: "small-caps"
-        //}
-      }];
+      var thisRow = [
+        {
+          value: key
+          //style: {
+          //  fontVariant: "small-caps"
+          //}
+        }
+      ];
 
       _.each(columnMapIterator, function(tag) {
-
-        var myValue = valueTransform[tag] ? valueTransform[tag](value[tag]) : value[tag];
-
+        var myValue = valueTransform[tag]
+          ? valueTransform[tag](value[tag])
+          : value[tag];
 
         if (valueFormat[tag]) {
           thisRow.push({
-            'value': myValue,
-            'format': valueFormat[tag]
+            value: myValue,
+            format: valueFormat[tag]
           });
         } else {
           thisRow.push(myValue);
         }
       });
 
-      rowData.push([thisRow, _.isNumber(value[self.props.orderOn]) ? value[self.props.orderOn] : rowData.length]);
-
+      rowData.push([
+        thisRow,
+        _.isNumber(value[self.props.orderOn])
+          ? value[self.props.orderOn]
+          : rowData.length
+      ]);
     });
 
-
-
     return {
-      'data': _.map(_.sortBy(rowData, function(value) {
-        return value[1];
-      }), function(r) {
-        return r[0];
-      }),
-      'columns': _.map(columnMapIterator, function(tag) {
+      data: _.map(
+        _.sortBy(rowData, function(value) {
+          return value[1];
+        }),
+        function(r) {
+          return r[0];
+        }
+      ),
+      columns: _.map(columnMapIterator, function(tag) {
         return columnMap[tag].value;
       })
     };
   },
 
   dm_makeHeaderRow: function(columnMap) {
-    var headerRow = ['Model'];
+    var headerRow = ["Model"];
     _.each(columnMap, function(v) {
       headerRow.push(v);
     });
@@ -723,105 +827,117 @@ var DatamonkeyModelTable = React.createClass({
   },
 
   getInitialState: function() {
-
     var tableInfo = this.dm_extractFitsTable(this.props.fits);
 
     return {
       header: this.dm_makeHeaderRow(tableInfo.columns),
       rows: tableInfo.data,
-      caption: null,
+      caption: null
     };
   },
 
-
   render: function() {
-    return (<div>
-      <h4 className="dm-table-header">
-        Model fits
-        <span className="glyphicon glyphicon-info-sign" style={{"verticalAlign": "middle", "float":"right"}} aria-hidden="true" data-toggle="popover" data-trigger="hover" title="Actions" data-html="true" data-content="<ul><li>Hover over a column header for a description of its content.</li></ul>" data-placement="bottom"></span>
-      </h4>
-      <DatamonkeyTable headerData={this.state.header} bodyData={this.state.rows}/>
-    </div>);
-  },
+    return (
+      <div>
+        <h4 className="dm-table-header">
+          Model fits
+          <span
+            className="glyphicon glyphicon-info-sign"
+            style={{ verticalAlign: "middle", float: "right" }}
+            aria-hidden="true"
+            data-toggle="popover"
+            data-trigger="hover"
+            title="Actions"
+            data-html="true"
+            data-content="<ul><li>Hover over a column header for a description of its content.</li></ul>"
+            data-placement="bottom"
+          />
+        </h4>
+        <DatamonkeyTable
+          headerData={this.state.header}
+          bodyData={this.state.rows}
+        />
+      </div>
+    );
+  }
 });
 
 var DatamonkeyTimersTable = React.createClass({
-
   dm_percentageFormatter: d3.format(".2%"),
 
   propTypes: {
-    timers: React.PropTypes.object.isRequired,
+    timers: React.PropTypes.object.isRequired
   },
 
   dm_formatSeconds: function(seconds) {
-
-    var fields = [~~(seconds / 3600), ~~((seconds % 3600) / 60),
-      seconds % 60
-    ];
-
+    var fields = [~~(seconds / 3600), ~~(seconds % 3600 / 60), seconds % 60];
 
     return _.map(fields, function(d) {
-      return d < 10 ? "0" + d : "" + d
-    }).join(':');
+      return d < 10 ? "0" + d : "" + d;
+    }).join(":");
   },
 
   dm_extractTimerTable: function(jsonTable) {
-    var totalTime = 0.,
-      formattedRows = _.map(jsonTable, _.bind(function(value, key) {
-        if (this.props.totalTime) {
-          if (key == this.props.totalTime) {
-            totalTime = value['timer'];
+    var totalTime = 0,
+      formattedRows = _.map(
+        jsonTable,
+        _.bind(function(value, key) {
+          if (this.props.totalTime) {
+            if (key == this.props.totalTime) {
+              totalTime = value["timer"];
+            }
+          } else {
+            totalTime += value["timer"];
           }
-        } else {
-          totalTime += value['timer'];
-        }
-        return [key, value['timer'], value['order']];
-      }, this));
-
+          return [key, value["timer"], value["order"]];
+        }, this)
+      );
 
     formattedRows = _.sortBy(formattedRows, function(row) {
       return row[2];
     });
 
-    formattedRows = _.map(formattedRows, _.bind(function(row) {
-      var fraction = null;
-      if (this.props.totalTime === null || this.props.totalTime != row[0]) {
-        row[2] = {
-          "value": row[1] / totalTime,
-          "format": this.dm_percentageFormatter
-        };
-      } else {
-        row[2] = "";
-      }
-      row[1] = this.dm_formatSeconds(row[1]);
-      return row;
-    }, this));
+    formattedRows = _.map(
+      formattedRows,
+      _.bind(function(row) {
+        var fraction = null;
+        if (this.props.totalTime === null || this.props.totalTime != row[0]) {
+          row[2] = {
+            value: row[1] / totalTime,
+            format: this.dm_percentageFormatter
+          };
+        } else {
+          row[2] = "";
+        }
+        row[1] = this.dm_formatSeconds(row[1]);
+        return row;
+      }, this)
+    );
 
     return formattedRows;
   },
 
   dm_makeHeaderRow: function() {
-    return ['Task', 'Time', '%'];
+    return ["Task", "Time", "%"];
   },
 
   getInitialState: function() {
-
     return {
       header: this.dm_makeHeaderRow(),
       rows: this.dm_extractTimerTable(this.props.timers),
-      caption: null,
+      caption: null
     };
   },
 
-
   render: function() {
     return (
-      <DatamonkeyTable headerData = {this.state.header} bodyData = {this.state.rows}/>
-
+      <DatamonkeyTable
+        headerData={this.state.header}
+        bodyData={this.state.rows}
+      />
     );
-  },
+  }
 });
-
 
 module.exports.DatamonkeyTable = DatamonkeyTable;
 module.exports.DatamonkeyTableRow = DatamonkeyTableRow;
