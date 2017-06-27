@@ -1,4 +1,3 @@
-// __tests__/graphs.test.js
 "use strict";
 
 jest.unmock("../src/jsx/components/graphs.jsx");
@@ -52,11 +51,9 @@ describe("GraphMenu", () => {
 
   it("should trigger event when selection changes", () => {
     // Click a button
-    component
-      .find("a[data-dimension='beta']")
-      .simulate("click", {
-        target: { dataset: { dimension: "beta", axis: "yaxis" } }
-      });
+    component.find("a[data-dimension='beta']").simulate("click", {
+      target: { dataset: { dimension: "beta", axis: "yaxis" } }
+    });
     expect(updateAxisSelectionMock.mock.calls.length).toBe(1);
   });
 });

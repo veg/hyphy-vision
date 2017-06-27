@@ -50,6 +50,7 @@ var FEL = React.createClass({
       var mle_header_values = _.map(mle_headers, function(d) {
         return d.value;
       });
+
       var mle_results = _.map(mle_content, function(c) {
         return _.object(mle_header_values, c);
       });
