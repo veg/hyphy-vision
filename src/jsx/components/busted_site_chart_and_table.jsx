@@ -209,12 +209,25 @@ var BUSTEDSiteChartAndTable = React.createClass({
     }
   },
   headerData: [
-    'Site Index',
-    'Unconstrained Likelihood',
-    'Constrained Likelihood',
-    'Optimized Null Likelihood',
-    'Constrained Statistic',
-    'Optimized Null Statistic'
+    { 
+      abbr: 'Position of site in multiple sequence alignment.',
+      sortable: true,
+      value: 'Site index'
+    },
+    {
+      abbr: "Likelihood of unconstrained model.",
+      sortable: true,
+      value: "Unconstrained likelihood"
+    },
+    {
+      abbr: "Likelihood of constrained model.",
+      sortable: true,
+      value: "Constrained likelihood"
+    },
+    ,
+    "Optimized Null Likelihood",
+    "Constrained Statistic",
+    "Optimized Null Statistic"
   ],
   render: function(){
     var self = this,
