@@ -1,7 +1,7 @@
 var React = require("react");
 var datamonkey = require("../../datamonkey/datamonkey.js");
 
-import { DatamonkeyTable } from "./shared_summary.jsx";
+import { DatamonkeyTable } from "./tables.jsx";
 
 var SLACSites = React.createClass({
   propTypes: {

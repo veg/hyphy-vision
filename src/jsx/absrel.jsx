@@ -9,7 +9,7 @@ require("phylotree");
 require("phylotree.css");
 
 import {BSRELSummary} from "./components/absrel_summary.jsx";
-import {DatamonkeyModelTable} from "./components/shared_summary.jsx";
+import {DatamonkeyModelTable} from "./components/tables.jsx";
 import {TreeSummary} from "./components/tree_summary.jsx";
 import {Tree} from "./components/tree.jsx";
 import {BranchTable} from "./components/branch_table.jsx";

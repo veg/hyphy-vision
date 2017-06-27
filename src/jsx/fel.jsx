@@ -2,19 +2,23 @@ var React = require("react"),
   ReactDOM = require("react-dom"),
   _ = require("underscore");
 
-import { DatamonkeyTable } from "./components/shared_summary.jsx";
+import { DatamonkeyTable } from "./components/tables.jsx";
 import { DatamonkeySeries, DatamonkeyGraphMenu } from "./components/graphs.jsx";
 import { NavBar } from "./components/navbar.jsx";
 import { ScrollSpy } from "./components/scrollspy.jsx";
 
 var FEL = React.createClass({
+
   float_format: d3.format(".3f"),
 
   loadFromServer: function() {
     var self = this;
 
     d3.json(this.props.url, function(data) {
+
       var mle = data["MLE"];
+
+      // These variables are to be used for DatamonkeyTable
       var mle_headers = mle.headers || [];
       var mle_content = mle.content[0] || [];
 
@@ -41,7 +45,7 @@ var FEL = React.createClass({
         return [k].concat(d);
       });
 
-      // Create datatype that is a bit more manageable
+      // Create datatype that is a bit more manageable for use with DatamonkeySeries
       var mle_header_values = _.map(mle_headers, function(d) {
         return d.value;
       });

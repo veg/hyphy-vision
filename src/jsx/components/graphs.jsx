@@ -3,6 +3,11 @@ var React = require("react"),
   _ = require("underscore"),
   graphDefaultColorPallette = d3.scale.category10().domain(_.range(10));
 
+
+/* 
+ * Creates a dropdown menu to be used with any 
+ * component that extends BaseGraph
+ */
 class GraphMenu extends React.Component {
   constructor(props) {
     super(props);

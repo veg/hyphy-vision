@@ -1,4 +1,4 @@
-// __tests__/graphs-test.js
+// __tests__/graphs.test.js
 "use strict";
 
 jest.unmock("../src/jsx/components/graphs.jsx");
