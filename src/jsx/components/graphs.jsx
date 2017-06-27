@@ -9,6 +9,7 @@ var React = require("react"),
  * component that extends BaseGraph
  */
 class GraphMenu extends React.Component {
+
   constructor(props) {
     super(props);
     this.state = {

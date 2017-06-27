@@ -753,6 +753,7 @@ var DatamonkeyModelTable = React.createClass({
   },
 
   dm_extractFitsTable: function(jsonTable) {
+
     var columnMap = null;
     var columnMapIterator = [];
     var valueFormat = {};

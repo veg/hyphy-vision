@@ -141,9 +141,6 @@ var FEL = React.createClass({
       }
     );
 
-    console.log(JSON.stringify(self.state.mle_headers));
-    console.log(JSON.stringify(self.state.mle_content));
-
     return (
       <div>
 
