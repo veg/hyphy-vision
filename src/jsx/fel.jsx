@@ -1,6 +1,6 @@
 var React = require("react"),
-    ReactDOM = require("react-dom"),
-    _ = require("underscore");
+  ReactDOM = require("react-dom"),
+  _ = require("underscore");
 
 import { DatamonkeyTable } from "./components/shared_summary.jsx";
 import { DatamonkeySeries, DatamonkeyGraphMenu } from "./components/graphs.jsx";
@@ -8,15 +8,12 @@ import { NavBar } from "./components/navbar.jsx";
 import { ScrollSpy } from "./components/scrollspy.jsx";
 
 var FEL = React.createClass({
-
   float_format: d3.format(".3f"),
 
   loadFromServer: function() {
-
     var self = this;
 
     d3.json(this.props.url, function(data) {
-
       var mle = data["MLE"];
       var mle_headers = mle.headers || [];
       var mle_content = mle.content[0] || [];
@@ -45,15 +42,18 @@ var FEL = React.createClass({
       });
 
       // Create datatype that is a bit more manageable
-      var mle_header_values = _.map(mle_headers, function(d) { return d.value });
-      var mle_results = _.map(mle_content, function(c) { return _.object(mle_header_values, c)});
-
-      self.setState({
-        mle_headers : mle_headers,
-        mle_content : mle_content,
-        mle_results : mle_results
+      var mle_header_values = _.map(mle_headers, function(d) {
+        return d.value;
+      });
+      var mle_results = _.map(mle_content, function(c) {
+        return _.object(mle_header_values, c);
       });
 
+      self.setState({
+        mle_headers: mle_headers,
+        mle_content: mle_content,
+        mle_results: mle_results
+      });
     });
   },
 
@@ -64,7 +64,6 @@ var FEL = React.createClass({
   },
 
   definePlotData: function(x_label, y_label) {
-
     var self = this;
 
     var x = _.map(self.state.mle_results, function(d) {
@@ -76,7 +75,6 @@ var FEL = React.createClass({
     });
 
     return { x: x, y: [y] };
-
   },
 
   getDefaultProps: function() {
@@ -106,18 +104,15 @@ var FEL = React.createClass({
   },
 
   updateAxisSelection: function(e) {
-
-    var state_to_update  = {},
-        dimension = e.target.dataset.dimension,
-        axis = e.target.dataset.axis;
+    var state_to_update = {},
+      dimension = e.target.dataset.dimension,
+      axis = e.target.dataset.axis;
 
     state_to_update[axis] = dimension;
     this.setState(state_to_update);
-
   },
 
   render: function() {
-
     var self = this;
 
     var scrollspy_info = [
@@ -132,14 +127,20 @@ var FEL = React.createClass({
     );
 
     var x_options = "Site";
-    var y_options = _.filter(_.map(self.state.mle_headers, function(d) {
-                      return d.value;
-                    }), function(d) { return d != "Site"});
+    var y_options = _.filter(
+      _.map(self.state.mle_headers, function(d) {
+        return d.value;
+      }),
+      function(d) {
+        return d != "Site";
+      }
+    );
 
     return (
       <div>
 
         <NavBar />
+
         <div className="container">
 
           <div className="row">
