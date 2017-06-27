@@ -281,17 +281,21 @@ var BUSTED = React.createClass({
     return (
       <div>
         <NavBar />
-        <div className="container-fluid">
+        <div className="container">
           <div className="row">
 
             <ScrollSpy info={scrollspy_info} />
 
             <div className="col-lg-10">
-              <BUSTEDSummary
-                test_result={this.state.test_result}
-                pmid={this.state.pmid}
-                input_data={self.state.input_data}
-              />
+              <div id="results">
+                <div id="summary-tab">
+                  <BUSTEDSummary
+                    test_result={this.state.test_result}
+                    pmid={this.state.pmid}
+                    input_data={self.state.input_data}
+                  />
+                </div>
+              </div>
 
               <div className="row">
                 <div id="hyphy-model-fits" className="col-lg-12">
