@@ -36,17 +36,15 @@ const DatamonkeyTableRow = React.createClass({
   },*/
 
   dm_compareTwoValues: function(a, b) {
-    /* this should be made static */
 
-    /**
-        compare objects by iterating over keys
-
-        return 0 : equal
-               1 : a < b
-               2 : a > b
-               -1 : cannot be compared
-               -2 : not compared, but could contain 'value' objects that could be compared
-    */
+    // this should be made static 
+    //  compare objects by iterating over keys
+    //  return 0 : equal
+    //       1 : a < b
+    //       2 : a > b
+    //       -1 : cannot be compared
+    //       -2 : not compared, but could contain 'value' objects that could be compared
+    
 
     var myType = typeof a,
       self = this;
@@ -60,6 +58,7 @@ const DatamonkeyTableRow = React.createClass({
       a = _.isNaN(parsed_a) ? a : parsed_a;
       b = _.isNaN(parsed_b) ? b : parsed_b;
 
+      // If it's a string or number, it can be sorted with a simple greater than
       if (myType == "string" || myType == "number") {
         return a == b ? 0 : a > b ? 2 : 1;
       }
@@ -72,12 +71,16 @@ const DatamonkeyTableRow = React.createClass({
         var comparison_result = 0;
 
         _.every(a, function(c, i) {
+
           var comp = self.dm_compareTwoValues(c, b[i]);
+
           if (comp != 0) {
             comparison_result = comp;
             return false;
           }
+
           return true;
+
         });
 
         return comparison_result;
@@ -90,6 +93,7 @@ const DatamonkeyTableRow = React.createClass({
   },
 
   dm_compareTwoValues_level2: function(a, b) {
+
     var compare = this.dm_compareTwoValues(a, b);
 
     if (compare == -2) {
@@ -123,7 +127,7 @@ const DatamonkeyTableRow = React.createClass({
     }
 
     var result = _.some(this.props.rowData, function(value, index) {
-      /** TO DO
+      /** TODO
           check for format and other field equality
       */
 
@@ -306,6 +310,7 @@ var DatamonkeyTable = React.createClass({
   dm_sortOnColumn: function(index, compare_function) {
     var self = this;
     var is_ascending = true;
+
     if (this.state.sortOn && this.state.sortOn[0] == index) {
       is_ascending = !this.state.sortOn[1];
     }
@@ -327,10 +332,14 @@ var DatamonkeyTable = React.createClass({
       })
     ) {
       this.setState({
-        rowOrder: new_order,
-        sortOn: [index, is_ascending]
+        rowOrder: new_order
       });
     }
+
+    this.setState({
+      sortOn: [index, is_ascending]
+    });
+
   },
 
   componentDidMount: function() {
