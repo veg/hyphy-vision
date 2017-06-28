@@ -115,7 +115,7 @@ var Tree = React.createClass({
 
   },
 
-  renderLegendColorScheme : function(svg_container, attr_name, do_not_render) {
+  renderLegendColorScheme: function(svg_container, attr_name, do_not_render) {
 
     var self = this;
 
