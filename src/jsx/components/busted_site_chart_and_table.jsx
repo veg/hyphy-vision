@@ -43,7 +43,7 @@ var BUSTEDSiteChartAndTable = React.createClass({
       y = d3.scale.linear().domain([ymin, ymax]).range([height, 0]),
       yAxisTicks = d3.range(5*Math.ceil(ymin/5), 5*Math.floor(ymax/5)+1, 5),
       xAxis = d3.svg.axis().scale(x)
-        .orient("bottom").tickValues(d3.range(1, number_of_sites, 3)),
+        .orient("bottom").tickValues(d3.range(5, number_of_sites, 5)),
       yAxis = d3.svg.axis().scale(y)
         .orient("left").tickValues(yAxisTicks),
       cer_line = d3.svg.line()
@@ -101,11 +101,11 @@ var BUSTEDSiteChartAndTable = React.createClass({
         .text("2*Logarithm of evidence ratio")
       var c_legend = svg.append("g")
         .attr("class", "legend")
-        .attr("transform", "translate( " + .9*width + "," + .05*height + ")")
+        .attr("transform", "translate( " + .8*width + "," + .05*height + ")")
         .attr("text-anchor", "end")
       c_legend.append("text")
         .text("Constrained")
-        .attr("x", 75)
+        .attr("x", 115)
         .attr("y", 7.5)
         .attr("dy", ".32em")
       c_legend.append("rect")
@@ -114,11 +114,11 @@ var BUSTEDSiteChartAndTable = React.createClass({
         .attr("fill", "#00a99d")
       var on_legend = svg.append("g")
         .attr("class", "legend")
-        .attr("transform", "translate( " + .9*width + "," + .15*height + ")")
+        .attr("transform", "translate( " + .8*width + "," + .15*height + ")")
         .attr("text-anchor", "end")
       on_legend.append("text")
         .text("Optimized Null")
-        .attr("x", 85)
+        .attr("x", 135)
         .attr("y", 7.5)
         .attr("dy", ".32em")
       on_legend.append("rect")

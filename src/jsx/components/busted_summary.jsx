@@ -32,10 +32,17 @@ var BUSTEDSummary = React.createClass({
     }
     return (
       <div className="row" id="summary-div">
-        <div className="col-md-8">
+        <div className="col-md-12">
           <h3 className="list-group-item-heading">
-            <span id="summary-method-name">BUSTED summary</span>
+            <span className="summary-method-name">Branch-Site Unrestricted Statistical Test for Episodic Diversification</span>
+            <br />
+            <span className="results-summary">results summary</span>
           </h3>
+        </div>
+        <div className="col-md-12">
+          <InputInfo input_data={this.props.input_data} />
+        </div>
+        <div className="col-md-12">
           <div className="main-result">
             {message}
             <hr />
@@ -59,10 +66,6 @@ var BUSTEDSummary = React.createClass({
               </small>
             </p>
           </div>
-        </div>
-
-        <div className="col-md-4">
-          <InputInfo input_data={this.props.input_data} />
         </div>
       </div>
     );
