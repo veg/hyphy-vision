@@ -1,6 +1,6 @@
 var React = require("react"),
-    _ = require("underscore"),
-    d3 = require("d3");
+  _ = require("underscore"),
+  d3 = require("d3");
 
 var datamonkey = require("../../datamonkey/datamonkey.js");
 
@@ -36,21 +36,18 @@ const DatamonkeyTableRow = React.createClass({
   },*/
 
   dm_compareTwoValues: function(a, b) {
-
-    // this should be made static 
+    // this should be made static
     //  compare objects by iterating over keys
     //  return 0 : equal
     //       1 : a < b
     //       2 : a > b
     //       -1 : cannot be compared
     //       -2 : not compared, but could contain 'value' objects that could be compared
-    
 
     var myType = typeof a,
       self = this;
 
     if (myType == typeof b) {
-
       // Parse as float if possible
       var parsed_a = parseFloat(a);
       var parsed_b = parseFloat(b);
@@ -71,7 +68,6 @@ const DatamonkeyTableRow = React.createClass({
         var comparison_result = 0;
 
         _.every(a, function(c, i) {
-
           var comp = self.dm_compareTwoValues(c, b[i]);
 
           if (comp != 0) {
@@ -80,7 +76,6 @@ const DatamonkeyTableRow = React.createClass({
           }
 
           return true;
-
         });
 
         return comparison_result;
@@ -93,7 +88,6 @@ const DatamonkeyTableRow = React.createClass({
   },
 
   dm_compareTwoValues_level2: function(a, b) {
-
     var compare = this.dm_compareTwoValues(a, b);
 
     if (compare == -2) {
@@ -339,7 +333,6 @@ var DatamonkeyTable = React.createClass({
     this.setState({
       sortOn: [index, is_ascending]
     });
-
   },
 
   componentDidMount: function() {
@@ -762,7 +755,6 @@ var DatamonkeyModelTable = React.createClass({
   },
 
   dm_extractFitsTable: function(jsonTable) {
-
     var columnMap = null;
     var columnMapIterator = [];
     var valueFormat = {};

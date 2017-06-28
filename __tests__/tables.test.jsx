@@ -66,38 +66,34 @@ describe("DatamonkeyTable", () => {
   ];
 
   it("should sort floats correctly", () => {
-
     const table = mount(
       <DatamonkeyTable
         headerData={mle_headers}
         bodyData={mle_content}
         classes={"table table-condensed"}
-      />);
+      />
+    );
 
     // sort on alpha
     var elem = table.find("th").at(1);
     elem.simulate("click");
     elem.simulate("click");
     expect(table.find("td").at(1).text()).toBe("119.000");
-
   });
 
   it("sort columns that are already sorted (tests bug fix)", () => {
-
     const table = mount(
       <DatamonkeyTable
         headerData={mle_headers}
         bodyData={mle_content}
         classes={"table table-condensed"}
-      />);
+      />
+    );
 
     // sort on alpha
     var elem = table.find("th").at(0);
     elem.simulate("click");
     elem.simulate("click");
     expect(table.find("td").at(0).text()).toBe("10");
-
   });
-
-
 });
