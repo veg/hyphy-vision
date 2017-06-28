@@ -368,11 +368,12 @@ var DatamonkeyTable = React.createClass({
     const children = [];
     var self = this,
         paginatorControls,
-        rowIndices;
+        rowIndices,
+        upperLimit = Math.min(this.state.current+this.props.paginate, this.state.rowOrder.length);
     if (this.props.paginate){
       paginatorControls = (<div>
         <div className="col-md-9">
-          <p>Showing entries {this.state.current+1} through {this.state.current+this.props.paginate} out of {this.state.rowOrder.length}.</p>
+          <p>Showing entries {this.state.current+1} through {upperLimit} out of {this.state.rowOrder.length}.</p>
         </div>
         <div className="col-md-3">
           <div className="btn-group btn-group-justified" role="group" aria-label="...">

@@ -40,9 +40,9 @@ class MEMETable extends React.Component {
           MEME data
           <span className="glyphicon glyphicon-info-sign" style={{"verticalAlign": "middle", "float":"right"}} aria-hidden="true" data-toggle="popover" data-trigger="hover" title="Actions" data-html="true" data-content="<ul><li>Hover over a column header for a description of its content.</li></ul>" data-placement="bottom"></span>
         </h4>
-        <div style={{width: "200px"}}>
-          <span style={{width: "15%", display: "inline-block", verticalAlign: "middle"}}>{self.state.value/100}</span>
-          <input type="range" id="myRange" value={self.state.value} style={{width: "75%", display: "inline-block", verticalAlign: "middle"}} onChange={this.handleChange} onMouseUp={this.handleMouseUp} />
+        <div style={{width: "500px"}}>
+          <span style={{width: "35%", display: "inline-block", verticalAlign: "middle"}}>p-value threshold: {self.state.value/100}</span>
+          <input type="range" id="myRange" value={self.state.value} style={{width: "65%", display: "inline-block", verticalAlign: "middle"}} onChange={this.handleChange} onMouseUp={this.handleMouseUp} />
         </div>
         <DatamonkeyTable 
           headerData={headerData}
