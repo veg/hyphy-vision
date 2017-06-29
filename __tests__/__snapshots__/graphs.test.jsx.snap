@@ -19,6 +19,14 @@ exports[`DatamonkeySeries should create an svg element 1`] = `
       style={null}
       transform="translate(45,10)"
     />
+    <text
+      text-anchor="middle"
+      transform="translate(250,396.6666666666667)"
+    />
+    <text
+      text-anchor="middle"
+      transform="translate(12.5,200)rotate(-90)"
+    />
   </svg>
 </div>
 `;
