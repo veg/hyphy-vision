@@ -9,9 +9,72 @@ import { ScrollSpy } from "./components/scrollspy.jsx";
 
 var FEL = React.createClass({
 
+  definePlotData: function(x_label, y_label) {
+    var self = this;
+
+    var x = _.map(self.state.mle_results, function(d) {
+      return d[x_label];
+    });
+
+    var y = _.map(self.state.mle_results, function(d) {
+      return d[y_label];
+    });
+
+    return { x: x, y: [y] };
+  },
+
   float_format: d3.format(".3f"),
 
+  formatHeadersForTable: function(mle) {
+    return _.map(mle, function(d) {
+      return _.object(["value", "abbr"], d);
+    });
+  },
+
+  updateAxisSelection: function(e) {
+    var state_to_update = {},
+      dimension = e.target.dataset.dimension,
+      axis = e.target.dataset.axis;
+
+    state_to_update[axis] = dimension;
+    this.setState(state_to_update);
+  },
+
+	updatePvalThreshold: function(e) {
+
+		var self = this;
+
+		// Get number of positively and negatively selected sites by p-value threshold
+		var positively_selected = _.filter(self.state.mle_results, function(d) { return parseFloat(d["beta"])/parseFloat(d["alpha"]) > 1 && parseFloat(d["p-value"]) <= self.state.pvalue_threshold });
+		var negatively_selected = _.filter(self.state.mle_results, function(d) { return parseFloat(d["beta"])/parseFloat(d["alpha"]) < 1 && parseFloat(d["p-value"]) <= self.state.pvalue_threshold });
+		var pvalue_threshold = parseFloat(e.target.value);
+
+    this.setState({
+			positively_selected: positively_selected,
+			negatively_selected: negatively_selected,
+      pvalue_threshold: pvalue_threshold
+		});
+
+	},
+
+  getDefaultProps: function() {
+    return {};
+  },
+
+  getInitialState: function() {
+    return {
+      mle_headers: [],
+      mle_content: [],
+      xaxis: "Site",
+      yaxis: "alpha",
+      pvalue_threshold: 0.1,
+      positively_selected: [], 
+      negatively_selected: []
+    };
+  },
+
   loadFromServer: function() {
+
     var self = this;
 
     d3.json(this.props.url, function(data) {
@@ -31,7 +94,6 @@ var FEL = React.createClass({
       // format content
       mle_content = _.map(mle_content, function(d) {
         return _.map(d, function(g) {
-          //return self.float_format(g);
           return self.float_format(g);
         });
       });
@@ -55,52 +117,73 @@ var FEL = React.createClass({
         return _.object(mle_header_values, c);
       });
 
+      // Get number of positively and negatively selected sites by p-value threshold
+      var positively_selected = _.filter(mle_results, function(d) { return parseFloat(d["beta"])/parseFloat(d["alpha"]) > 1 && parseFloat(d["p-value"]) <= self.state.pvalue_threshold });
+      var negatively_selected = _.filter(mle_results, function(d) { return parseFloat(d["beta"])/parseFloat(d["alpha"]) < 1 && parseFloat(d["p-value"]) <= self.state.pvalue_threshold });
+
       self.setState({
         mle_headers: mle_headers,
         mle_content: mle_content,
-        mle_results: mle_results
+        mle_results: mle_results,
+        positively_selected: positively_selected, 
+        negatively_selected: negatively_selected
       });
+
     });
+
   },
 
-  formatHeadersForTable: function(mle) {
-    return _.map(mle, function(d) {
-      return _.object(["value", "abbr"], d);
-    });
-  },
+  getSummary() {
 
-  definePlotData: function(x_label, y_label) {
     var self = this;
 
-    var x = _.map(self.state.mle_results, function(d) {
-      return d[x_label];
-    });
+    return(<div>
+      <div className="main-result">
+        <p>
+					<a href=""><i className="fa fa-clipboard pull-right" aria-hidden="true"></i></a>
+          <p>FEL <strong className="hyphy-highlight"> found evidence</strong> of</p>
+          <p>
+            <i className="fa fa-plus-circle" aria-hidden="true">  </i>
+            {" "}Pervasive Positive/Diversifying selection at 
+            <span className="hyphy-highlight">
+              {" "}{ self.state.positively_selected.length }{" "}
+            </span>
+            sites
+          </p>
+          <p>
+            <i className="fa fa-minus-circle" aria-hidden="true"> </i>
+            {" "}Pervasive Negative/Purifying selection at 
+            <span className="hyphy-highlight">
+            {" "}{ self.state.negatively_selected.length }{" "}
+            </span>
+            sites
+          </p>
+					<div className="row" style={{marginTop:"20px"}}>
+						<div className="col-md-3">
+							With p-value threshold of 
+						</div>
+						<div className="col-md-2" style={{top:"-5px"}}>
+							<input className="form-control" type="number" defaultValue="0.1" step="0.01" min="0" max="1" onChange={self.updatePvalThreshold} />
+						</div>
+					</div>
+        </p>
+        <hr />
+        <p>
+          <small>
+            See <a href="//hyphy.org/methods/selection-methods/#fel">here</a> for more information about the FEL method
+            <br />
+            Please cite PMID <a href="//www.ncbi.nlm.nih.gov/pubmed/15703242">15703242</a> if you use this result in a publication, presentation, or other scientific work
+          </small>
+        </p>
+      </div>
+    </div>);
 
-    var y = _.map(self.state.mle_results, function(d) {
-      return d[y_label];
-    });
 
-    return { x: x, y: [y] };
-  },
-
-  getDefaultProps: function() {
-    return {};
-  },
-
-  getInitialState: function() {
-    return {
-      mle_headers: [],
-      mle_content: [],
-      xaxis: "Site",
-      yaxis: "alpha"
-    };
   },
 
   componentWillMount: function() {
     this.loadFromServer();
   },
-
-  setEvents: function() {},
 
   componentDidUpdate(prevProps) {
     $("body").scrollspy({
@@ -109,16 +192,8 @@ var FEL = React.createClass({
     });
   },
 
-  updateAxisSelection: function(e) {
-    var state_to_update = {},
-      dimension = e.target.dataset.dimension,
-      axis = e.target.dataset.axis;
-
-    state_to_update[axis] = dimension;
-    this.setState(state_to_update);
-  },
-
   render: function() {
+
     var self = this;
 
     var scrollspy_info = [
@@ -141,6 +216,8 @@ var FEL = React.createClass({
         return d != "Site";
       }
     );
+
+    var Summary = self.getSummary();
 
     return (
       <div>
@@ -178,25 +255,11 @@ var FEL = React.createClass({
                   <span id="summary-method-name">
                     FEL - Fixed Effects Likelihood
                   </span>
+                  <br />
+                  <span className="results-summary">results summary</span>
                 </h3>
 
-                <div>
-                  <div className="main-result">
-                    <p className="list-group-item-text label_and_input">
-                      Evidence<sup>†</sup> of episodic diversifying selection
-                      was found on
-                      <span className="hyphy-highlight">
-                        <strong>
-                          {" "}{self.state.branches_with_evidence}
-                        </strong>{" "}
-                        out
-                        of {self.state.test_branches}
-                      </span>{" "}
-                      tested branches({self.state.total_branches} total
-                      branches).
-                    </p>
-                  </div>
-                </div>
+                {Summary}
 
                 <div id="plot-tab" className="row hyphy-row">
 
@@ -211,6 +274,8 @@ var FEL = React.createClass({
                   <DatamonkeySeries
                     x={x}
                     y={y}
+										x_label={self.state.xaxis}
+										y_label={self.state.yaxis}
                     marginLeft={50}
                     width={$("#results").width()}
                     transitions={true}
@@ -225,7 +290,7 @@ var FEL = React.createClass({
                     <DatamonkeyTable
                       headerData={self.state.mle_headers}
                       bodyData={self.state.mle_content}
-                      classes={"table table-condensed"}
+                      classes={"table table-condensed table-striped"}
                     />
                   </div>
                 </div>
@@ -236,6 +301,7 @@ var FEL = React.createClass({
       </div>
     );
   }
+
 });
 
 // Will need to make a call to this

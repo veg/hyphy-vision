@@ -120,8 +120,8 @@ class BaseGraph extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      xaxis: "site",
-      yaxis: "alpha"
+      x_label: "site",
+      y_label: "alpha"
     };
   }
 
@@ -203,6 +203,18 @@ class BaseGraph extends React.Component {
     self.doTransition(d3.select(dom_element)).call(xAxis);
   }
 
+  xAxisLabel() {
+    var transform_x = this.props.width/2;
+    var transform_y = this.props.height-(this.props.marginTop/3);
+    return(<text text-anchor="middle" transform={"translate("+transform_x+","+transform_y+")"}>{ this.props.x_label }</text>);
+  }
+
+  yAxisLabel() {
+    var transform_x = (this.props.marginLeft - 25)/2;
+    var transform_y = this.props.height/2;
+    return(<text text-anchor="middle" transform={"translate("+transform_x+","+transform_y+")rotate(-90)"}>{ this.props.y_label }</text>);
+  }
+
   //TODO : See if this can be removed
   makeClasses(key) {
     var className = null,
@@ -240,6 +252,7 @@ class BaseGraph extends React.Component {
   }
 
   render() {
+
     var self = this;
 
     var main = self.computeDimensions(),
@@ -247,6 +260,9 @@ class BaseGraph extends React.Component {
 
     var x_scale = self.makeScale(self.props.xScale, x_range, [0, main.width]),
       y_scale = self.makeScale(self.props.yScale, y_range, [main.height, 0]);
+
+    var xAxisLabel = self.xAxisLabel();
+    var yAxisLabel = self.yAxisLabel();
 
     return (
       <div>
@@ -299,6 +315,8 @@ class BaseGraph extends React.Component {
                 ).bind(self)}
               />
             : null}
+            { xAxisLabel }
+            { yAxisLabel }
         </svg>
       </div>
     );
@@ -370,6 +388,7 @@ class ScatterPlot extends BaseGraph {
 }
 
 class Series extends BaseGraph {
+
   renderGraph(x_scale, y_scale, dom_element) {
     var self = this,
       main_graph = d3.select(dom_element);
