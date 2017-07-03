@@ -61,6 +61,21 @@ var NavBar = React.createClass({
     window.addEventListener("hashchange", shiftWindow);
   },
   render: function() {
+    var input_style = {
+      position: "absolute",
+      top: 0,
+      right: 0,
+      minWidth: "100%",
+      minHeight: "100%",
+      fontSize: "100px",
+      textAlign: "right",
+      filter: "alpha(opacity=0)",
+      opacity: 0,
+      outline: "none",
+      background: "white",
+      cursor: "inherit",
+      display: "block"
+    }
     return (
       <nav className="navbar navbar-default navbar-fixed-top" role="navigation">
         <div className="container">
@@ -75,7 +90,10 @@ var NavBar = React.createClass({
 
 
                 <ul className="nav navbar-nav">
-                  <a href="#" className="nav-button" role="button">Load</a>
+                  <a href="#" className="nav-button" role="button" style={{position: "relative", overflow: "hidden"}}>
+                    <input type="file" style={input_style} id="dm-file"/>
+                    Load
+                  </a>
                   <a href="#" className="nav-button" role="button">Export</a>
                 </ul>
 
