@@ -832,3 +832,5 @@ input[type=range]:focus::-ms-fill-lower {
 input[type=range]:focus::-ms-fill-upper {
     background: #ccc;
 }
+
+.modal .modal-dialog { width: 800px; }

@@ -138,6 +138,7 @@ var BranchTable = React.createClass({
           current_model_name: label,
           current_omegas: self.state.annotations[label]["omegas"]
         });
+        $('#myModal').modal('show');
       });
     }
   },
@@ -247,7 +248,7 @@ var BranchTable = React.createClass({
               data-trigger="hover"
               title="Detailed results"
               data-html="true"
-              data-content="<ul><li><strong>Bolded rows</strong> correspond to positively-selected branches at P ≤ 0.05.</li><li>Click on a row to visualize its inferred rate distribution.</li><li>Hover over a column header for a description of its content.</li></ul>"
+              data-content="<ul><li><strong>Bolded rows</strong> correspond to positively-selected branches at P ≤ 0.05.</li><li>Click on a row to see a visualization of its inferred rate distribution.</li><li>Hover over a column header for a description of its content.</li></ul>"
               data-placement="bottom"
             />
           </h4>
@@ -305,14 +306,29 @@ var BranchTable = React.createClass({
             <tbody id="table-branch-table" />
           </table>
         </div>
-        <div id='primary-omega-tag' className="col-md-6 hidden">
-          <h4 className="dm-table-header">&omega; distribution</h4>
-          <PropChart
-            name={self.state.current_model_name}
-            omegas={self.state.current_omegas}
-            settings={self.state.distro_settings}
-          />
+
+        <div className="modal fade" id="myModal" tabIndex="-1" role="dialog" aria-labelledby="myModalLabel">
+          <div className="modal-dialog" role="document">
+            <div className="modal-content">
+              <div className="modal-header">
+                <button type="button" className="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 className="modal-title" id="myModalLabel">aBSREL Site Proportion Chart</h4>
+              </div>
+              <div className="modal-body" id="modal-body">
+                <h4 className="dm-table-header">&omega; distribution</h4>
+                <PropChart
+                  name={self.state.current_model_name}
+                  omegas={self.state.current_omegas}
+                  settings={self.state.distro_settings}
+                />
+              </div>
+              <div className="modal-footer">
+                <button type="button" className="btn btn-default" data-dismiss="modal">Close</button>
+              </div>
+            </div>
+          </div>
         </div>
+
         <div className="col-md-12">
           <p className="description" />
         </div>

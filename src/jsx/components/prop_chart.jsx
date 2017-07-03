@@ -158,6 +158,10 @@ var PropChart = React.createClass({
       "#17becf"
     ]);
 
+    var color_scale = d3.scale.linear()
+      .domain([.01, 1, 10])
+      .range([d3.rgb("#000000"), d3.rgb("#DDDDDD"), d3.rgb("#00A99D")]);
+
     // ** Omega Line (Red) ** //
     var omega_lines = this.plot.selectAll(".hyphy-omega-line").data(omegas);
     omega_lines.enter().append("line");
@@ -178,9 +182,7 @@ var PropChart = React.createClass({
         return self.proportion_scale(d.prop) + 20;
       })
       .style("stroke", function(d) {
-        var color = _.take(self.colores_g);
-        self.colores_g = _.rest(self.colores_g);
-        return color;
+        return color_scale(Math.min(10, d.omega));
       })
       .attr("class", "hyphy-omega-line");
   },
