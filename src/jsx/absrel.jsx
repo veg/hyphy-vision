@@ -1,9 +1,7 @@
 var React = require('react'),
 		ReactDOM = require('react-dom');
 
-var datamonkey = require('../datamonkey/datamonkey.js'),
-    _ = require('underscore'),
-		busted = require('../busted/busted.js');
+var _ = require('underscore');
 
 require("phylotree");
 require("phylotree.css");
@@ -50,11 +48,15 @@ var BSREL = React.createClass({
 
   },
 
+  omegaColorGradient : ["#5e4fa2", "#3288bd", "#e6f598", "#f46d43", "#9e0142"],
+  omegaGrayScaleGradient : ["#DDDDDD", "#AAAAAA", "#888888", "#444444", "#000000"],
+
   getDefaultProps: function() {
+  },
 
-    var edgeColorizer = function (element, data) {
+  getInitialState: function() {
 
-        var self = this;
+    var edgeColorizer = function(element, data, omega_color) {
 
         var svg = d3.select("#tree_container svg"),
             svg_defs = d3.select(".phylotree-definitions");
@@ -65,39 +67,25 @@ var BSREL = React.createClass({
         }
 
         // clear existing linearGradients
-
-        var scaling_exponent = 1.0/3,
-            omega_format = d3.format(".3r"),
-            prop_format = d3.format(".2p"),
-            fit_format = d3.format(".2f"),
-            p_value_format = d3.format(".4f");
-
-        self.omega_color = d3.scale.pow().exponent(scaling_exponent)
-            .domain([0, 0.25, 1, 5, 10])
-            .range(
-              self.options()["color-fill"]
-                ? ["#DDDDDD", "#AAAAAA", "#888888", "#444444", "#000000"]
-                : ["#6e4fa2", "#3288bd", "#e6f598", "#f46d43", "#9e0142"])
-            .clamp(true);
+        var omega_format = d3.format(".3r"),
+            prop_format = d3.format(".2p");
 
         var createBranchGradient = function(node) {
 
             function generateGradient(svg_defs, grad_id, annotations, already_cumulative) {
-
                 var current_weight = 0;
                 var this_grad = svg_defs.append("linearGradient")
                     .attr("id", grad_id);
 
                 annotations.forEach(function(d, i) {
-
                     if (d.prop) {
                         var new_weight = current_weight + d.prop;
                         this_grad.append("stop")
                             .attr("offset", "" + current_weight * 100 + "%")
-                            .style("stop-color", self.omega_color(d.omega));
+                            .style("stop-color", omega_color(d.omega));
                         this_grad.append("stop")
                             .attr("offset", "" + new_weight * 100 + "%")
-                            .style("stop-color", self.omega_color(d.omega));
+                            .style("stop-color", omega_color(d.omega));
                         current_weight = new_weight;
                     }
                 });
@@ -111,7 +99,7 @@ var BSREL = React.createClass({
             if(node.annotations) {
 
               if (node.annotations.length == 1) {
-                node['color'] = self.omega_color(node.annotations[0]["omega"]);
+                node['color'] = omega_color(node.annotations[0]["omega"]);
               } else {
                 self.gradient_count++;
                 var grad_id = "branch_gradient_" + self.gradient_count;
@@ -174,15 +162,8 @@ var BSREL = React.createClass({
 
       }
 
-    };
+    }
 
-    return {
-      edgeColorizer : edgeColorizer
-    };
-
-  },
-
-  getInitialState: function() {
 
     var tree_settings = {
         'omegaPlot': {},
@@ -195,11 +176,11 @@ var BSREL = React.createClass({
             'hyphy-tree-highlight': [null, false],
             'hyphy-tree-branch-lengths': [true, true],
             'hyphy-tree-hide-legend': [false, true],
-            'hyphy-tree-fill-color': [false, true]
+            'hyphy-tree-fill-color': [true, true]
         },
         'suppress-tree-render': false,
         'chart-append-html' : true,
-        'edgeColorizer' : this.props.edgeColorizer
+        'edgeColorizer' : edgeColorizer
     };
 
 
@@ -357,7 +338,10 @@ var BSREL = React.createClass({
                 <div className="row">
                   <div id="tree-tab" className="col-md-12">
                     <Tree json={self.state.json}
-                          settings={self.state.settings} />
+                          settings={self.state.settings}
+                          color_gradient={self.omegaColorGradient}
+                          grayscale_gradient={self.omegaGrayscaleGradient}
+                          />
                   </div>
                 </div>
 

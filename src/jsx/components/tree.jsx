@@ -4,10 +4,74 @@ require('phylotree');
 
 var Tree = React.createClass({
 
+  getDefaultProps : function() {
+
+    return { 
+              color_gradient : ["#5e4fa2", "#3288bd", "#e6f598", "#f46d43", "#9e0142"],
+              grayscale_gradient : ["#DDDDDD", "#AAAAAA", "#888888", "#444444", "#000000"],
+              fill_color : true,
+              scaling_exponent : 0.33,
+              bar_width : 70,
+              bar_height : 300,
+              margins : {
+                'bottom': 30,
+                'top': 15,
+                'left': 40,
+                'right': 2
+              }
+           };
+  },
+
+  changeColorScale : function(e) {
+
+    var self = this;
+    var fill_color = !e.target.checked;
+
+    var omega_color = d3.scale.pow().exponent(self.props.scaling_exponent)
+        .domain([0, 0.25, 1, 5, 10])
+        .range(fill_color
+               ? self.props.color_gradient
+               : self.props.grayscale_gradient)
+        .clamp(true);
+
+    var omega_scale = d3.scale.pow().exponent(self.props.scaling_exponent)
+        .domain(d3.extent(omega_color.domain()))
+        .range([0, 1]);
+
+    this.setState({
+      omega_color: omega_color,
+      omega_scale : omega_scale,
+      fill_color:false
+    });
+
+  },
+
   getInitialState: function() {
+
+    var self = this;
+
+    var omega_color = d3.scale.pow().exponent(self.props.scaling_exponent)
+        .domain([0, 0.25, 1, 5, 10])
+        .range(self.props.fill_color
+               ? self.props.color_gradient
+               : self.props.grayscale_gradient)
+        .clamp(true);
+
+    var omega_scale = d3.scale.pow().exponent(self.props.scaling_exponent)
+        .domain(d3.extent(omega_color.domain()))
+        .range([0, 1]),
+        axis_scale = d3.scale.pow().exponent(self.props.scaling_exponent)
+        .domain(d3.extent(omega_color.domain()))
+        .range([0, self.props.bar_height - self.props.margins['top'] - self.props.margins['bottom']]);
+
+
     return { 
               json : this.props.json,
-              settings : this.props.settings
+              settings : this.props.settings,
+              fill_color : this.props.fill_color,
+              omega_color : omega_color,
+              omega_scale : omega_scale,
+              axis_scale : axis_scale
            };
   },
 
@@ -118,24 +182,18 @@ var Tree = React.createClass({
   renderLegendColorScheme: function(svg_container, attr_name, do_not_render) {
 
     var self = this;
-
     var branch_annotations = this.state.json["fits"][this.which_model]["branch-annotations"];
-
     var svg = self.svg;
+
+    if(!self.state.omega_color || !self.state.omega_scale) {
+      return;
+    }
 
     // clear existing linearGradients
     d3.selectAll(".legend-definitions").selectAll("linearGradient").remove();
     d3.selectAll("#color-legend").remove();
 
     if (branch_annotations && !do_not_render) {
-        var bar_width = 70,
-            bar_height = 300,
-            margins = {
-                'bottom': 30,
-                'top': 15,
-                'left': 40,
-                'right': 2
-            };
 
         var this_grad = svg.append("defs")
             .attr("class", "legend-definitions")
@@ -146,32 +204,24 @@ var Tree = React.createClass({
               .attr("x2", "0%")
               .attr("y2", "100%");
 
-        var omega_scale = d3.scale.pow().exponent(this.scaling_exponent)
-            .domain(d3.extent(self.omega_color.domain()))
-            .range([0, 1]),
-            axis_scale = d3.scale.pow().exponent(this.scaling_exponent)
-            .domain(d3.extent(self.omega_color.domain()))
-            .range([0, bar_height - margins['top'] - margins['bottom']]);
-
-
-        self.omega_color.domain().forEach(function(d) {
+        self.state.omega_color.domain().forEach(function(d) {
             this_grad.append("stop")
-                .attr("offset", "" + omega_scale(d) * 100 + "%")
-                .style("stop-color", self.omega_color(d));
+                .attr("offset", "" + self.state.omega_scale(d) * 100 + "%")
+                .style("stop-color", self.state.omega_color(d));
         });
 
         var g_container = svg.append("g")
               .attr("id", "color-legend")
-              .attr("transform", "translate(" + margins["left"] + "," + margins["top"] + ")");
+              .attr("transform", "translate(" + self.props.margins["left"] + "," + self.props.margins["top"] + ")");
 
         g_container.append("rect").attr("x", 0)
-            .attr("width", bar_width - margins['left'] - margins['right'])
+            .attr("width", self.props.bar_width - self.props.margins['left'] - self.props.margins['right'])
             .attr("y", 0)
-            .attr("height", bar_height - margins['top'] - margins['bottom'])
+            .attr("height", self.props.bar_height - self.props.margins['top'] - self.props.margins['bottom'])
             .style("fill", "url(#_omega_bar)");
 
 
-        var draw_omega_bar = d3.svg.axis().scale(axis_scale)
+        var draw_omega_bar = d3.svg.axis().scale(self.state.axis_scale)
             .orient("left")
             .tickFormat(d3.format(".1r"))
             .tickValues([0, 0.01, 0.1, 0.5, 1, 2, 5, 10]);
@@ -185,18 +235,17 @@ var Tree = React.createClass({
         scale_bar.selectAll("text")
             .style("text-anchor", "right");
 
-				var _label = '';
-        var x_label = _label = scale_bar.append("g").attr("class", "hyphy-omega-bar");
+        var x_label = scale_bar.append("g").attr("class", "hyphy-omega-bar");
+
         x_label = x_label.selectAll("text").data([attr_name]);
         x_label.enter().append("text");
         x_label.text(function(d) {
             return $('<textarea />').html(d).text();
-        })
-            .attr("transform", "translate(" + (bar_width - margins['left'] - margins['right']) * 0.5 + "," + (bar_height - margins['bottom']) + ")")
-            .style("text-anchor", "middle")
-            .style("font-size", "18")
-            .attr("dx", "0.0em")
-            .attr("dy", "0.1em");
+        }).attr("transform", "translate(" + (self.props.bar_width - self.props.margins['left'] - self.props.margins['right']) * 0.5 + "," + (self.props.bar_height - self.props.margins['bottom']) + ")")
+          .style("text-anchor", "middle")
+          .style("font-size", "18")
+          .attr("dx", "0.0em")
+          .attr("dy", "0.1em");
     }
   },
 
@@ -211,9 +260,6 @@ var Tree = React.createClass({
       });
 
       $(".hyphy-tree-trigger").on("click", function(e) {
-
-        self.renderTree();
-
       });
 
       $(".tree-tab-btn").on('click', function(e) {
@@ -319,7 +365,6 @@ var Tree = React.createClass({
     partition_list.enter().append("a");
     partition_list.attr("href", "#").on("click", function(d, i) {
         d3.select("#hyphy-tree-highlight").attr("value", d);
-        self.renderTree();
     });
 
     // set default to passed setting
@@ -333,8 +378,6 @@ var Tree = React.createClass({
   },
 
   setModelList : function() {
-
-    var self = this;
 
     if(!this.state.json) {
       return [];
@@ -358,7 +401,6 @@ var Tree = React.createClass({
 
     model_list.attr("href", "#").on("click", function(d, i) {
       d3.select("#hyphy-tree-model").attr("value", d);
-      self.renderTree();
     });
 
 
@@ -399,8 +441,6 @@ var Tree = React.createClass({
 
   initialize : function() {
 
-    var self = this;
-
     this.settings = this.state.settings;
 
     if(!this.settings) {
@@ -418,9 +458,6 @@ var Tree = React.createClass({
     this.prop_format = d3.format(".2p");
     this.fit_format = d3.format(".2f");
     this.p_value_format = d3.format(".4f");
-
-    var json =  this.state.json;
-    var analysis_data = json;
 
     this.width = 800;
     this.height = 600;
@@ -442,9 +479,7 @@ var Tree = React.createClass({
     var analysis_data = self.state.json;
 
     var width = this.width,
-        height = this.height,
-        alpha_level = 0.05,
-        branch_lengths = [];
+        height = this.height;
 
     if(!this.tree) {
       this.tree = d3.layout.phylotree("body")
@@ -475,14 +510,26 @@ var Tree = React.createClass({
 
     this.assignBranchAnnotations();
 
-    self.omega_color = d3.scale.pow().exponent(this.scaling_exponent)
-        .domain([0, 0.25, 1, 5, 10])
-        .range(this.settings["tree-options"]["hyphy-tree-fill-color"][0] 
-                    ? ["#DDDDDD", "#AAAAAA", "#888888", "#444444", "#000000"] 
-                    :  ["#5e4fa2", "#3288bd", "#e6f598", "#f46d43", "#9e0142"]) 
-        .clamp(true);
+    if(_.indexOf(_.keys(analysis_data), "tree") > -1) {
+      self.tree(analysis_data["tree"]).svg(self.svg);
+    } else {
+      self.tree(analysis_data["fits"][self.which_model]["tree string"]).svg(self.svg);
+    }
 
-    self.renderTree();
+    self.branch_lengths = this.getBranchLengths();
+    self.tree.font_size(18);
+    self.tree.scale_bar_font_size(14);
+    self.tree.node_circle_size(0);
+
+    self.tree.branch_length(function(n) {
+        if (self.branch_lengths) {
+            return self.branch_lengths[n.name] || 0;
+        }
+        return undefined;
+    });
+
+    this.assignBranchAnnotations();
+
 
     if (self.legend_type == 'discrete') {
       self.renderDiscreteLegendColorScheme("tree_container");
@@ -492,7 +539,7 @@ var Tree = React.createClass({
 
 
     if(this.settings.edgeColorizer) {
-      this.edgeColorizer = this.settings.edgeColorizer;
+      this.edgeColorizer = _.partial(this.settings.edgeColorizer, _, _, self.state.omega_color);
     }
 
 
@@ -504,116 +551,6 @@ var Tree = React.createClass({
     this.tree.placenodes().update();
     this.tree.layout();
 
-  },
-
-  renderTree : function(skip_render) {
-
-      var self = this;
-      var analysis_data = this.state.json;
-      var svg = self.svg;
-
-      if (!this.settings['suppress-tree-render']) {
-
-          var do_layout = false;
-
-          for (var k in this.settings["tree-options"]) {
-
-              //TODO : Check to make sure settings has a matching field
-              if(k == 'hyphy-tree-model') {
-
-                var controller = d3.select("#" + k),
-                    controller_value = (controller.attr("value") || controller.property("checked"));
-                    
-                if (controller_value != this.settings["tree-options"][k][0] && controller_value != false) {
-                    this.settings["tree-options"][k][0] = controller_value;
-                    do_layout = do_layout || this.settings["tree-options"][k][1];
-                }
-
-              } else {
-                var controller = d3.select("#" + k),
-                    controller_value = (controller.attr("value") || controller.property("checked"));
-                    
-                if (controller_value != this.settings["tree-options"][k][0]) {
-                    this.settings["tree-options"][k][0] = controller_value;
-                    do_layout = do_layout || this.settings["tree-options"][k][1];
-                }
-              }
-          }
-
-
-          // Update which_model
-          if(self.which_model != this.settings["tree-options"]["hyphy-tree-model"][0]) {
-            self.which_model = this.settings["tree-options"]["hyphy-tree-model"][0]; 
-            self.initializeTree();
-            return;
-          }
-
-          if(_.indexOf(_.keys(analysis_data), "tree") > -1) {
-            this.tree(analysis_data["tree"]).svg(svg);
-          } else {
-            this.tree(analysis_data["fits"][self.which_model]["tree string"]).svg(svg);
-          }
-
-          this.branch_lengths = this.getBranchLengths();
-
-          this.tree.font_size(18);
-          this.tree.scale_bar_font_size(14);
-          this.tree.node_circle_size(0);
-
-          this.tree.branch_length(function(n) {
-              if (self.branch_lengths) {
-                  return self.branch_lengths[n.name] || 0;
-              }
-              return undefined;
-          });
-
-          this.assignBranchAnnotations();
-          
-          if(_.findKey(analysis_data, "partition")) {
-            this.partition = (this.settings["tree-options"]["hyphy-tree-highlight"] 
-                              ? analysis_data["partition"][this.settings["tree-options"]["hyphy-tree-highlight"][0]] 
-                              : null) || null;
-          } else {
-            this.partition = null;
-          }
-
-          self.omega_color = d3.scale.pow().exponent(self.scaling_exponent)
-              .domain([0, 0.25, 1, 5, 10])
-              .range(self.settings["tree-options"]["hyphy-tree-fill-color"][0] 
-                     ? ["#DDDDDD", "#AAAAAA", "#888888", "#444444", "#000000"]
-                     : ["#5e4fa2", "#3288bd", "#e6f598", "#f46d43", "#9e0142"])
-              .clamp(true);
-
-          self.tree.options({
-              'color-fill': self.settings["tree-options"]["hyphy-tree-fill-color"][0]
-          }, false);
-
-
-          d3.select(".phylotree-definitions").selectAll("linearGradient").remove();
-
-          // TODO: Should be a prop. Hide or show legend.
-          if(!this.settings["tree-options"]["hyphy-tree-hide-legend"][0]) {
-            d3.select("#color-legend").style("visibility", "visible");
-            
-            if(self.legend_type) {
-              self.renderDiscreteLegendColorScheme("tree_container");
-            } else {
-              self.renderLegendColorScheme("tree_container", self.state.json["fits"][self.which_model]["annotation-tag"]);
-            }
-
-          } else {
-            d3.select("#color-legend").style("visibility", "hidden");
-          }
-
-          if (!skip_render) {
-              if (do_layout) {
-                  this.tree.update_layout();
-              }
-              //d3_phylotree_trigger_refresh(this.tree);
-							//this.tree.trigger_refresh();
-          }
-
-      }
   },
 
   componentDidMount: function() {
@@ -723,7 +660,7 @@ var Tree = React.createClass({
 
                       <span className="input-group-addon">
                         Grayscale 
-                        <input type="checkbox" id="hyphy-tree-fill-color" className="hyphy-tree-trigger"></input>
+                        <input type="checkbox" id="hyphy-tree-fill-color" className="hyphy-tree-trigger" defaultChecked={!this.props.fill_color} onChange={this.changeColorScale}></input>
                       </span>
 
                   </div>

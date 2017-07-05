@@ -6,6 +6,7 @@ import { DatamonkeyTable } from "./components/tables.jsx";
 import { DatamonkeySeries, DatamonkeyGraphMenu } from "./components/graphs.jsx";
 import { NavBar } from "./components/navbar.jsx";
 import { ScrollSpy } from "./components/scrollspy.jsx";
+import CopyToClipboard from 'react-copy-to-clipboard';
 
 var FEL = React.createClass({
 
@@ -45,14 +46,35 @@ var FEL = React.createClass({
 		var self = this;
 
 		// Get number of positively and negatively selected sites by p-value threshold
-		var positively_selected = _.filter(self.state.mle_results, function(d) { return parseFloat(d["beta"])/parseFloat(d["alpha"]) > 1 && parseFloat(d["p-value"]) <= self.state.pvalue_threshold });
-		var negatively_selected = _.filter(self.state.mle_results, function(d) { return parseFloat(d["beta"])/parseFloat(d["alpha"]) < 1 && parseFloat(d["p-value"]) <= self.state.pvalue_threshold });
 		var pvalue_threshold = parseFloat(e.target.value);
+
+		// Get number of positively and negatively selected sites by p-value threshold
+		var mle_results = _.map(self.state.mle_results, function(d) { 
+			d["is_positive"] = parseFloat(d["beta"])/parseFloat(d["alpha"]) > 1 && parseFloat(d["p-value"]) <= pvalue_threshold; 
+			d["is_negative"] = parseFloat(d["beta"])/parseFloat(d["alpha"]) < 1 && parseFloat(d["p-value"]) <= pvalue_threshold;
+			return d;
+		});
+
+		var positively_selected = _.filter(self.state.mle_results, function(d) { return d["is_positive"] });
+		var negatively_selected = _.filter(self.state.mle_results, function(d) { return d["is_negative"] });
+
+		// highlight mle_content with whether they are significant or not
+		var mle_content = _.map(self.state.mle_results, function(d, key) {
+			var classes="";
+			if(mle_results[key].is_positive) {
+				classes = "success";
+			} else if (mle_results[key].is_negative) {
+				classes = "warning";
+			}
+			return _.map(_.values(d), function(g) { return {"value" : g, "classes": classes} })
+		});
 
     this.setState({
 			positively_selected: positively_selected,
 			negatively_selected: negatively_selected,
-      pvalue_threshold: pvalue_threshold
+      pvalue_threshold: pvalue_threshold,
+			mle_results: mle_results,
+			mle_content: mle_content
 		});
 
 	},
@@ -67,6 +89,7 @@ var FEL = React.createClass({
       mle_content: [],
       xaxis: "Site",
       yaxis: "alpha",
+			copy_transition: false,
       pvalue_threshold: 0.1,
       positively_selected: [], 
       negatively_selected: []
@@ -117,9 +140,29 @@ var FEL = React.createClass({
         return _.object(mle_header_values, c);
       });
 
+		
+
       // Get number of positively and negatively selected sites by p-value threshold
-      var positively_selected = _.filter(mle_results, function(d) { return parseFloat(d["beta"])/parseFloat(d["alpha"]) > 1 && parseFloat(d["p-value"]) <= self.state.pvalue_threshold });
-      var negatively_selected = _.filter(mle_results, function(d) { return parseFloat(d["beta"])/parseFloat(d["alpha"]) < 1 && parseFloat(d["p-value"]) <= self.state.pvalue_threshold });
+			var mle_results = _.map(mle_results, function(d) { 
+				d["is_positive"] = parseFloat(d["beta"])/parseFloat(d["alpha"]) > 1 && parseFloat(d["p-value"]) <= self.state.pvalue_threshold; 
+				d["is_negative"] = parseFloat(d["beta"])/parseFloat(d["alpha"]) < 1 && parseFloat(d["p-value"]) <= self.state.pvalue_threshold;
+				return d;
+			});
+
+      var positively_selected = _.filter(mle_results, function(d) { return d["is_positive"] });
+      var negatively_selected = _.filter(mle_results, function(d) { return d["is_negative"] });
+
+			// highlight mle_content with whether they are significant or not
+			var mle_content = _.map(mle_results, function(d, key) {
+				var classes="";
+				if(mle_results[key].is_positive) {
+					classes = "success";
+				} else if (mle_results[key].is_negative) {
+					classes = "warning";
+				}
+				return _.map(_.values(d), function(g) { return {"value" : g, "classes": classes} })
+			});
+
 
       self.setState({
         mle_headers: mle_headers,
@@ -133,6 +176,19 @@ var FEL = React.createClass({
 
   },
 
+	getClipboard() {
+		if(this.state.copy_transition) {
+			return(<i>Copied!</i>);
+		} else {
+			return(<a href="#"><i className="fa fa-clipboard" aria-hidden="true"></i></a>);
+		}
+	},
+
+	onCopy() {
+		this.setState( { copy_transition : true } );
+		setTimeout(() => { this.setState({ copy_transition : false })} , 1000);
+	},
+
   getSummary() {
 
     var self = this;
@@ -140,7 +196,10 @@ var FEL = React.createClass({
     return(<div>
       <div className="main-result">
         <p>
-					<a href=""><i className="fa fa-clipboard pull-right" aria-hidden="true"></i></a>
+				 	<CopyToClipboard text={this.state.value} onCopy={this.onCopy}>
+						<span id="copy-it" className="pull-right">{this.getClipboard()}</span>
+					</CopyToClipboard>
+
           <p>FEL <strong className="hyphy-highlight"> found evidence</strong> of</p>
           <p>
             <i className="fa fa-plus-circle" aria-hidden="true">  </i>
@@ -180,6 +239,19 @@ var FEL = React.createClass({
 
 
   },
+
+	getSummaryText() {
+
+		var no_selected = self.state.mle_content.length - self.state.positively_selected.length - self.state.negatively_selected.length;
+
+		//var text = FEL found evidence of pervasive positive/diversifying selection
+		//          at {self.state.positively_selected.length} sites/at any sites in your
+		//          alignment. In addition, FEL found evidence† of pervasive negative/purifying
+		//          selection at {self.state.negatively_selected.length} sites/at any sites in your
+		//          alignment. FEL did not find evidence for either positive or negative selection
+		//          in the remaining {no_selected} sites in your alignment.
+						
+	},
 
   componentWillMount: function() {
     this.loadFromServer();
@@ -287,6 +359,8 @@ var FEL = React.createClass({
                 <div id="table-tab" className="row hyphy-row">
                   <div id="hyphy-mle-fits" className="col-md-12">
                     <h3 className="dm-table-header">Table Summary</h3>
+										<div className="col-md-6 alert alert-success" role="alert">Positively selected sites with evidence are highlighted in green.</div>
+										<div className="col-md-6 alert alert-warning" role="alert">Negatively selected sites with evidence are highlighted in yellow.</div>
                     <DatamonkeyTable
                       headerData={self.state.mle_headers}
                       bodyData={self.state.mle_content}
