@@ -159,7 +159,7 @@ const DatamonkeyTableRow = React.createClass({
   },
 
   render: function() {
-
+    var entity_regex = /(&*;)|(<*>)/;
     return (
       <tr>
             {
@@ -186,6 +186,8 @@ const DatamonkeyTableRow = React.createClass({
 
                         if (_.has (cell, "abbr")) {
                             value = (
+                                entity_regex.test(value) ?
+                                <span data-toggle="tooltip" data-placement="top" data-html="true" title={cell.abbr} dangerouslySetInnerHTML={{__html: value}}></span> :
                                 <span data-toggle="tooltip" data-placement="top" data-html="true" title={cell.abbr}>{value}</span>
                             );
                         }
