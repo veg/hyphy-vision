@@ -16,7 +16,6 @@ import {BranchTable} from "./components/branch_table.jsx";
 import {NavBar} from "./components/navbar.jsx";
 import {ScrollSpy} from "./components/scrollspy.jsx";
 
-var React = require('react');
 
 var BSREL = React.createClass({
 
@@ -300,14 +299,6 @@ var BSREL = React.createClass({
 
   },
 
-  initialize : function() {
-
-    var model_fits_id = "#hyphy-model-fits",
-        omega_plots_id = "#hyphy-omega-plots",
-        tree_id = "#tree-tab";
-
-  },
-  
   componentDidUpdate(prevProps, prevState) {
     $('body').scrollspy({
       target: '.bs-docs-sidebar',

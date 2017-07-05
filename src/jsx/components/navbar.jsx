@@ -94,7 +94,7 @@ var NavBar = React.createClass({
                     <input type="file" style={input_style} id="dm-file"/>
                     Load
                   </a>
-                  <a href="#" className="nav-button" role="button">Export</a>
+                  <a href="#" className="nav-button" role="button" style={{display: "none"}}>Export</a>
                 </ul>
 
 
