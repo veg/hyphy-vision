@@ -284,11 +284,11 @@ var BUSTEDSiteChartAndTable = React.createClass({
       </div>
 
       <div className="row site-table">
-        <div className="col-lg-5">
-          <div className="input-group">
-            <span className="input-group-addon" id="basic-addon3">
+        <div className="col-lg-4">
+          <div className="form-group">
+            <label for="er-constrained-threshold">
               Constrained Evidence Ratio Threshold:
-            </span>
+            </label>
             <input
               type="text"
               className="form-control"
@@ -300,11 +300,11 @@ var BUSTEDSiteChartAndTable = React.createClass({
             />
           </div>
         </div>
-        <div className="col-lg-5">
-          <div className="input-group">
-            <span className="input-group-addon" id="basic-addon3">
+        <div className="col-lg-4">
+          <div className="form-group">
+            <label for="er-optimized-null-threshold">
               Optimized Null Evidence Ratio Threshold
-            </span>
+            </label>
             <input
               type="text"
               className="form-control"
@@ -316,7 +316,7 @@ var BUSTEDSiteChartAndTable = React.createClass({
             />
           </div>
         </div>
-        <div className="col-lg-2">
+        <div className="col-lg-4">
           <button
             id="export-csv"
             type="button"
