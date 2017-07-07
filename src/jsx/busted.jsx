@@ -8,11 +8,12 @@ import { Tree } from "./components/tree.jsx";
 import { ModelFits } from "./components/model_fits.jsx";
 import { PropChart } from "./components/prop_chart.jsx";
 import { BUSTEDSummary } from "./components/busted_summary.jsx";
+import { BUSTEDSiteChartAndTable } from "./components/busted_site_chart_and_table.jsx";
 import { NavBar } from "./components/navbar.jsx";
 import { ScrollSpy } from "./components/scrollspy.jsx";
 
-var datamonkey = require("../datamonkey/datamonkey.js"),
-  busted = require("../busted/busted.js");
+var datamonkey = require("../datamonkey/datamonkey.js");
+var _ = require("underscore");
 
 var BUSTED = React.createClass({
   float_format: d3.format(".2f"),
@@ -67,7 +68,21 @@ var BUSTED = React.createClass({
           text: pmid_text,
           href: pmid_href
         },
-        input_data: data["input_data"]
+        input_data: data["input_data"],
+        evidence_ratio_data: _.map(_.range(data.input_data["sites"]), function(
+          i
+        ) {
+          return {
+            site_index: i + 1,
+            unconstrained_likelihood: data["profiles"]["unconstrained"][0][i],
+            constained_likelihood: data["profiles"]["constrained"][0][i],
+            optimized_null_likelihood: data["profiles"]["optimized null"][0][i],
+            constrained_evidence_ratio:
+              2 * Math.log(data["evidence ratios"]["constrained"][0][i]),
+            optimized_null_evidence_ratio:
+              2 * Math.log(data["evidence ratios"]["optimized null"][0][i])
+          };
+        })
       });
     });
   },
@@ -136,7 +151,8 @@ var BUSTED = React.createClass({
         href: null,
         text: null
       },
-      input_data: null
+      input_data: null,
+      table_rows: []
     };
   },
 
@@ -230,8 +246,6 @@ var BUSTED = React.createClass({
       return;
     }
 
-    busted.render_histogram("#chart-id", json);
-
     // delete existing tree
     d3.select("#tree_container").select("svg").remove();
 
@@ -270,17 +284,20 @@ var BUSTED = React.createClass({
     return (
       <div>
         <NavBar />
-        <div className="container-fluid">
+        <div className="container">
           <div className="row">
-
             <ScrollSpy info={scrollspy_info} />
 
             <div className="col-lg-10">
-              <BUSTEDSummary
-                test_result={this.state.test_result}
-                pmid={this.state.pmid}
-                input_data={self.state.input_data}
-              />
+              <div id="results">
+                <div id="summary-tab">
+                  <BUSTEDSummary
+                    test_result={this.state.test_result}
+                    pmid={this.state.pmid}
+                    input_data={self.state.input_data}
+                  />
+                </div>
+              </div>
 
               <div className="row">
                 <div id="hyphy-model-fits" className="col-lg-12">
@@ -295,103 +312,7 @@ var BUSTED = React.createClass({
                 </div>
               </div>
 
-              <div className="row hyphy-busted-site-table">
-                <div className="col-md-12">
-                  <h4 className="dm-table-header">
-                    Model Evidence Ratios Per Site
-                    <span
-                      className="glyphicon glyphicon-info-sign"
-                      style={{ verticalAlign: "middle", float: "right" }}
-                      aria-hidden="true"
-                      data-toggle="popover"
-                      data-trigger="hover"
-                      title="Actions"
-                      data-html="true"
-                      data-content="<ul><li>Hover over a column header for a description of its content.</li></ul>"
-                      data-placement="bottom"
-                    />
-                  </h4>
-                </div>
-                <div className="col-lg-12">
-                  <button
-                    id="export-chart-svg"
-                    type="button"
-                    className="btn btn-default btn-sm pull-right btn-export"
-                  >
-                    <span className="glyphicon glyphicon-floppy-save" /> Export
-                    Chart to SVG
-                  </button>
-                  <button
-                    id="export-chart-png"
-                    type="button"
-                    className="btn btn-default btn-sm pull-right btn-export"
-                  >
-                    <span className="glyphicon glyphicon-floppy-save" /> Export
-                    Chart to PNG
-                  </button>
-                </div>
-                <div id="chart-id" className="col-lg-12" />
-                <div className="col-lg-12">
-                  <div className="clearfix" />
-                </div>
-              </div>
-
-              <div className="row site-table">
-                <div className="col-lg-12">
-                  <form id="er-thresholds">
-                    <div className="form-group">
-                      <label htmlFor="er-constrained-threshold">
-                        Constrained Evidence Ratio Threshold:
-                      </label>
-                      <input
-                        type="text"
-                        className="form-control"
-                        id="er-constrained-threshold"
-                        defaultValue={this.props.constrained_threshold}
-                      />
-                    </div>
-                    <div className="form-group">
-                      <label htmlFor="er-optimized-null-threshold">
-                        Optimized Null Evidence Ratio Threshold:
-                      </label>
-                      <input
-                        type="text"
-                        className="form-control"
-                        id="er-optimized-null-threshold"
-                        defaultValue={this.props.null_threshold}
-                      />
-                    </div>
-                  </form>
-                  <button
-                    id="export-csv"
-                    type="button"
-                    className="btn btn-default btn-sm pull-right hyphy-busted-btn-export"
-                  >
-                    <span className="glyphicon glyphicon-floppy-save" /> Export
-                    Table to CSV
-                  </button>
-
-                  <button
-                    id="apply-thresholds"
-                    type="button"
-                    className="btn btn-default btn-sm pull-right hyphy-busted-btn-export"
-                  >
-                    Apply Thresholds
-                  </button>
-                  <table id="sites" className="table sites dc-data-table">
-                    <thead>
-                      <tr className="header">
-                        <th>Site Index</th>
-                        <th>Unconstrained Likelihood</th>
-                        <th>Constrained Likelihood</th>
-                        <th>Optimized Null Likelihood</th>
-                        <th>Constrained Evidence Ratio</th>
-                        <th>Optimized Null Evidence Ratio</th>
-                      </tr>
-                    </thead>
-                  </table>
-                </div>
-              </div>
+              <BUSTEDSiteChartAndTable data={this.state.evidence_ratio_data} />
 
               <div className="row">
                 <div className="col-md-12" id="phylogenetic-tree">
@@ -414,7 +335,6 @@ var BUSTED = React.createClass({
             </div>
 
             <div className="col-lg-1" />
-
           </div>
         </div>
       </div>

@@ -14,7 +14,8 @@ var absrel = require('./jsx/absrel.jsx'),
     fade_summary = require('./jsx/fade_summary.jsx'),
     fel = require('./jsx/fel.jsx'),
     relax = require('./jsx/relax.jsx'),
-    slac = require('./jsx/slac.jsx');
+    slac = require('./jsx/slac.jsx'),
+    meme = require('./jsx/meme.jsx');
 
 // Create new hyphy-vision export
 window.absrel = absrel;
@@ -24,3 +25,4 @@ window.fade_summary = fade_summary;
 window.relax = relax;
 window.slac = slac;
 window.fel = fel;
+window.meme = meme;
