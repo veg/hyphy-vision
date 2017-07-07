@@ -309,6 +309,11 @@ var BSREL = React.createClass({
       { label: "table", href: "table-tab" }
     ];
 
+		var models = {};
+		if(!_.isNull(self.state.json)) {
+			models = self.state.json.fits;
+		}
+
     return (
       <div>
         <NavBar />
@@ -357,6 +362,7 @@ var BSREL = React.createClass({
                     <Tree
                       json={self.state.json}
                       settings={self.state.settings}
+                      models={models}
                       color_gradient={self.omegaColorGradient}
                       grayscale_gradient={self.omegaGrayscaleGradient}
                     />
