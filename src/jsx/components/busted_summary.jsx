@@ -34,7 +34,10 @@ var BUSTEDSummary = React.createClass({
       <div className="row" id="summary-div">
         <div className="col-md-12">
           <h3 className="list-group-item-heading">
-            <span className="summary-method-name">Branch-Site Unrestricted Statistical Test for Episodic Diversification</span>
+            <span className="summary-method-name">
+              Branch-Site Unrestricted Statistical Test for Episodic
+              Diversification
+            </span>
             <br />
             <span className="results-summary">results summary</span>
           </h3>

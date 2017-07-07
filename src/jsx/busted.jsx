@@ -15,7 +15,6 @@ import { ScrollSpy } from "./components/scrollspy.jsx";
 var datamonkey = require("../datamonkey/datamonkey.js");
 var _ = require("underscore");
 
-
 var BUSTED = React.createClass({
   float_format: d3.format(".2f"),
   p_value_format: d3.format(".4f"),
@@ -70,15 +69,19 @@ var BUSTED = React.createClass({
           href: pmid_href
         },
         input_data: data["input_data"],
-        evidence_ratio_data: _.map(_.range(data.input_data["sites"]), function(i){
+        evidence_ratio_data: _.map(_.range(data.input_data["sites"]), function(
+          i
+        ) {
           return {
-            site_index: i+1,
+            site_index: i + 1,
             unconstrained_likelihood: data["profiles"]["unconstrained"][0][i],
             constained_likelihood: data["profiles"]["constrained"][0][i],
             optimized_null_likelihood: data["profiles"]["optimized null"][0][i],
-            constrained_evidence_ratio: 2*Math.log(data["evidence ratios"]["constrained"][0][i]),
-            optimized_null_evidence_ratio: 2*Math.log(data["evidence ratios"]["optimized null"][0][i])
-          }
+            constrained_evidence_ratio:
+              2 * Math.log(data["evidence ratios"]["constrained"][0][i]),
+            optimized_null_evidence_ratio:
+              2 * Math.log(data["evidence ratios"]["optimized null"][0][i])
+          };
         })
       });
     });
@@ -283,7 +286,6 @@ var BUSTED = React.createClass({
         <NavBar />
         <div className="container">
           <div className="row">
-
             <ScrollSpy info={scrollspy_info} />
 
             <div className="col-lg-10">
@@ -310,7 +312,7 @@ var BUSTED = React.createClass({
                 </div>
               </div>
 
-              <BUSTEDSiteChartAndTable data={this.state.evidence_ratio_data}/>
+              <BUSTEDSiteChartAndTable data={this.state.evidence_ratio_data} />
 
               <div className="row">
                 <div className="col-md-12" id="phylogenetic-tree">
@@ -333,7 +335,6 @@ var BUSTED = React.createClass({
             </div>
 
             <div className="col-lg-1" />
-
           </div>
         </div>
       </div>

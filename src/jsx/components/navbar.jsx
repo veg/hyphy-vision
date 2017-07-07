@@ -22,34 +22,57 @@ var Methods = React.createClass({
   render: function() {
     return (
       <div className="dropdown">
-        <button className="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Tools
-        <span className="caret"></span></button>
+        <button
+          className="btn btn-primary dropdown-toggle"
+          type="button"
+          data-toggle="dropdown"
+        >
+          Tools
+          <span className="caret" />
+        </button>
         <ul className="dropdown-menu">
-          <li><a href="#">aBSREL</a></li>
-          <li><a href="../relax">RELAX</a></li>
-          <li><a href="../busted">BUSTED</a></li>
-          <li><a href="../fade">FADE</a></li>
-          <li><a href="../slac">SLAC</a></li>
+          <li>
+            <a href="#">aBSREL</a>
+          </li>
+          <li>
+            <a href="../relax">RELAX</a>
+          </li>
+          <li>
+            <a href="../busted">BUSTED</a>
+          </li>
+          <li>
+            <a href="../fade">FADE</a>
+          </li>
+          <li>
+            <a href="../slac">SLAC</a>
+          </li>
         </ul>
       </div>
-      
-    )
+    );
   }
 });
 
-
 <div className="dropdown">
-  <button className="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Dropdown Example
-  <span className="caret"></span></button>
+  <button
+    className="btn btn-primary dropdown-toggle"
+    type="button"
+    data-toggle="dropdown"
+  >
+    Dropdown Example
+    <span className="caret" />
+  </button>
   <ul className="dropdown-menu">
-    <li><a href="#">HTML</a></li>
-    <li><a href="#">CSS</a></li>
-    <li><a href="#">JavaScript</a></li>
+    <li>
+      <a href="#">HTML</a>
+    </li>
+    <li>
+      <a href="#">CSS</a>
+    </li>
+    <li>
+      <a href="#">JavaScript</a>
+    </li>
   </ul>
-</div>
-
-
-
+</div>;
 
 var NavBar = React.createClass({
   componentDidMount: function() {
@@ -75,34 +98,43 @@ var NavBar = React.createClass({
       background: "white",
       cursor: "inherit",
       display: "block"
-    }
+    };
     return (
       <nav className="navbar navbar-default navbar-fixed-top" role="navigation">
         <div className="container">
           <div className="row">
             <div className="col-sm-12">
-              <a href='#'><img id="hyphy-logo" src="../../images/hyphy-logo.svg" /></a>
+              <a href="#">
+                <img id="hyphy-logo" src="../../images/hyphy-logo.svg" />
+              </a>
               <div className="navbar-header">
                 <Hamburger />
               </div>
 
               <div className="collapse navbar-collapse" id="navbar-collapse-1">
-
-
                 <ul className="nav navbar-nav">
-                  <a href="#" className="nav-button" role="button" style={{position: "relative", overflow: "hidden"}}>
-                    <input type="file" style={input_style} id="dm-file"/>
+                  <a
+                    href="#"
+                    className="nav-button"
+                    role="button"
+                    style={{ position: "relative", overflow: "hidden" }}
+                  >
+                    <input type="file" style={input_style} id="dm-file" />
                     Load
                   </a>
-                  <a href="#" className="nav-button" role="button" style={{display: "none"}}>Export</a>
+                  <a
+                    href="#"
+                    className="nav-button"
+                    role="button"
+                    style={{ display: "none" }}
+                  >
+                    Export
+                  </a>
                 </ul>
 
-
-              <Methods />
-                
+                <Methods />
               </div>
             </div>
-
           </div>
         </div>
       </nav>

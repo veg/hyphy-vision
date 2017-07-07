@@ -14,7 +14,6 @@ import { BranchTable } from "./components/branch_table.jsx";
 import { NavBar } from "./components/navbar.jsx";
 import { ScrollSpy } from "./components/scrollspy.jsx";
 
-
 var BSREL = React.createClass({
   float_format: d3.format(".2f"),
 
@@ -217,42 +216,47 @@ var BSREL = React.createClass({
     var self = this;
 
     $("#dm-file").on("change", function(e) {
-        var files = e.target.files; // FileList object
+      var files = e.target.files; // FileList object
 
-        if (files.length == 1) {
-            var f = files[0];
-            var reader = new FileReader();
+      if (files.length == 1) {
+        var f = files[0];
+        var reader = new FileReader();
 
-            reader.onload = (function(theFile) {
-                return function(e) {
-                  var data = JSON.parse(this.result);
-                  data["fits"]["MG94"]["branch-annotations"] = self.formatBranchAnnotations(data, "MG94");
-                  data["fits"]["Full model"]["branch-annotations"] = self.formatBranchAnnotations(data, "Full model");
+        reader.onload = (function(theFile) {
+          return function(e) {
+            var data = JSON.parse(this.result);
+            data["fits"]["MG94"][
+              "branch-annotations"
+            ] = self.formatBranchAnnotations(data, "MG94");
+            data["fits"]["Full model"][
+              "branch-annotations"
+            ] = self.formatBranchAnnotations(data, "Full model");
 
-                  var annotations = data["fits"]["Full model"]["branch-annotations"],
-                      json = data,
-                      pmid = data["PMID"],
-                      full_model = json["fits"]["Full model"],
-                      test_results = data["test results"],
-                      input_data = data["input_data"],
-                      fits = data["fits"];
+            var annotations = data["fits"]["Full model"]["branch-annotations"],
+              json = data,
+              pmid = data["PMID"],
+              full_model = json["fits"]["Full model"],
+              test_results = data["test results"],
+              input_data = data["input_data"],
+              fits = data["fits"];
 
-                  self.setState({
-                    annotations : annotations,
-                    json : json,
-                    pmid : pmid,
-                    full_model : full_model,
-                    test_results : test_results,
-                    input_data : input_data,
-                    fits : fits,
-                    tree: d3.layout.phylotree()(data["fits"]["Full model"]["tree string"])
-                  });
-
-                };
-            })(f);
-            reader.readAsText(f);
-        }
-        e.preventDefault();
+            self.setState({
+              annotations: annotations,
+              json: json,
+              pmid: pmid,
+              full_model: full_model,
+              test_results: test_results,
+              input_data: input_data,
+              fits: fits,
+              tree: d3.layout.phylotree()(
+                data["fits"]["Full model"]["tree string"]
+              )
+            });
+          };
+        })(f);
+        reader.readAsText(f);
+      }
+      e.preventDefault();
     });
   },
 
@@ -309,9 +313,7 @@ var BSREL = React.createClass({
       <div>
         <NavBar />
         <div className="container">
-
           <div className="row">
-
             <ScrollSpy info={scrollspy_info} />
 
             <div className="col-sm-10">
@@ -381,11 +383,9 @@ var BSREL = React.createClass({
                     </p>
                   </div>
                 </div>
-
               </div>
             </div>
           </div>
-
         </div>
       </div>
     );

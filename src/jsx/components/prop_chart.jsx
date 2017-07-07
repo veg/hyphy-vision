@@ -158,8 +158,9 @@ var PropChart = React.createClass({
       "#17becf"
     ]);
 
-    var color_scale = d3.scale.linear()
-      .domain([.01, 1, 10])
+    var color_scale = d3.scale
+      .linear()
+      .domain([0.01, 1, 10])
       .range([d3.rgb("#000000"), d3.rgb("#DDDDDD"), d3.rgb("#00A99D")]);
 
     // ** Omega Line (Red) ** //
@@ -349,7 +350,9 @@ var PropChart = React.createClass({
           <div className="row">
             <div className="col-md-8 v-align">
               <h1 className="panel-title">
-                <strong>{this.state.model_name}</strong>
+                <strong>
+                  {this.state.model_name}
+                </strong>
               </h1>
             </div>
             <div className="col-md-4 v-align">
