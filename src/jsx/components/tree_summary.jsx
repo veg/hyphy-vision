@@ -1,7 +1,7 @@
 var React = require("react"),
   _ = require("underscore");
 
-import { DatamonkeyTable } from "./shared_summary.jsx";
+import { DatamonkeyTable } from "./tables.jsx";
 
 /**
  * Generates a table that contains tree summary information

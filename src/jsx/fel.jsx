@@ -1,17 +1,100 @@
 var React = require("react"),
-  ReactDOM = require("react-dom");
+  ReactDOM = require("react-dom"),
+  _ = require("underscore");
 
-var _ = require("underscore");
-
-import { DatamonkeyTable } from "./components/shared_summary.jsx";
+import { DatamonkeyTable } from "./components/tables.jsx";
 import { DatamonkeySeries, DatamonkeyGraphMenu } from "./components/graphs.jsx";
 import { NavBar } from "./components/navbar.jsx";
 import { ScrollSpy } from "./components/scrollspy.jsx";
-
-var React = require("react");
+import CopyToClipboard from 'react-copy-to-clipboard';
 
 var FEL = React.createClass({
+
+  definePlotData: function(x_label, y_label) {
+    var self = this;
+
+    var x = _.map(self.state.mle_results, function(d) {
+      return d[x_label];
+    });
+
+    var y = _.map(self.state.mle_results, function(d) {
+      return d[y_label];
+    });
+
+    return { x: x, y: [y] };
+  },
+
   float_format: d3.format(".3f"),
+
+  formatHeadersForTable: function(mle) {
+    return _.map(mle, function(d) {
+      return _.object(["value", "abbr"], d);
+    });
+  },
+
+  updateAxisSelection: function(e) {
+    var state_to_update = {},
+      dimension = e.target.dataset.dimension,
+      axis = e.target.dataset.axis;
+
+    state_to_update[axis] = dimension;
+    this.setState(state_to_update);
+  },
+
+	updatePvalThreshold: function(e) {
+
+		var self = this;
+
+		// Get number of positively and negatively selected sites by p-value threshold
+		var pvalue_threshold = parseFloat(e.target.value);
+
+		// Get number of positively and negatively selected sites by p-value threshold
+		var mle_results = _.map(self.state.mle_results, function(d) { 
+			d["is_positive"] = parseFloat(d["beta"])/parseFloat(d["alpha"]) > 1 && parseFloat(d["p-value"]) <= pvalue_threshold; 
+			d["is_negative"] = parseFloat(d["beta"])/parseFloat(d["alpha"]) < 1 && parseFloat(d["p-value"]) <= pvalue_threshold;
+			return d;
+		});
+
+		var positively_selected = _.filter(self.state.mle_results, function(d) { return d["is_positive"] });
+		var negatively_selected = _.filter(self.state.mle_results, function(d) { return d["is_negative"] });
+
+		// highlight mle_content with whether they are significant or not
+		var mle_content = _.map(self.state.mle_results, function(d, key) {
+			var classes="";
+			if(mle_results[key].is_positive) {
+				classes = "success";
+			} else if (mle_results[key].is_negative) {
+				classes = "warning";
+			}
+			return _.map(_.values(d), function(g) { return {"value" : g, "classes": classes} })
+		});
+
+    this.setState({
+			positively_selected: positively_selected,
+			negatively_selected: negatively_selected,
+      pvalue_threshold: pvalue_threshold,
+			mle_results: mle_results,
+			mle_content: mle_content
+		});
+
+	},
+
+  getDefaultProps: function() {
+    return {};
+  },
+
+  getInitialState: function() {
+    return {
+      mle_headers: [],
+      mle_content: [],
+      xaxis: "Site",
+      yaxis: "alpha",
+			copy_transition: false,
+      pvalue_threshold: 0.1,
+      positively_selected: [], 
+      negatively_selected: []
+    };
+  },
 
   loadFromServer: function() {
 
@@ -20,6 +103,8 @@ var FEL = React.createClass({
     d3.json(this.props.url, function(data) {
 
       var mle = data["MLE"];
+
+      // These variables are to be used for DatamonkeyTable
       var mle_headers = mle.headers || [];
       var mle_content = mle.content[0] || [];
 
@@ -46,78 +131,137 @@ var FEL = React.createClass({
         return [k].concat(d);
       });
 
-      // zip both headers and content
-      var mle_results = _.zip(mle.headers, mle_content);
+      // Create datatype that is a bit more manageable for use with DatamonkeySeries
+      var mle_header_values = _.map(mle_headers, function(d) {
+        return d.value;
+      });
+
+      var mle_results = _.map(mle_content, function(c) {
+        return _.object(mle_header_values, c);
+      });
+
+		
+
+      // Get number of positively and negatively selected sites by p-value threshold
+			var mle_results = _.map(mle_results, function(d) { 
+				d["is_positive"] = parseFloat(d["beta"])/parseFloat(d["alpha"]) > 1 && parseFloat(d["p-value"]) <= self.state.pvalue_threshold; 
+				d["is_negative"] = parseFloat(d["beta"])/parseFloat(d["alpha"]) < 1 && parseFloat(d["p-value"]) <= self.state.pvalue_threshold;
+				return d;
+			});
+
+      var positively_selected = _.filter(mle_results, function(d) { return d["is_positive"] });
+      var negatively_selected = _.filter(mle_results, function(d) { return d["is_negative"] });
+
+			// highlight mle_content with whether they are significant or not
+			var mle_content = _.map(mle_results, function(d, key) {
+				var classes="";
+				if(mle_results[key].is_positive) {
+					classes = "success";
+				} else if (mle_results[key].is_negative) {
+					classes = "warning";
+				}
+				return _.map(_.values(d), function(g) { return {"value" : g, "classes": classes} })
+			});
+
 
       self.setState({
         mle_headers: mle_headers,
         mle_content: mle_content,
-        mle_results : mle_results
+        mle_results: mle_results,
+        positively_selected: positively_selected, 
+        negatively_selected: negatively_selected
       });
 
     });
+
   },
 
-  formatHeadersForTable: function(mle) {
-    return _.map(mle, function(d) {
-      return _.object(["value", "abbr"], d);
-    });
-  },
+	getClipboard() {
+		if(this.state.copy_transition) {
+			return(<i>Copied!</i>);
+		} else {
+			return(<a href="#"><i className="fa fa-clipboard" aria-hidden="true"></i></a>);
+		}
+	},
 
-  definePlotData: function(x_label, y_label) {
+	onCopy() {
+		this.setState( { copy_transition : true } );
+		setTimeout(() => { this.setState({ copy_transition : false })} , 1000);
+	},
+
+  getSummary() {
 
     var self = this;
 
-    var x = _.map(self.state.mle_content, function(d) {
-      return d[x_label];
-    });
+    return(<div>
+      <div className="main-result">
+        <p>
+				 	<CopyToClipboard text={this.state.value} onCopy={this.onCopy}>
+						<span id="copy-it" className="pull-right">{this.getClipboard()}</span>
+					</CopyToClipboard>
 
-    var y = _.map(self.state.mle_content, function(d) {
-      return d[y_label];
-    });
+          <p>FEL <strong className="hyphy-highlight"> found evidence</strong> of</p>
+          <p>
+            <i className="fa fa-plus-circle" aria-hidden="true">  </i>
+            {" "}Pervasive Positive/Diversifying selection at 
+            <span className="hyphy-highlight">
+              {" "}{ self.state.positively_selected.length }{" "}
+            </span>
+            sites
+          </p>
+          <p>
+            <i className="fa fa-minus-circle" aria-hidden="true"> </i>
+            {" "}Pervasive Negative/Purifying selection at 
+            <span className="hyphy-highlight">
+            {" "}{ self.state.negatively_selected.length }{" "}
+            </span>
+            sites
+          </p>
+					<div className="row" style={{marginTop:"20px"}}>
+						<div className="col-md-3">
+							With p-value threshold of 
+						</div>
+						<div className="col-md-2" style={{top:"-5px"}}>
+							<input className="form-control" type="number" defaultValue="0.1" step="0.01" min="0" max="1" onChange={self.updatePvalThreshold} />
+						</div>
+					</div>
+        </p>
+        <hr />
+        <p>
+          <small>
+            See <a href="//hyphy.org/methods/selection-methods/#fel">here</a> for more information about the FEL method
+            <br />
+            Please cite PMID <a href="//www.ncbi.nlm.nih.gov/pubmed/15703242">15703242</a> if you use this result in a publication, presentation, or other scientific work
+          </small>
+        </p>
+      </div>
+    </div>);
 
-    console.log(x);
-    console.log(y);
-
-    return { x: x, y: [y] };
 
   },
 
-  getDefaultProps: function() {
-    return {};
-  },
+	getSummaryText() {
 
-  getInitialState: function() {
-    return {
-      mle_headers: [],
-      mle_content: [],
-      xaxis: "site",
-      yaxis: "alpha"
-    };
-  },
+		var no_selected = self.state.mle_content.length - self.state.positively_selected.length - self.state.negatively_selected.length;
+
+		//var text = FEL found evidence of pervasive positive/diversifying selection
+		//          at {self.state.positively_selected.length} sites/at any sites in your
+		//          alignment. In addition, FEL found evidence† of pervasive negative/purifying
+		//          selection at {self.state.negatively_selected.length} sites/at any sites in your
+		//          alignment. FEL did not find evidence for either positive or negative selection
+		//          in the remaining {no_selected} sites in your alignment.
+						
+	},
 
   componentWillMount: function() {
     this.loadFromServer();
   },
-
-  setEvents: function() {},
 
   componentDidUpdate(prevProps) {
     $("body").scrollspy({
       target: ".bs-docs-sidebar",
       offset: 50
     });
-  },
-
-  updateAxisSelection: function(e) {
-
-    var state_to_update  = {};
-    var dimension = $(e.target).data("dimension");
-    var axis = $(e.target).data("axis");
-
-    state_to_update[axis] = dimension;
-    this.setState(state_to_update);
-
   },
 
   render: function() {
@@ -135,18 +279,31 @@ var FEL = React.createClass({
       self.state.yaxis
     );
 
-    console.log(self.state.xaxis);
-    console.log(self.state.yaxis);
-    console.log(x);
-    console.log(y);
+    var x_options = "Site";
+    var y_options = _.filter(
+      _.map(self.state.mle_headers, function(d) {
+        return d.value;
+      }),
+      function(d) {
+        return d != "Site";
+      }
+    );
+
+    var Summary = self.getSummary();
 
     return (
       <div>
+
         <NavBar />
-        <div className="container-fluid">
+
+        <div className="container">
+
           <div className="row">
+
             <ScrollSpy info={scrollspy_info} />
-            <div id="fel-results" className="col-sm-10">
+
+            <div className="col-sm-10">
+
               <div
                 id="datamonkey-fel-error"
                 className="alert alert-danger alert-dismissible"
@@ -164,49 +321,35 @@ var FEL = React.createClass({
                 <strong>Error!</strong> <span id="datamonkey-fel-error-text" />
               </div>
 
-              <h3 className="list-group-item-heading">
-                <span id="summary-method-name">
-                  FEL - Fixed Effects Likelihood - Results
-                </span>
-              </h3>
-
               <div id="results">
 
-                <div id="summary-tab" className="row hyphy-row">
+                <h3 className="list-group-item-heading">
+                  <span id="summary-method-name">
+                    FEL - Fixed Effects Likelihood
+                  </span>
+                  <br />
+                  <span className="results-summary">results summary</span>
+                </h3>
 
-                  <div className="main-result">
-                    <p className="list-group-item-text label_and_input">
-                      Evidence<sup>†</sup> of episodic diversifying selection
-                      was found on
-                      <span className="hyphy-highlight">
-                        <strong>
-                          {" "}{self.state.branches_with_evidence}
-                        </strong>{" "}
-                        out
-                        of {self.state.test_branches}
-                      </span>{" "}
-                      tested branches ({self.state.total_branches} total
-                      branches).
-                    </p>
-                  </div>
-                </div>
+                {Summary}
 
                 <div id="plot-tab" className="row hyphy-row">
 
                   <h3 className="dm-table-header">Plot Summary</h3>
 
                   <DatamonkeyGraphMenu
-                    headers={_.map(self.state.mle_content, function(d) {
-                      return d.value;
-                    })}
+                    x_options={x_options}
+                    y_options={y_options}
                     axisSelectionEvent={self.updateAxisSelection}
                   />
 
                   <DatamonkeySeries
                     x={x}
                     y={y}
+										x_label={self.state.xaxis}
+										y_label={self.state.yaxis}
                     marginLeft={50}
-                    width={$("#fel-results").width()}
+                    width={$("#results").width()}
                     transitions={true}
                     doDots={true}
                   />
@@ -216,10 +359,12 @@ var FEL = React.createClass({
                 <div id="table-tab" className="row hyphy-row">
                   <div id="hyphy-mle-fits" className="col-md-12">
                     <h3 className="dm-table-header">Table Summary</h3>
+										<div className="col-md-6 alert alert-success" role="alert">Positively selected sites with evidence are highlighted in green.</div>
+										<div className="col-md-6 alert alert-warning" role="alert">Negatively selected sites with evidence are highlighted in yellow.</div>
                     <DatamonkeyTable
                       headerData={self.state.mle_headers}
                       bodyData={self.state.mle_content}
-                      classes={"table table-condensed"}
+                      classes={"table table-condensed table-striped"}
                     />
                   </div>
                 </div>
@@ -230,6 +375,7 @@ var FEL = React.createClass({
       </div>
     );
   }
+
 });
 
 // Will need to make a call to this
