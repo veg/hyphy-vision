@@ -1,6 +1,7 @@
 var React = require("react"),
   ReactDOM = require("react-dom"),
-  d3 = require("d3");
+  d3 = require("d3"),
+  _ = require("underscore");
 
 require("phylotree");
 require("phylotree.css");
@@ -8,9 +9,10 @@ require("phylotree.css");
 import { MEMESummary } from "./components/meme_summary.jsx";
 import { MEMETable } from "./components/meme_table.jsx";
 import { DatamonkeyModelTable } from "./components/tables.jsx";
+import { DatamonkeySeries, DatamonkeyGraphMenu } from "./components/graphs.jsx";
 import { NavBar } from "./components/navbar.jsx";
 import { ScrollSpy } from "./components/scrollspy.jsx";
-import { Tree } from "./components/tree.jsx";
+
 
 var MEME = React.createClass({
   getInitialState: function() {
@@ -19,9 +21,21 @@ var MEME = React.createClass({
       data: null,
       fits: null,
       header: null,
-      rows: null
+      rows: null,
+      xaxis: "Site",
+      yaxis: "&alpha;"
     };
   },
+
+  updateAxisSelection: function(e) {
+    var state_to_update = {},
+      dimension = e.target.dataset.dimension,
+      axis = e.target.dataset.axis;
+
+    state_to_update[axis] = dimension;
+    this.setState(state_to_update);
+  },
+
   loadFromServer: function() {
     var self = this;
     d3.json(this.props.url, function(data) {
@@ -34,22 +48,30 @@ var MEME = React.createClass({
       });
     });
   },
+
   componentWillMount: function() {
     this.loadFromServer();
   },
+
   componentDidUpdate(prevProps, prevState) {
     $("body").scrollspy({
       target: ".bs-docs-sidebar",
       offset: 50
     });
   },
+
   render: function() {
     var self = this,
       scrollspy_info = [
         { label: "summary", href: "summary-tab" },
         { label: "table", href: "table-tab" },
-        { label: "fits", href: "fit-tab" }
-      ];
+        { label: "fits", href: "fit-tab" },
+        { label: "plot", href: "plot-tab" }
+      ],
+      x = this.state.rows ? _.range(1, this.state.rows.length+1) : [],
+      index = this.state.yaxis == "&alpha;" ? 0 : 1,
+      y = this.state.rows ? [_.map(this.state.rows, d=>d[index])] : [[]];
+    
     return (
       <div>
         <NavBar />
@@ -70,6 +92,31 @@ var MEME = React.createClass({
                   </p>
                 </div>
               </div>
+
+              <div id="plot-tab" className="row hyphy-row">
+
+                <h3 className="dm-table-header">Plot Summary</h3>
+
+                <DatamonkeyGraphMenu
+                  x_options={"Site"}
+                  y_options={["&alpha;", "&beta;"]}
+                  axisSelectionEvent={self.updateAxisSelection}
+                />
+
+                <DatamonkeySeries
+                  x={x}
+                  y={y}
+                  x_label={"Site"}
+                  y_label={self.state.yaxis}
+                  marginLeft={50}
+                  width={$("#results").width()}
+                  transitions={true}
+                  doDots={true}
+                />
+
+              </div>
+
+
             </div>
           </div>
         </div>

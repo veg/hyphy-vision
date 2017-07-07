@@ -386,6 +386,7 @@ var BUSTEDSiteChartAndTable = React.createClass({
               bodyData={bodyData}
               paginate={Math.min(20, bodyData.length)}
               initialSort={0}
+              classes={"table table-condensed table-striped"}
             />
           </div>
         </div>

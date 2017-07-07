@@ -35,7 +35,7 @@ class GraphMenu extends React.Component {
     return (
       <li key={value}>
         <a
-          href="#"
+          href="javascript:void(0);"
           tabIndex="-1"
           data-dimension={value}
           data-axis={axis}
