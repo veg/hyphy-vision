@@ -3,9 +3,7 @@ var datamonkey = require("../../datamonkey/datamonkey.js");
 require("phylotree");
 
 var Tree = React.createClass({
-
   getDefaultProps: function() {
-
     return {
       color_gradient: ["#5e4fa2", "#3288bd", "#e6f598", "#f46d43", "#9e0142"],
       grayscale_gradient: [
@@ -26,18 +24,15 @@ var Tree = React.createClass({
         right: 2
       }
     };
-
   },
 
-	toggleLegend: function(e) {
-
+  toggleLegend: function(e) {
     var show_legend = !e.target.checked;
 
     this.setState({
-      show_legend : show_legend,
+      show_legend: show_legend
     });
-
-	},
+  },
 
   changeColorScale: function(e) {
     var self = this;
@@ -66,7 +61,6 @@ var Tree = React.createClass({
   },
 
   getInitialState: function() {
-
     var self = this;
 
     var omega_color = d3.scale
@@ -96,7 +90,7 @@ var Tree = React.createClass({
             self.props.margins["bottom"]
         ]);
 
-		var selected_model = _.first(_.keys(self.props.models));
+    var selected_model = _.first(_.keys(self.props.models));
 
     return {
       json: this.props.json,
@@ -104,7 +98,7 @@ var Tree = React.createClass({
       fill_color: this.props.fill_color,
       omega_color: omega_color,
       omega_scale: omega_scale,
-      show_legend : true,
+      show_legend: true,
       axis_scale: axis_scale,
       selected_model: selected_model
     };
@@ -222,7 +216,8 @@ var Tree = React.createClass({
 
   renderLegendColorScheme: function(svg_container, attr_name, do_not_render) {
     var self = this;
-    var branch_annotations = self.props.models[self.state.selected_model]["branch-annotations"];
+    var branch_annotations =
+      self.props.models[self.state.selected_model]["branch-annotations"];
     var svg = self.svg;
 
     if (!self.state.omega_color || !self.state.omega_scale) {
@@ -380,8 +375,8 @@ var Tree = React.createClass({
 
     $(".phylotree-align-toggler").on("change", function(e) {
       if ($(this).is(":checked")) {
-				tree_object.align_tips($(this).data("align") == "right");
-				tree_object.placenodes().update();
+        tree_object.align_tips($(this).data("align") == "right");
+        tree_object.placenodes().update();
       }
     });
 
@@ -405,7 +400,6 @@ var Tree = React.createClass({
   },
 
   setPartitionList: function() {
-
     var self = this;
 
     // Check if partition list exists
@@ -452,30 +446,37 @@ var Tree = React.createClass({
     });
   },
 
-	changeModelSelection(e) {
+  changeModelSelection(e) {
+    var selected_model = e.target.dataset.type;
 
-		var selected_model = e.target.dataset.type;
-
-		this.setState({
+    this.setState({
       selected_model: selected_model
-		});
-		
-	},
+    });
+  },
 
   getModelList: function() {
+    var self = this;
 
-		var self = this;
+    var createListElement = function(model_type) {
+      return (
+        <li>
+          <a
+            href="#"
+            data-type={model_type}
+            onClick={self.changeModelSelection}
+          >
+            {model_type}
+          </a>
+        </li>
+      );
+    };
 
-		var createListElement = function(model_type) {
-			return(<li><a href="#" data-type={model_type} onClick={self.changeModelSelection}>{model_type}</a></li>);
-		}
-		
-		return _.map(this.props.models, (d,key) => { return createListElement(key) });
-
+    return _.map(this.props.models, (d, key) => {
+      return createListElement(key);
+    });
   },
 
   initialize: function() {
-
     this.settings = this.state.settings;
 
     if (!this.settings) {
@@ -502,7 +503,6 @@ var Tree = React.createClass({
     this.setHandlers();
     this.initializeTree();
     this.setPartitionList();
-
   },
 
   initializeTree: function() {
@@ -570,16 +570,16 @@ var Tree = React.createClass({
 
     this.assignBranchAnnotations();
 
-		if(self.state.show_legend) {
-			if (self.legend_type == "discrete") {
-				self.renderDiscreteLegendColorScheme("tree_container");
-			} else {
-				self.renderLegendColorScheme(
-					"tree_container",
-					self.props.models[self.state.selected_model]["annotation-tag"]
-				);
-			}
-		}
+    if (self.state.show_legend) {
+      if (self.legend_type == "discrete") {
+        self.renderDiscreteLegendColorScheme("tree_container");
+      } else {
+        self.renderLegendColorScheme(
+          "tree_container",
+          self.props.models[self.state.selected_model]["annotation-tag"]
+        );
+      }
+    }
 
     if (this.settings.edgeColorizer) {
       this.edgeColorizer = _.partial(
@@ -604,15 +604,13 @@ var Tree = React.createClass({
   },
 
   componentWillReceiveProps: function(nextProps) {
-
-		var selected_model = _.first(_.keys(nextProps.models));
+    var selected_model = _.first(_.keys(nextProps.models));
 
     this.setState({
       json: nextProps.json,
       settings: nextProps.settings,
-			selected_model : selected_model
+      selected_model: selected_model
     });
-
   },
 
   componentDidUpdate: function() {
@@ -620,8 +618,12 @@ var Tree = React.createClass({
   },
 
   render: function() {
-
-		var dropdownListStyle = { paddingLeft: "20px", paddingRight: "20px", paddingTop: "10px", paddingBottom:"10px"}
+    var dropdownListStyle = {
+      paddingLeft: "20px",
+      paddingRight: "20px",
+      paddingTop: "10px",
+      paddingBottom: "10px"
+    };
 
     return (
       <div>
@@ -654,8 +656,8 @@ var Tree = React.createClass({
                   <span className="caret" />
                 </button>
                 <ul className="dropdown-menu" id="hyphy-tree-model-list">
-									{this.getModelList()}
-								</ul>
+                  {this.getModelList()}
+                </ul>
                 <button
                   type="button"
                   className="btn btn-default btn-sm"
@@ -761,17 +763,40 @@ var Tree = React.createClass({
                 </ul>
               </div>
 
-
               <div className="input-group-btn">
 
-								<button type="button" className="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown" style={{paddingLeft:'30px'}}>
-									<span className="glyphicon glyphicon-cog"></span> <span className="caret"></span>
-								</button>
+                <button
+                  type="button"
+                  className="btn btn-default btn-sm dropdown-toggle"
+                  data-toggle="dropdown"
+                  style={{ paddingLeft: "30px" }}
+                >
+                  <span className="glyphicon glyphicon-cog" />{" "}
+                  <span className="caret" />
+                </button>
 
-								<ul className="dropdown-menu">
-									<li style={dropdownListStyle}><input type="checkbox" id="hyphy-tree-hide-legend" className="hyphy-tree-trigger" defaultChecked={false} onChange={this.toggleLegend} />  Hide Legend</li>
-									<li style={dropdownListStyle}><input type="checkbox" id="hyphy-tree-fill-color" className="hyphy-tree-trigger" defaultChecked={!this.props.fill_color} onChange={this.changeColorScale} />  GrayScale</li>
-								</ul>
+                <ul className="dropdown-menu">
+                  <li style={dropdownListStyle}>
+                    <input
+                      type="checkbox"
+                      id="hyphy-tree-hide-legend"
+                      className="hyphy-tree-trigger"
+                      defaultChecked={false}
+                      onChange={this.toggleLegend}
+                    />{" "}
+                    Hide Legend
+                  </li>
+                  <li style={dropdownListStyle}>
+                    <input
+                      type="checkbox"
+                      id="hyphy-tree-fill-color"
+                      className="hyphy-tree-trigger"
+                      defaultChecked={!this.props.fill_color}
+                      onChange={this.changeColorScale}
+                    />{" "}
+                    GrayScale
+                  </li>
+                </ul>
 
               </div>
 
