@@ -309,10 +309,10 @@ var BSREL = React.createClass({
       { label: "table", href: "table-tab" }
     ];
 
-		var models = {};
-		if(!_.isNull(self.state.json)) {
-			models = self.state.json.fits;
-		}
+    var models = {};
+    if (!_.isNull(self.state.json)) {
+      models = self.state.json.fits;
+    }
 
     return (
       <div>
