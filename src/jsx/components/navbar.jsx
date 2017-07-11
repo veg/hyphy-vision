@@ -72,16 +72,11 @@ var NavBar = React.createClass({
               </div>
 
               <div className="collapse navbar-collapse" id="navbar-collapse-1">
-
-
                 <ul className="nav navbar-nav">
                   <a href="#" className="nav-button" role="button">Load</a>
                   <a href="#" className="nav-button" role="button">Export</a>
                 </ul>
-
-
-              <Methods />
-                
+                <Methods />
               </div>
             </div>
 
