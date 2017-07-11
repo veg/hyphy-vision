@@ -6,7 +6,7 @@ import {
   DatamonkeyPartitionTable,
   DatamonkeyModelTable,
   DatamonkeyTimersTable
-} from "./components/shared_summary.jsx";
+} from "./components/tables.jsx";
 import { SLACSites } from "./components/slac_sites.jsx";
 import { SLACBanner } from "./components/slac_summary.jsx";
 import { SLACGraphs } from "./components/slac_graphs.jsx";

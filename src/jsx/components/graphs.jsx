@@ -1,107 +1,136 @@
-var React = require("react");
-var graphDefaultColorPallette = d3.scale.category10().domain(_.range(10));
+var React = require("react"),
+  d3 = require("d3"),
+  _ = require("underscore"),
+  graphDefaultColorPallette = d3.scale.category10().domain(_.range(10));
 
+
+/* 
+ * Creates a dropdown menu to be used with any 
+ * component that extends BaseGraph
+ */
 class GraphMenu extends React.Component {
 
   constructor(props) {
     super(props);
     this.state = {
-      xLabel: "Site",
-      yLabel: "dN-dS"
+      xaxis: "Site",
+      yaxis: "alpha"
     };
   }
 
+  handleSelection(e) {
+    var dimension = e.target.dataset.dimension;
+    var axis = e.target.dataset.axis;
+
+    var state_to_update = {};
+    state_to_update[axis] = dimension;
+    this.setState(state_to_update);
+
+    this.props.axisSelectionEvent(e);
+  }
+
   dimensionOptionElement(axis, value) {
+    var self = this;
+
     return (
       <li key={value}>
-        <a href="#" tabIndex="-1" onClick={_.partial(axis, value)}>
+        <a
+          href="#"
+          tabIndex="-1"
+          data-dimension={value}
+          data-axis={axis}
+          onClick={self.handleSelection.bind(self)}
+        >
           {value}
         </a>
       </li>
     );
   }
 
-  render() {
-
+  AxisButton(options, selected, axis, label) {
     var self = this;
 
-    var XDimensionOptions = _.map(
-      ["Site"].concat(self.props.headers),
+    var DimensionOptions = [];
+
+    DimensionOptions = _.map(
+      options,
       function(value) {
-        return self.dimensionOptionElement(self.xAxis, value);
+        return self.dimensionOptionElement(axis, value);
       },
       self
     );
 
-    var YDimensionOptions = _.map(
-      ["Site"].concat(self.props.headers),
-      function(value) {
-        return self.dimensionOptionElement(self.yAxis, value);
-      },
-      self
+    if (_.size(_.keys(options)) <= 1) {
+      return <div />;
+    } else {
+      return (
+        <div className="input-group">
+          <span className="input-group-addon">{label}: </span>
+          <ul className="dropdown-menu">
+            {DimensionOptions}
+          </ul>
+          <button
+            className="btn btn-default btn-sm dropdown-toggle form-control"
+            type="button"
+            data-toggle="dropdown"
+            aria-haspopup="true"
+            aria-expanded="false"
+          >
+            {selected}
+            <span className="caret" />
+          </button>
+        </div>
+      );
+    }
+  }
+
+  render() {
+    var self = this;
+    var XAxisButton = self.AxisButton(
+      self.props.x_options,
+      self.state.xaxis,
+      "xaxis",
+      "X-axis"
     );
+    var YAxisButton = self.AxisButton(
+      self.props.y_options,
+      self.state.yaxis,
+      "yaxis",
+      "Y-axis"
+    );
+
+    var navStyle = { borderBottom: "none" };
 
     return (
-      <nav className="navbar">
+      <nav className="navbar" style={navStyle}>
         <form className="navbar-form">
           <div className="form-group navbar-left">
             <div className="input-group">
-              <span className="input-group-addon">X-axis: </span>
-              <ul className="dropdown-menu">
-                {XDimensionOptions}
-              </ul>
-              <button
-                className="btn btn-default btn-sm dropdown-toggle form-control"
-                type="button"
-                data-toggle="dropdown"
-                aria-haspopup="true"
-                aria-expanded="false"
-              >
-                {self.state.xLabel}
-                <span className="caret" />
-              </button>
-            </div>
-            <div className="input-group">
-              <span className="input-group-addon">Y-axis:</span>
-              <ul className="dropdown-menu">
-                {YDimensionOptions}
-              </ul>
-              <button
-                className="btn btn-default btn-sm dropdown-toggle form-control"
-                type="button"
-                data-toggle="dropdown"
-                aria-haspopup="true"
-                aria-expanded="false"
-              >
-                {self.state.yLabel}
-                <span className="caret" />
-              </button>
+              {XAxisButton}
+              {YAxisButton}
             </div>
           </div>
         </form>
       </nav>
     );
-
   }
-
 }
 
 class BaseGraph extends React.Component {
-
   constructor(props) {
     super(props);
     this.state = {
-      xLabel: "Site",
-      yLabel: "dN-dS"
+      x_label: "site",
+      y_label: "alpha"
     };
   }
 
   setXAxis(column) {
-    this.setState({ xLabel: column });
+    this.setState({ xaxis: column });
   }
 
   setYAxis(column) {
-    this.setState({ yLabel: column });
+    this.setState({ yaxis: column });
   }
 
   computeRanges() {
@@ -169,16 +198,25 @@ class BaseGraph extends React.Component {
   }
 
   renderAxis(scale, location, label, dom_element) {
-
     var self = this;
     var xAxis = d3.svg.axis().scale(scale).orient(location); // e.g. bottom
     self.doTransition(d3.select(dom_element)).call(xAxis);
+  }
 
+  xAxisLabel() {
+    var transform_x = this.props.width/2;
+    var transform_y = this.props.height-(this.props.marginTop/3);
+    return(<text text-anchor="middle" transform={"translate("+transform_x+","+transform_y+")"}>{ this.props.x_label }</text>);
+  }
+
+  yAxisLabel() {
+    var transform_x = (this.props.marginLeft - 25)/2;
+    var transform_y = this.props.height/2;
+    return(<text text-anchor="middle" transform={"translate("+transform_x+","+transform_y+")rotate(-90)"}>{ this.props.y_label }</text>);
   }
 
   //TODO : See if this can be removed
   makeClasses(key) {
-
     var className = null,
       styleDict = null;
 
@@ -192,7 +230,6 @@ class BaseGraph extends React.Component {
     }
 
     return { className: className, style: styleDict };
-
   }
 
   makeScale(type, domain, range) {
@@ -222,7 +259,10 @@ class BaseGraph extends React.Component {
       { x_range, y_range } = self.computeRanges();
 
     var x_scale = self.makeScale(self.props.xScale, x_range, [0, main.width]),
-        y_scale = self.makeScale(self.props.yScale, y_range, [main.height, 0]);
+      y_scale = self.makeScale(self.props.yScale, y_range, [main.height, 0]);
+
+    var xAxisLabel = self.xAxisLabel();
+    var yAxisLabel = self.yAxisLabel();
 
     return (
       <div>
@@ -253,7 +293,7 @@ class BaseGraph extends React.Component {
                   self.renderAxis,
                   x_scale,
                   "bottom",
-                  self.props.xLabel
+                  self.props.xaxis
                 ).bind(self)}
               />
             : null}
@@ -275,6 +315,8 @@ class BaseGraph extends React.Component {
                 ).bind(self)}
               />
             : null}
+            { xAxisLabel }
+            { yAxisLabel }
         </svg>
       </div>
     );
@@ -306,11 +348,9 @@ BaseGraph.defaultProps = {
 };
 
 class ScatterPlot extends BaseGraph {
-
   renderGraph(x_scale, y_scale, dom_element) {
-
     var self = this,
-        main_graph = d3.select(dom_element);
+      main_graph = d3.select(dom_element);
 
     _.each(
       this.props.y,
@@ -348,6 +388,7 @@ class ScatterPlot extends BaseGraph {
 }
 
 class Series extends BaseGraph {
+
   renderGraph(x_scale, y_scale, dom_element) {
     var self = this,
       main_graph = d3.select(dom_element);

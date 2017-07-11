@@ -1,6 +1,8 @@
 var root = this;
 var datamonkey = function() {};
 
+var $ = require("jquery");
+
 if (typeof exports !== "undefined") {
   if (typeof module !== "undefined" && module.exports) {
     exports = module.exports = datamonkey;
