@@ -131,7 +131,6 @@ var NavBar = React.createClass({
                     Export
                   </a>
                 </ul>
-
                 <Methods />
               </div>
             </div>
