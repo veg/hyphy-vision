@@ -59,11 +59,21 @@ var SLACBanner = React.createClass({
 
   render: function() {
     return (
-      <div className="row">
-        <div className="col-md-8" id="slac-summary">
+      <div className="row" id="summary-div">
+
+        <div className="col-md-12">
           <h3 className="list-group-item-heading">
-            <span id="summary-method-name">SLAC analysis summary</span>
+            <span className="summary-method-name">Single-Likelihood Ancestor Counting</span>
+            <br />
+            <span className="results-summary">results summary</span>
           </h3>
+        </div>
+
+        <div className="col-md-12">
+          <InputInfo input_data={this.props.input_data}/>
+        </div>
+
+        <div className="col-md-12">
           <div className="main-result">
             <p>
               Evidence<sup>&dagger;</sup> of pervasive{" "}
@@ -129,9 +139,6 @@ var SLACBanner = React.createClass({
               </small>
             </div>
           </div>
-        </div>
-        <div className="col-md-4">
-          <InputInfo input_data={this.props.analysis_results.input_data} />
         </div>
       </div>
     );

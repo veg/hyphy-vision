@@ -38,7 +38,10 @@ var SLAC = React.createClass({
   },
 
   dm_initializeFromJSON: function(data) {
-    this.setState({ analysis_results: data });
+    this.setState({
+      analysis_results: data,
+      input_data: data.input_data  
+    });
   },
 
   getDefaultProps: function() {
@@ -136,15 +139,16 @@ var SLAC = React.createClass({
       return (
         <div>
           <NavBar />
-          <div className="container-fluid">
+          <div className="container">
             <div className="row">
               <ScrollSpy info={scrollspy_info} />
               <div className="col-md-10">
-
+              <div id="results">
                 <SLACBanner
                   analysis_results={self.state.analysis_results}
                   pValue={self.state.pValue}
                   pAdjuster={_.bind(self.dm_adjustPvalue, self)}
+                  input_data={self.state.input_data}
                 />
 
                 <div className="row hidden-print">
@@ -262,6 +266,7 @@ var SLAC = React.createClass({
                   </div>
                 </div>
 
+              </div>
               </div>
 
               <div className="col-md-1" />

@@ -2,6 +2,11 @@ var React = require("react");
 
 var InputInfo = React.createClass({
   getInitialState() {
+    if (this.props.input_data){
+      return {
+        input_data: this.props.input_data
+      }
+    }
     return {
       input_data: {}
     };
