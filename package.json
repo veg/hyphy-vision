@@ -81,7 +81,7 @@
     "style-loader": "^0.13.1",
     "uglify-js": "2.4.x",
     "url-loader": "^0.5.7",
-    "webpack": "^3.0.0",
+    "webpack": "^2.0.0",
     "webpack-eslint-plugin": "^1.2.0"
   },
   "scripts": {
