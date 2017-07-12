@@ -165,15 +165,17 @@ var Tree = React.createClass({
     var self = this,
       svg = self.svg;
 
-    var color_fill = self.settings["tree-options"]["hyphy-tree-fill-color"][0]
-      ? "black"
-      : "red";
+    if (!self.state.omega_color || !self.state.omega_scale) {
+      return;
+    }
+
+    var color_fill = self.state.omega_color(0);
 
     var margins = {
       bottom: 30,
       top: 15,
-      left: 40,
-      right: 2
+      left: 0,
+      right: 0
     };
 
     d3.selectAll("#color-legend").remove();
