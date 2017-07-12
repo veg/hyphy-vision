@@ -87,10 +87,19 @@ var BUSTED = React.createClass({
     });
   },
 
+  colorGradient: ["red", "green"],
+  grayScaleGradient: [
+    "#444444",
+    "#000000"
+  ],
+
+
   getDefaultProps: function() {
-    var edgeColorizer = function(element, data) {
+
+    var edgeColorizer = function(element, data, foreground_color) {
+
       var is_foreground = data.target.annotations.is_foreground,
-        color_fill = this.options()["color-fill"] ? "black" : "red";
+        color_fill = foreground_color(0);
 
       element
         .style("stroke", is_foreground ? color_fill : "gray")
@@ -272,6 +281,7 @@ var BUSTED = React.createClass({
   },
 
   render: function() {
+
     var self = this;
     self.initialize();
     var scrollspy_info = [
@@ -280,6 +290,12 @@ var BUSTED = React.createClass({
       { label: "input tree", href: "phylogenetic-tree" },
       { label: "ω distribution", href: "primary-omega-dist" }
     ];
+
+    var models = {};
+    if (!_.isNull(self.state.json)) {
+      models = self.state.json.fits;
+    }
+
 
     return (
       <div>
@@ -319,6 +335,9 @@ var BUSTED = React.createClass({
                   <Tree
                     json={self.state.json}
                     settings={self.props.tree_settings}
+                    models={models}
+                    color_gradient={self.colorGradient}
+                    grayscale_gradient={self.grayscaleGradient}
                   />
                 </div>
                 <div className="col-md-12">
