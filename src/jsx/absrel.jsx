@@ -14,8 +14,6 @@ import { BranchTable } from "./components/branch_table.jsx";
 import { NavBar } from "./components/navbar.jsx";
 import { ScrollSpy } from "./components/scrollspy.jsx";
 
-var React = require("react");
-
 var BSREL = React.createClass({
   float_format: d3.format(".2f"),
 
@@ -217,7 +215,7 @@ var BSREL = React.createClass({
   setEvents: function() {
     var self = this;
 
-    $("#datamonkey-absrel-json-file").on("change", function(e) {
+    $("#dm-file").on("change", function(e) {
       var files = e.target.files; // FileList object
 
       if (files.length == 1) {
@@ -249,14 +247,15 @@ var BSREL = React.createClass({
               full_model: full_model,
               test_results: test_results,
               input_data: input_data,
-              fits: fits
+              fits: fits,
+              tree: d3.layout.phylotree()(
+                data["fits"]["Full model"]["tree string"]
+              )
             });
           };
         })(f);
         reader.readAsText(f);
       }
-
-      $("#datamonkey-absrel-toggle-here").dropdown("toggle");
       e.preventDefault();
     });
   },
@@ -293,12 +292,6 @@ var BSREL = React.createClass({
     return branch_annotations;
   },
 
-  initialize: function() {
-    var model_fits_id = "#hyphy-model-fits",
-      omega_plots_id = "#hyphy-omega-plots",
-      tree_id = "#tree-tab";
-  },
-
   componentDidUpdate(prevProps, prevState) {
     $("body").scrollspy({
       target: ".bs-docs-sidebar",
@@ -316,13 +309,16 @@ var BSREL = React.createClass({
       { label: "table", href: "table-tab" }
     ];
 
+    var models = {};
+    if (!_.isNull(self.state.json)) {
+      models = self.state.json.fits;
+    }
+
     return (
       <div>
         <NavBar />
         <div className="container">
-
           <div className="row">
-
             <ScrollSpy info={scrollspy_info} />
 
             <div className="col-sm-10">
@@ -366,6 +362,7 @@ var BSREL = React.createClass({
                     <Tree
                       json={self.state.json}
                       settings={self.state.settings}
+                      models={models}
                       color_gradient={self.omegaColorGradient}
                       grayscale_gradient={self.omegaGrayscaleGradient}
                     />
@@ -392,11 +389,9 @@ var BSREL = React.createClass({
                     </p>
                   </div>
                 </div>
-
               </div>
             </div>
           </div>
-
         </div>
       </div>
     );

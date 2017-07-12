@@ -140,8 +140,6 @@ var FEL = React.createClass({
         return _.object(mle_header_values, c);
       });
 
-		
-
       // Get number of positively and negatively selected sites by p-value threshold
 			var mle_results = _.map(mle_results, function(d) { 
 				d["is_positive"] = parseFloat(d["beta"])/parseFloat(d["alpha"]) > 1 && parseFloat(d["p-value"]) <= self.state.pvalue_threshold; 
@@ -196,7 +194,7 @@ var FEL = React.createClass({
     return(<div>
       <div className="main-result">
         <p>
-				 	<CopyToClipboard text={this.state.value} onCopy={this.onCopy}>
+				 	<CopyToClipboard text={this.getSummaryText()} onCopy={this.onCopy}>
 						<span id="copy-it" className="pull-right">{this.getClipboard()}</span>
 					</CopyToClipboard>
 
@@ -242,14 +240,17 @@ var FEL = React.createClass({
 
 	getSummaryText() {
 
+    var self = this;
 		var no_selected = self.state.mle_content.length - self.state.positively_selected.length - self.state.negatively_selected.length;
 
-		//var text = FEL found evidence of pervasive positive/diversifying selection
-		//          at {self.state.positively_selected.length} sites/at any sites in your
-		//          alignment. In addition, FEL found evidence† of pervasive negative/purifying
-		//          selection at {self.state.negatively_selected.length} sites/at any sites in your
-		//          alignment. FEL did not find evidence for either positive or negative selection
-		//          in the remaining {no_selected} sites in your alignment.
+    var summary_text = `FEL found evidence of pervasive positive/diversifying selection \
+at ${self.state.positively_selected.length} sites/at any sites in your \
+alignment. In addition, FEL found evidence with p-value ${self.state.pvalue_threshold} of pervasive negative/purifying \
+selection at ${self.state.negatively_selected.length} sites/at any sites in your \
+alignment. FEL did not find evidence for either positive or negative selection \
+in the remaining ${no_selected} sites in your alignment.`;
+
+    return summary_text;
 						
 	},
 

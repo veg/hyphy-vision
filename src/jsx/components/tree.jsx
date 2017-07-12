@@ -26,6 +26,14 @@ var Tree = React.createClass({
     };
   },
 
+  toggleLegend: function(e) {
+    var show_legend = !e.target.checked;
+
+    this.setState({
+      show_legend: show_legend
+    });
+  },
+
   changeColorScale: function(e) {
     var self = this;
     var fill_color = !e.target.checked;
@@ -82,13 +90,17 @@ var Tree = React.createClass({
             self.props.margins["bottom"]
         ]);
 
+    var selected_model = _.first(_.keys(self.props.models));
+
     return {
       json: this.props.json,
       settings: this.props.settings,
       fill_color: this.props.fill_color,
       omega_color: omega_color,
       omega_scale: omega_scale,
-      axis_scale: axis_scale
+      show_legend: true,
+      axis_scale: axis_scale,
+      selected_model: selected_model
     };
   },
 
@@ -120,7 +132,7 @@ var Tree = React.createClass({
     var branch_lengths = self.settings["tree-options"][
       "hyphy-tree-branch-lengths"
     ][0]
-      ? this.state.json["fits"][this.which_model]["branch-lengths"]
+      ? self.props.models[self.state.selected_model]["branch-lengths"]
       : null;
 
     if (!branch_lengths) {
@@ -142,9 +154,9 @@ var Tree = React.createClass({
   },
 
   assignBranchAnnotations: function() {
-    if (this.state.json && this.state.json["fits"][this.which_model]) {
+    if (this.state.json && this.props.models[this.state.selected_model]) {
       this.tree.assign_attributes(
-        this.state.json["fits"][this.which_model]["branch-annotations"]
+        this.props.models[this.state.selected_model]["branch-annotations"]
       );
     }
   },
@@ -153,15 +165,17 @@ var Tree = React.createClass({
     var self = this,
       svg = self.svg;
 
-    var color_fill = self.settings["tree-options"]["hyphy-tree-fill-color"][0]
-      ? "black"
-      : "red";
+    if (!self.state.omega_color || !self.state.omega_scale) {
+      return;
+    }
+
+    var color_fill = self.state.omega_color(0);
 
     var margins = {
       bottom: 30,
       top: 15,
-      left: 40,
-      right: 2
+      left: 0,
+      right: 0
     };
 
     d3.selectAll("#color-legend").remove();
@@ -204,9 +218,8 @@ var Tree = React.createClass({
 
   renderLegendColorScheme: function(svg_container, attr_name, do_not_render) {
     var self = this;
-    var branch_annotations = this.state.json["fits"][this.which_model][
-      "branch-annotations"
-    ];
+    var branch_annotations =
+      self.props.models[self.state.selected_model]["branch-annotations"];
     var svg = self.svg;
 
     if (!self.state.omega_color || !self.state.omega_scale) {
@@ -364,9 +377,8 @@ var Tree = React.createClass({
 
     $(".phylotree-align-toggler").on("change", function(e) {
       if ($(this).is(":checked")) {
-        if (tree_object.align_tips($(this).data("align") == "right")) {
-          tree_object.placenodes().update();
-        }
+        tree_object.align_tips($(this).data("align") == "right");
+        tree_object.placenodes().update();
       }
     });
 
@@ -436,66 +448,34 @@ var Tree = React.createClass({
     });
   },
 
-  setModelList: function() {
-    if (!this.state.json) {
-      return [];
-    }
+  changeModelSelection(e) {
+    var selected_model = e.target.dataset.type;
 
-    this.state.settings["suppress-tree-render"] = true;
-
-    var def_displayed = false;
-
-    var model_list = d3.select("#hyphy-tree-model-list").selectAll("li").data(
-      d3
-        .keys(this.state.json["fits"])
-        .map(function(d) {
-          return [d];
-        })
-        .sort()
-    );
-
-    model_list.enter().append("li");
-    model_list.exit().remove();
-    model_list = model_list.selectAll("a").data(function(d) {
-      return d;
+    this.setState({
+      selected_model: selected_model
     });
+  },
 
-    model_list.enter().append("a");
+  getModelList: function() {
+    var self = this;
 
-    model_list.attr("href", "#").on("click", function(d, i) {
-      d3.select("#hyphy-tree-model").attr("value", d);
+    var createListElement = function(model_type) {
+      return (
+        <li>
+          <a
+            href="#"
+            data-type={model_type}
+            onClick={self.changeModelSelection}
+          >
+            {model_type}
+          </a>
+        </li>
+      );
+    };
+
+    return _.map(this.props.models, (d, key) => {
+      return createListElement(key);
     });
-
-    model_list.text(function(d) {
-      if (d == "General Descriptive") {
-        def_displayed = true;
-        this.click();
-      }
-
-      if (!def_displayed && d == "Alternative") {
-        def_displayed = true;
-        this.click();
-      }
-
-      if (!def_displayed && d == "Partitioned MG94xREV") {
-        def_displayed = true;
-        this.click();
-      }
-
-      if (!def_displayed && d == "MG94") {
-        def_displayed = true;
-        this.click();
-      }
-
-      if (!def_displayed && d == "Full model") {
-        def_displayed = true;
-        this.click();
-      }
-
-      return d;
-    });
-
-    this.settings["suppress-tree-render"] = false;
   },
 
   initialize: function() {
@@ -520,11 +500,9 @@ var Tree = React.createClass({
     this.width = 800;
     this.height = 600;
 
-    this.which_model = this.settings["tree-options"]["hyphy-tree-model"][0];
     this.legend_type = this.settings["hyphy-tree-legend-type"];
 
     this.setHandlers();
-    this.setModelList();
     this.initializeTree();
     this.setPartitionList();
   },
@@ -576,7 +554,7 @@ var Tree = React.createClass({
       self.tree(analysis_data["tree"]).svg(self.svg);
     } else {
       self
-        .tree(analysis_data["fits"][self.which_model]["tree string"])
+        .tree(self.props.models[self.state.selected_model]["tree string"])
         .svg(self.svg);
     }
 
@@ -594,13 +572,15 @@ var Tree = React.createClass({
 
     this.assignBranchAnnotations();
 
-    if (self.legend_type == "discrete") {
-      self.renderDiscreteLegendColorScheme("tree_container");
-    } else {
-      self.renderLegendColorScheme(
-        "tree_container",
-        analysis_data["fits"][this.which_model]["annotation-tag"]
-      );
+    if (self.state.show_legend) {
+      if (self.legend_type == "discrete") {
+        self.renderDiscreteLegendColorScheme("tree_container");
+      } else {
+        self.renderLegendColorScheme(
+          "tree_container",
+          self.props.models[self.state.selected_model]["annotation-tag"]
+        );
+      }
     }
 
     if (this.settings.edgeColorizer) {
@@ -626,9 +606,12 @@ var Tree = React.createClass({
   },
 
   componentWillReceiveProps: function(nextProps) {
+    var selected_model = _.first(_.keys(nextProps.models));
+
     this.setState({
       json: nextProps.json,
-      settings: nextProps.settings
+      settings: nextProps.settings,
+      selected_model: selected_model
     });
   },
 
@@ -637,6 +620,13 @@ var Tree = React.createClass({
   },
 
   render: function() {
+    var dropdownListStyle = {
+      paddingLeft: "20px",
+      paddingRight: "20px",
+      paddingTop: "10px",
+      paddingBottom: "10px"
+    };
+
     return (
       <div>
         <h4 className="dm-table-header">
@@ -656,22 +646,19 @@ var Tree = React.createClass({
         </h4>
         <div className="row">
           <div className="col-md-12">
-            <div className="input-group input-group-sm">
+
+            <div className="">
               <div className="input-group-btn">
                 <button
                   type="button"
                   className="btn btn-default dropdown-toggle"
                   data-toggle="dropdown"
                 >
-                  Export<span className="caret" />
+                  Model{" "}
+                  <span className="caret" />
                 </button>
-                <ul className="dropdown-menu">
-                  <li id="export-phylo-png">
-                    <a href="#"><i className="fa fa-image" /> Image</a>
-                  </li>
-                  <li id="export-phylo-nwk">
-                    <a href="#"><i className="fa fa-file-o" /> Newick File</a>
-                  </li>
+                <ul className="dropdown-menu" id="hyphy-tree-model-list">
+                  {this.getModelList()}
                 </ul>
                 <button
                   type="button"
@@ -694,24 +681,6 @@ var Tree = React.createClass({
                 <button
                   type="button"
                   className="btn btn-default btn-sm"
-                  data-direction="horizontal"
-                  data-amount="1"
-                  title="Expand horizonal spacing"
-                >
-                  <i className="fa fa-arrows-h" />
-                </button>
-                <button
-                  type="button"
-                  className="btn btn-default btn-sm"
-                  data-direction="horizontal"
-                  data-amount="-1"
-                  title="Compress horizonal spacing"
-                >
-                  <i className="fa  fa-compress fa-rotate-45" />
-                </button>
-                <button
-                  type="button"
-                  className="btn btn-default btn-sm"
                   id="sort_ascending"
                   title="Sort deepest clades to the bototm"
                 >
@@ -725,17 +694,11 @@ var Tree = React.createClass({
                 >
                   <i className="fa fa-sort-amount-desc" />
                 </button>
-                <button
-                  type="button"
-                  className="btn btn-default btn-sm"
-                  id="sort_original"
-                  title="Restore original order"
-                >
-                  <i className="fa fa-sort" />
-                </button>
+
               </div>
+
               <div className="input-group-btn" data-toggle="buttons">
-                <label className="btn btn-default active btn-sm">
+                <button className="btn btn-default active">
                   <input
                     type="radio"
                     name="options"
@@ -745,8 +708,8 @@ var Tree = React.createClass({
                     checked=""
                     title="Layout left-to-right"
                   />Linear
-                </label>
-                <label className="btn btn-default  btn-sm">
+                </button>
+                <button className="btn btn-default">
                   <input
                     type="radio"
                     name="options"
@@ -756,10 +719,10 @@ var Tree = React.createClass({
                     title="Layout radially"
                   />{" "}
                   Radial
-                </label>
+                </button>
               </div>
               <div className="input-group-btn" data-toggle="buttons">
-                <label className="btn btn-default active btn-sm">
+                <button className="btn btn-default active">
                   <input
                     type="radio"
                     className="phylotree-align-toggler"
@@ -770,8 +733,8 @@ var Tree = React.createClass({
                     title="Align tips labels to branches"
                   />
                   <i className="fa fa-align-left" />
-                </label>
-                <label className="btn btn-default btn-sm">
+                </button>
+                <button className="btn btn-default btn-sm">
                   <input
                     type="radio"
                     className="phylotree-align-toggler"
@@ -781,7 +744,7 @@ var Tree = React.createClass({
                     title="Align tips labels to the edge of the plot"
                   />
                   <i className="fa fa-align-right" />
-                </label>
+                </button>
               </div>
 
               <div className="input-group-btn">
@@ -790,69 +753,54 @@ var Tree = React.createClass({
                   className="btn btn-default dropdown-toggle"
                   data-toggle="dropdown"
                 >
-                  Model
-                  <span className="caret" />
+                  Export <span className="caret" />
                 </button>
-                <ul className="dropdown-menu" id="hyphy-tree-model-list" />
+                <ul className="dropdown-menu">
+                  <li id="export-phylo-png">
+                    <a href="#"><i className="fa fa-image" /> Image</a>
+                  </li>
+                  <li id="export-phylo-nwk">
+                    <a href="#"><i className="fa fa-file-o" /> Newick File</a>
+                  </li>
+                </ul>
               </div>
 
-              <input
-                type="text"
-                className="form-control disabled"
-                id="hyphy-tree-model"
-                disabled
-              />
+              <div className="input-group-btn">
 
-              <div id="hyphy-tree-highlight-div" className="input-group-btn">
                 <button
                   type="button"
-                  className="btn btn-default dropdown-toggle"
+                  className="btn btn-default btn-sm dropdown-toggle"
                   data-toggle="dropdown"
+                  style={{ paddingLeft: "30px" }}
                 >
-                  Highlight branch set
+                  <span className="glyphicon glyphicon-cog" />{" "}
                   <span className="caret" />
                 </button>
-                <ul
-                  className="dropdown-menu"
-                  id="hyphy-tree-highlight-branches"
-                />
+
+                <ul className="dropdown-menu">
+                  <li style={dropdownListStyle}>
+                    <input
+                      type="checkbox"
+                      id="hyphy-tree-hide-legend"
+                      className="hyphy-tree-trigger"
+                      defaultChecked={false}
+                      onChange={this.toggleLegend}
+                    />{" "}
+                    Hide Legend
+                  </li>
+                  <li style={dropdownListStyle}>
+                    <input
+                      type="checkbox"
+                      id="hyphy-tree-fill-color"
+                      className="hyphy-tree-trigger"
+                      defaultChecked={!this.props.fill_color}
+                      onChange={this.changeColorScale}
+                    />{" "}
+                    GrayScale
+                  </li>
+                </ul>
+
               </div>
-
-              <input
-                type="text"
-                className="form-control disabled"
-                id="hyphy-tree-highlight"
-                disabled
-              />
-
-              <span className="input-group-addon">
-                Use model branch lengths
-                <input
-                  type="checkbox"
-                  id="hyphy-tree-branch-lengths"
-                  className="hyphy-tree-trigger"
-                />
-              </span>
-
-              <span className="input-group-addon">
-                Hide legend
-                <input
-                  type="checkbox"
-                  id="hyphy-tree-hide-legend"
-                  className="hyphy-tree-trigger"
-                />
-              </span>
-
-              <span className="input-group-addon">
-                Grayscale
-                <input
-                  type="checkbox"
-                  id="hyphy-tree-fill-color"
-                  className="hyphy-tree-trigger"
-                  defaultChecked={!this.props.fill_color}
-                  onChange={this.changeColorScale}
-                />
-              </span>
 
             </div>
           </div>

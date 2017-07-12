@@ -15,7 +15,6 @@ import { ScrollSpy } from "./components/scrollspy.jsx";
 var datamonkey = require("../datamonkey/datamonkey.js");
 var _ = require("underscore");
 
-
 var BUSTED = React.createClass({
   float_format: d3.format(".2f"),
   p_value_format: d3.format(".4f"),
@@ -70,24 +69,37 @@ var BUSTED = React.createClass({
           href: pmid_href
         },
         input_data: data["input_data"],
-        evidence_ratio_data: _.map(_.range(data.input_data["sites"]), function(i){
+        evidence_ratio_data: _.map(_.range(data.input_data["sites"]), function(
+          i
+        ) {
           return {
-            site_index: i+1,
+            site_index: i + 1,
             unconstrained_likelihood: data["profiles"]["unconstrained"][0][i],
             constained_likelihood: data["profiles"]["constrained"][0][i],
             optimized_null_likelihood: data["profiles"]["optimized null"][0][i],
-            constrained_evidence_ratio: 2*Math.log(data["evidence ratios"]["constrained"][0][i]),
-            optimized_null_evidence_ratio: 2*Math.log(data["evidence ratios"]["optimized null"][0][i])
-          }
+            constrained_evidence_ratio:
+              2 * Math.log(data["evidence ratios"]["constrained"][0][i]),
+            optimized_null_evidence_ratio:
+              2 * Math.log(data["evidence ratios"]["optimized null"][0][i])
+          };
         })
       });
     });
   },
 
+  colorGradient: ["red", "green"],
+  grayScaleGradient: [
+    "#444444",
+    "#000000"
+  ],
+
+
   getDefaultProps: function() {
-    var edgeColorizer = function(element, data) {
+
+    var edgeColorizer = function(element, data, foreground_color) {
+
       var is_foreground = data.target.annotations.is_foreground,
-        color_fill = this.options()["color-fill"] ? "black" : "red";
+        color_fill = foreground_color(0);
 
       element
         .style("stroke", is_foreground ? color_fill : "gray")
@@ -269,6 +281,7 @@ var BUSTED = React.createClass({
   },
 
   render: function() {
+
     var self = this;
     self.initialize();
     var scrollspy_info = [
@@ -278,12 +291,17 @@ var BUSTED = React.createClass({
       { label: "ω distribution", href: "primary-omega-dist" }
     ];
 
+    var models = {};
+    if (!_.isNull(self.state.json)) {
+      models = self.state.json.fits;
+    }
+
+
     return (
       <div>
         <NavBar />
         <div className="container">
           <div className="row">
-
             <ScrollSpy info={scrollspy_info} />
 
             <div className="col-lg-10">
@@ -310,13 +328,16 @@ var BUSTED = React.createClass({
                 </div>
               </div>
 
-              <BUSTEDSiteChartAndTable data={this.state.evidence_ratio_data}/>
+              <BUSTEDSiteChartAndTable data={this.state.evidence_ratio_data} />
 
               <div className="row">
                 <div className="col-md-12" id="phylogenetic-tree">
                   <Tree
                     json={self.state.json}
                     settings={self.props.tree_settings}
+                    models={models}
+                    color_gradient={self.colorGradient}
+                    grayscale_gradient={self.grayscaleGradient}
                   />
                 </div>
                 <div className="col-md-12">
@@ -333,7 +354,6 @@ var BUSTED = React.createClass({
             </div>
 
             <div className="col-lg-1" />
-
           </div>
         </div>
       </div>
