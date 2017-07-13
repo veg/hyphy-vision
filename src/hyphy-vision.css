@@ -256,6 +256,11 @@ p.description {
 .bs-docs-sidebar {
 
 }
+
+.bs-docs-sidebar .nav {
+  max-width:175px;
+}
+
 /* all links */
 .bs-docs-sidebar .nav>li>a {
   font-family: "Montserrat", sans-serif;
@@ -311,6 +316,7 @@ p.description {
 .bs-docs-sidebar .nav .nav>.active:focus>a {
   font-weight: 500;
 }
+
 /* hide inactive nested list */
 .bs-docs-sidebar .nav ul.nav {
   /*display: none;       */
