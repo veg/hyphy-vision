@@ -1,8 +1,11 @@
 var React = require("react"),
   _ = require("underscore"),
-  d3 = require("d3");
+  d3 = require("d3"),
+  d3_save_svg = require("d3-save-svg");
 
 import { DatamonkeyTable } from "./tables.jsx";
+import { saveSvgAsPng } from "save-svg-as-png";
+
 
 var BUSTEDSiteChartAndTable = React.createClass({
   getInitialState: function() {
@@ -25,6 +28,14 @@ var BUSTEDSiteChartAndTable = React.createClass({
       d3.select("#chart-id").html("");
       this.drawChart();
     }
+  },
+  componentDidMount: function(){
+    d3.select("#export-chart-png").on("click", function(e){
+      saveSvgAsPng(document.getElementById("chart"), "busted-chart.png");
+    });
+    d3.select("#export-chart-svg").on("click", function(e){
+      d3_save_svg.save(d3.select("#chart").node(), {filename: "busted"});
+    });
   },
   drawChart: function() {
     var self = this,
@@ -80,11 +91,19 @@ var BUSTEDSiteChartAndTable = React.createClass({
       svg = d3
         .select("#chart-id")
         .append("svg")
+        .attr("id", "chart")
         .attr("width", width + margin.left + margin.right)
         .attr("height", height + margin.top + margin.bottom)
-        .append("g")
-        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-    svg
+
+    svg.append("rect")
+      .attr("width", "100%")
+      .attr("height", "100%")
+      .attr("fill", "white")
+
+    var g = svg.append("g")
+      .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+    g
       .selectAll(".axis-line")
       .data(yAxisTicks)
       .enter()
@@ -95,33 +114,33 @@ var BUSTEDSiteChartAndTable = React.createClass({
       .attr("y2", d => y(d))
       .style("stroke", "#eee")
       .style("stroke-width", 1);
-    svg
+    g
       .append("path")
       .attr("class", "line")
       .attr("d", oner_line(self.props.data))
       .style("fill", "none")
       .style("stroke-width", 2)
       .style("stroke", "#000");
-    svg
+    g
       .append("path")
       .attr("class", "line")
       .attr("d", cer_line(self.props.data))
       .style("fill", "none")
       .style("stroke-width", 2)
       .style("stroke", "#00a99d");
-    svg
+    g
       .append("g")
       .attr("class", "x axis")
       .attr("transform", "translate(0," + height + ")")
       .call(xAxis);
-    svg
+    g
       .append("text")
       .attr("x", width / 2)
       .attr("y", height + margin.bottom)
       .style("text-anchor", "middle")
       .text("Site index");
-    svg.append("g").attr("class", "y axis").call(yAxis);
-    svg
+    g.append("g").attr("class", "y axis").call(yAxis);
+    g
       .append("text")
       .attr("transform", "rotate(-90)")
       .attr("x", -height / 2)
@@ -187,7 +206,7 @@ var BUSTEDSiteChartAndTable = React.createClass({
 
     var brush = d3.svg.brush().x(x).on("brushend", brushend);
 
-    svg
+    g
       .append("g")
       .attr("class", "brush")
       .call(brush)

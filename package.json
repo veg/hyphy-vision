@@ -25,6 +25,7 @@
     "bootstrap": "3.x",
     "crossfilter": "1.x",
     "d3": "3.x",
+    "d3-save-svg": "0.0.2",
     "dc": "1.x",
     "extract-text-webpack-plugin": "^2.0.0",
     "font-awesome": "4.x",
@@ -39,7 +40,8 @@
     "phylotree": "0.1.6",
     "react": "15.x.x",
     "react-copy-to-clipboard": "^5.0.0",
-    "react-dom": "^15.4.1"
+    "react-dom": "^15.4.1",
+    "save-svg-as-png": "^1.2.0"
   },
   "devDependencies": {
     "babel-core": "^6.17.0",
