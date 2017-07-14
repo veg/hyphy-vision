@@ -357,7 +357,7 @@ var BUSTEDSiteChartAndTable = React.createClass({
         </div>
 
         <div className="row site-table">
-          <div className="col-lg-4">
+          <div className="col-lg-6">
             <div className="form-group">
               <label for="er-constrained-threshold">
                 Constrained Evidence Ratio Threshold:
@@ -373,7 +373,7 @@ var BUSTEDSiteChartAndTable = React.createClass({
               />
             </div>
           </div>
-          <div className="col-lg-4">
+          <div className="col-lg-6">
             <div className="form-group">
               <label for="er-optimized-null-threshold">
                 Optimized Null Evidence Ratio Threshold
@@ -389,16 +389,6 @@ var BUSTEDSiteChartAndTable = React.createClass({
               />
             </div>
           </div>
-          <div className="col-lg-4">
-            <button
-              id="export-csv"
-              type="button"
-              className="btn btn-default btn-sm pull-right hyphy-busted-btn-export"
-            >
-              <span className="glyphicon glyphicon-floppy-save" /> Export Table
-              to CSV
-            </button>
-          </div>
           <div className="col-lg-12">
             <DatamonkeyTable
               headerData={this.headerData}
@@ -406,6 +396,7 @@ var BUSTEDSiteChartAndTable = React.createClass({
               paginate={Math.min(20, bodyData.length)}
               initialSort={0}
               classes={"table table-condensed table-striped"}
+              export_csv
             />
           </div>
         </div>

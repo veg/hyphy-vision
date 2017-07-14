@@ -82,6 +82,7 @@ class MEMETable extends React.Component {
             bodyData={bodyData}
             paginate={20}
             classes={"table table-condensed table-striped"}
+            export_csv
           />
         </div>
       </div>

@@ -1,6 +1,7 @@
 var React = require("react"),
   _ = require("underscore"),
-  d3 = require("d3");
+  d3 = require("d3"),
+  csv_export = require('csvexport');
 
 var datamonkey = require("../../datamonkey/datamonkey.js");
 
@@ -390,34 +391,59 @@ var DatamonkeyTable = React.createClass({
   },
 
   componentDidMount: function() {
-    $('[data-toggle="tooltip"]').tooltip();
   },
 
   componentDidUpdate: function() {
     $('[data-toggle="tooltip"]').tooltip();
-  },
-
-  componentDidUpdate: function() {
+    var self = this;
     $('[data-toggle="tooltip"]').tooltip();
+    if(self.props.export_csv){
+      d3.select("#export-csv").on("click", function(){
+        function extract(d){
+          return _.isObject(d) ? d.value : d
+        }
+        var headers = _.map(self.props.headerData, extract),
+          munged = _.map(self.props.bodyData, row=>_.map(row, extract))
+            .map(row=>_.object(headers, row)),
+          exporter = Export.create();
+        exporter.downloadCsv(munged);
+      });
+    }
+
   },
 
   render: function() {
     const children = [];
     var self = this,
       paginatorControls,
+      button,
       rowIndices,
       upperLimit = Math.min(
         this.state.current + this.props.paginate,
         this.state.rowOrder.length
       );
+
     if (this.props.paginate) {
+      if(this.props.export_csv){
+        button = <button
+          id="export-csv"
+          type="button"
+          className="btn btn-default btn-sm pull-right"
+        >
+          <span className="glyphicon glyphicon-floppy-save" /> Export Table to CSV
+        </button>
+
+      }
       paginatorControls = (
         <div>
-          <div className="col-md-9">
+          <div className="col-md-6">
             <p>
               Showing entries {this.state.current + 1} through {upperLimit} out
               of {this.state.rowOrder.length}.
             </p>
+          </div>
+          <div className="col-md-3">
+            {button}
           </div>
           <div className="col-md-3">
             <div

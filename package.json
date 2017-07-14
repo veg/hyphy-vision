@@ -24,6 +24,7 @@
   "dependencies": {
     "bootstrap": "3.x",
     "crossfilter": "1.x",
+    "csvexport": "^1.0.2",
     "d3": "3.x",
     "d3-save-svg": "0.0.2",
     "dc": "1.x",
