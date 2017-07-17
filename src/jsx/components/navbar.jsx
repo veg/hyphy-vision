@@ -84,7 +84,8 @@ var NavBar = React.createClass({
     window.addEventListener("hashchange", shiftWindow);
   },
   render: function() {
-    var input_style = {
+    var self = this,
+      input_style = {
       position: "absolute",
       top: 0,
       right: 0,
@@ -119,7 +120,12 @@ var NavBar = React.createClass({
                     role="button"
                     style={{ position: "relative", overflow: "hidden" }}
                   >
-                    <input type="file" style={input_style} id="dm-file" />
+                    <input 
+                      type="file"
+                      style={input_style}
+                      id="dm-file"
+                      onChange={self.props.onFileChange}
+                    />
                     Load
                   </a>
                   <a
