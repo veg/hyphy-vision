@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang='en'>
+
+<head>
+  <meta charset="utf-8">
+  <link rel="shortcut icon" href="/images/favicon.ico" type="image/x-icon">
+  <!-- Latest compiled and minified CSS -->
+  <link rel="stylesheet" href="../../dist/hyphyvision.css">
+  <!-- Fonts -->
+  <link href='//fonts.googleapis.com/css?family=Montserrat' rel='stylesheet'>
+  <link href='//fonts.googleapis.com/css?family=Noto Sans' rel='stylesheet'>
+  <!-- Latest compiled and minified JavaScript -->
+  <script src="../../dist/vendor.js"></script>
+  <script src="../../dist/hyphyvision.js"></script>
+
+  <title>PRIME</title>
+</head>
+
+<body style='padding-top: 70px;'>
+  
+  <div id="prime-content" class="tab-content"></div>
+
+  <script>
+    $(document).ready(function() {
+      d3.json("test-data/test.json", function(err, data) {
+        prime(data, "prime-content");
+      });
+    });
+  </script>
+
+</body>
+
+</html>
