@@ -1,7 +1,10 @@
 var React = require("react"),
   d3 = require("d3"),
   _ = require("underscore"),
+  d3_save_svg = require("d3-save-svg"),
   graphDefaultColorPallette = d3.scale.category10().domain(_.range(10));
+
+import { saveSvgAsPng } from "save-svg-as-png";
 
 
 /* 
@@ -14,7 +17,7 @@ class GraphMenu extends React.Component {
     super(props);
     this.state = {
       xaxis: "Site",
-      yaxis: "alpha"
+      yaxis: props.y_options ? props.y_options[0] : "alpha"
     };
   }
 
@@ -40,9 +43,8 @@ class GraphMenu extends React.Component {
           data-dimension={value}
           data-axis={axis}
           onClick={self.handleSelection.bind(self)}
-        >
-          {value}
-        </a>
+          dangerouslySetInnerHTML={{ __html: value }}
+        />
       </li>
     );
   }
@@ -75,10 +77,8 @@ class GraphMenu extends React.Component {
             data-toggle="dropdown"
             aria-haspopup="true"
             aria-expanded="false"
-          >
-            {selected}
-            <span className="caret" />
-          </button>
+            dangerouslySetInnerHTML={{__html: selected+'<span className="caret" />'}}
+          />
         </div>
       );
     }
@@ -206,13 +206,17 @@ class BaseGraph extends React.Component {
   xAxisLabel() {
     var transform_x = this.props.width/2;
     var transform_y = this.props.height-(this.props.marginTop/3);
-    return(<text text-anchor="middle" transform={"translate("+transform_x+","+transform_y+")"}>{ this.props.x_label }</text>);
+    return(<text textAnchor="middle" transform={"translate("+transform_x+","+transform_y+")"}>{ this.props.x_label }</text>);
   }
 
   yAxisLabel() {
     var transform_x = (this.props.marginLeft - 25)/2;
     var transform_y = this.props.height/2;
-    return(<text text-anchor="middle" transform={"translate("+transform_x+","+transform_y+")rotate(-90)"}>{ this.props.y_label }</text>);
+    return(<text
+      textAnchor="middle"
+      transform={"translate("+transform_x+","+transform_y+")rotate(-90)"}
+      dangerouslySetInnerHTML={{ __html: this.props.y_label }}
+    />);
   }
 
   //TODO : See if this can be removed
@@ -266,7 +270,8 @@ class BaseGraph extends React.Component {
 
     return (
       <div>
-        <svg width={self.props.width} height={self.props.height}>
+        <svg width={self.props.width} height={self.props.height} id="dm-chart">
+          <rect width="100%" height="100%" fill="white" />
           <g
             transform={
               "translate(" +
@@ -460,6 +465,78 @@ class Series extends BaseGraph {
   }
 }
 
+class SiteGraph extends React.Component {
+  constructor(props){
+    super(props);
+    this.updateAxisSelection = this.updateAxisSelection.bind(this);
+    this.state = { active_column: props.columns[0] };
+  }
+  updateAxisSelection(e) {
+    var dimension = e.target.dataset.dimension,
+      axis = e.target.dataset.axis;
+
+    this.setState({
+      axis: dimension,
+      active_column: dimension
+    });
+  }
+  savePNG(){
+    saveSvgAsPng(document.getElementById("dm-chart"), "datamonkey-chart.png");
+  }
+  saveSVG(){
+    d3_save_svg.save(d3.select("#dm-chart").node(), {filename: "datamonkey-chart"});
+  }
+  render(){
+    var self = this,
+      index = this.props.columns.indexOf(this.state.active_column),
+      x = _.range(1, this.props.rows.length+1),
+      y = [this.props.rows.map(row=>row[index])];
+
+    return (<div className="row">
+      <div className="col-md-6">
+        <GraphMenu
+          x_options={"Site"}
+          y_options={this.props.columns}
+          axisSelectionEvent={self.updateAxisSelection}
+        />
+      </div>
+      <div className="col-md-6">
+        <button
+          id="export-chart-svg"
+          type="button"
+          className="btn btn-default btn-sm pull-right btn-export"
+          onClick={self.saveSVG}
+        >
+          <span className="glyphicon glyphicon-floppy-save" /> Export Chart to SVG
+        </button>
+        <button
+          id="export-chart-png"
+          type="button"
+          className="btn btn-default btn-sm pull-right btn-export"
+          onClick={self.savePNG}
+        >
+          <span className="glyphicon glyphicon-floppy-save" /> Export Chart to PNG
+        </button>
+
+      </div>
+      <div className="col-md-12">
+        <Series
+          x={x}
+          y={y}
+          x_label={"Site"}
+          y_label={self.state.active_column}
+          marginLeft={80}
+          width={900}
+          transitions={true}
+          doDots={true}
+        />
+      </div>
+    </div>);
+  }
+}
+
 module.exports.DatamonkeyGraphMenu = GraphMenu;
 module.exports.DatamonkeyScatterplot = ScatterPlot;
 module.exports.DatamonkeySeries = Series;
+module.exports.DatamonkeySiteGraph = SiteGraph;
+

@@ -3,20 +3,82 @@ var React = require("react"),
   d3 = require("d3"),
   _ = require("underscore");
 
-require("phylotree");
-require("phylotree.css");
-
-import { MEMESummary } from "./components/meme_summary.jsx";
+import { InputInfo } from "./components/input_info.jsx";
 import { MEMETable } from "./components/meme_table.jsx";
 import { DatamonkeyModelTable } from "./components/tables.jsx";
-import { DatamonkeySeries, DatamonkeyGraphMenu } from "./components/graphs.jsx";
+import { DatamonkeySiteGraph } from "./components/graphs.jsx";
 import { NavBar } from "./components/navbar.jsx";
 import { ScrollSpy } from "./components/scrollspy.jsx";
 
+class MEMESummary extends React.Component {
+  render() {
+    var user_message,
+      was_evidence = true;
+    if (was_evidence) {
+      user_message = (
+        <p className="list-group-item-text label_and_input">
+          MEME <strong className="hyphy-highlight">found evidence</strong> of
+          positive selection in your phylogeny.
+        </p>
+      );
+    } else {
+      user_message = (
+        <p className="list-group-item-text label_and_input">
+          MEME <strong>found no evidence</strong> of positive selection in your
+          phylogeny.
+        </p>
+      );
+    }
 
-var MEME = React.createClass({
-  getInitialState: function() {
-    return {
+    return (
+      <div className="row" id="summary-tab">
+        <div className="col-md-12">
+          <h3 className="list-group-item-heading">
+            <span className="summary-method-name">
+              Mixed Effects Model of Evolution
+            </span>
+            <br />
+            <span className="results-summary">results summary</span>
+          </h3>
+        </div>
+        <div className="col-md-12">
+          <InputInfo input_data={this.props.input_data} />
+        </div>
+        <div className="col-md-12">
+          <div className="main-result">
+            {user_message}
+            <hr />
+            <p>
+              <small>
+                See{" "}
+                <a href="http://www.hyphy.org/methods/selection-methods/#meme">
+                  here
+                </a>{" "}
+                for more information about the MEME method.
+                <br />Please cite{" "}
+                <a
+                  href="http://www.ncbi.nlm.nih.gov/pubmed/22807683"
+                  id="summary-pmid"
+                  target="_blank"
+                >
+                  PMID 22807683
+                </a>{" "}
+                if you use this result in a publication, presentation, or other
+                scientific work.
+              </small>
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+}
+
+class MEME extends React.Component {
+  constructor(props) {
+    super(props);
+    this.updateAxisSelection = this.updateAxisSelection.bind(this);
+    this.state = {
       input_data: null,
       data: null,
       fits: null,
@@ -25,18 +87,18 @@ var MEME = React.createClass({
       xaxis: "Site",
       yaxis: "&alpha;"
     };
-  },
+  }
 
-  updateAxisSelection: function(e) {
+  updateAxisSelection(e) {
     var state_to_update = {},
       dimension = e.target.dataset.dimension,
       axis = e.target.dataset.axis;
 
     state_to_update[axis] = dimension;
     this.setState(state_to_update);
-  },
+  }
 
-  loadFromServer: function() {
+  loadFromServer() {
     var self = this;
     d3.json(this.props.url, function(data) {
       self.setState({
@@ -47,21 +109,22 @@ var MEME = React.createClass({
         rows: data["MLE"]["content"]["0"]
       });
     });
-  },
+  }
 
-  componentWillMount: function() {
+  componentWillMount() {
     this.loadFromServer();
-  },
+  }
 
   componentDidUpdate(prevProps, prevState) {
     $("body").scrollspy({
       target: ".bs-docs-sidebar",
       offset: 50
     });
-  },
+  }
 
-  render: function() {
+  render() {
     var self = this,
+      site_graph,
       scrollspy_info = [
         { label: "summary", href: "summary-tab" },
         { label: "table", href: "table-tab" },
@@ -72,6 +135,12 @@ var MEME = React.createClass({
       index = this.state.yaxis == "&alpha;" ? 0 : 1,
       y = this.state.rows ? [_.map(this.state.rows, d=>d[index])] : [[]];
     
+    if(this.state.data){
+      site_graph = <DatamonkeySiteGraph 
+        columns={_.pluck(self.state.header, 0)}
+        rows={self.state.rows}
+      />;
+    }
     return (
       <div>
         <NavBar />
@@ -94,26 +163,10 @@ var MEME = React.createClass({
               </div>
 
               <div id="plot-tab" className="row hyphy-row">
-
-                <h3 className="dm-table-header">Plot Summary</h3>
-
-                <DatamonkeyGraphMenu
-                  x_options={"Site"}
-                  y_options={["&alpha;", "&beta;"]}
-                  axisSelectionEvent={self.updateAxisSelection}
-                />
-
-                <DatamonkeySeries
-                  x={x}
-                  y={y}
-                  x_label={"Site"}
-                  y_label={self.state.yaxis}
-                  marginLeft={50}
-                  width={$("#results").width()}
-                  transitions={true}
-                  doDots={true}
-                />
-
+                <div className="col-md-12">
+                  <h4 className="dm-table-header">Plot Summary</h4>
+                  {site_graph}
+                </div>
               </div>
 
 
@@ -123,7 +176,7 @@ var MEME = React.createClass({
       </div>
     );
   }
-});
+}
 
 function render_meme(url, element) {
   ReactDOM.render(<MEME url={url} />, document.getElementById(element));
