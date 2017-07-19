@@ -23,6 +23,7 @@
   "version": "1.0.0",
   "dependencies": {
     "bootstrap": "3.x",
+    "chi-squared": "^1.1.0",
     "crossfilter": "1.x",
     "d3": "3.x",
     "dc": "1.x",

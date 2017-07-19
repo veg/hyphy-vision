@@ -475,6 +475,7 @@ class Series extends BaseGraph {
 }
 
 class MultiScatterPlot extends React.Component {
+
   constructor(props) {
     super(props);
 
@@ -491,6 +492,7 @@ class MultiScatterPlot extends React.Component {
   }
 
   plotDataPoints(dom_element) {
+
     var self = this;
 
     // prepend property info with x information
@@ -540,7 +542,7 @@ class MultiScatterPlot extends React.Component {
       .append("text")
       .attr("class", "label")
       .attr("x", width)
-      .attr("y", 30)
+      .attr("y", 40)
       .style("text-anchor", "end")
       .text("Codon index");
 
@@ -562,7 +564,7 @@ class MultiScatterPlot extends React.Component {
       .append("text")
       .attr("class", "label")
       .attr("transform", "rotate(-90)")
-      .attr("y", -30)
+      .attr("y", -45)
       .attr("dy", ".71em")
       .style("text-anchor", "end")
       .text("Property weight");
@@ -603,6 +605,7 @@ class MultiScatterPlot extends React.Component {
       });
 
     _.each(property_info, function(d, series) {
+
       // check if we should plot
       if (!_.values(self.state.to_plot)[series]) {
         return;
@@ -652,6 +655,7 @@ class MultiScatterPlot extends React.Component {
   }
 
   getCheckBox(label) {
+
     var self = this;
 
     return (
@@ -676,6 +680,7 @@ class MultiScatterPlot extends React.Component {
   }
 
   render() {
+
     var self = this;
 
     return (

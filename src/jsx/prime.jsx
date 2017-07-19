@@ -1,19 +1,21 @@
 var React = require("react"),
   ReactDOM = require("react-dom"),
-  _ = require("underscore");
+  _ = require("underscore"),
+  chi = require("chi-squared");
 
 import { DatamonkeyTable } from "./components/tables.jsx";
 import {
-  DatamonkeyMultiScatterplot,
-  DatamonkeyGraphMenu
+  DatamonkeyMultiScatterplot
 } from "./components/graphs.jsx";
 import { NavBar } from "./components/navbar.jsx";
 import { ScrollSpy } from "./components/scrollspy.jsx";
-import CopyToClipboard from "react-copy-to-clipboard";
 
 class PRIME extends React.Component {
   constructor(props) {
     super(props);
+
+    this.float_format = d3.format(".3f");
+    this.initial_pvalue_threshold = 0.1;
 
     var results = _.map(this.props.prime_results, function(d, k) {
       d["codon"] = k;
@@ -29,32 +31,66 @@ class PRIME extends React.Component {
       return d.CONSTANT != 1;
     });
 
+    // calculate p-values
+    results = _.map(results, d => {
+      return _.extend(d, { pvalues: this.calculatePvalues(d) });
+    });
+
     var codons = _.map(results, d => {
       return parseInt(d.codon);
     });
 
-    // format data into variables usable by components
-    var all_mle_props = _.flatten(
-      _.map(results, d => {
-        return _.values(_.omit(d["Full model"]["MLES"], "_felScaler"));
-      })
-    );
-
     var property_headers = _.keys(
       _.omit(results[0]["Full model"]["MLES"], "_felScaler")
     );
+
+    // format property_values for table
     var property_values = _.unzip(
       _.map(results, d => {
-        return _.values(_.omit(d["Full model"]["MLES"], "_felScaler"));
+        return _.map(
+          _.values(_.omit(d["Full model"]["MLES"], "_felScaler")),
+          d => {
+            return this.float_format(d);
+          }
+        );
       })
     );
 
-    // TODO: Need to annotate with p-values and filter based on that
+    // add pvalue to header
+    var table_property_headers = _.map(
+      _.flatten(_.zip(property_headers, property_headers)),
+      (d, k) => {
+        if (k % 2) {
+          return d + "_pval";
+        } else return d;
+      }
+    );
+
+    // prepend with codon
+    table_property_headers = ["codon"].concat(table_property_headers);
+    var table_property_values = this.formatValuesForTable(
+      codons,
+      results,
+      this.initial_pvalue_threshold
+    );
+
+
+    // format data into variables usable by components
+    var all_mle_props = _.flatten(
+      _.map(results, d => {
+        return _.zip(
+          _.values(_.omit(d["Full model"]["MLES"], "_felScaler")),
+          _.values(d["pvalues"])
+        );
+      }), true
+    );
+
     var changing_properties = _.filter(all_mle_props, d => {
-      return d < 0;
+      return d[0] < 0 && d[1] < this.initial_pvalue_threshold;
     });
+
     var conserved_properties = _.filter(all_mle_props, d => {
-      return d > 0;
+      return d[0] > 0 && d[1] < this.initial_pvalue_threshold;
     });
 
     // Get plot width according to bootstrap conventions
@@ -75,41 +111,106 @@ class PRIME extends React.Component {
     }
 
     this.state = {
+      results: results,
+      all_mle_props: all_mle_props,
       codons: codons,
       property_plot_done: false,
       property_headers: property_headers,
       property_values: property_values,
+      table_property_headers: table_property_headers,
+      table_property_values: table_property_values,
       changing_properties: changing_properties,
       conserved_properties: conserved_properties,
-      pvalue_threshold: 0.1,
+      pvalue_threshold: this.initial_pvalue_threshold,
       total_sites_found: results.length,
       plot_width: plot_width
     };
   }
 
-  definePlotData() {}
+  formatValuesForTable(codons, results, pvalue) {
+    // update property values to state whether they are conserved or changing
+    var table_property_values = _.unzip(
+      _.map(results, rows => {
+        return _.map(
+          _.omit(rows["Full model"]["MLES"], "_felScaler"),
+          (d, k) => {
+            var classes = "";
+            if (rows["pvalues"][k] < pvalue) {
+              if (d > 0) {
+                classes = "success";
+              } else {
+                classes = "danger";
+              }
+            }
+            return { value: d, classes: classes };
+          },
+          this
+        );
+      })
+    );
 
-  getClipboard() {
-    if (this.state.copy_transition) {
-      return <i> Copied! </i>;
-    } else {
-      return (
-        <a href="#">
-          {" "}<i className="fa fa-clipboard" aria-hidden="true" />{" "}
-        </a>
-      );
-    }
+    var p_values = _.unzip(
+      _.map(results, d => {
+        return _.map(_.values(d["pvalues"]), d => {
+          return { value: this.float_format(d) };
+        });
+      })
+    );
+
+    table_property_values = _.flatten(
+      _.zip(table_property_values, p_values),
+      true
+    );
+
+    // prepend with codon sites
+    table_property_values = [codons].concat(table_property_values);
+
+    return table_property_values;
   }
 
-  onCopy() {
-    this.setState({
-      copy_transition: true
+  calculatePvalues(values) {
+    var property_keys = ["alpha_0", "alpha_1", "alpha_2", "alpha_3", "alpha_4"];
+    var full_model_logl = values["Full model"]["LogL"];
+    var full_model_df = values["Full model"]["DF"];
+
+    // Must get log-likelihood of each test property
+    var pvals = _.map(this.props.properties, d => {
+      var logl = values[d]["LogL"];
+      var n = 2 * (full_model_logl - logl);
+      var df = full_model_df - values[d]["DF"];
+      return 1 - chi.cdf(n, df);
     });
-    setTimeout(() => {
-      this.setState({
-        copy_transition: false
-      });
-    }, 1000);
+
+    return _.object(property_keys, pvals);
+  }
+
+  updatePvalThreshold(e) {
+
+    var pvalue_threshold = parseFloat(e.target.value);
+
+    var table_property_values = this.formatValuesForTable(
+      this.state.codons,
+      this.state.results,
+      pvalue_threshold
+    );
+
+    // update conserved and changing properties count
+    var changing_properties = _.filter(this.state.all_mle_props, d => {
+      return d[0] < 0 && d[1] < pvalue_threshold;
+    });
+
+    var conserved_properties = _.filter(this.state.all_mle_props, d => {
+      return d[0] > 0 && d[1] < pvalue_threshold;
+    });
+
+
+    this.setState({
+      table_property_headers: this.state.table_property_headers,
+      pvalue_threshold: pvalue_threshold,
+      table_property_values: table_property_values,
+      conserved_properties : conserved_properties,
+      changing_properties: changing_properties
+    });
   }
 
   getSummary() {
@@ -122,7 +223,7 @@ class PRIME extends React.Component {
             <p>
               PRIME {" "}
               <strong className="hyphy-highlight"> found evidence </strong> of{" "}
-            </p>{" "}
+            </p>
             <p>
               <span className="hyphy-highlight">
                 {" "} {self.state.conserved_properties.length} {" "}
@@ -155,7 +256,7 @@ class PRIME extends React.Component {
                   step="0.01"
                   min="0"
                   max="1"
-                  onChange={self.updatePvalThreshold}
+                  onChange={self.updatePvalThreshold.bind(this)}
                 />
               </div>
             </div>
@@ -168,7 +269,7 @@ class PRIME extends React.Component {
                 here{" "}
               </a>{" "}
               for more information about the PRIME method <br />
-              Please cite PMID  <a href=""> TBA </a> if you use this result in a
+              Please cite PMID <a href=""> TBA </a> if you use this result in a
               publication, presentation, or other scientific work
             </small>
           </p>
@@ -204,53 +305,32 @@ class PRIME extends React.Component {
       }
     ];
 
-    var x = this.state.codons;
-    var y = this.state.property_values;
+    var order_table_rows = _.unzip(this.state.table_property_values);
 
     return (
       <div>
         <NavBar />
         <div className="container">
-          <div id="results" className="row">
+          <div className="row">
             <ScrollSpy info={scrollspy_info} />
             <div className="col-sm-10">
-              <div
-                id="datamonkey-prime-error"
-                className="alert alert-danger alert-dismissible"
-                role="alert"
-                style={{
-                  display: "none"
-                }}
-              >
-                <button
-                  type="button"
-                  className="close"
-                  id="datamonkey-prime-error-hide"
-                >
-                  <span aria-hidden="true"> & times; </span>{" "}
-                  <span className="sr-only"> Close </span>{" "}
-                </button>{" "}
-                <strong> Error! </strong> {" "}
-                <span id="datamonkey-prime-error-text" />
-              </div>
               <div id="results">
                 <h3 className="list-group-item-heading">
                   <span id="summary-method-name">
                     PRIME - PRoperty Informed Models of Evolution{" "}
-                  </span>{" "}
+                  </span>
                   <br />
-                  <span className="results-summary">
-                    {" "}results summary{" "}
-                  </span>{" "}
+                  <span className="results-summary"> results summary </span>
                 </h3>
                 {this.getSummary()}
               </div>
 
               <div id="plot-tab" className="row hyphy-row">
                 <h3 className="dm-table-header">Property Importance Plot</h3>
+
                 <DatamonkeyMultiScatterplot
-                  x={x}
-                  y={y}
+                  x={this.state.codons}
+                  y={this.state.property_values}
                   width={this.state.plot_width}
                   x_label={"test"}
                   y_labels={this.state.property_headers}
@@ -261,16 +341,21 @@ class PRIME extends React.Component {
               <div id="table-tab" className="row hyphy-row">
                 <div id="hyphy-mle-fits" className="col-md-12">
                   <h3 className="dm-table-header">Table Summary</h3>
+
                   <div className="col-md-6 alert alert-danger" role="alert">
                     Conserved properties with evidence are highlighted in red.
                   </div>
+
                   <div className="col-md-6 alert alert-success" role="alert">
                     Changing properties with evidence are highlighted in green.
                   </div>
+
                   <DatamonkeyTable
-                    headerData={this.state.property_headers}
-                    bodyData={_.unzip(this.state.property_values)}
+                    headerData={this.state.table_property_headers}
+                    bodyData={order_table_rows}
                     classes={"table table-condensed table-striped"}
+                    paginate={20}
+                    forceUpdate={true}
                   />
                 </div>
               </div>
@@ -283,7 +368,14 @@ class PRIME extends React.Component {
 }
 
 PRIME.defaultProps = {
-  _use_q_values: false
+  _use_q_values: false,
+  properties: [
+    "Test property 1",
+    "Test property 2",
+    "Test property 3",
+    "Test property 4",
+    "Test property 5"
+  ]
 };
 
 // Will need to make a call to this

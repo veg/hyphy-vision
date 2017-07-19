@@ -112,6 +112,7 @@ const DatamonkeyTableRow = React.createClass({
   },
 
   shouldComponentUpdate: function(nextProps) {
+
     var self = this;
 
     if (this.state.header !== nextProps.header) {
@@ -123,9 +124,15 @@ const DatamonkeyTableRow = React.createClass({
     }
 
     var result = _.some(this.props.rowData, function(value, index) {
-      /** TO DO
-          check for format and other field equality
-      */
+
+      // check for format and other field equality
+      if(!_.isMatch(value, nextProps.rowData[index])) {
+        return true;
+      }
+
+      if (value === nextProps.rowData[index]) {
+        return false;
+      }
 
       if (value === nextProps.rowData[index]) {
         return false;

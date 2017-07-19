@@ -13,6 +13,7 @@ import { ScrollSpy } from "./components/scrollspy.jsx";
 import { Tree } from "./components/tree.jsx";
 
 var MEME = React.createClass({
+
   getInitialState: function() {
     return {
       input_data: null,
@@ -22,6 +23,7 @@ var MEME = React.createClass({
       rows: null
     };
   },
+
   loadFromServer: function() {
     var self = this;
     d3.json(this.props.url, function(data) {
