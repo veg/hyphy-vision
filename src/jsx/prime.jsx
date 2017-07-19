@@ -136,7 +136,7 @@ class PRIME extends React.Component {
           (d, k) => {
             var classes = "";
             if (rows["pvalues"][k] < pvalue) {
-              if (d > 0) {
+              if (d < 0) {
                 classes = "success";
               } else {
                 classes = "danger";
