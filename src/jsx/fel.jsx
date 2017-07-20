@@ -6,10 +6,9 @@ import { DatamonkeyTable } from "./components/tables.jsx";
 import { DatamonkeySeries, DatamonkeyGraphMenu } from "./components/graphs.jsx";
 import { NavBar } from "./components/navbar.jsx";
 import { ScrollSpy } from "./components/scrollspy.jsx";
-import CopyToClipboard from 'react-copy-to-clipboard';
+import CopyToClipboard from "react-copy-to-clipboard";
 
 var FEL = React.createClass({
-
   definePlotData: function(x_label, y_label) {
     var self = this;
 
@@ -41,43 +40,51 @@ var FEL = React.createClass({
     this.setState(state_to_update);
   },
 
-	updatePvalThreshold: function(e) {
+  updatePvalThreshold: function(e) {
+    var self = this;
 
-		var self = this;
+    // Get number of positively and negatively selected sites by p-value threshold
+    var pvalue_threshold = parseFloat(e.target.value);
 
-		// Get number of positively and negatively selected sites by p-value threshold
-		var pvalue_threshold = parseFloat(e.target.value);
+    // Get number of positively and negatively selected sites by p-value threshold
+    var mle_results = _.map(self.state.mle_results, function(d) {
+      d["is_positive"] =
+        parseFloat(d["beta"]) / parseFloat(d["alpha"]) > 1 &&
+        parseFloat(d["p-value"]) <= pvalue_threshold;
+      d["is_negative"] =
+        parseFloat(d["beta"]) / parseFloat(d["alpha"]) < 1 &&
+        parseFloat(d["p-value"]) <= pvalue_threshold;
+      return d;
+    });
 
-		// Get number of positively and negatively selected sites by p-value threshold
-		var mle_results = _.map(self.state.mle_results, function(d) { 
-			d["is_positive"] = parseFloat(d["beta"])/parseFloat(d["alpha"]) > 1 && parseFloat(d["p-value"]) <= pvalue_threshold; 
-			d["is_negative"] = parseFloat(d["beta"])/parseFloat(d["alpha"]) < 1 && parseFloat(d["p-value"]) <= pvalue_threshold;
-			return d;
-		});
+    var positively_selected = _.filter(self.state.mle_results, function(d) {
+      return d["is_positive"];
+    });
+    var negatively_selected = _.filter(self.state.mle_results, function(d) {
+      return d["is_negative"];
+    });
 
-		var positively_selected = _.filter(self.state.mle_results, function(d) { return d["is_positive"] });
-		var negatively_selected = _.filter(self.state.mle_results, function(d) { return d["is_negative"] });
-
-		// highlight mle_content with whether they are significant or not
-		var mle_content = _.map(self.state.mle_results, function(d, key) {
-			var classes="";
-			if(mle_results[key].is_positive) {
-				classes = "success";
-			} else if (mle_results[key].is_negative) {
-				classes = "warning";
-			}
-			return _.map(_.values(d), function(g) { return {"value" : g, "classes": classes} })
-		});
+    // highlight mle_content with whether they are significant or not
+    var mle_content = _.map(self.state.mle_results, function(d, key) {
+      var classes = "";
+      if (mle_results[key].is_positive) {
+        classes = "success";
+      } else if (mle_results[key].is_negative) {
+        classes = "warning";
+      }
+      return _.map(_.values(d), function(g) {
+        return { value: g, classes: classes };
+      });
+    });
 
     this.setState({
-			positively_selected: positively_selected,
-			negatively_selected: negatively_selected,
+      positively_selected: positively_selected,
+      negatively_selected: negatively_selected,
       pvalue_threshold: pvalue_threshold,
-			mle_results: mle_results,
-			mle_content: mle_content
-		});
-
-	},
+      mle_results: mle_results,
+      mle_content: mle_content
+    });
+  },
 
   getDefaultProps: function() {
     return {};
@@ -89,19 +96,17 @@ var FEL = React.createClass({
       mle_content: [],
       xaxis: "Site",
       yaxis: "alpha",
-			copy_transition: false,
+      copy_transition: false,
       pvalue_threshold: 0.1,
-      positively_selected: [], 
+      positively_selected: [],
       negatively_selected: []
     };
   },
 
   loadFromServer: function() {
-
     var self = this;
 
     d3.json(this.props.url, function(data) {
-
       var mle = data["MLE"];
 
       // These variables are to be used for DatamonkeyTable
@@ -141,118 +146,156 @@ var FEL = React.createClass({
       });
 
       // Get number of positively and negatively selected sites by p-value threshold
-			var mle_results = _.map(mle_results, function(d) { 
-				d["is_positive"] = parseFloat(d["beta"])/parseFloat(d["alpha"]) > 1 && parseFloat(d["p-value"]) <= self.state.pvalue_threshold; 
-				d["is_negative"] = parseFloat(d["beta"])/parseFloat(d["alpha"]) < 1 && parseFloat(d["p-value"]) <= self.state.pvalue_threshold;
-				return d;
-			});
+      var mle_results = _.map(mle_results, function(d) {
+        d["is_positive"] =
+          parseFloat(d["beta"]) / parseFloat(d["alpha"]) > 1 &&
+          parseFloat(d["p-value"]) <= self.state.pvalue_threshold;
+        d["is_negative"] =
+          parseFloat(d["beta"]) / parseFloat(d["alpha"]) < 1 &&
+          parseFloat(d["p-value"]) <= self.state.pvalue_threshold;
+        return d;
+      });
 
-      var positively_selected = _.filter(mle_results, function(d) { return d["is_positive"] });
-      var negatively_selected = _.filter(mle_results, function(d) { return d["is_negative"] });
+      var positively_selected = _.filter(mle_results, function(d) {
+        return d["is_positive"];
+      });
+      var negatively_selected = _.filter(mle_results, function(d) {
+        return d["is_negative"];
+      });
 
-			// highlight mle_content with whether they are significant or not
-			var mle_content = _.map(mle_results, function(d, key) {
-				var classes="";
-				if(mle_results[key].is_positive) {
-					classes = "success";
-				} else if (mle_results[key].is_negative) {
-					classes = "warning";
-				}
-				return _.map(_.values(d), function(g) { return {"value" : g, "classes": classes} })
-			});
-
+      // highlight mle_content with whether they are significant or not
+      var mle_content = _.map(mle_results, function(d, key) {
+        var classes = "";
+        if (mle_results[key].is_positive) {
+          classes = "success";
+        } else if (mle_results[key].is_negative) {
+          classes = "warning";
+        }
+        return _.map(_.values(d), function(g) {
+          return { value: g, classes: classes };
+        });
+      });
 
       self.setState({
         mle_headers: mle_headers,
         mle_content: mle_content,
         mle_results: mle_results,
-        positively_selected: positively_selected, 
+        positively_selected: positively_selected,
         negatively_selected: negatively_selected
       });
-
     });
-
   },
 
-	getClipboard() {
-		if(this.state.copy_transition) {
-			return(<i>Copied!</i>);
-		} else {
-			return(<a href="#"><i className="fa fa-clipboard" aria-hidden="true"></i></a>);
-		}
-	},
+  getClipboard() {
+    if (this.state.copy_transition) {
+      return <i>Copied!</i>;
+    } else {
+      return (
+        <a href="#">
+          <i className="fa fa-clipboard" aria-hidden="true" />
+        </a>
+      );
+    }
+  },
 
-	onCopy() {
-		this.setState( { copy_transition : true } );
-		setTimeout(() => { this.setState({ copy_transition : false })} , 1000);
-	},
+  onCopy() {
+    this.setState({ copy_transition: true });
+    setTimeout(() => {
+      this.setState({ copy_transition: false });
+    }, 1000);
+  },
 
   getSummary() {
-
     var self = this;
 
-    return(<div>
-      <div className="main-result">
-        <p>
-				 	<CopyToClipboard text={this.getSummaryText()} onCopy={this.onCopy}>
-						<span id="copy-it" className="pull-right">{this.getClipboard()}</span>
-					</CopyToClipboard>
+    return (
+      <div>
+        <div className="main-result">
+          <p>
+            <CopyToClipboard text={this.getSummaryText()} onCopy={this.onCopy}>
+              <span id="copy-it" className="pull-right">
+                {this.getClipboard()}
+              </span>
+            </CopyToClipboard>
 
-          <p>FEL <strong className="hyphy-highlight"> found evidence</strong> of</p>
-          <p>
-            <i className="fa fa-plus-circle" aria-hidden="true">  </i>
-            {" "}Pervasive Positive/Diversifying selection at 
-            <span className="hyphy-highlight">
-              {" "}{ self.state.positively_selected.length }{" "}
-            </span>
-            sites
+            <p>
+              FEL <strong className="hyphy-highlight">
+                {" "}found evidence
+              </strong>{" "}
+              of
+            </p>
+            <p>
+              <i className="fa fa-plus-circle" aria-hidden="true">
+                {" "}
+              </i>{" "}
+              Pervasive Positive/Diversifying selection at
+              <span className="hyphy-highlight">
+                {" "}{self.state.positively_selected.length}{" "}
+              </span>
+              sites
+            </p>
+            <p>
+              <i className="fa fa-minus-circle" aria-hidden="true">
+                {" "}
+              </i>{" "}
+              Pervasive Negative/Purifying selection at
+              <span className="hyphy-highlight">
+                {" "}{self.state.negatively_selected.length}{" "}
+              </span>
+              sites
+            </p>
+            <div className="row" style={{ marginTop: "20px" }}>
+              <div className="col-md-3">With p-value threshold of</div>
+              <div className="col-md-2" style={{ top: "-5px" }}>
+                <input
+                  className="form-control"
+                  type="number"
+                  defaultValue="0.1"
+                  step="0.01"
+                  min="0"
+                  max="1"
+                  onChange={self.updatePvalThreshold}
+                />
+              </div>
+            </div>
           </p>
+          <hr />
           <p>
-            <i className="fa fa-minus-circle" aria-hidden="true"> </i>
-            {" "}Pervasive Negative/Purifying selection at 
-            <span className="hyphy-highlight">
-            {" "}{ self.state.negatively_selected.length }{" "}
-            </span>
-            sites
+            <small>
+              See <a href="//hyphy.org/methods/selection-methods/#fel">
+                here
+              </a>{" "}
+              for more information about the FEL method
+              <br />
+              Please cite PMID{" "}
+              <a href="//www.ncbi.nlm.nih.gov/pubmed/15703242">15703242</a> if
+              you use this result in a publication, presentation, or other
+              scientific work
+            </small>
           </p>
-					<div className="row" style={{marginTop:"20px"}}>
-						<div className="col-md-3">
-							With p-value threshold of 
-						</div>
-						<div className="col-md-2" style={{top:"-5px"}}>
-							<input className="form-control" type="number" defaultValue="0.1" step="0.01" min="0" max="1" onChange={self.updatePvalThreshold} />
-						</div>
-					</div>
-        </p>
-        <hr />
-        <p>
-          <small>
-            See <a href="//hyphy.org/methods/selection-methods/#fel">here</a> for more information about the FEL method
-            <br />
-            Please cite PMID <a href="//www.ncbi.nlm.nih.gov/pubmed/15703242">15703242</a> if you use this result in a publication, presentation, or other scientific work
-          </small>
-        </p>
+        </div>
       </div>
-    </div>);
-
-
+    );
   },
 
-	getSummaryText() {
-
+  getSummaryText() {
     var self = this;
-		var no_selected = self.state.mle_content.length - self.state.positively_selected.length - self.state.negatively_selected.length;
+    var no_selected =
+      self.state.mle_content.length -
+      self.state.positively_selected.length -
+      self.state.negatively_selected.length;
 
     var summary_text = `FEL found evidence of pervasive positive/diversifying selection \
 at ${self.state.positively_selected.length} sites/at any sites in your \
-alignment. In addition, FEL found evidence with p-value ${self.state.pvalue_threshold} of pervasive negative/purifying \
-selection at ${self.state.negatively_selected.length} sites/at any sites in your \
+alignment. In addition, FEL found evidence with p-value ${self.state
+      .pvalue_threshold} of pervasive negative/purifying \
+selection at ${self.state.negatively_selected
+      .length} sites/at any sites in your \
 alignment. FEL did not find evidence for either positive or negative selection \
 in the remaining ${no_selected} sites in your alignment.`;
 
     return summary_text;
-						
-	},
+  },
 
   componentWillMount: function() {
     this.loadFromServer();
@@ -266,7 +309,6 @@ in the remaining ${no_selected} sites in your alignment.`;
   },
 
   render: function() {
-
     var self = this;
 
     var scrollspy_info = [
@@ -294,17 +336,13 @@ in the remaining ${no_selected} sites in your alignment.`;
 
     return (
       <div>
-
         <NavBar />
 
         <div className="container">
-
           <div className="row">
-
             <ScrollSpy info={scrollspy_info} />
 
             <div className="col-sm-10">
-
               <div
                 id="datamonkey-fel-error"
                 className="alert alert-danger alert-dismissible"
@@ -323,7 +361,6 @@ in the remaining ${no_selected} sites in your alignment.`;
               </div>
 
               <div id="results">
-
                 <h3 className="list-group-item-heading">
                   <span id="summary-method-name">
                     FEL - Fixed Effects Likelihood
@@ -335,7 +372,6 @@ in the remaining ${no_selected} sites in your alignment.`;
                 {Summary}
 
                 <div id="plot-tab" className="row hyphy-row">
-
                   <h3 className="dm-table-header">Plot Summary</h3>
 
                   <DatamonkeyGraphMenu
@@ -347,21 +383,26 @@ in the remaining ${no_selected} sites in your alignment.`;
                   <DatamonkeySeries
                     x={x}
                     y={y}
-										x_label={self.state.xaxis}
-										y_label={self.state.yaxis}
+                    x_label={self.state.xaxis}
+                    y_label={self.state.yaxis}
                     marginLeft={50}
                     width={$("#results").width()}
                     transitions={true}
                     doDots={true}
                   />
-
                 </div>
 
                 <div id="table-tab" className="row hyphy-row">
                   <div id="hyphy-mle-fits" className="col-md-12">
                     <h3 className="dm-table-header">Table Summary</h3>
-										<div className="col-md-6 alert alert-success" role="alert">Positively selected sites with evidence are highlighted in green.</div>
-										<div className="col-md-6 alert alert-warning" role="alert">Negatively selected sites with evidence are highlighted in yellow.</div>
+                    <div className="col-md-6 alert alert-success" role="alert">
+                      Positively selected sites with evidence are highlighted in
+                      green.
+                    </div>
+                    <div className="col-md-6 alert alert-warning" role="alert">
+                      Negatively selected sites with evidence are highlighted in
+                      yellow.
+                    </div>
                     <DatamonkeyTable
                       headerData={self.state.mle_headers}
                       bodyData={self.state.mle_content}
@@ -378,7 +419,6 @@ in the remaining ${no_selected} sites in your alignment.`;
       </div>
     );
   }
-
 });
 
 // Will need to make a call to this

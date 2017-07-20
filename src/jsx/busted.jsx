@@ -570,7 +570,6 @@ var BUSTED = React.createClass({
     "#000000"
   ],
 
-
   getDefaultProps: function() {
 
     var edgeColorizer = function(element, data, foreground_color) {

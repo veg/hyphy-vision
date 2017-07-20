@@ -6,13 +6,11 @@ var React = require("react"),
 
 import { saveSvgAsPng } from "save-svg-as-png";
 
-
 /* 
  * Creates a dropdown menu to be used with any 
  * component that extends BaseGraph
  */
 class GraphMenu extends React.Component {
-
   constructor(props) {
     super(props);
     this.state = {
@@ -67,7 +65,9 @@ class GraphMenu extends React.Component {
     } else {
       return (
         <div className="input-group">
-          <span className="input-group-addon">{label}: </span>
+          <span className="input-group-addon">
+            {label}:{" "}
+          </span>
           <ul className="dropdown-menu">
             {DimensionOptions}
           </ul>
@@ -256,7 +256,6 @@ class BaseGraph extends React.Component {
   }
 
   render() {
-
     var self = this;
 
     var main = self.computeDimensions(),
@@ -320,8 +319,8 @@ class BaseGraph extends React.Component {
                 ).bind(self)}
               />
             : null}
-            { xAxisLabel }
-            { yAxisLabel }
+          {xAxisLabel}
+          {yAxisLabel}
         </svg>
       </div>
     );
@@ -393,7 +392,6 @@ class ScatterPlot extends BaseGraph {
 }
 
 class Series extends BaseGraph {
-
   renderGraph(x_scale, y_scale, dom_element) {
     var self = this,
       main_graph = d3.select(dom_element);
@@ -465,6 +463,275 @@ class Series extends BaseGraph {
   }
 }
 
+class MultiScatterPlot extends React.Component {
+
+  constructor(props) {
+    super(props);
+
+    var to_plot = _.object(
+      this.props.y_labels,
+      _.times(this.props.y_labels.length, () => {
+        return true;
+      })
+    );
+
+    this.state = {
+      to_plot: to_plot
+    };
+  }
+
+  plotDataPoints(dom_element) {
+
+    var self = this;
+
+    // prepend property info with x information
+    var property_info = self.props.y;
+
+    var site_count = _.max(self.props.x);
+
+    var width =
+      self.props.width - self.props.marginLeft - self.props.marginRight;
+    var height =
+      self.props.height - self.props.marginTop - self.props.marginBottom;
+
+    var x = d3.scale.linear().range([0, width]);
+    var y = d3.scale.linear().range([height, 0]);
+
+    var xAxis = d3.svg.axis().scale(x).orient("bottom");
+    var yAxis = d3.svg.axis().scale(y).orient("left");
+    var yAxis2 = d3.svg.axis().scale(y).orient("right");
+
+    function make_x_axis() {
+      return d3.svg.axis().scale(x).orient("bottom").ticks(20);
+    }
+
+    function make_y_axis() {
+      return d3.svg.axis().scale(y).orient("left").ticks(20);
+    }
+
+    d3.select(dom_element).selectAll("*").remove();
+
+    var svg = d3
+      .select(dom_element)
+      .append("g")
+      .attr(
+        "transform",
+        "translate(" + self.props.marginLeft + "," + self.props.marginTop + ")"
+      );
+
+    x.domain([1, site_count]);
+    y.domain([-20, 20]);
+
+    svg
+      .append("g")
+      .attr("class", "x axis")
+      .attr("transform", "translate(0," + height + ")")
+      .call(xAxis)
+      .append("text")
+      .attr("class", "label")
+      .attr("x", width)
+      .attr("y", 40)
+      .style("text-anchor", "end")
+      .text("Codon index");
+
+    svg
+      .append("g")
+      .attr("class", "grid")
+      .call(make_y_axis().tickSize(-width, 0, 0).tickFormat(""));
+
+    svg
+      .append("g")
+      .attr("class", "grid")
+      .attr("transform", "translate(0," + height + ")")
+      .call(make_x_axis().tickSize(-height, 0, 0).tickFormat(""));
+
+    svg
+      .append("g")
+      .attr("class", "y axis")
+      .call(yAxis)
+      .append("text")
+      .attr("class", "label")
+      .attr("transform", "rotate(-90)")
+      .attr("y", -45)
+      .attr("dy", ".71em")
+      .style("text-anchor", "end")
+      .text("Property weight");
+
+    var y2 = svg
+      .append("g")
+      .attr("class", "y axis")
+      .attr("transform", "translate(" + width + ",0)")
+      .call(yAxis2.tickFormat(""));
+
+    y2
+      .append("text")
+      .attr("class", "label")
+      .attr("transform", "rotate(-90)")
+      .attr("y", 10)
+      .attr("dy", ".71em")
+      .style("text-anchor", "end")
+      .text("Property conserved");
+
+    y2
+      .append("text")
+      .attr("class", "label")
+      .attr("transform", "rotate(-90)")
+      .attr("y", 10)
+      .attr("x", -height)
+      .attr("dy", ".71em")
+      .style("text-anchor", "start")
+      .text("Property changing");
+
+    //var legend = svg
+    //  .selectAll(".legend")
+    //  .data(self.props.color.domain())
+    //  .enter()
+    //  .append("g")
+    //  .attr("class", "legend")
+    //  .attr("transform", function(d, i) {
+    //    return "translate(0," + i * 20 + ")";
+    //  });
+
+    _.each(property_info, function(d, series) {
+
+      // check if we should plot
+      if (!_.values(self.state.to_plot)[series]) {
+        return;
+      }
+
+      svg
+        .selectAll(".dot" + series)
+        .data(_.zip(self.props.x, property_info[series]))
+        .enter()
+        .append("circle")
+        .attr("class", "dot" + series)
+        .attr("r", function(d) {
+          if (d[1] == 0) return 1;
+          return 3.5;
+        })
+        .attr("cx", function(d) {
+          return x(d[0]);
+        })
+        .attr("cy", function(d) {
+          return y(d[1]);
+        })
+        .style("fill", function(d) {
+          return self.props.color(series);
+        })
+        .append("title")
+        .text(function(d) {
+          return "Codon " + d[0] + ", property " + series + " = " + d[1];
+        });
+      d3.select("#show_property" + series).style("color", function(d) {
+        return self.props.color(series);
+      });
+    });
+  }
+
+  componentWillMount() {}
+
+  componentDidMount() {}
+
+  componentDidUpdate(prevProps) {}
+
+  toggleActive(e) {
+    // set plot according to which buttons are activated
+    var to_plot = this.state.to_plot;
+    var label = e.target.dataset["label"];
+    to_plot[label] = !to_plot[label];
+    this.setState({ to_plot: to_plot });
+  }
+
+  getCheckBox(label) {
+
+    var self = this;
+
+    return (
+      <label
+        className="btn btn-primary active focus"
+        onClick={self.toggleActive.bind(self)}
+        data-label={label}
+      >
+        <input type="checkbox" /> {label}
+      </label>
+    );
+  }
+
+  getCheckBoxes() {
+    return _.map(
+      this.props.y_labels,
+      value => {
+        return this.getCheckBox(value);
+      },
+      self
+    );
+  }
+
+  render() {
+
+    var self = this;
+
+    return (
+      <div style={{ marginTop: "20px" }}>
+        <div
+          id="hyphy-prime-toggle-buttons"
+          className="btn-group-justified col-lg-12"
+          data-toggle="buttons"
+        >
+          {self.getCheckBoxes()}
+        </div>
+
+        <svg
+          width={
+            self.props.width + self.props.marginLeft + self.props.marginRight
+          }
+          height={
+            self.props.height + self.props.marginTop + self.props.marginBottom
+          }
+        >
+          <g
+            transform={
+              "translate(" +
+              self.props.marginLeft +
+              "," +
+              self.props.marginTop +
+              ")"
+            }
+            ref={_.partial(self.plotDataPoints).bind(self)}
+          />
+          {self.props.x_label}
+          {self.props.y_label}
+        </svg>
+      </div>
+    );
+  }
+}
+
+MultiScatterPlot.defaultProps = {
+  color: d3.scale.category10(),
+  width: 800,
+  height: 400,
+  marginLeft: 40,
+  marginRight: 40,
+  marginTop: 20,
+  marginBottom: 30,
+  marginXaxis: 5,
+  marginYaxis: 5,
+  graphData: null,
+  renderStyle: { axis: { class: "hyphy-axis" }, points: { class: "" } },
+  xScale: "linear",
+  yScale: "linear",
+  xAxis: true,
+  yAxis: true,
+  transitions: false,
+  numberFormat: d3.format(".4r"),
+  tracker: true,
+  xLabel: null,
+  yLabel: null,
+  x: [],
+  y: []
+};
+
 class SiteGraph extends React.Component {
   constructor(props){
     super(props);
@@ -535,6 +802,7 @@ class SiteGraph extends React.Component {
 }
 
 module.exports.DatamonkeyGraphMenu = GraphMenu;
+module.exports.DatamonkeyMultiScatterplot = MultiScatterPlot;
 module.exports.DatamonkeyScatterplot = ScatterPlot;
 module.exports.DatamonkeySeries = Series;
 module.exports.DatamonkeySiteGraph = SiteGraph;

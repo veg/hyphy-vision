@@ -156,6 +156,7 @@ var BSREL = React.createClass({
   float_format: d3.format(".2f"),
 
   loadFromServer: function() {
+
     var self = this;
 
     d3.json(this.props.url, function(data) {
@@ -182,6 +183,7 @@ var BSREL = React.createClass({
         tree: d3.layout.phylotree()(data["fits"]["Full model"]["tree string"])
       });
     });
+
   },
 
   omegaColorGradient: ["#5e4fa2", "#3288bd", "#e6f598", "#f46d43", "#9e0142"],
