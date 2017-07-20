@@ -487,7 +487,6 @@ class MultiScatterPlot extends React.Component {
     // prepend property info with x information
     var property_info = self.props.y;
 
-    var property_plot_done = true;
     var site_count = _.max(self.props.x);
 
     var width =
@@ -583,15 +582,15 @@ class MultiScatterPlot extends React.Component {
       .style("text-anchor", "start")
       .text("Property changing");
 
-    var legend = svg
-      .selectAll(".legend")
-      .data(self.props.color.domain())
-      .enter()
-      .append("g")
-      .attr("class", "legend")
-      .attr("transform", function(d, i) {
-        return "translate(0," + i * 20 + ")";
-      });
+    //var legend = svg
+    //  .selectAll(".legend")
+    //  .data(self.props.color.domain())
+    //  .enter()
+    //  .append("g")
+    //  .attr("class", "legend")
+    //  .attr("transform", function(d, i) {
+    //    return "translate(0," + i * 20 + ")";
+    //  });
 
     _.each(property_info, function(d, series) {
 

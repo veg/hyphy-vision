@@ -355,7 +355,7 @@ class PRIME extends React.Component {
                     bodyData={order_table_rows}
                     classes={"table table-condensed table-striped"}
                     paginate={20}
-                    forceUpdate={true}
+                    export_csv
                   />
                 </div>
               </div>
