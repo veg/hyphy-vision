@@ -407,6 +407,8 @@ in the remaining ${no_selected} sites in your alignment.`;
                       headerData={self.state.mle_headers}
                       bodyData={self.state.mle_content}
                       classes={"table table-condensed table-striped"}
+                      paginate={20}
+                      export_csv
                     />
                   </div>
                 </div>

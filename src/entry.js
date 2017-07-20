@@ -16,7 +16,8 @@ var absrel = require('./jsx/absrel.jsx'),
     prime = require('./jsx/prime.jsx'),
     relax = require('./jsx/relax.jsx'),
     slac = require('./jsx/slac.jsx'),
-    meme = require('./jsx/meme.jsx');
+    meme = require('./jsx/meme.jsx'),
+    template = require('./jsx/template.jsx');
 
 // Create new hyphy-vision export
 window.absrel = absrel;
@@ -28,3 +29,4 @@ window.prime = prime;
 window.meme = meme;
 window.relax = relax;
 window.slac = slac;
+window.template = template
