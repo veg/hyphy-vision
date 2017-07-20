@@ -1,6 +1,7 @@
 var React = require("react");
 var datamonkey = require("../../datamonkey/datamonkey.js");
 require("phylotree");
+require("phylotree.css");
 
 var Tree = React.createClass({
   getDefaultProps: function() {

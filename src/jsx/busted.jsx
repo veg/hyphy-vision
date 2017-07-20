@@ -1,5 +1,4 @@
 require("phylotree");
-require("phylotree.css");
 
 var React = require("react"),
   ReactDOM = require("react-dom"),
@@ -605,9 +604,9 @@ var BUSTED = React.createClass({
 
     var distro_settings = {
       dimensions: { width: 600, height: 400 },
-      margins: { left: 50, right: 15, bottom: 35, top: 35 },
+      margins: { left: 50, right: 15, bottom: 15, top: 15 },
       legend: false,
-      domain: [0.00001, 100],
+      domain: [0.00001, 10000],
       do_log_plot: true,
       k_p: null,
       plot: null,
