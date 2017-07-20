@@ -83,7 +83,7 @@ datamonkey.save_image = function(type, container) {
           }
         }
       } catch (e) {
-        console.log("Could not process stylesheet : " + ss);
+        //console.log("Could not process stylesheet : " + ss);
       }
     }
 
