@@ -472,8 +472,7 @@ class SiteGraph extends React.Component {
     this.state = { active_column: props.columns[0] };
   }
   updateAxisSelection(e) {
-    var dimension = e.target.dataset.dimension,
-      axis = e.target.dataset.axis;
+    var dimension = e.target.dataset.dimension;
 
     this.setState({
       axis: dimension,

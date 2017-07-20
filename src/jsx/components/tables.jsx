@@ -1,9 +1,10 @@
 var React = require("react"),
   _ = require("underscore"),
   d3 = require("d3"),
-  csv_export = require('csvexport');
+  datamonkey = require("../../datamonkey/datamonkey.js");
 
-var datamonkey = require("../../datamonkey/datamonkey.js");
+require('csvexport');
+
 
 const DatamonkeyTableRow = React.createClass({
   /**
