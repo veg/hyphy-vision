@@ -13,21 +13,22 @@ import { NavBar } from "./components/navbar.jsx";
 import { ScrollSpy } from "./components/scrollspy.jsx";
 import { DatamonkeyScatterplot, DatamonkeySeries } from "./components/graphs.jsx";
 import { InputInfo } from "./components/input_info.jsx";
+import PropTypes from 'prop-types';
 
 require("../datamonkey/helpers.js");
 
 
 var SLACSites = React.createClass({
   propTypes: {
-    headers: React.PropTypes.arrayOf(
-      React.PropTypes.arrayOf(React.PropTypes.string)
+    headers: PropTypes.arrayOf(
+      PropTypes.arrayOf(PropTypes.string)
     ).isRequired,
-    mle: React.PropTypes.object.isRequired,
-    sample25: React.PropTypes.object,
-    sampleMedian: React.PropTypes.object,
-    sample975: React.PropTypes.object,
-    initialAmbigHandling: React.PropTypes.string.isRequired,
-    partitionSites: React.PropTypes.object.isRequired
+    mle: PropTypes.object.isRequired,
+    sample25: PropTypes.object,
+    sampleMedian: PropTypes.object,
+    sample975: PropTypes.object,
+    initialAmbigHandling: PropTypes.string.isRequired,
+    partitionSites: PropTypes.object.isRequired
   },
 
   getInitialState: function() {
@@ -1381,7 +1382,7 @@ var SLAC = React.createClass({
                 </div>
 
                 <div className="row">
-                  <div className="col-md-12" i id="slac-graph">
+                  <div className="col-md-12" id="slac-graph">
                     <h4 className="dm-table-header">
                       Site graph
                     </h4>

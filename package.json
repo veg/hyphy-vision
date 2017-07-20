@@ -40,6 +40,7 @@
     "lodash": "3.x",
     "lodash.clonedeep": "^4.5.0",
     "phylotree": "0.1.6",
+    "prop-types": "^15.5.10",
     "react": "15.x.x",
     "react-copy-to-clipboard": "^5.0.0",
     "react-dom": "^15.4.1",
