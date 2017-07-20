@@ -372,7 +372,7 @@ class LineChart extends BaseGraph {
         .attr("stroke-linejoin", "round")
         .attr("stroke-linecap", "round")
         .attr("stroke-width", 1.5)
-        .attr("d", d => { console.log(d); return line(d) } );
+        .attr("d", d => { return line(d) } );
 
   }
 
