@@ -771,6 +771,7 @@ var SLACSites = React.createClass({
           bodyData={rows}
           initialSort={1}
           paginate={20}
+          export_csv
         />
       </div>
     );
@@ -836,7 +837,7 @@ var SLACBanner = React.createClass({
 
   render: function() {
     return (
-      <div className="row" id="summary-div">
+      <div className="row" id="slac-summary">
 
         <div className="col-md-12">
           <h3 className="list-group-item-heading">
