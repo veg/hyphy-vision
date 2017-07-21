@@ -1,6 +1,7 @@
 var React = require("react"),
   ReactDOM = require("react-dom"),
   _ = require("underscore"),
+  d3_save_svg = require("d3-save-svg"),
   datamonkey = require("../datamonkey/datamonkey.js");
 
 import {
@@ -14,6 +15,7 @@ import { ScrollSpy } from "./components/scrollspy.jsx";
 import { DatamonkeyScatterplot, DatamonkeySeries } from "./components/graphs.jsx";
 import { InputInfo } from "./components/input_info.jsx";
 import PropTypes from 'prop-types';
+import { saveSvgAsPng } from "save-svg-as-png";
 
 require("../datamonkey/helpers.js");
 
@@ -856,7 +858,7 @@ var SLACBanner = React.createClass({
           <div className="main-result">
             <p>
               Evidence<sup>&dagger;</sup> of pervasive{" "}
-              <span className="hyphy-highlight">diversifying</span>/<span className="hyphy-highlight">purifying</span>{" "}
+              <span className="hyphy-highlight">diversifying</span>/<span className="hyphy-navy">purifying</span>{" "}
               selection was found at
               <strong className="hyphy-highlight">
                 {" "}{this.state.sites.positive}
@@ -868,7 +870,8 @@ var SLACBanner = React.createClass({
               sites
               among {this.state.sites.all} tested sites.
             </p>
-            <div style={{ marginBottom: "0em" }}>
+            <hr /> 
+            <p>
               <small>
                 <sup>&dagger;</sup>Extended binomial test, p &le;{" "}
                 {this.dm_formatP(this.props.pValue)}
@@ -905,8 +908,16 @@ var SLACBanner = React.createClass({
                   </ul>
                 </div>
                 <emph> not</emph> corrected for multiple testing; ambiguous
-                characters resolved to minimize substitution counts.<br />
-                <i className="fa fa-exclamation-circle" /> Please cite{" "}
+                characters resolved to minimize substitution counts.
+                <br />
+                See{" "}
+                <a href="http://hyphy.org/methods/selection-methods/#slac">
+                  here
+                </a>{" "}
+                for more information about the SLAC method.
+
+                <br />
+                Please cite{" "}
                 <a
                   href="http://www.ncbi.nlm.nih.gov/pubmed/15703242"
                   target="_blank"
@@ -916,7 +927,7 @@ var SLACBanner = React.createClass({
                 if you use this result in a publication, presentation, or other
                 scientific work.
               </small>
-            </div>
+            </p>
           </div>
         </div>
       </div>
@@ -1025,6 +1036,15 @@ var SLACGraphs = React.createClass({
     return this.state.xLabel != "Site";
   },
 
+  savePNG(){
+    saveSvgAsPng(document.getElementById("dm-chart"), "datamonkey-chart.png");
+  },
+  
+  saveSVG(){
+    d3_save_svg.save(d3.select("#dm-chart").node(), {filename: "datamonkey-chart"});
+  },
+
+
   render: function() {
     var self = this;
     var { x: x, y: y } = this.dm_makePlotData(this.state.xLabel, [
@@ -1032,8 +1052,8 @@ var SLACGraphs = React.createClass({
     ]);
 
     return (
-      <div className="row">
-        <nav className="navbar">
+      <div className="table-responsive">
+        <nav className="navbar" style={{borderBottom:"none"}}>
           <form className="navbar-form ">
             <div className="form-group navbar-left">
               <div className="input-group">
@@ -1126,7 +1146,27 @@ var SLACGraphs = React.createClass({
 
               </div>
             </div>
+            <div className="form-group navbar-right">
+              <div className="input-group">
+                <button
+                  id="export-chart-png"
+                  type="button"
+                  className="btn btn-default btn-sm pull-right btn-export"
+                  onClick={self.savePNG}
+                >
+                  <span className="glyphicon glyphicon-floppy-save" /> Export to PNG
+                </button>
+                <button
+                  id="export-chart-png"
+                  type="button"
+                  className="btn btn-default btn-sm pull-right btn-export"
+                  onClick={self.saveSVG}
+                >
+                  <span className="glyphicon glyphicon-floppy-save" /> Export to SVG
+                </button>
 
+              </div>
+            </div>
             {/*<div className="form-group navbar-right">
                                 <span className="badge" style={{marginLeft : "0.5em"}}>X: {self.state.currentX}</span>
                                 <span className="badge" style={{marginLeft : "0.5em"}}>Y: {self.state.currentY}</span>
@@ -1292,7 +1332,7 @@ var SLAC = React.createClass({
                 <div className="row hidden-print">
                   <div
                     id="datamonkey-slac-tree-summary"
-                    className="col-lg-4 col-md-6 col-sm-12"
+                    className="col-md-12"
                   >
                     <h4 className="dm-table-header">
                       Partition information
@@ -1327,7 +1367,7 @@ var SLAC = React.createClass({
                   </div>
                   <div
                     id="datamonkey-slac-model-fits"
-                    className="col-lg-5 col-md-6 col-sm-12"
+                    className="col-md-6"
                   >
                     <small>
                       {
@@ -1339,7 +1379,7 @@ var SLAC = React.createClass({
                   </div>
                   <div
                     id="datamonkey-slac-timers"
-                    className="col-lg-3 col-md-3 col-sm-12"
+                    className="col-md-6"
                   >
                     <h4 className="dm-table-header">
                       Execution time
