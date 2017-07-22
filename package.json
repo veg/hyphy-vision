@@ -90,7 +90,8 @@
     "webpack-eslint-plugin": "^1.2.0"
   },
   "scripts": {
-    "lint": "eslint dist/hyphyvision.js"
+    "lint": "eslint dist/hyphyvision.js",
+    "jest": "node ./node_modules/jest-cli/bin/jest.js"
   },
   "license": "MIT",
   "files": [
