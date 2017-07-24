@@ -10,13 +10,12 @@ import CopyToClipboard from "react-copy-to-clipboard";
 
 var FEL = React.createClass({
   definePlotData: function(x_label, y_label) {
-    var self = this;
 
-    var x = _.map(self.state.mle_results, function(d) {
+    var x = _.map(this.state.mle_results, function(d) {
       return d[x_label];
     });
 
-    var y = _.map(self.state.mle_results, function(d) {
+    var y = _.map(this.state.mle_results, function(d) {
       return d[y_label];
     });
 
@@ -41,13 +40,12 @@ var FEL = React.createClass({
   },
 
   updatePvalThreshold: function(e) {
-    var self = this;
 
     // Get number of positively and negatively selected sites by p-value threshold
     var pvalue_threshold = parseFloat(e.target.value);
 
     // Get number of positively and negatively selected sites by p-value threshold
-    var mle_results = _.map(self.state.mle_results, function(d) {
+    var mle_results = _.map(this.state.mle_results, function(d) {
       d["is_positive"] =
         parseFloat(d["beta"]) / parseFloat(d["alpha"]) > 1 &&
         parseFloat(d["p-value"]) <= pvalue_threshold;
@@ -57,15 +55,15 @@ var FEL = React.createClass({
       return d;
     });
 
-    var positively_selected = _.filter(self.state.mle_results, function(d) {
+    var positively_selected = _.filter(this.state.mle_results, function(d) {
       return d["is_positive"];
     });
-    var negatively_selected = _.filter(self.state.mle_results, function(d) {
+    var negatively_selected = _.filter(this.state.mle_results, function(d) {
       return d["is_negative"];
     });
 
     // highlight mle_content with whether they are significant or not
-    var mle_content = _.map(self.state.mle_results, function(d, key) {
+    var mle_content = _.map(this.state.mle_results, function(d, key) {
       var classes = "";
       if (mle_results[key].is_positive) {
         classes = "success";
@@ -104,25 +102,24 @@ var FEL = React.createClass({
   },
 
   loadFromServer: function() {
-    var self = this;
 
-    d3.json(this.props.url, function(data) {
+    d3.json(this.props.url, (data) => {
       var mle = data["MLE"];
 
       // These variables are to be used for DatamonkeyTable
       var mle_headers = mle.headers || [];
       var mle_content = mle.content[0] || [];
 
-      mle_headers = self.formatHeadersForTable(mle_headers);
+      mle_headers = this.formatHeadersForTable(mle_headers);
 
       _.each(mle_headers, function(d) {
         return (d["sortable"] = true);
       });
 
       // format content
-      mle_content = _.map(mle_content, function(d) {
-        return _.map(d, function(g) {
-          return self.float_format(g);
+      mle_content = _.map(mle_content, d => {
+        return _.map(d, g => {
+          return this.float_format(g);
         });
       });
 
@@ -146,13 +143,13 @@ var FEL = React.createClass({
       });
 
       // Get number of positively and negatively selected sites by p-value threshold
-      var mle_results = _.map(mle_results, function(d) {
+      var mle_results = _.map(mle_results, d => {
         d["is_positive"] =
           parseFloat(d["beta"]) / parseFloat(d["alpha"]) > 1 &&
-          parseFloat(d["p-value"]) <= self.state.pvalue_threshold;
+          parseFloat(d["p-value"]) <= this.state.pvalue_threshold;
         d["is_negative"] =
           parseFloat(d["beta"]) / parseFloat(d["alpha"]) < 1 &&
-          parseFloat(d["p-value"]) <= self.state.pvalue_threshold;
+          parseFloat(d["p-value"]) <= this.state.pvalue_threshold;
         return d;
       });
 
@@ -176,7 +173,7 @@ var FEL = React.createClass({
         });
       });
 
-      self.setState({
+      this.setState({
         mle_headers: mle_headers,
         mle_content: mle_content,
         mle_results: mle_results,
@@ -206,7 +203,6 @@ var FEL = React.createClass({
   },
 
   getSummary() {
-    var self = this;
 
     return (
       <div>
@@ -230,7 +226,7 @@ var FEL = React.createClass({
               </i>{" "}
               Pervasive Positive/Diversifying selection at
               <span className="hyphy-highlight">
-                {" "}{self.state.positively_selected.length}{" "}
+                {" "}{this.state.positively_selected.length}{" "}
               </span>
               sites
             </p>
@@ -240,7 +236,7 @@ var FEL = React.createClass({
               </i>{" "}
               Pervasive Negative/Purifying selection at
               <span className="hyphy-highlight">
-                {" "}{self.state.negatively_selected.length}{" "}
+                {" "}{this.state.negatively_selected.length}{" "}
               </span>
               sites
             </p>
@@ -254,7 +250,7 @@ var FEL = React.createClass({
                   step="0.01"
                   min="0"
                   max="1"
-                  onChange={self.updatePvalThreshold}
+                  onChange={this.updatePvalThreshold}
                 />
               </div>
             </div>
@@ -279,17 +275,17 @@ var FEL = React.createClass({
   },
 
   getSummaryText() {
-    var self = this;
+
     var no_selected =
-      self.state.mle_content.length -
-      self.state.positively_selected.length -
-      self.state.negatively_selected.length;
+      this.state.mle_content.length -
+      this.state.positively_selected.length -
+      this.state.negatively_selected.length;
 
     var summary_text = `FEL found evidence of pervasive positive/diversifying selection \
-at ${self.state.positively_selected.length} sites/at any sites in your \
-alignment. In addition, FEL found evidence with p-value ${self.state
+at ${this.state.positively_selected.length} sites/at any sites in your \
+alignment. In addition, FEL found evidence with p-value ${this.state
       .pvalue_threshold} of pervasive negative/purifying \
-selection at ${self.state.negatively_selected
+selection at ${this.state.negatively_selected
       .length} sites/at any sites in your \
 alignment. FEL did not find evidence for either positive or negative selection \
 in the remaining ${no_selected} sites in your alignment.`;
@@ -309,7 +305,6 @@ in the remaining ${no_selected} sites in your alignment.`;
   },
 
   render: function() {
-    var self = this;
 
     var scrollspy_info = [
       { label: "summary", href: "summary-tab" },
@@ -317,14 +312,14 @@ in the remaining ${no_selected} sites in your alignment.`;
       { label: "table", href: "table-tab" }
     ];
 
-    var { x: x, y: y } = self.definePlotData(
-      self.state.xaxis,
-      self.state.yaxis
+    var { x: x, y: y } = this.definePlotData(
+      this.state.xaxis,
+      this.state.yaxis
     );
 
     var x_options = "Site";
     var y_options = _.filter(
-      _.map(self.state.mle_headers, function(d) {
+      _.map(this.state.mle_headers, function(d) {
         return d.value;
       }),
       function(d) {
@@ -332,7 +327,7 @@ in the remaining ${no_selected} sites in your alignment.`;
       }
     );
 
-    var Summary = self.getSummary();
+    var Summary = this.getSummary();
 
     return (
       <div>
@@ -377,14 +372,14 @@ in the remaining ${no_selected} sites in your alignment.`;
                   <DatamonkeyGraphMenu
                     x_options={x_options}
                     y_options={y_options}
-                    axisSelectionEvent={self.updateAxisSelection}
+                    axisSelectionEvent={this.updateAxisSelection}
                   />
 
                   <DatamonkeySeries
                     x={x}
                     y={y}
-                    x_label={self.state.xaxis}
-                    y_label={self.state.yaxis}
+                    x_label={this.state.xaxis}
+                    y_label={this.state.yaxis}
                     marginLeft={50}
                     width={$("#results").width()}
                     transitions={true}
@@ -404,8 +399,8 @@ in the remaining ${no_selected} sites in your alignment.`;
                       yellow.
                     </div>
                     <DatamonkeyTable
-                      headerData={self.state.mle_headers}
-                      bodyData={self.state.mle_content}
+                      headerData={this.state.mle_headers}
+                      bodyData={this.state.mle_content}
                       classes={"table table-condensed table-striped"}
                       paginate={20}
                       export_csv
@@ -419,6 +414,7 @@ in the remaining ${no_selected} sites in your alignment.`;
       </div>
     );
   }
+
 });
 
 // Will need to make a call to this

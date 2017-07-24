@@ -351,6 +351,33 @@ BaseGraph.defaultProps = {
   y: []
 };
 
+class LineChart extends BaseGraph {
+
+  renderGraph(x_scale, y_scale, dom_element) {
+
+    var main_graph = d3.select(dom_element);
+
+    var y = this.props.y[0];
+
+    var line = d3.svg.line()
+        .x(d => { return x_scale(d[0]); })
+        .y(d => { return y_scale(d[1]); });
+
+    var g = main_graph.append("g").attr("transform", "translate(" + this.props.marginLeft + "," + this.props.marginTop + ")");
+
+    g.append("path")
+        .datum(_.zip(this.props.x, y))
+        .attr("fill", "none")
+        .attr("stroke", "steelblue")
+        .attr("stroke-linejoin", "round")
+        .attr("stroke-linecap", "round")
+        .attr("stroke-width", 1.5)
+        .attr("d", d => { return line(d) } );
+
+  }
+
+}
+
 class ScatterPlot extends BaseGraph {
   renderGraph(x_scale, y_scale, dom_element) {
     var self = this,
@@ -364,6 +391,7 @@ class ScatterPlot extends BaseGraph {
         var data_points = main_graph
           .selectAll("circle.series_" + i)
           .data(_.zip(this.props.x, y));
+
         data_points.enter().append("circle");
         data_points.exit().remove();
 
@@ -802,6 +830,7 @@ class SiteGraph extends React.Component {
 }
 
 module.exports.DatamonkeyGraphMenu = GraphMenu;
+module.exports.DatamonkeyLine = LineChart;
 module.exports.DatamonkeyMultiScatterplot = MultiScatterPlot;
 module.exports.DatamonkeyScatterplot = ScatterPlot;
 module.exports.DatamonkeySeries = Series;
