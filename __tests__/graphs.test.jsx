@@ -8,6 +8,7 @@ import TestUtils from "react-dom/test-utils";
 import renderer from "react-test-renderer";
 import {
   DatamonkeySeries,
+  DatamonkeyScatterplot,
   DatamonkeyGraphMenu
 } from "../src/jsx/components/graphs.jsx";
 import { mount } from "enzyme";
@@ -22,6 +23,7 @@ describe("DatamonkeySeries", () => {
     <DatamonkeySeries
       x={x}
       y={y}
+      y_label={"y values"}
       marginLeft={50}
       width={500}
       transitions={true}
@@ -34,6 +36,30 @@ describe("DatamonkeySeries", () => {
     expect(chart).toMatchSnapshot();
   });
 });
+
+describe("DatamonkeyScatterplot", () => {
+  var x = _.range(10);
+  var y = [_.range(10)];
+
+  const component = renderer.create(
+    <DatamonkeyScatterplot
+      x={x}
+      y={y}
+      y_label={"y values"}
+      marginLeft={50}
+      height={400}
+      width={500}
+      transitions={true}
+      doDots={true}
+    />
+  );
+
+  it("should create an svg element", () => {
+    let chart = component.toJSON();
+    expect(chart).toMatchSnapshot();
+  });
+});
+
 
 describe("GraphMenu", () => {
   var x_options = ["Site"];
@@ -56,4 +82,23 @@ describe("GraphMenu", () => {
     });
     expect(updateAxisSelectionMock.mock.calls.length).toBe(1);
   });
+
+  it("Graph menu should handle empty y_options", () => {
+    const no_ylabel_component = renderer.create(
+      <DatamonkeyGraphMenu
+        x_options={x_options}
+        y_options={[]}
+        axisSelectionEvent={updateAxisSelectionMock}
+      />
+    );
+
+    let menu = no_ylabel_component.toJSON();
+    expect(menu).toMatchSnapshot();
+
+
+
+  });
+
+
+
 });
