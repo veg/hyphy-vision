@@ -403,21 +403,6 @@ var DatamonkeyTable = React.createClass({
 
   componentDidUpdate: function() {
     $('[data-toggle="tooltip"]').tooltip();
-    var self = this;
-    $('[data-toggle="tooltip"]').tooltip();
-    if(self.props.export_csv){
-      d3.select("#export-csv").on("click", function(){
-        function extract(d){
-          return _.isObject(d) ? d.value : d
-        }
-        var headers = _.map(self.props.headerData, extract),
-          munged = _.map(self.props.bodyData, row=>_.map(row, extract))
-            .map(row=>_.object(headers, row)),
-          exporter = Export.create();
-        exporter.downloadCsv(munged);
-      });
-    }
-
   },
 
   render: function() {
@@ -433,10 +418,21 @@ var DatamonkeyTable = React.createClass({
 
     if (this.props.paginate) {
       if(this.props.export_csv){
+        var exportCSV = function(){
+          function extract(d){
+            return _.isObject(d) ? d.value : d
+          }
+          var headers = _.map(self.props.headerData, extract),
+            munged = _.map(self.props.bodyData, row=>_.map(row, extract))
+              .map(row=>_.object(headers, row)),
+            exporter = Export.create();
+          exporter.downloadCsv(munged);
+        };
         button = <button
           id="export-csv"
           type="button"
           className="btn btn-default btn-sm pull-right"
+          onClick={exportCSV}
         >
           <span className="glyphicon glyphicon-floppy-save" /> Export Table to CSV
         </button>
