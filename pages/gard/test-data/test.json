@@ -1,0 +1,12 @@
+{
+  "timeElapsed": 877,
+  "totalModelCount": 9061,
+  "lastImprovedBPC": 2,
+  "numberOfFrags": 3,
+  "totalBP": 172,
+  "input_data": {
+    "filename": "sequences.fasta",
+    "sequences": 10,
+    "sites": 1001
+  }
+}
