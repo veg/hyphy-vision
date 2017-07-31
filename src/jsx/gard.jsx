@@ -58,7 +58,7 @@ function GARDResults(props){
         <p>
           GARD <strong className="hyphy-highlight">found evidence</strong> of {props.data.lastImprovedBPC} recombination breakpoint{props.data.lastImprovedBPC == 1 ? '' : 's'}.
           GARD examined {props.data.totalModelCount} in {timeString} wallclock time, at a rate of {(props.data.totalModelCount/props.data.timeElapsed).toFixed(2)} models
-          per second. The alignment contained {props.totalPotentialBreakpoints} potential breakpoints, translating into a search space of {totalPossibleModels} models
+          per second. The alignment contained {props.data.totalPotentialBreakpoints} potential breakpoints, translating into a search space of {totalPossibleModels} models
           with up to {props.data.numberOfFrags} breakpoints, of which {percentageExplored}% was explored by the genetic algorithm.
         </p>
         <hr />
@@ -84,6 +84,54 @@ function GARDResults(props){
       </div>
     </div>
 
+  </div>);
+}
+
+function GARDRecombinationReport(props){
+  if(!props.data) return <div></div>;
+  var colors = ["black", "#00a99d"],
+    width = 500,
+    height = 20,
+    scale = d3.scale.linear()
+      .domain([1, props.data.input_data.sites])
+      .range([0, width]);
+  var segments = props.data.breakpoints.map(function(d){
+    var bp = [0].concat(d.bps).concat([props.data.input_data.sites]),
+      individual_segments = [];
+    for(var i=0; i<bp.length-1; i++){
+      var bp_delta = bp[i+1]-bp[i];
+      individual_segments.push(<g transform={"translate(" + scale(bp[i])  + ",0)"}>
+        <rect x={0} y={0} width={scale(bp_delta)} height={height} style={{fill: colors[i % colors.length]}} />
+        <text x={scale(bp_delta/2)} y={2*height/3} fill={"white"} textAnchor={'middle'}>
+          {bp[i]+1} - {bp[i+1]}
+        </text>
+      </g>);
+    }
+    return (<svg width={width} height={height}>
+      {individual_segments}
+    </svg>);
+  });
+  var rows = props.data.breakpoints.map((row, index) => <tr>
+    <td>{row.bps.length}</td>
+    <td>{row.AICc.toFixed(2)}</td>
+    <td>{row.delta_AICc.toFixed(2)}</td>
+    <td>{segments[index]}</td>
+  </tr>);
+  return (<div className="row">
+    <div className="col-md-12">
+      <Header title="Recombination report" />
+      <table className="table table-condensed tabled-striped">
+        <thead>
+          <th>BPs</th>
+          <th>AIC<sub>c</sub></th>
+          <th>&Delta; AIC<sub>c</sub></th>
+          <th>Segments</th>
+        </thead>
+        <tbody>
+          {rows} 
+        </tbody>
+      </table>
+    </div>
   </div>);
 }
 
@@ -143,6 +191,7 @@ class GARD extends React.Component {
           <div className="col-sm-10" id="results">
             <ErrorMessage />
             <GARDResults data={this.state.data} />
+            <GARDRecombinationReport data={this.state.data} />
             <RateMatrix rate_matrix={this.state.data ? this.state.data.rate_matrix : undefined} />
           </div>
         </div>
