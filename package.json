@@ -33,6 +33,7 @@
     "font-awesome": "4.x",
     "font-awesome-webpack": "0.0.4",
     "immutable": "3.8.1",
+    "in-browser-download": "^1.0.0",
     "jquery": "1.x",
     "jquery-ui": "1.x",
     "jquery-ui-bundle": "^1.11.4",

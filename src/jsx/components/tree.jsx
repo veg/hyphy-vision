@@ -1,5 +1,10 @@
 var React = require("react");
 var datamonkey = require("../../datamonkey/datamonkey.js");
+var download = require("in-browser-download");
+var d3_save_svg = require("d3-save-svg");
+
+import { saveSvgAsPng } from "save-svg-as-png";
+
 require("phylotree");
 require("phylotree.css");
 
@@ -336,26 +341,6 @@ var Tree = React.createClass({
       self.tree.placenodes().update();
     });
 
-    $("#export-phylo-svg").on("click", function(e) {
-      datamonkey.save_image("svg", "#tree_container");
-    });
-
-    $("#export-phylo-png").on("click", function(e) {
-      datamonkey.save_image("png", "#tree_container");
-    });
-
-    $("#export-phylo-nwk").on("click", function(e) {
-      var nwk = self.tree.get_newick(function() {});
-      var pom = document.createElement("a");
-      pom.setAttribute(
-        "href",
-        "data:text/octet-stream;charset=utf-8," + encodeURIComponent(nwk)
-      );
-      pom.setAttribute("download", "nwk.txt");
-      $("body").append(pom);
-      pom.click();
-      pom.remove();
-    });
   },
 
   setTreeHandlers: function() {
@@ -537,7 +522,9 @@ var Tree = React.createClass({
       .select("#tree_container")
       .append("svg")
       .attr("width", width)
-      .attr("height", height);
+      .attr("height", height)
+      .attr("id", "dm-phylotree");
+
 
     this.tree.branch_name(null);
     this.tree.node_span("equal");
@@ -553,6 +540,7 @@ var Tree = React.createClass({
     );
 
     this.assignBranchAnnotations();
+
 
     if (_.indexOf(_.keys(analysis_data), "tree") > -1) {
       self.tree(analysis_data["tree"]).svg(self.svg);
@@ -575,6 +563,11 @@ var Tree = React.createClass({
     });
 
     this.assignBranchAnnotations();
+    d3.select("#dm-phylotree")
+      .append("rect")
+      .attr("width", "100%")
+      .attr("height", "100%")
+      .attr("fill", "white");
 
     if (self.state.show_legend) {
       if (self.legend_type == "discrete") {
@@ -611,6 +604,7 @@ var Tree = React.createClass({
     this.tree.layout();
     this.tree.placenodes().update();
     this.tree.layout();
+
   },
 
   componentDidMount: function() {
@@ -629,6 +623,10 @@ var Tree = React.createClass({
 
   componentDidUpdate: function() {
     this.initialize();
+  },
+
+  exportNewick: function() {
+    download(this.tree.get_newick(function() {}), 'tree.new');
   },
 
   render: function() {
@@ -762,10 +760,28 @@ var Tree = React.createClass({
                 </button>
                 <ul className="dropdown-menu">
                   <li id="export-phylo-png">
-                    <a href="#"><i className="fa fa-image" /> Image</a>
+                    <a
+                      onClick={()=>saveSvgAsPng(document.getElementById("dm-phylotree"), "tree.png")}
+                      href="javascript:;"
+                    >
+                      <i className="fa fa-image" /> PNG
+                    </a>
+                  </li>
+                  <li id="export-phylo-png">
+                    <a
+                      onClick={()=>d3_save_svg.save(d3.select("#dm-phylotree").node(), {filename: "tree"})}
+                      href="javascript:;"
+                    >
+                      <i className="fa fa-image" /> SVG
+                    </a>
                   </li>
                   <li id="export-phylo-nwk">
-                    <a href="#"><i className="fa fa-file-o" /> Newick File</a>
+                    <a
+                      onClick={this.exportNewick}
+                      href="javascript:;"
+                    >
+                      <i className="fa fa-file-o" /> Newick File
+                    </a>
                   </li>
                 </ul>
               </div>
