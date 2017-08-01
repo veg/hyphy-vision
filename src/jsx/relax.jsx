@@ -3,7 +3,7 @@ import { NavBar } from "./components/navbar.jsx";
 import { ScrollSpy } from "./components/scrollspy.jsx";
 import { InputInfo } from "./components/input_info.jsx";
 import { ErrorMessage } from "./components/error_message.jsx";
-import { Tree } from "./components/relax_tree.jsx";
+import { Tree } from "./components/tree.jsx";
 import { OmegaPlotGrid } from "./components/omega_plots.jsx";
 import { Header } from "./components/header.jsx";
 
@@ -212,6 +212,14 @@ class RELAX extends React.Component{
         { label: "ω plots", href: "omega-tab" },
         { label: "tree", href: "tree-tab" }
       ];
+
+    var models = {},
+      partition = undefined;
+    if (!_.isNull(self.state.json)) {
+      models = self.state.json.fits,
+      partition = self.state.json.partition;
+    }
+
     return (<div>
       <NavBar onFileChange={this.onFileChange} />
       <div className="container">
@@ -228,8 +236,12 @@ class RELAX extends React.Component{
               <OmegaPlotGrid json={self.state.json} />
             </div>
             <div className="row" id="tree-tab">
-              <Header title="Phylogenetic Tree" popover="<p>Needs content.</p>"/>
-              <Tree json={self.state.json} settings={self.state.settings} />
+              <Tree
+                json={self.state.json}
+                settings={self.state.settings}
+                models={models}
+                partition={partition}
+              />
             </div>
           </div>
         </div>
@@ -239,21 +251,10 @@ class RELAX extends React.Component{
 }
 
 RELAX.defaultProps = {
-  edgeColorizer: function(element, data) {
+  edgeColorizer: function(element, data, omega_color, partition) {
     var self = this,
       scaling_exponent = 0.33,
       omega_format = d3.format(".3r");
-
-    var omega_color = d3.scale
-      .pow()
-      .exponent(scaling_exponent)
-      .domain([0, 0.25, 1, 5, 10])
-      .range(
-        self.options()["color-fill"]
-          ? ["#DDDDDD", "#AAAAAA", "#888888", "#444444", "#000000"]
-          : ["#6e4fa2", "#3288bd", "#e6f598", "#f46d43", "#9e0142"]
-      )
-      .clamp(true);
 
     if (data.target.annotations) {
       element.style(
@@ -273,19 +274,11 @@ RELAX.defaultProps = {
       $(element[0][0]).tooltip("destroy");
     }
 
-    var selected_partition = $("#hyphy-tree-highlight").attr("value");
-
-    if (selected_partition && this.get_partitions()) {
-      var partitions = this.get_partitions()[selected_partition];
-
-      element
-        .style(
-          "stroke-width",
-          partitions && partitions[data.target.name] ? "8" : "4"
-        )
-        .style("stroke-linejoin", "round")
-        .style("stroke-linecap", "round");
-    }
+    var is_in_partition = partition.indexOf(data.target.name) > -1;
+    element
+      .style("stroke-width", is_in_partition ? "6" : "2")
+      .style("stroke-linejoin", "round")
+      .style("stroke-linecap", "round");
   },
   alpha_level: 0.05
 };
