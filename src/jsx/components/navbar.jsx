@@ -33,7 +33,7 @@ var Methods = React.createClass({
         </button>
         <ul className="dropdown-menu">
           <li>
-            <a href="#">aBSREL</a>
+            <a href="../absrel">aBSREL</a>
           </li>
           <li>
             <a href="../relax">RELAX</a>

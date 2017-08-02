@@ -806,6 +806,8 @@ var Tree = React.createClass({
             </div>
           </div>
         </div>
+        
+        
         <div className="row">
           <div className="col-md-12">
             <div className="row">

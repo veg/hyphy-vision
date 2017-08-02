@@ -440,16 +440,15 @@ var DatamonkeyTable = React.createClass({
 
       }
       paginatorControls = (
-        <div>
-          <div className="col-md-6">
+      <div>
+
+          <div className="col-md-12">
             <p>
               Showing entries {this.state.current + 1} through {upperLimit} out
               of {this.state.rowOrder.length}.
             </p>
           </div>
-          <div className="col-md-3">
-            {button}
-          </div>
+
           <div className="col-md-3">
             <div
               className="btn-group btn-group-justified"
@@ -514,7 +513,14 @@ var DatamonkeyTable = React.createClass({
               </div>
             </div>
           </div>
-        </div>
+          
+          <div className="col-md-6"></div>
+          
+          <div className="col-md-3">
+            {button}
+          </div>
+        
+      </div>
       );
     } else {
       paginatorControls = "";

@@ -668,40 +668,40 @@ var SLACSites = React.createClass({
               >
                 {" "}&times;{" "}
               </button>
-              Default table shading is used to indicate the magnitude of
-              difference between the estimate
-              of a specific quantity using the MLE ancestral state
-              reconstruction, and the median
-              of the estimate using a sample from the distribution of ancestral
-              state reconstructions.
-              <br />
-              <strong>Color legend:</strong> MLE is &nbsp;
-              <span
-                className="badge"
-                style={{ backgroundColor: self.dm_rangeColorizer(-1) }}
-              >
-                is much less
-              </span>
-              &nbsp;
-              <span
-                className="badge"
-                style={{
-                  backgroundColor: self.dm_rangeColorizer(0),
-                  color: "black"
-                }}
-              >
-                is the same as
-              </span>
-              &nbsp;
-              <span
-                className="badge"
-                style={{ backgroundColor: self.dm_rangeColorizer(1) }}
-              >
-                is much greater
-              </span>
-              &nbsp;
-              than the sampled median. You can mouse over the cells to see
-              individual sampling intervals.
+              <p>
+                <strong>Color legend:</strong> MLE is &nbsp;
+                <span
+                  className="blue-badge"
+                >
+                  is much less
+                </span>
+                &nbsp;
+                <span
+                  className="white-badge"
+                >
+                  is the same as
+                </span>
+                &nbsp;
+                <span
+                  className="red-badge"
+                >
+                  is much greater
+                </span>
+                &nbsp;
+                than the sampled median.
+              </p>
+              <p>
+                Default table shading is used to indicate the magnitude of
+                difference between the estimate
+                of a specific quantity using the MLE ancestral state
+                reconstruction, and the median
+                of the estimate using a sample from the distribution of ancestral
+                state reconstructions.
+              </p>
+              <small>
+                You can mouse over the cells to see
+                individual sampling intervals.
+              </small>
             </div>
           : null}
 
@@ -840,11 +840,14 @@ var SLACBanner = React.createClass({
 
   render: function() {
     return (
-      <div className="row" id="slac-summary">
-
+    
+    
+      <div className="row">
+      <div className="clearance" id="slac-summary"></div>
         <div className="col-md-12">
           <h3 className="list-group-item-heading">
-            <span className="summary-method-name">Single-Likelihood Ancestor Counting</span>
+            <span className="summary-method-name">
+            Single-Likelihood Ancestor Counting</span>
             <br />
             <span className="results-summary">results summary</span>
           </h3>
@@ -870,64 +873,38 @@ var SLACBanner = React.createClass({
               sites
               among {this.state.sites.all} tested sites.
             </p>
+            
+            
             <hr /> 
             <p>
               <small>
-                <sup>&dagger;</sup>Extended binomial test, p &le;{" "}
-                {this.dm_formatP(this.props.pValue)}
-                <div
-                  className="dropdown hidden-print"
-                  style={{ display: "inline", marginLeft: "0.25em" }}
-                >
-                  <button
-                    id="dm.pvalue.slider"
-                    type="button"
-                    className="btn btn-primary btn-xs dropdown-toggle"
-                    data-toggle="dropdown"
-                    aria-haspopup="true"
-                    aria-expanded="false"
+                px
+                  <sup>&dagger;</sup>Extended binomial test, p &le;{" "}
+                  {this.dm_formatP(this.props.pValue)}
+                  
+                  <emph> not</emph> corrected for multiple testing; ambiguous
+                  characters resolved to minimize substitution counts.
+                  <br />
+                  See{" "}
+                  <a href="http://hyphy.org/methods/selection-methods/#slac">
+                    here
+                  </a>{" "}
+                  for more information about the SLAC method.
+  
+                  Please cite{" "}
+                  <a
+                    href="http://www.ncbi.nlm.nih.gov/pubmed/15703242"
+                    target="_blank"
                   >
-                    <span className="caret" />
-                  </button>
-                  <ul
-                    className="dropdown-menu"
-                    aria-labelledby="dm.pvalue.slider"
-                  >
-                    <li>
-                      <a href="#">
-                        <input
-                          type="range"
-                          min="0"
-                          max="1"
-                          value={this.props.pValue}
-                          step="0.01"
-                          onChange={this.props.pAdjuster}
-                        />
-                      </a>
-                    </li>
-                  </ul>
-                </div>
-                <emph> not</emph> corrected for multiple testing; ambiguous
-                characters resolved to minimize substitution counts.
-                <br />
-                See{" "}
-                <a href="http://hyphy.org/methods/selection-methods/#slac">
-                  here
-                </a>{" "}
-                for more information about the SLAC method.
-
-                <br />
-                Please cite{" "}
-                <a
-                  href="http://www.ncbi.nlm.nih.gov/pubmed/15703242"
-                  target="_blank"
-                >
-                  PMID 15703242
-                </a>{" "}
-                if you use this result in a publication, presentation, or other
-                scientific work.
-              </small>
+                    PMID 15703242
+                  </a>{" "}
+                  if you use this result in a publication, presentation, or other
+                  scientific work.
+              </small> 
             </p>
+            
+
+            
           </div>
         </div>
       </div>
@@ -1337,7 +1314,7 @@ var SLAC = React.createClass({
                     <h4 className="dm-table-header">
                       Partition information
                     </h4>
-                    <small>
+                     
                       <DatamonkeyPartitionTable
                         pValue={self.state.pValue}
                         trees={self.state.analysis_results.trees}
@@ -1363,33 +1340,33 @@ var SLAC = React.createClass({
                           );
                         }}
                       />
-                    </small>
+                     
                   </div>
                   <div
                     id="datamonkey-slac-model-fits"
-                    className="col-md-6"
+                    className="col-md-8"
                   >
-                    <small>
+                     
                       {
                         <DatamonkeyModelTable
                           fits={self.state.analysis_results.fits}
                         />
                       }
-                    </small>
+                     
                   </div>
                   <div
                     id="datamonkey-slac-timers"
-                    className="col-md-6"
+                    className="col-md-4"
                   >
                     <h4 className="dm-table-header">
                       Execution time
                     </h4>
-                    <small>
+                     
                       <DatamonkeyTimersTable
                         timers={self.state.analysis_results.timers}
                         totalTime={"Total time"}
                       />
-                    </small>
+                     
                   </div>
                 </div>
 

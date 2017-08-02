@@ -95,7 +95,8 @@ var BSRELSummary = React.createClass({
     }
 
     return (
-      <div className="row" id="summary-div" >
+      <div className="row">
+      <div className="clearance" id="summary-div"></div>
         <div className="col-md-12">
           <h3 className="list-group-item-heading">
             <span className="summary-method-name">adaptive Branch Site REL</span>

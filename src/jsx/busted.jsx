@@ -48,7 +48,8 @@ var BUSTEDSummary = React.createClass({
       );
     }
     return (
-      <div className="row" id="summary-div">
+      <div className="row">
+      <div className="clearance" id="summary-div"></div>
         <div className="col-md-12">
           <h3 className="list-group-item-heading">
             <span className="summary-method-name">
@@ -402,9 +403,45 @@ var BUSTEDSiteChartAndTable = React.createClass({
         _.values(row).map((d, i) => (i != 0 ? +float_format(d) : +d))
       );
     return (
+
       <div>
+          <div className="col-lg-6 clear-padding justify-content">
+            <div className="form-group">
+              <label for="er-constrained-threshold">
+                Constrained Test Statistic
+              </label>
+              <input
+                type="text"
+                className="form-control"
+                id="er-constrained-threshold"
+                value={this.state.constrained_evidence_ratio_threshold}
+                onChange={this.handleCERChange}
+                onFocus={this.handleCERFocus}
+                onBlur={this.handleCERBlur}
+              />
+            </div>
+          </div>
+          
+          <div className="col-lg-6 clear-padding justify-content">
+            <div className="form-group">
+              <label for="er-optimized-null-threshold">
+                Optimized Null Test Statistic
+              </label>
+              <input
+                type="text"
+                className="form-control"
+                id="er-optimized-null-threshold"
+                value={this.state.optimized_null_evidence_ratio_threshold}
+                onChange={this.handleONERChange}
+                onFocus={this.handleONERFocus}
+                onBlur={this.handleONERBlur}
+              />
+            </div>
+          </div>
+         
         <div className="row hyphy-busted-site-table">
-          <div className="col-md-12">
+        
+          <div className="col-md-12">     
             <h4 className="dm-table-header">
               Model Test Statistics Per Site
               <span
@@ -442,39 +479,6 @@ var BUSTEDSiteChartAndTable = React.createClass({
         </div>
 
         <div className="row site-table">
-          <div className="col-lg-6">
-            <div className="form-group">
-              <label for="er-constrained-threshold">
-                Constrained Test Statistic
-              </label>
-              <input
-                type="text"
-                className="form-control"
-                id="er-constrained-threshold"
-                value={this.state.constrained_evidence_ratio_threshold}
-                onChange={this.handleCERChange}
-                onFocus={this.handleCERFocus}
-                onBlur={this.handleCERBlur}
-              />
-            </div>
-          </div>
-          <div className="col-lg-6">
-            <div className="form-group">
-              <label for="er-optimized-null-threshold">
-                Optimized Null Test Statistic
-              </label>
-              <input
-                type="text"
-                className="form-control"
-                id="er-optimized-null-threshold"
-                value={this.state.optimized_null_evidence_ratio_threshold}
-                onChange={this.handleONERChange}
-                onFocus={this.handleONERFocus}
-                onBlur={this.handleONERBlur}
-              />
-            </div>
-          </div>
-          <div className="col-lg-12">
             <DatamonkeyTable
               headerData={this.headerData}
               bodyData={bodyData}
@@ -483,9 +487,9 @@ var BUSTEDSiteChartAndTable = React.createClass({
               classes={"table table-condensed table-striped"}
               export_csv
             />
-          </div>
-        </div>
+        </div>    
       </div>
+
     );
   }
 
@@ -817,7 +821,7 @@ var BUSTED = React.createClass({
                 </div>
                 <div className="col-md-12">
                   <h4 className="dm-table-header">&omega; distribution</h4>
-                  <div id="primary-omega-dist" className="panel-body">
+                  <div id="primary-omega-dist">
                     <PropChart
                       name={self.props.model_name}
                       omegas={self.state.omegas}
