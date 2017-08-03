@@ -32,10 +32,10 @@ function GARDResults(props){
       timeString = '';
   timeString += days > 0 ? days + ':' : '';
   timeString += hours > 0 ? hours + ':' : '';
-  timeString += minutes + ':' + seconds;
+  timeString += minutes + ':' + String(seconds).padStart(2, '0');
 
   var totalPossibleModels = _.range(props.data.numberOfFrags)
-    .map(k=>binomial(props.data.totalPotentialBreakpoints, k+1))
+    .map(k=>binomial(props.data.totalBP, k+1))
     .reduce((a,b)=>a+b,0);
 
   var percentageExplored = (100*props.data.totalModelCount/totalPossibleModels).toFixed(2);
@@ -58,7 +58,7 @@ function GARDResults(props){
         <p>
           GARD <strong className="hyphy-highlight">found evidence</strong> of {props.data.lastImprovedBPC} recombination breakpoint{props.data.lastImprovedBPC == 1 ? '' : 's'}.
           GARD examined {props.data.totalModelCount} in {timeString} wallclock time, at a rate of {(props.data.totalModelCount/props.data.timeElapsed).toFixed(2)} models
-          per second. The alignment contained {props.data.totalPotentialBreakpoints} potential breakpoints, translating into a search space of {totalPossibleModels} models
+          per second. The alignment contained {props.data.totalBP} potential breakpoints, translating into a search space of {totalPossibleModels} models
           with up to {props.data.numberOfFrags} breakpoints, of which {percentageExplored}% was explored by the genetic algorithm.
         </p>
         <hr />
@@ -89,14 +89,23 @@ function GARDResults(props){
 
 function GARDRecombinationReport(props){
   if(!props.data) return <div></div>;
+  if(!props.data.improvements) {
+    return (<div className="row">
+      <div className="col-md-12">
+        <Header title="Recombination report" />
+        <p>GARD found no evidence of recombination.</p>
+      </div>
+    </div>);
+  }
+    
   var colors = ["black", "#00a99d"],
-    width = 500,
+    width = 700,
     height = 20,
     scale = d3.scale.linear()
       .domain([1, props.data.input_data.sites])
       .range([0, width]);
-  var segments = props.data.breakpoints.map(function(d){
-    var bp = [0].concat(d.bps).concat([props.data.input_data.sites]),
+  var segments = [{breakpoints: []}].concat(props.data.improvements).map(function(d){
+    var bp = [0].concat(d.breakpoints).concat([props.data.input_data.sites]),
       individual_segments = [];
     for(var i=0; i<bp.length-1; i++){
       var bp_delta = bp[i+1]-bp[i];
@@ -111,10 +120,9 @@ function GARDRecombinationReport(props){
       {individual_segments}
     </svg>);
   });
-  var rows = props.data.breakpoints.map((row, index) => <tr>
-    <td>{row.bps.length}</td>
-    <td>{row.AICc.toFixed(2)}</td>
-    <td>{row.delta_AICc.toFixed(2)}</td>
+  var rows = [{breakpoints: []}].concat(props.data.improvements).map((row, index) => <tr>
+    <td>{row.breakpoints.length}</td>
+    <td>{row.deltaAICc ? row.deltaAICc.toFixed(2) : ''}</td>
     <td>{segments[index]}</td>
   </tr>);
   return (<div className="row">
@@ -123,7 +131,6 @@ function GARDRecombinationReport(props){
       <table className="table table-condensed tabled-striped">
         <thead>
           <th>BPs</th>
-          <th>AIC<sub>c</sub></th>
           <th>&Delta; AIC<sub>c</sub></th>
           <th>Segments</th>
         </thead>
@@ -192,7 +199,7 @@ class GARD extends React.Component {
             <ErrorMessage />
             <GARDResults data={this.state.data} />
             <GARDRecombinationReport data={this.state.data} />
-            <RateMatrix rate_matrix={this.state.data ? this.state.data.rate_matrix : undefined} />
+            <RateMatrix rate_matrix={this.state.data ? this.state.data.rateMatrix : undefined} />
           </div>
         </div>
       </div>
