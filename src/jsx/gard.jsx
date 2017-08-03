@@ -9,6 +9,7 @@ import { InputInfo } from "./components/input_info.jsx";
 import { ErrorMessage } from "./components/error_message.jsx";
 import { Header } from "./components/header.jsx";
 import { RateMatrix } from "./components/rate_matrix.jsx";
+import { DatamonkeySiteGraph } from "./components/graphs.jsx";
 
 
 function binomial(n, k) {
@@ -130,14 +131,55 @@ function GARDRecombinationReport(props){
       <Header title="Recombination report" />
       <table className="table table-condensed tabled-striped">
         <thead>
-          <th>BPs</th>
-          <th>&Delta; AIC<sub>c</sub></th>
-          <th>Segments</th>
+          <tr>
+            <th>BPs</th>
+            <th>&Delta; AIC<sub>c</sub></th>
+            <th>Segments</th>
+          </tr>
         </thead>
         <tbody>
           {rows} 
         </tbody>
       </table>
+    </div>
+  </div>);
+}
+
+function GARDSiteGraph(props){
+  if(!props.data) return <div></div>;
+  var bestScore = props.data.baselineScore,
+    number_of_sites = props.data.input_data.sites,
+    bp_support = d3.range(number_of_sites).map(d=>0*d),
+    tree_length = d3.range(number_of_sites).map(d=>0*d),
+    normalizer = 0,
+    model,
+    modelScore,
+    fromSite,
+    toSite;
+  for(var i=0; i<props.data.models.length; i++){
+    model = props.data.models[i];
+    modelScore = Math.exp(.5*(props.data.baselineScore-model.aicc));
+    if (modelScore > .00001){
+      for(var j=0; j<model.breakpoints.length; j++){
+        fromSite = model.breakpoints[j][0];
+        toSite = model.breakpoints[j][1];
+        if(j>0) bp_support[fromSite] += modelScore;
+        for(var k=fromSite; k<toSite; k++){
+          tree_length[k] += model.tree_lengths[j]*modelScore;
+        }
+      }
+      normalizer += modelScore;
+    }
+  }
+  bp_support = bp_support.map(d=>d/normalizer);
+  tree_length = tree_length.map(d=>d/normalizer);
+  return(<div className="row">
+    <div className="col-md-12">
+      <Header title="GARD Site Graph" />
+      <DatamonkeySiteGraph 
+        columns={["Breakpoint support", "Tree length"]}
+        rows={_.zip(bp_support, tree_length)}
+      />;
     </div>
   </div>);
 }
@@ -199,6 +241,7 @@ class GARD extends React.Component {
             <ErrorMessage />
             <GARDResults data={this.state.data} />
             <GARDRecombinationReport data={this.state.data} />
+            <GARDSiteGraph data={this.state.data} />
             <RateMatrix rate_matrix={this.state.data ? this.state.data.rateMatrix : undefined} />
           </div>
         </div>
