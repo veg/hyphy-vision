@@ -3,6 +3,7 @@ var React = require('react'),
   d3 = require("d3"),
   _ = require("underscore");
 
+import { Tree } from "./components/tree.jsx";
 import { NavBar } from "./components/navbar.jsx";
 import { ScrollSpy } from "./components/scrollspy.jsx";
 import { InputInfo } from "./components/input_info.jsx";
@@ -295,7 +296,27 @@ class GARD extends React.Component {
         { label: "report", href: "report-tab" },
         { label: "graph", href: "graph-tab" },
         { label: "matrix", href: "matrix-tab" },
+        { label: "tree", href: "tree-tab" },
       ];
+    var tree_settings = {
+      omegaPlot: {},
+      "tree-options": {
+        /* value arrays have the following meaning
+                [0] - the value of the attribute
+                [1] - does the change in attribute value trigger tree re-layout?
+            */
+        "hyphy-tree-model": ["Unconstrained model", true],
+        "hyphy-tree-highlight": ["RELAX.test", false],
+        "hyphy-tree-branch-lengths": [false, true],
+        "hyphy-tree-hide-legend": [true, false],
+        "hyphy-tree-fill-color": [true, false]
+      },
+      "hyphy-tree-legend-type": "discrete",
+      "suppress-tree-render": false,
+      "chart-append-html": true,
+      edgeColorizer: function(e,d){return 0} 
+    };
+
     return (<div>
       <NavBar onFileChange={this.onFileChange} />
       <div className="container">
@@ -308,6 +329,18 @@ class GARD extends React.Component {
             <GARDTopologyReport data={this.state.data} />
             <GARDSiteGraph data={this.state.data} />
             <RateMatrix rate_matrix={this.state.data ? this.state.data.rateMatrix : undefined} />
+
+            <div className="row">
+              <div id="tree-tab" className="col-md-12">
+                <Tree
+                  models={{}}
+                  json={this.state.data}
+                  settings={tree_settings}
+                  multitree
+                />
+              </div>
+            </div>
+
           </div>
         </div>
       </div>
