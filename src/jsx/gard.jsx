@@ -42,7 +42,7 @@ function GARDResults(props){
   var percentageExplored = (100*props.data.totalModelCount/totalPossibleModels).toFixed(2);
   var evidence_statement = props.data.lastImprovedBPC ?
     <span><strong className="hyphy-highlight">found evidence</strong> of {props.data.lastImprovedBPC} recombination breakpoint{props.data.lastImprovedBPC == 1 ? '' : 's'}</span> :
-    <span><strong>found no evidence</strong> of recombination.</span>;
+    <span><strong>found no evidence</strong> of recombination</span>;
   return (<div className="row" id="summary-tab">
     <div className="col-md-12">
       <h3 className="list-group-item-heading">
@@ -60,7 +60,7 @@ function GARDResults(props){
       <div className="main-result">
         <p>
           GARD {evidence_statement}.
-          GARD examined {props.data.totalModelCount} in {timeString} wallclock time, at a rate of {(props.data.totalModelCount/props.data.timeElapsed).toFixed(2)} models
+          GARD examined {props.data.totalModelCount} models in {timeString} wallclock time, at a rate of {(props.data.totalModelCount/props.data.timeElapsed).toFixed(2)} models
           per second. The alignment contained {props.data.totalBP} potential breakpoints, translating into a search space of {totalPossibleModels} models
           with up to {props.data.numberOfFrags} breakpoints, of which {percentageExplored}% was explored by the genetic algorithm.
         </p>
@@ -222,7 +222,7 @@ function GARDTopologyReport(props){
     w = Math.exp(0.5*(currentAIC-props.data.singleTreeAICc)),
     conclusion = w > 0.01 ?
       <i>some or all of the breakpoints may reflect rate variation instead of topological incongruence</i> :
-      <i>at least of one of the breakpoints reflects a true topological incorguence</i>
+      <i>at least of one of the breakpoints reflects a true topological incongruence</i>
   return (<div className="row">
     <div className="col-md-12">
       <Header title="Topological incongruence report" />
