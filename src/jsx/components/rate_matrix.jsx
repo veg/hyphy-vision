@@ -130,7 +130,7 @@ class RateMatrix extends React.Component {
 
     }
   render(){
-    return(<div className="row" id="summary-tab">
+    return(<div className="row" id="matrix-tab">
       <div className="col-md-12">
         <Header title='Substitution Model' />
       </div>

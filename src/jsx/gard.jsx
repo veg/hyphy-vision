@@ -40,7 +40,9 @@ function GARDResults(props){
     .reduce((a,b)=>a+b,0);
 
   var percentageExplored = (100*props.data.totalModelCount/totalPossibleModels).toFixed(2);
-
+  var evidence_statement = props.data.lastImprovedBPC ?
+    <span><strong className="hyphy-highlight">found evidence</strong> of {props.data.lastImprovedBPC} recombination breakpoint{props.data.lastImprovedBPC == 1 ? '' : 's'}</span> :
+    <span><strong>found no evidence</strong> of recombination.</span>;
   return (<div className="row" id="summary-tab">
     <div className="col-md-12">
       <h3 className="list-group-item-heading">
@@ -57,7 +59,7 @@ function GARDResults(props){
     <div className="col-md-12">
       <div className="main-result">
         <p>
-          GARD <strong className="hyphy-highlight">found evidence</strong> of {props.data.lastImprovedBPC} recombination breakpoint{props.data.lastImprovedBPC == 1 ? '' : 's'}.
+          GARD {evidence_statement}.
           GARD examined {props.data.totalModelCount} in {timeString} wallclock time, at a rate of {(props.data.totalModelCount/props.data.timeElapsed).toFixed(2)} models
           per second. The alignment contained {props.data.totalBP} potential breakpoints, translating into a search space of {totalPossibleModels} models
           with up to {props.data.numberOfFrags} breakpoints, of which {percentageExplored}% was explored by the genetic algorithm.
@@ -91,7 +93,7 @@ function GARDResults(props){
 function GARDRecombinationReport(props){
   if(!props.data) return <div></div>;
   if(!props.data.improvements) {
-    return (<div className="row">
+    return (<div className="row" id="report-tab">
       <div className="col-md-12">
         <Header title="Recombination report" />
         <p>GARD found no evidence of recombination.</p>
@@ -123,16 +125,18 @@ function GARDRecombinationReport(props){
   });
   var rows = [{breakpoints: []}].concat(props.data.improvements).map((row, index) => <tr>
     <td>{row.breakpoints.length}</td>
+    <td>{(props.data.baselineScore-_.first(_.pluck(props.data.improvements, "deltaAICc"), index).reduce((t,n)=>t+n,0)).toFixed(2)}</td>
     <td>{row.deltaAICc ? row.deltaAICc.toFixed(2) : ''}</td>
     <td>{segments[index]}</td>
   </tr>);
-  return (<div className="row">
+  return (<div className="row" id="report-tab">
     <div className="col-md-12">
       <Header title="Recombination report" />
       <table className="table table-condensed tabled-striped">
         <thead>
           <tr>
             <th>BPs</th>
+            <th>AIC<sub>c</sub></th>
             <th>&Delta; AIC<sub>c</sub></th>
             <th>Segments</th>
           </tr>
@@ -173,13 +177,73 @@ function GARDSiteGraph(props){
   }
   bp_support = bp_support.map(d=>d/normalizer);
   tree_length = tree_length.map(d=>d/normalizer);
-  return(<div className="row">
+  return(<div className="row" id="graph-tab">
     <div className="col-md-12">
       <Header title="GARD Site Graph" />
       <DatamonkeySiteGraph 
         columns={["Breakpoint support", "Tree length"]}
         rows={_.zip(bp_support, tree_length)}
-      />;
+      />
+    </div>
+  </div>);
+}
+
+function GARDTopologyReport(props){
+  if(!props.data) return <div></div>;
+  if(!props.data.lastImprovedBPC) return <div></div>;
+  var readPCount = props.data.pairwisePValues.length,
+    totalComparisons = (readPCount-1)*2,
+    threshP = 0.01/totalComparisons,
+    bypvalue = [[.01, 0], [.05, 0], [0.1, 0]].map(row=>row.map(entry=>entry/totalComparisons)),
+    rows = [];
+  for (var pcounter = 1; pcounter < readPCount; pcounter++){
+    var lhs = props.data.pairwisePValues[pcounter][pcounter-1],
+      rhs = props.data.pairwisePValues[pcounter-1][pcounter],
+      sig = 0;
+    for(var k=0; k<bypvalue.length; k++){
+      threshP = bypvalue[k][0];
+      if(lhs <= threshP && rhs <= threshP){
+        if(sig == 0){
+          sig = readPCount - k;
+        }
+        bypvalue[k][1] += 1;
+      }
+    }
+    var sigCell = d3.range(sig).map(d=><i className="fa fa-circle"></i>);
+    rows.push((<tr>
+      <td>{_.last(props.data.improvements).breakpoints[pcounter-1]+1}</td>
+      <td>{Math.min(1, lhs*totalComparisons)}</td>
+      <td>{Math.min(1, rhs*totalComparisons)}</td>
+      <td>{sigCell}</td>
+    </tr>));
+  }
+  var statements = _.range(3).map(k=><p>At p = {bypvalue[k][0]*totalComparisons}, there are {bypvalue[k][1]} breakpoints with significant topological incongruence.</p>),
+    currentAIC = props.data.baselineScore-_.pluck(props.data.improvements, "deltaAICc").reduce((t,n)=>t+n),
+    w = Math.exp(0.5*(currentAIC-props.data.singleTreeAICc)),
+    conclusion = w > 0.01 ?
+      <i>some or all of the breakpoints may reflect rate variation instead of topological incongruence</i> :
+      <i>at least of one of the breakpoints reflects a true topological incorguence</i>
+  return (<div className="row">
+    <div className="col-md-12">
+      <Header title="Topological incongruence report" />
+      <table className="table table-condensed tabled-striped">
+        <thead>
+          <tr>
+            <th>Breakpoints</th>
+            <th>LHS p-value</th>
+            <th>RHS p-value</th>
+            <th>Significance</th>
+          </tr>
+        </thead>
+        <tbody>
+          {rows}
+        </tbody>
+      </table>
+      <p>Comparing the AIC<sub>c</sub> score of the best fitting GARD model, that allows for different topologies between segments ({currentAIC.toFixed(1)}), and that of the model that
+      assumes the same tree for all the partitions inferred by GARD the same tree, but allows different branch lengths between partitions ({props.data.singleTreeAICc.toFixed(1)}) suggests that because
+      the multiple tree model { w > 0.01 ? 'cannot' : 'can' } be preferred over the single tree model by an evidence ratio of 100 or greater, {conclusion}.</p>
+      <p>Please consult the above Kishino Hasegawa topological incongruence table for more details.</p>
+      {statements}
     </div>
   </div>);
 }
@@ -228,9 +292,9 @@ class GARD extends React.Component {
     var self = this,
       scrollspy_info = [
         { label: "summary", href: "summary-tab" },
-        { label: "details", href: "details-tab" },
-        { label: "plots", href: "plots-tab" },
-        { label: "trees", href: "trees-tab" },
+        { label: "report", href: "report-tab" },
+        { label: "graph", href: "graph-tab" },
+        { label: "matrix", href: "matrix-tab" },
       ];
     return (<div>
       <NavBar onFileChange={this.onFileChange} />
@@ -241,6 +305,7 @@ class GARD extends React.Component {
             <ErrorMessage />
             <GARDResults data={this.state.data} />
             <GARDRecombinationReport data={this.state.data} />
+            <GARDTopologyReport data={this.state.data} />
             <GARDSiteGraph data={this.state.data} />
             <RateMatrix rate_matrix={this.state.data ? this.state.data.rateMatrix : undefined} />
           </div>
