@@ -134,7 +134,9 @@ class RELAX extends React.Component{
 
   getSummary(){
     if(!this.state.json) return <div></div>;
-    return (<div className="row" id="summary-tab">
+    return (
+      <div className="row">
+      <div className="clearance" id="summary-tab"></div>
       <div className="col-md-12">
         <h3 className="list-group-item-heading">
           <span className="summary-method-name">
@@ -216,12 +218,18 @@ class RELAX extends React.Component{
           <div className="col-sm-10" id="results">
             <ErrorMessage />
             {self.getSummary()}
+            
             <div id="fits-tab" className="row">
-              <ModelFits json={self.state.json} />
+              <div className="col-md-12">
+                <ModelFits json={self.state.json} />
+              </div>
             </div>
+            
             <div id="omega-tab" className="row">
-              <Header title="Omega plots" popover="<p>Needs content.</p>"/>
-              <OmegaPlotGrid json={self.state.json} />
+              <div className="col-md-12">
+                <Header title="Omega plots" popover="<p>Needs content.</p>"/>
+                <OmegaPlotGrid json={self.state.json} />
+              </div>
             </div>
             <div className="row" id="tree-tab">
               <Tree
