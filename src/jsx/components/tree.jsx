@@ -107,7 +107,8 @@ var Tree = React.createClass({
       show_legend: true,
       axis_scale: axis_scale,
       selected_model: selected_model,
-      partition: []
+      partition: [],
+      current: 0
     };
   },
 
@@ -398,24 +399,34 @@ var Tree = React.createClass({
 
   getModelList: function() {
     var self = this;
+    if(self.props.multitree && self.props.json){
+      return _.range(self.props.json.breakpointData.length).map((d,i)=>(<li>
+        <a
+          href="javascript:;"
+          onClick={()=>this.setState({current: i})}
+        >
+          {i+1}
+        </a>
+      </li>));
+    } else {
+      var createListElement = function(model_type) {
+        return (
+          <li>
+            <a
+              href="javascript:;"
+              data-type={model_type}
+              onClick={self.changeModelSelection}
+            >
+              {model_type}
+            </a>
+          </li>
+        );
+      };
 
-    var createListElement = function(model_type) {
-      return (
-        <li>
-          <a
-            href="javascript:;"
-            data-type={model_type}
-            onClick={self.changeModelSelection}
-          >
-            {model_type}
-          </a>
-        </li>
-      );
-    };
-
-    return _.map(this.props.models, (d, key) => {
-      return createListElement(key);
-    });
+      return _.map(this.props.models, (d, key) => {
+        return createListElement(key);
+      });
+    }
   },
 
   settingsMenu: function(){
@@ -544,6 +555,9 @@ var Tree = React.createClass({
 
     if (_.indexOf(_.keys(analysis_data), "tree") > -1) {
       self.tree(analysis_data["tree"]).svg(self.svg);
+    } else if(self.props.multitree){
+      self.tree(self.props.json.breakpointData[self.state.current].tree)
+        .svg(self.svg);      
     } else {
       self
         .tree(self.props.models[self.state.selected_model]["tree string"])
@@ -569,7 +583,7 @@ var Tree = React.createClass({
       .attr("height", "100%")
       .attr("fill", "white");
 
-    if (self.state.show_legend) {
+    if (self.state.show_legend && !self.props.multitree) {
       if (self.legend_type == "discrete") {
         self.renderDiscreteLegendColorScheme("tree_container");
       } else {
@@ -657,7 +671,7 @@ var Tree = React.createClass({
                   className="btn btn-default dropdown-toggle"
                   data-toggle="dropdown"
                 >
-                  Model{" "}
+                  {this.props.multitree ? "Partition" : "Model"}{" "}
                   <span className="caret" />
                 </button>
                 <ul className="dropdown-menu" id="hyphy-tree-model-list">
