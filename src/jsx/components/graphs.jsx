@@ -386,7 +386,7 @@ class ScatterPlot extends BaseGraph {
     _.each(
       this.props.y,
       _.bind(function(y, i) {
-        var series_color = _dmGraphDefaultColorPallette(i);
+        var series_color = graphDefaultColorPallette(i);
 
         var data_points = main_graph
           .selectAll("circle.series_" + i)

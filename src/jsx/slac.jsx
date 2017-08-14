@@ -1066,7 +1066,7 @@ var SLACGraphs = React.createClass({
                       return (
                         <li key={value}>
                           <a
-                            href="#"
+                            href="javascript:void(0);"
                             tabIndex="-1"
                             onClick={_.partial(self.dm_xAxis, value)}
                           >
@@ -1096,7 +1096,7 @@ var SLACGraphs = React.createClass({
                     return (
                       <li key={value}>
                         <a
-                          href="#"
+                          href="javascript:void(0);"
                           tabIndex="-1"
                           onClick={_.partial(self.dm_yAxis, value)}
                         >
