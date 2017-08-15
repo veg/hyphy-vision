@@ -45,6 +45,7 @@ function GARDResults(props){
     <span><strong className="hyphy-highlight">found evidence</strong> of {props.data.lastImprovedBPC} recombination breakpoint{props.data.lastImprovedBPC == 1 ? '' : 's'}</span> :
     <span><strong>found no evidence</strong> of recombination</span>;
   return (<div className="row" id="summary-tab">
+    <div className="clearance" id="summary-div"></div>
     <div className="col-md-12">
       <h3 className="list-group-item-heading">
         <span className="summary-method-name">

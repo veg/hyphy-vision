@@ -239,7 +239,7 @@ var BUSTEDSiteChartAndTable = React.createClass({
       .attr("class", "legend")
       .attr(
         "transform",
-        "translate( " + (0.8 * width) + "," + (0.05 * height) + ")"
+        "translate( " + (0.9 * width) + "," + (0.05 * height) + ")"
       )
       .attr("text-anchor", "start");
     c_legend
@@ -258,7 +258,7 @@ var BUSTEDSiteChartAndTable = React.createClass({
       .attr("class", "legend")
       .attr(
         "transform",
-        "translate( " + (0.8 * width) + "," + (0.15 * height) + ")"
+        "translate( " + (0.9 * width) + "," + (0.15 * height) + ")"
       )
       .attr("text-anchor", "start");
     on_legend

@@ -537,7 +537,7 @@ var SLACSites = React.createClass({
                     return (
                       <li key={index}>
                         <a
-                          href="#"
+                          href="javascript:void(0);"
                           tabIndex="-1"
                           onClick={_.partial(self.dm_setAmbigOption, value)}
                         >
@@ -1101,7 +1101,7 @@ var SLACGraphs = React.createClass({
                     return (
                       <li key={index}>
                         <a
-                          href="#"
+                          href="javascript:void(0);"
                           tabIndex="-1"
                           onClick={_.partial(self.dm_setAmbigOption, value)}
                         >
