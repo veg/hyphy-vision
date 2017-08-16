@@ -1,5 +1,4 @@
 require("phylotree");
-require("phylotree.css");
 
 var React = require("react"),
   ReactDOM = require("react-dom"),
@@ -49,7 +48,8 @@ var BUSTEDSummary = React.createClass({
       );
     }
     return (
-      <div className="row" id="summary-div">
+      <div className="row">
+      <div className="clearance" id="summary-div"></div>
         <div className="col-md-12">
           <h3 className="list-group-item-heading">
             <span className="summary-method-name">
@@ -239,13 +239,13 @@ var BUSTEDSiteChartAndTable = React.createClass({
       .attr("class", "legend")
       .attr(
         "transform",
-        "translate( " + 0.8 * width + "," + 0.05 * height + ")"
+        "translate( " + (0.9 * width) + "," + (0.05 * height) + ")"
       )
-      .attr("text-anchor", "end");
+      .attr("text-anchor", "start");
     c_legend
       .append("text")
       .text("Constrained")
-      .attr("x", 115)
+      .attr("x", 20)
       .attr("y", 7.5)
       .attr("dy", ".32em");
     c_legend
@@ -258,13 +258,13 @@ var BUSTEDSiteChartAndTable = React.createClass({
       .attr("class", "legend")
       .attr(
         "transform",
-        "translate( " + 0.8 * width + "," + 0.15 * height + ")"
+        "translate( " + (0.9 * width) + "," + (0.15 * height) + ")"
       )
-      .attr("text-anchor", "end");
+      .attr("text-anchor", "start");
     on_legend
       .append("text")
       .text("Optimized Null")
-      .attr("x", 135)
+      .attr("x", 20)
       .attr("y", 7.5)
       .attr("dy", ".32em");
     on_legend
@@ -403,9 +403,12 @@ var BUSTEDSiteChartAndTable = React.createClass({
         _.values(row).map((d, i) => (i != 0 ? +float_format(d) : +d))
       );
     return (
+
       <div>
-        <div className="row hyphy-busted-site-table">
-          <div className="col-md-12">
+         
+        <div className="row hyphy-busted-site-table" style={{marginBottom:"20px"}}>
+        
+          <div className="col-md-12">     
             <h4 className="dm-table-header">
               Model Test Statistics Per Site
               <span
@@ -440,10 +443,8 @@ var BUSTEDSiteChartAndTable = React.createClass({
             </button>
           </div>
           <div id="chart-id" className="col-lg-12" />
-        </div>
 
-        <div className="row site-table">
-          <div className="col-lg-6">
+          <div className="col-lg-6 clear-padding justify-content">
             <div className="form-group">
               <label for="er-constrained-threshold">
                 Constrained Test Statistic
@@ -459,7 +460,8 @@ var BUSTEDSiteChartAndTable = React.createClass({
               />
             </div>
           </div>
-          <div className="col-lg-6">
+          
+          <div className="col-lg-6 justify-content">
             <div className="form-group">
               <label for="er-optimized-null-threshold">
                 Optimized Null Test Statistic
@@ -475,7 +477,10 @@ var BUSTEDSiteChartAndTable = React.createClass({
               />
             </div>
           </div>
-          <div className="col-lg-12">
+
+        </div>
+
+        <div className="row site-table">
             <DatamonkeyTable
               headerData={this.headerData}
               bodyData={bodyData}
@@ -484,9 +489,9 @@ var BUSTEDSiteChartAndTable = React.createClass({
               classes={"table table-condensed table-striped"}
               export_csv
             />
-          </div>
-        </div>
+        </div>    
       </div>
+
     );
   }
 
@@ -605,9 +610,9 @@ var BUSTED = React.createClass({
 
     var distro_settings = {
       dimensions: { width: 600, height: 400 },
-      margins: { left: 50, right: 15, bottom: 35, top: 35 },
+      margins: { left: 50, right: 15, bottom: 15, top: 15 },
       legend: false,
-      domain: [0.00001, 100],
+      domain: [0.00001, 10000],
       do_log_plot: true,
       k_p: null,
       plot: null,
@@ -818,7 +823,7 @@ var BUSTED = React.createClass({
                 </div>
                 <div className="col-md-12">
                   <h4 className="dm-table-header">&omega; distribution</h4>
-                  <div id="primary-omega-dist" className="panel-body">
+                  <div id="primary-omega-dist">
                     <PropChart
                       name={self.props.model_name}
                       omegas={self.state.omegas}

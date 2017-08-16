@@ -1,8 +1,7 @@
 var React = require("react"),
   d3 = require("d3"),
   _ = require("underscore"),
-  d3_save_svg = require("d3-save-svg"),
-  graphDefaultColorPallette = d3.scale.category10().domain(_.range(10));
+  d3_save_svg = require("d3-save-svg");
 
 import { saveSvgAsPng } from "save-svg-as-png";
 
