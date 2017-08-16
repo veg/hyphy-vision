@@ -163,9 +163,10 @@ var Tree = React.createClass({
 
   assignBranchAnnotations: function() {
     if (this.state.json && this.props.models[this.state.selected_model]) {
-      this.tree.assign_attributes(
-        this.props.models[this.state.selected_model]["branch-annotations"]
-      );
+      var attributes = this.props.multitree ? 
+        this.props.models[this.state.selected_model]["branch-annotations"][this.state.current] :
+        this.props.models[this.state.selected_model]["branch-annotations"];
+      this.tree.assign_attributes(attributes);
     }
   },
 
@@ -219,7 +220,7 @@ var Tree = React.createClass({
       .append("rect")
       .attr("width", "13")
       .attr("height", "13")
-      .attr("fill", "gray");
+      .attr("fill", "black");
 
     bg_item.append("text").attr("x", "15").attr("y", "11").text("Background");
   },
@@ -400,7 +401,7 @@ var Tree = React.createClass({
   getModelList: function() {
     var self = this;
     if(self.props.multitree && self.props.json){
-      return _.range(self.props.json.breakpointData.length).map((d,i)=>(<li>
+      return _.range(self.props.json.trees.length).map((d,i)=>(<li>
         <a
           href="javascript:;"
           onClick={()=>this.setState({current: i})}
@@ -556,7 +557,7 @@ var Tree = React.createClass({
     if (_.indexOf(_.keys(analysis_data), "tree") > -1) {
       self.tree(analysis_data["tree"]).svg(self.svg);
     } else if(self.props.multitree){
-      self.tree(self.props.json.breakpointData[self.state.current].tree)
+      self.tree(self.props.json.trees[self.state.current])
         .svg(self.svg);      
     } else {
       self
@@ -583,7 +584,7 @@ var Tree = React.createClass({
       .attr("height", "100%")
       .attr("fill", "white");
 
-    if (self.state.show_legend && !self.props.multitree) {
+    if (self.state.show_legend && _.keys(self.props.models).length > 0) {
       if (self.legend_type == "discrete") {
         self.renderDiscreteLegendColorScheme("tree_container");
       } else {

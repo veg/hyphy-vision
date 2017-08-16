@@ -585,13 +585,14 @@ var BUSTED = React.createClass({
           return d;
         });
 
+      data['trees'] = _.values(data['input']['trees']);
+
       data["fits"]["Unconstrained model"][
         "branch-annotations"
       ] = self.formatBranchAnnotations(data);
       data["fits"]["Constrained model"][
         "branch-annotations"
       ] = self.formatBranchAnnotations(data);
-      data['tree'] = data['input']['trees']['0'];
 
       self.setState({
         p: data['test results'].p,
@@ -613,7 +614,7 @@ var BUSTED = React.createClass({
     });
   },
 
-  colorGradient: ["red", "green"],
+  colorGradient: ["#00a99d", "#000000"],
   grayScaleGradient: [
     "#444444",
     "#000000"
@@ -627,7 +628,7 @@ var BUSTED = React.createClass({
         color_fill = foreground_color(0);
 
       element
-        .style("stroke", is_foreground ? color_fill : "gray")
+        .style("stroke", is_foreground ? color_fill : "black")
         .style("stroke-linejoin", "round")
         .style("stroke-linejoin", "round")
         .style("stroke-linecap", "round");
@@ -683,10 +684,11 @@ var BUSTED = React.createClass({
 
   formatBranchAnnotations: function(json) {
     // attach is_foreground to branch annotations
-    var branch_annotations = _.mapObject(json['tested'][0], (val, key)=>{
-      return {is_foreground: val == 'test'};
+    var branch_annotations = d3.range(json.trees.length).map(i=>{
+      return _.mapObject(json['tested'][i], (val, key)=>{
+        return {is_foreground: val == 'test'};
+      });
     });
-
     return branch_annotations;
   },
 
@@ -728,7 +730,6 @@ var BUSTED = React.createClass({
     if (!_.isNull(self.state.json)) {
       models = self.state.json.fits;
     }
-
     return (
       <div>
         <NavBar />
@@ -769,6 +770,7 @@ var BUSTED = React.createClass({
                     models={models}
                     color_gradient={self.colorGradient}
                     grayscale_gradient={self.grayscaleGradient}
+                    multitree
                   />
                 </div>
                 <div className="col-md-12">

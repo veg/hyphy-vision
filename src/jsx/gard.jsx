@@ -259,6 +259,7 @@ class GARD extends React.Component {
   componentDidMount(){
     var self = this;
     d3.json(this.props.url, function(data){
+      data.trees = data.breakpointData.map(row=>row.tree); 
       self.setState({
         data: data
       });
@@ -282,6 +283,7 @@ class GARD extends React.Component {
       reader.onload = (function(theFile) {
         return function(e) {
           var data = JSON.parse(this.result);
+          data.trees = data.breakpointData.map(row=>row.tree); 
           self.setState({data: data});
         };
       })(f);
