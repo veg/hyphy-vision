@@ -329,6 +329,7 @@ class BaseGraph extends React.Component {
 }
 
 BaseGraph.defaultProps = {
+  color_pallette : d3.scale.category10().domain (_.range (10)),
   width: 800,
   height: 400,
   marginLeft: 35,
@@ -451,12 +452,14 @@ ScatterPlot.defaultProps = {
 
 
 class Series extends BaseGraph {
+
   renderGraph(x_scale, y_scale, dom_element) {
+
     var self = this,
       main_graph = d3.select(dom_element);
 
     _.each(self.props.y, function(y, i) {
-      var series_color = graphDefaultColorPallette(i);
+      var series_color = self.props.color_pallette(i);
 
       var series_line = d3.svg
         .area()
