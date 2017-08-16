@@ -372,7 +372,6 @@ var BUSTEDSiteChartAndTable = React.createClass({
       sortable: true,
       value: "Constrained likelihood"
     },
-    ,
     "Optimized Null Likelihood",
     "Constrained Statistic",
     "Optimized Null Statistic"
