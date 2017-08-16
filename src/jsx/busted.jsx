@@ -18,80 +18,81 @@ import { InputInfo } from "./components/input_info";
 var datamonkey = require("../datamonkey/datamonkey.js");
 var _ = require("underscore");
 
-var BUSTEDSummary = React.createClass({
-  render: function() {
-    var significant = this.props.test_result.p < 0.05,
-      message;
-    if (significant) {
-      message = (
-        <p>
-          BUSTED <strong className="hyphy-highlight">
-            found evidence
-          </strong>{" "}
-          (LRT, p-value &le; .05) of gene-wide episodic diversifying selection
-          in the selected foreground of your phylogeny. Therefore, there is
-          evidence that at least one site on at least one foreground branch has
-          experienced diversifying selection.{" "}
-        </p>
-      );
-    } else {
-      message = (
-        <p>
-          BUSTED <strong className="hyphy-highlight">
-            found no evidence
-          </strong>{" "}
-          (LRT, p-value &le; .05) of gene-wide episodic diversifying selection
-          in the selected foreground of your phylogeny. Therefore, there is no
-          evidence that any sites have experienced diversifying selection along
-          the foreground branch(es).{" "}
-        </p>
-      );
-    }
-    return (
-      <div className="row">
-      <div className="clearance" id="summary-div"></div>
-        <div className="col-md-12">
-          <h3 className="list-group-item-heading">
-            <span className="summary-method-name">
-              Branch-Site Unrestricted Statistical Test for Episodic
-              Diversification
-            </span>
-            <br />
-            <span className="results-summary">results summary</span>
-          </h3>
-        </div>
-        <div className="col-md-12">
-          <InputInfo input_data={this.props.input_data} />
-        </div>
-        <div className="col-md-12">
-          <div className="main-result">
-            {message}
-            <hr />
-            <p>
-              <small>
-                See{" "}
-                <a href="http://hyphy.org/methods/selection-methods/#busted">
-                  here
-                </a>{" "}
-                for more information about the BUSTED method.
-                <br />Please cite{" "}
-                <a
-                  href="http://www.ncbi.nlm.nih.gov/pubmed/25701167"
-                  id="summary-pmid"
-                  target="_blank"
-                >
-                  PMID 25701167
-                </a>{" "}
-                if you use this result in a publication, presentation, or other
-                scientific work.
-              </small>
-            </p>
-          </div>
-        </div>
-      </div>
+function BUSTEDSummary(props) {
+  var significant = props.p < 0.05,
+    input_data = props.input_data ? {
+      filename: props.input_data['file name'],
+      sequences: props.input_data['number of sequences'],
+      sites: props.input_data['number of sites']
+    } : null,
+    message;
+  if (significant) {
+    message = (<p>
+      BUSTED <strong className="hyphy-highlight">
+        found evidence
+      </strong>{" "}
+      (LRT, p-value={props.p ? props.p.toFixed(3) : null} &le; .05) of gene-wide episodic diversifying selection
+      in the selected foreground of your phylogeny. Therefore, there is
+      evidence that at least one site on at least one foreground branch has
+      experienced diversifying selection.{" "}
+    </p>);
+  } else {
+    message = (
+      <p>
+        BUSTED <strong className="hyphy-highlight">
+          found no evidence
+        </strong>{" "}
+        (LRT, p-value &le; .05) of gene-wide episodic diversifying selection
+        in the selected foreground of your phylogeny. Therefore, there is no
+        evidence that any sites have experienced diversifying selection along
+        the foreground branch(es).{" "}
+      </p>
     );
   }
-});
+  return (
+    <div className="row">
+    <div className="clearance" id="summary-div"></div>
+      <div className="col-md-12">
+        <h3 className="list-group-item-heading">
+          <span className="summary-method-name">
+            Branch-Site Unrestricted Statistical Test for Episodic
+            Diversification
+          </span>
+          <br />
+          <span className="results-summary">results summary</span>
+        </h3>
+      </div>
+      <div className="col-md-12">
+        <InputInfo input_data={input_data} />
+      </div>
+      <div className="col-md-12">
+        <div className="main-result">
+          {message}
+          <hr />
+          <p>
+            <small>
+              See{" "}
+              <a href="http://hyphy.org/methods/selection-methods/#busted">
+                here
+              </a>{" "}
+              for more information about the BUSTED method.
+              <br />Please cite{" "}
+              <a
+                href="http://www.ncbi.nlm.nih.gov/pubmed/25701167"
+                id="summary-pmid"
+                target="_blank"
+              >
+                PMID 25701167
+              </a>{" "}
+              if you use this result in a publication, presentation, or other
+              scientific work.
+            </small>
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 var BUSTEDSiteChartAndTable = React.createClass({
   getInitialState: function() {
@@ -128,7 +129,7 @@ var BUSTEDSiteChartAndTable = React.createClass({
       number_of_sites = this.props.data.length,
       margin = { top: 20, right: 20, bottom: 40, left: 50 },
       width = $("#chart-id").width() - margin.left - margin.right,
-      height = 270 - margin.top - margin.bottom,
+      height = 320 - margin.top - margin.bottom,
       ymin = d3.min(
         self.props.data.map(d =>
           Math.min(
@@ -147,16 +148,18 @@ var BUSTEDSiteChartAndTable = React.createClass({
       ),
       x = d3.scale.linear().domain([0, number_of_sites]).range([0, width]),
       y = d3.scale.linear().domain([ymin, ymax]).range([height, 0]),
+      yAxisDelta = Math.max(2, 2*Math.floor(((ymax-ymin)/10)/2)),
       yAxisTicks = d3.range(
-        5 * Math.ceil(ymin / 5),
-        5 * Math.floor(ymax / 5) + 1,
-        5
+        yAxisDelta * Math.ceil(ymin / yAxisDelta),
+        yAxisDelta * Math.floor(ymax / yAxisDelta) + 1,
+        yAxisDelta 
       ),
+      xAxisDelta = 5*Math.floor((number_of_sites/30)/5),
       xAxis = d3.svg
         .axis()
         .scale(x)
         .orient("bottom")
-        .tickValues(d3.range(5, number_of_sites, 5)),
+        .tickValues(d3.range(xAxisDelta, number_of_sites, xAxisDelta)),
       yAxis = d3.svg.axis().scale(y).orient("left").tickValues(yAxisTicks),
       cer_line = d3.svg
         .line()
@@ -179,12 +182,12 @@ var BUSTEDSiteChartAndTable = React.createClass({
         .append("svg")
         .attr("id", "chart")
         .attr("width", width + margin.left + margin.right)
-        .attr("height", height + margin.top + margin.bottom)
+        .attr("height", height + margin.top + margin.bottom);
 
     svg.append("rect")
       .attr("width", "100%")
       .attr("height", "100%")
-      .attr("fill", "white")
+      .attr("fill", "white");
 
     var g = svg.append("g")
       .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
@@ -497,6 +500,69 @@ var BUSTEDSiteChartAndTable = React.createClass({
 
 });
 
+function BUSTEDModelTable(props){
+  if(!props.fits) return <div></div>;
+  var rows = _.map(props.fits, (val, key) => {
+    var distributions = val['Rate Distributions'];
+    return [(<tr>
+      <td>{key}</td>
+      <td>{val['Log Likelihood'] ? val['Log Likelihood'].toFixed(1) : null}</td>
+      <td>{val['estimated parameters']}</td>
+      <td>{val['AIC-c'].toFixed(1)}</td>
+      <td>Test</td>
+      <td>{distributions["Test"]["0"].omega.toFixed(2)} ({(100*distributions["Test"]["0"].proportion).toFixed(0)}%)</td>
+      <td>{distributions["Test"]["1"].omega.toFixed(2)} ({(100*distributions["Test"]["1"].proportion).toFixed(0)}%)</td>
+      <td>{distributions["Test"]["2"].omega.toFixed(2)} ({(100*distributions["Test"]["2"].proportion).toFixed(0)}%)</td>
+    </tr>),
+    (<tr>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td>Background</td>
+      <td>{distributions["Background"]["0"].omega.toFixed(2)} ({(100*distributions["Background"]["0"].proportion).toFixed(0)}%)</td>
+      <td>{distributions["Background"]["1"].omega.toFixed(2)} ({(100*distributions["Background"]["1"].proportion).toFixed(0)}%)</td>
+      <td>{distributions["Background"]["2"].omega.toFixed(2)} ({(100*distributions["Background"]["2"].proportion).toFixed(0)}%)</td>
+    </tr>)];
+  });
+  return (<div>
+    <h4 className="dm-table-header">
+      Model fits
+      <span
+        className="glyphicon glyphicon-info-sign"
+        style={{ verticalAlign: "middle", float: "right" }}
+        aria-hidden="true"
+        data-toggle="popover"
+        data-trigger="hover"
+        title="Actions"
+        data-html="true"
+        data-content="<ul><li>Hover over a column header for a description of its content.</li></ul>"
+        data-placement="bottom"
+      />
+    </h4>
+    <table
+      className="dm-table table table-hover table-condensed list-group-item-text"
+      style={{ marginTop: "0.5em" }}
+    >
+      <thead id="summary-model-header1">
+        <tr>
+          <th>Model</th>
+          <th><em>log</em> L</th>
+          <th>#. params</th>
+          <th>AIC<sub>c</sub></th>
+          <th>Branch set</th>
+          <th>&omega;<sub>1</sub></th>
+          <th>&omega;<sub>2</sub></th>
+          <th>&omega;<sub>3</sub></th>
+        </tr>
+      </thead>
+      <tbody id="summary-model-table">
+        {_.flatten(rows)}
+      </tbody>
+    </table>
+  </div>); 
+}
+
 var BUSTED = React.createClass({
   float_format: d3.format(".2f"),
   p_value_format: d3.format(".4f"),
@@ -506,63 +572,41 @@ var BUSTED = React.createClass({
     var self = this;
 
     d3.json(this.props.url, function(data) {
+      data.fits = _.mapObject(data.fits, (val, key) => {
+        val['log-likelihood'] = val['Log Likelihood'];
+        val['parameters'] = val['estimated parameters'];
+        val['display-order'] = val['display order'];
+        return val;
+      });
+
+      var omegas = data['fits']['Unconstrained model']['Rate Distributions']['Test'], 
+        formatted_omegas = _.map(_.values(omegas), function(d) {
+          d.prop = d.proportion;
+          return d;
+        });
+
       data["fits"]["Unconstrained model"][
         "branch-annotations"
-      ] = self.formatBranchAnnotations(data, "Unconstrained model");
+      ] = self.formatBranchAnnotations(data);
       data["fits"]["Constrained model"][
         "branch-annotations"
-      ] = self.formatBranchAnnotations(data, "Constrained model");
-
-      // rename rate distributions
-      data["fits"]["Unconstrained model"]["rate-distributions"] =
-        data["fits"]["Unconstrained model"]["rate distributions"];
-      data["fits"]["Constrained model"]["rate-distributions"] =
-        data["fits"]["Constrained model"]["rate distributions"];
-
-      // set display order
-      data["fits"]["Unconstrained model"]["display-order"] = 0;
-      data["fits"]["Constrained model"]["display-order"] = 1;
-
-      var json = data,
-        pmid = "25701167",
-        pmid_text = "PubMed ID " + pmid,
-        pmid_href = "http://www.ncbi.nlm.nih.gov/pubmed/" + pmid,
-        p = json["test results"]["p"],
-        statement = p <= 0.05 ? "evidence" : "no evidence";
-
-      var fg_rate =
-        json["fits"]["Unconstrained model"]["rate distributions"]["FG"];
-      var mapped_omegas = {
-        omegas: _.map(fg_rate, function(d) {
-          return _.object(["omega", "prop"], d);
-        })
-      };
+      ] = self.formatBranchAnnotations(data);
+      data['tree'] = data['input']['trees']['0'];
 
       self.setState({
-        p: p,
-        test_result: {
-          statement: statement,
-          p: p
-        },
-        json: json,
-        omegas: mapped_omegas["omegas"],
-        pmid: {
-          text: pmid_text,
-          href: pmid_href
-        },
-        input_data: data["input_data"],
-        evidence_ratio_data: _.map(_.range(data.input_data["sites"]), function(
-          i
-        ) {
+        p: data['test results'].p,
+        input_data: data['input'],
+        fits: data['fits'],
+        omegas: formatted_omegas,
+        json: data,
+        evidence_ratio_data: _.map(_.range(data.input['number of sites']), function(i){
           return {
-            site_index: i + 1,
-            unconstrained_likelihood: data["profiles"]["unconstrained"][0][i],
-            constained_likelihood: data["profiles"]["constrained"][0][i],
-            optimized_null_likelihood: data["profiles"]["optimized null"][0][i],
-            constrained_evidence_ratio:
-              2 * Math.log(data["evidence ratios"]["constrained"][0][i]),
-            optimized_null_evidence_ratio:
-              2 * Math.log(data["evidence ratios"]["optimized null"][0][i])
+            site_index: i+1,
+            unconstrained_likelihood: data["Site Log Likelihood"]["unconstrained"][0][i],
+            constrained_likelihood: data["Site Log Likelihood"]["constrained"][0][i],
+            optimized_null_likelihood: data["Site Log Likelihood"]["optimized null"][0][i],
+            constrained_evidence_ratio: 2*Math.log(data['Evidence Ratios']['constrained'][0][i]),
+            optimized_null_evidence_ratio: 2*Math.log(data['Evidence Ratios']['optimized null'][0][i])
           };
         })
       });
@@ -631,100 +675,17 @@ var BUSTED = React.createClass({
   getInitialState: function() {
     return {
       p: null,
-      test_result: {
-        statement: null,
-        p: null
-      },
-      json: null,
-      omegas: null,
-      pmid: {
-        href: null,
-        text: null
-      },
+      fits: null,
       input_data: null,
-      table_rows: []
+      json: null
     };
   },
 
-  setEvents: function() {
-    var self = this;
-
-    $("#json-file").on("change", function(e) {
-      var files = e.target.files; // FileList object
-      if (files.length == 1) {
-        var f = files[0];
-        var reader = new FileReader();
-        reader.onload = (function(theFile) {
-          return function(e) {
-            var data = JSON.parse(this.result);
-            data["fits"]["Unconstrained model"][
-              "branch-annotations"
-            ] = self.formatBranchAnnotations(data, "Unconstrained model");
-            data["fits"]["Constrained model"][
-              "branch-annotations"
-            ] = self.formatBranchAnnotations(data, "Constrained model");
-
-            // rename rate distributions
-            data["fits"]["Unconstrained model"]["rate-distributions"] =
-              data["fits"]["Unconstrained model"]["rate distributions"];
-            data["fits"]["Constrained model"]["rate-distributions"] =
-              data["fits"]["Constrained model"]["rate distributions"];
-
-            var json = data,
-              pmid = "25701167",
-              pmid_text = "PubMed ID " + pmid,
-              pmid_href = "http://www.ncbi.nlm.nih.gov/pubmed/" + pmid,
-              p = json["test results"]["p"],
-              statement = p <= 0.05 ? "evidence" : "no evidence";
-
-            var fg_rate =
-              json["fits"]["Unconstrained model"]["rate distributions"]["FG"];
-            var mapped_omegas = {
-              omegas: _.map(fg_rate, function(d) {
-                return _.object(["omega", "prop"], d);
-              })
-            };
-
-            self.setState({
-              p: p,
-              test_result: {
-                statement: statement,
-                p: p
-              },
-              json: json,
-              omegas: mapped_omegas["omegas"],
-              pmid: {
-                text: pmid_text,
-                href: pmid_href
-              },
-              input_data: data["input_data"]
-            });
-          };
-        })(f);
-        reader.readAsText(f);
-      }
-      $("#json-file").dropdown("toggle");
-      e.preventDefault();
-    });
-  },
-
-  formatBranchAnnotations: function(json, key) {
+  formatBranchAnnotations: function(json) {
     // attach is_foreground to branch annotations
-    var foreground = json["test set"].split(",");
-
-    var tree = d3.layout.phylotree(),
-      nodes = tree(json["fits"][key]["tree string"]).get_nodes(),
-      node_names = _.map(nodes, function(d) {
-        return d.name;
-      });
-
-    // Iterate over objects
-    var branch_annotations = _.object(
-      node_names,
-      _.map(node_names, function(d) {
-        return { is_foreground: _.indexOf(foreground, d) > -1 };
-      })
-    );
+    var branch_annotations = _.mapObject(json['tested'][0], (val, key)=>{
+      return {is_foreground: val == 'test'};
+    });
 
     return branch_annotations;
   },
@@ -738,19 +699,10 @@ var BUSTED = React.createClass({
 
     // delete existing tree
     d3.select("#tree_container").select("svg").remove();
-
-    $("#export-dist-svg").on("click", function(e) {
-      datamonkey.save_image("svg", "#primary-omega-dist");
-    });
-
-    $("#export-dist-png").on("click", function(e) {
-      datamonkey.save_image("png", "#primary-omega-dist");
-    });
   },
 
   componentWillMount: function() {
     this.loadFromServer();
-    this.setEvents();
   },
 
   componentDidUpdate(prevProps, prevState) {
@@ -777,7 +729,6 @@ var BUSTED = React.createClass({
       models = self.state.json.fits;
     }
 
-
     return (
       <div>
         <NavBar />
@@ -789,8 +740,7 @@ var BUSTED = React.createClass({
               <div id="results">
                 <div id="summary-tab">
                   <BUSTEDSummary
-                    test_result={this.state.test_result}
-                    pmid={this.state.pmid}
+                    p={this.state.p}
                     input_data={self.state.input_data}
                   />
                 </div>
@@ -798,7 +748,7 @@ var BUSTED = React.createClass({
 
               <div className="row">
                 <div id="hyphy-model-fits" className="col-lg-12">
-                  <ModelFits json={self.state.json} />
+                  <BUSTEDModelTable fits={self.state.fits} />
                   <p className="description">
                     This table reports a statistical summary of the models fit
                     to the data. Here, <strong>Unconstrained model</strong>{" "}
@@ -840,6 +790,7 @@ var BUSTED = React.createClass({
       </div>
     );
   }
+
 });
 
 // Will need to make a call to this
