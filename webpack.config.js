@@ -32,7 +32,10 @@ config = {
     rules: [
       {
         test: /\.(js|jsx)?$/,
-        exclude: /node_modules/,
+        include:[
+          path.resolve(__dirname, "src"),
+          path.resolve(__dirname, "node_modules/csvexport")
+        ],
         loaders: "babel-loader",
         query: {
           presets: ["react"]

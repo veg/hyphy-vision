@@ -1615,7 +1615,7 @@ var React = __webpack_require__(5),
     d3 = __webpack_require__(6),
     datamonkey = __webpack_require__(20);
 
-__webpack_require__(145);
+__webpack_require__(111);
 
 var DatamonkeyTableRow = React.createClass({
   displayName: "DatamonkeyTableRow",
@@ -12284,17 +12284,17 @@ __webpack_require__(150);
 __webpack_require__(68);
 __webpack_require__(20);
 
-var absrel = __webpack_require__(113),
-    busted = __webpack_require__(114),
-    fade = __webpack_require__(112),
-    fade_summary = __webpack_require__(119),
-    fel = __webpack_require__(120),
-    prime = __webpack_require__(123),
-    relax = __webpack_require__(124),
-    slac = __webpack_require__(125),
-    meme = __webpack_require__(122),
-    gard = __webpack_require__(121),
-    template = __webpack_require__(126);
+var absrel = __webpack_require__(114),
+    busted = __webpack_require__(115),
+    fade = __webpack_require__(113),
+    fade_summary = __webpack_require__(120),
+    fel = __webpack_require__(121),
+    prime = __webpack_require__(124),
+    relax = __webpack_require__(125),
+    slac = __webpack_require__(126),
+    meme = __webpack_require__(123),
+    gard = __webpack_require__(122),
+    template = __webpack_require__(127);
 
 // Create new hyphy-vision export
 window.absrel = absrel;
@@ -12315,6 +12315,157 @@ window.template = template;
 /* 109 */,
 /* 110 */,
 /* 111 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+(function () {
+  var CsvWriter = function () {
+    function CsvWriter() {
+      var delimiter = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : ",";
+      var contentType = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : "text/csv";
+
+      _classCallCheck(this, CsvWriter);
+
+      this._delimiter = delimiter;
+      this._contentType = contentType;
+      this._rows = [[]];
+    }
+
+    _createClass(CsvWriter, [{
+      key: "_quote",
+      value: function _quote(string) {
+        return "\"" + string.replace(/"/g, "\"\"") + "\"";
+      }
+    }, {
+      key: "writeValue",
+      value: function writeValue(value) {
+        var stringValue = value === undefined ? "" : String(value);
+        var needsQuote = stringValue.indexOf(this._delimiter) !== -1 || /"\r\n/.test(stringValue);
+        this._currentRow.push(needsQuote ? this._quote(stringValue) : stringValue);
+      }
+    }, {
+      key: "writeLine",
+      value: function writeLine() {
+        this._rows.push([]);
+      }
+    }, {
+      key: "toString",
+      value: function toString() {
+        var _this = this;
+
+        return this._rows.map(function (row) {
+          return row.join(_this._delimiter);
+        }).reduce(function (content, row) {
+          return content + "\r\n" + row;
+        });
+      }
+    }, {
+      key: "toBlob",
+      value: function toBlob() {
+        return new Blob([this.toString()], { type: this._contentType });
+      }
+    }, {
+      key: "_currentRow",
+      get: function get() {
+        return this._rows[this._rows.length - 1];
+      }
+    }]);
+
+    return CsvWriter;
+  }();
+
+  var Export = function () {
+    function Export(options) {
+      _classCallCheck(this, Export);
+
+      this._options = options || {};
+    }
+
+    _createClass(Export, [{
+      key: "_createCsvBlob",
+      value: function _createCsvBlob(data) {
+        var delimeter = this._options.delimeter || ",";
+        var contentType = this._options.contentType || "text/csv";
+        var headerNames = this._options.headers || {};
+        var formatters = this._options.formatters || {};
+        var includeHeaders = this._options.includeHeaders;
+        var getFormater = function getFormater(header) {
+          return formatters[header] || function (v) {
+            return v;
+          };
+        };
+        var writer = new CsvWriter(delimeter, contentType);
+        var headers = this._options.columns || Object.getOwnPropertyNames(data[0]);
+        if (includeHeaders === undefined || includeHeaders) {
+          headers.forEach(function (header) {
+            return writer.writeValue(headerNames[header] || header);
+          });
+          writer.writeLine();
+        }
+        data.forEach(function (row) {
+          headers.forEach(function (header) {
+            return writer.writeValue(getFormater(header)(row[header]));
+          });
+          writer.writeLine();
+        });
+        return writer.toBlob();
+      }
+    }, {
+      key: "_download",
+      value: function _download(blob, filename) {
+        if (navigator.msSaveBlob) {
+          // Internet Explorer throws "Access is Denied" with ObjectUrls
+          navigator.msSaveBlob(blob, filename);
+          return;
+        }
+        var link = document.createElement("A");
+        var url = URL.createObjectURL(blob);
+        link.href = url;
+        link.download = filename;
+        link.style.display = "none";
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      }
+    }, {
+      key: "downloadCsv",
+      value: function downloadCsv(data) {
+        try {
+          console.info("Generating CSV download");
+          var blob = this._createCsvBlob(data);
+          var filename = this._options.filename || "export.csv";
+          this._download(blob, filename);
+        } catch (err) {
+          alert("Unable to create export: " + err.message);
+          console.error(err);
+        }
+      }
+    }], [{
+      key: "create",
+      value: function create(options) {
+        return new Export(options);
+      }
+    }, {
+      key: "download",
+      value: function download(data) {
+        return new Export().downloadCsv(data);
+      }
+    }]);
+
+    return Export;
+  }();
+
+  window.Export = Export;
+})();
+
+/***/ }),
+/* 112 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12603,7 +12754,7 @@ datamonkey.helpers.map = datamonkey_map_list;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3), __webpack_require__(3), __webpack_require__(6), __webpack_require__(9)))
 
 /***/ }),
-/* 112 */
+/* 113 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12907,7 +13058,7 @@ module.exports = datamonkey_fade;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3), __webpack_require__(6)))
 
 /***/ }),
-/* 113 */
+/* 114 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12915,11 +13066,11 @@ module.exports = datamonkey_fade;
 
 var _tables = __webpack_require__(23);
 
-var _tree_summary = __webpack_require__(118);
+var _tree_summary = __webpack_require__(119);
 
 var _tree = __webpack_require__(39);
 
-var _branch_table = __webpack_require__(115);
+var _branch_table = __webpack_require__(116);
 
 var _navbar = __webpack_require__(16);
 
@@ -13529,7 +13680,7 @@ module.exports = render_absrel;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(6), __webpack_require__(3)))
 
 /***/ }),
-/* 114 */
+/* 115 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14324,7 +14475,7 @@ module.exports = render_busted;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ }),
-/* 115 */
+/* 116 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14748,7 +14899,7 @@ module.exports.rerender_branch_table = rerender_branch_table;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(9), __webpack_require__(6), __webpack_require__(3)))
 
 /***/ }),
-/* 116 */
+/* 117 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -15210,7 +15361,7 @@ module.exports.OmegaPlotGrid = OmegaPlotGrid;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(6)))
 
 /***/ }),
-/* 117 */
+/* 118 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -15363,7 +15514,7 @@ var RateMatrix = function (_React$Component) {
 module.exports.RateMatrix = RateMatrix;
 
 /***/ }),
-/* 118 */
+/* 119 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -15580,7 +15731,7 @@ module.exports.rerender_tree_summary = rerender_tree_summary;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(6), __webpack_require__(3)))
 
 /***/ }),
-/* 119 */
+/* 120 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -15716,7 +15867,7 @@ function render_fade_summary(json, msa) {
 module.exports = render_fade_summary;
 
 /***/ }),
-/* 120 */
+/* 121 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16234,7 +16385,7 @@ module.exports = render_fel;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(6), __webpack_require__(3)))
 
 /***/ }),
-/* 121 */
+/* 122 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16254,7 +16405,7 @@ var _error_message = __webpack_require__(48);
 
 var _header = __webpack_require__(38);
 
-var _rate_matrix = __webpack_require__(117);
+var _rate_matrix = __webpack_require__(118);
 
 var _graphs = __webpack_require__(30);
 
@@ -16878,7 +17029,7 @@ module.exports = render_gard;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ }),
-/* 122 */
+/* 123 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17282,7 +17433,7 @@ module.exports = render_meme;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ }),
-/* 123 */
+/* 124 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17307,7 +17458,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 var React = __webpack_require__(5),
     ReactDOM = __webpack_require__(18),
     _ = __webpack_require__(9),
-    chi = __webpack_require__(141);
+    chi = __webpack_require__(142);
 
 var PRIME = function (_React$Component) {
   _inherits(PRIME, _React$Component);
@@ -17744,7 +17895,7 @@ module.exports = prime;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(6), __webpack_require__(3)))
 
 /***/ }),
-/* 124 */
+/* 125 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17764,7 +17915,7 @@ var _error_message = __webpack_require__(48);
 
 var _tree = __webpack_require__(39);
 
-var _omega_plots = __webpack_require__(116);
+var _omega_plots = __webpack_require__(117);
 
 var _header = __webpack_require__(38);
 
@@ -18120,7 +18271,7 @@ module.exports = render_relax;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(6), __webpack_require__(3)))
 
 /***/ }),
-/* 125 */
+/* 126 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -18150,7 +18301,7 @@ var React = __webpack_require__(5),
     d3_save_svg = __webpack_require__(31),
     datamonkey = __webpack_require__(20);
 
-__webpack_require__(111);
+__webpack_require__(112);
 
 var SLACSites = React.createClass({
   displayName: "SLACSites",
@@ -19640,7 +19791,7 @@ module.exports = render_slac;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(6), __webpack_require__(3)))
 
 /***/ }),
-/* 126 */
+/* 127 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -19886,7 +20037,7 @@ module.exports = render_template;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ }),
-/* 127 */
+/* 128 */
 /***/ (function(module, exports) {
 
 /*
@@ -19959,7 +20110,6 @@ module.exports = render_template;
 
 
 /***/ }),
-/* 128 */,
 /* 129 */,
 /* 130 */,
 /* 131 */,
@@ -19971,7 +20121,8 @@ module.exports = render_template;
 /* 137 */,
 /* 138 */,
 /* 139 */,
-/* 140 */
+/* 140 */,
+/* 141 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var LogGamma = __webpack_require__(76).log
@@ -20040,7 +20191,7 @@ module.exports = function (Z, DF) {
 
 
 /***/ }),
-/* 141 */
+/* 142 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var gamma = __webpack_require__(76);
@@ -20054,11 +20205,11 @@ exports.pdf = function (x, k_) {
     ;
 };
 
-exports.cdf = __webpack_require__(140)
+exports.cdf = __webpack_require__(141)
 
 
 /***/ }),
-/* 142 */
+/* 143 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -20143,103 +20294,8 @@ module.exports = copy;
 
 
 /***/ }),
-/* 143 */,
 /* 144 */,
-/* 145 */
-/***/ (function(module, exports) {
-
-(() => {
-  
-class CsvWriter {
-  constructor(delimiter = ",", contentType = "text/csv") {
-    this._delimiter = delimiter;
-    this._contentType = contentType;
-    this._rows = [[]];
-  }
-
-  get _currentRow() { return this._rows[this._rows.length-1]; }
-
-  _quote(string) { return "\"" + string.replace(/"/g, "\"\"") + "\"" }
-
-  writeValue(value) {
-    let stringValue = value === undefined ? "" : String(value);
-    let needsQuote = stringValue.indexOf(this._delimiter) !== -1 || /"\r\n/.test(stringValue);
-    this._currentRow.push(needsQuote ? this._quote(stringValue) : stringValue);
-  }
-
-  writeLine() { this._rows.push([]); }
-
-  toString() { return this._rows.map(row => row.join(this._delimiter)).reduce((content,row) => content + "\r\n" + row); }
-
-  toBlob() { return new Blob([this.toString()], { type: this._contentType }); }
-}
-
-
-class Export {
-  
-  constructor(options) {
-    this._options = options || {};
-  }
-  
-  _createCsvBlob(data) {
-    let delimeter = this._options.delimeter || ",";
-    let contentType = this._options.contentType || "text/csv";
-    let headerNames = this._options.headers || {};
-    let formatters = this._options.formatters || {};
-    let includeHeaders = this._options.includeHeaders;
-    let getFormater = header => formatters[header] || (v => v);
-    let writer = new CsvWriter(delimeter,contentType);
-    let headers = this._options.columns || Object.getOwnPropertyNames(data[0]);
-    if (includeHeaders === undefined || includeHeaders) {
-      headers.forEach(header => writer.writeValue(headerNames[header]||header));
-      writer.writeLine();
-    }
-    data.forEach(row => {
-      headers.forEach(header => writer.writeValue(getFormater(header)(row[header])));
-      writer.writeLine();
-    });
-    return writer.toBlob();
-  }
-
-  _download(blob, filename)
-  {
-    if (navigator.msSaveBlob) {
-      // Internet Explorer throws "Access is Denied" with ObjectUrls
-      navigator.msSaveBlob(blob,filename);
-      return;
-    }
-    let link = document.createElement("A");
-    let url = URL.createObjectURL(blob);
-    link.href = url;
-    link.download = filename;
-    link.style.display = "none";
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-  }
-  
-  downloadCsv(data) {
-  	try {
-    	console.info("Generating CSV download");
-      let blob = this._createCsvBlob(data);
-      let filename = this._options.filename || "export.csv";
-      this._download(blob, filename);
-    } catch(err) {
-    	alert(`Unable to create export: ${err.message}`);
-      console.error(err);
-    }
-  }
-  
-  static create(options) { return new Export(options); }
-
-  static download(data) { return new Export().downloadCsv(data); }
-}
-
-window.Export = Export;
-
-})();
-
-/***/ }),
+/* 145 */,
 /* 146 */,
 /* 147 */
 /***/ (function(module, exports) {
@@ -21040,7 +21096,7 @@ module.exports = performanceNow;
 
 var datauriDownload = __webpack_require__(147),
     isArrayBuffer = __webpack_require__(168),
-    arraybufferToBase64 = __webpack_require__(127).encode;
+    arraybufferToBase64 = __webpack_require__(128).encode;
 
 /**
  * Download a string or an ArrayBuffer as a file in the browser
@@ -21172,7 +21228,7 @@ var _react = __webpack_require__(5);
 
 var _react2 = _interopRequireDefault(_react);
 
-var _copyToClipboard = __webpack_require__(142);
+var _copyToClipboard = __webpack_require__(143);
 
 var _copyToClipboard2 = _interopRequireDefault(_copyToClipboard);
 
