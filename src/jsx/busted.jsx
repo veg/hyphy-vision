@@ -750,7 +750,7 @@ var BUSTED = React.createClass({
     var scrollspy_info = [
       { label: "summary", href: "summary-div" },
       { label: "model statistics", href: "hyphy-model-fits" },
-      { label: "input tree", href: "phylogenetic-tree" },
+      { label: "tree", href: "phylogenetic-tree" },
       { label: "ω distribution", href: "primary-omega-dist" }
     ];
 

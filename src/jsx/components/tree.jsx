@@ -406,7 +406,7 @@ var Tree = React.createClass({
       menu = [];
     if(self.props.multitree && self.props.json){
       menu = menu.concat(<li className="dropdown-header">Partitions</li>)
-      var partition_list = _.range(self.props.json.trees.length).map((d,i)=>(<li>
+      var partition_list = _.range(self.props.json.trees.length).map((d,i)=>(<li style={{backgroundColor: d==self.state.current ? 'lightGrey' : 'white'}}>
         <a
           href="javascript:;"
           onClick={()=>this.setState({current: i})}
@@ -422,23 +422,28 @@ var Tree = React.createClass({
         menu = menu.concat(<li role="separator" className="divider"></li>);
       }
       menu = menu.concat(<li className="dropdown-header">Models</li>)
+
       var createListElement = function(model_type) {
-        return (
-          <li>
-            <a
-              href="javascript:;"
-              data-type={model_type}
-              onClick={self.changeModelSelection}
-            >
-              {model_type}
-            </a>
-          </li>
-        );
+        return (<li>
+          <a
+            href="javascript:;"
+            data-type={model_type}
+            onClick={self.changeModelSelection}
+          >
+            {model_type}
+          </a>
+        </li>);
       };
 
-      var model_list = _.map(this.props.models, (d, key) => {
-        return createListElement(key);
-      });
+      var model_list = _.map(this.props.models, (d, model_type) => (<li style={{backgroundColor: model_type==self.state.selected_model ? 'lightGrey' : 'white'}}>
+          <a
+            href="javascript:;"
+            data-type={model_type}
+            onClick={self.changeModelSelection}
+          >
+            {model_type}
+          </a>
+        </li>));
       menu = menu.concat(model_list);
     }
     return menu;
