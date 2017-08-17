@@ -236,7 +236,7 @@ var BUSTEDSiteChartAndTable = React.createClass({
       .attr("y", -margin.left)
       .attr("dy", "1em")
       .style("text-anchor", "middle")
-      .text("2*Logarithm of evidence ratio");
+      .text("2*Log Evidence Ratio");
     var c_legend = svg
       .append("g")
       .attr("class", "legend")
@@ -567,50 +567,79 @@ var BUSTED = React.createClass({
   p_value_format: d3.format(".4f"),
   fit_format: d3.format(".2f"),
 
+  processData: function(data) {
+    data.fits = _.mapObject(data.fits, (val, key) => {
+      val['log-likelihood'] = val['Log Likelihood'];
+      val['parameters'] = val['estimated parameters'];
+      val['display-order'] = val['display order'];
+      return val;
+    });
+
+    var omegas = data['fits']['Unconstrained model']['Rate Distributions']['Test'], 
+      formatted_omegas = _.map(_.values(omegas), function(d) {
+        d.prop = d.proportion;
+        return d;
+      });
+
+    data['trees'] = _.map(data['input']['trees'], (val, key) => {
+      var branchLengths = {
+        'Unconstrained model': _.mapObject(data['branch attributes'][key], val1 => val1.unconstrained),
+        'Constrained model': _.mapObject(data['branch attributes'][key], val1 => val1.constrained)
+      };
+      return {newickString: val, branchLengths: branchLengths};
+    });
+
+    data["fits"]["Unconstrained model"][
+      "branch-annotations"
+    ] = this.formatBranchAnnotations(data);
+    data["fits"]["Constrained model"][
+      "branch-annotations"
+    ] = this.formatBranchAnnotations(data);
+
+    this.setState({
+      p: data['test results'].p,
+      input_data: data['input'],
+      fits: data['fits'],
+      omegas: formatted_omegas,
+      json: data,
+      evidence_ratio_data: _.map(_.range(data.input['number of sites']), function(i){
+        return {
+          site_index: i+1,
+          unconstrained_likelihood: data["Site Log Likelihood"]["unconstrained"][0][i],
+          constrained_likelihood: data["Site Log Likelihood"]["constrained"][0][i],
+          optimized_null_likelihood: data["Site Log Likelihood"]["optimized null"][0][i],
+          constrained_evidence_ratio: 2*Math.log(data['Evidence Ratios']['constrained'][0][i]),
+          optimized_null_evidence_ratio: 2*Math.log(data['Evidence Ratios']['optimized null'][0][i])
+        };
+      })
+    });
+  },
+
   loadFromServer: function() {
     var self = this;
 
     d3.json(this.props.url, function(data) {
-      data.fits = _.mapObject(data.fits, (val, key) => {
-        val['log-likelihood'] = val['Log Likelihood'];
-        val['parameters'] = val['estimated parameters'];
-        val['display-order'] = val['display order'];
-        return val;
-      });
-
-      var omegas = data['fits']['Unconstrained model']['Rate Distributions']['Test'], 
-        formatted_omegas = _.map(_.values(omegas), function(d) {
-          d.prop = d.proportion;
-          return d;
-        });
-
-      data['trees'] = _.values(data['input']['trees']);
-
-      data["fits"]["Unconstrained model"][
-        "branch-annotations"
-      ] = self.formatBranchAnnotations(data);
-      data["fits"]["Constrained model"][
-        "branch-annotations"
-      ] = self.formatBranchAnnotations(data);
-
-      self.setState({
-        p: data['test results'].p,
-        input_data: data['input'],
-        fits: data['fits'],
-        omegas: formatted_omegas,
-        json: data,
-        evidence_ratio_data: _.map(_.range(data.input['number of sites']), function(i){
-          return {
-            site_index: i+1,
-            unconstrained_likelihood: data["Site Log Likelihood"]["unconstrained"][0][i],
-            constrained_likelihood: data["Site Log Likelihood"]["constrained"][0][i],
-            optimized_null_likelihood: data["Site Log Likelihood"]["optimized null"][0][i],
-            constrained_evidence_ratio: 2*Math.log(data['Evidence Ratios']['constrained'][0][i]),
-            optimized_null_evidence_ratio: 2*Math.log(data['Evidence Ratios']['optimized null'][0][i])
-          };
-        })
-      });
+      self.processData(data);
     });
+  },
+
+  onFileChange: function(e){
+    var self = this,
+      files = e.target.files; // FileList object
+
+    if (files.length == 1) {
+      var f = files[0],
+        reader = new FileReader();
+
+      reader.onload = (function(theFile) {
+        return function(e) {
+          var data = JSON.parse(this.result);
+          self.processData(data);
+        };
+      })(f);
+      reader.readAsText(f);
+    }
+    e.preventDefault();
   },
 
   colorGradient: ["#00a99d", "#000000"],
@@ -729,9 +758,10 @@ var BUSTED = React.createClass({
     if (!_.isNull(self.state.json)) {
       models = self.state.json.fits;
     }
+
     return (
       <div>
-        <NavBar />
+        <NavBar onFileChange={this.onFileChange} />
         <div className="container">
           <div className="row">
             <ScrollSpy info={scrollspy_info} />
@@ -769,6 +799,7 @@ var BUSTED = React.createClass({
                     models={models}
                     color_gradient={self.colorGradient}
                     grayscale_gradient={self.grayscaleGradient}
+                    method={'busted'}
                     multitree
                   />
                 </div>
@@ -776,7 +807,7 @@ var BUSTED = React.createClass({
                   <h4 className="dm-table-header">&omega; distribution</h4>
                   <div id="primary-omega-dist">
                     <PropChart
-                      name={self.props.model_name}
+                      name='Test'
                       omegas={self.state.omegas}
                       settings={self.props.distro_settings}
                     />

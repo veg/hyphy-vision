@@ -143,7 +143,10 @@ var Tree = React.createClass({
       ? self.props.models[self.state.selected_model]["branch-lengths"]
       : null;
 
-    if (!branch_lengths) {
+    if(self.props.method == 'busted'){
+      branch_lengths = self.props.json.trees[self.state.current].branchLengths[self.state.selected_model];
+      //debugger;
+    } else if (!branch_lengths) {
       var nodes = _.filter(self.tree.get_nodes(), function(d) {
         return d.parent;
       });
@@ -209,7 +212,7 @@ var Tree = React.createClass({
       .attr("height", "13")
       .attr("fill", color_fill);
 
-    fg_item.append("text").attr("x", "15").attr("y", "11").text("Foreground");
+    fg_item.append("text").attr("x", "15").attr("y", "11").text("Test");
 
     var bg_item = dc_legend
       .append("g")
@@ -398,10 +401,12 @@ var Tree = React.createClass({
     });
   },
 
-  getModelList: function() {
-    var self = this;
+  getMainList: function() {
+    var self = this,
+      menu = [];
     if(self.props.multitree && self.props.json){
-      return _.range(self.props.json.trees.length).map((d,i)=>(<li>
+      menu = menu.concat(<li className="dropdown-header">Partitions</li>)
+      var partition_list = _.range(self.props.json.trees.length).map((d,i)=>(<li>
         <a
           href="javascript:;"
           onClick={()=>this.setState({current: i})}
@@ -409,7 +414,14 @@ var Tree = React.createClass({
           {i+1}
         </a>
       </li>));
-    } else {
+      menu = menu.concat(partition_list);
+    } 
+
+    if (_.keys(self.props.models).length > 0) {
+      if(self.props.multitree && self.props.json){
+        menu = menu.concat(<li role="separator" className="divider"></li>);
+      }
+      menu = menu.concat(<li className="dropdown-header">Models</li>)
       var createListElement = function(model_type) {
         return (
           <li>
@@ -424,10 +436,12 @@ var Tree = React.createClass({
         );
       };
 
-      return _.map(this.props.models, (d, key) => {
+      var model_list = _.map(this.props.models, (d, key) => {
         return createListElement(key);
       });
+      menu = menu.concat(model_list);
     }
+    return menu;
   },
 
   settingsMenu: function(){
@@ -557,7 +571,7 @@ var Tree = React.createClass({
     if (_.indexOf(_.keys(analysis_data), "tree") > -1) {
       self.tree(analysis_data["tree"]).svg(self.svg);
     } else if(self.props.multitree){
-      self.tree(self.props.json.trees[self.state.current])
+      self.tree(self.props.json.trees[self.state.current]['newickString'])
         .svg(self.svg);      
     } else {
       self
@@ -672,11 +686,11 @@ var Tree = React.createClass({
                   className="btn btn-default dropdown-toggle"
                   data-toggle="dropdown"
                 >
-                  {this.props.multitree ? "Partition" : "Model"}{" "}
+                  Options
                   <span className="caret" />
                 </button>
                 <ul className="dropdown-menu" id="hyphy-tree-model-list">
-                  {this.getModelList()}
+                  {this.getMainList()}
                 </ul>
                 <button
                   type="button"
