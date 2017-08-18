@@ -512,16 +512,6 @@ function BUSTEDModelTable(props){
       <td>{distributions["Test"]["0"].omega.toFixed(2)} ({(100*distributions["Test"]["0"].proportion).toFixed(0)}%)</td>
       <td>{distributions["Test"]["1"].omega.toFixed(2)} ({(100*distributions["Test"]["1"].proportion).toFixed(0)}%)</td>
       <td>{distributions["Test"]["2"].omega.toFixed(2)} ({(100*distributions["Test"]["2"].proportion).toFixed(0)}%)</td>
-    </tr>),
-    (<tr>
-      <td></td>
-      <td></td>
-      <td></td>
-      <td></td>
-      <td>Background</td>
-      <td>{distributions["Background"]["0"].omega.toFixed(2)} ({(100*distributions["Background"]["0"].proportion).toFixed(0)}%)</td>
-      <td>{distributions["Background"]["1"].omega.toFixed(2)} ({(100*distributions["Background"]["1"].proportion).toFixed(0)}%)</td>
-      <td>{distributions["Background"]["2"].omega.toFixed(2)} ({(100*distributions["Background"]["2"].proportion).toFixed(0)}%)</td>
     </tr>)];
   });
   return (<div>
@@ -597,7 +587,7 @@ var BUSTED = React.createClass({
     ] = this.formatBranchAnnotations(data);
 
     this.setState({
-      p: data['test results'].p,
+      p: data['test results']['p-value'],
       input_data: data['input'],
       fits: data['fits'],
       omegas: formatted_omegas,
