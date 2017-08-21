@@ -1,31 +1,33 @@
-var React = require('react'),
-    ReactDOM = require('react-dom');
+var React = require("react");
 
 var InputInfo = React.createClass({
-
-  getInitialState(){
+  getInitialState() {
+    if (this.props.input_data){
+      return {
+        input_data: this.props.input_data
+      }
+    }
     return {
       input_data: {}
     };
   },
 
-  componentWillReceiveProps(nextProps){
+  componentWillReceiveProps(nextProps) {
     this.setState({
       input_data: nextProps.input_data
     });
   },
 
-  render(){
-    return(
+  render() {
+    return (
       <div id="input-info">
-        <h5 className="hyphy-highlight">INPUT DATA</h5><br/>
-        <p>{this.state.input_data.filename}</p><br/>
-        <p><span className="hyphy-highlight">{this.state.input_data.sequences}</span> sequences</p><br/>
-        <p><span className="hyphy-highlight">{this.state.input_data.sites}</span> sites</p><br/>
+        <span className="hyphy-highlight">INPUT DATA</span> <span className="divider">|</span>
+        <a href="#">{this.state.input_data.filename}</a> <span className="divider">|</span>
+        <span className="hyphy-highlight">{this.state.input_data.sequences}</span> sequences <span className="divider">|</span>
+        <span className="hyphy-highlight">{this.state.input_data.sites}</span> sites
       </div>
-    )
+    );
   }
-
 });
 
 module.exports.InputInfo = InputInfo;

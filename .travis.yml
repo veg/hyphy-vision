@@ -2,13 +2,13 @@ language: node_js
 
 node_js:
   - "8"
-  
+
+sudo: false
+
 branches:
   only:
   - master
   - develop
-
-sudo: false
 
 cache:
   yarn: true
@@ -17,4 +17,4 @@ cache:
     - "node_modules"
 
 script:
-  - yarn
+  - yarn run jest
