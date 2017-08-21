@@ -1,11 +1,10 @@
-var React = require("react"),
-  ReactDOM = require("react-dom");
-
 var _ = require("underscore");
 
 require("phylotree");
 require("phylotree.css");
 
+import React from "react";
+import ReactDOM from "react-dom";
 import { DatamonkeyModelTable } from "./components/tables.jsx";
 import { TreeSummary } from "./components/tree_summary.jsx";
 import { Tree } from "./components/tree.jsx";

@@ -7,26 +7,17 @@ var ExtractTextPlugin = require("extract-text-webpack-plugin");
 config = {
   devtool: "source-map",
   entry: {
-    hyphyvision: ["./src/entry.js"],
-    vendor: [
-      "jquery",
-      "jquery-ui-bundle",
-      "bootstrap",
-      "d3",
-      "crossfilter",
-      "dc",
-      "immutable",
-      "underscore",
-      "phylotree",
-      "react"
-    ]
+    hyphyvision: ["./src/library-entry.js"],
   },
   output: {
     path: path.resolve(__dirname, "dist/"),
     filename: "[name].js",
-    library : "hyphyVision"
+    library : "hyphyVision",
+    libraryTarget : "umd"
   },
-  //externals: ['react', 'react-dom'],
+  externals: [
+    /^[a-z\.\-0-9]+$/
+  ],
   module: {
     rules: [
       {
@@ -46,28 +37,6 @@ config = {
           fallback: "style-loader",
           use: "css-loader"
         })
-      },
-      {
-        test: require.resolve("jquery"),
-        use: [
-          {
-            loader: "expose-loader",
-            query: "jQuery"
-          },
-          {
-            loader: "expose-loader",
-            query: "$"
-          }
-        ]
-      },
-      {
-        test: require.resolve("d3"),
-        use: [
-          {
-            loader: "expose-loader",
-            query: "d3"
-          }
-        ]
       },
       {
         test: /\.(woff|woff2)(\?v=\d+\.\d+\.\d+)?$/,
@@ -102,19 +71,6 @@ config = {
   },
   plugins: [
     new webpack.LoaderOptionsPlugin({ debug: true }),
-    new webpack.optimize.CommonsChunkPlugin({
-      name: "vendor",
-      filename: "vendor.js"
-    }),
-    new webpack.ProvidePlugin({
-      $: "jquery",
-      jQuery: "jquery",
-      d3: "d3",
-      crossfilter: "crossfilter",
-      dc: "dc",
-      datamonkey: "datamonkey",
-      _: "underscore"
-    }),
     new webpack.IgnorePlugin(/jsdom$/),
     new ExtractTextPlugin("[name].css")
   ],

@@ -1,7 +1,7 @@
+//var $ = require("jquery");
+
 var root = this;
 var datamonkey = function() {};
-
-var $ = require("jquery");
 
 if (typeof exports !== "undefined") {
   if (typeof module !== "undefined" && module.exports) {
@@ -18,6 +18,7 @@ datamonkey.errorModal = function(msg) {
 };
 
 function b64toBlob(b64, onsuccess, onerror) {
+
   var img = new Image();
 
   img.onerror = onerror;
@@ -36,6 +37,7 @@ function b64toBlob(b64, onsuccess, onerror) {
   };
 
   img.src = b64;
+
 }
 
 datamonkey.export_csv_button = function(data) {
