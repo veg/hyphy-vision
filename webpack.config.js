@@ -24,6 +24,7 @@ config = {
   output: {
     path: path.resolve(__dirname, "dist/"),
     filename: "[name].js"
+    library : "hyphyVision"
   },
   externals: 
     ['react', 'react-dom']
