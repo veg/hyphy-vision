@@ -25,9 +25,9 @@ config = {
     path: path.resolve(__dirname, "dist/"),
     filename: "[name].js"
   },
-  externals: {
-    jsdom: "window"
-  },
+  externals: 
+    ['react', 'react-dom']
+  ,
   module: {
     rules: [
       {
