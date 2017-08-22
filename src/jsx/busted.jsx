@@ -3,20 +3,18 @@ require("phylotree");
 var React = require("react"),
   ReactDOM = require("react-dom"),
   d3 = require("d3"),
-  d3_save_svg = require("d3-save-svg");
+  d3_save_svg = require("d3-save-svg"),
+  _ = require("underscore");
 
 import { Tree } from "./components/tree.jsx";
-import { ModelFits } from "./components/model_fits.jsx";
 import { PropChart } from "./components/prop_chart.jsx";
 import { NavBar } from "./components/navbar.jsx";
 import { ScrollSpy } from "./components/scrollspy.jsx";
 import { DatamonkeyTable } from "./components/tables.jsx";
 import { saveSvgAsPng } from "save-svg-as-png";
 import { InputInfo } from "./components/input_info";
+import { Header } from "./components/header.jsx";
 
-
-var datamonkey = require("../datamonkey/datamonkey.js");
-var _ = require("underscore");
 
 function BUSTEDSummary(props) {
   var significant = props.p < 0.05,
@@ -31,7 +29,7 @@ function BUSTEDSummary(props) {
       BUSTED <strong className="hyphy-highlight">
         found evidence
       </strong>{" "}
-      (LRT, p-value={props.p ? props.p.toFixed(3) : null} &le; .05) of gene-wide episodic diversifying selection
+      (LRT, p-value = {props.p ? props.p.toFixed(3) : null} &le; .05) of gene-wide episodic diversifying selection
       in the selected foreground of your phylogeny. Therefore, there is
       evidence that at least one site on at least one foreground branch has
       experienced diversifying selection.{" "}
@@ -39,10 +37,10 @@ function BUSTEDSummary(props) {
   } else {
     message = (
       <p>
-        BUSTED <strong className="hyphy-highlight">
+        BUSTED <strong>
           found no evidence
         </strong>{" "}
-        (LRT, p-value &le; .05) of gene-wide episodic diversifying selection
+        (LRT, p-value = {props.p ? props.p.toFixed(3) : null} &ge; .05) of gene-wide episodic diversifying selection
         in the selected foreground of your phylogeny. Therefore, there is no
         evidence that any sites have experienced diversifying selection along
         the foreground branch(es).{" "}
@@ -111,7 +109,7 @@ var BUSTEDSiteChartAndTable = React.createClass({
     });
   },
   componentDidUpdate: function() {
-    if (!this.state.brushend_event) {
+    if (!this.state.brushend_event && !_.isEmpty(this.props.data)) {
       d3.select("#chart-id").html("");
       this.drawChart();
     }
@@ -377,6 +375,14 @@ var BUSTEDSiteChartAndTable = React.createClass({
     "Optimized Null Statistic"
   ],
   render: function() {
+    if(_.isEmpty(this.props.data)){
+      return (<div className="row" style={{marginBottom:"20px"}}>
+        <div className="col-md-12">     
+          <Header title='Model Test Statistics Per Site' />
+          <p className="description">No data to display.</p>
+        </div>
+      </div>);
+    }
     var self = this,
       float_format = d3.format(".2f"),
       bodyData = _.filter(this.props.data, function(element, index) {
@@ -431,6 +437,7 @@ var BUSTEDSiteChartAndTable = React.createClass({
               id="export-chart-svg"
               type="button"
               className="btn btn-default btn-sm pull-right btn-export"
+              onClick={()=>{d3_save_svg.save(d3.select("#chart").node(), {filename: "busted"});}}
             >
               <span className="glyphicon glyphicon-floppy-save" /> Export Chart
               to SVG
@@ -439,6 +446,7 @@ var BUSTEDSiteChartAndTable = React.createClass({
               id="export-chart-png"
               type="button"
               className="btn btn-default btn-sm pull-right btn-export"
+              onClick={()=>{saveSvgAsPng(document.getElementById("chart"), "busted-chart.png");}}
             >
               <span className="glyphicon glyphicon-floppy-save" /> Export Chart
               to PNG
@@ -502,8 +510,8 @@ var BUSTEDSiteChartAndTable = React.createClass({
 function BUSTEDModelTable(props){
   if(!props.fits) return <div></div>;
   var rows = _.map(props.fits, (val, key) => {
-    var distributions = val['Rate Distributions'];
-    return [(<tr>
+    var distributions = val['Rate Distributions'],
+      test_row = (<tr>
       <td>{key}</td>
       <td>{val['Log Likelihood'] ? val['Log Likelihood'].toFixed(1) : null}</td>
       <td>{val['estimated parameters']}</td>
@@ -512,7 +520,21 @@ function BUSTEDModelTable(props){
       <td>{distributions["Test"]["0"].omega.toFixed(2)} ({(100*distributions["Test"]["0"].proportion).toFixed(0)}%)</td>
       <td>{distributions["Test"]["1"].omega.toFixed(2)} ({(100*distributions["Test"]["1"].proportion).toFixed(0)}%)</td>
       <td>{distributions["Test"]["2"].omega.toFixed(2)} ({(100*distributions["Test"]["2"].proportion).toFixed(0)}%)</td>
-    </tr>)];
+    </tr>);
+    if(distributions['Background']){
+      var background_row = (<tr>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td>Background</td>
+        <td>{distributions["Background"]["0"].omega.toFixed(2)} ({(100*distributions["Background"]["0"].proportion).toFixed(0)}%)</td>
+        <td>{distributions["Background"]["1"].omega.toFixed(2)} ({(100*distributions["Background"]["1"].proportion).toFixed(0)}%)</td>
+        <td>{distributions["Background"]["2"].omega.toFixed(2)} ({(100*distributions["Background"]["2"].proportion).toFixed(0)}%)</td>
+      </tr>)
+      return [test_row, background_row];
+    }
+    return test_row;
   });
   return (<div>
     <h4 className="dm-table-header">
@@ -582,9 +604,11 @@ var BUSTED = React.createClass({
     data["fits"]["Unconstrained model"][
       "branch-annotations"
     ] = this.formatBranchAnnotations(data);
-    data["fits"]["Constrained model"][
-      "branch-annotations"
-    ] = this.formatBranchAnnotations(data);
+    if(data["fits"]["Constrained model"]) {
+      data["fits"]["Constrained model"][
+        "branch-annotations"
+      ] = this.formatBranchAnnotations(data);
+    }
 
     this.setState({
       p: data['test results']['p-value'],
@@ -592,16 +616,17 @@ var BUSTED = React.createClass({
       fits: data['fits'],
       omegas: formatted_omegas,
       json: data,
-      evidence_ratio_data: _.map(_.range(data.input['number of sites']), function(i){
-        return {
-          site_index: i+1,
-          unconstrained_likelihood: data["Site Log Likelihood"]["unconstrained"][0][i],
-          constrained_likelihood: data["Site Log Likelihood"]["constrained"][0][i],
-          optimized_null_likelihood: data["Site Log Likelihood"]["optimized null"][0][i],
-          constrained_evidence_ratio: 2*Math.log(data['Evidence Ratios']['constrained'][0][i]),
-          optimized_null_evidence_ratio: 2*Math.log(data['Evidence Ratios']['optimized null'][0][i])
-        };
-      })
+      evidence_ratio_data: _.isEmpty(data['Evidence Ratios']) ? {} :
+        _.map(_.range(data.input['number of sites']), function(i){
+          return {
+            site_index: i+1,
+            unconstrained_likelihood: data["Site Log Likelihood"]["unconstrained"][0][i],
+            constrained_likelihood: data["Site Log Likelihood"]["constrained"][0][i],
+            optimized_null_likelihood: data["Site Log Likelihood"]["optimized null"][0][i],
+            constrained_evidence_ratio: 2*Math.log(data['Evidence Ratios']['constrained'][0][i]),
+            optimized_null_evidence_ratio: 2*Math.log(data['Evidence Ratios']['optimized null'][0][i])
+          };
+        })
     });
   },
 
