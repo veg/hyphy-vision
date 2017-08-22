@@ -415,7 +415,7 @@ var OmegaPlot = React.createClass({
     this.save_png_id = "export-" + key + "-png";
 
     return (
-      <div className="col-lg-6">
+      <div>
         <div className="panel panel-default" id={key}>
           <div className="panel-heading">
             <h3 className="panel-title">

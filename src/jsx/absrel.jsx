@@ -94,7 +94,8 @@ var BSRELSummary = React.createClass({
     }
 
     return (
-      <div className="row" id="summary-div" >
+      <div className="row">
+      <div className="clearance" id="summary-div"></div>
         <div className="col-md-12">
           <h3 className="list-group-item-heading">
             <span className="summary-method-name">adaptive Branch Site REL</span>
@@ -185,7 +186,7 @@ var BSREL = React.createClass({
 
   },
 
-  omegaColorGradient: ["#5e4fa2", "#3288bd", "#e6f598", "#f46d43", "#9e0142"],
+  omegaColorGradient: ["#000000", "#888888", "#DFDFDF", "#77CCC6", "#00a99d"],
   omegaGrayScaleGradient: [
     "#DDDDDD",
     "#AAAAAA",
@@ -379,6 +380,9 @@ var BSREL = React.createClass({
               input_data = data["input_data"],
               fits = data["fits"];
 
+            data["fits"]["MG94"]["annotation-tag"] = "ω";
+            data["fits"]["Full model"]["annotation-tag"] = "ω";
+
             self.setState({
               annotations: annotations,
               json: json,
@@ -445,7 +449,8 @@ var BSREL = React.createClass({
     var scrollspy_info = [
       { label: "summary", href: "summary-tab" },
       { label: "tree", href: "hyphy-tree-summary" },
-      { label: "table", href: "table-tab" }
+      { label: "table", href: "table-tab" },
+      { label: "model fits", href: "hyphy-model-fits" }
     ];
 
     var models = {};

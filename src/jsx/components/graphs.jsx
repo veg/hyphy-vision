@@ -13,27 +13,25 @@ import { saveSvgAsPng } from "save-svg-as-png";
 class GraphMenu extends React.Component {
   constructor(props) {
     super(props);
-
     this.state = {
       xaxis: "Site",
-      yaxis: !_.isEmpty(props.y_options) ? props.y_options[0] : "alpha"
+      yaxis: props.y_options ? props.y_options[0] : "alpha"
     };
-
   }
 
   handleSelection(e) {
-
     var dimension = e.target.dataset.dimension;
     var axis = e.target.dataset.axis;
 
     var state_to_update = {};
     state_to_update[axis] = dimension;
     this.setState(state_to_update);
-    this.props.axisSelectionEvent(e);
 
+    this.props.axisSelectionEvent(e);
   }
 
   dimensionOptionElement(axis, value) {
+    var self = this;
 
     return (
       <li key={value}>
@@ -42,7 +40,7 @@ class GraphMenu extends React.Component {
           tabIndex="-1"
           data-dimension={value}
           data-axis={axis}
-          onClick={this.handleSelection.bind(this)}
+          onClick={self.handleSelection.bind(self)}
           dangerouslySetInnerHTML={{ __html: value }}
         />
       </li>
@@ -381,17 +379,14 @@ class LineChart extends BaseGraph {
 }
 
 class ScatterPlot extends BaseGraph {
-
   renderGraph(x_scale, y_scale, dom_element) {
-
     var self = this,
       main_graph = d3.select(dom_element);
 
     _.each(
       this.props.y,
       _.bind(function(y, i) {
-
-        var series_color = this.props.color_pallette(i);
+        var series_color = graphDefaultColorPallette(i);
 
         var data_points = main_graph
           .selectAll("circle.series_" + i)
@@ -423,33 +418,6 @@ class ScatterPlot extends BaseGraph {
     );
   }
 }
-
-ScatterPlot.defaultProps = {
-  color_pallette : d3.scale.category10().domain (_.range (10)),
-  width: 800,
-  height: 400,
-  marginLeft: 35,
-  marginRight: 10,
-  marginTop: 10,
-  marginBottom: 35,
-  marginXaxis: 5,
-  marginYaxis: 5,
-  graphData: null,
-  renderStyle: { axis: { class: "hyphy-axis" }, points: { class: "" } },
-  xScale: "linear",
-  yScale: "linear",
-  xAxis: true,
-  yAxis: true,
-  transitions: false,
-  numberFormat: d3.format(".4r"),
-  tracker: true,
-  xLabel: null,
-  yLabel: null,
-  x: [],
-  y: []
-
-};
-
 
 class Series extends BaseGraph {
   renderGraph(x_scale, y_scale, dom_element) {
@@ -729,6 +697,8 @@ class MultiScatterPlot extends React.Component {
 
   render() {
 
+    var self = this;
+
     return (
       <div style={{ marginTop: "20px" }}>
         <div
@@ -736,29 +706,29 @@ class MultiScatterPlot extends React.Component {
           className="btn-group-justified col-lg-12"
           data-toggle="buttons"
         >
-          {this.getCheckBoxes()}
+          {self.getCheckBoxes()}
         </div>
 
         <svg
           width={
-            this.props.width + this.props.marginLeft + this.props.marginRight
+            self.props.width + self.props.marginLeft + self.props.marginRight
           }
           height={
-            this.props.height + this.props.marginTop + this.props.marginBottom
+            self.props.height + self.props.marginTop + self.props.marginBottom
           }
         >
           <g
             transform={
               "translate(" +
-              this.props.marginLeft +
+              self.props.marginLeft +
               "," +
-              this.props.marginTop +
+              self.props.marginTop +
               ")"
             }
-            ref={_.partial(this.plotDataPoints).bind(this)}
+            ref={_.partial(self.plotDataPoints).bind(self)}
           />
-          {this.props.x_label}
-          {this.props.y_label}
+          {self.props.x_label}
+          {self.props.y_label}
         </svg>
       </div>
     );

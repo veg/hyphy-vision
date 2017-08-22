@@ -1,5 +1,6 @@
 var React = require("react");
 
+
 var Hamburger = React.createClass({
   render: function() {
     return (
@@ -32,7 +33,7 @@ var Methods = React.createClass({
         </button>
         <ul className="dropdown-menu">
           <li>
-            <a href="#">aBSREL</a>
+            <a href="../absrel">aBSREL</a>
           </li>
           <li>
             <a href="../relax">RELAX</a>
@@ -51,28 +52,6 @@ var Methods = React.createClass({
     );
   }
 });
-
-<div className="dropdown">
-  <button
-    className="btn btn-primary dropdown-toggle"
-    type="button"
-    data-toggle="dropdown"
-  >
-    Dropdown Example
-    <span className="caret" />
-  </button>
-  <ul className="dropdown-menu">
-    <li>
-      <a href="#">HTML</a>
-    </li>
-    <li>
-      <a href="#">CSS</a>
-    </li>
-    <li>
-      <a href="#">JavaScript</a>
-    </li>
-  </ul>
-</div>;
 
 var NavBar = React.createClass({
   componentDidMount: function() {
@@ -101,7 +80,7 @@ var NavBar = React.createClass({
       display: "block"
     };
     return (
-      <nav className="navbar navbar-default navbar-fixed-top" role="navigation">
+      <nav className="navbar navbar-default navbar-fixed-top main-nav" role="navigation">
         <div className="container">
           <div className="row">
             <div className="col-sm-12">
