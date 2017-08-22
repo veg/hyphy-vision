@@ -187,7 +187,7 @@ var BSREL = React.createClass({
 
   },
 
-  omegaColorGradient: ["#000000", "#888888", "#EEEEEE", "#77CCC6", "#00a99d"],
+  omegaColorGradient: ["#000000", "#888888", "#DFDFDF", "#77CCC6", "#00a99d"],
   omegaGrayScaleGradient: [
     "#DDDDDD",
     "#AAAAAA",
