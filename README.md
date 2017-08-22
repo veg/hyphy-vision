@@ -1,4 +1,4 @@
-# HyPhy Vision!
+# HyPhy Vision
 ## Visualize HyPhy results in your browser. 
 
 This repository holds visualizations written in React and D3 for JSON results
