@@ -309,7 +309,6 @@ class PRIME extends React.Component {
 
     return (
       <div>
-        <NavBar />
         <div className="container">
           <div className="row">
             <ScrollSpy info={scrollspy_info} />

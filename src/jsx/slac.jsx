@@ -1293,7 +1293,6 @@ var SLAC = React.createClass({
       ];
       return (
         <div>
-          <NavBar />
           <div className="container">
             <div className="row">
               <ScrollSpy info={scrollspy_info} />

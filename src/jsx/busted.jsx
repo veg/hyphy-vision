@@ -776,7 +776,6 @@ var BUSTED = React.createClass({
 
     return (
       <div>
-        <NavBar onFileChange={this.onFileChange} />
         <div className="container">
           <div className="row">
             <ScrollSpy info={scrollspy_info} />

@@ -331,7 +331,6 @@ in the remaining ${no_selected} sites in your alignment.`;
 
     return (
       <div>
-        <NavBar />
 
         <div className="container">
           <div className="row">
