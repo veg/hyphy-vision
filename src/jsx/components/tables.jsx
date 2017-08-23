@@ -883,7 +883,7 @@ var DatamonkeyModelTable = React.createClass({
   dm_numberFormatter: d3.format(".2f"),
 
   dm_supportedColumns: {
-    "log-likelihood": {
+    "Log Likelihood": {
       order: 2,
       value: {
         value: "log L",
@@ -891,7 +891,7 @@ var DatamonkeyModelTable = React.createClass({
       },
       display_format: d3.format(".2f")
     },
-    parameters: {
+    "estimated parameters": {
       order: 3,
       value: {
         value: "Parameters",

@@ -156,35 +156,46 @@ var BSRELSummary = React.createClass({
 var BSREL = React.createClass({
   float_format: d3.format(".2f"),
 
-  loadFromServer: function() {
-
-    var self = this;
-
-    d3.json(this.props.url, function(data) {
-      data["fits"]["MG94"]["branch-annotations"] = self.formatBranchAnnotations(
-        data,
-        "MG94"
-      );
-      data["fits"]["Full model"][
-        "branch-annotations"
-      ] = self.formatBranchAnnotations(data, "Full model");
-
-      // GH-#18 Add omega annotation tag
-      data["fits"]["MG94"]["annotation-tag"] = "ω";
-      data["fits"]["Full model"]["annotation-tag"] = "ω";
-
-      self.setState({
-        annotations: data["fits"]["Full model"]["branch-annotations"],
-        json: data,
-        pmid: data["PMID"],
-        fits: data["fits"],
-        full_model: data["fits"]["Full model"],
-        test_results: data["test results"],
-        input_data: data["input_data"],
-        tree: d3.layout.phylotree()(data["fits"]["Full model"]["tree string"])
-      });
+  processData: function(data){
+    var test_results = _.mapObject(data['branch attributes']['0'], (val, key) => {
+      return {
+        LRT: val.LRT || 'test not run',
+        'uncorrected p': val['Uncorrected P-value'] || 1,
+        p: val['Corrected P-value'] || 1,
+        tested: 1
+      };
     });
 
+    data["fits"]["Full adaptive model"][
+      "branch-annotations"
+    ] = this.formatBranchAnnotations(data, "Full adaptive model");
+
+    data["fits"]["Baseline MG94xREV"]["branch-annotations"] = this.formatBranchAnnotations(
+      data,
+      "Baseline MG94xREV"
+    );
+
+    // GH-#18 Add omega annotation tag
+    data["fits"]["Baseline MG94xREV"]["annotation-tag"] = "ω";
+    data["fits"]["Full adaptive model"]["annotation-tag"] = "ω";
+
+    this.setState({
+      annotations: data["fits"]["Full adaptive model"]["branch-annotations"],
+      json: data,
+      pmid: data["PMID"],
+      fits: data["fits"],
+      full_model: data["fits"]["Full adaptive model"],
+      test_results: test_results,
+      input_data: data["input"],
+      tree: d3.layout.phylotree()(data.input['trees'][0])
+    });
+  },
+
+  loadFromServer: function() {
+    var self = this;
+    d3.json(self.props.url, function(data) {
+      self.processData(data);
+    });
   },
 
   omegaColorGradient: ["#000000", "#888888", "#DFDFDF", "#77CCC6", "#00a99d"],
@@ -319,9 +330,9 @@ var BSREL = React.createClass({
       omegaPlot: {},
       "tree-options": {
         /* value arrays have the following meaning
-                [0] - the value of the attribute
-                [1] - does the change in attribute value trigger tree re-layout?
-            */
+            [0] - the value of the attribute
+            [1] - does the change in attribute value trigger tree re-layout?
+        */
         "hyphy-tree-model": ["Full model", true],
         "hyphy-tree-highlight": [null, false],
         "hyphy-tree-branch-lengths": [true, true],
@@ -330,7 +341,7 @@ var BSREL = React.createClass({
       },
       "suppress-tree-render": false,
       "chart-append-html": true,
-      edgeColorizer: edgeColorizer
+      //edgeColorizer: edgeColorizer
     };
 
     return {
@@ -404,36 +415,17 @@ var BSREL = React.createClass({
     });
   },
 
-  formatBranchAnnotations: function(json, key) {
-    var initial_branch_annotations = json["fits"][key]["branch-annotations"];
-
-    if (!initial_branch_annotations) {
-      initial_branch_annotations = json["fits"][key]["rate distributions"];
-    }
-
-    // Iterate over objects
-    var branch_annotations = _.mapObject(initial_branch_annotations, function(
-      val,
-      key
-    ) {
-      var vals = [];
-      try {
-        vals = JSON.parse(val);
-      } catch (e) {
-        vals = val;
-      }
-
-      var omegas = {
-        omegas: _.map(vals, function(d) {
-          return _.object(["omega", "prop"], d);
-        })
+  formatBranchAnnotations: function(json, model) {
+    return _.mapObject(json['branch attributes']['0'], (val, key) =>{
+      var omegas = val['Rate Distributions'].map(entry=>({ omega: entry[0], prop: entry[1]}));
+      return {
+        LRT: val.LRT || 'test not run',
+        omegas: omegas,
+        p: json['Corrected P-value'] || 1,
+        'uncorrected p': json['Uncorrected P-value'] || 1,
+        tested: val.LRT == null
       };
-      var test_results = _.clone(json["test results"][key]);
-      _.extend(test_results, omegas);
-      return test_results;
     });
-
-    return branch_annotations;
   },
 
   componentDidUpdate(prevProps, prevState) {
@@ -444,7 +436,7 @@ var BSREL = React.createClass({
     $('[data-toggle="popover"]').popover();
   },
 
-  render: function() {
+  old_render: function() {
     var self = this;
 
     var scrollspy_info = [
@@ -529,6 +521,91 @@ var BSREL = React.createClass({
                       to the data. Here, <strong>MG94</strong> refers to the
                       MG94xREV baseline model that infers a single &omega; rate
                       category per branch. <strong>Full Model</strong> refers to
+                      the adaptive aBSREL model that infers an optimized number
+                      of &omega; rate categories per branch.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  },
+  render: function() {
+    var self = this;
+
+    var scrollspy_info = [
+      { label: "summary", href: "summary-tab" },
+      { label: "tree", href: "hyphy-tree-summary" },
+      { label: "table", href: "table-tab" },
+      { label: "model fits", href: "hyphy-model-fits" }
+    ];
+
+    var models = {};
+    if (!_.isNull(self.state.json)) {
+      models = self.state.json.fits;
+    }
+
+    return (
+      <div>
+        <NavBar />
+        <div className="container">
+          <div className="row">
+            <ScrollSpy info={scrollspy_info} />
+
+            <div className="col-sm-10">
+              <div
+                id="datamonkey-absrel-error"
+                className="alert alert-danger alert-dismissible"
+                role="alert"
+                style={{ display: "none" }}
+              >
+                <button
+                  type="button"
+                  className="close"
+                  id="datamonkey-absrel-error-hide"
+                >
+                  <span aria-hidden="true">&times;</span>
+                  <span className="sr-only">Close</span>
+                </button>
+                <strong>Error!</strong>{" "}
+                <span id="datamonkey-absrel-error-text" />
+              </div>
+
+              <div id="results">
+                <div id="summary-tab">
+                  <BSRELSummary
+                    test_results={self.state.test_results}
+                    pmid={self.state.pmid}
+                    input_data={self.state.input_data}
+                  />
+                  <div className="row">
+                    <div id="hyphy-tree-summary" className="col-md-12">
+                      <TreeSummary
+                        model={self.state.full_model}
+                        test_results={self.state.test_results}
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="row">
+                  <div id="tree-tab" className="col-md-12">
+                  </div>
+                </div>
+
+                <div className="row">
+                  <div id="table-tab" className="col-md-12">
+                  </div>
+                  <div id="hyphy-model-fits" className="col-md-12">
+                    <DatamonkeyModelTable fits={self.state.fits} />
+                    <p className="description">
+                      This table reports a statistical summary of the models fit
+                      to the data. Here, <strong>Baseline MG94xREV</strong> refers to the
+                      MG94xREV baseline model that infers a single &omega; rate
+                      category per branch. <strong>Full adaptive model</strong> refers to
                       the adaptive aBSREL model that infers an optimized number
                       of &omega; rate categories per branch.
                     </p>
