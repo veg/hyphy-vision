@@ -30,8 +30,8 @@ function BUSTEDSummary(props) {
         found evidence
       </strong>{" "}
       (LRT, p-value = {props.p ? props.p.toFixed(3) : null} &le; .05) of gene-wide episodic diversifying selection
-      in the selected foreground of your phylogeny. Therefore, there is
-      evidence that at least one site on at least one foreground branch has
+      in the selected test branches of your phylogeny. Therefore, there is
+      evidence that at least one site on at least one test branch has
       experienced diversifying selection.{" "}
     </p>);
   } else {
@@ -41,9 +41,9 @@ function BUSTEDSummary(props) {
           found no evidence
         </strong>{" "}
         (LRT, p-value = {props.p ? props.p.toFixed(3) : null} &ge; .05) of gene-wide episodic diversifying selection
-        in the selected foreground of your phylogeny. Therefore, there is no
+        in the selected test branches of your phylogeny. Therefore, there is no
         evidence that any sites have experienced diversifying selection along
-        the foreground branch(es).{" "}
+        the test branch(es).{" "}
       </p>
     );
   }
