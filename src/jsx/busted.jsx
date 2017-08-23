@@ -510,14 +510,41 @@ var BUSTEDSiteChartAndTable = React.createClass({
 class BUSTEDModelTable extends React.Component {
   constructor(props){
     super(props);
+
+    var distro_settings = {
+      dimensions: {
+        width: 600,
+        height: 400
+      },
+      margins: {
+        left: 50,
+        right: 15,
+        bottom: 15,
+        top: 35
+      },
+      legend: false,
+      domain: [0.00001, 10000],
+      do_log_plot: true,
+      k_p: null,
+      plot: null,
+      svg_id: "prop-chart"
+    };
+
     this.state = {
-      model: null,
-      branch: null
+      model: "Unconstrained model",
+      branch: "Test",
+      distro_settings: distro_settings
     }
   }
   render() {
     if(!this.props.fits) return <div></div>;
-    var self = this;
+    var self = this,
+      omegas = _.values(this.props.fits[this.state.model]['Rate Distributions'][this.state.branch]).map(val => {
+        return {
+          omega: val.omega,
+          prop: val.proportion
+        };
+      });
     function modalShower(model, branch){
       return function(){
         this.setState({model: model, branch:branch});
@@ -611,7 +638,11 @@ class BUSTEDModelTable extends React.Component {
             </div>
             <div className="modal-body" id="modal-body">
               <h4 className="dm-table-header">&omega; distribution</h4>
-              <p className='description'>{this.state.model}, {this.state.branch}</p>
+                <PropChart
+                  name={self.state.model + ', ' + self.state.branch + ' branches'}
+                  omegas={omegas}
+                  settings={self.state.distro_settings}
+                />
             </div>
             <div className="modal-footer">
               <button
@@ -821,8 +852,7 @@ var BUSTED = React.createClass({
     var scrollspy_info = [
       { label: "summary", href: "summary-div" },
       { label: "model statistics", href: "hyphy-model-fits" },
-      { label: "tree", href: "phylogenetic-tree" },
-      { label: "ω distribution", href: "primary-omega-dist" }
+      { label: "tree", href: "phylogenetic-tree" }
     ];
 
     var models = {};
@@ -873,16 +903,6 @@ var BUSTED = React.createClass({
                     method={'busted'}
                     multitree
                   />
-                </div>
-                <div className="col-md-12">
-                  <h4 className="dm-table-header">&omega; distribution</h4>
-                  <div id="primary-omega-dist">
-                    <PropChart
-                      name='Test'
-                      omegas={self.state.omegas}
-                      settings={self.props.distro_settings}
-                    />
-                  </div>
                 </div>
               </div>
             </div>
