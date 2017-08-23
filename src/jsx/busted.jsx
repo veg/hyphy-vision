@@ -507,71 +507,127 @@ var BUSTEDSiteChartAndTable = React.createClass({
 
 });
 
-function BUSTEDModelTable(props){
-  if(!props.fits) return <div></div>;
-  var rows = _.map(props.fits, (val, key) => {
-    var distributions = val['Rate Distributions'],
-      test_row = (<tr>
-      <td>{key}</td>
-      <td>{val['Log Likelihood'] ? val['Log Likelihood'].toFixed(1) : null}</td>
-      <td>{val['estimated parameters']}</td>
-      <td>{val['AIC-c'].toFixed(1)}</td>
-      <td>Test</td>
-      <td>{distributions["Test"]["0"].omega.toFixed(2)} ({(100*distributions["Test"]["0"].proportion).toFixed(0)}%)</td>
-      <td>{distributions["Test"]["1"].omega.toFixed(2)} ({(100*distributions["Test"]["1"].proportion).toFixed(0)}%)</td>
-      <td>{distributions["Test"]["2"].omega.toFixed(2)} ({(100*distributions["Test"]["2"].proportion).toFixed(0)}%)</td>
-    </tr>);
-    if(distributions['Background']){
-      var background_row = (<tr>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td>Background</td>
-        <td>{distributions["Background"]["0"].omega.toFixed(2)} ({(100*distributions["Background"]["0"].proportion).toFixed(0)}%)</td>
-        <td>{distributions["Background"]["1"].omega.toFixed(2)} ({(100*distributions["Background"]["1"].proportion).toFixed(0)}%)</td>
-        <td>{distributions["Background"]["2"].omega.toFixed(2)} ({(100*distributions["Background"]["2"].proportion).toFixed(0)}%)</td>
-      </tr>)
-      return [test_row, background_row];
+class BUSTEDModelTable extends React.Component {
+  constructor(props){
+    super(props);
+    this.state = {
+      model: null,
+      branch: null
     }
-    return test_row;
-  });
-  return (<div>
-    <h4 className="dm-table-header">
-      Model fits
-      <span
-        className="glyphicon glyphicon-info-sign"
-        style={{ verticalAlign: "middle", float: "right" }}
-        aria-hidden="true"
-        data-toggle="popover"
-        data-trigger="hover"
-        title="Actions"
-        data-html="true"
-        data-content="<ul><li>Hover over a column header for a description of its content.</li></ul>"
-        data-placement="bottom"
-      />
-    </h4>
-    <table
-      className="dm-table table table-hover table-condensed list-group-item-text"
-      style={{ marginTop: "0.5em" }}
-    >
-      <thead id="summary-model-header1">
-        <tr>
-          <th>Model</th>
-          <th><em>log</em> L</th>
-          <th>#. params</th>
-          <th>AIC<sub>c</sub></th>
-          <th>Branch set</th>
-          <th>&omega;<sub>1</sub></th>
-          <th>&omega;<sub>2</sub></th>
-          <th>&omega;<sub>3</sub></th>
-        </tr>
-      </thead>
-      <tbody id="summary-model-table">
-        {_.flatten(rows)}
-      </tbody>
-    </table>
-  </div>); 
+  }
+  render() {
+    if(!this.props.fits) return <div></div>;
+    var self = this;
+    function modalShower(model, branch){
+      return function(){
+        this.setState({model: model, branch:branch});
+        $("#myModal").modal("show");
+      }
+    }
+    var rows = _.map(this.props.fits, (val, key) => {
+      var distributions = val['Rate Distributions'],
+        test_row = (<tr onClick={modalShower(key, "Test").bind(self)}>
+        <td>{key}</td>
+        <td>{val['Log Likelihood'] ? val['Log Likelihood'].toFixed(1) : null}</td>
+        <td>{val['estimated parameters']}</td>
+        <td>{val['AIC-c'].toFixed(1)}</td>
+        <td>Test</td>
+        <td>{distributions["Test"]["0"].omega.toFixed(2)} ({(100*distributions["Test"]["0"].proportion).toFixed(0)}%)</td>
+        <td>{distributions["Test"]["1"].omega.toFixed(2)} ({(100*distributions["Test"]["1"].proportion).toFixed(0)}%)</td>
+        <td>{distributions["Test"]["2"].omega.toFixed(2)} ({(100*distributions["Test"]["2"].proportion).toFixed(0)}%)</td>
+      </tr>);
+      if(distributions['Background']){
+        var background_row = (<tr onClick={modalShower(key, "Background").bind(self)}>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td>Background</td>
+          <td>{distributions["Background"]["0"].omega.toFixed(2)} ({(100*distributions["Background"]["0"].proportion).toFixed(0)}%)</td>
+          <td>{distributions["Background"]["1"].omega.toFixed(2)} ({(100*distributions["Background"]["1"].proportion).toFixed(0)}%)</td>
+          <td>{distributions["Background"]["2"].omega.toFixed(2)} ({(100*distributions["Background"]["2"].proportion).toFixed(0)}%)</td>
+        </tr>)
+        return [test_row, background_row];
+      }
+      return test_row;
+    });
+    return (<div>
+      <h4 className="dm-table-header">
+        Model fits
+        <span
+          className="glyphicon glyphicon-info-sign"
+          style={{ verticalAlign: "middle", float: "right" }}
+          aria-hidden="true"
+          data-toggle="popover"
+          data-trigger="hover"
+          title="Actions"
+          data-html="true"
+          data-content="<ul><li>Hover over a column header for a description of its content.</li></ul>"
+          data-placement="bottom"
+        />
+      </h4>
+      <table
+        className="dm-table table table-hover table-condensed list-group-item-text"
+        style={{ marginTop: "0.5em" }}
+      >
+        <thead id="summary-model-header1">
+          <tr>
+            <th>Model</th>
+            <th><em>log</em> L</th>
+            <th>#. params</th>
+            <th>AIC<sub>c</sub></th>
+            <th>Branch set</th>
+            <th>&omega;<sub>1</sub></th>
+            <th>&omega;<sub>2</sub></th>
+            <th>&omega;<sub>3</sub></th>
+          </tr>
+        </thead>
+        <tbody id="summary-model-table">
+          {_.flatten(rows)}
+        </tbody>
+      </table>
+
+      <div
+        className="modal fade"
+        id="myModal"
+        tabIndex="-1"
+        role="dialog"
+        aria-labelledby="myModalLabel"
+      >
+        <div className="modal-dialog" role="document">
+          <div className="modal-content">
+            <div className="modal-header">
+              <button
+                type="button"
+                className="close"
+                data-dismiss="modal"
+                aria-label="Close"
+              >
+                <span aria-hidden="true">&times;</span>
+              </button>
+              <h4 className="modal-title" id="myModalLabel">
+                BUSTED Site Proportion Chart
+              </h4>
+            </div>
+            <div className="modal-body" id="modal-body">
+              <h4 className="dm-table-header">&omega; distribution</h4>
+              <p className='description'>{this.state.model}, {this.state.branch}</p>
+            </div>
+            <div className="modal-footer">
+              <button
+                type="button"
+                className="btn btn-default"
+                data-dismiss="modal"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>); 
+  }
 }
 
 var BUSTED = React.createClass({
