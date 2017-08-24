@@ -179,6 +179,13 @@ var BSREL = React.createClass({
     data["fits"]["Baseline MG94xREV"]["annotation-tag"] = "ω";
     data["fits"]["Full adaptive model"]["annotation-tag"] = "ω";
 
+    data["trees"] = {
+      branchLengths: {
+        "Baseline MG94xREV": _.mapObject(data["branch attributes"][0], val=>val["Baseline MG94xREV"]),
+        "Full adaptive model": _.mapObject(data["branch attributes"][0], val=>val["Full adaptive model"])
+      }
+    }
+
     this.setState({
       annotations: data["fits"]["Full adaptive model"]["branch-annotations"],
       json: data,
@@ -342,7 +349,7 @@ var BSREL = React.createClass({
       },
       "suppress-tree-render": false,
       "chart-append-html": true,
-      //edgeColorizer: edgeColorizer
+      edgeColorizer: edgeColorizer
     };
 
     return {
@@ -418,16 +425,23 @@ var BSREL = React.createClass({
   },
 
   formatBranchAnnotations: function(json, model) {
-    return _.mapObject(json['branch attributes']['0'], (val, key) =>{
-      var omegas = val['Rate Distributions'].map(entry=>({ omega: entry[0], prop: entry[1]}));
+    var branch_annotations = _.mapObject(json['branch attributes']['0'], (val, key) =>{
+      var tested = !(val.LRT == null),
+        omegas; 
+      if(model=='Full adaptive model'){
+        omegas = val['Rate Distributions'].map(entry=>({ omega: entry[0], prop: entry[1]}));
+      }else{
+        omegas = [{omega: val['Baseline MG94xREV omega ratio'], prop: 1}];
+      }
       return {
-        LRT: val.LRT || 'test not run',
+        LRT: tested ? val.LRT : 'test not run',
         omegas: omegas,
-        p: json['Corrected P-value'] || 1,
-        'uncorrected p': json['Uncorrected P-value'] || 1,
-        tested: val.LRT == null
+        p: tested ? val['Corrected P-value'] : 1,
+        'uncorrected p': tested ? val['Uncorrected P-value'] : 1,
+        tested: tested
       };
     });
+    return branch_annotations;
   },
 
   componentDidUpdate(prevProps, prevState) {
@@ -504,6 +518,7 @@ var BSREL = React.createClass({
                       models={models}
                       color_gradient={self.omegaColorGradient}
                       grayscale_gradient={self.omegaGrayscaleGradient}
+                      method='absrel'
                     />
                   </div>
                 </div>
@@ -596,6 +611,14 @@ var BSREL = React.createClass({
 
                 <div className="row">
                   <div id="tree-tab" className="col-md-12">
+                    <Tree
+                      json={self.state.json}
+                      settings={self.state.settings}
+                      models={models}
+                      color_gradient={self.omegaColorGradient}
+                      grayscale_gradient={self.omegaGrayscaleGradient}
+                      method='absrel'
+                    />
                   </div>
                 </div>
 

@@ -137,30 +137,12 @@ var Tree = React.createClass({
       return [];
     }
 
-    var branch_lengths = self.settings["tree-options"][
-      "hyphy-tree-branch-lengths"
-    ][0]
-      ? self.props.models[self.state.selected_model]["branch-lengths"]
-      : null;
-
-    if(self.props.method == 'busted'){
+    var branch_lengths;
+    if(self.props.method == 'absrel'){
+      branch_lengths = self.props.json.trees.branchLengths[self.state.selected_model];
+    } else if(self.props.method == 'busted'){
       branch_lengths = self.props.json.trees[self.state.current].branchLengths[self.state.selected_model];
-      //debugger;
-    } else if (!branch_lengths) {
-      var nodes = _.filter(self.tree.get_nodes(), function(d) {
-        return d.parent;
-      });
-
-      branch_lengths = _.object(
-        _.map(nodes, function(d) {
-          return d.name;
-        }),
-        _.map(nodes, function(d) {
-          return parseFloat(d.attribute);
-        })
-      );
-    }
-
+    } 
     return branch_lengths;
   },
 
@@ -572,17 +554,21 @@ var Tree = React.createClass({
 
     this.assignBranchAnnotations();
 
+    //if (_.indexOf(_.keys(analysis_data), "tree") > -1) {
+    //  self.tree(analysis_data["tree"]).svg(self.svg);
+    //} else if(self.props.multitree){
+    //  self.tree(self.props.json.trees[self.state.current]['newickString'])
+    //    .svg(self.svg);      
+    //} else {
+    //  self
+    //    .tree(self.props.models[self.state.selected_model]["tree string"])
+    //    .svg(self.svg);
+    //}
 
-    if (_.indexOf(_.keys(analysis_data), "tree") > -1) {
-      self.tree(analysis_data["tree"]).svg(self.svg);
-    } else if(self.props.multitree){
-      self.tree(self.props.json.trees[self.state.current]['newickString'])
-        .svg(self.svg);      
-    } else {
-      self
-        .tree(self.props.models[self.state.selected_model]["tree string"])
-        .svg(self.svg);
+    if(self.props.method=='absrel'){
+      var tree_string = self.props.json.input.trees[0];
     }
+    self.tree(tree_string).svg(self.svg); 
 
     self.branch_lengths = this.getBranchLengths();
     self.tree.font_size(18);
@@ -613,7 +599,7 @@ var Tree = React.createClass({
         );
       }
     }
-  
+
     if (!_.isEmpty(this.props.partition) && this.settings.edgeColorizer) {
       this.edgeColorizer = _.partial(
         this.settings.edgeColorizer,
