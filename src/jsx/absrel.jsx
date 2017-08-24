@@ -187,7 +187,8 @@ var BSREL = React.createClass({
       full_model: data["fits"]["Full adaptive model"],
       test_results: test_results,
       input_data: data["input"],
-      tree: d3.layout.phylotree()(data.input['trees'][0])
+      tree: d3.layout.phylotree()(data.input['trees'][0]),
+      branch_attributes: data["branch attributes"][0]
     });
   },
 
@@ -352,10 +353,11 @@ var BSREL = React.createClass({
       settings: tree_settings,
       test_results: null,
       input_data: null,
-      tree: null
+      tree: null,
+      branch_attributes: null
     };
-  },
 
+  },
   componentWillMount: function() {
     this.loadFromServer();
   },
@@ -586,6 +588,7 @@ var BSREL = React.createClass({
                       <TreeSummary
                         model={self.state.full_model}
                         test_results={self.state.test_results}
+                        branch_attributes={self.state.branch_attributes}
                       />
                     </div>
                   </div>
