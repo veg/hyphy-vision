@@ -158,11 +158,13 @@ var BSREL = React.createClass({
 
   processData: function(data){
     var test_results = _.mapObject(data['branch attributes']['0'], (val, key) => {
+      var tested = val.LRT != null;
+
       return {
-        LRT: val.LRT || 'test not run',
-        'uncorrected p': val['Uncorrected P-value'] || 1,
-        p: val['Corrected P-value'] || 1,
-        tested: 1
+        LRT: tested ? val.LRT : 'test not run',
+        p: tested ? val['Corrected P-value'] : 1,
+        'uncorrected p': tested ? val['Uncorrected P-value'] : 1,
+        tested: tested
       };
     });
 
@@ -426,7 +428,7 @@ var BSREL = React.createClass({
 
   formatBranchAnnotations: function(json, model) {
     var branch_annotations = _.mapObject(json['branch attributes']['0'], (val, key) =>{
-      var tested = !(val.LRT == null),
+      var tested = val.LRT != null,
         omegas; 
       if(model=='Full adaptive model'){
         omegas = val['Rate Distributions'].map(entry=>({ omega: entry[0], prop: entry[1]}));
@@ -452,104 +454,6 @@ var BSREL = React.createClass({
     $('[data-toggle="popover"]').popover();
   },
 
-  old_render: function() {
-    var self = this;
-
-    var scrollspy_info = [
-      { label: "summary", href: "summary-tab" },
-      { label: "tree", href: "hyphy-tree-summary" },
-      { label: "table", href: "table-tab" },
-      { label: "model fits", href: "hyphy-model-fits" }
-    ];
-
-    var models = {};
-    if (!_.isNull(self.state.json)) {
-      models = self.state.json.fits;
-    }
-
-    return (
-      <div>
-        <NavBar />
-        <div className="container">
-          <div className="row">
-            <ScrollSpy info={scrollspy_info} />
-
-            <div className="col-sm-10">
-              <div
-                id="datamonkey-absrel-error"
-                className="alert alert-danger alert-dismissible"
-                role="alert"
-                style={{ display: "none" }}
-              >
-                <button
-                  type="button"
-                  className="close"
-                  id="datamonkey-absrel-error-hide"
-                >
-                  <span aria-hidden="true">&times;</span>
-                  <span className="sr-only">Close</span>
-                </button>
-                <strong>Error!</strong>{" "}
-                <span id="datamonkey-absrel-error-text" />
-              </div>
-
-              <div id="results">
-                <div id="summary-tab">
-                  <BSRELSummary
-                    test_results={self.state.test_results}
-                    pmid={self.state.pmid}
-                    input_data={self.state.input_data}
-                  />
-                  <div className="row">
-                    <div id="hyphy-tree-summary" className="col-md-12">
-                      <TreeSummary
-                        model={self.state.full_model}
-                        test_results={self.state.test_results}
-                      />
-                    </div>
-                  </div>
-                </div>
-
-                <div className="row">
-                  <div id="tree-tab" className="col-md-12">
-                    <Tree
-                      json={self.state.json}
-                      settings={self.state.settings}
-                      models={models}
-                      color_gradient={self.omegaColorGradient}
-                      grayscale_gradient={self.omegaGrayscaleGradient}
-                      method='absrel'
-                    />
-                  </div>
-                </div>
-
-                <div className="row">
-                  <div id="table-tab" className="col-md-12">
-                    <BranchTable
-                      tree={self.state.tree}
-                      test_results={self.state.test_results}
-                      annotations={self.state.annotations}
-                    />
-                  </div>
-                  <div id="hyphy-model-fits" className="col-md-12">
-                    <DatamonkeyModelTable fits={self.state.fits} />
-                    <p className="description">
-                      This table reports a statistical summary of the models fit
-                      to the data. Here, <strong>MG94</strong> refers to the
-                      MG94xREV baseline model that infers a single &omega; rate
-                      category per branch. <strong>Full Model</strong> refers to
-                      the adaptive aBSREL model that infers an optimized number
-                      of &omega; rate categories per branch.
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  },
   render: function() {
     var self = this;
 
@@ -564,7 +468,6 @@ var BSREL = React.createClass({
     if (!_.isNull(self.state.json)) {
       models = self.state.json.fits;
     }
-
     return (
       <div>
         <NavBar />
@@ -624,6 +527,11 @@ var BSREL = React.createClass({
 
                 <div className="row">
                   <div id="table-tab" className="col-md-12">
+                    <BranchTable
+                      tree={self.state.tree}
+                      test_results={self.state.test_results}
+                      annotations={self.state.annotations}
+                    />
                   </div>
                   <div id="hyphy-model-fits" className="col-md-12">
                     <DatamonkeyModelTable fits={self.state.fits} />
