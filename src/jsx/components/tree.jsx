@@ -567,6 +567,8 @@ var Tree = React.createClass({
 
     if(self.props.method=='absrel'){
       var tree_string = self.props.json.input.trees[0];
+    }else if (self.props.method=='busted'){
+      var tree_string = self.props.json.trees[self.state.current]['newickString']
     }
     self.tree(tree_string).svg(self.svg); 
 
