@@ -833,3 +833,7 @@ input[type=range]:focus::-ms-fill-upper {
 }
 
 .modal .modal-dialog { width: 800px; }
+
+.fa-bar-chart:hover {
+    color: #00a99d;
+}
