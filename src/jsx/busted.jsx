@@ -533,7 +533,8 @@ class BUSTEDModelTable extends React.Component {
     this.state = {
       model: "Unconstrained model",
       branch: "Test",
-      distro_settings: distro_settings
+      distro_settings: distro_settings,
+      active: null
     }
   }
   render() {
@@ -551,9 +552,21 @@ class BUSTEDModelTable extends React.Component {
         $("#myModal").modal("show");
       }
     }
+    function makeActive(model){
+      return function(){
+        this.setState({active: model});
+      }
+    }
+    function makeInactive(){
+      this.setState({active: null});
+    }
     var rows = _.map(this.props.fits, (val, key) => {
       var distributions = val['Rate Distributions'],
-        test_row = (<tr onClick={modalShower(key, "Test").bind(self)}>
+        onClick = modalShower(key, "Test").bind(self),
+        onMouseEnter = makeActive(key).bind(self),
+        onMouseLeave = makeInactive.bind(self),
+        className = key == self.state.active ? 'active' : '',
+        test_row = (<tr onClick={onClick} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave} className={className}> 
         <td>{key}</td>
         <td>{val['Log Likelihood'] ? val['Log Likelihood'].toFixed(1) : null}</td>
         <td>{val['estimated parameters']}</td>
@@ -562,9 +575,11 @@ class BUSTEDModelTable extends React.Component {
         <td>{distributions["Test"]["0"].omega.toFixed(2)} ({(100*distributions["Test"]["0"].proportion).toFixed(0)}%)</td>
         <td>{distributions["Test"]["1"].omega.toFixed(2)} ({(100*distributions["Test"]["1"].proportion).toFixed(0)}%)</td>
         <td>{distributions["Test"]["2"].omega.toFixed(2)} ({(100*distributions["Test"]["2"].proportion).toFixed(0)}%)</td>
+        <td><i className="fa fa-bar-chart" aria-hidden="true"></i></td>
       </tr>);
       if(distributions['Background']){
-        var background_row = (<tr onClick={modalShower(key, "Background").bind(self)}>
+        var onClick = modalShower(key, "Background").bind(self);
+        var background_row = (<tr onClick={onClick} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave} className={className}>
           <td></td>
           <td></td>
           <td></td>
@@ -573,6 +588,7 @@ class BUSTEDModelTable extends React.Component {
           <td>{distributions["Background"]["0"].omega.toFixed(2)} ({(100*distributions["Background"]["0"].proportion).toFixed(0)}%)</td>
           <td>{distributions["Background"]["1"].omega.toFixed(2)} ({(100*distributions["Background"]["1"].proportion).toFixed(0)}%)</td>
           <td>{distributions["Background"]["2"].omega.toFixed(2)} ({(100*distributions["Background"]["2"].proportion).toFixed(0)}%)</td>
+          <td><i className="fa fa-bar-chart" aria-hidden="true"></i></td>
         </tr>)
         return [test_row, background_row];
       }
@@ -594,7 +610,7 @@ class BUSTEDModelTable extends React.Component {
         />
       </h4>
       <table
-        className="dm-table table table-hover table-condensed list-group-item-text"
+        className="dm-table table table-condensed list-group-item-text"
         style={{ marginTop: "0.5em" }}
       >
         <thead id="summary-model-header1">
@@ -607,6 +623,7 @@ class BUSTEDModelTable extends React.Component {
             <th>&omega;<sub>1</sub></th>
             <th>&omega;<sub>2</sub></th>
             <th>&omega;<sub>3</sub></th>
+            <th></th>
           </tr>
         </thead>
         <tbody id="summary-model-table">
