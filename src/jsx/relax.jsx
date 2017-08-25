@@ -18,7 +18,7 @@ class RELAX extends React.Component{
     super(props);
     this.p_value_format = d3.format(".4f");
     this.fit_format = d3.format(".2f")
-    
+    this.onFileChange = this.onFileChange.bind(this); 
     var tree_settings = {
       omegaPlot: {},
       "tree-options": {
@@ -57,47 +57,80 @@ class RELAX extends React.Component{
 
   }
 
+  onFileChange(e) {
+    var self = this;
+    var files = e.target.files; // FileList object
+
+    if (files.length == 1) {
+      var f = files[0];
+      var reader = new FileReader();
+
+      reader.onload = (function(theFile) {
+        return function(e) {
+          var data = JSON.parse(this.result);
+          self.processData(data);
+        };
+      })(f);
+      reader.readAsText(f);
+    }
+    e.preventDefault();
+  }
+
+  processData(data) {
+    var k = data["test results"]["relaxation or intensification parameter"],
+      p = data["test results"]["p-value"];
+    this.setState({
+      json: data,
+      direction: k > 1 ? "intensification" : "relaxation",
+      lrt: data["test results"]["LRT"].toFixed(2),
+      summary_k: k.toFixed(2),
+      evidence: p <= this.props.alpha_level ? "significant" : "not significant",
+      p: p.toFixed(3)
+    });
+    //var models = ["Partitioned MG94xREV", "General Descriptive", "Null", "Alternative", "Partitioned Exploratory"];
+    //models.forEach(model=>{
+    //  if (data["fits"][model]) data["fits"][model]["branch-annotations"] = self.formatBranchAnnotations(data, model);
+    //});
+
+    //var annotations =
+    //  data["fits"]["Partitioned MG94xREV"]["branch-annotations"],
+    //  json = data,
+    //  pmid = data["PMID"],
+    //  test_results = data["relaxation_test"];
+
+    //var p = data["relaxation-test"]["p"],
+    //  direction = data["fits"]["Alternative"]["K"] > 1
+    //    ? "intensification"
+    //    : "relaxation",
+    //  evidence = p <= self.props.alpha_level
+    //    ? "significant"
+    //    : "not significant",
+    //  pvalue = self.p_value_format(p),
+    //  lrt = self.fit_format(data["relaxation-test"]["LR"]),
+    //  summary_k = self.fit_format(data["fits"]["Alternative"]["K"]),
+    //  pmid_text = "PubMed ID " + pmid,
+    //  pmid_href = "http://www.ncbi.nlm.nih.gov/pubmed/" + pmid;
+
+    //this.setState({
+      //annotations: annotations,
+      //json: data,
+      //pmid: pmid,
+      //test_results: test_results,
+      //p: p,
+      //direction: direction,
+      //evidence: evidence,
+      //pvalue: pvalue,
+      //lrt: lrt,
+      //summary_k: summary_k,
+      //pmid_text: pmid_text,
+      //pmid_href: pmid_href
+    //});
+  }
+
   componentDidMount(){
     var self = this;
     d3.json(this.props.url, function(data){
-      var models = ["Partitioned MG94xREV", "General Descriptive", "Null", "Alternative", "Partitioned Exploratory"];
-      models.forEach(model=>{
-        if (data["fits"][model]) data["fits"][model]["branch-annotations"] = self.formatBranchAnnotations(data, model);
-      });
-
-      var annotations =
-        data["fits"]["Partitioned MG94xREV"]["branch-annotations"],
-        json = data,
-        pmid = data["PMID"],
-        test_results = data["relaxation_test"];
-
-      var p = data["relaxation-test"]["p"],
-        direction = data["fits"]["Alternative"]["K"] > 1
-          ? "intensification"
-          : "relaxation",
-        evidence = p <= self.props.alpha_level
-          ? "significant"
-          : "not significant",
-        pvalue = self.p_value_format(p),
-        lrt = self.fit_format(data["relaxation-test"]["LR"]),
-        summary_k = self.fit_format(data["fits"]["Alternative"]["K"]),
-        pmid_text = "PubMed ID " + pmid,
-        pmid_href = "http://www.ncbi.nlm.nih.gov/pubmed/" + pmid;
-
-      self.setState({
-        annotations: annotations,
-        json: json,
-        pmid: pmid,
-        test_results: test_results,
-        p: p,
-        direction: direction,
-        evidence: evidence,
-        pvalue: pvalue,
-        lrt: lrt,
-        summary_k: summary_k,
-        pmid_text: pmid_text,
-        pmid_href: pmid_href
-      });
+      self.processData(data);
     });
   }
 
@@ -147,7 +180,7 @@ class RELAX extends React.Component{
         </h3>
       </div>
       <div className="col-md-12">
-        <InputInfo input_data={this.state.json.input_data} />
+        <InputInfo input_data={this.state.json.input} />
       </div>
       <div className="col-md-12">
         <div className="main-result">
@@ -195,6 +228,49 @@ class RELAX extends React.Component{
     </div>);
   }
   render(){
+    var self = this,
+      scrollspy_info = [
+        { label: "summary", href: "summary-tab" },
+        { label: "fits", href: "fits-tab" },
+        { label: "ω plots", href: "omega-tab" },
+        { label: "tree", href: "tree-tab" }
+      ];
+
+    var models = {},
+      partition = undefined;
+    if (!_.isNull(self.state.json)) {
+      models = self.state.json.fits,
+      partition = self.state.json.partition;
+    }
+
+    return (<div>
+      <NavBar onFileChange={this.onFileChange} />
+      <div className="container">
+        <div className="row">
+          <ScrollSpy info={scrollspy_info} />
+          <div className="col-sm-10" id="results">
+            <ErrorMessage />
+            {self.getSummary()}
+
+            <div id="fits-tab" className="row">
+              <div className="col-md-12">
+              </div>
+            </div>
+            
+            <div id="omega-tab" className="row">
+              <div className="col-md-12">
+                <Header title="Omega plots" popover="<p>Needs content.</p>"/>
+              </div>
+            </div>
+            <div className="row" id="tree-tab">
+              
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>);
+  }
+  old_render(){
     var self = this,
       scrollspy_info = [
         { label: "summary", href: "summary-tab" },
