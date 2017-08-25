@@ -18,11 +18,6 @@ import { Header } from "./components/header.jsx";
 
 function BUSTEDSummary(props) {
   var significant = props.p < 0.05,
-    input_data = props.input_data ? {
-      filename: props.input_data['file name'],
-      sequences: props.input_data['number of sequences'],
-      sites: props.input_data['number of sites']
-    } : null,
     message;
   if (significant) {
     message = (<p>
@@ -61,7 +56,7 @@ function BUSTEDSummary(props) {
         </h3>
       </div>
       <div className="col-md-12">
-        <InputInfo input_data={input_data} />
+        <InputInfo input_data={props.input_data} />
       </div>
       <div className="col-md-12">
         <div className="main-result">
