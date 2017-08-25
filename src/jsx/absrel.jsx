@@ -388,36 +388,7 @@ var BSREL = React.createClass({
         reader.onload = (function(theFile) {
           return function(e) {
             var data = JSON.parse(this.result);
-            data["fits"]["MG94"][
-              "branch-annotations"
-            ] = self.formatBranchAnnotations(data, "MG94");
-            data["fits"]["Full model"][
-              "branch-annotations"
-            ] = self.formatBranchAnnotations(data, "Full model");
-
-            var annotations = data["fits"]["Full model"]["branch-annotations"],
-              json = data,
-              pmid = data["PMID"],
-              full_model = json["fits"]["Full model"],
-              test_results = data["test results"],
-              input_data = data["input_data"],
-              fits = data["fits"];
-
-            data["fits"]["MG94"]["annotation-tag"] = "ω";
-            data["fits"]["Full model"]["annotation-tag"] = "ω";
-
-            self.setState({
-              annotations: annotations,
-              json: json,
-              pmid: pmid,
-              full_model: full_model,
-              test_results: test_results,
-              input_data: input_data,
-              fits: fits,
-              tree: d3.layout.phylotree()(
-                data["fits"]["Full model"]["tree string"]
-              )
-            });
+            self.processData(data);
           };
         })(f);
         reader.readAsText(f);
