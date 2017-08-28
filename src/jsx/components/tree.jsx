@@ -138,7 +138,7 @@ var Tree = React.createClass({
     }
 
     var branch_lengths;
-    if(self.props.method == 'absrel'){
+    if(self.props.method == 'absrel' || self.props.method == 'relax'){
       branch_lengths = self.props.json.trees.branchLengths[self.state.selected_model];
     } else if(self.props.method == 'busted'){
       branch_lengths = self.props.json.trees[self.state.current].branchLengths[self.state.selected_model];
@@ -428,21 +428,11 @@ var Tree = React.createClass({
         </li>));
       menu = menu.concat(model_list);
     }
-    return menu;
-  },
 
-  settingsMenu: function(){
-    var dropdownListStyle = {
-      paddingLeft: "20px",
-      paddingRight: "20px",
-      paddingTop: "10px",
-      paddingBottom: "10px"
-    };
-
-    var partitionList = [];
     if(!_.isEmpty(this.props.partition)){
-      partitionList = [
-        <div className="dropdown-divider"></div>,
+      var partitionList = [
+        <li role="separator" className="divider"></li>,
+        <li className="dropdown-header">Branch partition</li>,
         (<li>
           <a href="javascript:;" onClick={ ()=>this.setState({partition: []}) }>None</a>
         </li>)
@@ -455,7 +445,20 @@ var Tree = React.createClass({
         </a>
       </li>))
       );
+      menu = menu.concat(partitionList);
     }
+
+    return menu;
+  },
+
+  settingsMenu: function(){
+    var dropdownListStyle = {
+      paddingLeft: "20px",
+      paddingRight: "20px",
+      paddingTop: "10px",
+      paddingBottom: "10px"
+    };
+
     return (<ul className="dropdown-menu">
       <li style={dropdownListStyle}>
         <input
@@ -477,7 +480,6 @@ var Tree = React.createClass({
         />{" "}
         GrayScale
       </li>
-      {partitionList}
     </ul>);
   },
 
@@ -565,7 +567,7 @@ var Tree = React.createClass({
     //    .svg(self.svg);
     //}
 
-    if(self.props.method=='absrel'){
+    if(self.props.method=='absrel' || self.props.method=='relax'){
       var tree_string = self.props.json.input.trees[0];
     }else if (self.props.method=='busted'){
       var tree_string = self.props.json.trees[self.state.current]['newickString']

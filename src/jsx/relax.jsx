@@ -172,6 +172,19 @@ class RELAX extends React.Component{
     var k = data["test results"]["relaxation or intensification parameter"],
       p = data["test results"]["p-value"],
       significant = p <= this.props.alpha_level;
+
+    data["trees"] = {
+      branchLengths: _.mapObject(data.fits, (model_val, model_key) => {
+        return _.mapObject(data['branch attributes'][0], (branch_val, branch_key) => {
+          return branch_val[model_key]; 
+        });
+      })
+    }
+   
+    _.keys(data.fits).forEach(model=>{
+      data["fits"][model]["branch-annotations"] = this.formatBranchAnnotations(data, model);
+    });
+
     this.setState({
       json: data,
       direction: k > 1 ? "intensification" : "relaxation",
@@ -242,11 +255,29 @@ class RELAX extends React.Component{
     $('[data-toggle="popover"]').popover();
   }
 
-  formatBranchAnnotations(json, key) {
-    var initial_branch_annotations = json["fits"][key]["branch-annotations"];
+  formatBranchAnnotations(json, model) {
+    //var initial_branch_annotations = json["fits"][model]["branch-annotations"];
 
-    if (!initial_branch_annotations) {
-      initial_branch_annotations = json["fits"][key]["rate distributions"];
+    //if (!initial_branch_annotations) {
+    //  initial_branch_annotations = json["fits"][model]["rate distributions"];
+    //}
+    
+    if(model == 'MG94xREV with separate rates for branch sets') {
+      var initial_branch_annotations = _.mapObject(json.fits[model]['Rate Distributions'], (val, key) => {
+        return _.values(val).map(d=>[d.omega, d.proportion]);
+      });
+    } else if(model == 'General descriptive') {
+      var initial_branch_annotations = _.mapObject(json['branch attributes'][0], val=>val['k (general descriptive)']);
+    } else if(model == 'RELAX alternative') {
+      var initial_branch_annotations = _.mapObject(json['tested'][0], val => {
+        return val == "Reference" ? 1 : json["test results"]["relaxation or intensification parameter"];
+      });
+    } else if(model == 'RELAX null') {
+      var initial_branch_annotations = _.mapObject(json.tested[0], val=>1);
+    } else if(model == 'RELAX partitioned descriptive') {
+      return null;
+    } else {
+      return null;
     }
 
     // Iterate over objects
@@ -331,12 +362,16 @@ class RELAX extends React.Component{
       ];
 
     var models = {},
-      partition = undefined;
+      partition = {'Reference': {}, 'Test': {}, 'Unclassified': {}};
     if (!_.isNull(self.state.json)) {
       models = self.state.json.fits,
-      partition = self.state.json.partition;
+      _.each(self.state.json.tested[0], (val, key) => {
+        partition[val][key] = 1;
+      });
+      if(_.size(partition['Unclassified']) == 0){
+        delete partition['Unclassified'];
+      }
     }
-
     return (<div>
       <NavBar onFileChange={this.onFileChange} />
       <div className="container">
@@ -360,57 +395,15 @@ class RELAX extends React.Component{
             </div>
 
             <div className="row" id="tree-tab">
-              
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>);
-  }
-  old_render(){
-    var self = this,
-      scrollspy_info = [
-        { label: "summary", href: "summary-tab" },
-        { label: "fits", href: "fits-tab" },
-        { label: "ω plots", href: "omega-tab" },
-        { label: "tree", href: "tree-tab" }
-      ];
-
-    var models = {},
-      partition = undefined;
-    if (!_.isNull(self.state.json)) {
-      models = self.state.json.fits,
-      partition = self.state.json.partition;
-    }
-
-    return (<div>
-      <NavBar onFileChange={this.onFileChange} />
-      <div className="container">
-        <div className="row">
-          <ScrollSpy info={scrollspy_info} />
-          <div className="col-sm-10" id="results">
-            <ErrorMessage />
-            {self.getSummary()}
-            
-            <div id="fits-tab" className="row">
-              <div className="col-md-12">
-                <ModelFits json={self.state.json} />
-              </div>
-            </div>
-            
-            <div id="omega-tab" className="row">
-              <div className="col-md-12">
-                <Header title="Omega plots" popover="<p>Needs content.</p>"/>
-                <OmegaPlotGrid json={self.state.json} />
-              </div>
-            </div>
-            <div className="row" id="tree-tab">
               <Tree
                 json={self.state.json}
                 settings={self.state.settings}
                 models={models}
                 partition={partition}
-              />
+                color_gradient={["#000000", "#888888", "#DFDFDF", "#77CCC6", "#00a99d"]}
+                grayscale_gradient={["#DDDDDD", "#AAAAAA", "#888888", "#444444", "#000000"]}
+                method='relax'
+              />              
             </div>
           </div>
         </div>

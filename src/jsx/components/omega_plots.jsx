@@ -420,8 +420,8 @@ var OmegaPlot = React.createClass({
             <p>
               <small>
                 Test branches are shown in{" "}
-                <span style={{color: '#00a99d', 'font-weight':'bold'}}>green</span> and reference branches
-                are shown in <span style={{color: 'black', 'font-weight':'bold'}}>black</span>
+                <span style={{color: '#00a99d', 'fontWeight':'bold'}}>green</span> and reference branches
+                are shown in <span style={{color: 'black', 'fontWeight':'bold'}}>black</span>
               </small>
             </p>
             <div className="btn-group">
