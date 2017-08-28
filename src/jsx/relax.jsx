@@ -7,11 +7,102 @@ import { Tree } from "./components/tree.jsx";
 import { OmegaPlotGrid } from "./components/omega_plots.jsx";
 import { Header } from "./components/header.jsx";
 
-
 var React = require("react"),
   ReactDOM = require("react-dom"),
   _ = require("underscore");
 
+class RELAXModelTable extends React.Component {
+  constructor(props){
+    super(props);
+
+    this.state = {
+      model: "MG94xREV with separate rates for branch sets",
+    }
+  }
+  render() {
+    if(!this.props.fits) return <div></div>;
+    var self = this;
+    function omegaFormatter(omegaDict){
+      if (!omegaDict) return '';
+      return omegaDict.omega.toFixed(2) + ' (' + (100*omegaDict.proportion).toFixed(0) + '%)';
+    }
+    function makeActive(model){
+      return function(){
+        this.setState({active: model});
+      }
+    }
+    function makeInactive(){
+      this.setState({active: null});
+    }
+    var rows = _.map(this.props.fits, (val, key) => {
+      var distributions = val['Rate Distributions'],
+        onMouseEnter = makeActive(key).bind(self),
+        onMouseLeave = makeInactive.bind(self),
+        className = key == self.state.active ? 'active' : '',
+        branch_set = distributions['Shared'] ? 'Shared' : 'Test',
+        test_row = (<tr onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave} className={className}>
+        <td>{key}</td>
+        <td>{val['Log Likelihood'] ? val['Log Likelihood'].toFixed(1) : null}</td>
+        <td>{val['estimated parameters']}</td>
+        <td>{val['AIC-c'].toFixed(1)}</td>
+        <td>{branch_set}</td>
+        <td>{omegaFormatter(distributions[branch_set]["0"])}</td>
+        <td>{omegaFormatter(distributions[branch_set]["1"])}</td>
+        <td>{omegaFormatter(distributions[branch_set]["2"])}</td>
+      </tr>);
+      if(distributions['Reference']){
+        var background_row = (<tr onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave} className={className}>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td>Reference</td>
+          <td>{omegaFormatter(distributions["Reference"]["0"])}</td>
+          <td>{omegaFormatter(distributions["Reference"]["1"])}</td>
+          <td>{omegaFormatter(distributions["Reference"]["2"])}</td>
+        </tr>)
+        return [test_row, background_row];
+      }
+      return test_row;
+    });
+    return (<div>
+      <h4 className="dm-table-header">
+        Model fits
+        <span
+          className="glyphicon glyphicon-info-sign"
+          style={{ verticalAlign: "middle", float: "right" }}
+          aria-hidden="true"
+          data-toggle="popover"
+          data-trigger="hover"
+          title="Actions"
+          data-html="true"
+          data-content="<ul><li>Hover over a column header for a description of its content.</li></ul>"
+          data-placement="bottom"
+        />
+      </h4>
+      <table
+        className="dm-table table table-hover table-condensed list-group-item-text"
+        style={{ marginTop: "0.5em" }}
+      >
+        <thead id="summary-model-header1">
+          <tr>
+            <th>Model</th>
+            <th><em>log</em> L</th>
+            <th>#. params</th>
+            <th>AIC<sub>c</sub></th>
+            <th>Branch set</th>
+            <th>&omega;<sub>1</sub></th>
+            <th>&omega;<sub>2</sub></th>
+            <th>&omega;<sub>3</sub></th>
+          </tr>
+        </thead>
+        <tbody id="summary-model-table">
+          {_.flatten(rows)}
+        </tbody>
+      </table>
+    </div>); 
+  }
+}
 
 class RELAX extends React.Component{
   constructor(props){
@@ -52,7 +143,8 @@ class RELAX extends React.Component{
       summary_k: "unknown",
       pmid_text: "PubMed ID : Unknown",
       pmid_href: "#",
-      relaxation_K: "unknown"
+      relaxation_K: "unknown",
+      fits: null
     };
 
   }
@@ -78,14 +170,17 @@ class RELAX extends React.Component{
 
   processData(data) {
     var k = data["test results"]["relaxation or intensification parameter"],
-      p = data["test results"]["p-value"];
+      p = data["test results"]["p-value"],
+      significant = p <= this.props.alpha_level;
     this.setState({
       json: data,
       direction: k > 1 ? "intensification" : "relaxation",
       lrt: data["test results"]["LRT"].toFixed(2),
       summary_k: k.toFixed(2),
-      evidence: p <= this.props.alpha_level ? "significant" : "not significant",
-      p: p.toFixed(3)
+      evidence: significant ? "significant" : "not significant",
+      p: p.toFixed(3),
+      fits: data["fits"],
+      significant: significant
     });
     //var models = ["Partitioned MG94xREV", "General Descriptive", "Null", "Alternative", "Partitioned Exploratory"];
     //models.forEach(model=>{
@@ -192,7 +287,7 @@ class RELAX extends React.Component{
 
             (K ={" "}
             <strong id="summary-K">{this.state.summary_k}</strong>) was{" "}
-            <strong id="summary-evidence">
+            <strong id="summary-evidence" className={this.state.significant ? 'hyphy-highlight' : ''}>
               {this.state.evidence}
             </strong>{" "}
 
@@ -232,7 +327,6 @@ class RELAX extends React.Component{
       scrollspy_info = [
         { label: "summary", href: "summary-tab" },
         { label: "fits", href: "fits-tab" },
-        { label: "ω plots", href: "omega-tab" },
         { label: "tree", href: "tree-tab" }
       ];
 
@@ -254,14 +348,17 @@ class RELAX extends React.Component{
 
             <div id="fits-tab" className="row">
               <div className="col-md-12">
+                <RELAXModelTable fits={self.state.fits} />
               </div>
             </div>
             
             <div id="omega-tab" className="row">
               <div className="col-md-12">
                 <Header title="Omega plots" popover="<p>Needs content.</p>"/>
+                <OmegaPlotGrid json={self.state.json} />
               </div>
             </div>
+
             <div className="row" id="tree-tab">
               
             </div>
