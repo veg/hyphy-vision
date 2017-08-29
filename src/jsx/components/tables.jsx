@@ -1122,6 +1122,12 @@ var DatamonkeyTimersTable = React.createClass({
     };
   },
 
+  componentWillReceiveProps: function(nextProps) {
+    this.setState({
+      rows: this.dm_extractTimerTable(nextProps.timers)
+    });
+  },
+
   render: function() {
     return (
       <DatamonkeyTable
