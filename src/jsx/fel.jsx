@@ -359,7 +359,7 @@ in the remaining ${no_selected} sites in your alignment.`;
               <div id="results">
                 <h3 className="list-group-item-heading">
                   <span id="summary-method-name">
-                    FEL - Fixed Effects Likelihood
+                    Fixed Effects Likelihood
                   </span>
                   <br />
                   <span className="results-summary">results summary</span>

@@ -99,7 +99,7 @@ var BSRELSummary = React.createClass({
       <div className="clearance" id="summary-div"></div>
         <div className="col-md-12">
           <h3 className="list-group-item-heading">
-            <span className="summary-method-name">adaptive Branch Site REL</span>
+            <span id="summary-method-name">adaptive Branch Site REL</span>
             <br />
             <span className="results-summary">results summary</span>
           </h3>

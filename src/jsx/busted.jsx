@@ -47,8 +47,8 @@ function BUSTEDSummary(props) {
     <div className="clearance" id="summary-div"></div>
       <div className="col-md-12">
         <h3 className="list-group-item-heading">
-          <span className="summary-method-name">
-            Branch-Site Unrestricted Statistical Test for Episodic
+          <span id="summary-method-name">
+            Branch-site Unrestricted Statistical Test for Episodic
             Diversification
           </span>
           <br />

@@ -34,7 +34,7 @@ class MEMESummary extends React.Component {
         <div className="clearance" id="summary-div"></div>
         <div className="col-md-12">
           <h3 className="list-group-item-heading">
-            <span className="summary-method-name">
+            <span id="summary-method-name">
               Mixed Effects Model of Evolution
             </span>
             <br />

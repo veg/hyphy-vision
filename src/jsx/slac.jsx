@@ -846,7 +846,7 @@ var SLACBanner = React.createClass({
       <div className="clearance" id="slac-summary"></div>
         <div className="col-md-12">
           <h3 className="list-group-item-heading">
-            <span className="summary-method-name">
+            <span id="summary-method-name">
             Single-Likelihood Ancestor Counting</span>
             <br />
             <span className="results-summary">results summary</span>

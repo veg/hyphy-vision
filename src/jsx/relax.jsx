@@ -255,7 +255,7 @@ class RELAX extends React.Component{
       <div className="clearance" id="summary-tab"></div>
       <div className="col-md-12">
         <h3 className="list-group-item-heading">
-          <span className="summary-method-name">
+          <span id="summary-method-name">
             RELAX(ed selection test)
           </span>
           <br />
