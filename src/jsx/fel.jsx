@@ -2,6 +2,7 @@ var React = require("react"),
   ReactDOM = require("react-dom"),
   _ = require("underscore");
 
+import { InputInfo } from "./components/input_info.jsx";
 import { DatamonkeyTable } from "./components/tables.jsx";
 import { DatamonkeySeries, DatamonkeyGraphMenu } from "./components/graphs.jsx";
 import { NavBar } from "./components/navbar.jsx";
@@ -97,7 +98,8 @@ var FEL = React.createClass({
       copy_transition: false,
       pvalue_threshold: 0.1,
       positively_selected: [],
-      negatively_selected: []
+      negatively_selected: [],
+      input: null
     };
   },
 
@@ -178,7 +180,8 @@ var FEL = React.createClass({
         mle_content: mle_content,
         mle_results: mle_results,
         positively_selected: positively_selected,
-        negatively_selected: negatively_selected
+        negatively_selected: negatively_selected,
+        input: data.input
       });
     });
   },
@@ -364,7 +367,7 @@ in the remaining ${no_selected} sites in your alignment.`;
                   <br />
                   <span className="results-summary">results summary</span>
                 </h3>
-
+                <InputInfo input_data={this.state.input} />
                 {Summary}
 
                 <div id="plot-tab" className="row hyphy-row">
