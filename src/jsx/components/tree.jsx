@@ -107,7 +107,7 @@ var Tree = React.createClass({
       show_legend: true,
       axis_scale: axis_scale,
       selected_model: selected_model,
-      partition: [],
+      partition: 'None',
       current: 0
     };
   },
@@ -386,6 +386,8 @@ var Tree = React.createClass({
   getMainList: function() {
     var self = this,
       menu = [];
+
+    // Enable display of multiple trees
     if(self.props.multitree && self.props.json){
       menu = menu.concat(<li className="dropdown-header">Partitions</li>)
       var partition_list = _.range(self.props.json.trees.length).map((d,i)=>(<li style={{backgroundColor: d==self.state.current ? 'lightGrey' : 'white'}}>
@@ -399,6 +401,7 @@ var Tree = React.createClass({
       menu = menu.concat(partition_list);
     } 
 
+    // Multiple models
     if (_.keys(self.props.models).length > 0) {
       if(self.props.multitree && self.props.json){
         menu = menu.concat(<li role="separator" className="divider"></li>);
@@ -429,17 +432,18 @@ var Tree = React.createClass({
       menu = menu.concat(model_list);
     }
 
+    // Branch partitions
     if(!_.isEmpty(this.props.partition)){
       var partitionList = [
         <li role="separator" className="divider"></li>,
         <li className="dropdown-header">Branch partition</li>,
-        (<li>
-          <a href="javascript:;" onClick={ ()=>this.setState({partition: []}) }>None</a>
+        (<li style={{backgroundColor: self.state.partition == 'None' ? 'lightGrey' : 'white'}}>
+          <a href="javascript:;" onClick={ ()=>this.setState({partition: 'None'}) }>None</a>
         </li>)
-      ].concat(_.keys(this.props.partition).map(key=>(<li>
+      ].concat(_.keys(this.props.partition).map(key=>(<li style={{backgroundColor: self.state.partition == key ? 'lightGrey' : 'white'}}>
         <a
           href="javascript:;"
-          onClick={ ()=>this.setState({partition: _.keys(this.props.partition[key])}) }
+          onClick={ ()=>this.setState({partition: key}) }
         >
         {key}
         </a>
@@ -610,7 +614,7 @@ var Tree = React.createClass({
         _,
         _,
         self.state.omega_color,
-        self.state.partition
+        _.keys(self.props.partition[self.state.partition])
       );
     } else if (this.settings.edgeColorizer) {
       this.edgeColorizer = _.partial(

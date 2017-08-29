@@ -183,6 +183,7 @@ class RELAX extends React.Component{
    
     _.keys(data.fits).forEach(model=>{
       data["fits"][model]["branch-annotations"] = this.formatBranchAnnotations(data, model);
+      data["fits"][model]["annotation-tag"] = model == "MG94xREV with separate rates for branch sets" ? "ω" : 'k';
     });
 
     this.setState({
@@ -195,44 +196,6 @@ class RELAX extends React.Component{
       fits: data["fits"],
       significant: significant
     });
-    //var models = ["Partitioned MG94xREV", "General Descriptive", "Null", "Alternative", "Partitioned Exploratory"];
-    //models.forEach(model=>{
-    //  if (data["fits"][model]) data["fits"][model]["branch-annotations"] = self.formatBranchAnnotations(data, model);
-    //});
-
-    //var annotations =
-    //  data["fits"]["Partitioned MG94xREV"]["branch-annotations"],
-    //  json = data,
-    //  pmid = data["PMID"],
-    //  test_results = data["relaxation_test"];
-
-    //var p = data["relaxation-test"]["p"],
-    //  direction = data["fits"]["Alternative"]["K"] > 1
-    //    ? "intensification"
-    //    : "relaxation",
-    //  evidence = p <= self.props.alpha_level
-    //    ? "significant"
-    //    : "not significant",
-    //  pvalue = self.p_value_format(p),
-    //  lrt = self.fit_format(data["relaxation-test"]["LR"]),
-    //  summary_k = self.fit_format(data["fits"]["Alternative"]["K"]),
-    //  pmid_text = "PubMed ID " + pmid,
-    //  pmid_href = "http://www.ncbi.nlm.nih.gov/pubmed/" + pmid;
-
-    //this.setState({
-      //annotations: annotations,
-      //json: data,
-      //pmid: pmid,
-      //test_results: test_results,
-      //p: p,
-      //direction: direction,
-      //evidence: evidence,
-      //pvalue: pvalue,
-      //lrt: lrt,
-      //summary_k: summary_k,
-      //pmid_text: pmid_text,
-      //pmid_href: pmid_href
-    //});
   }
 
   componentDidMount(){
@@ -256,12 +219,6 @@ class RELAX extends React.Component{
   }
 
   formatBranchAnnotations(json, model) {
-    //var initial_branch_annotations = json["fits"][model]["branch-annotations"];
-
-    //if (!initial_branch_annotations) {
-    //  initial_branch_annotations = json["fits"][model]["rate distributions"];
-    //}
-    
     if(model == 'MG94xREV with separate rates for branch sets') {
       var initial_branch_annotations = _.mapObject(json.fits[model]['Rate Distributions'], (val, key) => {
         return _.values(val).map(d=>[d.omega, d.proportion]);
