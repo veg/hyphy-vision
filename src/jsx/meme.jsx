@@ -80,14 +80,27 @@ class MEMETable extends React.Component {
     this.state = {
       bodyData: null,
       value: 10,
-      filter: 0.1
+      filter: 0.1,
     };
   }
-  componentWillReceiveProps(nextProps) {
+  processBodyData(body_data, partitions){
+    var flattened = _.flatten(_.values(body_data), true),
+      partition_column = d3.range(flattened.length).map(d=>0);
+    _.each(partitions, (val, key)=>{
+      val.coverage[0].forEach(d=>{
+        partition_column[d] = key;
+      });
+    });
     var formatter = d3.format(".2f"),
-      new_rows = nextProps.rows.map(row => row.map(entry => formatter(entry)));
+      new_rows = flattened.map(
+        (row, index) => [index+1, partition_column[index]].concat(row.map(formatter))
+      );
+    return new_rows;
+  }
+  componentWillReceiveProps(nextProps) {
+    var self = this;
     this.setState({
-      bodyData: new_rows
+      bodyData: self.processBodyData(nextProps.body_data, nextProps.partitions),
     });
   }
   handleChange(event) {
@@ -98,11 +111,11 @@ class MEMETable extends React.Component {
   }
   render() {
     if (this.props.header) {
-      var headerData = this.props.header.map(pair => {
+      var headerData = ['Site', 'Partition'].concat(this.props.header.map(pair => {
           return { value: pair[0] == 'alpha;' ? '&alpha; ' : pair[0], abbr: pair[1] };
-        }),
+        })),
         bodyData = this.state.bodyData.filter(
-          row => row[6] < this.state.filter
+          row => (parseFloat(row[8]) <= this.state.filter)
         );
     }
     var self = this;
@@ -163,12 +176,14 @@ class MEME extends React.Component {
   constructor(props) {
     super(props);
     this.updateAxisSelection = this.updateAxisSelection.bind(this);
+    this.onFileChange = this.onFileChange.bind(this); 
     this.state = {
       input_data: null,
       data: null,
       fits: null,
       header: null,
-      rows: null,
+      bodyData: null,
+      partitions: null,
       xaxis: "Site",
       yaxis: "&alpha;"
     };
@@ -183,17 +198,41 @@ class MEME extends React.Component {
     this.setState(state_to_update);
   }
 
+  processData(data){
+    this.setState({
+      input_data: data["input_data"],
+      data: data,
+      fits: data["fits"],
+      header: data["MLE"]["headers"],
+      bodyData: data["MLE"]["content"],
+      partitions: data["data partitions"]
+    });
+  }
+
   loadFromServer() {
     var self = this;
     d3.json(this.props.url, function(data) {
-      self.setState({
-        input_data: data["input_data"],
-        data: data,
-        fits: data["fits"],
-        header: data["MLE"]["headers"],
-        rows: data["MLE"]["content"]["0"]
-      });
+      self.processData(data);
     });
+  }
+
+  onFileChange(e) {
+    var self = this;
+    var files = e.target.files; // FileList object
+
+    if (files.length == 1) {
+      var f = files[0];
+      var reader = new FileReader();
+
+      reader.onload = (function(theFile) {
+        return function(e) {
+          var data = JSON.parse(this.result);
+          self.processData(data);
+        };
+      })(f);
+      reader.readAsText(f);
+    }
+    e.preventDefault();
   }
 
   componentWillMount() {
@@ -222,18 +261,18 @@ class MEME extends React.Component {
       columns[0] = '&alpha;';
       site_graph = <DatamonkeySiteGraph 
         columns={columns}
-        rows={self.state.rows}
+        rows={_.flatten(_.values(self.state.bodyData), true)}
       />;
     }
     return (
       <div>
-        <NavBar />
+        <NavBar onFileChange={this.onFileChange} />
         <div className="container">
           <div className="row">
             <ScrollSpy info={scrollspy_info} />
             <div className="col-sm-10" id="results">
               <MEMESummary json={self.state.data} />
-              <MEMETable header={self.state.header} rows={self.state.rows} />
+              <MEMETable header={self.state.header} body_data={self.state.bodyData} partitions={self.state.partitions}/>
               <div className="row">
                 <div className="col-md-12" id="fit-tab">
                   <DatamonkeyModelTable fits={self.state.fits} />
