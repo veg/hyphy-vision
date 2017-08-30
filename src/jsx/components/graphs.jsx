@@ -212,9 +212,11 @@ class BaseGraph extends React.Component {
   yAxisLabel() {
     var transform_x = (this.props.marginLeft - 25)/2;
     var transform_y = this.props.height/2;
-    var y_label = this.props.y_label.indexOf('<sup>' !== -1) ?
-      '<tspan>' + this.props.y_label.replace('<sup>', '<tspan baseline-shift="super">').replace('</sup>','</tspan>') + '</tspan>' :
-      this.props.y_label;
+    if (this.props.y_label){
+      var y_label = this.props.y_label.indexOf('<sup>' !== -1) ?
+        '<tspan>' + this.props.y_label.replace('<sup>', '<tspan baseline-shift="super">').replace('</sup>','</tspan>') + '</tspan>' :
+        this.props.y_label;
+    }
     return(<text
       textAnchor="middle"
       transform={"translate("+transform_x+","+transform_y+")rotate(-90)"}
