@@ -99,7 +99,7 @@ class MEMETable extends React.Component {
   render() {
     if (this.props.header) {
       var headerData = this.props.header.map(pair => {
-          return { value: pair[0], abbr: pair[1] };
+          return { value: pair[0] == 'alpha;' ? '&alpha; ' : pair[0], abbr: pair[1] };
         }),
         bodyData = this.state.bodyData.filter(
           row => row[6] < this.state.filter
@@ -218,8 +218,10 @@ class MEME extends React.Component {
       ];
     
     if(this.state.data){
+      var columns = _.pluck(self.state.header, 0);
+      columns[0] = '&alpha;';
       site_graph = <DatamonkeySiteGraph 
-        columns={_.pluck(self.state.header, 0)}
+        columns={columns}
         rows={self.state.rows}
       />;
     }
