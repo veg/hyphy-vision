@@ -906,7 +906,7 @@ var DatamonkeyModelTable = React.createClass({
       },
       display_format: d3.format(".2f")
     },
-    "rate distributions": {
+    "Rate Distributions": {
       order: 4,
       value: "Rate distributions",
       transform: function(value) {

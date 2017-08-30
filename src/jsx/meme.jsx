@@ -82,8 +82,8 @@ function MEMETable(props) {
   });
   var formatter = d3.format(".2f"),
     new_rows = flattened.map((row, index) => {
-      var selection = row[3]/row[0] > 1 && row[6] < .1 ? "success" : "";
-        selection = row[3]/row[0] < 1 && row[6] < .1 ? "warning" : selection;
+      var selection = row[3]/row[0] > 1 && row[6] < .1 ? "positive-selection-row" : "";
+        selection = row[3]/row[0] < 1 && row[6] < .1 ? "negative-selection-row" : selection;
       var site = {value: index+1, classes: selection},
         partition = {value: partition_column[index], classes:selection};
   
@@ -117,13 +117,13 @@ function MEMETable(props) {
           data-placement="bottom"
         />
       </h4>
-      <div className="col-md-6 alert alert-success" role="alert">
+      <div className="col-md-6 positive-selection-row alert" role="alert">
         Positively selected sites with evidence are highlighted in
         green.
       </div>
-      <div className="col-md-6 alert alert-warning" role="alert">
+      <div className="col-md-6 negative-selection-row alert" role="alert">
         Negatively selected sites with evidence are highlighted in
-        yellow.
+        black.
       </div>    
       <DatamonkeyTable
         headerData={headerData}
