@@ -72,110 +72,73 @@ function MEMESummary(props) {
   );
 }
 
-class MEMETable extends React.Component {
-  constructor(props) {
-    super(props);
-    this.handleChange = this.handleChange.bind(this);
-    this.handleMouseUp = this.handleMouseUp.bind(this);
-    this.state = {
-      bodyData: null,
-      value: 10,
-      filter: 0.1,
-    };
-  }
-  processBodyData(body_data, partitions){
-    var flattened = _.flatten(_.values(body_data), true),
-      partition_column = d3.range(flattened.length).map(d=>0);
-    _.each(partitions, (val, key)=>{
-      val.coverage[0].forEach(d=>{
-        partition_column[d] = key;
-      });
+function MEMETable(props) {
+  var flattened = _.flatten(_.values(props.body_data), true),
+    partition_column = d3.range(flattened.length).map(d=>0);
+  _.each(props.partitions, (val, key)=>{
+    val.coverage[0].forEach(d=>{
+      partition_column[d] = key;
     });
-    var formatter = d3.format(".2f"),
-      new_rows = flattened.map(
-        (row, index) => [index+1, partition_column[index]].concat(row.map(formatter))
-      );
-    return new_rows;
-  }
-  componentWillReceiveProps(nextProps) {
-    var self = this;
-    this.setState({
-      bodyData: self.processBodyData(nextProps.body_data, nextProps.partitions),
+  });
+  var formatter = d3.format(".2f"),
+    new_rows = flattened.map((row, index) => {
+      var selection = row[3]/row[0] > 1 && row[6] < .1 ? "success" : "";
+        selection = row[3]/row[0] < 1 && row[6] < .1 ? "warning" : selection;
+      var site = {value: index+1, classes: selection},
+        partition = {value: partition_column[index], classes:selection};
+  
+      return [site, partition].concat(
+        row.map(entry => {
+          return {value: formatter(entry), classes: selection};
+        })
+      )
     });
-  }
-  handleChange(event) {
-    this.setState({ value: event.target.value });
-  }
-  handleMouseUp(event) {
-    this.setState({ filter: event.target.value / 100 });
-  }
-  render() {
-    if (this.props.header) {
-      var headerData = ['Site', 'Partition'].concat(this.props.header.map(pair => {
-          return { value: pair[0] == 'alpha;' ? '&alpha; ' : pair[0], abbr: pair[1] };
-        })),
-        bodyData = this.state.bodyData.filter(
-          row => (parseFloat(row[8]) <= this.state.filter)
-        );
-    }
-    var self = this;
-    return (
-      <div className="row">
-        <div className="col-md-12" id="table-tab">
-          <h4 className="dm-table-header">
-            MEME data
-            <span
-              className="glyphicon glyphicon-info-sign"
-              style={{ verticalAlign: "middle", float: "right" }}
-              aria-hidden="true"
-              data-toggle="popover"
-              data-trigger="hover"
-              title="Actions"
-              data-html="true"
-              data-content="<ul><li>Hover over a column header for a description of its content.</li></ul>"
-              data-placement="bottom"
-            />
-          </h4>
-          <div style={{ width: "500px" }}>
-            <span
-              style={{
-                width: "35%",
-                display: "inline-block",
-                verticalAlign: "middle"
-              }}
-            >
-              p-value threshold: {self.state.value / 100}
-            </span>
-            <input
-              type="range"
-              id="myRange"
-              value={self.state.value}
-              style={{
-                width: "65%",
-                display: "inline-block",
-                verticalAlign: "middle"
-              }}
-              onChange={this.handleChange}
-              onMouseUp={this.handleMouseUp}
-            />
-          </div>
-          <DatamonkeyTable
-            headerData={headerData}
-            bodyData={bodyData}
-            paginate={20}
-            classes={"table table-condensed table-striped"}
-            export_csv
-          />
-        </div>
-      </div>
+  if (props.header) {
+    var headerData = ['Site', 'Partition'].concat(
+      props.header.map(pair => {
+        return { value: pair[0] == 'alpha;' ? '&alpha; ' : pair[0], abbr: pair[1] };
+      })
     );
   }
+  
+  return (<div className="row">
+    <div className="col-md-12" id="table-tab">
+      <h4 className="dm-table-header">
+        MEME data
+        <span
+          className="glyphicon glyphicon-info-sign"
+          style={{ verticalAlign: "middle", float: "right" }}
+          aria-hidden="true"
+          data-toggle="popover"
+          data-trigger="hover"
+          title="Actions"
+          data-html="true"
+          data-content="<ul><li>Hover over a column header for a description of its content.</li></ul>"
+          data-placement="bottom"
+        />
+      </h4>
+      <div className="col-md-6 alert alert-success" role="alert">
+        Positively selected sites with evidence are highlighted in
+        green.
+      </div>
+      <div className="col-md-6 alert alert-warning" role="alert">
+        Negatively selected sites with evidence are highlighted in
+        yellow.
+      </div>    
+      <DatamonkeyTable
+        headerData={headerData}
+        bodyData={new_rows}
+        paginate={20}
+        classes={"table table-condensed table-striped"}
+        export_csv
+      />
+    </div>
+  </div>);
 }
 
 class MEME extends React.Component {
   constructor(props) {
     super(props);
-    this.updateAxisSelection = this.updateAxisSelection.bind(this);
     this.onFileChange = this.onFileChange.bind(this); 
     this.state = {
       input_data: null,
@@ -183,22 +146,18 @@ class MEME extends React.Component {
       fits: null,
       header: null,
       bodyData: null,
-      partitions: null,
-      xaxis: "Site",
-      yaxis: "&alpha;"
+      partitions: null
     };
   }
 
-  updateAxisSelection(e) {
-    var state_to_update = {},
-      dimension = e.target.dataset.dimension,
-      axis = e.target.dataset.axis;
-
-    state_to_update[axis] = dimension;
-    this.setState(state_to_update);
-  }
-
   processData(data){
+    data['trees'] = _.map(data['input']['trees'], (val, key) => {
+      var branchLengths = {
+        'Global MG94xREV': _.mapObject(data['branch attributes'][key], val1 => val1['Global MG94xREV'])
+      };
+      return {newickString: val, branchLengths: branchLengths};
+    });
+
     this.setState({
       input_data: data["input_data"],
       data: data,
@@ -264,6 +223,12 @@ class MEME extends React.Component {
         rows={_.flatten(_.values(self.state.bodyData), true)}
       />;
     }
+
+    var models = {};
+    if (!_.isNull(self.state.data)) {
+      models = self.state.data.fits;
+    }
+
     return (
       <div>
         <NavBar onFileChange={this.onFileChange} />
@@ -291,7 +256,6 @@ class MEME extends React.Component {
                   {site_graph}
                 </div>
               </div>
-
 
             </div>
           </div>
