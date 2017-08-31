@@ -50,7 +50,8 @@ module.exports = reactProdInvariant;
 /* 5 */,
 /* 6 */,
 /* 7 */,
-/* 8 */
+/* 8 */,
+/* 9 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -69,7 +70,7 @@ module.exports = reactProdInvariant;
 var _prodInvariant = __webpack_require__(4);
 
 var DOMProperty = __webpack_require__(21);
-var ReactDOMComponentFlags = __webpack_require__(83);
+var ReactDOMComponentFlags = __webpack_require__(82);
 
 var invariant = __webpack_require__(1);
 
@@ -251,7 +252,6 @@ module.exports = ReactDOMComponentTree;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
 
 /***/ }),
-/* 9 */,
 /* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -344,10 +344,10 @@ module.exports = { debugTool: debugTool };
 var _prodInvariant = __webpack_require__(4),
     _assign = __webpack_require__(7);
 
-var CallbackQueue = __webpack_require__(81);
+var CallbackQueue = __webpack_require__(80);
 var PooledClass = __webpack_require__(24);
-var ReactFeatureFlags = __webpack_require__(86);
-var ReactReconciler = __webpack_require__(27);
+var ReactFeatureFlags = __webpack_require__(85);
+var ReactReconciler = __webpack_require__(28);
 var Transaction = __webpack_require__(44);
 
 var invariant = __webpack_require__(1);
@@ -1106,204 +1106,61 @@ function getPooledWarningPropertyDefinition(propName, getVal) {
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/* WEBPACK VAR INJECTION */(function(d3, jQuery) {
 
-var root = undefined;
-var datamonkey = function datamonkey() {};
 
-var $ = __webpack_require__(3);
+var React = __webpack_require__(5),
+    _ = __webpack_require__(8);
 
-if (true) {
-  if (typeof module !== "undefined" && module.exports) {
-    exports = module.exports = datamonkey;
-  }
-  exports.datamonkey = datamonkey;
-} else {
-  root.datamonkey = datamonkey;
+function InputInfo(props) {
+  if (!props.input_data) return React.createElement('div', null);
+  var is_full_path = props.input_data['file name'].indexOf('/') != -1,
+      filename = is_full_path ? _.last(props.input_data['file name'].split('/')) : props.input_data['file name'];
+  return React.createElement(
+    'div',
+    { id: 'input-info' },
+    React.createElement(
+      'span',
+      { className: 'hyphy-highlight' },
+      'INPUT DATA'
+    ),
+    ' ',
+    React.createElement(
+      'span',
+      { className: 'divider' },
+      '|'
+    ),
+    React.createElement(
+      'a',
+      { href: '#' },
+      filename
+    ),
+    ' ',
+    React.createElement(
+      'span',
+      { className: 'divider' },
+      '|'
+    ),
+    React.createElement(
+      'span',
+      { className: 'hyphy-highlight' },
+      props.input_data['number of sequences']
+    ),
+    ' sequences ',
+    React.createElement(
+      'span',
+      { className: 'divider' },
+      '|'
+    ),
+    React.createElement(
+      'span',
+      { className: 'hyphy-highlight' },
+      props.input_data['number of sites']
+    ),
+    ' sites'
+  );
 }
 
-datamonkey.errorModal = function (msg) {
-  $("#modal-error-msg").text(msg);
-  $("#errorModal").modal();
-};
-
-function b64toBlob(b64, onsuccess, onerror) {
-  var img = new Image();
-
-  img.onerror = onerror;
-
-  img.onload = function onload() {
-    var canvas = document.getElementById("hyphy-chart-canvas");
-    canvas.width = img.width;
-    canvas.height = img.height;
-
-    var ctx = canvas.getContext("2d");
-    ctx.fillStyle = "#FFFFFF";
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-
-    canvas.toBlob(onsuccess);
-  };
-
-  img.src = b64;
-}
-
-datamonkey.export_csv_button = function (data) {
-  data = d3.csv.format(data);
-  if (data !== null) {
-    var pom = document.createElement("a");
-    pom.setAttribute("href", "data:text/csv;charset=utf-8," + encodeURIComponent(data));
-    pom.setAttribute("download", "export.csv");
-    pom.className = "btn btn-default btn-sm";
-    pom.innerHTML = '<span class="glyphicon glyphicon-floppy-save"></span> Download CSV';
-    $("body").append(pom);
-    pom.click();
-    pom.remove();
-  }
-};
-
-datamonkey.save_image = function (type, container) {
-  var prefix = {
-    xmlns: "http://www.w3.org/2000/xmlns/",
-    xlink: "http://www.w3.org/1999/xlink",
-    svg: "http://www.w3.org/2000/svg"
-  };
-
-  function get_styles(doc) {
-    function process_stylesheet(ss) {
-      try {
-        if (ss.cssRules) {
-          for (var i = 0; i < ss.cssRules.length; i++) {
-            var rule = ss.cssRules[i];
-            if (rule.type === 3) {
-              // Import Rule
-              process_stylesheet(rule.styleSheet);
-            } else {
-              // hack for illustrator crashing on descendent selectors
-              if (rule.selectorText) {
-                if (rule.selectorText.indexOf(">") === -1) {
-                  styles += "\n" + rule.cssText;
-                }
-              }
-            }
-          }
-        }
-      } catch (e) {
-        //console.log("Could not process stylesheet : " + ss);
-      }
-    }
-
-    var styles = "",
-        styleSheets = doc.styleSheets;
-
-    if (styleSheets) {
-      for (var i = 0; i < styleSheets.length; i++) {
-        process_stylesheet(styleSheets[i]);
-      }
-    }
-
-    return styles;
-  }
-
-  var svg = $(container).find("svg")[0];
-  if (!svg) {
-    svg = $(container)[0];
-  }
-
-  var styles = get_styles(window.document);
-
-  svg.setAttribute("version", "1.1");
-
-  var defsEl = document.createElement("defs");
-  svg.insertBefore(defsEl, svg.firstChild);
-
-  var styleEl = document.createElement("style");
-  defsEl.appendChild(styleEl);
-  styleEl.setAttribute("type", "text/css");
-
-  // removing attributes so they aren't doubled up
-  svg.removeAttribute("xmlns");
-  svg.removeAttribute("xlink");
-
-  // These are needed for the svg
-  if (!svg.hasAttributeNS(prefix.xmlns, "xmlns")) {
-    svg.setAttributeNS(prefix.xmlns, "xmlns", prefix.svg);
-  }
-
-  if (!svg.hasAttributeNS(prefix.xmlns, "xmlns:xlink")) {
-    svg.setAttributeNS(prefix.xmlns, "xmlns:xlink", prefix.xlink);
-  }
-
-  var source = new XMLSerializer().serializeToString(svg).replace("</style>", "<![CDATA[" + styles + "]]></style>");
-  var doctype = '<?xml version="1.0" standalone="no"?><!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">';
-  var to_download = [doctype + source];
-  var image_string = "data:image/svg+xml;base66," + encodeURIComponent(to_download);
-
-  if (type == "png") {
-    b64toBlob(image_string, function (blob) {
-      var url = window.URL.createObjectURL(blob);
-      var pom = document.createElement("a");
-      pom.setAttribute("download", "image.png");
-      pom.setAttribute("href", url);
-      $("body").append(pom);
-      pom.click();
-      pom.remove();
-    }, function (error) {
-      // handle error
-    });
-  } else {
-    var pom = document.createElement("a");
-    pom.setAttribute("download", "image.svg");
-    pom.setAttribute("href", image_string);
-    $("body").append(pom);
-    pom.click();
-    pom.remove();
-  }
-};
-
-datamonkey.validate_date = function () {
-  // Check that it is not empty
-  if ($(this).val().length === 0) {
-    $(this).next(".help-block").remove();
-    $(this).parent().removeClass("has-success");
-    $(this).parent().addClass("has-error");
-
-    jQuery("<span/>", {
-      class: "help-block",
-      text: "Field is empty"
-    }).insertAfter($(this));
-  } else if (isNaN(Date.parse($(this).val()))) {
-    $(this).next(".help-block").remove();
-    $(this).parent().removeClass("has-success");
-    $(this).parent().addClass("has-error");
-
-    jQuery("<span/>", {
-      class: "help-block",
-      text: "Date format should be in the format YYYY-mm-dd"
-    }).insertAfter($(this));
-  } else {
-    $(this).parent().removeClass("has-error");
-    $(this).parent().addClass("has-success");
-    $(this).next(".help-block").remove();
-  }
-};
-
-$(document).ready(function () {
-  $(function () {
-    $('[data-toggle="tooltip"]').tooltip();
-  });
-  $("#datamonkey-header").collapse();
-
-  var initial_padding = $("body").css("padding-top");
-
-  $("#collapse_nav_bar").on("click", function (e) {
-    $("#datamonkey-header").collapse("toggle");
-    $(this).find("i").toggleClass("fa-times-circle fa-eye");
-    var new_padding = $("body").css("padding-top") == initial_padding ? "5px" : initial_padding;
-    d3.select("body").transition().style("padding-top", new_padding);
-  });
-});
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(6), __webpack_require__(3)))
+module.exports.InputInfo = InputInfo;
 
 /***/ }),
 /* 21 */
@@ -1525,75 +1382,204 @@ module.exports = DOMProperty;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
+/* WEBPACK VAR INJECTION */(function(d3, jQuery) {
 
+var root = undefined;
+var datamonkey = function datamonkey() {};
 
-var React = __webpack_require__(5);
+var $ = __webpack_require__(3);
 
-var InputInfo = React.createClass({
-  displayName: "InputInfo",
-  getInitialState: function getInitialState() {
-    if (this.props.input_data) {
-      return {
-        input_data: this.props.input_data
-      };
-    }
-    return {
-      input_data: {}
-    };
-  },
-  componentWillReceiveProps: function componentWillReceiveProps(nextProps) {
-    this.setState({
-      input_data: nextProps.input_data
-    });
-  },
-  render: function render() {
-    return React.createElement(
-      "div",
-      { id: "input-info" },
-      React.createElement(
-        "span",
-        { className: "hyphy-highlight" },
-        "INPUT DATA"
-      ),
-      " ",
-      React.createElement(
-        "span",
-        { className: "divider" },
-        "|"
-      ),
-      React.createElement(
-        "a",
-        { href: "#" },
-        this.state.input_data.filename
-      ),
-      " ",
-      React.createElement(
-        "span",
-        { className: "divider" },
-        "|"
-      ),
-      React.createElement(
-        "span",
-        { className: "hyphy-highlight" },
-        this.state.input_data.sequences
-      ),
-      " sequences ",
-      React.createElement(
-        "span",
-        { className: "divider" },
-        "|"
-      ),
-      React.createElement(
-        "span",
-        { className: "hyphy-highlight" },
-        this.state.input_data.sites
-      ),
-      " sites"
-    );
+if (true) {
+  if (typeof module !== "undefined" && module.exports) {
+    exports = module.exports = datamonkey;
   }
-});
+  exports.datamonkey = datamonkey;
+} else {
+  root.datamonkey = datamonkey;
+}
 
-module.exports.InputInfo = InputInfo;
+datamonkey.errorModal = function (msg) {
+  $("#modal-error-msg").text(msg);
+  $("#errorModal").modal();
+};
+
+function b64toBlob(b64, onsuccess, onerror) {
+  var img = new Image();
+
+  img.onerror = onerror;
+
+  img.onload = function onload() {
+    var canvas = document.getElementById("hyphy-chart-canvas");
+    canvas.width = img.width;
+    canvas.height = img.height;
+
+    var ctx = canvas.getContext("2d");
+    ctx.fillStyle = "#FFFFFF";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+    canvas.toBlob(onsuccess);
+  };
+
+  img.src = b64;
+}
+
+datamonkey.export_csv_button = function (data) {
+  data = d3.csv.format(data);
+  if (data !== null) {
+    var pom = document.createElement("a");
+    pom.setAttribute("href", "data:text/csv;charset=utf-8," + encodeURIComponent(data));
+    pom.setAttribute("download", "export.csv");
+    pom.className = "btn btn-default btn-sm";
+    pom.innerHTML = '<span class="glyphicon glyphicon-floppy-save"></span> Download CSV';
+    $("body").append(pom);
+    pom.click();
+    pom.remove();
+  }
+};
+
+datamonkey.save_image = function (type, container) {
+  var prefix = {
+    xmlns: "http://www.w3.org/2000/xmlns/",
+    xlink: "http://www.w3.org/1999/xlink",
+    svg: "http://www.w3.org/2000/svg"
+  };
+
+  function get_styles(doc) {
+    function process_stylesheet(ss) {
+      try {
+        if (ss.cssRules) {
+          for (var i = 0; i < ss.cssRules.length; i++) {
+            var rule = ss.cssRules[i];
+            if (rule.type === 3) {
+              // Import Rule
+              process_stylesheet(rule.styleSheet);
+            } else {
+              // hack for illustrator crashing on descendent selectors
+              if (rule.selectorText) {
+                if (rule.selectorText.indexOf(">") === -1) {
+                  styles += "\n" + rule.cssText;
+                }
+              }
+            }
+          }
+        }
+      } catch (e) {
+        //console.log("Could not process stylesheet : " + ss);
+      }
+    }
+
+    var styles = "",
+        styleSheets = doc.styleSheets;
+
+    if (styleSheets) {
+      for (var i = 0; i < styleSheets.length; i++) {
+        process_stylesheet(styleSheets[i]);
+      }
+    }
+
+    return styles;
+  }
+
+  var svg = $(container).find("svg")[0];
+  if (!svg) {
+    svg = $(container)[0];
+  }
+
+  var styles = get_styles(window.document);
+
+  svg.setAttribute("version", "1.1");
+
+  var defsEl = document.createElement("defs");
+  svg.insertBefore(defsEl, svg.firstChild);
+
+  var styleEl = document.createElement("style");
+  defsEl.appendChild(styleEl);
+  styleEl.setAttribute("type", "text/css");
+
+  // removing attributes so they aren't doubled up
+  svg.removeAttribute("xmlns");
+  svg.removeAttribute("xlink");
+
+  // These are needed for the svg
+  if (!svg.hasAttributeNS(prefix.xmlns, "xmlns")) {
+    svg.setAttributeNS(prefix.xmlns, "xmlns", prefix.svg);
+  }
+
+  if (!svg.hasAttributeNS(prefix.xmlns, "xmlns:xlink")) {
+    svg.setAttributeNS(prefix.xmlns, "xmlns:xlink", prefix.xlink);
+  }
+
+  var source = new XMLSerializer().serializeToString(svg).replace("</style>", "<![CDATA[" + styles + "]]></style>");
+  var doctype = '<?xml version="1.0" standalone="no"?><!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">';
+  var to_download = [doctype + source];
+  var image_string = "data:image/svg+xml;base66," + encodeURIComponent(to_download);
+
+  if (type == "png") {
+    b64toBlob(image_string, function (blob) {
+      var url = window.URL.createObjectURL(blob);
+      var pom = document.createElement("a");
+      pom.setAttribute("download", "image.png");
+      pom.setAttribute("href", url);
+      $("body").append(pom);
+      pom.click();
+      pom.remove();
+    }, function (error) {
+      // handle error
+    });
+  } else {
+    var pom = document.createElement("a");
+    pom.setAttribute("download", "image.svg");
+    pom.setAttribute("href", image_string);
+    $("body").append(pom);
+    pom.click();
+    pom.remove();
+  }
+};
+
+datamonkey.validate_date = function () {
+  // Check that it is not empty
+  if ($(this).val().length === 0) {
+    $(this).next(".help-block").remove();
+    $(this).parent().removeClass("has-success");
+    $(this).parent().addClass("has-error");
+
+    jQuery("<span/>", {
+      class: "help-block",
+      text: "Field is empty"
+    }).insertAfter($(this));
+  } else if (isNaN(Date.parse($(this).val()))) {
+    $(this).next(".help-block").remove();
+    $(this).parent().removeClass("has-success");
+    $(this).parent().addClass("has-error");
+
+    jQuery("<span/>", {
+      class: "help-block",
+      text: "Date format should be in the format YYYY-mm-dd"
+    }).insertAfter($(this));
+  } else {
+    $(this).parent().removeClass("has-error");
+    $(this).parent().addClass("has-success");
+    $(this).next(".help-block").remove();
+  }
+};
+
+$(document).ready(function () {
+  $(function () {
+    $('[data-toggle="tooltip"]').tooltip();
+  });
+  $("#datamonkey-header").collapse();
+
+  var initial_padding = $("body").css("padding-top");
+
+  $("#collapse_nav_bar").on("click", function (e) {
+    $("#datamonkey-header").collapse("toggle");
+    $(this).find("i").toggleClass("fa-times-circle fa-eye");
+    var new_padding = $("body").css("padding-top") == initial_padding ? "5px" : initial_padding;
+    d3.select("body").transition().style("padding-top", new_padding);
+  });
+});
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(6), __webpack_require__(3)))
 
 /***/ }),
 /* 23 */
@@ -1604,18 +1590,18 @@ module.exports.InputInfo = InputInfo;
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
-var _propTypes = __webpack_require__(79);
+var _propTypes = __webpack_require__(78);
 
 var _propTypes2 = _interopRequireDefault(_propTypes);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var React = __webpack_require__(5),
-    _ = __webpack_require__(9),
+    _ = __webpack_require__(8),
     d3 = __webpack_require__(6),
-    datamonkey = __webpack_require__(20);
+    datamonkey = __webpack_require__(22);
 
-__webpack_require__(111);
+__webpack_require__(110);
 
 var DatamonkeyTableRow = React.createClass({
   displayName: "DatamonkeyTableRow",
@@ -2407,7 +2393,7 @@ var DatamonkeyModelTable = React.createClass({
   dm_numberFormatter: d3.format(".2f"),
 
   dm_supportedColumns: {
-    "log-likelihood": {
+    "Log Likelihood": {
       order: 2,
       value: {
         value: "log L",
@@ -2415,7 +2401,7 @@ var DatamonkeyModelTable = React.createClass({
       },
       display_format: d3.format(".2f")
     },
-    parameters: {
+    "estimated parameters": {
       order: 3,
       value: {
         value: "Parameters",
@@ -2434,7 +2420,7 @@ var DatamonkeyModelTable = React.createClass({
       },
       display_format: d3.format(".2f")
     },
-    "rate distributions": {
+    "Rate Distributions": {
       order: 4,
       value: "Rate distributions",
       transform: function transform(value) {
@@ -2634,6 +2620,12 @@ var DatamonkeyTimersTable = React.createClass({
     };
   },
 
+  componentWillReceiveProps: function componentWillReceiveProps(nextProps) {
+    this.setState({
+      rows: this.dm_extractTimerTable(nextProps.timers)
+    });
+  },
+
   render: function render() {
     return React.createElement(DatamonkeyTable, {
       headerData: this.state.header,
@@ -2773,6 +2765,227 @@ module.exports = PooledClass;
 /* 26 */
 /***/ (function(module, exports, __webpack_require__) {
 
+(function (global, factory) {
+   true ? factory(exports) :
+  typeof define === 'function' && define.amd ? define('d3-save-svg', ['exports'], factory) :
+  factory((global.d3_save_svg = {}));
+}(this, function (exports) { 'use strict';
+
+  function download (svgInfo, filename) {
+    window.URL = (window.URL || window.webkitURL);
+    var blob = new Blob(svgInfo.source, {type: 'text\/xml'});
+    var url = window.URL.createObjectURL(blob);
+    var body = document.body;
+    var a = document.createElement('a');
+
+    body.appendChild(a);
+    a.setAttribute('download', filename + '.svg');
+    a.setAttribute('href', url);
+    a.style.display = 'none';
+    a.click();
+    a.parentNode.removeChild(a);
+
+    setTimeout(function() {
+      window.URL.revokeObjectURL(url);
+    }, 10);
+  }
+
+  var prefix = {
+    svg: 'http://www.w3.org/2000/svg',
+    xhtml: 'http://www.w3.org/1999/xhtml',
+    xlink: 'http://www.w3.org/1999/xlink',
+    xml: 'http://www.w3.org/XML/1998/namespace',
+    xmlns: 'http://www.w3.org/2000/xmlns/',
+  };
+
+  function setInlineStyles (svg) {
+
+    // add empty svg element
+    var emptySvg = window.document.createElementNS(prefix.svg, 'svg');
+    window.document.body.appendChild(emptySvg);
+    var emptySvgDeclarationComputed = window.getComputedStyle(emptySvg);
+
+    // hardcode computed css styles inside svg
+    var allElements = traverse(svg);
+    var i = allElements.length;
+    while (i--) {
+      explicitlySetStyle(allElements[i]);
+    }
+
+    emptySvg.parentNode.removeChild(emptySvg);
+
+    function explicitlySetStyle(element) {
+      var cSSStyleDeclarationComputed = window.getComputedStyle(element);
+      var i;
+      var len;
+      var key;
+      var value;
+      var computedStyleStr = '';
+
+      for (i = 0, len = cSSStyleDeclarationComputed.length; i < len; i++) {
+        key = cSSStyleDeclarationComputed[i];
+        value = cSSStyleDeclarationComputed.getPropertyValue(key);
+        if (value !== emptySvgDeclarationComputed.getPropertyValue(key)) {
+          // Don't set computed style of width and height. Makes SVG elmements disappear.
+          if ((key !== 'height') && (key !== 'width')) {
+            computedStyleStr += key + ':' + value + ';';
+          }
+
+        }
+      }
+
+      element.setAttribute('style', computedStyleStr);
+    }
+
+    function traverse(obj) {
+      var tree = [];
+      tree.push(obj);
+      visit(obj);
+      function visit(node) {
+        if (node && node.hasChildNodes()) {
+          var child = node.firstChild;
+          while (child) {
+            if (child.nodeType === 1 && child.nodeName != 'SCRIPT') {
+              tree.push(child);
+              visit(child);
+            }
+
+            child = child.nextSibling;
+          }
+        }
+      }
+
+      return tree;
+    }
+  }
+
+  function preprocess (svg) {
+    svg.setAttribute('version', '1.1');
+
+    // removing attributes so they aren't doubled up
+    svg.removeAttribute('xmlns');
+    svg.removeAttribute('xlink');
+
+    // These are needed for the svg
+    if (!svg.hasAttributeNS(prefix.xmlns, 'xmlns')) {
+      svg.setAttributeNS(prefix.xmlns, 'xmlns', prefix.svg);
+    }
+
+    if (!svg.hasAttributeNS(prefix.xmlns, 'xmlns:xlink')) {
+      svg.setAttributeNS(prefix.xmlns, 'xmlns:xlink', prefix.xlink);
+    }
+
+    setInlineStyles(svg);
+
+    var xmls = new XMLSerializer();
+    var source = xmls.serializeToString(svg);
+    var doctype = '<?xml version="1.0" standalone="no"?><!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">';
+    var rect = svg.getBoundingClientRect();
+    var svgInfo = {
+      top: rect.top,
+      left: rect.left,
+      width: rect.width,
+      height: rect.height,
+      class: svg.getAttribute('class'),
+      id: svg.getAttribute('id'),
+      childElementCount: svg.childElementCount,
+      source: [doctype + source],
+    };
+
+    return svgInfo;
+  }
+
+  function converterEngine(input) { // fn BLOB => Binary => Base64 ?
+    var uInt8Array = new Uint8Array(input);
+    var i = uInt8Array.length;
+    var biStr = []; //new Array(i);
+    while (i--) {
+      biStr[i] = String.fromCharCode(uInt8Array[i]);
+    }
+
+    var base64 = window.btoa(biStr.join(''));
+    return base64;
+  };
+
+  function getImageBase64(url, callback) {
+    var xhr = new XMLHttpRequest(url);
+    var img64;
+    xhr.open('GET', url, true); // url is the url of a PNG/JPG image.
+    xhr.responseType = 'arraybuffer';
+    xhr.callback = callback;
+    xhr.onload = function() {
+      img64 = converterEngine(this.response); // convert BLOB to base64
+      this.callback(null, img64); // callback : err, data
+    };
+
+    xhr.onerror = function() {
+      callback('B64 ERROR', null);
+    };
+
+    xhr.send();
+  };
+
+  function isDataURL(str) {
+    var uriPattern = /^\s*data:([a-z]+\/[a-z0-9\-]+(;[a-z\-]+\=[a-z\-]+)?)?(;base64)?,[a-z0-9\!\$\&\'\,\(\)\*\+\,\;\=\-\.\_\~\:\@\/\?\%\s]*\s*$/i;
+    return !!str.match(uriPattern);
+  }
+
+  function save(svgElement, config) {
+    if (svgElement.nodeName !== 'svg' || svgElement.nodeType !== 1) {
+      throw 'Need an svg element input';
+    }
+
+    var config = config || {};
+    var svgInfo = preprocess(svgElement, config);
+    var defaultFileName = getDefaultFileName(svgInfo);
+    var filename = config.filename || defaultFileName;
+    var svgInfo = preprocess(svgElement);
+    download(svgInfo, filename);
+  }
+
+  function embedRasterImages(svg) {
+
+    var images = svg.querySelectorAll('image');
+    [].forEach.call(images, function(image) {
+      var url = image.getAttribute('href');
+
+      // Check if it is already a data URL
+      if (!isDataURL(url)) {
+        // convert to base64 image and embed.
+        getImageBase64(url, function(err, d) {
+          image.setAttributeNS(prefix.xlink, 'href', 'data:image/png;base64,' + d);
+        });
+      }
+
+    });
+
+  }
+
+  function getDefaultFileName(svgInfo) {
+    var defaultFileName = 'untitled';
+    if (svgInfo.id) {
+      defaultFileName = svgInfo.id;
+    } else if (svgInfo.class) {
+      defaultFileName = svgInfo.class;
+    } else if (window.document.title) {
+      defaultFileName = window.document.title.replace(/[^a-z0-9]/gi, '-').toLowerCase();
+    }
+
+    return defaultFileName;
+  }
+
+  var version = "0.0.2";
+
+  exports.version = version;
+  exports.save = save;
+  exports.embedRasterImages = embedRasterImages;
+
+}));
+
+/***/ }),
+/* 27 */
+/***/ (function(module, exports, __webpack_require__) {
+
 "use strict";
 /**
  * Copyright 2015-present, Facebook, Inc.
@@ -2790,7 +3003,7 @@ var DOMNamespaces = __webpack_require__(52);
 var setInnerHTML = __webpack_require__(46);
 
 var createMicrosoftUnsafeLocalFunction = __webpack_require__(59);
-var setTextContent = __webpack_require__(100);
+var setTextContent = __webpack_require__(99);
 
 var ELEMENT_NODE_TYPE = 1;
 var DOCUMENT_FRAGMENT_NODE_TYPE = 11;
@@ -2893,7 +3106,7 @@ DOMLazyTree.queueText = queueText;
 module.exports = DOMLazyTree;
 
 /***/ }),
-/* 27 */
+/* 28 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3065,9 +3278,502 @@ module.exports = ReactReconciler;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
 
 /***/ }),
-/* 28 */,
 /* 29 */,
-/* 30 */
+/* 30 */,
+/* 31 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var __WEBPACK_AMD_DEFINE_RESULT__;(function() {
+  var out$ = typeof exports != 'undefined' && exports || "function" != 'undefined' && {} || this;
+
+  var doctype = '<?xml version="1.0" standalone="no"?><!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd" [<!ENTITY nbsp "&#160;">]>';
+
+  function isElement(obj) {
+    return obj instanceof HTMLElement || obj instanceof SVGElement;
+  }
+
+  function requireDomNode(el) {
+    if (!isElement(el)) {
+      throw new Error('an HTMLElement or SVGElement is required; got ' + el);
+    }
+  }
+
+  function isExternal(url) {
+    return url && url.lastIndexOf('http',0) == 0 && url.lastIndexOf(window.location.host) == -1;
+  }
+
+  function inlineImages(el, callback) {
+    requireDomNode(el);
+
+    var images = el.querySelectorAll('image'),
+        left = images.length,
+        checkDone = function() {
+          if (left === 0) {
+            callback();
+          }
+        };
+
+    checkDone();
+    for (var i = 0; i < images.length; i++) {
+      (function(image) {
+        var href = image.getAttributeNS("http://www.w3.org/1999/xlink", "href");
+        if (href) {
+          if (isExternal(href.value)) {
+            console.warn("Cannot render embedded images linking to external hosts: "+href.value);
+            return;
+          }
+        }
+        var canvas = document.createElement('canvas');
+        var ctx = canvas.getContext('2d');
+        var img = new Image();
+        img.crossOrigin="anonymous";
+        href = href || image.getAttribute('href');
+        if (href) {
+          img.src = href;
+          img.onload = function() {
+            canvas.width = img.width;
+            canvas.height = img.height;
+            ctx.drawImage(img, 0, 0);
+            image.setAttributeNS("http://www.w3.org/1999/xlink", "href", canvas.toDataURL('image/png'));
+            left--;
+            checkDone();
+          }
+          img.onerror = function() {
+            console.log("Could not load "+href);
+            left--;
+            checkDone();
+          }
+        } else {
+          left--;
+          checkDone();
+        }
+      })(images[i]);
+    }
+  }
+
+  function styles(el, options, cssLoadedCallback) {
+    var selectorRemap = options.selectorRemap;
+    var modifyStyle = options.modifyStyle;
+    var css = "";
+    // each font that has extranl link is saved into queue, and processed
+    // asynchronously
+    var fontsQueue = [];
+    var sheets = document.styleSheets;
+    for (var i = 0; i < sheets.length; i++) {
+      try {
+        var rules = sheets[i].cssRules;
+      } catch (e) {
+        console.warn("Stylesheet could not be loaded: "+sheets[i].href);
+        continue;
+      }
+
+      if (rules != null) {
+        for (var j = 0, match; j < rules.length; j++, match = null) {
+          var rule = rules[j];
+          if (typeof(rule.style) != "undefined") {
+            var selectorText;
+
+            try {
+              selectorText = rule.selectorText;
+            } catch(err) {
+              console.warn('The following CSS rule has an invalid selector: "' + rule + '"', err);
+            }
+
+            try {
+              if (selectorText) {
+                match = el.querySelector(selectorText) || el.parentNode.querySelector(selectorText);
+              }
+            } catch(err) {
+              console.warn('Invalid CSS selector "' + selectorText + '"', err);
+            }
+
+            if (match) {
+              var selector = selectorRemap ? selectorRemap(rule.selectorText) : rule.selectorText;
+              var cssText = modifyStyle ? modifyStyle(rule.style.cssText) : rule.style.cssText;
+              css += selector + " { " + cssText + " }\n";
+            } else if(rule.cssText.match(/^@font-face/)) {
+              // below we are trying to find matches to external link. E.g.
+              // @font-face {
+              //   // ...
+              //   src: local('Abel'), url(https://fonts.gstatic.com/s/abel/v6/UzN-iejR1VoXU2Oc-7LsbvesZW2xOQ-xsNqO47m55DA.woff2);
+              // }
+              //
+              // This regex will save extrnal link into first capture group
+              var fontUrlRegexp = /url\(["']?(.+?)["']?\)/;
+              // TODO: This needs to be changed to support multiple url declarations per font.
+              var fontUrlMatch = rule.cssText.match(fontUrlRegexp);
+
+              var externalFontUrl = (fontUrlMatch && fontUrlMatch[1]) || '';
+              var fontUrlIsDataURI = externalFontUrl.match(/^data:/);
+              if (fontUrlIsDataURI) {
+                // We should ignore data uri - they are already embedded
+                externalFontUrl = '';
+              }
+
+              if (externalFontUrl) {
+                // okay, we are lucky. We can fetch this font later
+
+                //handle url if relative
+                if (externalFontUrl.startsWith('../')) {
+                  externalFontUrl = sheets[i].href + '/../' + externalFontUrl
+                } else if (externalFontUrl.startsWith('./')) {
+                  externalFontUrl = sheets[i].href + '/.' + externalFontUrl
+                }
+
+                fontsQueue.push({
+                  text: rule.cssText,
+                  // Pass url regex, so that once font is downladed, we can run `replace()` on it
+                  fontUrlRegexp: fontUrlRegexp,
+                  format: getFontMimeTypeFromUrl(externalFontUrl),
+                  url: externalFontUrl
+                });
+              } else {
+                // otherwise, use previous logic
+                css += rule.cssText + '\n';
+              }
+            }
+          }
+        }
+      }
+    }
+
+    // Now all css is processed, it's time to handle scheduled fonts
+    processFontQueue(fontsQueue);
+
+    function getFontMimeTypeFromUrl(fontUrl) {
+      var supportedFormats = {
+        'woff2': 'font/woff2',
+        'woff': 'font/woff',
+        'otf': 'application/x-font-opentype',
+        'ttf': 'application/x-font-ttf',
+        'eot': 'application/vnd.ms-fontobject',
+        'sfnt': 'application/font-sfnt',
+        'svg': 'image/svg+xml'
+      };
+      var extensions = Object.keys(supportedFormats);
+      for (var i = 0; i < extensions.length; ++i) {
+        var extension = extensions[i];
+        // TODO: This is not bullet proof, it needs to handle edge cases...
+        if (fontUrl.indexOf('.' + extension) > 0) {
+          return supportedFormats[extension];
+        }
+      }
+
+      // If you see this error message, you probably need to update code above.
+      console.error('Unknown font format for ' + fontUrl+ '; Fonts may not be working correctly');
+      return 'application/octet-stream';
+    }
+
+    function processFontQueue(queue) {
+      if (queue.length > 0) {
+        // load fonts one by one until we have anything in the queue:
+        var font = queue.pop();
+        processNext(font);
+      } else {
+        // no more fonts to load.
+        cssLoadedCallback(css);
+      }
+
+      function processNext(font) {
+        // TODO: This could benefit from caching.
+        var oReq = new XMLHttpRequest();
+        oReq.addEventListener('load', fontLoaded);
+        oReq.addEventListener('error', transferFailed);
+        oReq.addEventListener('abort', transferFailed);
+        oReq.open('GET', font.url);
+        oReq.responseType = 'arraybuffer';
+        oReq.send();
+
+        function fontLoaded() {
+          // TODO: it may be also worth to wait until fonts are fully loaded before
+          // attempting to rasterize them. (e.g. use https://developer.mozilla.org/en-US/docs/Web/API/FontFaceSet )
+          var fontBits = oReq.response;
+          var fontInBase64 = arrayBufferToBase64(fontBits);
+          updateFontStyle(font, fontInBase64);
+        }
+
+        function transferFailed(e) {
+          console.warn('Failed to load font from: ' + font.url);
+          console.warn(e)
+          css += font.text + '\n';
+          processFontQueue();
+        }
+
+        function updateFontStyle(font, fontInBase64) {
+          var dataUrl = 'url("data:' + font.format + ';base64,' + fontInBase64 + '")';
+          css += font.text.replace(font.fontUrlRegexp, dataUrl) + '\n';
+
+          // schedule next font download on next tick.
+          setTimeout(function() {
+            processFontQueue(queue)
+          }, 0);
+        }
+
+      }
+    }
+
+    function arrayBufferToBase64(buffer) {
+      var binary = '';
+      var bytes = new Uint8Array(buffer);
+      var len = bytes.byteLength;
+
+      for (var i = 0; i < len; i++) {
+          binary += String.fromCharCode(bytes[i]);
+      }
+
+      return window.btoa(binary);
+    }
+  }
+
+  function getDimension(el, clone, dim) {
+    var v = (el.viewBox && el.viewBox.baseVal && el.viewBox.baseVal[dim]) ||
+      (clone.getAttribute(dim) !== null && !clone.getAttribute(dim).match(/%$/) && parseInt(clone.getAttribute(dim))) ||
+      el.getBoundingClientRect()[dim] ||
+      parseInt(clone.style[dim]) ||
+      parseInt(window.getComputedStyle(el).getPropertyValue(dim));
+    return (typeof v === 'undefined' || v === null || isNaN(parseFloat(v))) ? 0 : v;
+  }
+
+  function reEncode(data) {
+    data = encodeURIComponent(data);
+    data = data.replace(/%([0-9A-F]{2})/g, function(match, p1) {
+      var c = String.fromCharCode('0x'+p1);
+      return c === '%' ? '%25' : c;
+    });
+    return decodeURIComponent(data);
+  }
+
+  out$.prepareSvg = function(el, options, cb) {
+    requireDomNode(el);
+
+    options = options || {};
+    options.scale = options.scale || 1;
+    options.responsive = options.responsive || false;
+    var xmlns = "http://www.w3.org/2000/xmlns/";
+
+    inlineImages(el, function() {
+      var outer = document.createElement("div");
+      var clone = el.cloneNode(true);
+      var width, height;
+      if(el.tagName == 'svg') {
+        width = options.width || getDimension(el, clone, 'width');
+        height = options.height || getDimension(el, clone, 'height');
+      } else if(el.getBBox) {
+        var box = el.getBBox();
+        width = box.x + box.width;
+        height = box.y + box.height;
+        clone.setAttribute('transform', clone.getAttribute('transform').replace(/translate\(.*?\)/, ''));
+
+        var svg = document.createElementNS('http://www.w3.org/2000/svg','svg')
+        svg.appendChild(clone)
+        clone = svg;
+      } else {
+        console.error('Attempted to render non-SVG element', el);
+        return;
+      }
+
+      clone.setAttribute("version", "1.1");
+      if (!clone.getAttribute('xmlns')) {
+        clone.setAttributeNS(xmlns, "xmlns", "http://www.w3.org/2000/svg");
+      }
+      if (!clone.getAttribute('xmlns:xlink')) {
+        clone.setAttributeNS(xmlns, "xmlns:xlink", "http://www.w3.org/1999/xlink");
+      }
+
+      if (options.responsive) {
+        clone.removeAttribute('width');
+        clone.removeAttribute('height');
+        clone.setAttribute('preserveAspectRatio', 'xMinYMin meet');
+      } else {
+        clone.setAttribute("width", width * options.scale);
+        clone.setAttribute("height", height * options.scale);
+      }
+
+      clone.setAttribute("viewBox", [
+        options.left || 0,
+        options.top || 0,
+        width,
+        height
+      ].join(" "));
+
+      var fos = clone.querySelectorAll('foreignObject > *');
+      for (var i = 0; i < fos.length; i++) {
+        if (!fos[i].getAttribute('xmlns')) {
+          fos[i].setAttributeNS(xmlns, "xmlns", "http://www.w3.org/1999/xhtml");
+        }
+      }
+
+      outer.appendChild(clone);
+
+      // In case of custom fonts we need to fetch font first, and then inline
+      // its url into data-uri format (encode as base64). That's why style
+      // processing is done asynchonously. Once all inlining is finshed
+      // cssLoadedCallback() is called.
+      styles(el, options, cssLoadedCallback);
+
+      function cssLoadedCallback(css) {
+        // here all fonts are inlined, so that we can render them properly.
+        var s = document.createElement('style');
+        s.setAttribute('type', 'text/css');
+        s.innerHTML = "<![CDATA[\n" + css + "\n]]>";
+        var defs = document.createElement('defs');
+        defs.appendChild(s);
+        clone.insertBefore(defs, clone.firstChild);
+
+        if (cb) {
+          var outHtml = outer.innerHTML;
+          outHtml = outHtml.replace(/NS\d+:href/gi, 'xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href');
+          cb(outHtml, width, height);
+        }
+      }
+    });
+  }
+
+  out$.svgAsDataUri = function(el, options, cb) {
+    out$.prepareSvg(el, options, function(svg) {
+      var uri = 'data:image/svg+xml;base64,' + window.btoa(reEncode(doctype + svg));
+      if (cb) {
+        cb(uri);
+      }
+    });
+  }
+
+  out$.svgAsPngUri = function(el, options, cb) {
+    requireDomNode(el);
+
+    options = options || {};
+    options.encoderType = options.encoderType || 'image/png';
+    options.encoderOptions = options.encoderOptions || 0.8;
+
+    var convertToPng = function(src, w, h) {
+      var canvas = document.createElement('canvas');
+      var context = canvas.getContext('2d');
+      canvas.width = w;
+      canvas.height = h;
+
+      if(options.canvg) {
+        options.canvg(canvas, src);
+      } else {
+        context.drawImage(src, 0, 0);
+      }
+
+      if(options.backgroundColor){
+        context.globalCompositeOperation = 'destination-over';
+        context.fillStyle = options.backgroundColor;
+        context.fillRect(0, 0, canvas.width, canvas.height);
+      }
+
+      var png;
+      try {
+        png = canvas.toDataURL(options.encoderType, options.encoderOptions);
+      } catch (e) {
+        if ((typeof SecurityError !== 'undefined' && e instanceof SecurityError) || e.name == "SecurityError") {
+          console.error("Rendered SVG images cannot be downloaded in this browser.");
+          return;
+        } else {
+          throw e;
+        }
+      }
+      cb(png);
+    }
+
+    if(options.canvg) {
+      out$.prepareSvg(el, options, convertToPng);
+    } else {
+      out$.svgAsDataUri(el, options, function(uri) {
+        var image = new Image();
+
+        image.onload = function() {
+          convertToPng(image, image.width, image.height);
+        }
+
+        image.onerror = function() {
+          console.error(
+            'There was an error loading the data URI as an image on the following SVG\n',
+            window.atob(uri.slice(26)), '\n',
+            "Open the following link to see browser's diagnosis\n",
+            uri);
+        }
+
+        image.src = uri;
+      });
+    }
+  }
+
+  out$.download = function(name, uri) {
+    if (navigator.msSaveOrOpenBlob) {
+      navigator.msSaveOrOpenBlob(uriToBlob(uri), name);
+    } else {
+      var saveLink = document.createElement('a');
+      var downloadSupported = 'download' in saveLink;
+      if (downloadSupported) {
+        saveLink.download = name;
+        saveLink.style.display = 'none';
+        document.body.appendChild(saveLink);
+        try {
+          var blob = uriToBlob(uri);
+          var url = URL.createObjectURL(blob);
+          saveLink.href = url;
+          saveLink.onclick = function() {
+            requestAnimationFrame(function() {
+              URL.revokeObjectURL(url);
+            })
+          };
+        } catch (e) {
+          console.warn('This browser does not support object URLs. Falling back to string URL.');
+          saveLink.href = uri;
+        }
+        saveLink.click();
+        document.body.removeChild(saveLink);
+      }
+      else {
+        window.open(uri, '_temp', 'menubar=no,toolbar=no,status=no');
+      }
+    }
+  }
+
+  function uriToBlob(uri) {
+    var byteString = window.atob(uri.split(',')[1]);
+    var mimeString = uri.split(',')[0].split(':')[1].split(';')[0]
+    var buffer = new ArrayBuffer(byteString.length);
+    var intArray = new Uint8Array(buffer);
+    for (var i = 0; i < byteString.length; i++) {
+      intArray[i] = byteString.charCodeAt(i);
+    }
+    return new Blob([buffer], {type: mimeString});
+  }
+
+  out$.saveSvg = function(el, name, options) {
+    requireDomNode(el);
+
+    options = options || {};
+    out$.svgAsDataUri(el, options, function(uri) {
+      out$.download(name, uri);
+    });
+  }
+
+  out$.saveSvgAsPng = function(el, name, options) {
+    requireDomNode(el);
+
+    options = options || {};
+    out$.svgAsPngUri(el, options, function(uri) {
+      out$.download(name, uri);
+    });
+  }
+
+  // if define is defined create as an AMD module
+  if (true) {
+    !(__WEBPACK_AMD_DEFINE_RESULT__ = function() {
+      return out$;
+    }.call(exports, __webpack_require__, exports, module),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+  }
+
+})();
+
+
+/***/ }),
+/* 32 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3077,7 +3783,7 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _saveSvgAsPng = __webpack_require__(36);
+var _saveSvgAsPng = __webpack_require__(31);
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -3087,8 +3793,8 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
 var React = __webpack_require__(5),
     d3 = __webpack_require__(6),
-    _ = __webpack_require__(9),
-    d3_save_svg = __webpack_require__(31);
+    _ = __webpack_require__(8),
+    d3_save_svg = __webpack_require__(26);
 
 /* 
  * Creates a dropdown menu to be used with any 
@@ -3314,10 +4020,13 @@ var BaseGraph = function (_React$Component2) {
     value: function yAxisLabel() {
       var transform_x = (this.props.marginLeft - 25) / 2;
       var transform_y = this.props.height / 2;
+      if (this.props.y_label) {
+        var y_label = this.props.y_label.indexOf('<sup>' !== -1) ? '<tspan>' + this.props.y_label.replace('<sup>', '<tspan baseline-shift="super">').replace('</sup>', '</tspan>') + '</tspan>' : this.props.y_label;
+      }
       return React.createElement("text", {
         textAnchor: "middle",
         transform: "translate(" + transform_x + "," + transform_y + ")rotate(-90)",
-        dangerouslySetInnerHTML: { __html: this.props.y_label }
+        dangerouslySetInnerHTML: { __html: y_label }
       });
     }
 
@@ -3919,228 +4628,60 @@ module.exports.DatamonkeySeries = Series;
 module.exports.DatamonkeySiteGraph = SiteGraph;
 
 /***/ }),
-/* 31 */
+/* 33 */
 /***/ (function(module, exports, __webpack_require__) {
 
-(function (global, factory) {
-   true ? factory(exports) :
-  typeof define === 'function' && define.amd ? define('d3-save-svg', ['exports'], factory) :
-  factory((global.d3_save_svg = {}));
-}(this, function (exports) { 'use strict';
+"use strict";
 
-  function download (svgInfo, filename) {
-    window.URL = (window.URL || window.webkitURL);
-    var blob = new Blob(svgInfo.source, {type: 'text\/xml'});
-    var url = window.URL.createObjectURL(blob);
-    var body = document.body;
-    var a = document.createElement('a');
 
-    body.appendChild(a);
-    a.setAttribute('download', filename + '.svg');
-    a.setAttribute('href', url);
-    a.style.display = 'none';
-    a.click();
-    a.parentNode.removeChild(a);
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-    setTimeout(function() {
-      window.URL.revokeObjectURL(url);
-    }, 10);
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var React = __webpack_require__(5);
+
+var Header = function (_React$Component) {
+  _inherits(Header, _React$Component);
+
+  function Header() {
+    _classCallCheck(this, Header);
+
+    return _possibleConstructorReturn(this, (Header.__proto__ || Object.getPrototypeOf(Header)).apply(this, arguments));
   }
 
-  var prefix = {
-    svg: 'http://www.w3.org/2000/svg',
-    xhtml: 'http://www.w3.org/1999/xhtml',
-    xlink: 'http://www.w3.org/1999/xlink',
-    xml: 'http://www.w3.org/XML/1998/namespace',
-    xmlns: 'http://www.w3.org/2000/xmlns/',
-  };
-
-  function setInlineStyles (svg) {
-
-    // add empty svg element
-    var emptySvg = window.document.createElementNS(prefix.svg, 'svg');
-    window.document.body.appendChild(emptySvg);
-    var emptySvgDeclarationComputed = window.getComputedStyle(emptySvg);
-
-    // hardcode computed css styles inside svg
-    var allElements = traverse(svg);
-    var i = allElements.length;
-    while (i--) {
-      explicitlySetStyle(allElements[i]);
+  _createClass(Header, [{
+    key: "render",
+    value: function render() {
+      return React.createElement(
+        "h4",
+        { className: "dm-table-header" },
+        this.props.title,
+        React.createElement("span", {
+          className: "glyphicon glyphicon-info-sign",
+          style: { verticalAlign: "middle", float: "right" },
+          "aria-hidden": "true",
+          "data-toggle": "popover",
+          "data-trigger": "hover",
+          title: "Actions",
+          "data-html": "true",
+          "data-content": this.props.popover,
+          "data-placement": "bottom"
+        })
+      );
     }
+  }]);
 
-    emptySvg.parentNode.removeChild(emptySvg);
+  return Header;
+}(React.Component);
 
-    function explicitlySetStyle(element) {
-      var cSSStyleDeclarationComputed = window.getComputedStyle(element);
-      var i;
-      var len;
-      var key;
-      var value;
-      var computedStyleStr = '';
-
-      for (i = 0, len = cSSStyleDeclarationComputed.length; i < len; i++) {
-        key = cSSStyleDeclarationComputed[i];
-        value = cSSStyleDeclarationComputed.getPropertyValue(key);
-        if (value !== emptySvgDeclarationComputed.getPropertyValue(key)) {
-          // Don't set computed style of width and height. Makes SVG elmements disappear.
-          if ((key !== 'height') && (key !== 'width')) {
-            computedStyleStr += key + ':' + value + ';';
-          }
-
-        }
-      }
-
-      element.setAttribute('style', computedStyleStr);
-    }
-
-    function traverse(obj) {
-      var tree = [];
-      tree.push(obj);
-      visit(obj);
-      function visit(node) {
-        if (node && node.hasChildNodes()) {
-          var child = node.firstChild;
-          while (child) {
-            if (child.nodeType === 1 && child.nodeName != 'SCRIPT') {
-              tree.push(child);
-              visit(child);
-            }
-
-            child = child.nextSibling;
-          }
-        }
-      }
-
-      return tree;
-    }
-  }
-
-  function preprocess (svg) {
-    svg.setAttribute('version', '1.1');
-
-    // removing attributes so they aren't doubled up
-    svg.removeAttribute('xmlns');
-    svg.removeAttribute('xlink');
-
-    // These are needed for the svg
-    if (!svg.hasAttributeNS(prefix.xmlns, 'xmlns')) {
-      svg.setAttributeNS(prefix.xmlns, 'xmlns', prefix.svg);
-    }
-
-    if (!svg.hasAttributeNS(prefix.xmlns, 'xmlns:xlink')) {
-      svg.setAttributeNS(prefix.xmlns, 'xmlns:xlink', prefix.xlink);
-    }
-
-    setInlineStyles(svg);
-
-    var xmls = new XMLSerializer();
-    var source = xmls.serializeToString(svg);
-    var doctype = '<?xml version="1.0" standalone="no"?><!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">';
-    var rect = svg.getBoundingClientRect();
-    var svgInfo = {
-      top: rect.top,
-      left: rect.left,
-      width: rect.width,
-      height: rect.height,
-      class: svg.getAttribute('class'),
-      id: svg.getAttribute('id'),
-      childElementCount: svg.childElementCount,
-      source: [doctype + source],
-    };
-
-    return svgInfo;
-  }
-
-  function converterEngine(input) { // fn BLOB => Binary => Base64 ?
-    var uInt8Array = new Uint8Array(input);
-    var i = uInt8Array.length;
-    var biStr = []; //new Array(i);
-    while (i--) {
-      biStr[i] = String.fromCharCode(uInt8Array[i]);
-    }
-
-    var base64 = window.btoa(biStr.join(''));
-    return base64;
-  };
-
-  function getImageBase64(url, callback) {
-    var xhr = new XMLHttpRequest(url);
-    var img64;
-    xhr.open('GET', url, true); // url is the url of a PNG/JPG image.
-    xhr.responseType = 'arraybuffer';
-    xhr.callback = callback;
-    xhr.onload = function() {
-      img64 = converterEngine(this.response); // convert BLOB to base64
-      this.callback(null, img64); // callback : err, data
-    };
-
-    xhr.onerror = function() {
-      callback('B64 ERROR', null);
-    };
-
-    xhr.send();
-  };
-
-  function isDataURL(str) {
-    var uriPattern = /^\s*data:([a-z]+\/[a-z0-9\-]+(;[a-z\-]+\=[a-z\-]+)?)?(;base64)?,[a-z0-9\!\$\&\'\,\(\)\*\+\,\;\=\-\.\_\~\:\@\/\?\%\s]*\s*$/i;
-    return !!str.match(uriPattern);
-  }
-
-  function save(svgElement, config) {
-    if (svgElement.nodeName !== 'svg' || svgElement.nodeType !== 1) {
-      throw 'Need an svg element input';
-    }
-
-    var config = config || {};
-    var svgInfo = preprocess(svgElement, config);
-    var defaultFileName = getDefaultFileName(svgInfo);
-    var filename = config.filename || defaultFileName;
-    var svgInfo = preprocess(svgElement);
-    download(svgInfo, filename);
-  }
-
-  function embedRasterImages(svg) {
-
-    var images = svg.querySelectorAll('image');
-    [].forEach.call(images, function(image) {
-      var url = image.getAttribute('href');
-
-      // Check if it is already a data URL
-      if (!isDataURL(url)) {
-        // convert to base64 image and embed.
-        getImageBase64(url, function(err, d) {
-          image.setAttributeNS(prefix.xlink, 'href', 'data:image/png;base64,' + d);
-        });
-      }
-
-    });
-
-  }
-
-  function getDefaultFileName(svgInfo) {
-    var defaultFileName = 'untitled';
-    if (svgInfo.id) {
-      defaultFileName = svgInfo.id;
-    } else if (svgInfo.class) {
-      defaultFileName = svgInfo.class;
-    } else if (window.document.title) {
-      defaultFileName = window.document.title.replace(/[^a-z0-9]/gi, '-').toLowerCase();
-    }
-
-    return defaultFileName;
-  }
-
-  var version = "0.0.2";
-
-  exports.version = version;
-  exports.save = save;
-  exports.embedRasterImages = embedRasterImages;
-
-}));
+module.exports.Header = Header;
 
 /***/ }),
-/* 32 */
+/* 34 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4162,8 +4703,8 @@ var EventPluginRegistry = __webpack_require__(41);
 var EventPluginUtils = __webpack_require__(53);
 var ReactErrorUtils = __webpack_require__(57);
 
-var accumulateInto = __webpack_require__(93);
-var forEachAccumulated = __webpack_require__(94);
+var accumulateInto = __webpack_require__(92);
+var forEachAccumulated = __webpack_require__(93);
 var invariant = __webpack_require__(1);
 
 /**
@@ -4420,7 +4961,7 @@ module.exports = EventPluginHub;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
 
 /***/ }),
-/* 33 */
+/* 35 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4436,11 +4977,11 @@ module.exports = EventPluginHub;
 
 
 
-var EventPluginHub = __webpack_require__(32);
+var EventPluginHub = __webpack_require__(34);
 var EventPluginUtils = __webpack_require__(53);
 
-var accumulateInto = __webpack_require__(93);
-var forEachAccumulated = __webpack_require__(94);
+var accumulateInto = __webpack_require__(92);
+var forEachAccumulated = __webpack_require__(93);
 var warning = __webpack_require__(2);
 
 var getListener = EventPluginHub.getListener;
@@ -4560,7 +5101,7 @@ module.exports = EventPropagators;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
 
 /***/ }),
-/* 34 */
+/* 36 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4611,7 +5152,7 @@ var ReactInstanceMap = {
 module.exports = ReactInstanceMap;
 
 /***/ }),
-/* 35 */
+/* 37 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4675,568 +5216,22 @@ SyntheticEvent.augmentClass(SyntheticUIEvent, UIEventInterface);
 module.exports = SyntheticUIEvent;
 
 /***/ }),
-/* 36 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var __WEBPACK_AMD_DEFINE_RESULT__;(function() {
-  var out$ = typeof exports != 'undefined' && exports || "function" != 'undefined' && {} || this;
-
-  var doctype = '<?xml version="1.0" standalone="no"?><!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd" [<!ENTITY nbsp "&#160;">]>';
-
-  function isElement(obj) {
-    return obj instanceof HTMLElement || obj instanceof SVGElement;
-  }
-
-  function requireDomNode(el) {
-    if (!isElement(el)) {
-      throw new Error('an HTMLElement or SVGElement is required; got ' + el);
-    }
-  }
-
-  function isExternal(url) {
-    return url && url.lastIndexOf('http',0) == 0 && url.lastIndexOf(window.location.host) == -1;
-  }
-
-  function inlineImages(el, callback) {
-    requireDomNode(el);
-
-    var images = el.querySelectorAll('image'),
-        left = images.length,
-        checkDone = function() {
-          if (left === 0) {
-            callback();
-          }
-        };
-
-    checkDone();
-    for (var i = 0; i < images.length; i++) {
-      (function(image) {
-        var href = image.getAttributeNS("http://www.w3.org/1999/xlink", "href");
-        if (href) {
-          if (isExternal(href.value)) {
-            console.warn("Cannot render embedded images linking to external hosts: "+href.value);
-            return;
-          }
-        }
-        var canvas = document.createElement('canvas');
-        var ctx = canvas.getContext('2d');
-        var img = new Image();
-        img.crossOrigin="anonymous";
-        href = href || image.getAttribute('href');
-        if (href) {
-          img.src = href;
-          img.onload = function() {
-            canvas.width = img.width;
-            canvas.height = img.height;
-            ctx.drawImage(img, 0, 0);
-            image.setAttributeNS("http://www.w3.org/1999/xlink", "href", canvas.toDataURL('image/png'));
-            left--;
-            checkDone();
-          }
-          img.onerror = function() {
-            console.log("Could not load "+href);
-            left--;
-            checkDone();
-          }
-        } else {
-          left--;
-          checkDone();
-        }
-      })(images[i]);
-    }
-  }
-
-  function styles(el, options, cssLoadedCallback) {
-    var selectorRemap = options.selectorRemap;
-    var modifyStyle = options.modifyStyle;
-    var css = "";
-    // each font that has extranl link is saved into queue, and processed
-    // asynchronously
-    var fontsQueue = [];
-    var sheets = document.styleSheets;
-    for (var i = 0; i < sheets.length; i++) {
-      try {
-        var rules = sheets[i].cssRules;
-      } catch (e) {
-        console.warn("Stylesheet could not be loaded: "+sheets[i].href);
-        continue;
-      }
-
-      if (rules != null) {
-        for (var j = 0, match; j < rules.length; j++, match = null) {
-          var rule = rules[j];
-          if (typeof(rule.style) != "undefined") {
-            var selectorText;
-
-            try {
-              selectorText = rule.selectorText;
-            } catch(err) {
-              console.warn('The following CSS rule has an invalid selector: "' + rule + '"', err);
-            }
-
-            try {
-              if (selectorText) {
-                match = el.querySelector(selectorText) || el.parentNode.querySelector(selectorText);
-              }
-            } catch(err) {
-              console.warn('Invalid CSS selector "' + selectorText + '"', err);
-            }
-
-            if (match) {
-              var selector = selectorRemap ? selectorRemap(rule.selectorText) : rule.selectorText;
-              var cssText = modifyStyle ? modifyStyle(rule.style.cssText) : rule.style.cssText;
-              css += selector + " { " + cssText + " }\n";
-            } else if(rule.cssText.match(/^@font-face/)) {
-              // below we are trying to find matches to external link. E.g.
-              // @font-face {
-              //   // ...
-              //   src: local('Abel'), url(https://fonts.gstatic.com/s/abel/v6/UzN-iejR1VoXU2Oc-7LsbvesZW2xOQ-xsNqO47m55DA.woff2);
-              // }
-              //
-              // This regex will save extrnal link into first capture group
-              var fontUrlRegexp = /url\(["']?(.+?)["']?\)/;
-              // TODO: This needs to be changed to support multiple url declarations per font.
-              var fontUrlMatch = rule.cssText.match(fontUrlRegexp);
-
-              var externalFontUrl = (fontUrlMatch && fontUrlMatch[1]) || '';
-              var fontUrlIsDataURI = externalFontUrl.match(/^data:/);
-              if (fontUrlIsDataURI) {
-                // We should ignore data uri - they are already embedded
-                externalFontUrl = '';
-              }
-
-              if (externalFontUrl) {
-                // okay, we are lucky. We can fetch this font later
-
-                //handle url if relative
-                if (externalFontUrl.startsWith('../')) {
-                  externalFontUrl = sheets[i].href + '/../' + externalFontUrl
-                } else if (externalFontUrl.startsWith('./')) {
-                  externalFontUrl = sheets[i].href + '/.' + externalFontUrl
-                }
-
-                fontsQueue.push({
-                  text: rule.cssText,
-                  // Pass url regex, so that once font is downladed, we can run `replace()` on it
-                  fontUrlRegexp: fontUrlRegexp,
-                  format: getFontMimeTypeFromUrl(externalFontUrl),
-                  url: externalFontUrl
-                });
-              } else {
-                // otherwise, use previous logic
-                css += rule.cssText + '\n';
-              }
-            }
-          }
-        }
-      }
-    }
-
-    // Now all css is processed, it's time to handle scheduled fonts
-    processFontQueue(fontsQueue);
-
-    function getFontMimeTypeFromUrl(fontUrl) {
-      var supportedFormats = {
-        'woff2': 'font/woff2',
-        'woff': 'font/woff',
-        'otf': 'application/x-font-opentype',
-        'ttf': 'application/x-font-ttf',
-        'eot': 'application/vnd.ms-fontobject',
-        'sfnt': 'application/font-sfnt',
-        'svg': 'image/svg+xml'
-      };
-      var extensions = Object.keys(supportedFormats);
-      for (var i = 0; i < extensions.length; ++i) {
-        var extension = extensions[i];
-        // TODO: This is not bullet proof, it needs to handle edge cases...
-        if (fontUrl.indexOf('.' + extension) > 0) {
-          return supportedFormats[extension];
-        }
-      }
-
-      // If you see this error message, you probably need to update code above.
-      console.error('Unknown font format for ' + fontUrl+ '; Fonts may not be working correctly');
-      return 'application/octet-stream';
-    }
-
-    function processFontQueue(queue) {
-      if (queue.length > 0) {
-        // load fonts one by one until we have anything in the queue:
-        var font = queue.pop();
-        processNext(font);
-      } else {
-        // no more fonts to load.
-        cssLoadedCallback(css);
-      }
-
-      function processNext(font) {
-        // TODO: This could benefit from caching.
-        var oReq = new XMLHttpRequest();
-        oReq.addEventListener('load', fontLoaded);
-        oReq.addEventListener('error', transferFailed);
-        oReq.addEventListener('abort', transferFailed);
-        oReq.open('GET', font.url);
-        oReq.responseType = 'arraybuffer';
-        oReq.send();
-
-        function fontLoaded() {
-          // TODO: it may be also worth to wait until fonts are fully loaded before
-          // attempting to rasterize them. (e.g. use https://developer.mozilla.org/en-US/docs/Web/API/FontFaceSet )
-          var fontBits = oReq.response;
-          var fontInBase64 = arrayBufferToBase64(fontBits);
-          updateFontStyle(font, fontInBase64);
-        }
-
-        function transferFailed(e) {
-          console.warn('Failed to load font from: ' + font.url);
-          console.warn(e)
-          css += font.text + '\n';
-          processFontQueue();
-        }
-
-        function updateFontStyle(font, fontInBase64) {
-          var dataUrl = 'url("data:' + font.format + ';base64,' + fontInBase64 + '")';
-          css += font.text.replace(font.fontUrlRegexp, dataUrl) + '\n';
-
-          // schedule next font download on next tick.
-          setTimeout(function() {
-            processFontQueue(queue)
-          }, 0);
-        }
-
-      }
-    }
-
-    function arrayBufferToBase64(buffer) {
-      var binary = '';
-      var bytes = new Uint8Array(buffer);
-      var len = bytes.byteLength;
-
-      for (var i = 0; i < len; i++) {
-          binary += String.fromCharCode(bytes[i]);
-      }
-
-      return window.btoa(binary);
-    }
-  }
-
-  function getDimension(el, clone, dim) {
-    var v = (el.viewBox && el.viewBox.baseVal && el.viewBox.baseVal[dim]) ||
-      (clone.getAttribute(dim) !== null && !clone.getAttribute(dim).match(/%$/) && parseInt(clone.getAttribute(dim))) ||
-      el.getBoundingClientRect()[dim] ||
-      parseInt(clone.style[dim]) ||
-      parseInt(window.getComputedStyle(el).getPropertyValue(dim));
-    return (typeof v === 'undefined' || v === null || isNaN(parseFloat(v))) ? 0 : v;
-  }
-
-  function reEncode(data) {
-    data = encodeURIComponent(data);
-    data = data.replace(/%([0-9A-F]{2})/g, function(match, p1) {
-      var c = String.fromCharCode('0x'+p1);
-      return c === '%' ? '%25' : c;
-    });
-    return decodeURIComponent(data);
-  }
-
-  out$.prepareSvg = function(el, options, cb) {
-    requireDomNode(el);
-
-    options = options || {};
-    options.scale = options.scale || 1;
-    options.responsive = options.responsive || false;
-    var xmlns = "http://www.w3.org/2000/xmlns/";
-
-    inlineImages(el, function() {
-      var outer = document.createElement("div");
-      var clone = el.cloneNode(true);
-      var width, height;
-      if(el.tagName == 'svg') {
-        width = options.width || getDimension(el, clone, 'width');
-        height = options.height || getDimension(el, clone, 'height');
-      } else if(el.getBBox) {
-        var box = el.getBBox();
-        width = box.x + box.width;
-        height = box.y + box.height;
-        clone.setAttribute('transform', clone.getAttribute('transform').replace(/translate\(.*?\)/, ''));
-
-        var svg = document.createElementNS('http://www.w3.org/2000/svg','svg')
-        svg.appendChild(clone)
-        clone = svg;
-      } else {
-        console.error('Attempted to render non-SVG element', el);
-        return;
-      }
-
-      clone.setAttribute("version", "1.1");
-      if (!clone.getAttribute('xmlns')) {
-        clone.setAttributeNS(xmlns, "xmlns", "http://www.w3.org/2000/svg");
-      }
-      if (!clone.getAttribute('xmlns:xlink')) {
-        clone.setAttributeNS(xmlns, "xmlns:xlink", "http://www.w3.org/1999/xlink");
-      }
-
-      if (options.responsive) {
-        clone.removeAttribute('width');
-        clone.removeAttribute('height');
-        clone.setAttribute('preserveAspectRatio', 'xMinYMin meet');
-      } else {
-        clone.setAttribute("width", width * options.scale);
-        clone.setAttribute("height", height * options.scale);
-      }
-
-      clone.setAttribute("viewBox", [
-        options.left || 0,
-        options.top || 0,
-        width,
-        height
-      ].join(" "));
-
-      var fos = clone.querySelectorAll('foreignObject > *');
-      for (var i = 0; i < fos.length; i++) {
-        if (!fos[i].getAttribute('xmlns')) {
-          fos[i].setAttributeNS(xmlns, "xmlns", "http://www.w3.org/1999/xhtml");
-        }
-      }
-
-      outer.appendChild(clone);
-
-      // In case of custom fonts we need to fetch font first, and then inline
-      // its url into data-uri format (encode as base64). That's why style
-      // processing is done asynchonously. Once all inlining is finshed
-      // cssLoadedCallback() is called.
-      styles(el, options, cssLoadedCallback);
-
-      function cssLoadedCallback(css) {
-        // here all fonts are inlined, so that we can render them properly.
-        var s = document.createElement('style');
-        s.setAttribute('type', 'text/css');
-        s.innerHTML = "<![CDATA[\n" + css + "\n]]>";
-        var defs = document.createElement('defs');
-        defs.appendChild(s);
-        clone.insertBefore(defs, clone.firstChild);
-
-        if (cb) {
-          var outHtml = outer.innerHTML;
-          outHtml = outHtml.replace(/NS\d+:href/gi, 'xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href');
-          cb(outHtml, width, height);
-        }
-      }
-    });
-  }
-
-  out$.svgAsDataUri = function(el, options, cb) {
-    out$.prepareSvg(el, options, function(svg) {
-      var uri = 'data:image/svg+xml;base64,' + window.btoa(reEncode(doctype + svg));
-      if (cb) {
-        cb(uri);
-      }
-    });
-  }
-
-  out$.svgAsPngUri = function(el, options, cb) {
-    requireDomNode(el);
-
-    options = options || {};
-    options.encoderType = options.encoderType || 'image/png';
-    options.encoderOptions = options.encoderOptions || 0.8;
-
-    var convertToPng = function(src, w, h) {
-      var canvas = document.createElement('canvas');
-      var context = canvas.getContext('2d');
-      canvas.width = w;
-      canvas.height = h;
-
-      if(options.canvg) {
-        options.canvg(canvas, src);
-      } else {
-        context.drawImage(src, 0, 0);
-      }
-
-      if(options.backgroundColor){
-        context.globalCompositeOperation = 'destination-over';
-        context.fillStyle = options.backgroundColor;
-        context.fillRect(0, 0, canvas.width, canvas.height);
-      }
-
-      var png;
-      try {
-        png = canvas.toDataURL(options.encoderType, options.encoderOptions);
-      } catch (e) {
-        if ((typeof SecurityError !== 'undefined' && e instanceof SecurityError) || e.name == "SecurityError") {
-          console.error("Rendered SVG images cannot be downloaded in this browser.");
-          return;
-        } else {
-          throw e;
-        }
-      }
-      cb(png);
-    }
-
-    if(options.canvg) {
-      out$.prepareSvg(el, options, convertToPng);
-    } else {
-      out$.svgAsDataUri(el, options, function(uri) {
-        var image = new Image();
-
-        image.onload = function() {
-          convertToPng(image, image.width, image.height);
-        }
-
-        image.onerror = function() {
-          console.error(
-            'There was an error loading the data URI as an image on the following SVG\n',
-            window.atob(uri.slice(26)), '\n',
-            "Open the following link to see browser's diagnosis\n",
-            uri);
-        }
-
-        image.src = uri;
-      });
-    }
-  }
-
-  out$.download = function(name, uri) {
-    if (navigator.msSaveOrOpenBlob) {
-      navigator.msSaveOrOpenBlob(uriToBlob(uri), name);
-    } else {
-      var saveLink = document.createElement('a');
-      var downloadSupported = 'download' in saveLink;
-      if (downloadSupported) {
-        saveLink.download = name;
-        saveLink.style.display = 'none';
-        document.body.appendChild(saveLink);
-        try {
-          var blob = uriToBlob(uri);
-          var url = URL.createObjectURL(blob);
-          saveLink.href = url;
-          saveLink.onclick = function() {
-            requestAnimationFrame(function() {
-              URL.revokeObjectURL(url);
-            })
-          };
-        } catch (e) {
-          console.warn('This browser does not support object URLs. Falling back to string URL.');
-          saveLink.href = uri;
-        }
-        saveLink.click();
-        document.body.removeChild(saveLink);
-      }
-      else {
-        window.open(uri, '_temp', 'menubar=no,toolbar=no,status=no');
-      }
-    }
-  }
-
-  function uriToBlob(uri) {
-    var byteString = window.atob(uri.split(',')[1]);
-    var mimeString = uri.split(',')[0].split(':')[1].split(';')[0]
-    var buffer = new ArrayBuffer(byteString.length);
-    var intArray = new Uint8Array(buffer);
-    for (var i = 0; i < byteString.length; i++) {
-      intArray[i] = byteString.charCodeAt(i);
-    }
-    return new Blob([buffer], {type: mimeString});
-  }
-
-  out$.saveSvg = function(el, name, options) {
-    requireDomNode(el);
-
-    options = options || {};
-    out$.svgAsDataUri(el, options, function(uri) {
-      out$.download(name, uri);
-    });
-  }
-
-  out$.saveSvgAsPng = function(el, name, options) {
-    requireDomNode(el);
-
-    options = options || {};
-    out$.svgAsPngUri(el, options, function(uri) {
-      out$.download(name, uri);
-    });
-  }
-
-  // if define is defined create as an AMD module
-  if (true) {
-    !(__WEBPACK_AMD_DEFINE_RESULT__ = function() {
-      return out$;
-    }.call(exports, __webpack_require__, exports, module),
-				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-  }
-
-})();
-
-
-/***/ }),
-/* 37 */,
-/* 38 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-var React = __webpack_require__(5);
-
-var Header = function (_React$Component) {
-  _inherits(Header, _React$Component);
-
-  function Header() {
-    _classCallCheck(this, Header);
-
-    return _possibleConstructorReturn(this, (Header.__proto__ || Object.getPrototypeOf(Header)).apply(this, arguments));
-  }
-
-  _createClass(Header, [{
-    key: "render",
-    value: function render() {
-      return React.createElement(
-        "h4",
-        { className: "dm-table-header" },
-        this.props.title,
-        React.createElement("span", {
-          className: "glyphicon glyphicon-info-sign",
-          style: { verticalAlign: "middle", float: "right" },
-          "aria-hidden": "true",
-          "data-toggle": "popover",
-          "data-trigger": "hover",
-          title: "Actions",
-          "data-html": "true",
-          "data-content": this.props.popover,
-          "data-placement": "bottom"
-        })
-      );
-    }
-  }]);
-
-  return Header;
-}(React.Component);
-
-module.exports.Header = Header;
-
-/***/ }),
+/* 38 */,
 /* 39 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(d3, _, $) {
 
-var _saveSvgAsPng = __webpack_require__(36);
+var _saveSvgAsPng = __webpack_require__(31);
 
 var React = __webpack_require__(5);
-var datamonkey = __webpack_require__(20);
+var datamonkey = __webpack_require__(22);
 var download = __webpack_require__(167);
-var d3_save_svg = __webpack_require__(31);
+var d3_save_svg = __webpack_require__(26);
 
-__webpack_require__(37);
-__webpack_require__(72);
+__webpack_require__(38);
+__webpack_require__(71);
 
 var Tree = React.createClass({
   displayName: "Tree",
@@ -5300,7 +5295,7 @@ var Tree = React.createClass({
       show_legend: true,
       axis_scale: axis_scale,
       selected_model: selected_model,
-      partition: [],
+      partition: 'None',
       current: 0
     };
   },
@@ -5330,26 +5325,19 @@ var Tree = React.createClass({
       return [];
     }
 
-    var branch_lengths = self.settings["tree-options"]["hyphy-tree-branch-lengths"][0] ? self.props.models[self.state.selected_model]["branch-lengths"] : null;
-
-    if (!branch_lengths) {
-      var nodes = _.filter(self.tree.get_nodes(), function (d) {
-        return d.parent;
-      });
-
-      branch_lengths = _.object(_.map(nodes, function (d) {
-        return d.name;
-      }), _.map(nodes, function (d) {
-        return parseFloat(d.attribute);
-      }));
+    var branch_lengths;
+    if (self.props.method == 'absrel' || self.props.method == 'relax') {
+      branch_lengths = self.props.json.trees.branchLengths[self.state.selected_model];
+    } else if (self.props.method == 'busted') {
+      branch_lengths = self.props.json.trees[self.state.current].branchLengths[self.state.selected_model];
     }
-
     return branch_lengths;
   },
 
   assignBranchAnnotations: function assignBranchAnnotations() {
     if (this.state.json && this.props.models[this.state.selected_model]) {
-      this.tree.assign_attributes(this.props.models[this.state.selected_model]["branch-annotations"]);
+      var attributes = this.props.multitree ? this.props.models[this.state.selected_model]["branch-annotations"][this.state.current] : this.props.models[this.state.selected_model]["branch-annotations"];
+      this.tree.assign_attributes(attributes);
     }
   },
 
@@ -5378,11 +5366,11 @@ var Tree = React.createClass({
 
     fg_item.append("rect").attr("width", "13").attr("height", "13").attr("fill", color_fill);
 
-    fg_item.append("text").attr("x", "15").attr("y", "11").text("Foreground");
+    fg_item.append("text").attr("x", "15").attr("y", "11").text("Test");
 
     var bg_item = dc_legend.append("g").attr("class", "dc-legend-item").attr("transform", "translate(0,18)");
 
-    bg_item.append("rect").attr("width", "13").attr("height", "13").attr("fill", "gray");
+    bg_item.append("rect").attr("width", "13").attr("height", "13").attr("fill", "black");
 
     bg_item.append("text").attr("x", "15").attr("y", "11").text("Background");
   },
@@ -5496,15 +5484,23 @@ var Tree = React.createClass({
   },
 
 
-  getModelList: function getModelList() {
+  getMainList: function getMainList() {
     var _this = this;
 
-    var self = this;
+    var self = this,
+        menu = [];
+
+    // Enable display of multiple trees
     if (self.props.multitree && self.props.json) {
-      return _.range(self.props.json.breakpointData.length).map(function (d, i) {
+      menu = menu.concat(React.createElement(
+        "li",
+        { className: "dropdown-header" },
+        "Partitions"
+      ));
+      var partition_list = _.range(self.props.json.trees.length).map(function (d, i) {
         return React.createElement(
           "li",
-          null,
+          { style: { backgroundColor: d == self.state.current ? 'lightGrey' : 'white' } },
           React.createElement(
             "a",
             {
@@ -5517,7 +5513,20 @@ var Tree = React.createClass({
           )
         );
       });
-    } else {
+      menu = menu.concat(partition_list);
+    }
+
+    // Multiple models
+    if (_.keys(self.props.models).length > 0) {
+      if (self.props.multitree && self.props.json) {
+        menu = menu.concat(React.createElement("li", { role: "separator", className: "divider" }));
+      }
+      menu = menu.concat(React.createElement(
+        "li",
+        { className: "dropdown-header" },
+        "Models"
+      ));
+
       var createListElement = function createListElement(model_type) {
         return React.createElement(
           "li",
@@ -5534,15 +5543,63 @@ var Tree = React.createClass({
         );
       };
 
-      return _.map(this.props.models, function (d, key) {
-        return createListElement(key);
+      var model_list = _.map(this.props.models, function (d, model_type) {
+        return React.createElement(
+          "li",
+          { style: { backgroundColor: model_type == self.state.selected_model ? 'lightGrey' : 'white' } },
+          React.createElement(
+            "a",
+            {
+              href: "javascript:;",
+              "data-type": model_type,
+              onClick: self.changeModelSelection
+            },
+            model_type
+          )
+        );
       });
+      menu = menu.concat(model_list);
     }
+
+    // Branch partitions
+    if (!_.isEmpty(this.props.partition)) {
+      var partitionList = [React.createElement("li", { role: "separator", className: "divider" }), React.createElement(
+        "li",
+        { className: "dropdown-header" },
+        "Branch partition"
+      ), React.createElement(
+        "li",
+        { style: { backgroundColor: self.state.partition == 'None' ? 'lightGrey' : 'white' } },
+        React.createElement(
+          "a",
+          { href: "javascript:;", onClick: function onClick() {
+              return _this.setState({ partition: 'None' });
+            } },
+          "None"
+        )
+      )].concat(_.keys(this.props.partition).map(function (key) {
+        return React.createElement(
+          "li",
+          { style: { backgroundColor: self.state.partition == key ? 'lightGrey' : 'white' } },
+          React.createElement(
+            "a",
+            {
+              href: "javascript:;",
+              onClick: function onClick() {
+                return _this.setState({ partition: key });
+              }
+            },
+            key
+          )
+        );
+      }));
+      menu = menu.concat(partitionList);
+    }
+
+    return menu;
   },
 
   settingsMenu: function settingsMenu() {
-    var _this2 = this;
-
     var dropdownListStyle = {
       paddingLeft: "20px",
       paddingRight: "20px",
@@ -5550,35 +5607,6 @@ var Tree = React.createClass({
       paddingBottom: "10px"
     };
 
-    var partitionList = [];
-    if (!_.isEmpty(this.props.partition)) {
-      partitionList = [React.createElement("div", { className: "dropdown-divider" }), React.createElement(
-        "li",
-        null,
-        React.createElement(
-          "a",
-          { href: "javascript:;", onClick: function onClick() {
-              return _this2.setState({ partition: [] });
-            } },
-          "None"
-        )
-      )].concat(_.keys(this.props.partition).map(function (key) {
-        return React.createElement(
-          "li",
-          null,
-          React.createElement(
-            "a",
-            {
-              href: "javascript:;",
-              onClick: function onClick() {
-                return _this2.setState({ partition: _.keys(_this2.props.partition[key]) });
-              }
-            },
-            key
-          )
-        );
-      }));
-    }
     return React.createElement(
       "ul",
       { className: "dropdown-menu" },
@@ -5607,8 +5635,7 @@ var Tree = React.createClass({
         }),
         " ",
         "GrayScale"
-      ),
-      partitionList
+      )
     );
   },
 
@@ -5673,13 +5700,23 @@ var Tree = React.createClass({
 
     this.assignBranchAnnotations();
 
-    if (_.indexOf(_.keys(analysis_data), "tree") > -1) {
-      self.tree(analysis_data["tree"]).svg(self.svg);
-    } else if (self.props.multitree) {
-      self.tree(self.props.json.breakpointData[self.state.current].tree).svg(self.svg);
-    } else {
-      self.tree(self.props.models[self.state.selected_model]["tree string"]).svg(self.svg);
+    //if (_.indexOf(_.keys(analysis_data), "tree") > -1) {
+    //  self.tree(analysis_data["tree"]).svg(self.svg);
+    //} else if(self.props.multitree){
+    //  self.tree(self.props.json.trees[self.state.current]['newickString'])
+    //    .svg(self.svg);      
+    //} else {
+    //  self
+    //    .tree(self.props.models[self.state.selected_model]["tree string"])
+    //    .svg(self.svg);
+    //}
+
+    if (self.props.method == 'absrel' || self.props.method == 'relax') {
+      var tree_string = self.props.json.input.trees[0];
+    } else if (self.props.method == 'busted') {
+      var tree_string = self.props.json.trees[self.state.current]['newickString'];
     }
+    self.tree(tree_string).svg(self.svg);
 
     self.branch_lengths = this.getBranchLengths();
     self.tree.font_size(18);
@@ -5696,7 +5733,7 @@ var Tree = React.createClass({
     this.assignBranchAnnotations();
     d3.select("#dm-phylotree").append("rect").attr("width", "100%").attr("height", "100%").attr("fill", "white");
 
-    if (self.state.show_legend && !self.props.multitree) {
+    if (self.state.show_legend && _.keys(self.props.models).length > 0) {
       if (self.legend_type == "discrete") {
         self.renderDiscreteLegendColorScheme("tree_container");
       } else {
@@ -5705,7 +5742,7 @@ var Tree = React.createClass({
     }
 
     if (!_.isEmpty(this.props.partition) && this.settings.edgeColorizer) {
-      this.edgeColorizer = _.partial(this.settings.edgeColorizer, _, _, self.state.omega_color, self.state.partition);
+      this.edgeColorizer = _.partial(this.settings.edgeColorizer, _, _, self.state.omega_color, _.keys(self.props.partition[self.state.partition]));
     } else if (this.settings.edgeColorizer) {
       this.edgeColorizer = _.partial(this.settings.edgeColorizer, _, _, self.state.omega_color);
     }
@@ -5780,14 +5817,13 @@ var Tree = React.createClass({
                   className: "btn btn-default dropdown-toggle",
                   "data-toggle": "dropdown"
                 },
-                this.props.multitree ? "Partition" : "Model",
-                " ",
+                "Options",
                 React.createElement("span", { className: "caret" })
               ),
               React.createElement(
                 "ul",
                 { className: "dropdown-menu", id: "hyphy-tree-model-list" },
-                this.getModelList()
+                this.getMainList()
               ),
               React.createElement(
                 "button",
@@ -6005,7 +6041,7 @@ function rerender_tree(json, element, settings) {
 module.exports.Tree = Tree;
 module.exports.render_tree = render_tree;
 module.exports.rerender_tree = rerender_tree;
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(6), __webpack_require__(9), __webpack_require__(3)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(6), __webpack_require__(8), __webpack_require__(3)))
 
 /***/ }),
 /* 40 */,
@@ -6288,7 +6324,7 @@ var _assign = __webpack_require__(7);
 
 var EventPluginRegistry = __webpack_require__(41);
 var ReactEventEmitterMixin = __webpack_require__(206);
-var ViewportMetrics = __webpack_require__(92);
+var ViewportMetrics = __webpack_require__(91);
 
 var getVendorPrefixedEventName = __webpack_require__(241);
 var isEventSupported = __webpack_require__(63);
@@ -6613,8 +6649,8 @@ module.exports = ReactBrowserEventEmitter;
 
 
 
-var SyntheticUIEvent = __webpack_require__(35);
-var ViewportMetrics = __webpack_require__(92);
+var SyntheticUIEvent = __webpack_require__(37);
+var ViewportMetrics = __webpack_require__(91);
 
 var getEventModifierState = __webpack_require__(61);
 
@@ -7300,14 +7336,14 @@ module.exports = shallowEqual;
 
 
 
-var DOMLazyTree = __webpack_require__(26);
+var DOMLazyTree = __webpack_require__(27);
 var Danger = __webpack_require__(179);
-var ReactDOMComponentTree = __webpack_require__(8);
+var ReactDOMComponentTree = __webpack_require__(9);
 var ReactInstrumentation = __webpack_require__(13);
 
 var createMicrosoftUnsafeLocalFunction = __webpack_require__(59);
 var setInnerHTML = __webpack_require__(46);
-var setTextContent = __webpack_require__(100);
+var setTextContent = __webpack_require__(99);
 
 function getNodeAfter(parentNode, node) {
   // Special case for text components, which return [open, close] comments
@@ -7855,10 +7891,10 @@ module.exports = KeyEscapeUtils;
 
 var _prodInvariant = __webpack_require__(4);
 
-var ReactPropTypesSecret = __webpack_require__(91);
-var propTypesFactory = __webpack_require__(77);
+var ReactPropTypesSecret = __webpack_require__(90);
+var propTypesFactory = __webpack_require__(76);
 
-var React = __webpack_require__(28);
+var React = __webpack_require__(29);
 var PropTypes = propTypesFactory(React.isValidElement);
 
 var invariant = __webpack_require__(1);
@@ -8132,7 +8168,7 @@ module.exports = ReactErrorUtils;
 var _prodInvariant = __webpack_require__(4);
 
 var ReactCurrentOwner = __webpack_require__(15);
-var ReactInstanceMap = __webpack_require__(34);
+var ReactInstanceMap = __webpack_require__(36);
 var ReactInstrumentation = __webpack_require__(13);
 var ReactUpdates = __webpack_require__(14);
 
@@ -9030,270 +9066,10 @@ module.exports = validateDOMNesting;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/* WEBPACK VAR INJECTION */(function(d3, _, $) {
-
-var React = __webpack_require__(5);
-
-var ModelFits = React.createClass({
-  displayName: "ModelFits",
-
-  getInitialState: function getInitialState() {
-    var table_row_data = this.getModelRows(this.props.json),
-        table_columns = this.getModelColumns(table_row_data);
-
-    return {
-      table_row_data: table_row_data,
-      table_columns: table_columns
-    };
-  },
-
-  formatRuntime: function formatRuntime(seconds) {
-    var duration_string = "",
-        seconds = parseFloat(seconds);
-
-    var split_array = [Math.floor(seconds / (24 * 3600)), Math.floor(seconds / 3600) % 24, Math.floor(seconds / 60) % 60, seconds % 60],
-        quals = ["d.", "hrs.", "min.", "sec."];
-
-    split_array.forEach(function (d, i) {
-      if (d) {
-        duration_string += " " + d + " " + quals[i];
-      }
-    });
-
-    return duration_string;
-  },
-
-  getLogLikelihood: function getLogLikelihood(this_model) {
-    return d3.format(".2f")(this_model["log-likelihood"]);
-  },
-
-  getAIC: function getAIC(this_model) {
-    return d3.format(".2f")(this_model["AIC-c"]);
-  },
-
-  getNumParameters: function getNumParameters(this_model) {
-    return this_model["parameters"];
-  },
-
-  getBranchLengths: function getBranchLengths(this_model) {
-    if (this_model["tree length"]) {
-      return d3.format(".2f")(this_model["tree length"]);
-    } else {
-      return d3.format(".2f")(d3.values(this_model["branch-lengths"]).reduce(function (p, c) {
-        return p + c;
-      }, 0));
-    }
-  },
-
-  getRuntime: function getRuntime(this_model) {
-    //return this.formatRuntime(this_model['runtime']);
-    return this.formatRuntime(this_model["runtime"]);
-  },
-
-  getDistributions: function getDistributions(m, this_model) {
-    var omega_distributions = {};
-    omega_distributions[m] = {};
-
-    var omega_format = d3.format(".3r"),
-        prop_format = d3.format(".2p");
-
-    var distributions = [];
-
-    for (var d in this_model["rate-distributions"]) {
-      var this_distro = this_model["rate-distributions"][d];
-      var this_distro_entry = [d, "", "", ""];
-
-      omega_distributions[m][d] = this_distro.map(function (d) {
-        return {
-          omega: d[0],
-          weight: d[1]
-        };
-      });
-
-      for (var k = 0; k < this_distro.length; k++) {
-        this_distro_entry[k + 1] = omega_format(this_distro[k][0]) + " (" + prop_format(this_distro[k][1]) + ")";
-      }
-
-      distributions.push(this_distro_entry);
-    }
-
-    distributions.sort(function (a, b) {
-      return a[0] < b[0] ? -1 : a[0] == b[0] ? 0 : 1;
-    });
-
-    return distributions;
-  },
-
-  getModelRows: function getModelRows(json) {
-    if (!json) {
-      return [];
-    }
-
-    var table_row_data = [];
-
-    for (var m in json["fits"]) {
-      var this_model_row = [],
-          this_model = json["fits"][m];
-
-      this_model_row = [this_model["display-order"], "", m, this.getLogLikelihood(this_model), this.getNumParameters(this_model), this.getAIC(this_model), this.getRuntime(this_model), this.getBranchLengths(this_model)];
-
-      var distributions = this.getDistributions(m, this_model);
-
-      if (distributions.length) {
-        this_model_row = this_model_row.concat(distributions[0]);
-        this_model_row[1] = distributions[0][0];
-
-        table_row_data.push(this_model_row);
-
-        for (var d = 1; d < distributions.length; d++) {
-          var this_distro_entry = this_model_row.map(function (d, i) {
-            if (i) return "";
-            return d;
-          });
-
-          this_distro_entry[1] = distributions[d][0];
-
-          for (var k = this_distro_entry.length - 4; k < this_distro_entry.length; k++) {
-            this_distro_entry[k] = distributions[d][k - this_distro_entry.length + 4];
-          }
-
-          table_row_data.push(this_distro_entry);
-        }
-      } else {
-        table_row_data.push(this_model_row);
-      }
-    }
-
-    table_row_data.sort(function (a, b) {
-      if (a[0] == b[0]) {
-        return a[1] < b[1] ? -1 : a[1] == b[1] ? 0 : 1;
-      }
-      return a[0] - b[0];
-    });
-
-    table_row_data = table_row_data.map(function (r) {
-      return r.slice(2);
-    });
-
-    return table_row_data;
-  },
-
-  getModelColumns: function getModelColumns(table_row_data) {
-    var model_header = "<th>Model</th>",
-        logl_header = "<th><em> log </em>L</th>",
-        num_params_header = "<th># par.</th>",
-        aic_header = "<th>AIC<sub>c</sub></abbr></th>",
-        runtime_header = "<th>Time to fit</th>",
-        branch_lengths_header = "<th>L<sub>tree</sub></abbr></th>",
-        branch_set_header = "<th>Branch set</th>",
-        omega_1_header = "<th>&omega;<sub>1</sub></th>",
-        omega_2_header = "<th>&omega;<sub>2</sub></th>",
-        omega_3_header = "<th>&omega;<sub>3</sub></th>";
-
-    // inspect table_row_data and return header
-    var all_columns = [model_header, logl_header, num_params_header, aic_header, runtime_header, branch_lengths_header, branch_set_header, omega_1_header, omega_2_header, omega_3_header];
-
-    // validate each table row with its associated header
-    if (table_row_data.length == 0) {
-      return [];
-    }
-
-    // trim columns to length of table_row_data
-    var column_headers = _.take(all_columns, table_row_data[0].length);
-
-    return column_headers;
-  },
-
-  componentDidUpdate: function componentDidUpdate() {
-    var model_columns = d3.select("#summary-model-header1");
-    model_columns = model_columns.selectAll("th").data(this.state.table_columns);
-    model_columns.enter().append("th");
-    model_columns.html(function (d) {
-      return d;
-    });
-
-    var model_rows = d3.select("#summary-model-table").selectAll("tr").data(this.state.table_row_data);
-    model_rows.enter().append("tr");
-    model_rows.exit().remove();
-    model_rows = model_rows.selectAll("td").data(function (d) {
-      return d;
-    });
-    model_rows.enter().append("td");
-    model_rows.html(function (d) {
-      return d;
-    });
-  },
-
-  componentWillReceiveProps: function componentWillReceiveProps(nextProps) {
-    var table_row_data = this.getModelRows(nextProps.json),
-        table_columns = this.getModelColumns(table_row_data);
-
-    this.setState({
-      table_row_data: table_row_data,
-      table_columns: table_columns
-    });
-  },
-
-  render: function render() {
-    return React.createElement(
-      "div",
-      null,
-      React.createElement(
-        "h4",
-        { className: "dm-table-header" },
-        "Model fits",
-        React.createElement("span", {
-          className: "glyphicon glyphicon-info-sign",
-          style: { verticalAlign: "middle", float: "right" },
-          "aria-hidden": "true",
-          "data-toggle": "popover",
-          "data-trigger": "hover",
-          title: "Actions",
-          "data-html": "true",
-          "data-content": "<ul><li>Hover over a column header for a description of its content.</li></ul>",
-          "data-placement": "bottom"
-        })
-      ),
-      React.createElement(
-        "table",
-        {
-          className: "dm-table table table-hover table-condensed list-group-item-text",
-          style: { marginTop: "0.5em" }
-        },
-        React.createElement("thead", { id: "summary-model-header1" }),
-        React.createElement("tbody", { id: "summary-model-table" })
-      )
-    );
-  }
-});
-
-// Will need to make a call to this
-// omega distributions
-function render_model_fits(json, element) {
-  React.render(React.createElement(ModelFits, { json: json }), $(element)[0]);
-}
-
-// Will need to make a call to this
-// omega distributions
-function rerender_model_fits(json, element) {
-  $(element).empty();
-  render_model_fits(json, element);
-}
-
-module.exports.ModelFits = ModelFits;
-module.exports.render_model_fits = render_model_fits;
-module.exports.rerender_model_fits = rerender_model_fits;
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(6), __webpack_require__(9), __webpack_require__(3)))
-
-/***/ }),
-/* 71 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
 /* WEBPACK VAR INJECTION */(function(d3, _) {
 
 var React = __webpack_require__(5);
-var datamonkey = __webpack_require__(20);
+var datamonkey = __webpack_require__(22);
 
 var PropChart = React.createClass({
   displayName: "PropChart",
@@ -9382,8 +9158,8 @@ var PropChart = React.createClass({
 
     this.svg.selectAll("defs").remove();
 
-    this.svg.append("defs").append("marker").attr("id", "arrowhead").attr("refX", 10) /*must be smarter way to calculate shift*/
-    .attr("refY", 4).attr("markerWidth", 10).attr("markerHeight", 8).attr("orient", "auto").attr("stroke", "#000").attr("fill", "#000").append("path").attr("d", "M 0,0 V8 L10,4 Z");
+    this.svg.append("defs").append("marker").attr("id", "arrowhead").attr("refX", 10 /*must be smarter way to calculate shift*/
+    ).attr("refY", 4).attr("markerWidth", 10).attr("markerHeight", 8).attr("orient", "auto").attr("stroke", "#000").attr("fill", "#000").append("path").attr("d", "M 0,0 V8 L10,4 Z");
 
     if (this.plot.empty()) {
       this.plot = this.svg.append("g").attr("class", "container");
@@ -9585,16 +9361,16 @@ var PropChart = React.createClass({
 });
 
 module.exports.PropChart = PropChart;
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(6), __webpack_require__(9)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(6), __webpack_require__(8)))
 
 /***/ }),
-/* 72 */
+/* 71 */
 /***/ (function(module, exports) {
 
 // removed by extract-text-webpack-plugin
 
 /***/ }),
-/* 73 */
+/* 72 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9684,7 +9460,7 @@ module.exports = EventListener;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
 
 /***/ }),
-/* 74 */
+/* 73 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9716,7 +9492,7 @@ function focusNode(node) {
 module.exports = focusNode;
 
 /***/ }),
-/* 75 */
+/* 74 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9760,7 +9536,7 @@ function getActiveElement(doc) /*?DOMElement*/{
 module.exports = getActiveElement;
 
 /***/ }),
-/* 76 */
+/* 75 */
 /***/ (function(module, exports) {
 
 // transliterated from the python snippet here:
@@ -9833,9 +9609,9 @@ module.exports.log = lngamma;
 
 
 /***/ }),
+/* 76 */,
 /* 77 */,
-/* 78 */,
-/* 79 */
+/* 78 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(process) {/**
@@ -9862,7 +9638,7 @@ if (process.env.NODE_ENV !== 'production') {
   // By explicitly using `prop-types` you are opting into new development behavior.
   // http://fb.me/prop-types-in-prod
   var throwOnDirectAccess = true;
-  module.exports = __webpack_require__(78)(isValidElement, throwOnDirectAccess);
+  module.exports = __webpack_require__(77)(isValidElement, throwOnDirectAccess);
 } else {
   // By explicitly using `prop-types` you are opting into new production behavior.
   // http://fb.me/prop-types-in-prod
@@ -9872,7 +9648,7 @@ if (process.env.NODE_ENV !== 'production') {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
 
 /***/ }),
-/* 80 */
+/* 79 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10031,7 +9807,7 @@ var CSSProperty = {
 module.exports = CSSProperty;
 
 /***/ }),
-/* 81 */
+/* 80 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10156,7 +9932,7 @@ module.exports = PooledClass.addPoolingTo(CallbackQueue);
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
 
 /***/ }),
-/* 82 */
+/* 81 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10173,7 +9949,7 @@ module.exports = PooledClass.addPoolingTo(CallbackQueue);
 
 
 var DOMProperty = __webpack_require__(21);
-var ReactDOMComponentTree = __webpack_require__(8);
+var ReactDOMComponentTree = __webpack_require__(9);
 var ReactInstrumentation = __webpack_require__(13);
 
 var quoteAttributeValueForBrowser = __webpack_require__(242);
@@ -10397,7 +10173,7 @@ module.exports = DOMPropertyOperations;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
 
 /***/ }),
-/* 83 */
+/* 82 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10420,7 +10196,7 @@ var ReactDOMComponentFlags = {
 module.exports = ReactDOMComponentFlags;
 
 /***/ }),
-/* 84 */
+/* 83 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10439,7 +10215,7 @@ module.exports = ReactDOMComponentFlags;
 var _assign = __webpack_require__(7);
 
 var LinkedValueUtils = __webpack_require__(55);
-var ReactDOMComponentTree = __webpack_require__(8);
+var ReactDOMComponentTree = __webpack_require__(9);
 var ReactUpdates = __webpack_require__(14);
 
 var warning = __webpack_require__(2);
@@ -10626,7 +10402,7 @@ module.exports = ReactDOMSelect;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
 
 /***/ }),
-/* 85 */
+/* 84 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10661,7 +10437,7 @@ ReactEmptyComponent.injection = ReactEmptyComponentInjection;
 module.exports = ReactEmptyComponent;
 
 /***/ }),
-/* 86 */
+/* 85 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10688,7 +10464,7 @@ var ReactFeatureFlags = {
 module.exports = ReactFeatureFlags;
 
 /***/ }),
-/* 87 */
+/* 86 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10762,7 +10538,7 @@ module.exports = ReactHostComponent;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
 
 /***/ }),
-/* 88 */
+/* 87 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10781,8 +10557,8 @@ module.exports = ReactHostComponent;
 var ReactDOMSelection = __webpack_require__(197);
 
 var containsNode = __webpack_require__(155);
-var focusNode = __webpack_require__(74);
-var getActiveElement = __webpack_require__(75);
+var focusNode = __webpack_require__(73);
+var getActiveElement = __webpack_require__(74);
 
 function isInDocument(node) {
   return containsNode(document.documentElement, node);
@@ -10890,7 +10666,7 @@ var ReactInputSelection = {
 module.exports = ReactInputSelection;
 
 /***/ }),
-/* 89 */
+/* 88 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10908,24 +10684,24 @@ module.exports = ReactInputSelection;
 
 var _prodInvariant = __webpack_require__(4);
 
-var DOMLazyTree = __webpack_require__(26);
+var DOMLazyTree = __webpack_require__(27);
 var DOMProperty = __webpack_require__(21);
-var React = __webpack_require__(28);
+var React = __webpack_require__(29);
 var ReactBrowserEventEmitter = __webpack_require__(42);
 var ReactCurrentOwner = __webpack_require__(15);
-var ReactDOMComponentTree = __webpack_require__(8);
+var ReactDOMComponentTree = __webpack_require__(9);
 var ReactDOMContainerInfo = __webpack_require__(189);
 var ReactDOMFeatureFlags = __webpack_require__(191);
-var ReactFeatureFlags = __webpack_require__(86);
-var ReactInstanceMap = __webpack_require__(34);
+var ReactFeatureFlags = __webpack_require__(85);
+var ReactInstanceMap = __webpack_require__(36);
 var ReactInstrumentation = __webpack_require__(13);
 var ReactMarkupChecksum = __webpack_require__(211);
-var ReactReconciler = __webpack_require__(27);
+var ReactReconciler = __webpack_require__(28);
 var ReactUpdateQueue = __webpack_require__(58);
 var ReactUpdates = __webpack_require__(14);
 
 var emptyObject = __webpack_require__(40);
-var instantiateReactComponent = __webpack_require__(98);
+var instantiateReactComponent = __webpack_require__(97);
 var invariant = __webpack_require__(1);
 var setInnerHTML = __webpack_require__(46);
 var shouldUpdateReactComponent = __webpack_require__(64);
@@ -11434,7 +11210,7 @@ module.exports = ReactMount;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
 
 /***/ }),
-/* 90 */
+/* 89 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11453,7 +11229,7 @@ module.exports = ReactMount;
 
 var _prodInvariant = __webpack_require__(4);
 
-var React = __webpack_require__(28);
+var React = __webpack_require__(29);
 
 var invariant = __webpack_require__(1);
 
@@ -11480,7 +11256,7 @@ module.exports = ReactNodeTypes;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
 
 /***/ }),
-/* 91 */
+/* 90 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11502,7 +11278,7 @@ var ReactPropTypesSecret = 'SECRET_DO_NOT_PASS_THIS_OR_YOU_WILL_BE_FIRED';
 module.exports = ReactPropTypesSecret;
 
 /***/ }),
-/* 92 */
+/* 91 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11532,7 +11308,7 @@ var ViewportMetrics = {
 module.exports = ViewportMetrics;
 
 /***/ }),
-/* 93 */
+/* 92 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11596,7 +11372,7 @@ module.exports = accumulateInto;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
 
 /***/ }),
-/* 94 */
+/* 93 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11632,7 +11408,7 @@ function forEachAccumulated(arr, cb, scope) {
 module.exports = forEachAccumulated;
 
 /***/ }),
-/* 95 */
+/* 94 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11648,7 +11424,7 @@ module.exports = forEachAccumulated;
 
 
 
-var ReactNodeTypes = __webpack_require__(90);
+var ReactNodeTypes = __webpack_require__(89);
 
 function getHostComponentFromComposite(inst) {
   var type;
@@ -11667,7 +11443,7 @@ function getHostComponentFromComposite(inst) {
 module.exports = getHostComponentFromComposite;
 
 /***/ }),
-/* 96 */
+/* 95 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11705,7 +11481,7 @@ function getTextContentAccessor() {
 module.exports = getTextContentAccessor;
 
 /***/ }),
-/* 97 */
+/* 96 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11721,7 +11497,7 @@ module.exports = getTextContentAccessor;
 
 
 
-var ReactDOMComponentTree = __webpack_require__(8);
+var ReactDOMComponentTree = __webpack_require__(9);
 
 function isCheckable(elem) {
   var type = elem.type;
@@ -11833,7 +11609,7 @@ var inputValueTracking = {
 module.exports = inputValueTracking;
 
 /***/ }),
-/* 98 */
+/* 97 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11853,8 +11629,8 @@ var _prodInvariant = __webpack_require__(4),
     _assign = __webpack_require__(7);
 
 var ReactCompositeComponent = __webpack_require__(186);
-var ReactEmptyComponent = __webpack_require__(85);
-var ReactHostComponent = __webpack_require__(87);
+var ReactEmptyComponent = __webpack_require__(84);
+var ReactHostComponent = __webpack_require__(86);
 
 var getNextDebugID = __webpack_require__(254);
 var invariant = __webpack_require__(1);
@@ -11968,7 +11744,7 @@ module.exports = instantiateReactComponent;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
 
 /***/ }),
-/* 99 */
+/* 98 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12024,7 +11800,7 @@ function isTextInputElement(elem) {
 module.exports = isTextInputElement;
 
 /***/ }),
-/* 100 */
+/* 99 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12081,7 +11857,7 @@ if (ExecutionEnvironment.canUseDOM) {
 module.exports = setTextContent;
 
 /***/ }),
-/* 101 */
+/* 100 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12263,12 +12039,12 @@ module.exports = traverseAllChildren;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
 
 /***/ }),
+/* 101 */,
 /* 102 */,
 /* 103 */,
 /* 104 */,
 /* 105 */,
-/* 106 */,
-/* 107 */
+/* 106 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12282,11 +12058,11 @@ __webpack_require__(151);
 __webpack_require__(150);
 
 __webpack_require__(68);
-__webpack_require__(20);
+__webpack_require__(22);
 
-var absrel = __webpack_require__(114),
-    busted = __webpack_require__(115),
-    fade = __webpack_require__(113),
+var absrel = __webpack_require__(113),
+    busted = __webpack_require__(114),
+    fade = __webpack_require__(112),
     fade_summary = __webpack_require__(120),
     fel = __webpack_require__(121),
     prime = __webpack_require__(124),
@@ -12311,10 +12087,10 @@ window.template = template;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ }),
+/* 107 */,
 /* 108 */,
 /* 109 */,
-/* 110 */,
-/* 111 */
+/* 110 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12465,13 +12241,13 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 })();
 
 /***/ }),
-/* 112 */
+/* 111 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function($, jQuery, d3, _) {
 
-var datamonkey = __webpack_require__(20);
+var datamonkey = __webpack_require__(22);
 
 function datamonkey_get_styles(doc) {
   var styles = "",
@@ -12751,10 +12527,10 @@ datamonkey.helpers.countSitesFromPartitionsJSON = datamonkey_count_sites_from_pa
 datamonkey.helpers.sum = datamonkey_sum;
 datamonkey.helpers.filter = datamonkey_filter_list;
 datamonkey.helpers.map = datamonkey_map_list;
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3), __webpack_require__(3), __webpack_require__(6), __webpack_require__(9)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3), __webpack_require__(3), __webpack_require__(6), __webpack_require__(8)))
 
 /***/ }),
-/* 113 */
+/* 112 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12936,27 +12712,27 @@ var datamonkey_fade = function datamonkey_fade(json) {
       x.domain([1, site_count]);
       y.domain([0, 1]);
 
-      svg.append("g").attr("class", "x hyphy-axis").attr("transform", "translate(0," + height + ")").call(xAxis).append("text")
+      svg.append("g").attr("class", "x hyphy-axis").attr("transform", "translate(0," + height + ")").call(xAxis).append("text"
       //.attr("class", "label")
-      .attr("x", width).attr("y", 30).style("text-anchor", "end").text("Site index");
+      ).attr("x", width).attr("y", 30).style("text-anchor", "end").text("Site index");
 
       svg.append("g").attr("class", "grid").call(make_y_axis().tickSize(-width, 0, 0).tickFormat(""));
 
       svg.append("g").attr("class", "grid").attr("transform", "translate(0," + height + ")").call(make_x_axis().tickSize(-height, 0, 0).tickFormat(""));
 
-      svg.append("g").attr("class", "y hyphy-axis").call(yAxis).append("text")
+      svg.append("g").attr("class", "y hyphy-axis").call(yAxis).append("text"
       //.attr("class", "label")
-      .attr("transform", "rotate(-90)").attr("y", -37).attr("dy", ".71em").style("text-anchor", "end").text("P(Bias>1)");
+      ).attr("transform", "rotate(-90)").attr("y", -37).attr("dy", ".71em").style("text-anchor", "end").text("P(Bias>1)");
 
       var y2 = svg.append("g").attr("class", "y hyphy-axis").attr("transform", "translate(" + width + ",0)").call(yAxis2.tickFormat(""));
 
-      y2.append("text")
+      y2.append("text"
       //.attr("class", "label")
-      .attr("transform", "rotate(-90)").attr("y", 10).attr("dy", ".71em").style("text-anchor", "end").text("High Posteriors");
+      ).attr("transform", "rotate(-90)").attr("y", 10).attr("dy", ".71em").style("text-anchor", "end").text("High Posteriors");
 
-      y2.append("text")
+      y2.append("text"
       //.attr("class", "label")
-      .attr("transform", "rotate(-90)").attr("y", 10).attr("x", -height).attr("dy", ".71em").style("text-anchor", "start").text("Low Posteriors");
+      ).attr("transform", "rotate(-90)").attr("y", 10).attr("x", -height).attr("dy", ".71em").style("text-anchor", "start").text("Low Posteriors");
 
       svg.selectAll(".legend").data(color.domain()).enter().append("g").attr("class", "legend").attr("transform", function (d, i) {
         return "translate(0," + i * 20 + ")";
@@ -13058,7 +12834,7 @@ module.exports = datamonkey_fade;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3), __webpack_require__(6)))
 
 /***/ }),
-/* 114 */
+/* 113 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13070,21 +12846,21 @@ var _tree_summary = __webpack_require__(119);
 
 var _tree = __webpack_require__(39);
 
-var _branch_table = __webpack_require__(116);
+var _branch_table = __webpack_require__(115);
 
 var _navbar = __webpack_require__(16);
 
 var _scrollspy = __webpack_require__(17);
 
-var _input_info = __webpack_require__(22);
+var _input_info = __webpack_require__(20);
 
 var React = __webpack_require__(5),
     ReactDOM = __webpack_require__(18);
 
-var _ = __webpack_require__(9);
+var _ = __webpack_require__(8);
 
-__webpack_require__(37);
-__webpack_require__(72);
+__webpack_require__(38);
+__webpack_require__(71);
 
 var BSRELSummary = React.createClass({
   displayName: "BSRELSummary",
@@ -13200,7 +12976,7 @@ var BSRELSummary = React.createClass({
           { className: "list-group-item-heading" },
           React.createElement(
             "span",
-            { className: "summary-method-name" },
+            { id: "summary-method-name" },
             "adaptive Branch Site REL"
           ),
           React.createElement("br", null),
@@ -13286,32 +13062,60 @@ var BSREL = React.createClass({
 
   float_format: d3.format(".2f"),
 
-  loadFromServer: function loadFromServer() {
+  processData: function processData(data) {
+    var test_results = _.mapObject(data['branch attributes']['0'], function (val, key) {
+      var tested = val.LRT != null;
 
-    var self = this;
+      return {
+        LRT: tested ? val.LRT : 'test not run',
+        p: tested ? val['Corrected P-value'] : 1,
+        'uncorrected p': tested ? val['Uncorrected P-value'] : 1,
+        tested: tested
+      };
+    });
 
-    d3.json(this.props.url, function (data) {
-      data["fits"]["MG94"]["branch-annotations"] = self.formatBranchAnnotations(data, "MG94");
-      data["fits"]["Full model"]["branch-annotations"] = self.formatBranchAnnotations(data, "Full model");
+    data["fits"]["Full adaptive model"]["branch-annotations"] = this.formatBranchAnnotations(data, "Full adaptive model");
 
-      // GH-#18 Add omega annotation tag
-      data["fits"]["MG94"]["annotation-tag"] = "ω";
-      data["fits"]["Full model"]["annotation-tag"] = "ω";
+    data["fits"]["Baseline MG94xREV"]["branch-annotations"] = this.formatBranchAnnotations(data, "Baseline MG94xREV");
 
-      self.setState({
-        annotations: data["fits"]["Full model"]["branch-annotations"],
-        json: data,
-        pmid: data["PMID"],
-        fits: data["fits"],
-        full_model: data["fits"]["Full model"],
-        test_results: data["test results"],
-        input_data: data["input_data"],
-        tree: d3.layout.phylotree()(data["fits"]["Full model"]["tree string"])
-      });
+    // GH-#18 Add omega annotation tag
+    data["fits"]["Baseline MG94xREV"]["annotation-tag"] = "ω";
+    data["fits"]["Full adaptive model"]["annotation-tag"] = "ω";
+
+    data["trees"] = {
+      branchLengths: {
+        "Baseline MG94xREV": _.mapObject(data["branch attributes"][0], function (val) {
+          return val["Baseline MG94xREV"];
+        }),
+        "Full adaptive model": _.mapObject(data["branch attributes"][0], function (val) {
+          return val["Full adaptive model"];
+        })
+      }
+    };
+    _.each(_.keys(data.fits), function (model) {
+      delete data.fits[model]['Rate Distributions'];
+    });
+    this.setState({
+      annotations: data["fits"]["Full adaptive model"]["branch-annotations"],
+      json: data,
+      pmid: data["PMID"],
+      fits: data["fits"],
+      full_model: data["fits"]["Full adaptive model"],
+      test_results: test_results,
+      input_data: data["input"],
+      tree: d3.layout.phylotree()(data.input['trees'][0]),
+      branch_attributes: data["branch attributes"][0]
     });
   },
 
-  omegaColorGradient: ["#5e4fa2", "#3288bd", "#e6f598", "#f46d43", "#9e0142"],
+  loadFromServer: function loadFromServer() {
+    var self = this;
+    d3.json(self.props.url, function (data) {
+      self.processData(data);
+    });
+  },
+
+  omegaColorGradient: ["#000000", "#888888", "#DFDFDF", "#77CCC6", "#00a99d"],
   omegaGrayScaleGradient: ["#DDDDDD", "#AAAAAA", "#888888", "#444444", "#000000"],
 
   getDefaultProps: function getDefaultProps() {},
@@ -13416,9 +13220,9 @@ var BSREL = React.createClass({
       omegaPlot: {},
       "tree-options": {
         /* value arrays have the following meaning
-                [0] - the value of the attribute
-                [1] - does the change in attribute value trigger tree re-layout?
-            */
+            [0] - the value of the attribute
+            [1] - does the change in attribute value trigger tree re-layout?
+        */
         "hyphy-tree-model": ["Full model", true],
         "hyphy-tree-highlight": [null, false],
         "hyphy-tree-branch-lengths": [true, true],
@@ -13438,10 +13242,10 @@ var BSREL = React.createClass({
       settings: tree_settings,
       test_results: null,
       input_data: null,
-      tree: null
+      tree: null,
+      branch_attributes: null
     };
   },
-
   componentWillMount: function componentWillMount() {
     this.loadFromServer();
   },
@@ -13463,27 +13267,7 @@ var BSREL = React.createClass({
         reader.onload = function (theFile) {
           return function (e) {
             var data = JSON.parse(this.result);
-            data["fits"]["MG94"]["branch-annotations"] = self.formatBranchAnnotations(data, "MG94");
-            data["fits"]["Full model"]["branch-annotations"] = self.formatBranchAnnotations(data, "Full model");
-
-            var annotations = data["fits"]["Full model"]["branch-annotations"],
-                json = data,
-                pmid = data["PMID"],
-                full_model = json["fits"]["Full model"],
-                test_results = data["test results"],
-                input_data = data["input_data"],
-                fits = data["fits"];
-
-            self.setState({
-              annotations: annotations,
-              json: json,
-              pmid: pmid,
-              full_model: full_model,
-              test_results: test_results,
-              input_data: input_data,
-              fits: fits,
-              tree: d3.layout.phylotree()(data["fits"]["Full model"]["tree string"])
-            });
+            self.processData(data);
           };
         }(f);
         reader.readAsText(f);
@@ -13492,32 +13276,25 @@ var BSREL = React.createClass({
     });
   },
 
-  formatBranchAnnotations: function formatBranchAnnotations(json, key) {
-    var initial_branch_annotations = json["fits"][key]["branch-annotations"];
-
-    if (!initial_branch_annotations) {
-      initial_branch_annotations = json["fits"][key]["rate distributions"];
-    }
-
-    // Iterate over objects
-    var branch_annotations = _.mapObject(initial_branch_annotations, function (val, key) {
-      var vals = [];
-      try {
-        vals = JSON.parse(val);
-      } catch (e) {
-        vals = val;
+  formatBranchAnnotations: function formatBranchAnnotations(json, model) {
+    var branch_annotations = _.mapObject(json['branch attributes']['0'], function (val, key) {
+      var tested = val.LRT != null,
+          omegas;
+      if (model == 'Full adaptive model') {
+        omegas = val['Rate Distributions'].map(function (entry) {
+          return { omega: entry[0], prop: entry[1] };
+        });
+      } else {
+        omegas = [{ omega: val['Baseline MG94xREV omega ratio'], prop: 1 }];
       }
-
-      var omegas = {
-        omegas: _.map(vals, function (d) {
-          return _.object(["omega", "prop"], d);
-        })
+      return {
+        LRT: tested ? val.LRT : 'test not run',
+        omegas: omegas,
+        p: tested ? val['Corrected P-value'] : 1,
+        'uncorrected p': tested ? val['Uncorrected P-value'] : 1,
+        tested: tested
       };
-      var test_results = _.clone(json["test results"][key]);
-      _.extend(test_results, omegas);
-      return test_results;
     });
-
     return branch_annotations;
   },
 
@@ -13533,13 +13310,12 @@ var BSREL = React.createClass({
   render: function render() {
     var self = this;
 
-    var scrollspy_info = [{ label: "summary", href: "summary-tab" }, { label: "tree", href: "hyphy-tree-summary" }, { label: "table", href: "table-tab" }];
+    var scrollspy_info = [{ label: "summary", href: "summary-tab" }, { label: "tree", href: "hyphy-tree-summary" }, { label: "table", href: "table-tab" }, { label: "model fits", href: "hyphy-model-fits" }];
 
     var models = {};
     if (!_.isNull(self.state.json)) {
       models = self.state.json.fits;
     }
-
     return React.createElement(
       "div",
       null,
@@ -13607,7 +13383,8 @@ var BSREL = React.createClass({
                     { id: "hyphy-tree-summary", className: "col-md-12" },
                     React.createElement(_tree_summary.TreeSummary, {
                       model: self.state.full_model,
-                      test_results: self.state.test_results
+                      test_results: self.state.test_results,
+                      branch_attributes: self.state.branch_attributes
                     })
                   )
                 )
@@ -13623,7 +13400,8 @@ var BSREL = React.createClass({
                     settings: self.state.settings,
                     models: models,
                     color_gradient: self.omegaColorGradient,
-                    grayscale_gradient: self.omegaGrayscaleGradient
+                    grayscale_gradient: self.omegaGrayscaleGradient,
+                    method: "absrel"
                   })
                 )
               ),
@@ -13650,13 +13428,13 @@ var BSREL = React.createClass({
                     React.createElement(
                       "strong",
                       null,
-                      "MG94"
+                      "Baseline MG94xREV"
                     ),
                     " refers to the MG94xREV baseline model that infers a single \u03C9 rate category per branch. ",
                     React.createElement(
                       "strong",
                       null,
-                      "Full Model"
+                      "Full adaptive model"
                     ),
                     " refers to the adaptive aBSREL model that infers an optimized number of \u03C9 rate categories per branch."
                   )
@@ -13680,17 +13458,17 @@ module.exports = render_absrel;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(6), __webpack_require__(3)))
 
 /***/ }),
-/* 115 */
+/* 114 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function($) {
 
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
 var _tree = __webpack_require__(39);
 
-var _model_fits = __webpack_require__(70);
-
-var _prop_chart = __webpack_require__(71);
+var _prop_chart = __webpack_require__(70);
 
 var _navbar = __webpack_require__(16);
 
@@ -13698,127 +13476,133 @@ var _scrollspy = __webpack_require__(17);
 
 var _tables = __webpack_require__(23);
 
-var _saveSvgAsPng = __webpack_require__(36);
+var _saveSvgAsPng = __webpack_require__(31);
 
-var _input_info = __webpack_require__(22);
+var _input_info = __webpack_require__(20);
 
-__webpack_require__(37);
+var _header = __webpack_require__(33);
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+__webpack_require__(38);
 
 var React = __webpack_require__(5),
     ReactDOM = __webpack_require__(18),
     d3 = __webpack_require__(6),
-    d3_save_svg = __webpack_require__(31);
+    d3_save_svg = __webpack_require__(26),
+    _ = __webpack_require__(8);
 
-var datamonkey = __webpack_require__(20);
-var _ = __webpack_require__(9);
-
-var BUSTEDSummary = React.createClass({
-  displayName: "BUSTEDSummary",
-
-  render: function render() {
-    var significant = this.props.test_result.p < 0.05,
-        message;
-    if (significant) {
-      message = React.createElement(
-        "p",
+function BUSTEDSummary(props) {
+  var significant = props.p < 0.05,
+      message;
+  if (significant) {
+    message = React.createElement(
+      "p",
+      null,
+      "BUSTED ",
+      React.createElement(
+        "strong",
+        { className: "hyphy-highlight" },
+        "found evidence"
+      ),
+      " ",
+      "(LRT, p-value = ",
+      props.p ? props.p.toFixed(3) : null,
+      " \u2264 .05) of gene-wide episodic diversifying selection in the selected test branches of your phylogeny. Therefore, there is evidence that at least one site on at least one test branch has experienced diversifying selection.",
+      " "
+    );
+  } else {
+    message = React.createElement(
+      "p",
+      null,
+      "BUSTED ",
+      React.createElement(
+        "strong",
         null,
-        "BUSTED ",
-        React.createElement(
-          "strong",
-          { className: "hyphy-highlight" },
-          "found evidence"
-        ),
-        " ",
-        "(LRT, p-value \u2264 .05) of gene-wide episodic diversifying selection in the selected foreground of your phylogeny. Therefore, there is evidence that at least one site on at least one foreground branch has experienced diversifying selection.",
-        " "
-      );
-    } else {
-      message = React.createElement(
-        "p",
-        null,
-        "BUSTED ",
-        React.createElement(
-          "strong",
-          { className: "hyphy-highlight" },
-          "found no evidence"
-        ),
-        " ",
-        "(LRT, p-value \u2264 .05) of gene-wide episodic diversifying selection in the selected foreground of your phylogeny. Therefore, there is no evidence that any sites have experienced diversifying selection along the foreground branch(es).",
-        " "
-      );
-    }
-    return React.createElement(
+        "found no evidence"
+      ),
+      " ",
+      "(LRT, p-value = ",
+      props.p ? props.p.toFixed(3) : null,
+      " \u2265 .05) of gene-wide episodic diversifying selection in the selected test branches of your phylogeny. Therefore, there is no evidence that any sites have experienced diversifying selection along the test branch(es).",
+      " "
+    );
+  }
+  return React.createElement(
+    "div",
+    { className: "row" },
+    React.createElement("div", { className: "clearance", id: "summary-div" }),
+    React.createElement(
       "div",
-      { className: "row" },
-      React.createElement("div", { className: "clearance", id: "summary-div" }),
+      { className: "col-md-12" },
       React.createElement(
-        "div",
-        { className: "col-md-12" },
+        "h3",
+        { className: "list-group-item-heading" },
         React.createElement(
-          "h3",
-          { className: "list-group-item-heading" },
-          React.createElement(
-            "span",
-            { className: "summary-method-name" },
-            "Branch-Site Unrestricted Statistical Test for Episodic Diversification"
-          ),
-          React.createElement("br", null),
-          React.createElement(
-            "span",
-            { className: "results-summary" },
-            "results summary"
-          )
+          "span",
+          { id: "summary-method-name" },
+          "Branch-site Unrestricted Statistical Test for Episodic Diversification"
+        ),
+        React.createElement("br", null),
+        React.createElement(
+          "span",
+          { className: "results-summary" },
+          "results summary"
         )
-      ),
+      )
+    ),
+    React.createElement(
+      "div",
+      { className: "col-md-12" },
+      React.createElement(_input_info.InputInfo, { input_data: props.input_data })
+    ),
+    React.createElement(
+      "div",
+      { className: "col-md-12" },
       React.createElement(
         "div",
-        { className: "col-md-12" },
-        React.createElement(_input_info.InputInfo, { input_data: this.props.input_data })
-      ),
-      React.createElement(
-        "div",
-        { className: "col-md-12" },
+        { className: "main-result" },
+        message,
+        React.createElement("hr", null),
         React.createElement(
-          "div",
-          { className: "main-result" },
-          message,
-          React.createElement("hr", null),
+          "p",
+          null,
           React.createElement(
-            "p",
+            "small",
             null,
+            "See",
+            " ",
             React.createElement(
-              "small",
-              null,
-              "See",
-              " ",
-              React.createElement(
-                "a",
-                { href: "http://hyphy.org/methods/selection-methods/#busted" },
-                "here"
-              ),
-              " ",
-              "for more information about the BUSTED method.",
-              React.createElement("br", null),
-              "Please cite",
-              " ",
-              React.createElement(
-                "a",
-                {
-                  href: "http://www.ncbi.nlm.nih.gov/pubmed/25701167",
-                  id: "summary-pmid",
-                  target: "_blank"
-                },
-                "PMID 25701167"
-              ),
-              " ",
-              "if you use this result in a publication, presentation, or other scientific work."
-            )
+              "a",
+              { href: "http://hyphy.org/methods/selection-methods/#busted" },
+              "here"
+            ),
+            " ",
+            "for more information about the BUSTED method.",
+            React.createElement("br", null),
+            "Please cite",
+            " ",
+            React.createElement(
+              "a",
+              {
+                href: "http://www.ncbi.nlm.nih.gov/pubmed/25701167",
+                id: "summary-pmid",
+                target: "_blank"
+              },
+              "PMID 25701167"
+            ),
+            " ",
+            "if you use this result in a publication, presentation, or other scientific work."
           )
         )
       )
-    );
-  }
-});
+    )
+  );
+}
 
 var BUSTEDSiteChartAndTable = React.createClass({
   displayName: "BUSTEDSiteChartAndTable",
@@ -13839,7 +13623,7 @@ var BUSTEDSiteChartAndTable = React.createClass({
     });
   },
   componentDidUpdate: function componentDidUpdate() {
-    if (!this.state.brushend_event) {
+    if (!this.state.brushend_event && !_.isEmpty(this.props.data)) {
       d3.select("#chart-id").html("");
       this.drawChart();
     }
@@ -13857,7 +13641,7 @@ var BUSTEDSiteChartAndTable = React.createClass({
         number_of_sites = this.props.data.length,
         margin = { top: 20, right: 20, bottom: 40, left: 50 },
         width = $("#chart-id").width() - margin.left - margin.right,
-        height = 270 - margin.top - margin.bottom,
+        height = 320 - margin.top - margin.bottom,
         ymin = d3.min(self.props.data.map(function (d) {
       return Math.min(d.constrained_evidence_ratio, d.optimized_null_evidence_ratio);
     })),
@@ -13866,8 +13650,10 @@ var BUSTEDSiteChartAndTable = React.createClass({
     })),
         x = d3.scale.linear().domain([0, number_of_sites]).range([0, width]),
         y = d3.scale.linear().domain([ymin, ymax]).range([height, 0]),
-        yAxisTicks = d3.range(5 * Math.ceil(ymin / 5), 5 * Math.floor(ymax / 5) + 1, 5),
-        xAxis = d3.svg.axis().scale(x).orient("bottom").tickValues(d3.range(5, number_of_sites, 5)),
+        yAxisDelta = Math.max(2, 2 * Math.floor((ymax - ymin) / 10 / 2)),
+        yAxisTicks = d3.range(yAxisDelta * Math.ceil(ymin / yAxisDelta), yAxisDelta * Math.floor(ymax / yAxisDelta) + 1, yAxisDelta),
+        xAxisDelta = 5 * Math.floor(number_of_sites / 30 / 5),
+        xAxis = d3.svg.axis().scale(x).orient("bottom").tickValues(d3.range(xAxisDelta, number_of_sites, xAxisDelta)),
         yAxis = d3.svg.axis().scale(y).orient("left").tickValues(yAxisTicks),
         cer_line = d3.svg.line().x(function (d, i) {
       return x(d.site_index);
@@ -13895,7 +13681,7 @@ var BUSTEDSiteChartAndTable = React.createClass({
     g.append("g").attr("class", "x axis").attr("transform", "translate(0," + height + ")").call(xAxis);
     g.append("text").attr("x", width / 2).attr("y", height + margin.bottom).style("text-anchor", "middle").text("Site index");
     g.append("g").attr("class", "y axis").call(yAxis);
-    g.append("text").attr("transform", "rotate(-90)").attr("x", -height / 2).attr("y", -margin.left).attr("dy", "1em").style("text-anchor", "middle").text("2*Logarithm of evidence ratio");
+    g.append("text").attr("transform", "rotate(-90)").attr("x", -height / 2).attr("y", -margin.left).attr("dy", "1em").style("text-anchor", "middle").text("2*Log Evidence Ratio");
     var c_legend = svg.append("g").attr("class", "legend").attr("transform", "translate( " + 0.9 * width + "," + 0.05 * height + ")").attr("text-anchor", "start");
     c_legend.append("text").text("Constrained").attr("x", 20).attr("y", 7.5).attr("dy", ".32em");
     c_legend.append("rect").attr("width", 15).attr("height", 15).attr("fill", "#00a99d");
@@ -13990,8 +13776,24 @@ var BUSTEDSiteChartAndTable = React.createClass({
     abbr: "Likelihood of constrained model.",
     sortable: true,
     value: "Constrained likelihood"
-  },, "Optimized Null Likelihood", "Constrained Statistic", "Optimized Null Statistic"],
+  }, "Optimized Null Likelihood", "Constrained Statistic", "Optimized Null Statistic"],
   render: function render() {
+    if (_.isEmpty(this.props.data)) {
+      return React.createElement(
+        "div",
+        { className: "row", style: { marginBottom: "20px" } },
+        React.createElement(
+          "div",
+          { className: "col-md-12" },
+          React.createElement(_header.Header, { title: "Model Test Statistics Per Site" }),
+          React.createElement(
+            "p",
+            { className: "description" },
+            "No data to display."
+          )
+        )
+      );
+    }
     var self = this,
         float_format = d3.format(".2f"),
         bodyData = _.filter(this.props.data, function (element, index) {
@@ -14039,7 +13841,10 @@ var BUSTEDSiteChartAndTable = React.createClass({
             {
               id: "export-chart-svg",
               type: "button",
-              className: "btn btn-default btn-sm pull-right btn-export"
+              className: "btn btn-default btn-sm pull-right btn-export",
+              onClick: function onClick() {
+                d3_save_svg.save(d3.select("#chart").node(), { filename: "busted" });
+              }
             },
             React.createElement("span", { className: "glyphicon glyphicon-floppy-save" }),
             " Export Chart to SVG"
@@ -14049,7 +13854,10 @@ var BUSTEDSiteChartAndTable = React.createClass({
             {
               id: "export-chart-png",
               type: "button",
-              className: "btn btn-default btn-sm pull-right btn-export"
+              className: "btn btn-default btn-sm pull-right btn-export",
+              onClick: function onClick() {
+                (0, _saveSvgAsPng.saveSvgAsPng)(document.getElementById("chart"), "busted-chart.png");
+              }
             },
             React.createElement("span", { className: "glyphicon glyphicon-floppy-save" }),
             " Export Chart to PNG"
@@ -14118,6 +13926,359 @@ var BUSTEDSiteChartAndTable = React.createClass({
 
 });
 
+var BUSTEDModelTable = function (_React$Component) {
+  _inherits(BUSTEDModelTable, _React$Component);
+
+  function BUSTEDModelTable(props) {
+    _classCallCheck(this, BUSTEDModelTable);
+
+    var _this = _possibleConstructorReturn(this, (BUSTEDModelTable.__proto__ || Object.getPrototypeOf(BUSTEDModelTable)).call(this, props));
+
+    var distro_settings = {
+      dimensions: {
+        width: 600,
+        height: 400
+      },
+      margins: {
+        left: 50,
+        right: 15,
+        bottom: 15,
+        top: 35
+      },
+      legend: false,
+      domain: [0.00001, 10000],
+      do_log_plot: true,
+      k_p: null,
+      plot: null,
+      svg_id: "prop-chart"
+    };
+
+    _this.state = {
+      model: "Unconstrained model",
+      branch: "Test",
+      distro_settings: distro_settings,
+      active: null
+    };
+    return _this;
+  }
+
+  _createClass(BUSTEDModelTable, [{
+    key: "render",
+    value: function render() {
+      if (!this.props.fits) return React.createElement("div", null);
+      var self = this,
+          omegas = _.values(this.props.fits[this.state.model]['Rate Distributions'][this.state.branch]).map(function (val) {
+        return {
+          omega: val.omega,
+          prop: val.proportion
+        };
+      });
+      function modalShower(model, branch) {
+        return function () {
+          this.setState({ model: model, branch: branch });
+          $("#myModal").modal("show");
+        };
+      }
+      function makeActive(model) {
+        return function () {
+          this.setState({ active: model });
+        };
+      }
+      function makeInactive() {
+        this.setState({ active: null });
+      }
+      var rows = _.map(this.props.fits, function (val, key) {
+        var distributions = val['Rate Distributions'],
+            onClick = modalShower(key, "Test").bind(self),
+            onMouseEnter = makeActive(key).bind(self),
+            onMouseLeave = makeInactive.bind(self),
+            className = key == self.state.active ? 'active' : '',
+            test_row = React.createElement(
+          "tr",
+          { onClick: onClick, onMouseEnter: onMouseEnter, onMouseLeave: onMouseLeave, className: className },
+          React.createElement(
+            "td",
+            null,
+            key
+          ),
+          React.createElement(
+            "td",
+            null,
+            val['Log Likelihood'] ? val['Log Likelihood'].toFixed(1) : null
+          ),
+          React.createElement(
+            "td",
+            null,
+            val['estimated parameters']
+          ),
+          React.createElement(
+            "td",
+            null,
+            val['AIC-c'].toFixed(1)
+          ),
+          React.createElement(
+            "td",
+            null,
+            "Test"
+          ),
+          React.createElement(
+            "td",
+            null,
+            distributions["Test"]["0"].omega.toFixed(2),
+            " (",
+            (100 * distributions["Test"]["0"].proportion).toFixed(0),
+            "%)"
+          ),
+          React.createElement(
+            "td",
+            null,
+            distributions["Test"]["1"].omega.toFixed(2),
+            " (",
+            (100 * distributions["Test"]["1"].proportion).toFixed(0),
+            "%)"
+          ),
+          React.createElement(
+            "td",
+            null,
+            distributions["Test"]["2"].omega.toFixed(2),
+            " (",
+            (100 * distributions["Test"]["2"].proportion).toFixed(0),
+            "%)"
+          ),
+          React.createElement(
+            "td",
+            null,
+            React.createElement("i", { className: "fa fa-bar-chart", "aria-hidden": "true" })
+          )
+        );
+        if (distributions['Background']) {
+          var onClick = modalShower(key, "Background").bind(self);
+          var background_row = React.createElement(
+            "tr",
+            { onClick: onClick, onMouseEnter: onMouseEnter, onMouseLeave: onMouseLeave, className: className },
+            React.createElement("td", null),
+            React.createElement("td", null),
+            React.createElement("td", null),
+            React.createElement("td", null),
+            React.createElement(
+              "td",
+              null,
+              "Background"
+            ),
+            React.createElement(
+              "td",
+              null,
+              distributions["Background"]["0"].omega.toFixed(2),
+              " (",
+              (100 * distributions["Background"]["0"].proportion).toFixed(0),
+              "%)"
+            ),
+            React.createElement(
+              "td",
+              null,
+              distributions["Background"]["1"].omega.toFixed(2),
+              " (",
+              (100 * distributions["Background"]["1"].proportion).toFixed(0),
+              "%)"
+            ),
+            React.createElement(
+              "td",
+              null,
+              distributions["Background"]["2"].omega.toFixed(2),
+              " (",
+              (100 * distributions["Background"]["2"].proportion).toFixed(0),
+              "%)"
+            ),
+            React.createElement(
+              "td",
+              null,
+              React.createElement("i", { className: "fa fa-bar-chart", "aria-hidden": "true" })
+            )
+          );
+          return [test_row, background_row];
+        }
+        return test_row;
+      });
+      return React.createElement(
+        "div",
+        null,
+        React.createElement(
+          "h4",
+          { className: "dm-table-header" },
+          "Model fits",
+          React.createElement("span", {
+            className: "glyphicon glyphicon-info-sign",
+            style: { verticalAlign: "middle", float: "right" },
+            "aria-hidden": "true",
+            "data-toggle": "popover",
+            "data-trigger": "hover",
+            title: "Actions",
+            "data-html": "true",
+            "data-content": "<ul><li>Hover over a column header for a description of its content.</li></ul>",
+            "data-placement": "bottom"
+          })
+        ),
+        React.createElement(
+          "table",
+          {
+            className: "dm-table table table-hover table-condensed list-group-item-text",
+            style: { marginTop: "0.5em" }
+          },
+          React.createElement(
+            "thead",
+            { id: "summary-model-header1" },
+            React.createElement(
+              "tr",
+              null,
+              React.createElement(
+                "th",
+                null,
+                "Model"
+              ),
+              React.createElement(
+                "th",
+                null,
+                React.createElement(
+                  "em",
+                  null,
+                  "log"
+                ),
+                " L"
+              ),
+              React.createElement(
+                "th",
+                null,
+                "#. params"
+              ),
+              React.createElement(
+                "th",
+                null,
+                "AIC",
+                React.createElement(
+                  "sub",
+                  null,
+                  "c"
+                )
+              ),
+              React.createElement(
+                "th",
+                null,
+                "Branch set"
+              ),
+              React.createElement(
+                "th",
+                null,
+                "\u03C9",
+                React.createElement(
+                  "sub",
+                  null,
+                  "1"
+                )
+              ),
+              React.createElement(
+                "th",
+                null,
+                "\u03C9",
+                React.createElement(
+                  "sub",
+                  null,
+                  "2"
+                )
+              ),
+              React.createElement(
+                "th",
+                null,
+                "\u03C9",
+                React.createElement(
+                  "sub",
+                  null,
+                  "3"
+                )
+              ),
+              React.createElement("th", null)
+            )
+          ),
+          React.createElement(
+            "tbody",
+            { id: "summary-model-table" },
+            _.flatten(rows)
+          )
+        ),
+        React.createElement(
+          "div",
+          {
+            className: "modal fade",
+            id: "myModal",
+            tabIndex: "-1",
+            role: "dialog",
+            "aria-labelledby": "myModalLabel"
+          },
+          React.createElement(
+            "div",
+            { className: "modal-dialog", role: "document" },
+            React.createElement(
+              "div",
+              { className: "modal-content" },
+              React.createElement(
+                "div",
+                { className: "modal-header" },
+                React.createElement(
+                  "button",
+                  {
+                    type: "button",
+                    className: "close",
+                    "data-dismiss": "modal",
+                    "aria-label": "Close"
+                  },
+                  React.createElement(
+                    "span",
+                    { "aria-hidden": "true" },
+                    "\xD7"
+                  )
+                ),
+                React.createElement(
+                  "h4",
+                  { className: "modal-title", id: "myModalLabel" },
+                  "BUSTED Site Proportion Chart"
+                )
+              ),
+              React.createElement(
+                "div",
+                { className: "modal-body", id: "modal-body" },
+                React.createElement(
+                  "h4",
+                  { className: "dm-table-header" },
+                  "\u03C9 distribution"
+                ),
+                React.createElement(_prop_chart.PropChart, {
+                  name: self.state.model + ', ' + self.state.branch + ' branches',
+                  omegas: omegas,
+                  settings: self.state.distro_settings
+                })
+              ),
+              React.createElement(
+                "div",
+                { className: "modal-footer" },
+                React.createElement(
+                  "button",
+                  {
+                    type: "button",
+                    className: "btn btn-default",
+                    "data-dismiss": "modal"
+                  },
+                  "Close"
+                )
+              )
+            )
+          )
+        )
+      );
+    }
+  }]);
+
+  return BUSTEDModelTable;
+}(React.Component);
+
 var BUSTED = React.createClass({
   displayName: "BUSTED",
 
@@ -14125,63 +14286,84 @@ var BUSTED = React.createClass({
   p_value_format: d3.format(".4f"),
   fit_format: d3.format(".2f"),
 
+  processData: function processData(data) {
+    data.fits = _.mapObject(data.fits, function (val, key) {
+      val['log-likelihood'] = val['Log Likelihood'];
+      val['parameters'] = val['estimated parameters'];
+      val['display-order'] = val['display order'];
+      return val;
+    });
+
+    var omegas = data['fits']['Unconstrained model']['Rate Distributions']['Test'],
+        formatted_omegas = _.map(_.values(omegas), function (d) {
+      d.prop = d.proportion;
+      return d;
+    });
+
+    data['trees'] = _.map(data['input']['trees'], function (val, key) {
+      var branchLengths = {
+        'Unconstrained model': _.mapObject(data['branch attributes'][key], function (val1) {
+          return val1.unconstrained;
+        }),
+        'Constrained model': _.mapObject(data['branch attributes'][key], function (val1) {
+          return val1.constrained;
+        })
+      };
+      return { newickString: val, branchLengths: branchLengths };
+    });
+
+    data["fits"]["Unconstrained model"]["branch-annotations"] = this.formatBranchAnnotations(data);
+    if (data["fits"]["Constrained model"]) {
+      data["fits"]["Constrained model"]["branch-annotations"] = this.formatBranchAnnotations(data);
+    }
+
+    this.setState({
+      p: data['test results']['p-value'],
+      input_data: data['input'],
+      fits: data['fits'],
+      omegas: formatted_omegas,
+      json: data,
+      evidence_ratio_data: _.isEmpty(data['Evidence Ratios']) ? {} : _.map(_.range(data.input['number of sites']), function (i) {
+        return {
+          site_index: i + 1,
+          unconstrained_likelihood: data["Site Log Likelihood"]["unconstrained"][0][i],
+          constrained_likelihood: data["Site Log Likelihood"]["constrained"][0][i],
+          optimized_null_likelihood: data["Site Log Likelihood"]["optimized null"][0][i],
+          constrained_evidence_ratio: 2 * Math.log(data['Evidence Ratios']['constrained'][0][i]),
+          optimized_null_evidence_ratio: 2 * Math.log(data['Evidence Ratios']['optimized null'][0][i])
+        };
+      })
+    });
+  },
+
   loadFromServer: function loadFromServer() {
     var self = this;
 
     d3.json(this.props.url, function (data) {
-      data["fits"]["Unconstrained model"]["branch-annotations"] = self.formatBranchAnnotations(data, "Unconstrained model");
-      data["fits"]["Constrained model"]["branch-annotations"] = self.formatBranchAnnotations(data, "Constrained model");
-
-      // rename rate distributions
-      data["fits"]["Unconstrained model"]["rate-distributions"] = data["fits"]["Unconstrained model"]["rate distributions"];
-      data["fits"]["Constrained model"]["rate-distributions"] = data["fits"]["Constrained model"]["rate distributions"];
-
-      // set display order
-      data["fits"]["Unconstrained model"]["display-order"] = 0;
-      data["fits"]["Constrained model"]["display-order"] = 1;
-
-      var json = data,
-          pmid = "25701167",
-          pmid_text = "PubMed ID " + pmid,
-          pmid_href = "http://www.ncbi.nlm.nih.gov/pubmed/" + pmid,
-          p = json["test results"]["p"],
-          statement = p <= 0.05 ? "evidence" : "no evidence";
-
-      var fg_rate = json["fits"]["Unconstrained model"]["rate distributions"]["FG"];
-      var mapped_omegas = {
-        omegas: _.map(fg_rate, function (d) {
-          return _.object(["omega", "prop"], d);
-        })
-      };
-
-      self.setState({
-        p: p,
-        test_result: {
-          statement: statement,
-          p: p
-        },
-        json: json,
-        omegas: mapped_omegas["omegas"],
-        pmid: {
-          text: pmid_text,
-          href: pmid_href
-        },
-        input_data: data["input_data"],
-        evidence_ratio_data: _.map(_.range(data.input_data["sites"]), function (i) {
-          return {
-            site_index: i + 1,
-            unconstrained_likelihood: data["profiles"]["unconstrained"][0][i],
-            constained_likelihood: data["profiles"]["constrained"][0][i],
-            optimized_null_likelihood: data["profiles"]["optimized null"][0][i],
-            constrained_evidence_ratio: 2 * Math.log(data["evidence ratios"]["constrained"][0][i]),
-            optimized_null_evidence_ratio: 2 * Math.log(data["evidence ratios"]["optimized null"][0][i])
-          };
-        })
-      });
+      self.processData(data);
     });
   },
 
-  colorGradient: ["red", "green"],
+  onFileChange: function onFileChange(e) {
+    var self = this,
+        files = e.target.files; // FileList object
+
+    if (files.length == 1) {
+      var f = files[0],
+          reader = new FileReader();
+
+      reader.onload = function (theFile) {
+        return function (e) {
+          var data = JSON.parse(this.result);
+          self.processData(data);
+        };
+      }(f);
+      reader.readAsText(f);
+    }
+    e.preventDefault();
+  },
+
+  colorGradient: ["#00a99d", "#000000"],
   grayScaleGradient: ["#444444", "#000000"],
 
   getDefaultProps: function getDefaultProps() {
@@ -14191,7 +14373,7 @@ var BUSTED = React.createClass({
       var is_foreground = data.target.annotations.is_foreground,
           color_fill = foreground_color(0);
 
-      element.style("stroke", is_foreground ? color_fill : "gray").style("stroke-linejoin", "round").style("stroke-linejoin", "round").style("stroke-linecap", "round");
+      element.style("stroke", is_foreground ? color_fill : "black").style("stroke-linejoin", "round").style("stroke-linejoin", "round").style("stroke-linecap", "round");
     };
 
     var tree_settings = {
@@ -14236,91 +14418,19 @@ var BUSTED = React.createClass({
   getInitialState: function getInitialState() {
     return {
       p: null,
-      test_result: {
-        statement: null,
-        p: null
-      },
-      json: null,
-      omegas: null,
-      pmid: {
-        href: null,
-        text: null
-      },
+      fits: null,
       input_data: null,
-      table_rows: []
+      json: null
     };
   },
 
-  setEvents: function setEvents() {
-    var self = this;
-
-    $("#json-file").on("change", function (e) {
-      var files = e.target.files; // FileList object
-      if (files.length == 1) {
-        var f = files[0];
-        var reader = new FileReader();
-        reader.onload = function (theFile) {
-          return function (e) {
-            var data = JSON.parse(this.result);
-            data["fits"]["Unconstrained model"]["branch-annotations"] = self.formatBranchAnnotations(data, "Unconstrained model");
-            data["fits"]["Constrained model"]["branch-annotations"] = self.formatBranchAnnotations(data, "Constrained model");
-
-            // rename rate distributions
-            data["fits"]["Unconstrained model"]["rate-distributions"] = data["fits"]["Unconstrained model"]["rate distributions"];
-            data["fits"]["Constrained model"]["rate-distributions"] = data["fits"]["Constrained model"]["rate distributions"];
-
-            var json = data,
-                pmid = "25701167",
-                pmid_text = "PubMed ID " + pmid,
-                pmid_href = "http://www.ncbi.nlm.nih.gov/pubmed/" + pmid,
-                p = json["test results"]["p"],
-                statement = p <= 0.05 ? "evidence" : "no evidence";
-
-            var fg_rate = json["fits"]["Unconstrained model"]["rate distributions"]["FG"];
-            var mapped_omegas = {
-              omegas: _.map(fg_rate, function (d) {
-                return _.object(["omega", "prop"], d);
-              })
-            };
-
-            self.setState({
-              p: p,
-              test_result: {
-                statement: statement,
-                p: p
-              },
-              json: json,
-              omegas: mapped_omegas["omegas"],
-              pmid: {
-                text: pmid_text,
-                href: pmid_href
-              },
-              input_data: data["input_data"]
-            });
-          };
-        }(f);
-        reader.readAsText(f);
-      }
-      $("#json-file").dropdown("toggle");
-      e.preventDefault();
-    });
-  },
-
-  formatBranchAnnotations: function formatBranchAnnotations(json, key) {
+  formatBranchAnnotations: function formatBranchAnnotations(json) {
     // attach is_foreground to branch annotations
-    var foreground = json["test set"].split(",");
-
-    var tree = d3.layout.phylotree(),
-        nodes = tree(json["fits"][key]["tree string"]).get_nodes(),
-        node_names = _.map(nodes, function (d) {
-      return d.name;
+    var branch_annotations = d3.range(json.trees.length).map(function (i) {
+      return _.mapObject(json['tested'][i], function (val, key) {
+        return { is_foreground: val == 'test' };
+      });
     });
-
-    // Iterate over objects
-    var branch_annotations = _.object(node_names, _.map(node_names, function (d) {
-      return { is_foreground: _.indexOf(foreground, d) > -1 };
-    }));
-
     return branch_annotations;
   },
 
@@ -14333,19 +14443,10 @@ var BUSTED = React.createClass({
 
     // delete existing tree
     d3.select("#tree_container").select("svg").remove();
-
-    $("#export-dist-svg").on("click", function (e) {
-      datamonkey.save_image("svg", "#primary-omega-dist");
-    });
-
-    $("#export-dist-png").on("click", function (e) {
-      datamonkey.save_image("png", "#primary-omega-dist");
-    });
   },
 
   componentWillMount: function componentWillMount() {
     this.loadFromServer();
-    this.setEvents();
   },
 
   componentDidUpdate: function componentDidUpdate(prevProps, prevState) {
@@ -14361,7 +14462,7 @@ var BUSTED = React.createClass({
 
     var self = this;
     self.initialize();
-    var scrollspy_info = [{ label: "summary", href: "summary-div" }, { label: "model statistics", href: "hyphy-model-fits" }, { label: "input tree", href: "phylogenetic-tree" }, { label: "ω distribution", href: "primary-omega-dist" }];
+    var scrollspy_info = [{ label: "summary", href: "summary-div" }, { label: "model statistics", href: "hyphy-model-fits" }, { label: "tree", href: "phylogenetic-tree" }];
 
     var models = {};
     if (!_.isNull(self.state.json)) {
@@ -14371,7 +14472,7 @@ var BUSTED = React.createClass({
     return React.createElement(
       "div",
       null,
-      React.createElement(_navbar.NavBar, null),
+      React.createElement(_navbar.NavBar, { onFileChange: this.onFileChange }),
       React.createElement(
         "div",
         { className: "container" },
@@ -14389,8 +14490,7 @@ var BUSTED = React.createClass({
                 "div",
                 { id: "summary-tab" },
                 React.createElement(BUSTEDSummary, {
-                  test_result: this.state.test_result,
-                  pmid: this.state.pmid,
+                  p: this.state.p,
                   input_data: self.state.input_data
                 })
               )
@@ -14401,7 +14501,7 @@ var BUSTED = React.createClass({
               React.createElement(
                 "div",
                 { id: "hyphy-model-fits", className: "col-lg-12" },
-                React.createElement(_model_fits.ModelFits, { json: self.state.json }),
+                React.createElement(BUSTEDModelTable, { fits: self.state.fits }),
                 React.createElement(
                   "p",
                   { className: "description" },
@@ -14435,26 +14535,10 @@ var BUSTED = React.createClass({
                   settings: self.props.tree_settings,
                   models: models,
                   color_gradient: self.colorGradient,
-                  grayscale_gradient: self.grayscaleGradient
+                  grayscale_gradient: self.grayscaleGradient,
+                  method: 'busted',
+                  multitree: true
                 })
-              ),
-              React.createElement(
-                "div",
-                { className: "col-md-12" },
-                React.createElement(
-                  "h4",
-                  { className: "dm-table-header" },
-                  "\u03C9 distribution"
-                ),
-                React.createElement(
-                  "div",
-                  { id: "primary-omega-dist" },
-                  React.createElement(_prop_chart.PropChart, {
-                    name: self.props.model_name,
-                    omegas: self.state.omegas,
-                    settings: self.props.distro_settings
-                  })
-                )
               )
             )
           ),
@@ -14463,6 +14547,7 @@ var BUSTED = React.createClass({
       )
     );
   }
+
 });
 
 // Will need to make a call to this
@@ -14475,13 +14560,13 @@ module.exports = render_busted;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ }),
-/* 116 */
+/* 115 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(_, d3, $) {
 
-var _prop_chart = __webpack_require__(71);
+var _prop_chart = __webpack_require__(70);
 
 var React = __webpack_require__(5);
 
@@ -14896,7 +14981,267 @@ function rerender_branch_table(tree, test_results, annotations, element) {
 module.exports.BranchTable = BranchTable;
 module.exports.render_branch_table = render_branch_table;
 module.exports.rerender_branch_table = rerender_branch_table;
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(9), __webpack_require__(6), __webpack_require__(3)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(8), __webpack_require__(6), __webpack_require__(3)))
+
+/***/ }),
+/* 116 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(d3, _, $) {
+
+var React = __webpack_require__(5);
+
+var ModelFits = React.createClass({
+  displayName: "ModelFits",
+
+  getInitialState: function getInitialState() {
+    var table_row_data = this.getModelRows(this.props.json),
+        table_columns = this.getModelColumns(table_row_data);
+
+    return {
+      table_row_data: table_row_data,
+      table_columns: table_columns
+    };
+  },
+
+  formatRuntime: function formatRuntime(seconds) {
+    var duration_string = "",
+        seconds = parseFloat(seconds);
+
+    var split_array = [Math.floor(seconds / (24 * 3600)), Math.floor(seconds / 3600) % 24, Math.floor(seconds / 60) % 60, seconds % 60],
+        quals = ["d.", "hrs.", "min.", "sec."];
+
+    split_array.forEach(function (d, i) {
+      if (d) {
+        duration_string += " " + d + " " + quals[i];
+      }
+    });
+
+    return duration_string;
+  },
+
+  getLogLikelihood: function getLogLikelihood(this_model) {
+    return d3.format(".2f")(this_model["log-likelihood"]);
+  },
+
+  getAIC: function getAIC(this_model) {
+    return d3.format(".2f")(this_model["AIC-c"]);
+  },
+
+  getNumParameters: function getNumParameters(this_model) {
+    return this_model["parameters"];
+  },
+
+  getBranchLengths: function getBranchLengths(this_model) {
+    if (this_model["tree length"]) {
+      return d3.format(".2f")(this_model["tree length"]);
+    } else {
+      return d3.format(".2f")(d3.values(this_model["branch-lengths"]).reduce(function (p, c) {
+        return p + c;
+      }, 0));
+    }
+  },
+
+  getRuntime: function getRuntime(this_model) {
+    //return this.formatRuntime(this_model['runtime']);
+    return this.formatRuntime(this_model["runtime"]);
+  },
+
+  getDistributions: function getDistributions(m, this_model) {
+    var omega_distributions = {};
+    omega_distributions[m] = {};
+
+    var omega_format = d3.format(".3r"),
+        prop_format = d3.format(".2p");
+
+    var distributions = [];
+
+    for (var d in this_model["rate-distributions"]) {
+      var this_distro = this_model["rate-distributions"][d];
+      var this_distro_entry = [d, "", "", ""];
+
+      omega_distributions[m][d] = this_distro.map(function (d) {
+        return {
+          omega: d[0],
+          weight: d[1]
+        };
+      });
+
+      for (var k = 0; k < this_distro.length; k++) {
+        this_distro_entry[k + 1] = omega_format(this_distro[k][0]) + " (" + prop_format(this_distro[k][1]) + ")";
+      }
+
+      distributions.push(this_distro_entry);
+    }
+
+    distributions.sort(function (a, b) {
+      return a[0] < b[0] ? -1 : a[0] == b[0] ? 0 : 1;
+    });
+
+    return distributions;
+  },
+
+  getModelRows: function getModelRows(json) {
+    if (!json) {
+      return [];
+    }
+
+    var table_row_data = [];
+
+    for (var m in json["fits"]) {
+      var this_model_row = [],
+          this_model = json["fits"][m];
+
+      this_model_row = [this_model["display-order"], "", m, this.getLogLikelihood(this_model), this.getNumParameters(this_model), this.getAIC(this_model), this.getRuntime(this_model), this.getBranchLengths(this_model)];
+
+      var distributions = this.getDistributions(m, this_model);
+
+      if (distributions.length) {
+        this_model_row = this_model_row.concat(distributions[0]);
+        this_model_row[1] = distributions[0][0];
+
+        table_row_data.push(this_model_row);
+
+        for (var d = 1; d < distributions.length; d++) {
+          var this_distro_entry = this_model_row.map(function (d, i) {
+            if (i) return "";
+            return d;
+          });
+
+          this_distro_entry[1] = distributions[d][0];
+
+          for (var k = this_distro_entry.length - 4; k < this_distro_entry.length; k++) {
+            this_distro_entry[k] = distributions[d][k - this_distro_entry.length + 4];
+          }
+
+          table_row_data.push(this_distro_entry);
+        }
+      } else {
+        table_row_data.push(this_model_row);
+      }
+    }
+
+    table_row_data.sort(function (a, b) {
+      if (a[0] == b[0]) {
+        return a[1] < b[1] ? -1 : a[1] == b[1] ? 0 : 1;
+      }
+      return a[0] - b[0];
+    });
+
+    table_row_data = table_row_data.map(function (r) {
+      return r.slice(2);
+    });
+
+    return table_row_data;
+  },
+
+  getModelColumns: function getModelColumns(table_row_data) {
+    var model_header = "<th>Model</th>",
+        logl_header = "<th><em> log </em>L</th>",
+        num_params_header = "<th># par.</th>",
+        aic_header = "<th>AIC<sub>c</sub></abbr></th>",
+        runtime_header = "<th>Time to fit</th>",
+        branch_lengths_header = "<th>L<sub>tree</sub></abbr></th>",
+        branch_set_header = "<th>Branch set</th>",
+        omega_1_header = "<th>&omega;<sub>1</sub></th>",
+        omega_2_header = "<th>&omega;<sub>2</sub></th>",
+        omega_3_header = "<th>&omega;<sub>3</sub></th>";
+
+    // inspect table_row_data and return header
+    var all_columns = [model_header, logl_header, num_params_header, aic_header, runtime_header, branch_lengths_header, branch_set_header, omega_1_header, omega_2_header, omega_3_header];
+
+    // validate each table row with its associated header
+    if (table_row_data.length == 0) {
+      return [];
+    }
+
+    // trim columns to length of table_row_data
+    var column_headers = _.take(all_columns, table_row_data[0].length);
+
+    return column_headers;
+  },
+
+  componentDidUpdate: function componentDidUpdate() {
+    var model_columns = d3.select("#summary-model-header1");
+    model_columns = model_columns.selectAll("th").data(this.state.table_columns);
+    model_columns.enter().append("th");
+    model_columns.html(function (d) {
+      return d;
+    });
+
+    var model_rows = d3.select("#summary-model-table").selectAll("tr").data(this.state.table_row_data);
+    model_rows.enter().append("tr");
+    model_rows.exit().remove();
+    model_rows = model_rows.selectAll("td").data(function (d) {
+      return d;
+    });
+    model_rows.enter().append("td");
+    model_rows.html(function (d) {
+      return d;
+    });
+  },
+
+  componentWillReceiveProps: function componentWillReceiveProps(nextProps) {
+    var table_row_data = this.getModelRows(nextProps.json),
+        table_columns = this.getModelColumns(table_row_data);
+
+    this.setState({
+      table_row_data: table_row_data,
+      table_columns: table_columns
+    });
+  },
+
+  render: function render() {
+    return React.createElement(
+      "div",
+      null,
+      React.createElement(
+        "h4",
+        { className: "dm-table-header" },
+        "Model fits",
+        React.createElement("span", {
+          className: "glyphicon glyphicon-info-sign",
+          style: { verticalAlign: "middle", float: "right" },
+          "aria-hidden": "true",
+          "data-toggle": "popover",
+          "data-trigger": "hover",
+          title: "Actions",
+          "data-html": "true",
+          "data-content": "<ul><li>Hover over a column header for a description of its content.</li></ul>",
+          "data-placement": "bottom"
+        })
+      ),
+      React.createElement(
+        "table",
+        {
+          className: "dm-table table table-hover table-condensed list-group-item-text",
+          style: { marginTop: "0.5em" }
+        },
+        React.createElement("thead", { id: "summary-model-header1" }),
+        React.createElement("tbody", { id: "summary-model-table" })
+      )
+    );
+  }
+});
+
+// Will need to make a call to this
+// omega distributions
+function render_model_fits(json, element) {
+  React.render(React.createElement(ModelFits, { json: json }), $(element)[0]);
+}
+
+// Will need to make a call to this
+// omega distributions
+function rerender_model_fits(json, element) {
+  $(element).empty();
+  render_model_fits(json, element);
+}
+
+module.exports.ModelFits = ModelFits;
+module.exports.render_model_fits = render_model_fits;
+module.exports.rerender_model_fits = rerender_model_fits;
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(6), __webpack_require__(8), __webpack_require__(3)))
 
 /***/ }),
 /* 117 */
@@ -14905,9 +15250,12 @@ module.exports.rerender_branch_table = rerender_branch_table;
 "use strict";
 /* WEBPACK VAR INJECTION */(function(d3) {
 
+var _saveSvgAsPng = __webpack_require__(31);
+
 var React = __webpack_require__(5);
-var datamonkey = __webpack_require__(20);
-var _ = __webpack_require__(9);
+var datamonkey = __webpack_require__(22);
+var _ = __webpack_require__(8);
+var d3_save_svg = __webpack_require__(26);
 
 var OmegaPlot = React.createClass({
   displayName: "OmegaPlot",
@@ -14923,18 +15271,6 @@ var OmegaPlot = React.createClass({
       k_p: null,
       plot: null
     };
-  },
-
-  setEvents: function setEvents() {
-    var self = this;
-
-    d3.select("#" + this.save_svg_id).on("click", function (e) {
-      datamonkey.save_image("svg", "#" + self.svg_id);
-    });
-
-    d3.select("#" + this.save_png_id).on("click", function (e) {
-      datamonkey.save_image("png", "#" + self.svg_id);
-    });
   },
 
   initialize: function initialize() {
@@ -14987,11 +15323,13 @@ var OmegaPlot = React.createClass({
     // compute margins -- circle AREA is proportional to the relative weight
     // maximum diameter is (height - text margin)
     this.svg = d3.select("#" + this.svg_id).attr("width", dimensions.width).attr("height", dimensions.height);
+    this.svg.append("rect").attr("width", "100%").attr("height", "100%").attr("fill", "white");
+
     this.plot = this.svg.selectAll(".container");
 
     this.svg.selectAll("defs").remove();
-    this.svg.append("defs").append("marker").attr("id", "arrowhead").attr("refX", 10) /*must be smarter way to calculate shift*/
-    .attr("refY", 4).attr("markerWidth", 10).attr("markerHeight", 8).attr("orient", "auto").attr("stroke", "#000").attr("fill", "#000").append("path").attr("d", "M 0,0 V8 L10,4 Z");
+    this.svg.append("defs").append("marker").attr("id", "arrowhead").attr("refX", 10 /*must be smarter way to calculate shift*/
+    ).attr("refY", 4).attr("markerWidth", 10).attr("markerHeight", 8).attr("orient", "auto").attr("stroke", "#000").attr("fill", "#000").append("path").attr("d", "M 0,0 V8 L10,4 Z");
 
     if (this.plot.empty()) {
       this.plot = this.svg.append("g").attr("class", "container");
@@ -15006,7 +15344,6 @@ var OmegaPlot = React.createClass({
     this.createReferenceLine();
     this.createXAxis();
     this.createYAxis();
-    this.setEvents();
   },
   makeSpring: function makeSpring(x1, x2, y1, y2, step, displacement) {
     if (x1 == x2) {
@@ -15090,7 +15427,7 @@ var OmegaPlot = React.createClass({
       }).attr("y2", function (d) {
         return self.proportion_scale(d.weight);
       }).style("stroke", function (d) {
-        return "#d62728";
+        return "#000000";
       }).attr("class", "hyphy-omega-line-reference");
     } else {
       this.reference_omega_lines.remove();
@@ -15115,7 +15452,7 @@ var OmegaPlot = React.createClass({
     }).attr("y2", function (d) {
       return self.proportion_scale(d.weight);
     }).style("stroke", function (d) {
-      return "#1f77b4";
+      return "#00a99d";
     }).attr("class", "hyphy-omega-line");
   },
   createNeutralLine: function createNeutralLine() {
@@ -15192,6 +15529,8 @@ var OmegaPlot = React.createClass({
   },
 
   componentDidUpdate: function componentDidUpdate() {
+    d3.select("#" + this.svg_id).html("");
+
     this.initialize();
   },
 
@@ -15200,13 +15539,11 @@ var OmegaPlot = React.createClass({
   },
 
   render: function render() {
-    var key = this.props.omegas.key,
+    var self = this,
+        key = this.props.omegas.key,
         label = this.props.omegas.label;
 
     this.svg_id = key + "-svg";
-    this.save_svg_id = "export-" + key + "-svg";
-    this.save_png_id = "export-" + key + "-png";
-
     return React.createElement(
       "div",
       null,
@@ -15237,14 +15574,14 @@ var OmegaPlot = React.createClass({
               " ",
               React.createElement(
                 "span",
-                { className: "hyphy-blue" },
-                "blue"
+                { style: { color: '#00a99d', 'fontWeight': 'bold' } },
+                "green"
               ),
               " and reference branches are shown in ",
               React.createElement(
                 "span",
-                { className: "hyphy-red" },
-                "red"
+                { style: { color: 'black', 'fontWeight': 'bold' } },
+                "black"
               )
             )
           ),
@@ -15254,7 +15591,9 @@ var OmegaPlot = React.createClass({
             React.createElement(
               "button",
               {
-                id: this.save_svg_id,
+                onClick: function onClick() {
+                  d3_save_svg.save(d3.select('#' + self.svg_id).node(), { filename: "relax-chart" });
+                },
                 type: "button",
                 className: "btn btn-default btn-sm"
               },
@@ -15264,9 +15603,11 @@ var OmegaPlot = React.createClass({
             React.createElement(
               "button",
               {
-                id: this.save_png_id,
                 type: "button",
-                className: "btn btn-default btn-sm"
+                className: "btn btn-default btn-sm",
+                onClick: function onClick() {
+                  (0, _saveSvgAsPng.saveSvgAsPng)(document.getElementById(self.svg_id), "relax-chart.png");
+                }
               },
               React.createElement("span", { className: "glyphicon glyphicon-floppy-save" }),
               " PNG"
@@ -15306,19 +15647,19 @@ var OmegaPlotGrid = React.createClass({
     for (var m in json["fits"]) {
       var this_model = json["fits"][m];
       omega_distributions[m] = {};
-      for (var d in this_model["rate-distributions"]) {
-        var this_distro = this_model["rate-distributions"][d];
-        omega_distributions[m][d] = this_distro.map(function (d) {
+      for (var d in this_model["Rate Distributions"]) {
+        var this_distro = this_model["Rate Distributions"][d];
+        omega_distributions[m][d] = _.values(this_distro).map(function (d) {
           return {
-            omega: d[0],
-            weight: d[1]
+            omega: d.omega,
+            weight: d.proportion
           };
         });
       }
     }
 
     _.each(omega_distributions, function (item, key) {
-      item.key = key.toLowerCase().replace(/ /g, "-");
+      item.key = key.slice(0, 8).toLowerCase().replace(/ /g, "-");
       item.label = key;
     });
 
@@ -15345,7 +15686,7 @@ var OmegaPlotGrid = React.createClass({
         plot: null
       };
 
-      return React.createElement(OmegaPlot, { name: model_name, omegas: omegas, settings: settings });
+      return React.createElement(OmegaPlot, { name: model_name, omegas: omegas, settings: settings, key: omegas.key });
     });
 
     return React.createElement(
@@ -15369,9 +15710,9 @@ module.exports.OmegaPlotGrid = OmegaPlotGrid;
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _header = __webpack_require__(38);
+var _header = __webpack_require__(33);
 
-var _saveSvgAsPng = __webpack_require__(36);
+var _saveSvgAsPng = __webpack_require__(31);
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -15381,8 +15722,8 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
 var React = __webpack_require__(5),
     d3 = __webpack_require__(6),
-    _ = __webpack_require__(9),
-    d3_save_svg = __webpack_require__(31);
+    _ = __webpack_require__(8),
+    d3_save_svg = __webpack_require__(26);
 
 var RateMatrix = function (_React$Component) {
   _inherits(RateMatrix, _React$Component);
@@ -15523,7 +15864,7 @@ module.exports.RateMatrix = RateMatrix;
 var _tables = __webpack_require__(23);
 
 var React = __webpack_require__(5),
-    _ = __webpack_require__(9);
+    _ = __webpack_require__(8);
 
 /**
  * Generates a table that contains tree summary information
@@ -15541,7 +15882,7 @@ var TreeSummary = React.createClass({
 
 
   getInitialState: function getInitialState() {
-    var table_row_data = this.getSummaryRows(this.props.model, this.props.test_results),
+    var table_row_data = this.getSummaryRows(this.props.model, this.props.test_results, this.props.branch_attributes),
         table_columns = this.getTreeSummaryColumns(table_row_data);
 
     return {
@@ -15568,28 +15909,20 @@ var TreeSummary = React.createClass({
     });
   },
 
-  getBranchLengthProportion: function getBranchLengthProportion(model, rate_classes, branch_annotations, total_branch_length) {
-    // get branch lengths of each rate distribution
-    //return prop_format(d[2] / total_tree_length
-    if (_.has(model, "tree string")) {
-      var tree = d3.layout.phylotree("body")(model["tree string"]);
-    } else {
-      return null;
-    }
-
-    // Get count of all rate classes
-    var branch_lengths = _.mapObject(rate_classes, function (d) {
-      return 0;
-    });
-
-    for (var key in branch_annotations) {
-      var node = tree.get_node_by_name(key);
-      branch_lengths[branch_annotations[key].omegas.length] += tree.branch_length()(node);
-    }
-
-    return _.mapObject(branch_lengths, function (val, key) {
-      return d3.format(".2p")(val / total_branch_length);
-    });
+  getBranchLengthProportion: function getBranchLengthProportion(branch_attributes) {
+    var rate_classes = _.groupBy(branch_attributes, function (val, key) {
+      return val['Rate Distributions'].length;
+    }),
+        lengths = _.mapObject(rate_classes, function (val, key) {
+      return d3.sum(_.pluck(val, 'Full adaptive model'));
+    }),
+        total_length = d3.sum(_.values(lengths)),
+        percentages = _.mapObject(lengths, function (length) {
+      return length / total_length;
+    }),
+        formatter = d3.format(".2p"),
+        formatted_percentages = _.mapObject(percentages, formatter);
+    return formatted_percentages;
   },
 
   getNumUnderSelection: function getNumUnderSelection(rate_classes, branch_annotations, test_results) {
@@ -15604,7 +15937,7 @@ var TreeSummary = React.createClass({
     return num_under_selection;
   },
 
-  getSummaryRows: function getSummaryRows(model, test_results) {
+  getSummaryRows: function getSummaryRows(model, test_results, branch_attributes) {
     if (!model || !test_results) {
       return [];
     }
@@ -15613,10 +15946,9 @@ var TreeSummary = React.createClass({
 
     var tree_length = model["tree length"];
     var branch_annotations = model["branch-annotations"];
-
     var rate_classes = this.getRateClasses(branch_annotations),
         proportions = this.getBranchProportion(rate_classes),
-        length_proportions = this.getBranchLengthProportion(model, rate_classes, branch_annotations, tree_length),
+        length_proportions = this.getBranchLengthProportion(branch_attributes),
         num_under_selection = this.getNumUnderSelection(rate_classes, branch_annotations, test_results);
 
     // zip objects into matrix
@@ -15670,7 +16002,7 @@ var TreeSummary = React.createClass({
   },
 
   componentWillReceiveProps: function componentWillReceiveProps(nextProps) {
-    var table_row_data = this.getSummaryRows(nextProps.model, nextProps.test_results),
+    var table_row_data = this.getSummaryRows(nextProps.model, nextProps.test_results, nextProps.branch_attributes),
         table_columns = this.getTreeSummaryColumns(table_row_data);
 
     this.setState({
@@ -15873,9 +16205,11 @@ module.exports = render_fade_summary;
 "use strict";
 /* WEBPACK VAR INJECTION */(function(d3, $) {
 
+var _input_info = __webpack_require__(20);
+
 var _tables = __webpack_require__(23);
 
-var _graphs = __webpack_require__(30);
+var _graphs = __webpack_require__(32);
 
 var _navbar = __webpack_require__(16);
 
@@ -15889,7 +16223,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 var React = __webpack_require__(5),
     ReactDOM = __webpack_require__(18),
-    _ = __webpack_require__(9);
+    _ = __webpack_require__(8);
 
 var FEL = React.createClass({
   displayName: "FEL",
@@ -15978,7 +16312,8 @@ var FEL = React.createClass({
       copy_transition: false,
       pvalue_threshold: 0.1,
       positively_selected: [],
-      negatively_selected: []
+      negatively_selected: [],
+      input: null
     };
   },
 
@@ -16054,7 +16389,8 @@ var FEL = React.createClass({
         mle_content: mle_content,
         mle_results: mle_results,
         positively_selected: positively_selected,
-        negatively_selected: negatively_selected
+        negatively_selected: negatively_selected,
+        input: data.input
       });
     });
   },
@@ -16302,7 +16638,7 @@ var FEL = React.createClass({
                 React.createElement(
                   "span",
                   { id: "summary-method-name" },
-                  "FEL - Fixed Effects Likelihood"
+                  "Fixed Effects Likelihood"
                 ),
                 React.createElement("br", null),
                 React.createElement(
@@ -16311,6 +16647,7 @@ var FEL = React.createClass({
                   "results summary"
                 )
               ),
+              React.createElement(_input_info.InputInfo, { input_data: this.state.input }),
               Summary,
               React.createElement(
                 "div",
@@ -16399,15 +16736,15 @@ var _navbar = __webpack_require__(16);
 
 var _scrollspy = __webpack_require__(17);
 
-var _input_info = __webpack_require__(22);
+var _input_info = __webpack_require__(20);
 
 var _error_message = __webpack_require__(48);
 
-var _header = __webpack_require__(38);
+var _header = __webpack_require__(33);
 
 var _rate_matrix = __webpack_require__(118);
 
-var _graphs = __webpack_require__(30);
+var _graphs = __webpack_require__(32);
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -16418,7 +16755,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 var React = __webpack_require__(5),
     ReactDOM = __webpack_require__(18),
     d3 = __webpack_require__(6),
-    _ = __webpack_require__(9);
+    _ = __webpack_require__(8);
 
 function binomial(n, k) {
   if (typeof n !== 'number' || typeof k !== 'number') return false;
@@ -16485,7 +16822,7 @@ function GARDResults(props) {
         { className: "list-group-item-heading" },
         React.createElement(
           "span",
-          { className: "summary-method-name" },
+          { id: "summary-method-name" },
           "Genetic Algorithm Recombination Detection"
         ),
         React.createElement("br", null),
@@ -16917,6 +17254,9 @@ var GARD = function (_React$Component) {
     value: function componentDidMount() {
       var self = this;
       d3.json(this.props.url, function (data) {
+        data.trees = data.breakpointData.map(function (row) {
+          return { newickString: row.tree };
+        });
         self.setState({
           data: data
         });
@@ -16944,6 +17284,9 @@ var GARD = function (_React$Component) {
         reader.onload = function (theFile) {
           return function (e) {
             var data = JSON.parse(this.result);
+            data.trees = data.breakpointData.map(function (row) {
+              return { newickString: row.tree };
+            });
             self.setState({ data: data });
           };
         }(f);
@@ -17037,11 +17380,11 @@ module.exports = render_gard;
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _input_info = __webpack_require__(22);
+var _input_info = __webpack_require__(20);
 
 var _tables = __webpack_require__(23);
 
-var _graphs = __webpack_require__(30);
+var _graphs = __webpack_require__(32);
 
 var _navbar = __webpack_require__(16);
 
@@ -17056,288 +17399,249 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 var React = __webpack_require__(5),
     ReactDOM = __webpack_require__(18),
     d3 = __webpack_require__(6),
-    _ = __webpack_require__(9);
+    _ = __webpack_require__(8);
 
-var MEMESummary = function (_React$Component) {
-  _inherits(MEMESummary, _React$Component);
-
-  function MEMESummary() {
-    _classCallCheck(this, MEMESummary);
-
-    return _possibleConstructorReturn(this, (MEMESummary.__proto__ || Object.getPrototypeOf(MEMESummary)).apply(this, arguments));
+function MEMESummary(props) {
+  var user_message,
+      was_evidence = true;
+  if (was_evidence) {
+    user_message = React.createElement(
+      "p",
+      { className: "list-group-item-text label_and_input" },
+      "MEME ",
+      React.createElement(
+        "strong",
+        { className: "hyphy-highlight" },
+        "found evidence"
+      ),
+      " of natural selection in your phylogeny."
+    );
+  } else {
+    user_message = React.createElement(
+      "p",
+      { className: "list-group-item-text label_and_input" },
+      "MEME ",
+      React.createElement(
+        "strong",
+        null,
+        "found no evidence"
+      ),
+      " of positive selection in your phylogeny."
+    );
   }
 
-  _createClass(MEMESummary, [{
-    key: "render",
-    value: function render() {
-      var user_message,
-          was_evidence = true;
-      if (was_evidence) {
-        user_message = React.createElement(
+  return React.createElement(
+    "div",
+    { className: "row", id: "summary-tab" },
+    React.createElement("div", { className: "clearance", id: "summary-div" }),
+    React.createElement(
+      "div",
+      { className: "col-md-12" },
+      React.createElement(
+        "h3",
+        { className: "list-group-item-heading" },
+        React.createElement(
+          "span",
+          { id: "summary-method-name" },
+          "Mixed Effects Model of Evolution"
+        ),
+        React.createElement("br", null),
+        React.createElement(
+          "span",
+          { className: "results-summary" },
+          "results summary"
+        )
+      )
+    ),
+    React.createElement(
+      "div",
+      { className: "col-md-12" },
+      React.createElement(_input_info.InputInfo, { input_data: props.json ? props.json.input : null })
+    ),
+    React.createElement(
+      "div",
+      { className: "col-md-12" },
+      React.createElement(
+        "div",
+        { className: "main-result" },
+        user_message,
+        React.createElement("hr", null),
+        React.createElement(
           "p",
-          { className: "list-group-item-text label_and_input" },
-          "MEME ",
+          null,
           React.createElement(
-            "strong",
-            { className: "hyphy-highlight" },
-            "found evidence"
-          ),
-          " of positive selection in your phylogeny."
-        );
-      } else {
-        user_message = React.createElement(
-          "p",
-          { className: "list-group-item-text label_and_input" },
-          "MEME ",
-          React.createElement(
-            "strong",
+            "small",
             null,
-            "found no evidence"
-          ),
-          " of positive selection in your phylogeny."
-        );
-      }
-
-      return React.createElement(
-        "div",
-        { className: "row", id: "summary-tab" },
-        React.createElement("div", { className: "clearance", id: "summary-div" }),
-        React.createElement(
-          "div",
-          { className: "col-md-12" },
-          React.createElement(
-            "h3",
-            { className: "list-group-item-heading" },
+            "See",
+            " ",
             React.createElement(
-              "span",
-              { className: "summary-method-name" },
-              "Mixed Effects Model of Evolution"
+              "a",
+              { href: "http://www.hyphy.org/methods/selection-methods/#meme" },
+              "here"
             ),
+            " ",
+            "for more information about the MEME method.",
             React.createElement("br", null),
+            "Please cite",
+            " ",
             React.createElement(
-              "span",
-              { className: "results-summary" },
-              "results summary"
-            )
-          )
-        ),
-        React.createElement(
-          "div",
-          { className: "col-md-12" },
-          React.createElement(_input_info.InputInfo, { input_data: this.props.input_data })
-        ),
-        React.createElement(
-          "div",
-          { className: "col-md-12" },
-          React.createElement(
-            "div",
-            { className: "main-result" },
-            user_message,
-            React.createElement("hr", null),
-            React.createElement(
-              "p",
-              null,
-              React.createElement(
-                "small",
-                null,
-                "See",
-                " ",
-                React.createElement(
-                  "a",
-                  { href: "http://www.hyphy.org/methods/selection-methods/#meme" },
-                  "here"
-                ),
-                " ",
-                "for more information about the MEME method.",
-                React.createElement("br", null),
-                "Please cite",
-                " ",
-                React.createElement(
-                  "a",
-                  {
-                    href: "http://www.ncbi.nlm.nih.gov/pubmed/22807683",
-                    id: "summary-pmid",
-                    target: "_blank"
-                  },
-                  "PMID 22807683"
-                ),
-                " ",
-                "if you use this result in a publication, presentation, or other scientific work."
-              )
-            )
+              "a",
+              {
+                href: "http://www.ncbi.nlm.nih.gov/pubmed/22807683",
+                id: "summary-pmid",
+                target: "_blank"
+              },
+              "PMID 22807683"
+            ),
+            " ",
+            "if you use this result in a publication, presentation, or other scientific work."
           )
         )
-      );
-    }
-  }]);
+      )
+    )
+  );
+}
 
-  return MEMESummary;
-}(React.Component);
-
-var MEMETable = function (_React$Component2) {
-  _inherits(MEMETable, _React$Component2);
-
-  function MEMETable(props) {
-    _classCallCheck(this, MEMETable);
-
-    var _this2 = _possibleConstructorReturn(this, (MEMETable.__proto__ || Object.getPrototypeOf(MEMETable)).call(this, props));
-
-    _this2.handleChange = _this2.handleChange.bind(_this2);
-    _this2.handleMouseUp = _this2.handleMouseUp.bind(_this2);
-    _this2.state = {
-      bodyData: null,
-      value: 10,
-      filter: 0.1
-    };
-    return _this2;
+function MEMETable(props) {
+  var flattened = _.flatten(_.values(props.body_data), true),
+      partition_column = d3.range(flattened.length).map(function (d) {
+    return 0;
+  });
+  _.each(props.partitions, function (val, key) {
+    val.coverage[0].forEach(function (d) {
+      partition_column[d] = key;
+    });
+  });
+  var formatter = d3.format(".2f"),
+      new_rows = flattened.map(function (row, index) {
+    var alpha = row[0] ? row[0] : 1e-10,
+        beta_minus = row[1],
+        beta_plus = row[3];
+    var selection = beta_minus / alpha < 1 && row[6] < .1 ? "negative-selection-row" : "";
+    selection = beta_plus / alpha > 1 && row[6] < .1 ? "positive-selection-row" : selection;
+    var site = { value: index + 1, classes: selection },
+        partition = { value: partition_column[index], classes: selection };
+    return [site, partition].concat(row.map(function (entry) {
+      return { value: formatter(entry), classes: selection };
+    }));
+  });
+  if (props.header) {
+    var headerData = ['Site', 'Partition'].concat(props.header.map(function (pair) {
+      return { value: pair[0] == 'alpha;' ? '&alpha; ' : pair[0], abbr: pair[1] };
+    }));
   }
 
-  _createClass(MEMETable, [{
-    key: "componentWillReceiveProps",
-    value: function componentWillReceiveProps(nextProps) {
-      var formatter = d3.format(".2f"),
-          new_rows = nextProps.rows.map(function (row) {
-        return row.map(function (entry) {
-          return formatter(entry);
-        });
-      });
-      this.setState({
-        bodyData: new_rows
-      });
-    }
-  }, {
-    key: "handleChange",
-    value: function handleChange(event) {
-      this.setState({ value: event.target.value });
-    }
-  }, {
-    key: "handleMouseUp",
-    value: function handleMouseUp(event) {
-      this.setState({ filter: event.target.value / 100 });
-    }
-  }, {
-    key: "render",
-    value: function render() {
-      var _this3 = this;
-
-      if (this.props.header) {
-        var headerData = this.props.header.map(function (pair) {
-          return { value: pair[0], abbr: pair[1] };
-        }),
-            bodyData = this.state.bodyData.filter(function (row) {
-          return row[6] < _this3.state.filter;
-        });
-      }
-      var self = this;
-      return React.createElement(
+  return React.createElement(
+    "div",
+    { className: "row" },
+    React.createElement(
+      "div",
+      { className: "col-md-12", id: "table-tab" },
+      React.createElement(
+        "h4",
+        { className: "dm-table-header" },
+        "MEME data",
+        React.createElement("span", {
+          className: "glyphicon glyphicon-info-sign",
+          style: { verticalAlign: "middle", float: "right" },
+          "aria-hidden": "true",
+          "data-toggle": "popover",
+          "data-trigger": "hover",
+          title: "Actions",
+          "data-html": "true",
+          "data-content": "<ul><li>Hover over a column header for a description of its content.</li></ul>",
+          "data-placement": "bottom"
+        })
+      ),
+      React.createElement(
         "div",
-        { className: "row" },
-        React.createElement(
-          "div",
-          { className: "col-md-12", id: "table-tab" },
-          React.createElement(
-            "h4",
-            { className: "dm-table-header" },
-            "MEME data",
-            React.createElement("span", {
-              className: "glyphicon glyphicon-info-sign",
-              style: { verticalAlign: "middle", float: "right" },
-              "aria-hidden": "true",
-              "data-toggle": "popover",
-              "data-trigger": "hover",
-              title: "Actions",
-              "data-html": "true",
-              "data-content": "<ul><li>Hover over a column header for a description of its content.</li></ul>",
-              "data-placement": "bottom"
-            })
-          ),
-          React.createElement(
-            "div",
-            { style: { width: "500px" } },
-            React.createElement(
-              "span",
-              {
-                style: {
-                  width: "35%",
-                  display: "inline-block",
-                  verticalAlign: "middle"
-                }
-              },
-              "p-value threshold: ",
-              self.state.value / 100
-            ),
-            React.createElement("input", {
-              type: "range",
-              id: "myRange",
-              value: self.state.value,
-              style: {
-                width: "65%",
-                display: "inline-block",
-                verticalAlign: "middle"
-              },
-              onChange: this.handleChange,
-              onMouseUp: this.handleMouseUp
-            })
-          ),
-          React.createElement(_tables.DatamonkeyTable, {
-            headerData: headerData,
-            bodyData: bodyData,
-            paginate: 20,
-            classes: "table table-condensed table-striped",
-            export_csv: true
-          })
-        )
-      );
-    }
-  }]);
+        { className: "col-md-6 positive-selection-row alert", role: "alert" },
+        "Positively selected sites with evidence are highlighted in green."
+      ),
+      React.createElement(
+        "div",
+        { className: "col-md-6 negative-selection-row alert", role: "alert" },
+        "Negatively selected sites with evidence are highlighted in black."
+      ),
+      React.createElement(_tables.DatamonkeyTable, {
+        headerData: headerData,
+        bodyData: new_rows,
+        paginate: 20,
+        classes: "table table-condensed table-striped",
+        export_csv: true
+      })
+    )
+  );
+}
 
-  return MEMETable;
-}(React.Component);
-
-var MEME = function (_React$Component3) {
-  _inherits(MEME, _React$Component3);
+var MEME = function (_React$Component) {
+  _inherits(MEME, _React$Component);
 
   function MEME(props) {
     _classCallCheck(this, MEME);
 
-    var _this4 = _possibleConstructorReturn(this, (MEME.__proto__ || Object.getPrototypeOf(MEME)).call(this, props));
+    var _this = _possibleConstructorReturn(this, (MEME.__proto__ || Object.getPrototypeOf(MEME)).call(this, props));
 
-    _this4.updateAxisSelection = _this4.updateAxisSelection.bind(_this4);
-    _this4.state = {
+    _this.onFileChange = _this.onFileChange.bind(_this);
+    _this.state = {
       input_data: null,
       data: null,
       fits: null,
       header: null,
-      rows: null,
-      xaxis: "Site",
-      yaxis: "&alpha;"
+      bodyData: null,
+      partitions: null
     };
-    return _this4;
+    return _this;
   }
 
   _createClass(MEME, [{
-    key: "updateAxisSelection",
-    value: function updateAxisSelection(e) {
-      var state_to_update = {},
-          dimension = e.target.dataset.dimension,
-          axis = e.target.dataset.axis;
+    key: "processData",
+    value: function processData(data) {
+      data['trees'] = _.map(data['input']['trees'], function (val, key) {
+        var branchLengths = {
+          'Global MG94xREV': _.mapObject(data['branch attributes'][key], function (val1) {
+            return val1['Global MG94xREV'];
+          })
+        };
+        return { newickString: val, branchLengths: branchLengths };
+      });
 
-      state_to_update[axis] = dimension;
-      this.setState(state_to_update);
+      this.setState({
+        input_data: data["input_data"],
+        data: data,
+        fits: data["fits"],
+        header: data["MLE"]["headers"],
+        bodyData: data["MLE"]["content"],
+        partitions: data["data partitions"]
+      });
     }
   }, {
     key: "loadFromServer",
     value: function loadFromServer() {
       var self = this;
       d3.json(this.props.url, function (data) {
-        self.setState({
-          input_data: data["input_data"],
-          data: data,
-          fits: data["fits"],
-          header: data["MLE"]["headers"],
-          rows: data["MLE"]["content"]["0"]
-        });
+        self.processData(data);
       });
+    }
+  }, {
+    key: "onFileChange",
+    value: function onFileChange(e) {
+      var self = this;
+      var files = e.target.files; // FileList object
+
+      if (files.length == 1) {
+        var f = files[0];
+        var reader = new FileReader();
+
+        reader.onload = function (theFile) {
+          return function (e) {
+            var data = JSON.parse(this.result);
+            self.processData(data);
+          };
+        }(f);
+        reader.readAsText(f);
+      }
+      e.preventDefault();
     }
   }, {
     key: "componentWillMount",
@@ -17360,15 +17664,23 @@ var MEME = function (_React$Component3) {
           scrollspy_info = [{ label: "summary", href: "summary-tab" }, { label: "table", href: "table-tab" }, { label: "fits", href: "fit-tab" }, { label: "plot", href: "plot-tab" }];
 
       if (this.state.data) {
+        var columns = _.pluck(self.state.header, 0);
+        columns[0] = '&alpha;';
         site_graph = React.createElement(_graphs.DatamonkeySiteGraph, {
-          columns: _.pluck(self.state.header, 0),
-          rows: self.state.rows
+          columns: columns,
+          rows: _.flatten(_.values(self.state.bodyData), true)
         });
       }
+
+      var models = {};
+      if (!_.isNull(self.state.data)) {
+        models = self.state.data.fits;
+      }
+
       return React.createElement(
         "div",
         null,
-        React.createElement(_navbar.NavBar, null),
+        React.createElement(_navbar.NavBar, { onFileChange: this.onFileChange }),
         React.createElement(
           "div",
           { className: "container" },
@@ -17379,8 +17691,8 @@ var MEME = function (_React$Component3) {
             React.createElement(
               "div",
               { className: "col-sm-10", id: "results" },
-              React.createElement(MEMESummary, { input_data: self.state.input_data }),
-              React.createElement(MEMETable, { header: self.state.header, rows: self.state.rows }),
+              React.createElement(MEMESummary, { json: self.state.data }),
+              React.createElement(MEMETable, { header: self.state.header, body_data: self.state.bodyData, partitions: self.state.partitions }),
               React.createElement(
                 "div",
                 { className: "row" },
@@ -17443,7 +17755,7 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 var _tables = __webpack_require__(23);
 
-var _graphs = __webpack_require__(30);
+var _graphs = __webpack_require__(32);
 
 var _navbar = __webpack_require__(16);
 
@@ -17457,7 +17769,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
 var React = __webpack_require__(5),
     ReactDOM = __webpack_require__(18),
-    _ = __webpack_require__(9),
+    _ = __webpack_require__(8),
     chi = __webpack_require__(142);
 
 var PRIME = function (_React$Component) {
@@ -17903,13 +18215,13 @@ module.exports = prime;
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _model_fits = __webpack_require__(70);
+var _model_fits = __webpack_require__(116);
 
 var _navbar = __webpack_require__(16);
 
 var _scrollspy = __webpack_require__(17);
 
-var _input_info = __webpack_require__(22);
+var _input_info = __webpack_require__(20);
 
 var _error_message = __webpack_require__(48);
 
@@ -17917,7 +18229,7 @@ var _tree = __webpack_require__(39);
 
 var _omega_plots = __webpack_require__(117);
 
-var _header = __webpack_require__(38);
+var _header = __webpack_require__(33);
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -17927,19 +18239,244 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
 var React = __webpack_require__(5),
     ReactDOM = __webpack_require__(18),
-    _ = __webpack_require__(9);
+    _ = __webpack_require__(8);
 
-var RELAX = function (_React$Component) {
-  _inherits(RELAX, _React$Component);
+var RELAXModelTable = function (_React$Component) {
+  _inherits(RELAXModelTable, _React$Component);
+
+  function RELAXModelTable(props) {
+    _classCallCheck(this, RELAXModelTable);
+
+    var _this = _possibleConstructorReturn(this, (RELAXModelTable.__proto__ || Object.getPrototypeOf(RELAXModelTable)).call(this, props));
+
+    _this.state = {
+      model: "MG94xREV with separate rates for branch sets"
+    };
+    return _this;
+  }
+
+  _createClass(RELAXModelTable, [{
+    key: "render",
+    value: function render() {
+      if (!this.props.fits) return React.createElement("div", null);
+      var self = this;
+      function omegaFormatter(omegaDict) {
+        if (!omegaDict) return '';
+        return omegaDict.omega.toFixed(2) + ' (' + (100 * omegaDict.proportion).toFixed(0) + '%)';
+      }
+      function makeActive(model) {
+        return function () {
+          this.setState({ active: model });
+        };
+      }
+      function makeInactive() {
+        this.setState({ active: null });
+      }
+      var rows = _.map(this.props.fits, function (val, key) {
+        var distributions = val['Rate Distributions'],
+            onMouseEnter = makeActive(key).bind(self),
+            onMouseLeave = makeInactive.bind(self),
+            className = key == self.state.active ? 'active' : '',
+            branch_set = distributions['Shared'] ? 'Shared' : 'Test',
+            test_row = React.createElement(
+          "tr",
+          { onMouseEnter: onMouseEnter, onMouseLeave: onMouseLeave, className: className },
+          React.createElement(
+            "td",
+            null,
+            key
+          ),
+          React.createElement(
+            "td",
+            null,
+            val['Log Likelihood'] ? val['Log Likelihood'].toFixed(1) : null
+          ),
+          React.createElement(
+            "td",
+            null,
+            val['estimated parameters']
+          ),
+          React.createElement(
+            "td",
+            null,
+            val['AIC-c'].toFixed(1)
+          ),
+          React.createElement(
+            "td",
+            null,
+            branch_set
+          ),
+          React.createElement(
+            "td",
+            null,
+            omegaFormatter(distributions[branch_set]["0"])
+          ),
+          React.createElement(
+            "td",
+            null,
+            omegaFormatter(distributions[branch_set]["1"])
+          ),
+          React.createElement(
+            "td",
+            null,
+            omegaFormatter(distributions[branch_set]["2"])
+          )
+        );
+        if (distributions['Reference']) {
+          var background_row = React.createElement(
+            "tr",
+            { onMouseEnter: onMouseEnter, onMouseLeave: onMouseLeave, className: className },
+            React.createElement("td", null),
+            React.createElement("td", null),
+            React.createElement("td", null),
+            React.createElement("td", null),
+            React.createElement(
+              "td",
+              null,
+              "Reference"
+            ),
+            React.createElement(
+              "td",
+              null,
+              omegaFormatter(distributions["Reference"]["0"])
+            ),
+            React.createElement(
+              "td",
+              null,
+              omegaFormatter(distributions["Reference"]["1"])
+            ),
+            React.createElement(
+              "td",
+              null,
+              omegaFormatter(distributions["Reference"]["2"])
+            )
+          );
+          return [test_row, background_row];
+        }
+        return test_row;
+      });
+      return React.createElement(
+        "div",
+        null,
+        React.createElement(
+          "h4",
+          { className: "dm-table-header" },
+          "Model fits",
+          React.createElement("span", {
+            className: "glyphicon glyphicon-info-sign",
+            style: { verticalAlign: "middle", float: "right" },
+            "aria-hidden": "true",
+            "data-toggle": "popover",
+            "data-trigger": "hover",
+            title: "Actions",
+            "data-html": "true",
+            "data-content": "<ul><li>Hover over a column header for a description of its content.</li></ul>",
+            "data-placement": "bottom"
+          })
+        ),
+        React.createElement(
+          "table",
+          {
+            className: "dm-table table table-hover table-condensed list-group-item-text",
+            style: { marginTop: "0.5em" }
+          },
+          React.createElement(
+            "thead",
+            { id: "summary-model-header1" },
+            React.createElement(
+              "tr",
+              null,
+              React.createElement(
+                "th",
+                null,
+                "Model"
+              ),
+              React.createElement(
+                "th",
+                null,
+                React.createElement(
+                  "em",
+                  null,
+                  "log"
+                ),
+                " L"
+              ),
+              React.createElement(
+                "th",
+                null,
+                "#. params"
+              ),
+              React.createElement(
+                "th",
+                null,
+                "AIC",
+                React.createElement(
+                  "sub",
+                  null,
+                  "c"
+                )
+              ),
+              React.createElement(
+                "th",
+                null,
+                "Branch set"
+              ),
+              React.createElement(
+                "th",
+                null,
+                "\u03C9",
+                React.createElement(
+                  "sub",
+                  null,
+                  "1"
+                )
+              ),
+              React.createElement(
+                "th",
+                null,
+                "\u03C9",
+                React.createElement(
+                  "sub",
+                  null,
+                  "2"
+                )
+              ),
+              React.createElement(
+                "th",
+                null,
+                "\u03C9",
+                React.createElement(
+                  "sub",
+                  null,
+                  "3"
+                )
+              )
+            )
+          ),
+          React.createElement(
+            "tbody",
+            { id: "summary-model-table" },
+            _.flatten(rows)
+          )
+        )
+      );
+    }
+  }]);
+
+  return RELAXModelTable;
+}(React.Component);
+
+var RELAX = function (_React$Component2) {
+  _inherits(RELAX, _React$Component2);
 
   function RELAX(props) {
     _classCallCheck(this, RELAX);
 
-    var _this = _possibleConstructorReturn(this, (RELAX.__proto__ || Object.getPrototypeOf(RELAX)).call(this, props));
+    var _this2 = _possibleConstructorReturn(this, (RELAX.__proto__ || Object.getPrototypeOf(RELAX)).call(this, props));
 
-    _this.p_value_format = d3.format(".4f");
-    _this.fit_format = d3.format(".2f");
-
+    _this2.p_value_format = d3.format(".4f");
+    _this2.fit_format = d3.format(".2f");
+    _this2.onFileChange = _this2.onFileChange.bind(_this2);
     var tree_settings = {
       omegaPlot: {},
       "tree-options": {
@@ -17955,10 +18492,10 @@ var RELAX = function (_React$Component) {
       },
       "suppress-tree-render": false,
       "chart-append-html": true,
-      edgeColorizer: _this.props.edgeColorizer
+      edgeColorizer: _this2.props.edgeColorizer
     };
 
-    _this.state = {
+    _this2.state = {
       annotations: null,
       json: null,
       pmid: null,
@@ -17973,50 +18510,74 @@ var RELAX = function (_React$Component) {
       summary_k: "unknown",
       pmid_text: "PubMed ID : Unknown",
       pmid_href: "#",
-      relaxation_K: "unknown"
+      relaxation_K: "unknown",
+      fits: null
     };
 
-    return _this;
+    return _this2;
   }
 
   _createClass(RELAX, [{
+    key: "onFileChange",
+    value: function onFileChange(e) {
+      var self = this;
+      var files = e.target.files; // FileList object
+
+      if (files.length == 1) {
+        var f = files[0];
+        var reader = new FileReader();
+
+        reader.onload = function (theFile) {
+          return function (e) {
+            var data = JSON.parse(this.result);
+            self.processData(data);
+          };
+        }(f);
+        reader.readAsText(f);
+      }
+      e.preventDefault();
+    }
+  }, {
+    key: "processData",
+    value: function processData(data) {
+      var _this3 = this;
+
+      var k = data["test results"]["relaxation or intensification parameter"],
+          p = data["test results"]["p-value"],
+          significant = p <= this.props.alpha_level;
+
+      delete data['fits']['MG94xREV with separate rates for branch sets'];
+
+      data["trees"] = {
+        branchLengths: _.mapObject(data.fits, function (model_val, model_key) {
+          return _.mapObject(data['branch attributes'][0], function (branch_val, branch_key) {
+            return branch_val[model_key];
+          });
+        })
+      };
+
+      _.keys(data.fits).forEach(function (model) {
+        data["fits"][model]["branch-annotations"] = _this3.formatBranchAnnotations(data, model);
+        data["fits"][model]["annotation-tag"] = model == "MG94xREV with separate rates for branch sets" ? "ω" : 'k';
+      });
+
+      this.setState({
+        json: data,
+        direction: k > 1 ? "intensification" : "relaxation",
+        lrt: data["test results"]["LRT"].toFixed(2),
+        summary_k: k.toFixed(2),
+        evidence: significant ? "significant" : "not significant",
+        p: p.toFixed(3),
+        fits: data["fits"],
+        significant: significant
+      });
+    }
+  }, {
     key: "componentDidMount",
     value: function componentDidMount() {
       var self = this;
       d3.json(this.props.url, function (data) {
-        var models = ["Partitioned MG94xREV", "General Descriptive", "Null", "Alternative", "Partitioned Exploratory"];
-        models.forEach(function (model) {
-          if (data["fits"][model]) data["fits"][model]["branch-annotations"] = self.formatBranchAnnotations(data, model);
-        });
-
-        var annotations = data["fits"]["Partitioned MG94xREV"]["branch-annotations"],
-            json = data,
-            pmid = data["PMID"],
-            test_results = data["relaxation_test"];
-
-        var p = data["relaxation-test"]["p"],
-            direction = data["fits"]["Alternative"]["K"] > 1 ? "intensification" : "relaxation",
-            evidence = p <= self.props.alpha_level ? "significant" : "not significant",
-            pvalue = self.p_value_format(p),
-            lrt = self.fit_format(data["relaxation-test"]["LR"]),
-            summary_k = self.fit_format(data["fits"]["Alternative"]["K"]),
-            pmid_text = "PubMed ID " + pmid,
-            pmid_href = "http://www.ncbi.nlm.nih.gov/pubmed/" + pmid;
-
-        self.setState({
-          annotations: annotations,
-          json: json,
-          pmid: pmid,
-          test_results: test_results,
-          p: p,
-          direction: direction,
-          evidence: evidence,
-          pvalue: pvalue,
-          lrt: lrt,
-          summary_k: summary_k,
-          pmid_text: pmid_text,
-          pmid_href: pmid_href
-        });
+        self.processData(data);
       });
     }
   }, {
@@ -18036,11 +18597,29 @@ var RELAX = function (_React$Component) {
     }
   }, {
     key: "formatBranchAnnotations",
-    value: function formatBranchAnnotations(json, key) {
-      var initial_branch_annotations = json["fits"][key]["branch-annotations"];
-
-      if (!initial_branch_annotations) {
-        initial_branch_annotations = json["fits"][key]["rate distributions"];
+    value: function formatBranchAnnotations(json, model) {
+      if (model == 'MG94xREV with separate rates for branch sets') {
+        var initial_branch_annotations = _.mapObject(json.fits[model]['Rate Distributions'], function (val, key) {
+          return _.values(val).map(function (d) {
+            return [d.omega, d.proportion];
+          });
+        });
+      } else if (model == 'General descriptive') {
+        var initial_branch_annotations = _.mapObject(json['branch attributes'][0], function (val) {
+          return val['k (general descriptive)'];
+        });
+      } else if (model == 'RELAX alternative') {
+        var initial_branch_annotations = _.mapObject(json['tested'][0], function (val) {
+          return val == "Reference" ? 1 : json["test results"]["relaxation or intensification parameter"];
+        });
+      } else if (model == 'RELAX null') {
+        var initial_branch_annotations = _.mapObject(json.tested[0], function (val) {
+          return 1;
+        });
+      } else if (model == 'RELAX partitioned descriptive') {
+        return null;
+      } else {
+        return null;
       }
 
       // Iterate over objects
@@ -18066,7 +18645,7 @@ var RELAX = function (_React$Component) {
             { className: "list-group-item-heading" },
             React.createElement(
               "span",
-              { className: "summary-method-name" },
+              { id: "summary-method-name" },
               "RELAX(ed selection test)"
             ),
             React.createElement("br", null),
@@ -18080,7 +18659,7 @@ var RELAX = function (_React$Component) {
         React.createElement(
           "div",
           { className: "col-md-12" },
-          React.createElement(_input_info.InputInfo, { input_data: this.state.json.input_data })
+          React.createElement(_input_info.InputInfo, { input_data: this.state.json.input })
         ),
         React.createElement(
           "div",
@@ -18110,7 +18689,7 @@ var RELAX = function (_React$Component) {
               " ",
               React.createElement(
                 "strong",
-                { id: "summary-evidence" },
+                { id: "summary-evidence", className: this.state.significant ? 'hyphy-highlight' : '' },
                 this.state.evidence
               ),
               " ",
@@ -18171,14 +18750,18 @@ var RELAX = function (_React$Component) {
     key: "render",
     value: function render() {
       var self = this,
-          scrollspy_info = [{ label: "summary", href: "summary-tab" }, { label: "fits", href: "fits-tab" }, { label: "ω plots", href: "omega-tab" }, { label: "tree", href: "tree-tab" }];
+          scrollspy_info = [{ label: "summary", href: "summary-tab" }, { label: "fits", href: "fits-tab" }, { label: "tree", href: "tree-tab" }];
 
       var models = {},
-          partition = undefined;
+          partition = { 'Reference': {}, 'Test': {}, 'Unclassified': {} };
       if (!_.isNull(self.state.json)) {
-        models = self.state.json.fits, partition = self.state.json.partition;
+        models = self.state.json.fits, _.each(self.state.json.tested[0], function (val, key) {
+          partition[val][key] = 1;
+        });
+        if (_.size(partition['Unclassified']) == 0) {
+          delete partition['Unclassified'];
+        }
       }
-
       return React.createElement(
         "div",
         null,
@@ -18201,7 +18784,7 @@ var RELAX = function (_React$Component) {
                 React.createElement(
                   "div",
                   { className: "col-md-12" },
-                  React.createElement(_model_fits.ModelFits, { json: self.state.json })
+                  React.createElement(RELAXModelTable, { fits: self.state.fits })
                 )
               ),
               React.createElement(
@@ -18221,7 +18804,10 @@ var RELAX = function (_React$Component) {
                   json: self.state.json,
                   settings: self.state.settings,
                   models: models,
-                  partition: partition
+                  partition: partition,
+                  color_gradient: ["#000000", "#888888", "#DFDFDF", "#77CCC6", "#00a99d"],
+                  grayscale_gradient: ["#DDDDDD", "#AAAAAA", "#888888", "#444444", "#000000"],
+                  method: "relax"
                 })
               )
             )
@@ -18283,25 +18869,25 @@ var _navbar = __webpack_require__(16);
 
 var _scrollspy = __webpack_require__(17);
 
-var _graphs = __webpack_require__(30);
+var _graphs = __webpack_require__(32);
 
-var _input_info = __webpack_require__(22);
+var _input_info = __webpack_require__(20);
 
-var _propTypes = __webpack_require__(79);
+var _propTypes = __webpack_require__(78);
 
 var _propTypes2 = _interopRequireDefault(_propTypes);
 
-var _saveSvgAsPng = __webpack_require__(36);
+var _saveSvgAsPng = __webpack_require__(31);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var React = __webpack_require__(5),
     ReactDOM = __webpack_require__(18),
-    _ = __webpack_require__(9),
-    d3_save_svg = __webpack_require__(31),
-    datamonkey = __webpack_require__(20);
+    _ = __webpack_require__(8),
+    d3_save_svg = __webpack_require__(26),
+    datamonkey = __webpack_require__(22);
 
-__webpack_require__(112);
+__webpack_require__(111);
 
 var SLACSites = React.createClass({
   displayName: "SLACSites",
@@ -19106,7 +19692,7 @@ var SLACBanner = React.createClass({
           { className: "list-group-item-heading" },
           React.createElement(
             "span",
-            { className: "summary-method-name" },
+            { id: "summary-method-name" },
             "Single-Likelihood Ancestor Counting"
           ),
           React.createElement("br", null),
@@ -19178,7 +19764,6 @@ var SLACBanner = React.createClass({
             React.createElement(
               "small",
               null,
-              "px",
               React.createElement(
                 "sup",
                 null,
@@ -19538,7 +20123,7 @@ var SLAC = React.createClass({
   dm_initializeFromJSON: function dm_initializeFromJSON(data) {
     this.setState({
       analysis_results: data,
-      input_data: data.input_data
+      input_data: data.input
     });
   },
 
@@ -19561,34 +20146,26 @@ var SLAC = React.createClass({
 
   componentWillMount: function componentWillMount() {
     this.dm_loadFromServer();
-    this.dm_setEvents();
   },
 
-  dm_setEvents: function dm_setEvents() {
-    var self = this;
+  onFileChange: function onFileChange(e) {
+    var self = this,
+        files = e.target.files; // FileList object
 
-    $("#datamonkey-json-file").on("change", function (e) {
-      var files = e.target.files; // FileList object
+    if (files.length == 1) {
+      var f = files[0];
+      var reader = new FileReader();
 
-      if (files.length == 1) {
-        var f = files[0];
-        var reader = new FileReader();
+      reader.onload = function (theFile) {
+        return function (e) {
+          var data = JSON.parse(this.result);
+          self.dm_initializeFromJSON(data);
+        };
+      }(f);
 
-        reader.onload = function (theFile) {
-          return function (e) {
-            try {
-              self.dm_initializeFromJSON(JSON.parse(this.result));
-            } catch (error) {
-              self.setState({ error_message: error.toString() });
-            }
-          };
-        }(f);
-
-        reader.readAsText(f);
-      }
-
-      $("#datamonkey-json-file-toggle").dropdown("toggle");
-    });
+      reader.readAsText(f);
+    }
+    e.preventDefault();
   },
 
   dm_adjustPvalue: function dm_adjustPvalue(event) {
@@ -19641,10 +20218,16 @@ var SLAC = React.createClass({
 
     if (self.state.analysis_results) {
       var scrollspy_info = [{ label: "summary", href: "slac-summary" }, { label: "information", href: "datamonkey-slac-tree-summary" }, { label: "table", href: "slac-table" }, { label: "graph", href: "slac-graph" }];
+
+      var trees = self.state.analysis_results ? {
+        newick: self.state.analysis_results.input.trees,
+        tested: self.state.analysis_results.tested
+      } : null;
+
       return React.createElement(
         "div",
         null,
-        React.createElement(_navbar.NavBar, null),
+        React.createElement(_navbar.NavBar, { onFileChange: self.onFileChange }),
         React.createElement(
           "div",
           { className: "container" },
@@ -19680,16 +20263,18 @@ var SLAC = React.createClass({
                     ),
                     React.createElement(_tables.DatamonkeyPartitionTable, {
                       pValue: self.state.pValue,
-                      trees: self.state.analysis_results.trees,
-                      partitions: self.state.analysis_results.partitions,
+                      trees: trees,
+                      partitions: self.state.analysis_results['data partitions'],
                       branchAttributes: self.state.analysis_results["branch attributes"],
                       siteResults: self.state.analysis_results.MLE,
                       accessorPositive: function accessorPositive(json, partition) {
+                        if (!json["content"][partition]) return null;
                         return _.map(json["content"][partition]["by-site"]["AVERAGED"], function (v) {
                           return v[8];
                         });
                       },
                       accessorNegative: function accessorNegative(json, partition) {
+                        if (!json["content"][partition]) return null;
                         return _.map(json["content"][partition]["by-site"]["AVERAGED"], function (v) {
                           return v[9];
                         });
@@ -19744,7 +20329,7 @@ var SLAC = React.createClass({
                       sample25: self.state.analysis_results["sample-2.5"],
                       sampleMedian: self.state.analysis_results["sample-median"],
                       sample975: self.state.analysis_results["sample-97.5"],
-                      partitionSites: self.state.analysis_results.partitions
+                      partitionSites: self.state.analysis_results['data partitions']
                     })
                   )
                 ),
@@ -19765,7 +20350,7 @@ var SLAC = React.createClass({
                       }), function (value, key) {
                         return value["by-site"];
                       }),
-                      partitionSites: self.state.analysis_results.partitions,
+                      partitionSites: self.state.analysis_results['data partitions'],
                       headers: self.state.analysis_results.MLE.headers
                     })
                   )
@@ -19803,11 +20388,11 @@ var _navbar = __webpack_require__(16);
 
 var _scrollspy = __webpack_require__(17);
 
-var _input_info = __webpack_require__(22);
+var _input_info = __webpack_require__(20);
 
 var _error_message = __webpack_require__(48);
 
-var _header = __webpack_require__(38);
+var _header = __webpack_require__(33);
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -20125,7 +20710,7 @@ module.exports = render_template;
 /* 141 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var LogGamma = __webpack_require__(76).log
+var LogGamma = __webpack_require__(75).log
 
 // The following code liberated from
 // http://www.math.ucla.edu/~tom/distributions/chisq.html
@@ -20194,7 +20779,7 @@ module.exports = function (Z, DF) {
 /* 142 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var gamma = __webpack_require__(76);
+var gamma = __webpack_require__(75);
 
 exports.pdf = function (x, k_) {
     if (x < 0) return 0;
@@ -21406,9 +21991,9 @@ module.exports = ARIADOMPropertyConfig;
 
 
 
-var ReactDOMComponentTree = __webpack_require__(8);
+var ReactDOMComponentTree = __webpack_require__(9);
 
-var focusNode = __webpack_require__(74);
+var focusNode = __webpack_require__(73);
 
 var AutoFocusUtils = {
   focusDOMComponent: function () {
@@ -21435,7 +22020,7 @@ module.exports = AutoFocusUtils;
 
 
 
-var EventPropagators = __webpack_require__(33);
+var EventPropagators = __webpack_require__(35);
 var ExecutionEnvironment = __webpack_require__(10);
 var FallbackCompositionState = __webpack_require__(182);
 var SyntheticCompositionEvent = __webpack_require__(225);
@@ -21824,7 +22409,7 @@ module.exports = BeforeInputEventPlugin;
 
 
 
-var CSSProperty = __webpack_require__(80);
+var CSSProperty = __webpack_require__(79);
 var ExecutionEnvironment = __webpack_require__(10);
 var ReactInstrumentation = __webpack_require__(13);
 
@@ -22045,17 +22630,17 @@ module.exports = CSSPropertyOperations;
 
 
 
-var EventPluginHub = __webpack_require__(32);
-var EventPropagators = __webpack_require__(33);
+var EventPluginHub = __webpack_require__(34);
+var EventPropagators = __webpack_require__(35);
 var ExecutionEnvironment = __webpack_require__(10);
-var ReactDOMComponentTree = __webpack_require__(8);
+var ReactDOMComponentTree = __webpack_require__(9);
 var ReactUpdates = __webpack_require__(14);
 var SyntheticEvent = __webpack_require__(19);
 
-var inputValueTracking = __webpack_require__(97);
+var inputValueTracking = __webpack_require__(96);
 var getEventTarget = __webpack_require__(62);
 var isEventSupported = __webpack_require__(63);
-var isTextInputElement = __webpack_require__(99);
+var isTextInputElement = __webpack_require__(98);
 
 var eventTypes = {
   change: {
@@ -22364,7 +22949,7 @@ module.exports = ChangeEventPlugin;
 
 var _prodInvariant = __webpack_require__(4);
 
-var DOMLazyTree = __webpack_require__(26);
+var DOMLazyTree = __webpack_require__(27);
 var ExecutionEnvironment = __webpack_require__(10);
 
 var createNodesFromMarkup = __webpack_require__(157);
@@ -22445,8 +23030,8 @@ module.exports = DefaultEventPluginOrder;
 
 
 
-var EventPropagators = __webpack_require__(33);
-var ReactDOMComponentTree = __webpack_require__(8);
+var EventPropagators = __webpack_require__(35);
+var ReactDOMComponentTree = __webpack_require__(9);
 var SyntheticMouseEvent = __webpack_require__(43);
 
 var eventTypes = {
@@ -22552,7 +23137,7 @@ var _assign = __webpack_require__(7);
 
 var PooledClass = __webpack_require__(24);
 
-var getTextContentAccessor = __webpack_require__(96);
+var getTextContentAccessor = __webpack_require__(95);
 
 /**
  * This helper class stores information about text content of a target node,
@@ -22889,12 +23474,12 @@ module.exports = HTMLDOMPropertyConfig;
 
 
 
-var ReactReconciler = __webpack_require__(27);
+var ReactReconciler = __webpack_require__(28);
 
-var instantiateReactComponent = __webpack_require__(98);
+var instantiateReactComponent = __webpack_require__(97);
 var KeyEscapeUtils = __webpack_require__(54);
 var shouldUpdateReactComponent = __webpack_require__(64);
-var traverseAllChildren = __webpack_require__(101);
+var traverseAllChildren = __webpack_require__(100);
 var warning = __webpack_require__(2);
 
 var ReactComponentTreeHook;
@@ -23084,14 +23669,14 @@ module.exports = ReactComponentBrowserEnvironment;
 var _prodInvariant = __webpack_require__(4),
     _assign = __webpack_require__(7);
 
-var React = __webpack_require__(28);
+var React = __webpack_require__(29);
 var ReactComponentEnvironment = __webpack_require__(56);
 var ReactCurrentOwner = __webpack_require__(15);
 var ReactErrorUtils = __webpack_require__(57);
-var ReactInstanceMap = __webpack_require__(34);
+var ReactInstanceMap = __webpack_require__(36);
 var ReactInstrumentation = __webpack_require__(13);
-var ReactNodeTypes = __webpack_require__(90);
-var ReactReconciler = __webpack_require__(27);
+var ReactNodeTypes = __webpack_require__(89);
+var ReactReconciler = __webpack_require__(28);
 
 if (process.env.NODE_ENV !== 'production') {
   var checkReactTypeSpec = __webpack_require__(234);
@@ -23989,15 +24574,15 @@ module.exports = ReactCompositeComponent;
 
 
 
-var ReactDOMComponentTree = __webpack_require__(8);
+var ReactDOMComponentTree = __webpack_require__(9);
 var ReactDefaultInjection = __webpack_require__(204);
-var ReactMount = __webpack_require__(89);
-var ReactReconciler = __webpack_require__(27);
+var ReactMount = __webpack_require__(88);
+var ReactReconciler = __webpack_require__(28);
 var ReactUpdates = __webpack_require__(14);
 var ReactVersion = __webpack_require__(219);
 
 var findDOMNode = __webpack_require__(236);
-var getHostComponentFromComposite = __webpack_require__(95);
+var getHostComponentFromComposite = __webpack_require__(94);
 var renderSubtreeIntoContainer = __webpack_require__(243);
 var warning = __webpack_require__(2);
 
@@ -24111,18 +24696,18 @@ var _prodInvariant = __webpack_require__(4),
 
 var AutoFocusUtils = __webpack_require__(175);
 var CSSPropertyOperations = __webpack_require__(177);
-var DOMLazyTree = __webpack_require__(26);
+var DOMLazyTree = __webpack_require__(27);
 var DOMNamespaces = __webpack_require__(52);
 var DOMProperty = __webpack_require__(21);
-var DOMPropertyOperations = __webpack_require__(82);
-var EventPluginHub = __webpack_require__(32);
+var DOMPropertyOperations = __webpack_require__(81);
+var EventPluginHub = __webpack_require__(34);
 var EventPluginRegistry = __webpack_require__(41);
 var ReactBrowserEventEmitter = __webpack_require__(42);
-var ReactDOMComponentFlags = __webpack_require__(83);
-var ReactDOMComponentTree = __webpack_require__(8);
+var ReactDOMComponentFlags = __webpack_require__(82);
+var ReactDOMComponentTree = __webpack_require__(9);
 var ReactDOMInput = __webpack_require__(193);
 var ReactDOMOption = __webpack_require__(196);
-var ReactDOMSelect = __webpack_require__(84);
+var ReactDOMSelect = __webpack_require__(83);
 var ReactDOMTextarea = __webpack_require__(199);
 var ReactInstrumentation = __webpack_require__(13);
 var ReactMultiChild = __webpack_require__(212);
@@ -24133,7 +24718,7 @@ var escapeTextContentForBrowser = __webpack_require__(45);
 var invariant = __webpack_require__(1);
 var isEventSupported = __webpack_require__(63);
 var shallowEqual = __webpack_require__(49);
-var inputValueTracking = __webpack_require__(97);
+var inputValueTracking = __webpack_require__(96);
 var validateDOMNesting = __webpack_require__(65);
 var warning = __webpack_require__(2);
 
@@ -25161,8 +25746,8 @@ module.exports = ReactDOMContainerInfo;
 
 var _assign = __webpack_require__(7);
 
-var DOMLazyTree = __webpack_require__(26);
-var ReactDOMComponentTree = __webpack_require__(8);
+var DOMLazyTree = __webpack_require__(27);
+var ReactDOMComponentTree = __webpack_require__(9);
 
 var ReactDOMEmptyComponent = function (instantiate) {
   // ReactCompositeComponent uses this:
@@ -25249,7 +25834,7 @@ module.exports = ReactDOMFeatureFlags;
 
 
 var DOMChildrenOperations = __webpack_require__(51);
-var ReactDOMComponentTree = __webpack_require__(8);
+var ReactDOMComponentTree = __webpack_require__(9);
 
 /**
  * Operations used to process updates to DOM nodes.
@@ -25289,9 +25874,9 @@ module.exports = ReactDOMIDOperations;
 var _prodInvariant = __webpack_require__(4),
     _assign = __webpack_require__(7);
 
-var DOMPropertyOperations = __webpack_require__(82);
+var DOMPropertyOperations = __webpack_require__(81);
 var LinkedValueUtils = __webpack_require__(55);
-var ReactDOMComponentTree = __webpack_require__(8);
+var ReactDOMComponentTree = __webpack_require__(9);
 var ReactUpdates = __webpack_require__(14);
 
 var invariant = __webpack_require__(1);
@@ -25729,9 +26314,9 @@ module.exports = ReactDOMNullInputValuePropHook;
 
 var _assign = __webpack_require__(7);
 
-var React = __webpack_require__(28);
-var ReactDOMComponentTree = __webpack_require__(8);
-var ReactDOMSelect = __webpack_require__(84);
+var React = __webpack_require__(29);
+var ReactDOMComponentTree = __webpack_require__(9);
+var ReactDOMSelect = __webpack_require__(83);
 
 var warning = __webpack_require__(2);
 var didWarnInvalidOptionChildren = false;
@@ -25858,7 +26443,7 @@ module.exports = ReactDOMOption;
 var ExecutionEnvironment = __webpack_require__(10);
 
 var getNodeForCharacterOffset = __webpack_require__(240);
-var getTextContentAccessor = __webpack_require__(96);
+var getTextContentAccessor = __webpack_require__(95);
 
 /**
  * While `isCollapsed` is available on the Selection object and `collapsed`
@@ -26076,8 +26661,8 @@ var _prodInvariant = __webpack_require__(4),
     _assign = __webpack_require__(7);
 
 var DOMChildrenOperations = __webpack_require__(51);
-var DOMLazyTree = __webpack_require__(26);
-var ReactDOMComponentTree = __webpack_require__(8);
+var DOMLazyTree = __webpack_require__(27);
+var ReactDOMComponentTree = __webpack_require__(9);
 
 var escapeTextContentForBrowser = __webpack_require__(45);
 var invariant = __webpack_require__(1);
@@ -26244,7 +26829,7 @@ var _prodInvariant = __webpack_require__(4),
     _assign = __webpack_require__(7);
 
 var LinkedValueUtils = __webpack_require__(55);
-var ReactDOMComponentTree = __webpack_require__(8);
+var ReactDOMComponentTree = __webpack_require__(9);
 var ReactUpdates = __webpack_require__(14);
 
 var invariant = __webpack_require__(1);
@@ -27114,7 +27699,7 @@ var EnterLeaveEventPlugin = __webpack_require__(181);
 var HTMLDOMPropertyConfig = __webpack_require__(183);
 var ReactComponentBrowserEnvironment = __webpack_require__(185);
 var ReactDOMComponent = __webpack_require__(188);
-var ReactDOMComponentTree = __webpack_require__(8);
+var ReactDOMComponentTree = __webpack_require__(9);
 var ReactDOMEmptyComponent = __webpack_require__(190);
 var ReactDOMTreeTraversal = __webpack_require__(200);
 var ReactDOMTextComponent = __webpack_require__(198);
@@ -27222,7 +27807,7 @@ module.exports = REACT_ELEMENT_TYPE;
 
 
 
-var EventPluginHub = __webpack_require__(32);
+var EventPluginHub = __webpack_require__(34);
 
 function runEventQueueInBatch(events) {
   EventPluginHub.enqueueEvents(events);
@@ -27261,10 +27846,10 @@ module.exports = ReactEventEmitterMixin;
 
 var _assign = __webpack_require__(7);
 
-var EventListener = __webpack_require__(73);
+var EventListener = __webpack_require__(72);
 var ExecutionEnvironment = __webpack_require__(10);
 var PooledClass = __webpack_require__(24);
-var ReactDOMComponentTree = __webpack_require__(8);
+var ReactDOMComponentTree = __webpack_require__(9);
 var ReactUpdates = __webpack_require__(14);
 
 var getEventTarget = __webpack_require__(62);
@@ -27459,12 +28044,12 @@ module.exports = ReactHostOperationHistoryHook;
 
 
 var DOMProperty = __webpack_require__(21);
-var EventPluginHub = __webpack_require__(32);
+var EventPluginHub = __webpack_require__(34);
 var EventPluginUtils = __webpack_require__(53);
 var ReactComponentEnvironment = __webpack_require__(56);
-var ReactEmptyComponent = __webpack_require__(85);
+var ReactEmptyComponent = __webpack_require__(84);
 var ReactBrowserEventEmitter = __webpack_require__(42);
-var ReactHostComponent = __webpack_require__(87);
+var ReactHostComponent = __webpack_require__(86);
 var ReactUpdates = __webpack_require__(14);
 
 var ReactInjection = {
@@ -27598,11 +28183,11 @@ module.exports = ReactMarkupChecksum;
 var _prodInvariant = __webpack_require__(4);
 
 var ReactComponentEnvironment = __webpack_require__(56);
-var ReactInstanceMap = __webpack_require__(34);
+var ReactInstanceMap = __webpack_require__(36);
 var ReactInstrumentation = __webpack_require__(13);
 
 var ReactCurrentOwner = __webpack_require__(15);
-var ReactReconciler = __webpack_require__(27);
+var ReactReconciler = __webpack_require__(28);
 var ReactChildReconciler = __webpack_require__(184);
 
 var emptyFunction = __webpack_require__(12);
@@ -28179,10 +28764,10 @@ module.exports = ReactPropTypeLocationNames;
 
 var _assign = __webpack_require__(7);
 
-var CallbackQueue = __webpack_require__(81);
+var CallbackQueue = __webpack_require__(80);
 var PooledClass = __webpack_require__(24);
 var ReactBrowserEventEmitter = __webpack_require__(42);
-var ReactInputSelection = __webpack_require__(88);
+var ReactInputSelection = __webpack_require__(87);
 var ReactInstrumentation = __webpack_require__(13);
 var Transaction = __webpack_require__(44);
 var ReactUpdateQueue = __webpack_require__(58);
@@ -29022,14 +29607,14 @@ module.exports = SVGDOMPropertyConfig;
 
 
 
-var EventPropagators = __webpack_require__(33);
+var EventPropagators = __webpack_require__(35);
 var ExecutionEnvironment = __webpack_require__(10);
-var ReactDOMComponentTree = __webpack_require__(8);
-var ReactInputSelection = __webpack_require__(88);
+var ReactDOMComponentTree = __webpack_require__(9);
+var ReactInputSelection = __webpack_require__(87);
 var SyntheticEvent = __webpack_require__(19);
 
-var getActiveElement = __webpack_require__(75);
-var isTextInputElement = __webpack_require__(99);
+var getActiveElement = __webpack_require__(74);
+var isTextInputElement = __webpack_require__(98);
 var shallowEqual = __webpack_require__(49);
 
 var skipSelectionChangeEvent = ExecutionEnvironment.canUseDOM && 'documentMode' in document && document.documentMode <= 11;
@@ -29218,9 +29803,9 @@ module.exports = SelectEventPlugin;
 
 var _prodInvariant = __webpack_require__(4);
 
-var EventListener = __webpack_require__(73);
-var EventPropagators = __webpack_require__(33);
-var ReactDOMComponentTree = __webpack_require__(8);
+var EventListener = __webpack_require__(72);
+var EventPropagators = __webpack_require__(35);
+var ReactDOMComponentTree = __webpack_require__(9);
 var SyntheticAnimationEvent = __webpack_require__(223);
 var SyntheticClipboardEvent = __webpack_require__(224);
 var SyntheticEvent = __webpack_require__(19);
@@ -29230,7 +29815,7 @@ var SyntheticMouseEvent = __webpack_require__(43);
 var SyntheticDragEvent = __webpack_require__(226);
 var SyntheticTouchEvent = __webpack_require__(230);
 var SyntheticTransitionEvent = __webpack_require__(231);
-var SyntheticUIEvent = __webpack_require__(35);
+var SyntheticUIEvent = __webpack_require__(37);
 var SyntheticWheelEvent = __webpack_require__(232);
 
 var emptyFunction = __webpack_require__(12);
@@ -29616,7 +30201,7 @@ module.exports = SyntheticDragEvent;
 
 
 
-var SyntheticUIEvent = __webpack_require__(35);
+var SyntheticUIEvent = __webpack_require__(37);
 
 /**
  * @interface FocusEvent
@@ -29699,7 +30284,7 @@ module.exports = SyntheticInputEvent;
 
 
 
-var SyntheticUIEvent = __webpack_require__(35);
+var SyntheticUIEvent = __webpack_require__(37);
 
 var getEventCharCode = __webpack_require__(60);
 var getEventKey = __webpack_require__(238);
@@ -29788,7 +30373,7 @@ module.exports = SyntheticKeyboardEvent;
 
 
 
-var SyntheticUIEvent = __webpack_require__(35);
+var SyntheticUIEvent = __webpack_require__(37);
 
 var getEventModifierState = __webpack_require__(61);
 
@@ -29990,7 +30575,7 @@ module.exports = adler32;
 var _prodInvariant = __webpack_require__(4);
 
 var ReactPropTypeLocationNames = __webpack_require__(214);
-var ReactPropTypesSecret = __webpack_require__(91);
+var ReactPropTypesSecret = __webpack_require__(90);
 
 var invariant = __webpack_require__(1);
 var warning = __webpack_require__(2);
@@ -30080,7 +30665,7 @@ module.exports = checkReactTypeSpec;
 
 
 
-var CSSProperty = __webpack_require__(80);
+var CSSProperty = __webpack_require__(79);
 var warning = __webpack_require__(2);
 
 var isUnitlessNumber = CSSProperty.isUnitlessNumber;
@@ -30168,10 +30753,10 @@ module.exports = dangerousStyleValue;
 var _prodInvariant = __webpack_require__(4);
 
 var ReactCurrentOwner = __webpack_require__(15);
-var ReactDOMComponentTree = __webpack_require__(8);
-var ReactInstanceMap = __webpack_require__(34);
+var ReactDOMComponentTree = __webpack_require__(9);
+var ReactInstanceMap = __webpack_require__(36);
 
-var getHostComponentFromComposite = __webpack_require__(95);
+var getHostComponentFromComposite = __webpack_require__(94);
 var invariant = __webpack_require__(1);
 var warning = __webpack_require__(2);
 
@@ -30233,7 +30818,7 @@ module.exports = findDOMNode;
 
 
 var KeyEscapeUtils = __webpack_require__(54);
-var traverseAllChildren = __webpack_require__(101);
+var traverseAllChildren = __webpack_require__(100);
 var warning = __webpack_require__(2);
 
 var ReactComponentTreeHook;
@@ -30692,7 +31277,7 @@ module.exports = quoteAttributeValueForBrowser;
 
 
 
-var ReactMount = __webpack_require__(89);
+var ReactMount = __webpack_require__(88);
 
 module.exports = ReactMount.renderSubtreeIntoContainer;
 
@@ -30783,7 +31368,7 @@ module.exports = function () {
 /* 258 */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(107);
+module.exports = __webpack_require__(106);
 
 
 /***/ })
