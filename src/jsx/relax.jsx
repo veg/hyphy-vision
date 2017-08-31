@@ -173,6 +173,8 @@ class RELAX extends React.Component{
       p = data["test results"]["p-value"],
       significant = p <= this.props.alpha_level;
 
+    delete data['fits']['MG94xREV with separate rates for branch sets'];
+
     data["trees"] = {
       branchLengths: _.mapObject(data.fits, (model_val, model_key) => {
         return _.mapObject(data['branch attributes'][0], (branch_val, branch_key) => {

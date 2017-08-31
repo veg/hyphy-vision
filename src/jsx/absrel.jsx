@@ -187,7 +187,7 @@ var BSREL = React.createClass({
         "Full adaptive model": _.mapObject(data["branch attributes"][0], val=>val["Full adaptive model"])
       }
     }
-
+    _.each(_.keys(data.fits), model=>{delete data.fits[model]['Rate Distributions'];});
     this.setState({
       annotations: data["fits"]["Full adaptive model"]["branch-annotations"],
       json: data,

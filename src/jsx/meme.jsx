@@ -16,7 +16,7 @@ function MEMESummary(props) {
     user_message = (
       <p className="list-group-item-text label_and_input">
         MEME <strong className="hyphy-highlight">found evidence</strong> of
-        positive selection in your phylogeny.
+        natural selection in your phylogeny.
       </p>
     );
   } else {
