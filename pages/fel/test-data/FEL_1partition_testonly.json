@@ -1,0 +1,186 @@
+{
+ "analysis":{
+   "info":"FEL (Fixed Effects Likelihood)\n    estimates site-wise synonymous (&alpha;) and non-synonymous (&beta;) rates, and\n    uses a likelihood ratio test to determine if beta &neq; alpha at a site.\n    The estimates aggregate information over all branches,\n    so the signal is derived from\n    pervasive diversification or conservation. A subset of branches can be selected\n    for testing as well, in which case an additional (nuisance) parameter will be\n    inferred -- the non-synonymous rate on branches NOT selected for testing.\n    Multiple partitions within a NEXUS file are also supported\n    for recombination - aware analysis.\n    ",
+   "version":"2.00",
+   "citation":"Not So Different After All: A Comparison of Methods for Detecting Amino Acid Sites Under Selection (2005). _Mol Biol Evol_ 22 (5): 1208-1222",
+   "authors":"Sergei L Kosakovsky Pond and Simon DW Frost",
+   "contact":"spond@temple.edu",
+   "requirements":"in-frame codon alignment and a phylogenetic tree"
+  },
+ "input":{
+   "file name":"/home/sjspielman/v2.3.1-alpha_json/dat_plain.dat",
+   "number of sequences":12,
+   "number of sites":20,
+   "partition count":1,
+   "trees":{
+     "0":"(t1:0.140821,(((t4:0.0918075,t9:0.0712801)Node5:0.131355,(t10:0.416582,t7:0.0476408)Node8:0.0883192)Node4:0.637702,(t3:0.698741,t12:0.0835068)Node11:0.0469205)Node3:0.0741876,(((t5:0.0865238,t8:0.0535977)Node16:0.10328,t6:0.0885736)Node15:0.250248,(t2:0.0743222,t11:0.183571)Node20:0.644012)Node14:0.438272)"
+    }
+  },
+ "fits":{
+   "Global MG94xREV":{
+     "Log Likelihood":-445.6034898640178,
+     "estimated parameters":36,
+     "AIC-c":891.2069797280357,
+     "Rate Distributions":{
+       "non-synonymous/synonymous rate ratio":[
+        [0.7646660201788381, 1]
+        ]
+      },
+     "display order":0
+    }
+  },
+ "timers":{
+   "Total time":{
+     "timer":49,
+     "order":0
+    },
+   "Model fitting":{
+     "timer":24,
+     "order":1
+    },
+   "FEL analysis":{
+     "timer":24,
+     "order":2
+    }
+  },
+ "tested":{
+   "0":{
+     "t1":"test",
+     "t4":"test",
+     "t9":"test",
+     "Node5":"test",
+     "t10":"test",
+     "t7":"test",
+     "Node8":"test",
+     "Node4":"test",
+     "t3":"test",
+     "t12":"test",
+     "Node11":"test",
+     "Node3":"test",
+     "t5":"test",
+     "t8":"test",
+     "Node16":"test",
+     "t6":"test",
+     "Node15":"test",
+     "t2":"test",
+     "t11":"test",
+     "Node20":"test",
+     "Node14":"test"
+    }
+  },
+ "data partitions":{
+   "0":{
+     "name":"fel.filter.default",
+     "coverage":[
+      [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19]
+      ]
+    }
+  },
+ "branch attributes":{
+   "0":{
+     "Node11":{
+       "Global MG94xREV":0.03248616713613158
+      },
+     "Node14":{
+       "Global MG94xREV":0.2612357365240214
+      },
+     "Node15":{
+       "Global MG94xREV":0.07003351631776596
+      },
+     "Node16":{
+       "Global MG94xREV":0.01645568146429391
+      },
+     "Node20":{
+       "Global MG94xREV":0.09674252952731437
+      },
+     "Node3":{
+       "Global MG94xREV":0
+      },
+     "Node4":{
+       "Global MG94xREV":0.1969949348631641
+      },
+     "Node5":{
+       "Global MG94xREV":0.04008280860762046
+      },
+     "Node8":{
+       "Global MG94xREV":0.01577259137401381
+      },
+     "t1":{
+       "Global MG94xREV":0.07978650439684304
+      },
+     "t10":{
+       "Global MG94xREV":0.1948150703239042
+      },
+     "t11":{
+       "Global MG94xREV":0.08149008613681293
+      },
+     "t12":{
+       "Global MG94xREV":0.08082723507629985
+      },
+     "t2":{
+       "Global MG94xREV":0.06170794619906877
+      },
+     "t3":{
+       "Global MG94xREV":0.3981185611599067
+      },
+     "t4":{
+       "Global MG94xREV":0.03638869491983323
+      },
+     "t5":{
+       "Global MG94xREV":0.05128034177038528
+      },
+     "t6":{
+       "Global MG94xREV":0.03447420721952815
+      },
+     "t7":{
+       "Global MG94xREV":0
+      },
+     "t8":{
+       "Global MG94xREV":0.01687649359431731
+      },
+     "t9":{
+       "Global MG94xREV":0.01756956639177856
+      }
+    },
+   "attributes":{
+     "Global MG94xREV":{
+       "attribute type":"branch length",
+       "display order":0
+      }
+    }
+  },
+ "MLE":{
+   "headers":[
+    ["alpha", "Synonymous substitution rate at a site"],
+    ["beta", "Non-synonymous substitution rate at a site"],
+    ["alpha=beta", "The rate estimate under the neutral model"],
+    ["LRT", "Likelihood ration test statistic for beta = alpha, versus beta &neq; alpha"],
+    ["p-value", "Likelihood ration test statistic for beta = alpha, versus beta &neq; alpha"],
+    ["Total branch length", "The total length of branches contributing to inference at this site, and used to scale dN-dS"]
+    ],
+   "content":{
+     "0":[
+      [2.140135383647326, 1.339769385586781, 1.475261559517578, 0.2574062223757068, 0.6119077408205034, 3.334816010719664],
+      [0.2238313294449057, 0.3052404820892571, 0.2838887913914551, 0.01003283215041861, 0.9202141052620365, 0.6166355710456293],
+      [1.076421697657985, 0.5347448378720814, 0.7171091041368548, 0.4437230478021732, 0.5053309509782127, 1.45163058936572],
+      [0, 0.5411052554197728, 0.3472282343806347, 1.736623528832919, 0.1875672173113035, 0.8777880808030429],
+      [2.418367101520362, 1.280008302582066, 1.606333604332116, 0.5076256488340078, 0.4761685049148909, 3.388863633464969],
+      [5.985900336286689e-15, 0.8476647645019872, 0.8164233675182851, 0.2087654040840121, 0.6477367932195655, 1.375092958983253],
+      [2.336475051084191, 1.784172541732138, 1.963490958037424, 0.07042261012691142, 0.7907224514713459, 4.162283728938421],
+      [0, 1.760644760573761, 1.168883842493337, 4.122989664102327, 0.0423042555540053, 2.856141147919629],
+      [0.4752781955465627, 2.28054380466345, 1.482760582214851, 2.526149363904402, 0.1119731664878332, 3.957455707756955],
+      [3.482857119015241, 0, 0.7629234499657059, 10.01025042343149, 0.001556713536772336, 1.890102575405381],
+      [1.594865776767471, 0.7658506279900875, 0.8736269068642672, 0.3072050514767071, 0.5794003631488189, 2.107886504235095],
+      [0, 0.5389047998244855, 0.402694035484828, 1.145780204336997, 0.2844342460630003, 0.8742184727193415],
+      [1.162961089387509, 0.7056934321481093, 0.7852087122061501, 0.1543776684789293, 0.6943865190521995, 1.775909488303035],
+      [1.055163585656517, 2.091697273327703, 1.684275168541992, 0.5509900383068853, 0.4579134470357973, 3.965802852497156],
+      [1.248956542008095, 1.327251655726975, 1.316760641478242, 0.002797195512265205, 0.9578207315791428, 2.830878081121074],
+      [0, 0.6410601683027009, 0.5197387740653299, 1.220439052933365, 0.2692745049755815, 1.039936258569816],
+      [2.466520133217483, 0.6476123172681649, 0.9826267988950831, 1.885180205268455, 0.1697465498768101, 2.389114568996574],
+      [0.9880001212339357, 0.2479633211285072, 0.4953418912185667, 1.293543660396224, 0.2553959248686322, 0.9384245582682611],
+      [0, 0, 0, 0, 1, 0],
+      [0.9802787614414583, 0, 0.3075028392197529, 4.473773179994488, 0.03441890394295866, 0.5319849044337409]
+      ]
+    }
+  }
+}
