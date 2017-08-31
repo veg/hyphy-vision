@@ -846,7 +846,7 @@ var SLACBanner = React.createClass({
       <div className="clearance" id="slac-summary"></div>
         <div className="col-md-12">
           <h3 className="list-group-item-heading">
-            <span className="summary-method-name">
+            <span id="summary-method-name">
             Single-Likelihood Ancestor Counting</span>
             <br />
             <span className="results-summary">results summary</span>
@@ -878,7 +878,6 @@ var SLACBanner = React.createClass({
             <hr /> 
             <p>
               <small>
-                px
                   <sup>&dagger;</sup>Extended binomial test, p &le;{" "}
                   {this.dm_formatP(this.props.pValue)}
                   
@@ -1195,7 +1194,7 @@ var SLAC = React.createClass({
   dm_initializeFromJSON: function(data) {
     this.setState({
       analysis_results: data,
-      input_data: data.input_data  
+      input_data: data.input
     });
   },
 
@@ -1218,34 +1217,26 @@ var SLAC = React.createClass({
 
   componentWillMount: function() {
     this.dm_loadFromServer();
-    this.dm_setEvents();
   },
 
-  dm_setEvents: function() {
-    var self = this;
+  onFileChange: function(e) {
+    var self = this,
+      files = e.target.files; // FileList object
 
-    $("#datamonkey-json-file").on("change", function(e) {
-      var files = e.target.files; // FileList object
+    if (files.length == 1) {
+      var f = files[0];
+      var reader = new FileReader();
 
-      if (files.length == 1) {
-        var f = files[0];
-        var reader = new FileReader();
+      reader.onload = (function(theFile) {
+        return function(e) {
+          var data = JSON.parse(this.result);
+          self.dm_initializeFromJSON(data);
+        };
+      })(f);
 
-        reader.onload = (function(theFile) {
-          return function(e) {
-            try {
-              self.dm_initializeFromJSON(JSON.parse(this.result));
-            } catch (error) {
-              self.setState({ error_message: error.toString() });
-            }
-          };
-        })(f);
-
-        reader.readAsText(f);
-      }
-
-      $("#datamonkey-json-file-toggle").dropdown("toggle");
-    });
+      reader.readAsText(f);
+    }
+    e.preventDefault();
   },
 
   dm_adjustPvalue: function(event) {
@@ -1291,9 +1282,15 @@ var SLAC = React.createClass({
         { label: "table", href: "slac-table" },
         { label: "graph", href: "slac-graph" }
       ];
+
+      var trees = self.state.analysis_results ? {
+        newick: self.state.analysis_results.input.trees,
+        tested: self.state.analysis_results.tested
+      } : null;
+
       return (
         <div>
-          <NavBar />
+          <NavBar onFileChange={self.onFileChange}/>
           <div className="container">
             <div className="row">
               <ScrollSpy info={scrollspy_info} />
@@ -1317,13 +1314,14 @@ var SLAC = React.createClass({
                      
                       <DatamonkeyPartitionTable
                         pValue={self.state.pValue}
-                        trees={self.state.analysis_results.trees}
-                        partitions={self.state.analysis_results.partitions}
+                        trees={trees}
+                        partitions={self.state.analysis_results['data partitions']}
                         branchAttributes={
                           self.state.analysis_results["branch attributes"]
                         }
                         siteResults={self.state.analysis_results.MLE}
                         accessorPositive={function(json, partition) {
+                          if(!json["content"][partition]) return null;
                           return _.map(
                             json["content"][partition]["by-site"]["AVERAGED"],
                             function(v) {
@@ -1332,6 +1330,7 @@ var SLAC = React.createClass({
                           );
                         }}
                         accessorNegative={function(json, partition) {
+                          if(!json["content"][partition]) return null;
                           return _.map(
                             json["content"][partition]["by-site"]["AVERAGED"],
                             function(v) {
@@ -1393,7 +1392,7 @@ var SLAC = React.createClass({
                         self.state.analysis_results["sample-median"]
                       }
                       sample975={self.state.analysis_results["sample-97.5"]}
-                      partitionSites={self.state.analysis_results.partitions}
+                      partitionSites={self.state.analysis_results['data partitions']}
                     />
                   </div>
                 </div>
@@ -1415,7 +1414,7 @@ var SLAC = React.createClass({
                           return value["by-site"];
                         }
                       )}
-                      partitionSites={self.state.analysis_results.partitions}
+                      partitionSites={self.state.analysis_results['data partitions']}
                       headers={self.state.analysis_results.MLE.headers}
                     />
                   </div>

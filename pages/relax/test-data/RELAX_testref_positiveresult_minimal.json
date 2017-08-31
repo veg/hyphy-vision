@@ -1,0 +1,275 @@
+{
+ "input":{
+   "file name":"/Users/sjspielman/Dropbox/simulate_for_stephen/2.3.1-alpha/input_data/dat_labeled.dat",
+   "number of sequences":12,
+   "number of sites":20,
+   "partition count":1,
+   "trees":{
+     "0":"(t1:0.140821,(((t4:0.0918075,t9:0.0712801)Node5:0.131355,(t10:0.416582,t7:0.0476408)Node8:0.0883192)Node4:0.637702,(t3:0.698741,t12:0.0835068)Node11:0.0469205)Node3:0.0741876,(((t5:0.0865238,t8:0.0535977)Node16:0.10328,t6:0.0885736)Node15:0.250248,(t2:0.0743222,t11:0.183571)Node20:0.644012)Node14:0.438272)"
+    }
+  },
+ "fits":{
+   "MG94xREV with separate rates for branch sets":{
+     "Log Likelihood":-445.6011358078474,
+     "estimated parameters":37,
+     "AIC-c":979.1230636949026,
+     "Rate Distributions":{
+       "Reference":{
+         "0":{
+           "omega":0.7474420445121485,
+           "proportion":1
+          }
+        },
+       "Test":{
+         "0":{
+           "omega":0.7804184669035841,
+           "proportion":1
+          }
+        }
+      },
+     "display order":0
+    },
+   "RELAX alternative":{
+     "Log Likelihood":-445.6007874111351,
+     "estimated parameters":41,
+     "AIC-c":990.5955142162096,
+     "Rate Distributions":{
+       "Test":{
+         "0":{
+           "omega":0.3755637775136013,
+           "proportion":0
+          },
+         "1":{
+           "omega":0.7820517714849361,
+           "proportion":1
+          },
+         "2":{
+           "omega":1.512780235921855,
+           "proportion":0
+          }
+        },
+       "Reference":{
+         "0":{
+           "omega":0.3193563365348408,
+           "proportion":0
+          },
+         "1":{
+           "omega":0.7508641734856858,
+           "proportion":1
+          },
+         "2":{
+           "omega":1.620080088916863,
+           "proportion":0
+          }
+        }
+      },
+     "display order":1
+    },
+   "RELAX null":{
+     "Log Likelihood":-445.6030608188822,
+     "estimated parameters":40,
+     "AIC-c":987.6885336980658,
+     "Rate Distributions":{
+       "Test":{
+         "0":{
+           "omega":0.319995368564247,
+           "proportion":0
+          },
+         "1":{
+           "omega":0.75624799030459,
+           "proportion":1
+          },
+         "2":{
+           "omega":1.620080088916863,
+           "proportion":0
+          }
+        },
+       "Reference":{
+         "0":{
+           "omega":0.319995368564247,
+           "proportion":0
+          },
+         "1":{
+           "omega":0.75624799030459,
+           "proportion":1
+          },
+         "2":{
+           "omega":1.620080088916863,
+           "proportion":0
+          }
+        }
+      },
+     "display order":2
+    }
+  },
+ "timers":{
+   "Overall":{
+     "timer":98,
+     "order":0
+    },
+   "Preliminary model fitting":{
+     "timer":15,
+     "order":1
+    },
+   "RELAX alternative model fitting":{
+     "timer":75,
+     "order":3
+    },
+   "RELAX null model fitting":{
+     "timer":8,
+     "order":4
+    }
+  },
+ "test results":{
+   "LRT":5.46815494109069,
+   "p-value":0.0009462393244529533,
+   "relaxation or intensification parameter":0.8579691616364352
+  },
+ "tested":{
+   "0":{
+     "t1":"Reference",
+     "t4":"Test",
+     "t9":"Test",
+     "Node5":"Test",
+     "t10":"Test",
+     "t7":"Test",
+     "Node8":"Test",
+     "Node4":"Reference",
+     "t3":"Reference",
+     "t12":"Reference",
+     "Node11":"Reference",
+     "Node3":"Reference",
+     "t5":"Reference",
+     "t8":"Reference",
+     "Node16":"Reference",
+     "t6":"Reference",
+     "Node15":"Reference",
+     "t2":"Reference",
+     "t11":"Reference",
+     "Node20":"Reference",
+     "Node14":"Reference"
+    }
+  },
+ "data partitions":{
+   "0":{
+     "name":"relax.filter.default",
+     "coverage":[
+      [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19]
+      ]
+    }
+  },
+ "branch attributes":{
+   "0":{
+     "t8":{
+       "original name":"t8",
+       "RELAX alternative":0.01686204393458854,
+       "RELAX null":0.01687027689859267
+      },
+     "t9":{
+       "original name":"t9",
+       "RELAX alternative":0.01757299614229608,
+       "RELAX null":0.01756916600071096
+      },
+     "t6":{
+       "original name":"t6",
+       "RELAX alternative":0.03439826526625671,
+       "RELAX null":0.03443599504807572
+      },
+     "t7":{
+       "original name":"t7",
+       "RELAX alternative":0,
+       "RELAX null":0
+      },
+     "t4":{
+       "original name":"t4",
+       "RELAX alternative":0.03631835176320929,
+       "RELAX null":0.03635922890495557
+      },
+     "t5":{
+       "original name":"t5",
+       "RELAX alternative":0.05130229387165169,
+       "RELAX null":0.05129025589696731
+      },
+     "t2":{
+       "original name":"t2",
+       "RELAX alternative":0.0615239064807017,
+       "RELAX null":0.06159301516457753
+      },
+     "t3":{
+       "original name":"t3",
+       "RELAX alternative":0.3981676550757902,
+       "RELAX null":0.3983646565818074
+      },
+     "t1":{
+       "original name":"t1",
+       "RELAX alternative":0.079726561055255,
+       "RELAX null":0.07976481960684906
+      },
+     "t10":{
+       "original name":"t10",
+       "RELAX alternative":0.1949102845407007,
+       "RELAX null":0.1950757251465558
+      },
+     "t11":{
+       "original name":"t11",
+       "RELAX alternative":0.08152015568422628,
+       "RELAX null":0.08155806480971999
+      },
+     "t12":{
+       "original name":"t12",
+       "RELAX alternative":0.08082787074413898,
+       "RELAX null":0.08083127275503788
+      },
+     "Node11":{
+       "RELAX alternative":0.03239784576497329,
+       "RELAX null":0.03242668829377348
+      },
+     "Node14":{
+       "RELAX alternative":0.2614141551942832,
+       "RELAX null":0.2611843245647608
+      },
+     "Node15":{
+       "RELAX alternative":0.07006059754420713,
+       "RELAX null":0.07015090449964738
+      },
+     "Node16":{
+       "RELAX alternative":0.01650059066131361,
+       "RELAX null":0.01649616784460971
+      },
+     "Node20":{
+       "RELAX alternative":0.09658425862441561,
+       "RELAX null":0.09665959655906331
+      },
+     "Node3":{
+       "RELAX alternative":0,
+       "RELAX null":0
+      },
+     "Node4":{
+       "RELAX alternative":0.1967790470608119,
+       "RELAX null":0.196969278048611
+      },
+     "Node5":{
+       "RELAX alternative":0.04004489004020866,
+       "RELAX null":0.04006546114328163
+      },
+     "Node8":{
+       "RELAX alternative":0.01579818714699715,
+       "RELAX null":0.0157800310667419
+      }
+    },
+   "attributes":{
+     "original name":{
+       "attribute type":"node label",
+       "display order":0
+      },
+     "RELAX alternative":{
+       "attribute type":"branch length",
+       "display order":2
+      },
+     "RELAX null":{
+       "attribute type":"branch length",
+       "display order":3
+      }
+    }
+  }
+}

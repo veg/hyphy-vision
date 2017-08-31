@@ -107,7 +107,7 @@ var Tree = React.createClass({
       show_legend: true,
       axis_scale: axis_scale,
       selected_model: selected_model,
-      partition: [],
+      partition: 'None',
       current: 0
     };
   },
@@ -137,35 +137,21 @@ var Tree = React.createClass({
       return [];
     }
 
-    var branch_lengths = self.settings["tree-options"][
-      "hyphy-tree-branch-lengths"
-    ][0]
-      ? self.props.models[self.state.selected_model]["branch-lengths"]
-      : null;
-
-    if (!branch_lengths) {
-      var nodes = _.filter(self.tree.get_nodes(), function(d) {
-        return d.parent;
-      });
-
-      branch_lengths = _.object(
-        _.map(nodes, function(d) {
-          return d.name;
-        }),
-        _.map(nodes, function(d) {
-          return parseFloat(d.attribute);
-        })
-      );
-    }
-
+    var branch_lengths;
+    if(self.props.method == 'absrel' || self.props.method == 'relax'){
+      branch_lengths = self.props.json.trees.branchLengths[self.state.selected_model];
+    } else if(self.props.method == 'busted'){
+      branch_lengths = self.props.json.trees[self.state.current].branchLengths[self.state.selected_model];
+    } 
     return branch_lengths;
   },
 
   assignBranchAnnotations: function() {
     if (this.state.json && this.props.models[this.state.selected_model]) {
-      this.tree.assign_attributes(
-        this.props.models[this.state.selected_model]["branch-annotations"]
-      );
+      var attributes = this.props.multitree ? 
+        this.props.models[this.state.selected_model]["branch-annotations"][this.state.current] :
+        this.props.models[this.state.selected_model]["branch-annotations"];
+      this.tree.assign_attributes(attributes);
     }
   },
 
@@ -208,7 +194,7 @@ var Tree = React.createClass({
       .attr("height", "13")
       .attr("fill", color_fill);
 
-    fg_item.append("text").attr("x", "15").attr("y", "11").text("Foreground");
+    fg_item.append("text").attr("x", "15").attr("y", "11").text("Test");
 
     var bg_item = dc_legend
       .append("g")
@@ -219,7 +205,7 @@ var Tree = React.createClass({
       .append("rect")
       .attr("width", "13")
       .attr("height", "13")
-      .attr("fill", "gray");
+      .attr("fill", "black");
 
     bg_item.append("text").attr("x", "15").attr("y", "11").text("Background");
   },
@@ -397,10 +383,14 @@ var Tree = React.createClass({
     });
   },
 
-  getModelList: function() {
-    var self = this;
+  getMainList: function() {
+    var self = this,
+      menu = [];
+
+    // Enable display of multiple trees
     if(self.props.multitree && self.props.json){
-      return _.range(self.props.json.breakpointData.length).map((d,i)=>(<li>
+      menu = menu.concat(<li className="dropdown-header">Partitions</li>)
+      var partition_list = _.range(self.props.json.trees.length).map((d,i)=>(<li style={{backgroundColor: d==self.state.current ? 'lightGrey' : 'white'}}>
         <a
           href="javascript:;"
           onClick={()=>this.setState({current: i})}
@@ -408,25 +398,61 @@ var Tree = React.createClass({
           {i+1}
         </a>
       </li>));
-    } else {
+      menu = menu.concat(partition_list);
+    } 
+
+    // Multiple models
+    if (_.keys(self.props.models).length > 0) {
+      if(self.props.multitree && self.props.json){
+        menu = menu.concat(<li role="separator" className="divider"></li>);
+      }
+      menu = menu.concat(<li className="dropdown-header">Models</li>)
+
       var createListElement = function(model_type) {
-        return (
-          <li>
-            <a
-              href="javascript:;"
-              data-type={model_type}
-              onClick={self.changeModelSelection}
-            >
-              {model_type}
-            </a>
-          </li>
-        );
+        return (<li>
+          <a
+            href="javascript:;"
+            data-type={model_type}
+            onClick={self.changeModelSelection}
+          >
+            {model_type}
+          </a>
+        </li>);
       };
 
-      return _.map(this.props.models, (d, key) => {
-        return createListElement(key);
-      });
+      var model_list = _.map(this.props.models, (d, model_type) => (<li style={{backgroundColor: model_type==self.state.selected_model ? 'lightGrey' : 'white'}}>
+          <a
+            href="javascript:;"
+            data-type={model_type}
+            onClick={self.changeModelSelection}
+          >
+            {model_type}
+          </a>
+        </li>));
+      menu = menu.concat(model_list);
     }
+
+    // Branch partitions
+    if(!_.isEmpty(this.props.partition)){
+      var partitionList = [
+        <li role="separator" className="divider"></li>,
+        <li className="dropdown-header">Branch partition</li>,
+        (<li style={{backgroundColor: self.state.partition == 'None' ? 'lightGrey' : 'white'}}>
+          <a href="javascript:;" onClick={ ()=>this.setState({partition: 'None'}) }>None</a>
+        </li>)
+      ].concat(_.keys(this.props.partition).map(key=>(<li style={{backgroundColor: self.state.partition == key ? 'lightGrey' : 'white'}}>
+        <a
+          href="javascript:;"
+          onClick={ ()=>this.setState({partition: key}) }
+        >
+        {key}
+        </a>
+      </li>))
+      );
+      menu = menu.concat(partitionList);
+    }
+
+    return menu;
   },
 
   settingsMenu: function(){
@@ -437,23 +463,6 @@ var Tree = React.createClass({
       paddingBottom: "10px"
     };
 
-    var partitionList = [];
-    if(!_.isEmpty(this.props.partition)){
-      partitionList = [
-        <div className="dropdown-divider"></div>,
-        (<li>
-          <a href="javascript:;" onClick={ ()=>this.setState({partition: []}) }>None</a>
-        </li>)
-      ].concat(_.keys(this.props.partition).map(key=>(<li>
-        <a
-          href="javascript:;"
-          onClick={ ()=>this.setState({partition: _.keys(this.props.partition[key])}) }
-        >
-        {key}
-        </a>
-      </li>))
-      );
-    }
     return (<ul className="dropdown-menu">
       <li style={dropdownListStyle}>
         <input
@@ -475,7 +484,6 @@ var Tree = React.createClass({
         />{" "}
         GrayScale
       </li>
-      {partitionList}
     </ul>);
   },
 
@@ -552,17 +560,23 @@ var Tree = React.createClass({
 
     this.assignBranchAnnotations();
 
+    //if (_.indexOf(_.keys(analysis_data), "tree") > -1) {
+    //  self.tree(analysis_data["tree"]).svg(self.svg);
+    //} else if(self.props.multitree){
+    //  self.tree(self.props.json.trees[self.state.current]['newickString'])
+    //    .svg(self.svg);      
+    //} else {
+    //  self
+    //    .tree(self.props.models[self.state.selected_model]["tree string"])
+    //    .svg(self.svg);
+    //}
 
-    if (_.indexOf(_.keys(analysis_data), "tree") > -1) {
-      self.tree(analysis_data["tree"]).svg(self.svg);
-    } else if(self.props.multitree){
-      self.tree(self.props.json.breakpointData[self.state.current].tree)
-        .svg(self.svg);      
-    } else {
-      self
-        .tree(self.props.models[self.state.selected_model]["tree string"])
-        .svg(self.svg);
+    if(self.props.method=='absrel' || self.props.method=='relax'){
+      var tree_string = self.props.json.input.trees[0];
+    }else if (self.props.method=='busted'){
+      var tree_string = self.props.json.trees[self.state.current]['newickString']
     }
+    self.tree(tree_string).svg(self.svg); 
 
     self.branch_lengths = this.getBranchLengths();
     self.tree.font_size(18);
@@ -583,7 +597,7 @@ var Tree = React.createClass({
       .attr("height", "100%")
       .attr("fill", "white");
 
-    if (self.state.show_legend && !self.props.multitree) {
+    if (self.state.show_legend && _.keys(self.props.models).length > 0) {
       if (self.legend_type == "discrete") {
         self.renderDiscreteLegendColorScheme("tree_container");
       } else {
@@ -593,14 +607,14 @@ var Tree = React.createClass({
         );
       }
     }
-  
+
     if (!_.isEmpty(this.props.partition) && this.settings.edgeColorizer) {
       this.edgeColorizer = _.partial(
         this.settings.edgeColorizer,
         _,
         _,
         self.state.omega_color,
-        self.state.partition
+        _.keys(self.props.partition[self.state.partition])
       );
     } else if (this.settings.edgeColorizer) {
       this.edgeColorizer = _.partial(
@@ -671,11 +685,11 @@ var Tree = React.createClass({
                   className="btn btn-default dropdown-toggle"
                   data-toggle="dropdown"
                 >
-                  {this.props.multitree ? "Partition" : "Model"}{" "}
+                  Options
                   <span className="caret" />
                 </button>
                 <ul className="dropdown-menu" id="hyphy-tree-model-list">
-                  {this.getModelList()}
+                  {this.getMainList()}
                 </ul>
                 <button
                   type="button"

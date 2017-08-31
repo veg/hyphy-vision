@@ -48,7 +48,7 @@ function GARDResults(props){
     <div className="clearance" id="summary-div"></div>
     <div className="col-md-12">
       <h3 className="list-group-item-heading">
-        <span className="summary-method-name">
+        <span id="summary-method-name">
           Genetic Algorithm Recombination Detection
         </span>
         <br />
@@ -259,6 +259,9 @@ class GARD extends React.Component {
   componentDidMount(){
     var self = this;
     d3.json(this.props.url, function(data){
+      data.trees = data.breakpointData.map(row => {
+        return {newickString: row.tree};
+      }); 
       self.setState({
         data: data
       });
@@ -282,6 +285,9 @@ class GARD extends React.Component {
       reader.onload = (function(theFile) {
         return function(e) {
           var data = JSON.parse(this.result);
+          data.trees = data.breakpointData.map(row => {
+            return {newickString: row.tree};
+          }); 
           self.setState({data: data});
         };
       })(f);

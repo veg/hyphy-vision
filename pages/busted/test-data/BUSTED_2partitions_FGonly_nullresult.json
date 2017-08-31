@@ -1,0 +1,344 @@
+{
+ "analysis":{
+   "info":"BUSTED (branch-site unrestricted statistical test of episodic diversification) uses a random effects branch-site model fitted jointly to all or a subset of tree branches in order to test for alignment-wide evidence of episodic diversifying selection. Assuming there is evidence of positive selection (i.e. there is an omega > 1), BUSTED will also perform a quick evidence-ratio style analysis to explore which individual sites may have been subject to selection.",
+   "version":"1.2",
+   "citation":"*Gene-wide identification of episodic selection*, Mol Biol Evol. 32(5):1365-71",
+   "authors":"Sergei L Kosakovsky Pond",
+   "contact":"spond@temple.edu",
+   "requirements":"in-frame codon alignment and a phylogenetic tree (optionally annotated with {})"
+  },
+ "input":{
+   "file name":"/home/sjspielman/Dropbox/simulate_for_stephen/2.3.1-alpha/input_data/dat_partitioned.nex",
+   "number of sequences":12,
+   "number of sites":40,
+   "partition count":2,
+   "trees":{
+     "0":"(T1:0.140821,(((T4:0.0918075,T9:0.0712801)Node5:0.131355,(T10:0.416582,T7:0.0476408)Node8:0.0883192)Node4:0.637702,(T3:0.698741,T12:0.0835068)Node11:0.0469205)Node3:0.0741876,(((T5:0.0865238,T8:0.0535977)Node16:0.10328,T6:0.0885736)Node15:0.250248,(T2:0.0743222,T11:0.183571)Node20:0.644012)Node14:0.438272)",
+     "1":"(((T3:0.0197597,T10:0.16236)Node3:0.288468,T8:0.697417)Node2:0.235357,(((T11:0.178972,T5:0.347042)Node9:0.0479737,T1:0.08913)Node8:0.176925,(T7:0.407659,T2:0.27863)Node13:0.0266932)Node7:0.396699,(((T12:0.135414,T6:0.178748)Node18:0.0538266,T4:0.0910871)Node17:0.025723,T9:0.076758)Node16:0.0141549)"
+    }
+  },
+ "background":0,
+ "fits":{
+   "Unconstrained model":{
+     "Log Likelihood":-1035.808919133624,
+     "estimated parameters":61,
+     "AIC-c":2211.713532047152,
+     "Rate Distributions":{
+       "Test":{
+         "0":{
+           "omega":0.4318796640865625,
+           "proportion":0
+          },
+         "1":{
+           "omega":0.4612076561524368,
+           "proportion":1
+          },
+         "2":{
+           "omega":1.001165288595591,
+           "proportion":0
+          }
+        }
+      },
+     "display order":0
+    }
+  },
+ "timers":{
+   "Overall":{
+     "timer":549,
+     "order":0
+    },
+   "Preliminary model fitting":{
+     "timer":121,
+     "order":1
+    },
+   "Unconstrained BUSTED model fitting":{
+     "timer":422,
+     "order":2
+    }
+  },
+ "Site Log Likelihood":{
+   "unconstrained":[
+    [-32.31410439483439, -13.63139422915818, -18.89158573242186, -13.95021120303671, -30.39882042114753, -23.29732077680091, -33.37101443029505, -29.5260967461332, -30.97076406293683, -22.38095305337343, -17.14026888999427, -13.36013523794172, -20.00948491147754, -31.20168809181461, -26.55427049147703, -16.69800246202965, -31.18073146696686, -17.17471474072969, -9.402323957976348, -15.45474448324253, -24.69310991230069, -21.60069305079359, -37.62384652360269, -19.16876921227752, -17.20371872785019, -28.66020966948773, -28.67547134575338, -27.72757535763392, -15.71303320232956, -43.19762924853692, -40.51077256630646, -34.00631044206343, -36.38153433203363, -30.39493443572985, -35.7379576283484, -23.14262534449076, -36.82946187685668, -35.14022352295645, -21.57931929920942, -30.91309365127427]
+    ]
+  },
+ "Evidence Ratios":{
+  },
+ "tested":{
+   "0":{
+     "T1":"test",
+     "T4":"test",
+     "T9":"test",
+     "Node5":"test",
+     "T10":"test",
+     "T7":"test",
+     "Node8":"test",
+     "Node4":"test",
+     "T3":"test",
+     "T12":"test",
+     "Node11":"test",
+     "Node3":"test",
+     "T5":"test",
+     "T8":"test",
+     "Node16":"test",
+     "T6":"test",
+     "Node15":"test",
+     "T2":"test",
+     "T11":"test",
+     "Node20":"test",
+     "Node14":"test"
+    },
+   "1":{
+     "T3":"test",
+     "T10":"test",
+     "Node3":"test",
+     "T8":"test",
+     "Node2":"test",
+     "T11":"test",
+     "T5":"test",
+     "Node9":"test",
+     "T1":"test",
+     "Node8":"test",
+     "T7":"test",
+     "T2":"test",
+     "Node13":"test",
+     "Node7":"test",
+     "T12":"test",
+     "T6":"test",
+     "Node18":"test",
+     "T4":"test",
+     "Node17":"test",
+     "T9":"test",
+     "Node16":"test"
+    }
+  },
+ "data partitions":{
+   "0":{
+     "name":"busted.filter.SPAN_1",
+     "coverage":[
+      [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19]
+      ]
+    },
+   "1":{
+     "name":"busted.filter.SPAN_2",
+     "coverage":[
+      [20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39]
+      ]
+    }
+  },
+ "branch attributes":{
+   "0":{
+     "Node11":{
+       "MG94xREV with separate rates for test/background branches":0.02832315449821036,
+       "unconstrained":0.02835816415490066
+      },
+     "Node14":{
+       "MG94xREV with separate rates for test/background branches":0.2689118675758254,
+       "unconstrained":0.2686156290088844
+      },
+     "Node15":{
+       "MG94xREV with separate rates for test/background branches":0.07103116598593957,
+       "unconstrained":0.0710665137401998
+      },
+     "Node16":{
+       "MG94xREV with separate rates for test/background branches":0.01672933824491919,
+       "unconstrained":0.01673284903875345
+      },
+     "Node20":{
+       "MG94xREV with separate rates for test/background branches":0.09627900007085677,
+       "unconstrained":0.09635581918275311
+      },
+     "Node3":{
+       "MG94xREV with separate rates for test/background branches":0,
+       "unconstrained":0
+      },
+     "Node4":{
+       "MG94xREV with separate rates for test/background branches":0.1983465982475026,
+       "unconstrained":0.1981105489751582
+      },
+     "Node5":{
+       "MG94xREV with separate rates for test/background branches":0.03925289534537869,
+       "unconstrained":0.03927762372479388
+      },
+     "Node8":{
+       "MG94xREV with separate rates for test/background branches":0.01712319491430468,
+       "unconstrained":0.01712796148522197
+      },
+     "T1":{
+       "MG94xREV with separate rates for test/background branches":0.07893776080227186,
+       "original name":"T1",
+       "unconstrained":0.07898159496101288
+      },
+     "T10":{
+       "MG94xREV with separate rates for test/background branches":0.1966691353144097,
+       "original name":"T10",
+       "unconstrained":0.1965399599865049
+      },
+     "T11":{
+       "MG94xREV with separate rates for test/background branches":0.08300006607506386,
+       "original name":"T11",
+       "unconstrained":0.08304329263499542
+      },
+     "T12":{
+       "MG94xREV with separate rates for test/background branches":0.08372682827963333,
+       "original name":"T12",
+       "unconstrained":0.08374923234822958
+      },
+     "T2":{
+       "MG94xREV with separate rates for test/background branches":0.05766628352235936,
+       "original name":"T2",
+       "unconstrained":0.05766693446706946
+      },
+     "T3":{
+       "MG94xREV with separate rates for test/background branches":0.4073741086096745,
+       "original name":"T3",
+       "unconstrained":0.4072163977576372
+      },
+     "T4":{
+       "MG94xREV with separate rates for test/background branches":0.03625817360941748,
+       "original name":"T4",
+       "unconstrained":0.0362746009585475
+      },
+     "T5":{
+       "MG94xREV with separate rates for test/background branches":0.05033880789169514,
+       "original name":"T5",
+       "unconstrained":0.05037112064582149
+      },
+     "T6":{
+       "MG94xREV with separate rates for test/background branches":0.03363888389879652,
+       "original name":"T6",
+       "unconstrained":0.03366198255987684
+      },
+     "T7":{
+       "MG94xREV with separate rates for test/background branches":0,
+       "original name":"T7",
+       "unconstrained":0
+      },
+     "T8":{
+       "MG94xREV with separate rates for test/background branches":0.01667938279859089,
+       "original name":"T8",
+       "unconstrained":0.01668777669888927
+      },
+     "T9":{
+       "MG94xREV with separate rates for test/background branches":0.01729071462466831,
+       "original name":"T9",
+       "unconstrained":0.01729881369800077
+      }
+    },
+   "attributes":{
+     "MG94xREV with separate rates for test/background branches":{
+       "attribute type":"branch length",
+       "display order":2
+      },
+     "original name":{
+       "attribute type":"node label",
+       "display order":0
+      },
+     "unconstrained":{
+       "attribute type":"branch length",
+       "display order":0
+      }
+    },
+   "1":{
+     "Node13":{
+       "MG94xREV with separate rates for test/background branches":0,
+       "unconstrained":0
+      },
+     "Node16":{
+       "MG94xREV with separate rates for test/background branches":0.05745973239865818,
+       "unconstrained":0.05748847772261027
+      },
+     "Node17":{
+       "MG94xREV with separate rates for test/background branches":0,
+       "unconstrained":0
+      },
+     "Node18":{
+       "MG94xREV with separate rates for test/background branches":0.263471267679755,
+       "unconstrained":0.2634259870153103
+      },
+     "Node2":{
+       "MG94xREV with separate rates for test/background branches":0,
+       "unconstrained":0
+      },
+     "Node3":{
+       "MG94xREV with separate rates for test/background branches":0.05434292819862071,
+       "unconstrained":0.05436108302812003
+      },
+     "Node7":{
+       "MG94xREV with separate rates for test/background branches":0.009614054435234299,
+       "unconstrained":0.009604067318295578
+      },
+     "Node8":{
+       "MG94xREV with separate rates for test/background branches":0.2655030071413453,
+       "unconstrained":0.2657286889609558
+      },
+     "Node9":{
+       "MG94xREV with separate rates for test/background branches":0.00121394167999704,
+       "unconstrained":0.001350114319057518
+      },
+     "T1":{
+       "MG94xREV with separate rates for test/background branches":0.02711230483640607,
+       "original name":"T1",
+       "unconstrained":0.02708434674158762
+      },
+     "T10":{
+       "MG94xREV with separate rates for test/background branches":0.07978735928555498,
+       "original name":"T10",
+       "unconstrained":0.07984111894789585
+      },
+     "T11":{
+       "MG94xREV with separate rates for test/background branches":0.4436407971234707,
+       "original name":"T11",
+       "unconstrained":0.4437439002894605
+      },
+     "T12":{
+       "MG94xREV with separate rates for test/background branches":0,
+       "original name":"T12",
+       "unconstrained":0
+      },
+     "T2":{
+       "MG94xREV with separate rates for test/background branches":0.5773597227823066,
+       "original name":"T2",
+       "unconstrained":0.5775746258211802
+      },
+     "T3":{
+       "MG94xREV with separate rates for test/background branches":0.3677323458050963,
+       "original name":"T3",
+       "unconstrained":0.367793592820268
+      },
+     "T4":{
+       "MG94xREV with separate rates for test/background branches":0,
+       "original name":"T4",
+       "unconstrained":0
+      },
+     "T5":{
+       "MG94xREV with separate rates for test/background branches":0.3359805834094309,
+       "original name":"T5",
+       "unconstrained":0.3357530178911832
+      },
+     "T6":{
+       "MG94xREV with separate rates for test/background branches":0.4296218129383025,
+       "original name":"T6",
+       "unconstrained":0.4290683730370577
+      },
+     "T7":{
+       "MG94xREV with separate rates for test/background branches":0.05767477620114578,
+       "original name":"T7",
+       "unconstrained":0.05767580902083442
+      },
+     "T8":{
+       "MG94xREV with separate rates for test/background branches":0.6931106806587645,
+       "original name":"T8",
+       "unconstrained":0.6926098409359279
+      },
+     "T9":{
+       "MG94xREV with separate rates for test/background branches":0.03436252821845389,
+       "original name":"T9",
+       "unconstrained":0.03437432866348013
+      }
+    }
+  },
+ "test results":{
+   "LRT":0,
+   "p-value":1
+  }
+}
