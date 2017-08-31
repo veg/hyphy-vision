@@ -10377,6 +10377,20 @@ input[type=range]:focus::-ms-fill-upper {
 }
 
 .modal .modal-dialog { width: 800px; }
+
+.fa-bar-chart:hover {
+    color: #00a99d;
+}
+
+.positive-selection-row {
+  color: white;
+  background-color: #7EC6B3;
+}
+
+.negative-selection-row {
+  color: white;
+  background-color: black;
+}
 .axis path,
 .axis line {
   fill: none;
