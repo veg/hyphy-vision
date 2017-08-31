@@ -82,11 +82,13 @@ function MEMETable(props) {
   });
   var formatter = d3.format(".2f"),
     new_rows = flattened.map((row, index) => {
-      var selection = row[3]/row[0] > 1 && row[6] < .1 ? "positive-selection-row" : "";
-        selection = row[1]/row[0] < 1 && row[6] < .1 ? "negative-selection-row" : selection;
+      var alpha = row[0] ? row[0] : 1e-10,
+        beta_minus = row[1],
+        beta_plus = row[3];
+      var selection = beta_minus/alpha < 1 && row[6] < .1 ? "negative-selection-row" : "";
+        selection = beta_plus/alpha > 1 && row[6] < .1 ? "positive-selection-row" : selection;
       var site = {value: index+1, classes: selection},
         partition = {value: partition_column[index], classes:selection};
-  
       return [site, partition].concat(
         row.map(entry => {
           return {value: formatter(entry), classes: selection};
