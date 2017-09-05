@@ -19,6 +19,13 @@ class GraphMenu extends React.Component {
     };
   }
 
+  componentWillReceiveProps(nextProps){
+    this.setState({
+      xaxis: "Site",
+      yaxis: nextProps.y_options ? nextProps.y_options[0] : "alpha"
+    });
+  }
+
   handleSelection(e) {
     var dimension = e.target.dataset.dimension;
     var axis = e.target.dataset.axis;
