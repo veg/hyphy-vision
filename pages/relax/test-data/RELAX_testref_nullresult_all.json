@@ -1,0 +1,416 @@
+{
+ "input":{
+   "file name":"/Users/sjspielman/Dropbox/simulate_for_stephen/2.3.1-alpha/input_data/dat_labeled.dat",
+   "number of sequences":12,
+   "number of sites":20,
+   "partition count":1,
+   "trees":{
+     "0":"(t1:0.140821,(((t4:0.0918075,t9:0.0712801)Node5:0.131355,(t10:0.416582,t7:0.0476408)Node8:0.0883192)Node4:0.637702,(t3:0.698741,t12:0.0835068)Node11:0.0469205)Node3:0.0741876,(((t5:0.0865238,t8:0.0535977)Node16:0.10328,t6:0.0885736)Node15:0.250248,(t2:0.0743222,t11:0.183571)Node20:0.644012)Node14:0.438272)"
+    }
+  },
+ "fits":{
+   "MG94xREV with separate rates for branch sets":{
+     "Log Likelihood":-445.6006914858738,
+     "estimated parameters":37,
+     "AIC-c":979.1221750509554,
+     "Rate Distributions":{
+       "Reference":{
+         "0":{
+           "omega":0.7497659035056864,
+           "proportion":1
+          }
+        },
+       "Test":{
+         "0":{
+           "omega":0.7830779027056004,
+           "proportion":1
+          }
+        }
+      },
+     "display order":0
+    },
+   "General descriptive":{
+     "Log Likelihood":-436.18738217648,
+     "estimated parameters":60,
+     "AIC-c":1033.268619101563,
+     "Rate Distributions":{
+       "Shared":{
+         "0":{
+           "omega":0.521500239848429,
+           "proportion":1
+          },
+         "1":{
+           "omega":1,
+           "proportion":0
+          },
+         "2":{
+           "omega":1.103440608158405,
+           "proportion":0
+          }
+        }
+      },
+     "display order":1
+    },
+   "RELAX alternative":{
+     "Log Likelihood":-445.6008267203429,
+     "estimated parameters":41,
+     "AIC-c":990.5955928346251,
+     "Rate Distributions":{
+       "Test":{
+         "0":{
+           "omega":0.7811271889411298,
+           "proportion":1
+          },
+         "1":{
+           "omega":0.8078716953198206,
+           "proportion":0
+          },
+         "2":{
+           "omega":1.007115604173111,
+           "proportion":0
+          }
+        },
+       "Reference":{
+         "0":{
+           "omega":0.751396657988336,
+           "proportion":1
+          },
+         "1":{
+           "omega":0.781243962416255,
+           "proportion":0
+          },
+         "2":{
+           "omega":1.008237997264659,
+           "proportion":0
+          }
+        }
+      },
+     "display order":2
+    },
+   "RELAX null":{
+     "Log Likelihood":-445.6031227888958,
+     "estimated parameters":40,
+     "AIC-c":987.6886576380931,
+     "Rate Distributions":{
+       "Test":{
+         "0":{
+           "omega":0.7566540477408908,
+           "proportion":1
+          },
+         "1":{
+           "omega":0.7820252063786713,
+           "proportion":0
+          },
+         "2":{
+           "omega":1.040987190567318,
+           "proportion":0
+          }
+        },
+       "Reference":{
+         "0":{
+           "omega":0.7566540477408908,
+           "proportion":1
+          },
+         "1":{
+           "omega":0.7820252063786713,
+           "proportion":0
+          },
+         "2":{
+           "omega":1.040987190567318,
+           "proportion":0
+          }
+        }
+      },
+     "display order":3
+    },
+   "RELAX partitioned descriptive":{
+     "Log Likelihood":-445.6002516065557,
+     "estimated parameters":44,
+     "AIC-c":999.5081955208038,
+     "Rate Distributions":{
+       "Test":{
+         "0":{
+           "omega":0.7820252063786713,
+           "proportion":0
+          },
+         "1":{
+           "omega":0.7830605062318976,
+           "proportion":1
+          },
+         "2":{
+           "omega":1.045247472484532,
+           "proportion":0
+          }
+        },
+       "Reference":{
+         "0":{
+           "omega":0.7516469983226002,
+           "proportion":1
+          },
+         "1":{
+           "omega":0.7820252063786713,
+           "proportion":0
+          },
+         "2":{
+           "omega":1.045247472484532,
+           "proportion":0
+          }
+        }
+      },
+     "display order":4
+    }
+  },
+ "timers":{
+   "Overall":{
+     "timer":185,
+     "order":0
+    },
+   "Preliminary model fitting":{
+     "timer":16,
+     "order":1
+    },
+   "General descriptive model fitting":{
+     "timer":59,
+     "order":2
+    },
+   "RELAX alternative model fitting":{
+     "timer":88,
+     "order":3
+    },
+   "RELAX null model fitting":{
+     "timer":9,
+     "order":4
+    },
+   "RELAX partitioned descriptive":{
+     "timer":11,
+     "order":5
+    }
+  },
+ "test results":{
+   "LRT":0.004592137105873917,
+   "p-value":0.9459724596565359,
+   "relaxation or intensification parameter":0.8642359220048158
+  },
+ "tested":{
+   "0":{
+     "t1":"Reference",
+     "t4":"Test",
+     "t9":"Test",
+     "Node5":"Test",
+     "t10":"Test",
+     "t7":"Test",
+     "Node8":"Test",
+     "Node4":"Reference",
+     "t3":"Reference",
+     "t12":"Reference",
+     "Node11":"Reference",
+     "Node3":"Reference",
+     "t5":"Reference",
+     "t8":"Reference",
+     "Node16":"Reference",
+     "t6":"Reference",
+     "Node15":"Reference",
+     "t2":"Reference",
+     "t11":"Reference",
+     "Node20":"Reference",
+     "Node14":"Reference"
+    }
+  },
+ "data partitions":{
+   "0":{
+     "name":"relax.filter.default",
+     "coverage":[
+      [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19]
+      ]
+    }
+  },
+ "branch attributes":{
+   "0":{
+     "t8":{
+       "original name":"t8",
+       "General descriptive":0.01682533750666724,
+       "k (general descriptive)":0,
+       "RELAX alternative":0.01685039504130183,
+       "RELAX null":0.01686539814216965,
+       "RELAX partitioned descriptive":0.01686672302487426
+      },
+     "t9":{
+       "original name":"t9",
+       "General descriptive":0.01688094591672929,
+       "k (general descriptive)":49.13312589361033,
+       "RELAX alternative":0.01758648523617034,
+       "RELAX null":0.01755536002002411,
+       "RELAX partitioned descriptive":0.01759518935083426
+      },
+     "t6":{
+       "original name":"t6",
+       "General descriptive":0.03221990777958055,
+       "k (general descriptive)":49.49514947535414,
+       "RELAX alternative":0.03438069055427641,
+       "RELAX null":0.03442147270432769,
+       "RELAX partitioned descriptive":0.03441121909595755
+      },
+     "t7":{
+       "original name":"t7",
+       "General descriptive":0,
+       "k (general descriptive)":1.00401002405814,
+       "RELAX alternative":0,
+       "RELAX null":0,
+       "RELAX partitioned descriptive":0
+      },
+     "t4":{
+       "original name":"t4",
+       "General descriptive":0.03597238720799114,
+       "k (general descriptive)":49.133104656287,
+       "RELAX alternative":0.03632160970713156,
+       "RELAX null":0.03633102698474767,
+       "RELAX partitioned descriptive":0.03638381409203419
+      },
+     "t5":{
+       "original name":"t5",
+       "General descriptive":0.05102863549402059,
+       "k (general descriptive)":0.5132206971115816,
+       "RELAX alternative":0.05131273869409331,
+       "RELAX null":0.05132122100213149,
+       "RELAX partitioned descriptive":0.05129561846445469
+      },
+     "t2":{
+       "original name":"t2",
+       "General descriptive":0.05922839363668083,
+       "k (general descriptive)":1.997964361364795,
+       "RELAX alternative":0.06154286957201465,
+       "RELAX null":0.06165257607617733,
+       "RELAX partitioned descriptive":0.06157320166112784
+      },
+     "t3":{
+       "original name":"t3",
+       "General descriptive":0.3994367095459923,
+       "k (general descriptive)":0,
+       "RELAX alternative":0.3983215893095342,
+       "RELAX null":0.3981035227818848,
+       "RELAX partitioned descriptive":0.3986134742704834
+      },
+     "t1":{
+       "original name":"t1",
+       "General descriptive":0.07675350305116077,
+       "k (general descriptive)":0.23869430782113,
+       "RELAX alternative":0.07967548216254521,
+       "RELAX null":0.07969529036073685,
+       "RELAX partitioned descriptive":0.07974664148106135
+      },
+     "t10":{
+       "original name":"t10",
+       "General descriptive":0.1965527759605559,
+       "k (general descriptive)":0,
+       "RELAX alternative":0.1949690035379787,
+       "RELAX null":0.1949625498933763,
+       "RELAX partitioned descriptive":0.1951035411762401
+      },
+     "t11":{
+       "original name":"t11",
+       "General descriptive":0.08426110835639812,
+       "k (general descriptive)":0,
+       "RELAX alternative":0.08146064064285642,
+       "RELAX null":0.08150267827766244,
+       "RELAX partitioned descriptive":0.08157458061949704
+      },
+     "t12":{
+       "original name":"t12",
+       "General descriptive":0.08572521954348565,
+       "k (general descriptive)":0,
+       "RELAX alternative":0.08087743288964971,
+       "RELAX null":0.0809327430352401,
+       "RELAX partitioned descriptive":0.08093427343154259
+      },
+     "Node11":{
+       "General descriptive":0.03051463275386195,
+       "k (general descriptive)":2.188856017219285,
+       "RELAX alternative":0.03238509125836922,
+       "RELAX null":0.03235999636222214,
+       "RELAX partitioned descriptive":0.03235307785028052
+      },
+     "Node14":{
+       "General descriptive":0.2650910500282609,
+       "k (general descriptive)":1.300723141436809,
+       "RELAX alternative":0.2612359673974109,
+       "RELAX null":0.2614053864421889,
+       "RELAX partitioned descriptive":0.2613726445763686
+      },
+     "Node15":{
+       "General descriptive":0.07531749691046323,
+       "k (general descriptive)":0,
+       "RELAX alternative":0.07010367719920789,
+       "RELAX null":0.07010249771806457,
+       "RELAX partitioned descriptive":0.07013031807400652
+      },
+     "Node16":{
+       "General descriptive":0.01716690861216055,
+       "k (general descriptive)":0,
+       "RELAX alternative":0.01650736725600224,
+       "RELAX null":0.01650208531720659,
+       "RELAX partitioned descriptive":0.01650003782763962
+      },
+     "Node20":{
+       "General descriptive":0.08275541848862647,
+       "k (general descriptive)":1.131429741579877,
+       "RELAX alternative":0.09666813590454632,
+       "RELAX null":0.09663725605290034,
+       "RELAX partitioned descriptive":0.09668588940300132
+      },
+     "Node3":{
+       "General descriptive":0,
+       "k (general descriptive)":1.002002002002002,
+       "RELAX alternative":0,
+       "RELAX null":0,
+       "RELAX partitioned descriptive":0
+      },
+     "Node4":{
+       "General descriptive":0.204274175960725,
+       "k (general descriptive)":2.112518478401413,
+       "RELAX alternative":0.1969452818203601,
+       "RELAX null":0.1967545366079627,
+       "RELAX partitioned descriptive":0.1970774877074236
+      },
+     "Node5":{
+       "General descriptive":0.0369801259773135,
+       "k (general descriptive)":1.544344736142183,
+       "RELAX alternative":0.0400484867349595,
+       "RELAX null":0.04007886051625633,
+       "RELAX partitioned descriptive":0.04003532672420666
+      },
+     "Node8":{
+       "General descriptive":0.01828194473685063,
+       "k (general descriptive)":0,
+       "RELAX alternative":0.01579780202042219,
+       "RELAX null":0.01577131088640036,
+       "RELAX partitioned descriptive":0.01581648382530937
+      }
+    },
+   "attributes":{
+     "original name":{
+       "attribute type":"node label",
+       "display order":0
+      },
+     "General descriptive":{
+       "attribute type":"branch length",
+       "display order":1
+      },
+     "k (general descriptive)":{
+       "attribute type":"branch label",
+       "display order":1
+      },
+     "RELAX alternative":{
+       "attribute type":"branch length",
+       "display order":2
+      },
+     "RELAX null":{
+       "attribute type":"branch length",
+       "display order":3
+      },
+     "RELAX partitioned descriptive":{
+       "attribute type":"branch length",
+       "display order":4
+      }
+    }
+  }
+}
