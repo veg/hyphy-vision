@@ -237,6 +237,7 @@ class MEME extends React.Component {
 
     return (
       <div>
+        {this.props.hyphy_vision ? <NavBar onFileChange={this.onFileChange} /> : ''}
         <div className="container">
           <div className="row">
             <ScrollSpy info={scrollspy_info} />
@@ -274,4 +275,10 @@ function render_meme(url, element) {
   ReactDOM.render(<MEME url={url} />, document.getElementById(element));
 }
 
+function render_hv_meme(url, element) {
+  ReactDOM.render(<MEME url={url} hyphy_vision />, document.getElementById(element));
+}
+
 module.exports = render_meme;
+module.exports.hv = render_hv_meme;
+

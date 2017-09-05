@@ -1290,6 +1290,7 @@ var SLAC = React.createClass({
 
       return (
         <div>
+          {this.props.hyphy_vision ? <NavBar onFileChange={this.onFileChange} /> : ''}
           <div className="container">
             <div className="row">
               <ScrollSpy info={scrollspy_info} />
@@ -1438,4 +1439,10 @@ function render_slac(url, element) {
   ReactDOM.render(<SLAC url={url} />, document.getElementById(element));
 }
 
+function render_hv_slac(url, element) {
+  ReactDOM.render(<SLAC url={url} hyphy_vision />, document.getElementById(element));
+}
+
 module.exports = render_slac;
+module.exports.hv = render_hv_slac;
+

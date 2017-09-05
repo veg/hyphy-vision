@@ -440,6 +440,7 @@ var BSREL = React.createClass({
     }
     return (
       <div>
+        {self.props.hyphy_vision ? <NavBar /> : ''}
         <div className="container">
           <div className="row">
             <ScrollSpy info={scrollspy_info} />
@@ -529,4 +530,10 @@ function render_absrel(url, element) {
   ReactDOM.render(<BSREL url={url} />, document.getElementById(element));
 }
 
+function render_hv_absrel(url, element) {
+  ReactDOM.render(<BSREL url={url} hyphy_vision />, document.getElementById(element));
+}
+
 module.exports = render_absrel;
+module.exports.hv = render_hv_absrel;
+

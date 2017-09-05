@@ -332,6 +332,7 @@ class RELAX extends React.Component{
       }
     }
     return (<div>
+      {self.props.hyphy_vision ? <NavBar onFileChange={this.onFileChange} /> : ''}
       <div className="container">
         <div className="row">
           <ScrollSpy info={scrollspy_info} />
@@ -411,4 +412,10 @@ function render_relax(url, element) {
   ReactDOM.render(<RELAX url={url} />, document.getElementById(element));
 }
 
+function render_hv_relax(url, element) {
+  ReactDOM.render(<RELAX url={url} hyphy_vision />, document.getElementById(element));
+}
+
 module.exports = render_relax;
+module.exports.hv = render_hv_relax;
+

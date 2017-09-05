@@ -874,6 +874,7 @@ var BUSTED = React.createClass({
 
     return (
       <div>
+        {self.props.hyphy_vision ? <NavBar onFileChange={this.onFileChange} /> : ''}
         <div className="container">
           <div className="row">
             <ScrollSpy info={scrollspy_info} />
@@ -933,4 +934,10 @@ var render_busted = function(url, element) {
   ReactDOM.render(<BUSTED url={url} />, document.getElementById(element));
 };
 
+var render_hv_busted = function(url, element) {
+  ReactDOM.render(<BUSTED url={url} hyphy_vision />, document.getElementById(element));
+};
+
 module.exports = render_busted;
+module.exports.hv = render_hv_busted;
+
