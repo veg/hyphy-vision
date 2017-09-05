@@ -18,11 +18,6 @@ import { Header } from "./components/header.jsx";
 
 function BUSTEDSummary(props) {
   var significant = props.p < 0.05,
-    input_data = props.input_data ? {
-      filename: props.input_data['file name'],
-      sequences: props.input_data['number of sequences'],
-      sites: props.input_data['number of sites']
-    } : null,
     message;
   if (significant) {
     message = (<p>
@@ -30,8 +25,8 @@ function BUSTEDSummary(props) {
         found evidence
       </strong>{" "}
       (LRT, p-value = {props.p ? props.p.toFixed(3) : null} &le; .05) of gene-wide episodic diversifying selection
-      in the selected foreground of your phylogeny. Therefore, there is
-      evidence that at least one site on at least one foreground branch has
+      in the selected test branches of your phylogeny. Therefore, there is
+      evidence that at least one site on at least one test branch has
       experienced diversifying selection.{" "}
     </p>);
   } else {
@@ -41,9 +36,9 @@ function BUSTEDSummary(props) {
           found no evidence
         </strong>{" "}
         (LRT, p-value = {props.p ? props.p.toFixed(3) : null} &ge; .05) of gene-wide episodic diversifying selection
-        in the selected foreground of your phylogeny. Therefore, there is no
+        in the selected test branches of your phylogeny. Therefore, there is no
         evidence that any sites have experienced diversifying selection along
-        the foreground branch(es).{" "}
+        the test branch(es).{" "}
       </p>
     );
   }
@@ -52,8 +47,8 @@ function BUSTEDSummary(props) {
     <div className="clearance" id="summary-div"></div>
       <div className="col-md-12">
         <h3 className="list-group-item-heading">
-          <span className="summary-method-name">
-            Branch-Site Unrestricted Statistical Test for Episodic
+          <span id="summary-method-name">
+            Branch-site Unrestricted Statistical Test for Episodic
             Diversification
           </span>
           <br />
@@ -61,7 +56,7 @@ function BUSTEDSummary(props) {
         </h3>
       </div>
       <div className="col-md-12">
-        <InputInfo input_data={input_data} />
+        <InputInfo input_data={props.input_data} />
       </div>
       <div className="col-md-12">
         <div className="main-result">
@@ -507,71 +502,175 @@ var BUSTEDSiteChartAndTable = React.createClass({
 
 });
 
-function BUSTEDModelTable(props){
-  if(!props.fits) return <div></div>;
-  var rows = _.map(props.fits, (val, key) => {
-    var distributions = val['Rate Distributions'],
-      test_row = (<tr>
-      <td>{key}</td>
-      <td>{val['Log Likelihood'] ? val['Log Likelihood'].toFixed(1) : null}</td>
-      <td>{val['estimated parameters']}</td>
-      <td>{val['AIC-c'].toFixed(1)}</td>
-      <td>Test</td>
-      <td>{distributions["Test"]["0"].omega.toFixed(2)} ({(100*distributions["Test"]["0"].proportion).toFixed(0)}%)</td>
-      <td>{distributions["Test"]["1"].omega.toFixed(2)} ({(100*distributions["Test"]["1"].proportion).toFixed(0)}%)</td>
-      <td>{distributions["Test"]["2"].omega.toFixed(2)} ({(100*distributions["Test"]["2"].proportion).toFixed(0)}%)</td>
-    </tr>);
-    if(distributions['Background']){
-      var background_row = (<tr>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td>Background</td>
-        <td>{distributions["Background"]["0"].omega.toFixed(2)} ({(100*distributions["Background"]["0"].proportion).toFixed(0)}%)</td>
-        <td>{distributions["Background"]["1"].omega.toFixed(2)} ({(100*distributions["Background"]["1"].proportion).toFixed(0)}%)</td>
-        <td>{distributions["Background"]["2"].omega.toFixed(2)} ({(100*distributions["Background"]["2"].proportion).toFixed(0)}%)</td>
-      </tr>)
-      return [test_row, background_row];
+class BUSTEDModelTable extends React.Component {
+  constructor(props){
+    super(props);
+
+    var distro_settings = {
+      dimensions: {
+        width: 600,
+        height: 400
+      },
+      margins: {
+        left: 50,
+        right: 15,
+        bottom: 15,
+        top: 35
+      },
+      legend: false,
+      domain: [0.00001, 10000],
+      do_log_plot: true,
+      k_p: null,
+      plot: null,
+      svg_id: "prop-chart"
+    };
+
+    this.state = {
+      model: "Unconstrained model",
+      branch: "Test",
+      distro_settings: distro_settings,
+      active: null
     }
-    return test_row;
-  });
-  return (<div>
-    <h4 className="dm-table-header">
-      Model fits
-      <span
-        className="glyphicon glyphicon-info-sign"
-        style={{ verticalAlign: "middle", float: "right" }}
-        aria-hidden="true"
-        data-toggle="popover"
-        data-trigger="hover"
-        title="Actions"
-        data-html="true"
-        data-content="<ul><li>Hover over a column header for a description of its content.</li></ul>"
-        data-placement="bottom"
-      />
-    </h4>
-    <table
-      className="dm-table table table-hover table-condensed list-group-item-text"
-      style={{ marginTop: "0.5em" }}
-    >
-      <thead id="summary-model-header1">
-        <tr>
-          <th>Model</th>
-          <th><em>log</em> L</th>
-          <th>#. params</th>
-          <th>AIC<sub>c</sub></th>
-          <th>Branch set</th>
-          <th>&omega;<sub>1</sub></th>
-          <th>&omega;<sub>2</sub></th>
-          <th>&omega;<sub>3</sub></th>
-        </tr>
-      </thead>
-      <tbody id="summary-model-table">
-        {_.flatten(rows)}
-      </tbody>
-    </table>
-  </div>); 
+  }
+  render() {
+    if(!this.props.fits) return <div></div>;
+    var self = this,
+      omegas = _.values(this.props.fits[this.state.model]['Rate Distributions'][this.state.branch]).map(val => {
+        return {
+          omega: val.omega,
+          prop: val.proportion
+        };
+      });
+    function modalShower(model, branch){
+      return function(){
+        this.setState({model: model, branch:branch});
+        $("#myModal").modal("show");
+      }
+    }
+    function makeActive(model){
+      return function(){
+        this.setState({active: model});
+      }
+    }
+    function makeInactive(){
+      this.setState({active: null});
+    }
+    var rows = _.map(this.props.fits, (val, key) => {
+      var distributions = val['Rate Distributions'],
+        onClick = modalShower(key, "Test").bind(self),
+        onMouseEnter = makeActive(key).bind(self),
+        onMouseLeave = makeInactive.bind(self),
+        className = key == self.state.active ? 'active' : '',
+        test_row = (<tr onClick={onClick} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave} className={className}> 
+        <td>{key}</td>
+        <td>{val['Log Likelihood'] ? val['Log Likelihood'].toFixed(1) : null}</td>
+        <td>{val['estimated parameters']}</td>
+        <td>{val['AIC-c'].toFixed(1)}</td>
+        <td>Test</td>
+        <td>{distributions["Test"]["0"].omega.toFixed(2)} ({(100*distributions["Test"]["0"].proportion).toFixed(0)}%)</td>
+        <td>{distributions["Test"]["1"].omega.toFixed(2)} ({(100*distributions["Test"]["1"].proportion).toFixed(0)}%)</td>
+        <td>{distributions["Test"]["2"].omega.toFixed(2)} ({(100*distributions["Test"]["2"].proportion).toFixed(0)}%)</td>
+        <td><i className="fa fa-bar-chart" aria-hidden="true"></i></td>
+      </tr>);
+      if(distributions['Background']){
+        var onClick = modalShower(key, "Background").bind(self);
+        var background_row = (<tr onClick={onClick} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave} className={className}>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td>Background</td>
+          <td>{distributions["Background"]["0"].omega.toFixed(2)} ({(100*distributions["Background"]["0"].proportion).toFixed(0)}%)</td>
+          <td>{distributions["Background"]["1"].omega.toFixed(2)} ({(100*distributions["Background"]["1"].proportion).toFixed(0)}%)</td>
+          <td>{distributions["Background"]["2"].omega.toFixed(2)} ({(100*distributions["Background"]["2"].proportion).toFixed(0)}%)</td>
+          <td><i className="fa fa-bar-chart" aria-hidden="true"></i></td>
+        </tr>)
+        return [test_row, background_row];
+      }
+      return test_row;
+    });
+    return (<div>
+      <h4 className="dm-table-header">
+        Model fits
+        <span
+          className="glyphicon glyphicon-info-sign"
+          style={{ verticalAlign: "middle", float: "right" }}
+          aria-hidden="true"
+          data-toggle="popover"
+          data-trigger="hover"
+          title="Actions"
+          data-html="true"
+          data-content="<ul><li>Hover over a column header for a description of its content.</li></ul>"
+          data-placement="bottom"
+        />
+      </h4>
+      <table
+        className="dm-table table table-hover table-condensed list-group-item-text"
+        style={{ marginTop: "0.5em" }}
+      >
+        <thead id="summary-model-header1">
+          <tr>
+            <th>Model</th>
+            <th><em>log</em> L</th>
+            <th>#. params</th>
+            <th>AIC<sub>c</sub></th>
+            <th>Branch set</th>
+            <th>&omega;<sub>1</sub></th>
+            <th>&omega;<sub>2</sub></th>
+            <th>&omega;<sub>3</sub></th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody id="summary-model-table">
+          {_.flatten(rows)}
+        </tbody>
+      </table>
+
+      <div
+        className="modal fade"
+        id="myModal"
+        tabIndex="-1"
+        role="dialog"
+        aria-labelledby="myModalLabel"
+      >
+        <div className="modal-dialog" role="document">
+          <div className="modal-content">
+            <div className="modal-header">
+              <button
+                type="button"
+                className="close"
+                data-dismiss="modal"
+                aria-label="Close"
+              >
+                <span aria-hidden="true">&times;</span>
+              </button>
+              <h4 className="modal-title" id="myModalLabel">
+                BUSTED Site Proportion Chart
+              </h4>
+            </div>
+            <div className="modal-body" id="modal-body">
+              <h4 className="dm-table-header">&omega; distribution</h4>
+                <PropChart
+                  name={self.state.model + ', ' + self.state.branch + ' branches'}
+                  omegas={omegas}
+                  settings={self.state.distro_settings}
+                />
+            </div>
+            <div className="modal-footer">
+              <button
+                type="button"
+                className="btn btn-default"
+                data-dismiss="modal"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>); 
+  }
 }
 
 var BUSTED = React.createClass({
@@ -765,8 +864,7 @@ var BUSTED = React.createClass({
     var scrollspy_info = [
       { label: "summary", href: "summary-div" },
       { label: "model statistics", href: "hyphy-model-fits" },
-      { label: "tree", href: "phylogenetic-tree" },
-      { label: "ω distribution", href: "primary-omega-dist" }
+      { label: "tree", href: "phylogenetic-tree" }
     ];
 
     var models = {};
@@ -776,6 +874,7 @@ var BUSTED = React.createClass({
 
     return (
       <div>
+        {self.props.hyphy_vision ? <NavBar onFileChange={this.onFileChange} /> : ''}
         <div className="container">
           <div className="row">
             <ScrollSpy info={scrollspy_info} />
@@ -817,16 +916,6 @@ var BUSTED = React.createClass({
                     multitree
                   />
                 </div>
-                <div className="col-md-12">
-                  <h4 className="dm-table-header">&omega; distribution</h4>
-                  <div id="primary-omega-dist">
-                    <PropChart
-                      name='Test'
-                      omegas={self.state.omegas}
-                      settings={self.props.distro_settings}
-                    />
-                  </div>
-                </div>
               </div>
             </div>
 
@@ -845,4 +934,10 @@ var render_busted = function(url, element) {
   ReactDOM.render(<BUSTED url={url} />, document.getElementById(element));
 };
 
+var render_hv_busted = function(url, element) {
+  ReactDOM.render(<BUSTED url={url} hyphy_vision />, document.getElementById(element));
+};
+
 module.exports = render_busted;
+module.exports.hv = render_hv_busted;
+

@@ -2,11 +2,13 @@ var React = require("react"),
   ReactDOM = require("react-dom"),
   _ = require("underscore");
 
+import { InputInfo } from "./components/input_info.jsx";
 import { DatamonkeyTable } from "./components/tables.jsx";
 import { DatamonkeySeries, DatamonkeyGraphMenu } from "./components/graphs.jsx";
 import { NavBar } from "./components/navbar.jsx";
 import { ScrollSpy } from "./components/scrollspy.jsx";
 import CopyToClipboard from "react-copy-to-clipboard";
+
 
 var FEL = React.createClass({
   definePlotData: function(x_label, y_label) {
@@ -97,90 +99,132 @@ var FEL = React.createClass({
       copy_transition: false,
       pvalue_threshold: 0.1,
       positively_selected: [],
-      negatively_selected: []
+      negatively_selected: [],
+      input: null
     };
   },
 
-  loadFromServer: function() {
+  processData: function(data){
+    var mle = data["MLE"];
 
-    d3.json(this.props.url, (data) => {
-      var mle = data["MLE"];
+    // These variables are to be used for DatamonkeyTable
+    var mle_headers = mle.headers || [];
+    var mle_content = _.flatten(_.values(mle.content), true);
+    mle_headers = this.formatHeadersForTable(mle_headers);
 
-      // These variables are to be used for DatamonkeyTable
-      var mle_headers = mle.headers || [];
-      var mle_content = mle.content[0] || [];
+    _.each(mle_headers, function(d) {
+      return (d["sortable"] = true);
+    });
 
-      mle_headers = this.formatHeadersForTable(mle_headers);
-
-      _.each(mle_headers, function(d) {
-        return (d["sortable"] = true);
-      });
-
-      // format content
-      mle_content = _.map(mle_content, d => {
-        return _.map(d, g => {
-          return this.float_format(g);
-        });
-      });
-
-      // add a site count to both headers and content
-      mle_headers = [
-        { value: "Site", sortable: true, abbr: "Site Position" }
-      ].concat(mle_headers);
-
-      mle_content = _.map(mle_content, function(d, key) {
-        var k = key + 1;
-        return [k].concat(d);
-      });
-
-      // Create datatype that is a bit more manageable for use with DatamonkeySeries
-      var mle_header_values = _.map(mle_headers, function(d) {
-        return d.value;
-      });
-
-      var mle_results = _.map(mle_content, function(c) {
-        return _.object(mle_header_values, c);
-      });
-
-      // Get number of positively and negatively selected sites by p-value threshold
-      var mle_results = _.map(mle_results, d => {
-        d["is_positive"] =
-          parseFloat(d["beta"]) / parseFloat(d["alpha"]) > 1 &&
-          parseFloat(d["p-value"]) <= this.state.pvalue_threshold;
-        d["is_negative"] =
-          parseFloat(d["beta"]) / parseFloat(d["alpha"]) < 1 &&
-          parseFloat(d["p-value"]) <= this.state.pvalue_threshold;
-        return d;
-      });
-
-      var positively_selected = _.filter(mle_results, function(d) {
-        return d["is_positive"];
-      });
-      var negatively_selected = _.filter(mle_results, function(d) {
-        return d["is_negative"];
-      });
-
-      // highlight mle_content with whether they are significant or not
-      var mle_content = _.map(mle_results, function(d, key) {
-        var classes = "";
-        if (mle_results[key].is_positive) {
-          classes = "success";
-        } else if (mle_results[key].is_negative) {
-          classes = "warning";
-        }
-        return _.map(_.values(d), function(g) {
-          return { value: g, classes: classes };
-        });
-      });
-
-      this.setState({
-        mle_headers: mle_headers,
-        mle_content: mle_content,
-        mle_results: mle_results,
-        positively_selected: positively_selected,
-        negatively_selected: negatively_selected
+    // format content
+    mle_content = _.map(mle_content, d => {
+      return _.map(d, g => {
+        return this.float_format(g);
       });
     });
+
+
+    // add a partition entry to both headers and content
+    mle_headers = [
+      { value: "Partition", sortable: true, abbr: "Partition that site belongs to" }
+    ].concat(mle_headers);
+
+    var partition_column = d3.range(mle_content.length).map(d=>0);
+    _.each(data['data partitions'], (val, key)=>{
+      val.coverage[0].forEach(d=>{
+        partition_column[d] = key;
+      });
+    });
+
+    mle_content = _.map(mle_content, function(d, key) {
+      return [partition_column[key]].concat(d);
+    });
+
+    // add a site count to both headers and content
+    mle_headers = [
+      { value: "Site", sortable: true, abbr: "Site Position" }
+    ].concat(mle_headers);
+
+    mle_content = _.map(mle_content, function(d, key) {
+      var k = key + 1;
+      return [k].concat(d);
+    });
+
+    // Create datatype that is a bit more manageable for use with DatamonkeySeries
+    var mle_header_values = _.map(mle_headers, function(d) {
+      return d.value;
+    });
+
+    var mle_results = _.map(mle_content, function(c) {
+      return _.object(mle_header_values, c);
+    });
+
+    // Get number of positively and negatively selected sites by p-value threshold
+    var mle_results = _.map(mle_results, d => {
+      d["is_positive"] =
+        parseFloat(d["beta"]) / parseFloat(d["alpha"]) > 1 &&
+        parseFloat(d["p-value"]) <= this.state.pvalue_threshold;
+      d["is_negative"] =
+        parseFloat(d["beta"]) / parseFloat(d["alpha"]) < 1 &&
+        parseFloat(d["p-value"]) <= this.state.pvalue_threshold;
+      return d;
+    });
+
+    var positively_selected = _.filter(mle_results, function(d) {
+      return d["is_positive"];
+    });
+    var negatively_selected = _.filter(mle_results, function(d) {
+      return d["is_negative"];
+    });
+
+    // highlight mle_content with whether they are significant or not
+    var mle_content = _.map(mle_results, function(d, key) {
+      var classes = "";
+      if (mle_results[key].is_positive) {
+        classes = "success";
+      } else if (mle_results[key].is_negative) {
+        classes = "warning";
+      }
+      return _.map(_.values(d), function(g) {
+        return { value: g, classes: classes };
+      }).slice(0, 8);
+    });
+
+    this.setState({
+      mle_headers: mle_headers,
+      mle_content: mle_content,
+      mle_results: mle_results,
+      positively_selected: positively_selected,
+      negatively_selected: negatively_selected,
+      input: data.input
+    });
+
+  },
+
+  loadFromServer: function() {
+    var self = this;
+    d3.json(this.props.url, (data) => {
+      self.processData(data);
+    });
+  },
+
+  onFileChange(e) {
+    var self = this;
+    var files = e.target.files; // FileList object
+
+    if (files.length == 1) {
+      var f = files[0];
+      var reader = new FileReader();
+
+      reader.onload = (function(theFile) {
+        return function(e) {
+          var data = JSON.parse(this.result);
+          self.processData(data);
+        };
+      })(f);
+      reader.readAsText(f);
+    }
+    e.preventDefault();
   },
 
   getClipboard() {
@@ -323,7 +367,7 @@ in the remaining ${no_selected} sites in your alignment.`;
         return d.value;
       }),
       function(d) {
-        return d != "Site";
+        return d != "Site" && d != 'Partition';
       }
     );
 
@@ -331,7 +375,7 @@ in the remaining ${no_selected} sites in your alignment.`;
 
     return (
       <div>
-
+        {this.props.hyphy_vision ? <NavBar onFileChange={this.onFileChange} /> : ''}
         <div className="container">
           <div className="row">
             <ScrollSpy info={scrollspy_info} />
@@ -354,16 +398,16 @@ in the remaining ${no_selected} sites in your alignment.`;
                 <strong>Error!</strong> <span id="datamonkey-fel-error-text" />
               </div>
 
-              <div className="clearance" id="summary-div"></div>
+              <div className="clearance" id="summary-tab"></div>
               <div id="results">
                 <h3 className="list-group-item-heading">
                   <span id="summary-method-name">
-                    FEL - Fixed Effects Likelihood
+                    Fixed Effects Likelihood
                   </span>
                   <br />
                   <span className="results-summary">results summary</span>
                 </h3>
-
+                <InputInfo input_data={this.state.input} />
                 {Summary}
 
                 <div id="plot-tab" className="row hyphy-row">
@@ -373,6 +417,7 @@ in the remaining ${no_selected} sites in your alignment.`;
                     x_options={x_options}
                     y_options={y_options}
                     axisSelectionEvent={this.updateAxisSelection}
+                    export_images
                   />
 
                   <DatamonkeySeries
@@ -423,4 +468,10 @@ function render_fel(url, element) {
   ReactDOM.render(<FEL url={url} />, document.getElementById(element));
 }
 
+function render_hv_fel(url, element) {
+  ReactDOM.render(<FEL url={url} hyphy_vision />, document.getElementById(element));
+}
+
 module.exports = render_fel;
+module.exports.hv = render_hv_fel;
+

@@ -19,7 +19,8 @@ var TreeSummary = React.createClass({
   getInitialState: function() {
     var table_row_data = this.getSummaryRows(
       this.props.model,
-      this.props.test_results
+      this.props.test_results,
+      this.props.branch_attributes
     ),
       table_columns = this.getTreeSummaryColumns(table_row_data);
 
@@ -47,35 +48,14 @@ var TreeSummary = React.createClass({
     });
   },
 
-  getBranchLengthProportion: function(
-    model,
-    rate_classes,
-    branch_annotations,
-    total_branch_length
-  ) {
-    // get branch lengths of each rate distribution
-    //return prop_format(d[2] / total_tree_length
-    if (_.has(model, "tree string")) {
-      var tree = d3.layout.phylotree("body")(model["tree string"]);
-    } else {
-      return null;
-    }
-
-    // Get count of all rate classes
-    var branch_lengths = _.mapObject(rate_classes, function(d) {
-      return 0;
-    });
-
-    for (var key in branch_annotations) {
-      var node = tree.get_node_by_name(key);
-      branch_lengths[
-        branch_annotations[key].omegas.length
-      ] += tree.branch_length()(node);
-    }
-
-    return _.mapObject(branch_lengths, function(val, key) {
-      return d3.format(".2p")(val / total_branch_length);
-    });
+  getBranchLengthProportion: function(branch_attributes) {
+    var rate_classes = _.groupBy(branch_attributes, (val, key) => val['Rate Distributions'].length),
+      lengths = _.mapObject(rate_classes, (val,key)=>d3.sum(_.pluck(val,'Full adaptive model'))),
+      total_length = d3.sum(_.values(lengths)),
+      percentages = _.mapObject(lengths, length=>length/total_length),
+      formatter = d3.format(".2p"),
+      formatted_percentages = _.mapObject(percentages, formatter);
+    return formatted_percentages;
   },
 
   getNumUnderSelection: function(
@@ -95,7 +75,7 @@ var TreeSummary = React.createClass({
     return num_under_selection;
   },
 
-  getSummaryRows: function(model, test_results) {
+  getSummaryRows: function(model, test_results, branch_attributes) {
     if (!model || !test_results) {
       return [];
     }
@@ -104,15 +84,9 @@ var TreeSummary = React.createClass({
 
     var tree_length = model["tree length"];
     var branch_annotations = model["branch-annotations"];
-
     var rate_classes = this.getRateClasses(branch_annotations),
       proportions = this.getBranchProportion(rate_classes),
-      length_proportions = this.getBranchLengthProportion(
-        model,
-        rate_classes,
-        branch_annotations,
-        tree_length
-      ),
+      length_proportions = this.getBranchLengthProportion(branch_attributes),
       num_under_selection = this.getNumUnderSelection(
         rate_classes,
         branch_annotations,
@@ -184,7 +158,8 @@ var TreeSummary = React.createClass({
   componentWillReceiveProps: function(nextProps) {
     var table_row_data = this.getSummaryRows(
       nextProps.model,
-      nextProps.test_results
+      nextProps.test_results,
+      nextProps.branch_attributes
     ),
       table_columns = this.getTreeSummaryColumns(table_row_data);
 

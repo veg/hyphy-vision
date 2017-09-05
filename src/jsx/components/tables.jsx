@@ -883,7 +883,7 @@ var DatamonkeyModelTable = React.createClass({
   dm_numberFormatter: d3.format(".2f"),
 
   dm_supportedColumns: {
-    "log-likelihood": {
+    "Log Likelihood": {
       order: 2,
       value: {
         value: "log L",
@@ -891,7 +891,7 @@ var DatamonkeyModelTable = React.createClass({
       },
       display_format: d3.format(".2f")
     },
-    parameters: {
+    "estimated parameters": {
       order: 3,
       value: {
         value: "Parameters",
@@ -906,7 +906,7 @@ var DatamonkeyModelTable = React.createClass({
       },
       display_format: d3.format(".2f")
     },
-    "rate distributions": {
+    "Rate Distributions": {
       order: 4,
       value: "Rate distributions",
       transform: function(value) {
@@ -1120,6 +1120,12 @@ var DatamonkeyTimersTable = React.createClass({
       rows: this.dm_extractTimerTable(this.props.timers),
       caption: null
     };
+  },
+
+  componentWillReceiveProps: function(nextProps) {
+    this.setState({
+      rows: this.dm_extractTimerTable(nextProps.timers)
+    });
   },
 
   render: function() {

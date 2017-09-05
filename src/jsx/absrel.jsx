@@ -98,7 +98,7 @@ var BSRELSummary = React.createClass({
       <div className="clearance" id="summary-div"></div>
         <div className="col-md-12">
           <h3 className="list-group-item-heading">
-            <span className="summary-method-name">adaptive Branch Site REL</span>
+            <span id="summary-method-name">adaptive Branch Site REL</span>
             <br />
             <span className="results-summary">results summary</span>
           </h3>
@@ -155,35 +155,56 @@ var BSRELSummary = React.createClass({
 var BSREL = React.createClass({
   float_format: d3.format(".2f"),
 
-  loadFromServer: function() {
+  processData: function(data){
+    var test_results = _.mapObject(data['branch attributes']['0'], (val, key) => {
+      var tested = val.LRT != null;
 
-    var self = this;
-
-    d3.json(this.props.url, function(data) {
-      data["fits"]["MG94"]["branch-annotations"] = self.formatBranchAnnotations(
-        data,
-        "MG94"
-      );
-      data["fits"]["Full model"][
-        "branch-annotations"
-      ] = self.formatBranchAnnotations(data, "Full model");
-
-      // GH-#18 Add omega annotation tag
-      data["fits"]["MG94"]["annotation-tag"] = "ω";
-      data["fits"]["Full model"]["annotation-tag"] = "ω";
-
-      self.setState({
-        annotations: data["fits"]["Full model"]["branch-annotations"],
-        json: data,
-        pmid: data["PMID"],
-        fits: data["fits"],
-        full_model: data["fits"]["Full model"],
-        test_results: data["test results"],
-        input_data: data["input_data"],
-        tree: d3.layout.phylotree()(data["fits"]["Full model"]["tree string"])
-      });
+      return {
+        LRT: tested ? val.LRT : 'test not run',
+        p: tested ? val['Corrected P-value'] : 1,
+        'uncorrected p': tested ? val['Uncorrected P-value'] : 1,
+        tested: tested
+      };
     });
 
+    data["fits"]["Full adaptive model"][
+      "branch-annotations"
+    ] = this.formatBranchAnnotations(data, "Full adaptive model");
+
+    data["fits"]["Baseline MG94xREV"]["branch-annotations"] = this.formatBranchAnnotations(
+      data,
+      "Baseline MG94xREV"
+    );
+
+    // GH-#18 Add omega annotation tag
+    data["fits"]["Baseline MG94xREV"]["annotation-tag"] = "ω";
+    data["fits"]["Full adaptive model"]["annotation-tag"] = "ω";
+
+    data["trees"] = {
+      branchLengths: {
+        "Baseline MG94xREV": _.mapObject(data["branch attributes"][0], val=>val["Baseline MG94xREV"]),
+        "Full adaptive model": _.mapObject(data["branch attributes"][0], val=>val["Full adaptive model"])
+      }
+    }
+    _.each(_.keys(data.fits), model=>{delete data.fits[model]['Rate Distributions'];});
+    this.setState({
+      annotations: data["fits"]["Full adaptive model"]["branch-annotations"],
+      json: data,
+      pmid: data["PMID"],
+      fits: data["fits"],
+      full_model: data["fits"]["Full adaptive model"],
+      test_results: test_results,
+      input_data: data["input"],
+      tree: d3.layout.phylotree()(data.input['trees'][0]),
+      branch_attributes: data["branch attributes"][0]
+    });
+  },
+
+  loadFromServer: function() {
+    var self = this;
+    d3.json(self.props.url, function(data) {
+      self.processData(data);
+    });
   },
 
   omegaColorGradient: ["#000000", "#888888", "#DFDFDF", "#77CCC6", "#00a99d"],
@@ -318,9 +339,9 @@ var BSREL = React.createClass({
       omegaPlot: {},
       "tree-options": {
         /* value arrays have the following meaning
-                [0] - the value of the attribute
-                [1] - does the change in attribute value trigger tree re-layout?
-            */
+            [0] - the value of the attribute
+            [1] - does the change in attribute value trigger tree re-layout?
+        */
         "hyphy-tree-model": ["Full model", true],
         "hyphy-tree-highlight": [null, false],
         "hyphy-tree-branch-lengths": [true, true],
@@ -340,10 +361,11 @@ var BSREL = React.createClass({
       settings: tree_settings,
       test_results: null,
       input_data: null,
-      tree: null
+      tree: null,
+      branch_attributes: null
     };
-  },
 
+  },
   componentWillMount: function() {
     this.loadFromServer();
   },
@@ -365,36 +387,7 @@ var BSREL = React.createClass({
         reader.onload = (function(theFile) {
           return function(e) {
             var data = JSON.parse(this.result);
-            data["fits"]["MG94"][
-              "branch-annotations"
-            ] = self.formatBranchAnnotations(data, "MG94");
-            data["fits"]["Full model"][
-              "branch-annotations"
-            ] = self.formatBranchAnnotations(data, "Full model");
-
-            var annotations = data["fits"]["Full model"]["branch-annotations"],
-              json = data,
-              pmid = data["PMID"],
-              full_model = json["fits"]["Full model"],
-              test_results = data["test results"],
-              input_data = data["input_data"],
-              fits = data["fits"];
-
-            data["fits"]["MG94"]["annotation-tag"] = "ω";
-            data["fits"]["Full model"]["annotation-tag"] = "ω";
-
-            self.setState({
-              annotations: annotations,
-              json: json,
-              pmid: pmid,
-              full_model: full_model,
-              test_results: test_results,
-              input_data: input_data,
-              fits: fits,
-              tree: d3.layout.phylotree()(
-                data["fits"]["Full model"]["tree string"]
-              )
-            });
+            self.processData(data);
           };
         })(f);
         reader.readAsText(f);
@@ -403,35 +396,23 @@ var BSREL = React.createClass({
     });
   },
 
-  formatBranchAnnotations: function(json, key) {
-    var initial_branch_annotations = json["fits"][key]["branch-annotations"];
-
-    if (!initial_branch_annotations) {
-      initial_branch_annotations = json["fits"][key]["rate distributions"];
-    }
-
-    // Iterate over objects
-    var branch_annotations = _.mapObject(initial_branch_annotations, function(
-      val,
-      key
-    ) {
-      var vals = [];
-      try {
-        vals = JSON.parse(val);
-      } catch (e) {
-        vals = val;
+  formatBranchAnnotations: function(json, model) {
+    var branch_annotations = _.mapObject(json['branch attributes']['0'], (val, key) =>{
+      var tested = val.LRT != null,
+        omegas; 
+      if(model=='Full adaptive model'){
+        omegas = val['Rate Distributions'].map(entry=>({ omega: entry[0], prop: entry[1]}));
+      }else{
+        omegas = [{omega: val['Baseline MG94xREV omega ratio'], prop: 1}];
       }
-
-      var omegas = {
-        omegas: _.map(vals, function(d) {
-          return _.object(["omega", "prop"], d);
-        })
+      return {
+        LRT: tested ? val.LRT : 'test not run',
+        omegas: omegas,
+        p: tested ? val['Corrected P-value'] : 1,
+        'uncorrected p': tested ? val['Uncorrected P-value'] : 1,
+        tested: tested
       };
-      var test_results = _.clone(json["test results"][key]);
-      _.extend(test_results, omegas);
-      return test_results;
     });
-
     return branch_annotations;
   },
 
@@ -457,9 +438,9 @@ var BSREL = React.createClass({
     if (!_.isNull(self.state.json)) {
       models = self.state.json.fits;
     }
-
     return (
       <div>
+        {self.props.hyphy_vision ? <NavBar /> : ''}
         <div className="container">
           <div className="row">
             <ScrollSpy info={scrollspy_info} />
@@ -495,6 +476,7 @@ var BSREL = React.createClass({
                       <TreeSummary
                         model={self.state.full_model}
                         test_results={self.state.test_results}
+                        branch_attributes={self.state.branch_attributes}
                       />
                     </div>
                   </div>
@@ -508,6 +490,7 @@ var BSREL = React.createClass({
                       models={models}
                       color_gradient={self.omegaColorGradient}
                       grayscale_gradient={self.omegaGrayscaleGradient}
+                      method='absrel'
                     />
                   </div>
                 </div>
@@ -524,9 +507,9 @@ var BSREL = React.createClass({
                     <DatamonkeyModelTable fits={self.state.fits} />
                     <p className="description">
                       This table reports a statistical summary of the models fit
-                      to the data. Here, <strong>MG94</strong> refers to the
+                      to the data. Here, <strong>Baseline MG94xREV</strong> refers to the
                       MG94xREV baseline model that infers a single &omega; rate
-                      category per branch. <strong>Full Model</strong> refers to
+                      category per branch. <strong>Full adaptive model</strong> refers to
                       the adaptive aBSREL model that infers an optimized number
                       of &omega; rate categories per branch.
                     </p>
@@ -547,4 +530,10 @@ function render_absrel(url, element) {
   ReactDOM.render(<BSREL url={url} />, document.getElementById(element));
 }
 
+function render_hv_absrel(url, element) {
+  ReactDOM.render(<BSREL url={url} hyphy_vision />, document.getElementById(element));
+}
+
 module.exports = render_absrel;
+module.exports.hv = render_hv_absrel;
+

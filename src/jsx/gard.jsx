@@ -48,7 +48,7 @@ function GARDResults(props){
     <div className="clearance" id="summary-div"></div>
     <div className="col-md-12">
       <h3 className="list-group-item-heading">
-        <span className="summary-method-name">
+        <span id="summary-method-name">
           Genetic Algorithm Recombination Detection
         </span>
         <br />

@@ -1,6 +1,10 @@
+import { saveSvgAsPng } from "save-svg-as-png";
+
 var React = require("react");
 var datamonkey = require("../../datamonkey/datamonkey.js");
 var _ = require("underscore");
+var d3_save_svg = require("d3-save-svg");
+
 
 var OmegaPlot = React.createClass({
   getDefaultProps: function() {
@@ -14,18 +18,6 @@ var OmegaPlot = React.createClass({
       k_p: null,
       plot: null
     };
-  },
-
-  setEvents: function() {
-    var self = this;
-
-    d3.select("#" + this.save_svg_id).on("click", function(e) {
-      datamonkey.save_image("svg", "#" + self.svg_id);
-    });
-
-    d3.select("#" + this.save_png_id).on("click", function(e) {
-      datamonkey.save_image("png", "#" + self.svg_id);
-    });
   },
 
   initialize: function() {
@@ -106,6 +98,11 @@ var OmegaPlot = React.createClass({
       .select("#" + this.svg_id)
       .attr("width", dimensions.width)
       .attr("height", dimensions.height);
+    this.svg.append("rect")
+      .attr("width", "100%")
+      .attr("height", "100%")
+      .attr("fill", "white");
+
     this.plot = this.svg.selectAll(".container");
 
     this.svg.selectAll("defs").remove();
@@ -143,7 +140,6 @@ var OmegaPlot = React.createClass({
     this.createReferenceLine();
     this.createXAxis();
     this.createYAxis();
-    this.setEvents();
   },
   makeSpring: function(x1, x2, y1, y2, step, displacement) {
     if (x1 == x2) {
@@ -249,7 +245,7 @@ var OmegaPlot = React.createClass({
           return self.proportion_scale(d.weight);
         })
         .style("stroke", function(d) {
-          return "#d62728";
+          return "#000000";
         })
         .attr("class", "hyphy-omega-line-reference");
     } else {
@@ -283,7 +279,7 @@ var OmegaPlot = React.createClass({
         return self.proportion_scale(d.weight);
       })
       .style("stroke", function(d) {
-        return "#1f77b4";
+        return "#00a99d";
       })
       .attr("class", "hyphy-omega-line");
   },
@@ -399,6 +395,8 @@ var OmegaPlot = React.createClass({
   },
 
   componentDidUpdate: function() {
+    d3.select("#" + this.svg_id).html("");
+
     this.initialize();
   },
 
@@ -407,13 +405,11 @@ var OmegaPlot = React.createClass({
   },
 
   render: function() {
-    var key = this.props.omegas.key,
+    var self = this,
+      key = this.props.omegas.key,
       label = this.props.omegas.label;
 
     this.svg_id = key + "-svg";
-    this.save_svg_id = "export-" + key + "-svg";
-    this.save_png_id = "export-" + key + "-png";
-
     return (
       <div>
         <div className="panel panel-default" id={key}>
@@ -424,22 +420,22 @@ var OmegaPlot = React.createClass({
             <p>
               <small>
                 Test branches are shown in{" "}
-                <span className="hyphy-blue">blue</span> and reference branches
-                are shown in <span className="hyphy-red">red</span>
+                <span style={{color: '#00a99d', 'fontWeight':'bold'}}>green</span> and reference branches
+                are shown in <span style={{color: 'black', 'fontWeight':'bold'}}>black</span>
               </small>
             </p>
             <div className="btn-group">
               <button
-                id={this.save_svg_id}
+                onClick={()=>{d3_save_svg.save(d3.select('#'+self.svg_id).node(), {filename: "relax-chart"});}}
                 type="button"
                 className="btn btn-default btn-sm"
               >
                 <span className="glyphicon glyphicon-floppy-save" /> SVG
               </button>
               <button
-                id={this.save_png_id}
                 type="button"
                 className="btn btn-default btn-sm"
+                onClick={()=>{saveSvgAsPng(document.getElementById(self.svg_id), "relax-chart.png");}}
               >
                 <span className="glyphicon glyphicon-floppy-save" /> PNG
               </button>
@@ -475,19 +471,19 @@ var OmegaPlotGrid = React.createClass({
     for (var m in json["fits"]) {
       var this_model = json["fits"][m];
       omega_distributions[m] = {};
-      for (var d in this_model["rate-distributions"]) {
-        var this_distro = this_model["rate-distributions"][d];
-        omega_distributions[m][d] = this_distro.map(function(d) {
+      for (var d in this_model["Rate Distributions"]) {
+        var this_distro = this_model["Rate Distributions"][d];
+        omega_distributions[m][d] = _.values(this_distro).map(function(d) {
           return {
-            omega: d[0],
-            weight: d[1]
+            omega: d.omega,
+            weight: d.proportion
           };
         });
       }
     }
 
     _.each(omega_distributions, function(item, key) {
-      item.key = key.toLowerCase().replace(/ /g, "-");
+      item.key = key.slice(0,8).toLowerCase().replace(/ /g, "-");
       item.label = key;
     });
 
@@ -515,7 +511,7 @@ var OmegaPlotGrid = React.createClass({
       };
 
       return (
-        <OmegaPlot name={model_name} omegas={omegas} settings={settings} />
+        <OmegaPlot name={model_name} omegas={omegas} settings={settings} key={omegas.key}/>
       );
     });
 
