@@ -358,7 +358,7 @@ in the remaining ${no_selected} sites in your alignment.`;
                 <strong>Error!</strong> <span id="datamonkey-fel-error-text" />
               </div>
 
-              <div className="clearance" id="summary-div"></div>
+              <div className="clearance" id="summary-tab"></div>
               <div id="results">
                 <h3 className="list-group-item-heading">
                   <span id="summary-method-name">
