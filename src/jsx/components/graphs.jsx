@@ -15,15 +15,8 @@ class GraphMenu extends React.Component {
     super(props);
     this.state = {
       xaxis: "Site",
-      yaxis: props.y_options ? props.y_options[0] : "alpha"
+      yaxis: "alpha"
     };
-  }
-
-  componentWillReceiveProps(nextProps){
-    this.setState({
-      xaxis: "Site",
-      yaxis: nextProps.y_options ? nextProps.y_options[0] : "alpha"
-    });
   }
 
   handleSelection(e) {
@@ -107,16 +100,43 @@ class GraphMenu extends React.Component {
     );
 
     var navStyle = { borderBottom: "none" };
+    var export_buttons;
+
+    if(this.props.export_images){
+      export_buttons = (<div className="form-group navbar-right">
+        <div className="input-group">
+          <button
+            id="export-chart-png"
+            type="button"
+            className="btn btn-default btn-sm pull-right btn-export"
+            onClick={()=>saveSvgAsPng(document.getElementById("dm-chart"), "datamonkey-chart.png")}
+          >
+            <span className="glyphicon glyphicon-floppy-save" /> Export to PNG
+          </button>
+          <button
+            id="export-chart-png"
+            type="button"
+            className="btn btn-default btn-sm pull-right btn-export"
+            onClick={()=>d3_save_svg.save(d3.select("#dm-chart").node(), {filename: "datamonkey-chart"})}
+          >
+            <span className="glyphicon glyphicon-floppy-save" /> Export to SVG
+          </button>
+        </div>
+      </div>);
+    }
 
     return (
       <nav className="navbar" style={navStyle}>
         <form className="navbar-form">
+
           <div className="form-group navbar-left">
             <div className="input-group">
               {XAxisButton}
               {YAxisButton}
             </div>
           </div>
+
+          {export_buttons}
         </form>
       </nav>
     );

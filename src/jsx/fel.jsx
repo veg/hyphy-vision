@@ -9,6 +9,7 @@ import { NavBar } from "./components/navbar.jsx";
 import { ScrollSpy } from "./components/scrollspy.jsx";
 import CopyToClipboard from "react-copy-to-clipboard";
 
+
 var FEL = React.createClass({
   definePlotData: function(x_label, y_label) {
 
@@ -108,8 +109,7 @@ var FEL = React.createClass({
 
     // These variables are to be used for DatamonkeyTable
     var mle_headers = mle.headers || [];
-    var mle_content = mle.content[0] || [];
-
+    var mle_content = _.flatten(_.values(mle.content), true);
     mle_headers = this.formatHeadersForTable(mle_headers);
 
     _.each(mle_headers, function(d) {
@@ -121,6 +121,23 @@ var FEL = React.createClass({
       return _.map(d, g => {
         return this.float_format(g);
       });
+    });
+
+
+    // add a partition entry to both headers and content
+    mle_headers = [
+      { value: "Partition", sortable: true, abbr: "Partition that site belongs to" }
+    ].concat(mle_headers);
+
+    var partition_column = d3.range(mle_content.length).map(d=>0);
+    _.each(data['data partitions'], (val, key)=>{
+      val.coverage[0].forEach(d=>{
+        partition_column[d] = key;
+      });
+    });
+
+    mle_content = _.map(mle_content, function(d, key) {
+      return [partition_column[key]].concat(d);
     });
 
     // add a site count to both headers and content
@@ -170,7 +187,7 @@ var FEL = React.createClass({
       }
       return _.map(_.values(d), function(g) {
         return { value: g, classes: classes };
-      });
+      }).slice(0, 8);
     });
 
     this.setState({
@@ -350,7 +367,7 @@ in the remaining ${no_selected} sites in your alignment.`;
         return d.value;
       }),
       function(d) {
-        return d != "Site";
+        return d != "Site" && d != 'Partition';
       }
     );
 
@@ -401,6 +418,7 @@ in the remaining ${no_selected} sites in your alignment.`;
                     x_options={x_options}
                     y_options={y_options}
                     axisSelectionEvent={this.updateAxisSelection}
+                    export_images
                   />
 
                   <DatamonkeySeries
