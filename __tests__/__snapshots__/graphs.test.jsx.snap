@@ -1,0 +1,111 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`DatamonkeyScatterplot should create an svg element 1`] = `
+<div>
+  <svg
+    height={400}
+    id="dm-chart"
+    width={500}
+  >
+    <rect
+      fill="white"
+      height="100%"
+      width="100%"
+    />
+    <g
+      transform="translate(50,10)"
+    />
+    <g
+      className="hyphy-axis"
+      style={null}
+      transform="translate(50,370)"
+    />
+    <g
+      className="hyphy-axis"
+      style={null}
+      transform="translate(45,10)"
+    />
+    <text
+      textAnchor="middle"
+      transform="translate(250,396.6666666666667)"
+    />
+    <text
+      dangerouslySetInnerHTML={
+        Object {
+          "__html": "<tspan>y values</tspan>",
+        }
+      }
+      textAnchor="middle"
+      transform="translate(12.5,200)rotate(-90)"
+    />
+  </svg>
+</div>
+`;
+
+exports[`DatamonkeySeries should create an svg element 1`] = `
+<div>
+  <svg
+    height={400}
+    id="dm-chart"
+    width={500}
+  >
+    <rect
+      fill="white"
+      height="100%"
+      width="100%"
+    />
+    <g
+      transform="translate(50,10)"
+    />
+    <g
+      className="hyphy-axis"
+      style={null}
+      transform="translate(50,370)"
+    />
+    <g
+      className="hyphy-axis"
+      style={null}
+      transform="translate(45,10)"
+    />
+    <text
+      textAnchor="middle"
+      transform="translate(250,396.6666666666667)"
+    />
+    <text
+      dangerouslySetInnerHTML={
+        Object {
+          "__html": "<tspan>y values</tspan>",
+        }
+      }
+      textAnchor="middle"
+      transform="translate(12.5,200)rotate(-90)"
+    />
+  </svg>
+</div>
+`;
+
+exports[`GraphMenu Graph menu should handle empty y_options 1`] = `
+<nav
+  className="navbar"
+  style={
+    Object {
+      "borderBottom": "none",
+    }
+  }
+>
+  <form
+    className="navbar-form"
+  >
+    <div
+      className="form-group navbar-left"
+    >
+      <div
+        className="input-group"
+      >
+        <div />
+        <div />
+      </div>
+    </div>
+  </form>
+</nav>
+`;

@@ -1,23 +1,34 @@
 window.jQuery = window.$ = $; 
-import Bootstrap from 'bootstrap/dist/css/bootstrap.css';
+
 require("font-awesome/css/font-awesome.css");
+require('./application.less');
 require('./hyphy-vision.css');
 require('./fade/FADE.css');
 
 require('bootstrap');
 require('./datamonkey/datamonkey.js');
 
-var absrel = require('./jsx/absrel.jsx');
-var busted = require('./jsx/busted.jsx');
-var fade = require('./fade/FADE.js');
-var fade_summary = require('./jsx/fade_summary.jsx');
-var relax = require('./jsx/relax.jsx');
-var slac = require('./jsx/slac.jsx');
+var absrel = require('./jsx/absrel.jsx'),
+    busted = require('./jsx/busted.jsx'),
+    fade = require('./fade/FADE.js'),
+    fade_summary = require('./jsx/fade_summary.jsx'),
+    fel = require('./jsx/fel.jsx'),
+    prime = require('./jsx/prime.jsx'),
+    relax = require('./jsx/relax.jsx'),
+    slac = require('./jsx/slac.jsx'),
+    meme = require('./jsx/meme.jsx'),
+    gard = require('./jsx/gard.jsx'),
+    template = require('./jsx/template.jsx');
 
 // Create new hyphy-vision export
-window.absrel = absrel;
-window.busted = busted;
+window.absrel = absrel.hv;
+window.busted = busted.hv;
 window.fade = fade;
 window.fade_summary = fade_summary;
-window.relax = relax;
-window.slac = slac;
+window.fel = fel.hv;
+window.prime = prime;
+window.meme = meme.hv;
+window.relax = relax.hv;
+window.slac = slac.hv;
+window.gard = gard;
+window.template = template
