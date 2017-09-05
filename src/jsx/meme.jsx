@@ -96,9 +96,13 @@ function MEMETable(props) {
       )
     });
   if (props.header) {
-    var headerData = ['Site', 'Partition'].concat(
+    var headerData = [{value:'Site', sortable:true}, {value:'Partition', sortable:true}].concat(
       props.header.map(pair => {
-        return { value: pair[0] == 'alpha;' ? '&alpha; ' : pair[0], abbr: pair[1] };
+        return {
+          value: pair[0] == 'alpha;' ? '&alpha; ' : pair[0],
+          abbr: pair[1],
+          sortable: true
+        };
       })
     );
   }
