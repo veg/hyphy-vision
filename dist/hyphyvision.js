@@ -1,4 +1,5 @@
-webpackJsonp([0],[
+var hyphyVision =
+webpackJsonphyphyVision([0],[
 /* 0 */,
 /* 1 */,
 /* 2 */,
@@ -1384,10 +1385,10 @@ module.exports = DOMProperty;
 "use strict";
 /* WEBPACK VAR INJECTION */(function(d3, jQuery) {
 
+var $ = __webpack_require__(3);
+
 var root = undefined;
 var datamonkey = function datamonkey() {};
-
-var $ = __webpack_require__(3);
 
 if (true) {
   if (typeof module !== "undefined" && module.exports) {
@@ -1404,6 +1405,7 @@ datamonkey.errorModal = function (msg) {
 };
 
 function b64toBlob(b64, onsuccess, onerror) {
+
   var img = new Image();
 
   img.onerror = onerror;
@@ -12073,15 +12075,15 @@ var absrel = __webpack_require__(113),
     template = __webpack_require__(127);
 
 // Create new hyphy-vision export
-window.absrel = absrel;
-window.busted = busted;
+window.absrel = absrel.hv;
+window.busted = busted.hv;
 window.fade = fade;
 window.fade_summary = fade_summary;
-window.fel = fel;
+window.fel = fel.hv;
 window.prime = prime;
-window.meme = meme;
-window.relax = relax;
-window.slac = slac;
+window.meme = meme.hv;
+window.relax = relax.hv;
+window.slac = slac.hv;
 window.gard = gard;
 window.template = template;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
@@ -12840,6 +12842,14 @@ module.exports = datamonkey_fade;
 "use strict";
 /* WEBPACK VAR INJECTION */(function(d3, $) {
 
+var _react = __webpack_require__(5);
+
+var _react2 = _interopRequireDefault(_react);
+
+var _reactDom = __webpack_require__(18);
+
+var _reactDom2 = _interopRequireDefault(_reactDom);
+
 var _tables = __webpack_require__(23);
 
 var _tree_summary = __webpack_require__(119);
@@ -12854,15 +12864,14 @@ var _scrollspy = __webpack_require__(17);
 
 var _input_info = __webpack_require__(20);
 
-var React = __webpack_require__(5),
-    ReactDOM = __webpack_require__(18);
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var _ = __webpack_require__(8);
 
 __webpack_require__(38);
 __webpack_require__(71);
 
-var BSRELSummary = React.createClass({
+var BSRELSummary = _react2.default.createClass({
   displayName: "BSRELSummary",
 
   float_format: d3.format(".2f"),
@@ -12915,21 +12924,21 @@ var BSRELSummary = React.createClass({
         was_evidence = self.state.branches_with_evidence > 0;
 
     if (was_evidence) {
-      user_message = React.createElement(
+      user_message = _react2.default.createElement(
         "p",
         { className: "list-group-item-text label_and_input" },
         "aBSREL ",
-        React.createElement(
+        _react2.default.createElement(
           "strong",
           { className: "hyphy-highlight" },
           "found evidence"
         ),
         " of episodic diversifying selection on",
         " ",
-        React.createElement(
+        _react2.default.createElement(
           "span",
           { className: "hyphy-highlight" },
-          React.createElement(
+          _react2.default.createElement(
             "strong",
             null,
             self.state.branches_with_evidence
@@ -12938,10 +12947,10 @@ var BSRELSummary = React.createClass({
         " ",
         "out of",
         " ",
-        React.createElement(
+        _react2.default.createElement(
           "span",
           { className: "hyphy-highlight" },
-          React.createElement(
+          _react2.default.createElement(
             "strong",
             null,
             self.state.total_branches
@@ -12951,11 +12960,11 @@ var BSRELSummary = React.createClass({
         "branches in your phylogeny."
       );
     } else {
-      user_message = React.createElement(
+      user_message = _react2.default.createElement(
         "p",
         { className: "list-group-item-text label_and_input" },
         "aBSREL ",
-        React.createElement(
+        _react2.default.createElement(
           "strong",
           null,
           "found no evidence"
@@ -12964,54 +12973,54 @@ var BSRELSummary = React.createClass({
       );
     }
 
-    return React.createElement(
+    return _react2.default.createElement(
       "div",
       { className: "row" },
-      React.createElement("div", { className: "clearance", id: "summary-div" }),
-      React.createElement(
+      _react2.default.createElement("div", { className: "clearance", id: "summary-div" }),
+      _react2.default.createElement(
         "div",
         { className: "col-md-12" },
-        React.createElement(
+        _react2.default.createElement(
           "h3",
           { className: "list-group-item-heading" },
-          React.createElement(
+          _react2.default.createElement(
             "span",
             { id: "summary-method-name" },
             "adaptive Branch Site REL"
           ),
-          React.createElement("br", null),
-          React.createElement(
+          _react2.default.createElement("br", null),
+          _react2.default.createElement(
             "span",
             { className: "results-summary" },
             "results summary"
           )
         )
       ),
-      React.createElement(
+      _react2.default.createElement(
         "div",
         { className: "col-md-12" },
-        React.createElement(_input_info.InputInfo, { input_data: this.props.input_data })
+        _react2.default.createElement(_input_info.InputInfo, { input_data: this.props.input_data })
       ),
-      React.createElement(
+      _react2.default.createElement(
         "div",
         { className: "col-md-12" },
-        React.createElement(
+        _react2.default.createElement(
           "div",
           { className: "main-result" },
           user_message,
-          React.createElement(
+          _react2.default.createElement(
             "p",
             null,
             "A total of",
             " ",
-            React.createElement(
+            _react2.default.createElement(
               "strong",
               { className: "hyphy-highlight" },
               self.state.test_branches
             ),
             " ",
             "branches were formally tested for diversifying selection. Significance was assessed using the Likelihood Ratio Test at a threshold of p \u2264 0.05, after correcting for multiple testing. Significance and number of rate categories inferred at each branch are provided in the ",
-            React.createElement(
+            _react2.default.createElement(
               "a",
               { href: "#table-tab" },
               "detailed results"
@@ -13019,26 +13028,26 @@ var BSRELSummary = React.createClass({
             " ",
             "table."
           ),
-          React.createElement("hr", null),
-          React.createElement(
+          _react2.default.createElement("hr", null),
+          _react2.default.createElement(
             "p",
             null,
-            React.createElement(
+            _react2.default.createElement(
               "small",
               null,
               "See",
               " ",
-              React.createElement(
+              _react2.default.createElement(
                 "a",
                 { href: "http://hyphy.org/methods/selection-methods/#absrel" },
                 "here"
               ),
               " ",
               "for more information about the aBSREL method.",
-              React.createElement("br", null),
+              _react2.default.createElement("br", null),
               "Please cite",
               " ",
-              React.createElement(
+              _react2.default.createElement(
                 "a",
                 {
                   href: "http://www.ncbi.nlm.nih.gov/pubmed/25697341",
@@ -13057,7 +13066,7 @@ var BSRELSummary = React.createClass({
   }
 });
 
-var BSREL = React.createClass({
+var BSREL = _react2.default.createClass({
   displayName: "BSREL",
 
   float_format: d3.format(".2f"),
@@ -13316,21 +13325,21 @@ var BSREL = React.createClass({
     if (!_.isNull(self.state.json)) {
       models = self.state.json.fits;
     }
-    return React.createElement(
+    return _react2.default.createElement(
       "div",
       null,
-      React.createElement(_navbar.NavBar, null),
-      React.createElement(
+      self.props.hyphy_vision ? _react2.default.createElement(_navbar.NavBar, null) : '',
+      _react2.default.createElement(
         "div",
         { className: "container" },
-        React.createElement(
+        _react2.default.createElement(
           "div",
           { className: "row" },
-          React.createElement(_scrollspy.ScrollSpy, { info: scrollspy_info }),
-          React.createElement(
+          _react2.default.createElement(_scrollspy.ScrollSpy, { info: scrollspy_info }),
+          _react2.default.createElement(
             "div",
             { className: "col-sm-10" },
-            React.createElement(
+            _react2.default.createElement(
               "div",
               {
                 id: "datamonkey-absrel-error",
@@ -13338,50 +13347,50 @@ var BSREL = React.createClass({
                 role: "alert",
                 style: { display: "none" }
               },
-              React.createElement(
+              _react2.default.createElement(
                 "button",
                 {
                   type: "button",
                   className: "close",
                   id: "datamonkey-absrel-error-hide"
                 },
-                React.createElement(
+                _react2.default.createElement(
                   "span",
                   { "aria-hidden": "true" },
                   "\xD7"
                 ),
-                React.createElement(
+                _react2.default.createElement(
                   "span",
                   { className: "sr-only" },
                   "Close"
                 )
               ),
-              React.createElement(
+              _react2.default.createElement(
                 "strong",
                 null,
                 "Error!"
               ),
               " ",
-              React.createElement("span", { id: "datamonkey-absrel-error-text" })
+              _react2.default.createElement("span", { id: "datamonkey-absrel-error-text" })
             ),
-            React.createElement(
+            _react2.default.createElement(
               "div",
               { id: "results" },
-              React.createElement(
+              _react2.default.createElement(
                 "div",
                 { id: "summary-tab" },
-                React.createElement(BSRELSummary, {
+                _react2.default.createElement(BSRELSummary, {
                   test_results: self.state.test_results,
                   pmid: self.state.pmid,
                   input_data: self.state.input_data
                 }),
-                React.createElement(
+                _react2.default.createElement(
                   "div",
                   { className: "row" },
-                  React.createElement(
+                  _react2.default.createElement(
                     "div",
                     { id: "hyphy-tree-summary", className: "col-md-12" },
-                    React.createElement(_tree_summary.TreeSummary, {
+                    _react2.default.createElement(_tree_summary.TreeSummary, {
                       model: self.state.full_model,
                       test_results: self.state.test_results,
                       branch_attributes: self.state.branch_attributes
@@ -13389,13 +13398,13 @@ var BSREL = React.createClass({
                   )
                 )
               ),
-              React.createElement(
+              _react2.default.createElement(
                 "div",
                 { className: "row" },
-                React.createElement(
+                _react2.default.createElement(
                   "div",
                   { id: "tree-tab", className: "col-md-12" },
-                  React.createElement(_tree.Tree, {
+                  _react2.default.createElement(_tree.Tree, {
                     json: self.state.json,
                     settings: self.state.settings,
                     models: models,
@@ -13405,33 +13414,33 @@ var BSREL = React.createClass({
                   })
                 )
               ),
-              React.createElement(
+              _react2.default.createElement(
                 "div",
                 { className: "row" },
-                React.createElement(
+                _react2.default.createElement(
                   "div",
                   { id: "table-tab", className: "col-md-12" },
-                  React.createElement(_branch_table.BranchTable, {
+                  _react2.default.createElement(_branch_table.BranchTable, {
                     tree: self.state.tree,
                     test_results: self.state.test_results,
                     annotations: self.state.annotations
                   })
                 ),
-                React.createElement(
+                _react2.default.createElement(
                   "div",
                   { id: "hyphy-model-fits", className: "col-md-12" },
-                  React.createElement(_tables.DatamonkeyModelTable, { fits: self.state.fits }),
-                  React.createElement(
+                  _react2.default.createElement(_tables.DatamonkeyModelTable, { fits: self.state.fits }),
+                  _react2.default.createElement(
                     "p",
                     { className: "description" },
                     "This table reports a statistical summary of the models fit to the data. Here, ",
-                    React.createElement(
+                    _react2.default.createElement(
                       "strong",
                       null,
                       "Baseline MG94xREV"
                     ),
                     " refers to the MG94xREV baseline model that infers a single \u03C9 rate category per branch. ",
-                    React.createElement(
+                    _react2.default.createElement(
                       "strong",
                       null,
                       "Full adaptive model"
@@ -13451,10 +13460,15 @@ var BSREL = React.createClass({
 // Will need to make a call to this
 // omega distributions
 function render_absrel(url, element) {
-  ReactDOM.render(React.createElement(BSREL, { url: url }), document.getElementById(element));
+  _reactDom2.default.render(_react2.default.createElement(BSREL, { url: url }), document.getElementById(element));
+}
+
+function render_hv_absrel(url, element) {
+  _reactDom2.default.render(_react2.default.createElement(BSREL, { url: url, hyphy_vision: true }), document.getElementById(element));
 }
 
 module.exports = render_absrel;
+module.exports.hv = render_hv_absrel;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(6), __webpack_require__(3)))
 
 /***/ }),
@@ -14472,7 +14486,7 @@ var BUSTED = React.createClass({
     return React.createElement(
       "div",
       null,
-      React.createElement(_navbar.NavBar, { onFileChange: this.onFileChange }),
+      self.props.hyphy_vision ? React.createElement(_navbar.NavBar, { onFileChange: this.onFileChange }) : '',
       React.createElement(
         "div",
         { className: "container" },
@@ -14556,7 +14570,12 @@ var render_busted = function render_busted(url, element) {
   ReactDOM.render(React.createElement(BUSTED, { url: url }), document.getElementById(element));
 };
 
+var render_hv_busted = function render_hv_busted(url, element) {
+  ReactDOM.render(React.createElement(BUSTED, { url: url, hyphy_vision: true }), document.getElementById(element));
+};
+
 module.exports = render_busted;
+module.exports.hv = render_hv_busted;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ }),
@@ -16317,84 +16336,122 @@ var FEL = React.createClass({
     };
   },
 
-  loadFromServer: function loadFromServer() {
+  processData: function processData(data) {
     var _this = this;
 
-    d3.json(this.props.url, function (data) {
-      var mle = data["MLE"];
+    var mle = data["MLE"];
 
-      // These variables are to be used for DatamonkeyTable
-      var mle_headers = mle.headers || [];
-      var mle_content = mle.content[0] || [];
+    // These variables are to be used for DatamonkeyTable
+    var mle_headers = mle.headers || [];
+    var mle_content = _.flatten(_.values(mle.content), true);
+    mle_headers = this.formatHeadersForTable(mle_headers);
 
-      mle_headers = _this.formatHeadersForTable(mle_headers);
+    _.each(mle_headers, function (d) {
+      return d["sortable"] = true;
+    });
 
-      _.each(mle_headers, function (d) {
-        return d["sortable"] = true;
+    // format content
+    mle_content = _.map(mle_content, function (d) {
+      return _.map(d, function (g) {
+        return _this.float_format(g);
       });
+    });
 
-      // format content
-      mle_content = _.map(mle_content, function (d) {
-        return _.map(d, function (g) {
-          return _this.float_format(g);
-        });
-      });
+    // add a partition entry to both headers and content
+    mle_headers = [{ value: "Partition", sortable: true, abbr: "Partition that site belongs to" }].concat(mle_headers);
 
-      // add a site count to both headers and content
-      mle_headers = [{ value: "Site", sortable: true, abbr: "Site Position" }].concat(mle_headers);
+    var partition_column = d3.range(mle_content.length).map(function (d) {
+      return 0;
+    });
+    _.each(data['data partitions'], function (val, key) {
+      val.coverage[0].forEach(function (d) {
+        partition_column[d] = key;
+      });
+    });
 
-      mle_content = _.map(mle_content, function (d, key) {
-        var k = key + 1;
-        return [k].concat(d);
-      });
+    mle_content = _.map(mle_content, function (d, key) {
+      return [partition_column[key]].concat(d);
+    });
 
-      // Create datatype that is a bit more manageable for use with DatamonkeySeries
-      var mle_header_values = _.map(mle_headers, function (d) {
-        return d.value;
-      });
+    // add a site count to both headers and content
+    mle_headers = [{ value: "Site", sortable: true, abbr: "Site Position" }].concat(mle_headers);
 
-      var mle_results = _.map(mle_content, function (c) {
-        return _.object(mle_header_values, c);
-      });
+    mle_content = _.map(mle_content, function (d, key) {
+      var k = key + 1;
+      return [k].concat(d);
+    });
 
-      // Get number of positively and negatively selected sites by p-value threshold
-      var mle_results = _.map(mle_results, function (d) {
-        d["is_positive"] = parseFloat(d["beta"]) / parseFloat(d["alpha"]) > 1 && parseFloat(d["p-value"]) <= _this.state.pvalue_threshold;
-        d["is_negative"] = parseFloat(d["beta"]) / parseFloat(d["alpha"]) < 1 && parseFloat(d["p-value"]) <= _this.state.pvalue_threshold;
-        return d;
-      });
+    // Create datatype that is a bit more manageable for use with DatamonkeySeries
+    var mle_header_values = _.map(mle_headers, function (d) {
+      return d.value;
+    });
 
-      var positively_selected = _.filter(mle_results, function (d) {
-        return d["is_positive"];
-      });
-      var negatively_selected = _.filter(mle_results, function (d) {
-        return d["is_negative"];
-      });
+    var mle_results = _.map(mle_content, function (c) {
+      return _.object(mle_header_values, c);
+    });
 
-      // highlight mle_content with whether they are significant or not
-      var mle_content = _.map(mle_results, function (d, key) {
-        var classes = "";
-        if (mle_results[key].is_positive) {
-          classes = "success";
-        } else if (mle_results[key].is_negative) {
-          classes = "warning";
-        }
-        return _.map(_.values(d), function (g) {
-          return { value: g, classes: classes };
-        });
-      });
+    // Get number of positively and negatively selected sites by p-value threshold
+    var mle_results = _.map(mle_results, function (d) {
+      d["is_positive"] = parseFloat(d["beta"]) / parseFloat(d["alpha"]) > 1 && parseFloat(d["p-value"]) <= _this.state.pvalue_threshold;
+      d["is_negative"] = parseFloat(d["beta"]) / parseFloat(d["alpha"]) < 1 && parseFloat(d["p-value"]) <= _this.state.pvalue_threshold;
+      return d;
+    });
 
-      _this.setState({
-        mle_headers: mle_headers,
-        mle_content: mle_content,
-        mle_results: mle_results,
-        positively_selected: positively_selected,
-        negatively_selected: negatively_selected,
-        input: data.input
-      });
+    var positively_selected = _.filter(mle_results, function (d) {
+      return d["is_positive"];
+    });
+    var negatively_selected = _.filter(mle_results, function (d) {
+      return d["is_negative"];
+    });
+
+    // highlight mle_content with whether they are significant or not
+    var mle_content = _.map(mle_results, function (d, key) {
+      var classes = "";
+      if (mle_results[key].is_positive) {
+        classes = "success";
+      } else if (mle_results[key].is_negative) {
+        classes = "warning";
+      }
+      return _.map(_.values(d), function (g) {
+        return { value: g, classes: classes };
+      }).slice(0, 8);
+    });
+
+    this.setState({
+      mle_headers: mle_headers,
+      mle_content: mle_content,
+      mle_results: mle_results,
+      positively_selected: positively_selected,
+      negatively_selected: negatively_selected,
+      input: data.input
     });
   },
 
+  loadFromServer: function loadFromServer() {
+    var self = this;
+    d3.json(this.props.url, function (data) {
+      self.processData(data);
+    });
+  },
+
+  onFileChange: function onFileChange(e) {
+    var self = this;
+    var files = e.target.files; // FileList object
+
+    if (files.length == 1) {
+      var f = files[0];
+      var reader = new FileReader();
+
+      reader.onload = function (theFile) {
+        return function (e) {
+          var data = JSON.parse(this.result);
+          self.processData(data);
+        };
+      }(f);
+      reader.readAsText(f);
+    }
+    e.preventDefault();
+  },
   getClipboard: function getClipboard() {
     if (this.state.copy_transition) {
       return React.createElement(
@@ -16575,7 +16632,7 @@ var FEL = React.createClass({
     var y_options = _.filter(_.map(this.state.mle_headers, function (d) {
       return d.value;
     }), function (d) {
-      return d != "Site";
+      return d != "Site" && d != 'Partition';
     });
 
     var Summary = this.getSummary();
@@ -16583,7 +16640,7 @@ var FEL = React.createClass({
     return React.createElement(
       "div",
       null,
-      React.createElement(_navbar.NavBar, null),
+      this.props.hyphy_vision ? React.createElement(_navbar.NavBar, { onFileChange: this.onFileChange }) : '',
       React.createElement(
         "div",
         { className: "container" },
@@ -16628,7 +16685,7 @@ var FEL = React.createClass({
               " ",
               React.createElement("span", { id: "datamonkey-fel-error-text" })
             ),
-            React.createElement("div", { className: "clearance", id: "summary-div" }),
+            React.createElement("div", { className: "clearance", id: "summary-tab" }),
             React.createElement(
               "div",
               { id: "results" },
@@ -16660,7 +16717,8 @@ var FEL = React.createClass({
                 React.createElement(_graphs.DatamonkeyGraphMenu, {
                   x_options: x_options,
                   y_options: y_options,
-                  axisSelectionEvent: this.updateAxisSelection
+                  axisSelectionEvent: this.updateAxisSelection,
+                  export_images: true
                 }),
                 React.createElement(_graphs.DatamonkeySeries, {
                   x: x,
@@ -16718,7 +16776,12 @@ function render_fel(url, element) {
   ReactDOM.render(React.createElement(FEL, { url: url }), document.getElementById(element));
 }
 
+function render_hv_fel(url, element) {
+  ReactDOM.render(React.createElement(FEL, { url: url, hyphy_vision: true }), document.getElementById(element));
+}
+
 module.exports = render_fel;
+module.exports.hv = render_hv_fel;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(6), __webpack_require__(3)))
 
 /***/ }),
@@ -16914,7 +16977,7 @@ function GARDRecombinationReport(props) {
         React.createElement(_header.Header, { title: "Recombination report" }),
         React.createElement(
           "p",
-          null,
+          { className: "description" },
           "GARD found no evidence of recombination."
         )
       )
@@ -17142,7 +17205,7 @@ function GARDTopologyReport(props) {
   var statements = _.range(3).map(function (k) {
     return React.createElement(
       "p",
-      null,
+      { className: "description" },
       "At p = ",
       bypvalue[k][0] * totalComparisons,
       ", there are ",
@@ -17209,7 +17272,7 @@ function GARDTopologyReport(props) {
       ),
       React.createElement(
         "p",
-        null,
+        { className: "description" },
         "Comparing the AIC",
         React.createElement(
           "sub",
@@ -17228,7 +17291,7 @@ function GARDTopologyReport(props) {
       ),
       React.createElement(
         "p",
-        null,
+        { className: "description" },
         "Please consult the above Kishino Hasegawa topological incongruence table for more details."
       ),
       statements
@@ -17323,7 +17386,6 @@ var GARD = function (_React$Component) {
       return React.createElement(
         "div",
         null,
-        React.createElement(_navbar.NavBar, { onFileChange: this.onFileChange }),
         React.createElement(
           "div",
           { className: "container" },
@@ -17526,8 +17588,12 @@ function MEMETable(props) {
     }));
   });
   if (props.header) {
-    var headerData = ['Site', 'Partition'].concat(props.header.map(function (pair) {
-      return { value: pair[0] == 'alpha;' ? '&alpha; ' : pair[0], abbr: pair[1] };
+    var headerData = [{ value: 'Site', sortable: true }, { value: 'Partition', sortable: true }].concat(props.header.map(function (pair) {
+      return {
+        value: pair[0] == 'alpha;' ? '&alpha; ' : pair[0],
+        abbr: pair[1],
+        sortable: true
+      };
     }));
   }
 
@@ -17680,7 +17746,7 @@ var MEME = function (_React$Component) {
       return React.createElement(
         "div",
         null,
-        React.createElement(_navbar.NavBar, { onFileChange: this.onFileChange }),
+        this.props.hyphy_vision ? React.createElement(_navbar.NavBar, { onFileChange: this.onFileChange }) : '',
         React.createElement(
           "div",
           { className: "container" },
@@ -17741,7 +17807,12 @@ function render_meme(url, element) {
   ReactDOM.render(React.createElement(MEME, { url: url }), document.getElementById(element));
 }
 
+function render_hv_meme(url, element) {
+  ReactDOM.render(React.createElement(MEME, { url: url, hyphy_vision: true }), document.getElementById(element));
+}
+
 module.exports = render_meme;
+module.exports.hv = render_hv_meme;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ }),
@@ -18102,7 +18173,6 @@ var PRIME = function (_React$Component) {
       return React.createElement(
         "div",
         null,
-        React.createElement(_navbar.NavBar, null),
         React.createElement(
           "div",
           { className: "container" },
@@ -18765,7 +18835,7 @@ var RELAX = function (_React$Component2) {
       return React.createElement(
         "div",
         null,
-        React.createElement(_navbar.NavBar, { onFileChange: this.onFileChange }),
+        self.props.hyphy_vision ? React.createElement(_navbar.NavBar, { onFileChange: this.onFileChange }) : '',
         React.createElement(
           "div",
           { className: "container" },
@@ -18853,7 +18923,12 @@ function render_relax(url, element) {
   ReactDOM.render(React.createElement(RELAX, { url: url }), document.getElementById(element));
 }
 
+function render_hv_relax(url, element) {
+  ReactDOM.render(React.createElement(RELAX, { url: url, hyphy_vision: true }), document.getElementById(element));
+}
+
 module.exports = render_relax;
+module.exports.hv = render_hv_relax;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(6), __webpack_require__(3)))
 
 /***/ }),
@@ -20227,7 +20302,7 @@ var SLAC = React.createClass({
       return React.createElement(
         "div",
         null,
-        React.createElement(_navbar.NavBar, { onFileChange: self.onFileChange }),
+        this.props.hyphy_vision ? React.createElement(_navbar.NavBar, { onFileChange: this.onFileChange }) : '',
         React.createElement(
           "div",
           { className: "container" },
@@ -20372,7 +20447,12 @@ function render_slac(url, element) {
   ReactDOM.render(React.createElement(SLAC, { url: url }), document.getElementById(element));
 }
 
+function render_hv_slac(url, element) {
+  ReactDOM.render(React.createElement(SLAC, { url: url, hyphy_vision: true }), document.getElementById(element));
+}
+
 module.exports = render_slac;
+module.exports.hv = render_hv_slac;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(6), __webpack_require__(3)))
 
 /***/ }),

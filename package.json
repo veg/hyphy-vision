@@ -20,7 +20,7 @@
     "url": "git://github.com/veg/hyphy-vision.git"
   },
   "main": "dist/hyphyvision.js",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "dependencies": {
     "bootstrap": "3.x",
     "chi-squared": "^1.1.0",
@@ -96,6 +96,7 @@
   "license": "MIT",
   "files": [
     "dist/hyphyvision.js",
+    "dist/hyphyvision.css",
     "dist/hyphyvision.min.js",
     "dist/hyphyvision-min.map"
   ]
