@@ -98,7 +98,7 @@ function GARDRecombinationReport(props){
     return (<div className="row" id="report-tab">
       <div className="col-md-12">
         <Header title="Recombination report" />
-        <p>GARD found no evidence of recombination.</p>
+        <p className="description">GARD found no evidence of recombination.</p>
       </div>
     </div>);
   }
@@ -219,7 +219,7 @@ function GARDTopologyReport(props){
       <td>{sigCell}</td>
     </tr>));
   }
-  var statements = _.range(3).map(k=><p>At p = {bypvalue[k][0]*totalComparisons}, there are {bypvalue[k][1]} breakpoints with significant topological incongruence.</p>),
+  var statements = _.range(3).map(k=><p className="description">At p = {bypvalue[k][0]*totalComparisons}, there are {bypvalue[k][1]} breakpoints with significant topological incongruence.</p>),
     currentAIC = props.data.baselineScore-_.pluck(props.data.improvements, "deltaAICc").reduce((t,n)=>t+n),
     w = Math.exp(0.5*(currentAIC-props.data.singleTreeAICc)),
     conclusion = w > 0.01 ?
@@ -241,10 +241,10 @@ function GARDTopologyReport(props){
           {rows}
         </tbody>
       </table>
-      <p>Comparing the AIC<sub>c</sub> score of the best fitting GARD model, that allows for different topologies between segments ({currentAIC.toFixed(1)}), and that of the model that
+      <p className="description">Comparing the AIC<sub>c</sub> score of the best fitting GARD model, that allows for different topologies between segments ({currentAIC.toFixed(1)}), and that of the model that
       assumes the same tree for all the partitions inferred by GARD the same tree, but allows different branch lengths between partitions ({props.data.singleTreeAICc.toFixed(1)}) suggests that because
       the multiple tree model { w > 0.01 ? 'cannot' : 'can' } be preferred over the single tree model by an evidence ratio of 100 or greater, {conclusion}.</p>
-      <p>Please consult the above Kishino Hasegawa topological incongruence table for more details.</p>
+      <p className="description">Please consult the above Kishino Hasegawa topological incongruence table for more details.</p>
       {statements}
     </div>
   </div>);
@@ -325,7 +325,6 @@ class GARD extends React.Component {
     };
 
     return (<div>
-      <NavBar onFileChange={this.onFileChange} />
       <div className="container">
         <div className="row">
           <ScrollSpy info={scrollspy_info} />

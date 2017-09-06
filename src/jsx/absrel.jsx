@@ -1,11 +1,10 @@
-var React = require("react"),
-  ReactDOM = require("react-dom");
-
 var _ = require("underscore");
 
 require("phylotree");
 require("phylotree.css");
 
+import React from "react";
+import ReactDOM from "react-dom";
 import { DatamonkeyModelTable } from "./components/tables.jsx";
 import { TreeSummary } from "./components/tree_summary.jsx";
 import { Tree } from "./components/tree.jsx";
@@ -441,7 +440,7 @@ var BSREL = React.createClass({
     }
     return (
       <div>
-        <NavBar />
+        {self.props.hyphy_vision ? <NavBar /> : ''}
         <div className="container">
           <div className="row">
             <ScrollSpy info={scrollspy_info} />
@@ -531,4 +530,10 @@ function render_absrel(url, element) {
   ReactDOM.render(<BSREL url={url} />, document.getElementById(element));
 }
 
+function render_hv_absrel(url, element) {
+  ReactDOM.render(<BSREL url={url} hyphy_vision />, document.getElementById(element));
+}
+
 module.exports = render_absrel;
+module.exports.hv = render_hv_absrel;
+
