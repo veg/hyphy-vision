@@ -311,13 +311,16 @@ var BSREL = React.createClass({
         });
 
         tooltip += "<br/><i>p = " + omega_format(annotations["p"]) + "</i>";
+        $(element[0][0]).mouseover(e=>{
+          $('#tooltip_container').css({'display':'block','opacity':0})
+            .animate({'opacity':1},250)
+            .css('left', e.pageX)
+            .css('top', e.pageY);
+          console.log(data.target.name);
+        });
 
-        $(element[0][0]).tooltip({
-          title: tooltip,
-          html: true,
-          trigger: "hover",
-          container: "body",
-          placement: "auto"
+        $(element[0][0]).mouseout(e=>{
+          $('#tooltip_container').css({'display':'none'})
         });
 
         createBranchGradient(data.target);
@@ -519,6 +522,7 @@ var BSREL = React.createClass({
             </div>
           </div>
         </div>
+
       </div>
     );
   }
