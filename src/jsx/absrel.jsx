@@ -277,12 +277,8 @@ var BSREL = React.createClass({
       var annotations = data.target.annotations,
         alpha_level = 0.05,
         tooltip = "<b>" + data.target.name + "</b>";
-        //reference_omega_weight = prop_format(0),
-        //distro = "";
 
       if (annotations) {
-        //reference_omega_weight = annotations.omegas[0].prop;
-
         annotations.omegas.forEach(function(d, i) {
           var omega_value = d.omega > 1e20 ? "&infin;" : omega_format(d.omega),
             omega_weight = prop_format(d.prop);
@@ -295,19 +291,6 @@ var BSREL = React.createClass({
             " (" +
             omega_weight +
             ")";
-
-          //if (i) {
-          //  distro += "<br/>";
-          //}
-
-          //distro +=
-          //  "&omega;<sub>" +
-          //  (i + 1) +
-          //  "</sub> = " +
-          //  omega_value +
-          //  " (" +
-            //omega_weight +
-            //")";
         });
 
         tooltip += "<br/><i>p = " + omega_format(annotations["p"]) + "</i>";
@@ -315,12 +298,13 @@ var BSREL = React.createClass({
           $('#tooltip_container').css({'display':'block','opacity':0})
             .animate({'opacity':1},250)
             .css('left', e.pageX)
-            .css('top', e.pageY);
-          console.log(data.target.name);
+            .css('top', e.pageY)
+            .html(tooltip);
         });
 
         $(element[0][0]).mouseout(e=>{
           $('#tooltip_container').css({'display':'none'})
+            .html('');
         });
 
         createBranchGradient(data.target);
