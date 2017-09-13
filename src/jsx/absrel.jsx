@@ -423,7 +423,11 @@ var BSREL = React.createClass({
 
     var models = {};
     if (!_.isNull(self.state.json)) {
-      models = self.state.json.fits;
+      // List full adaptive model first
+      models = {
+        "Full adaptive model": self.state.json.fits["Full adaptive model"],
+        "Baseline MG94xREV": self.state.json.fits["Baseline MG94xREV"]
+      };
     }
     return (
       <div>
