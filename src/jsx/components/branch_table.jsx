@@ -223,7 +223,7 @@ var BranchTable = React.createClass({
       return d;
     });
 
-    branch_rows.enter().append("td");
+    branch_rows.enter().append("td").style("text-align", "left");
     branch_rows.html(function(d) {
       return d;
     });

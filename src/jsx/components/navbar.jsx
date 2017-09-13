@@ -84,7 +84,7 @@ var NavBar = React.createClass({
         <div className="container">
           <div className="row">
             <div className="col-sm-12">
-              <a href="#">
+              <a href="/">
                 <img id="hyphy-logo" src="../../images/hyphy-logo.svg" />
               </a>
               <div className="navbar-header">
