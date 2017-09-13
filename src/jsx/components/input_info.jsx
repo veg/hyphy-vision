@@ -7,7 +7,7 @@ function InputInfo(props){
     filename = is_full_path ? _.last(props.input_data['file name'].split('/')) : props.input_data['file name'];
   return (<div id="input-info">
     <span className="hyphy-highlight">INPUT DATA</span> <span className="divider">|</span>
-    <a href="#">{filename}</a> <span className="divider">|</span>
+    {filename} <span className="divider">|</span>
     <span className="hyphy-highlight">{props.input_data['number of sequences']}</span> sequences <span className="divider">|</span>
     <span className="hyphy-highlight">{props.input_data['number of sites']}</span> sites
   </div>);
