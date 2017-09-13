@@ -94,7 +94,9 @@ var BUSTEDSiteChartAndTable = React.createClass({
       upper_site_range: null,
       constrained_evidence_ratio_threshold: "-Infinity",
       optimized_null_evidence_ratio_threshold: "-Infinity",
-      brushend_event: false
+      brushend_event: false,
+      CERwarning: false,
+      ONERwarning: false,
     };
   },
   componentWillReceiveProps: function(nextProps) {
@@ -298,15 +300,22 @@ var BUSTEDSiteChartAndTable = React.createClass({
   handleONERChange: function(event) {
     if (/^-?[0-9]*(\.[0-9]*)?$/.test(event.target.value)) {
       this.setState({
-        optimized_null_evidence_ratio_threshold: event.target.value
+        optimized_null_evidence_ratio_threshold: event.target.value,
+        ONERwarning: false
       });
     } else if (event.target.value == "-I") {
       this.setState({
-        optimized_null_evidence_ratio_threshold: "-Infinity"
+        optimized_null_evidence_ratio_threshold: "-Infinity",
+        ONERwarning: false
       });
     } else if (event.target.value == "-Infinit") {
       this.setState({
-        optimized_null_evidence_ratio_threshold: ""
+        optimized_null_evidence_ratio_threshold: "",
+        ONERwarning: false
+      });
+    } else {
+      this.setState({
+        ONERwarning: true
       });
     }
   },
@@ -325,15 +334,22 @@ var BUSTEDSiteChartAndTable = React.createClass({
   handleCERChange: function(event) {
     if (/^-?[0-9]*(\.[0-9]*)?$/.test(event.target.value)) {
       this.setState({
-        constrained_evidence_ratio_threshold: event.target.value
+        constrained_evidence_ratio_threshold: event.target.value,
+        CERwarning: false
       });
     } else if (event.target.value == "-I") {
       this.setState({
-        constrained_evidence_ratio_threshold: "-Infinity"
+        constrained_evidence_ratio_threshold: "-Infinity",
+        CERwarning: false
       });
     } else if (event.target.value == "-Infinit") {
       this.setState({
-        constrained_evidence_ratio_threshold: ""
+        constrained_evidence_ratio_threshold: "",
+        CERwarning: false
+      });
+    } else {
+      this.setState({
+        CERwarning: true
       });
     }
   },
@@ -450,7 +466,7 @@ var BUSTEDSiteChartAndTable = React.createClass({
           <div id="chart-id" className="col-lg-12" />
 
           <div className="col-lg-6 clear-padding justify-content">
-            <div className="form-group">
+            <div className={"form-group" + (this.state.CERwarning ? " has-error" : "")}>
               <label for="er-constrained-threshold">
                 Constrained Test Statistic
               </label>
@@ -463,11 +479,12 @@ var BUSTEDSiteChartAndTable = React.createClass({
                 onFocus={this.handleCERFocus}
                 onBlur={this.handleCERBlur}
               />
+            {this.state.CERwarning ? <span className="help-block">Enter a floating point number.</span> : ''}
             </div>
           </div>
           
           <div className="col-lg-6 justify-content">
-            <div className="form-group">
+            <div className={"form-group" + (this.state.ONERwarning ? " has-error" : "")}>
               <label for="er-optimized-null-threshold">
                 Optimized Null Test Statistic
               </label>
@@ -480,6 +497,7 @@ var BUSTEDSiteChartAndTable = React.createClass({
                 onFocus={this.handleONERFocus}
                 onBlur={this.handleONERBlur}
               />
+            {this.state.ONERwarning ? <span className="help-block">Enter a floating point number.</span> : ''}
             </div>
           </div>
 
