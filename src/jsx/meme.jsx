@@ -9,6 +9,7 @@ import { DatamonkeySiteGraph } from "./components/graphs.jsx";
 import { NavBar } from "./components/navbar.jsx";
 import { ScrollSpy } from "./components/scrollspy.jsx";
 
+
 function MEMESummary(props) {
   var user_message,
     was_evidence = true;
@@ -85,10 +86,9 @@ function MEMETable(props) {
       var alpha = row[0] ? row[0] : 1e-10,
         beta_minus = row[1],
         beta_plus = row[3];
-      var selection = beta_minus/alpha < 1 && row[6] < .1 ? "negative-selection-row" : "";
-        selection = beta_plus/alpha > 1 && row[6] < .1 ? "positive-selection-row" : selection;
+      var selection = beta_plus/alpha > 1 && row[6] < .1 ? "positive-selection-row" : '';
       var site = {value: index+1, classes: selection},
-        partition = {value: partition_column[index], classes:selection};
+        partition = {value: +partition_column[index]+1, classes:selection};
       return [site, partition].concat(
         row.map(entry => {
           return {value: formatter(entry), classes: selection};
@@ -110,7 +110,7 @@ function MEMETable(props) {
   return (<div className="row">
     <div className="col-md-12" id="table-tab">
       <h4 className="dm-table-header">
-        MEME data
+        MEME Parameter Table 
         <span
           className="glyphicon glyphicon-info-sign"
           style={{ verticalAlign: "middle", float: "right" }}
@@ -123,14 +123,9 @@ function MEMETable(props) {
           data-placement="bottom"
         />
       </h4>
-      <div className="col-md-6 positive-selection-row alert" role="alert">
-        Positively selected sites with evidence are highlighted in
-        green.
+      <div className="col-md-12" role="alert">
+        <p className="description">Sites that yielded a statistically significant result (p &#8804; .1) are highlighted in green.</p>
       </div>
-      <div className="col-md-6 negative-selection-row alert" role="alert">
-        Negatively selected sites with evidence are highlighted in
-        black.
-      </div>    
       <DatamonkeyTable
         headerData={headerData}
         bodyData={new_rows}
