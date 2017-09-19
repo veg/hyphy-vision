@@ -172,6 +172,10 @@ class MEME extends React.Component {
       return {newickString: val, branchLengths: branchLengths};
     });
 
+    if(data["fits"]["Nucleotide GTR"]){
+      data["fits"]["Nucleotide GTR"]["Rate Distributions"] = {};      
+    }
+
     this.setState({
       input_data: data["input_data"],
       data: data,
