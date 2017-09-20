@@ -141,7 +141,7 @@ var Tree = React.createClass({
     var branch_lengths;
     if(self.props.method == 'absrel' || self.props.method == 'relax'){
       branch_lengths = self.props.json.trees.branchLengths[self.state.selected_model];
-    } else if(self.props.method == 'busted' || self.props.method == 'meme'){
+    } else if(['busted', 'meme', 'fel'].indexOf(self.props.method) > -1){
       branch_lengths = self.props.json.trees[self.state.current].branchLengths[self.state.selected_model];
     } 
     return branch_lengths;
@@ -574,7 +574,7 @@ var Tree = React.createClass({
 
     if(self.props.method=='absrel' || self.props.method=='relax'){
       var tree_string = self.props.json.input.trees[0];
-    }else if (self.props.method=='busted' || self.props.method=='meme'){
+    }else if (['busted', 'meme', 'fel'].indexOf(self.props.method) > -1){
       var tree_string = self.props.json.trees[self.state.current]['newickString']
     }
     self.tree(tree_string).svg(self.svg); 

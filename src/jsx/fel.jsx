@@ -2,8 +2,9 @@ var React = require("react"),
   ReactDOM = require("react-dom"),
   _ = require("underscore");
 
+import { Tree } from "./components/tree.jsx";
 import { InputInfo } from "./components/input_info.jsx";
-import { DatamonkeyTable } from "./components/tables.jsx";
+import { DatamonkeyTable, DatamonkeyModelTable } from "./components/tables.jsx";
 import { DatamonkeySeries, DatamonkeyGraphMenu } from "./components/graphs.jsx";
 import { NavBar } from "./components/navbar.jsx";
 import { ScrollSpy } from "./components/scrollspy.jsx";
@@ -100,7 +101,8 @@ var FEL = React.createClass({
       pvalue_threshold: 0.1,
       positively_selected: [],
       negatively_selected: [],
-      input: null
+      input: null,
+      fits: {}
     };
   },
 
@@ -132,7 +134,7 @@ var FEL = React.createClass({
     var partition_column = d3.range(mle_content.length).map(d=>0);
     _.each(data['data partitions'], (val, key)=>{
       val.coverage[0].forEach(d=>{
-        partition_column[d] = key;
+        partition_column[d] = +key+1;
       });
     });
 
@@ -190,13 +192,23 @@ var FEL = React.createClass({
       }).slice(0, 8);
     });
 
+    data['trees'] = _.map(data['input']['trees'], (val, key) => {
+      var branchLengths = {
+        'Global MG94xREV': _.mapObject(data['branch attributes'][key], val1 => val1['Global MG94xREV']),
+        'Nucleotide GTR': _.mapObject(data['branch attributes'][key], val1 => val1['Nucleotide GTR'])
+      };
+      return {newickString: val, branchLengths: branchLengths};
+    });
+
     this.setState({
       mle_headers: mle_headers,
       mle_content: mle_content,
       mle_results: mle_results,
       positively_selected: positively_selected,
       negatively_selected: negatively_selected,
-      input: data.input
+      input: data.input,
+      fits: data.fits,
+      data: data
     });
 
   },
@@ -284,20 +296,19 @@ var FEL = React.createClass({
               </span>
               sites
             </p>
-            <div className="row" style={{ marginTop: "20px" }}>
-              <div className="col-md-3">With p-value threshold of</div>
-              <div className="col-md-2" style={{ top: "-5px" }}>
-                <input
-                  className="form-control"
-                  type="number"
-                  defaultValue="0.1"
-                  step="0.01"
-                  min="0"
-                  max="1"
-                  onChange={this.updatePvalThreshold}
-                />
-              </div>
-            </div>
+            <p>
+              with p-value threshold of
+              <input
+                style={{display: "inline-block", marginLeft: "5px", width: "100px"}}
+                className="form-control"
+                type="number"
+                defaultValue="0.1"
+                step="0.01"
+                min="0"
+                max="1"
+                onChange={this.updatePvalThreshold}
+              />
+            </p>
           </p>
           <hr />
           <p>
@@ -352,8 +363,10 @@ in the remaining ${no_selected} sites in your alignment.`;
 
     var scrollspy_info = [
       { label: "summary", href: "summary-tab" },
-      { label: "plots", href: "plot-tab" },
-      { label: "table", href: "table-tab" }
+      { label: "plot", href: "plot-tab" },
+      { label: "table", href: "table-tab" },
+      { label: "tree", href: "tree-tab" },
+      { label: "fits", href: "fits-tab" }
     ];
 
     var { x: x, y: y } = this.definePlotData(
@@ -372,6 +385,30 @@ in the remaining ${no_selected} sites in your alignment.`;
     );
 
     var Summary = this.getSummary();
+
+    var tree_settings = {
+          omegaPlot: {},
+          "tree-options": {
+            /* value arrays have the following meaning
+                    [0] - the value of the attribute
+                    [1] - does the change in attribute value trigger tree re-layout?
+                */
+            "hyphy-tree-model": ["Unconstrained model", true],
+            "hyphy-tree-highlight": ["RELAX.test", false],
+            "hyphy-tree-branch-lengths": [false, true],
+            "hyphy-tree-hide-legend": [true, false],
+            "hyphy-tree-fill-color": [true, false]
+          },
+          "hyphy-tree-legend-type": "discrete",
+          "suppress-tree-render": false,
+          "chart-append-html": true,
+          edgeColorizer: function(e,d){return 0} 
+        };
+
+    var models = {};
+    if (this.state.data) {
+      models = this.state.data.fits;
+    }
 
     return (
       <div>
@@ -452,6 +489,32 @@ in the remaining ${no_selected} sites in your alignment.`;
                     />
                   </div>
                 </div>
+
+                <div className="row">
+                  <div id="tree-tab" className="col-md-12">
+                    <Tree
+                      models={models}
+                      json={this.state.data}
+                      settings={tree_settings}
+                      method={'fel'}
+                      multitree
+                    />
+                  </div>
+                </div>
+
+              <div className="row">
+                <div className="col-md-12" id="fits-tab">
+                  <DatamonkeyModelTable fits={this.state.fits} />
+                  <p className="description">
+                    This table reports a statistical summary of the models fit
+                    to the data. Here, <strong>MG94</strong> refers to the
+                    MG94xREV baseline model that infers a single &omega; rate
+                    category per branch.
+                  </p>
+                </div>
+              </div>
+
+
               </div>
             </div>
           </div>
