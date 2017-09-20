@@ -97,7 +97,7 @@ var Tree = React.createClass({
         ]);
 
     var selected_model = _.first(_.keys(self.props.models)),
-      show_legend = ['meme', 'fel', 'fubar', 'gard'].indexOf(self.props.method) < 0;
+      show_legend = ['meme', 'fubar', 'gard'].indexOf(self.props.method) < 0;
 
     return {
       json: this.props.json,

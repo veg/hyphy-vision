@@ -69,13 +69,13 @@ var FEL = React.createClass({
     var mle_content = _.map(this.state.mle_results, function(d, key) {
       var classes = "";
       if (mle_results[key].is_positive) {
-        classes = "success";
+        classes = "positive-selection-row";
       } else if (mle_results[key].is_negative) {
-        classes = "warning";
+        classes = "negative-selection-row";
       }
       return _.map(_.values(d), function(g) {
         return { value: g, classes: classes };
-      });
+      }).slice(0,8);
     });
 
     this.setState({
@@ -104,6 +104,16 @@ var FEL = React.createClass({
       input: null,
       fits: {}
     };
+  },
+
+  formatBranchAnnotations: function(json) {
+    // attach is_foreground to branch annotations
+    var branch_annotations = d3.range(json.trees.length).map(i=>{
+      return _.mapObject(json['tested'][i], (val, key)=>{
+        return {is_foreground: val == 'test'};
+      });
+    });
+    return branch_annotations;
   },
 
   processData: function(data){
@@ -183,9 +193,9 @@ var FEL = React.createClass({
     var mle_content = _.map(mle_results, function(d, key) {
       var classes = "";
       if (mle_results[key].is_positive) {
-        classes = "success";
+        classes = "positive-selection-row";
       } else if (mle_results[key].is_negative) {
-        classes = "warning";
+        classes = "negative-selection-row";
       }
       return _.map(_.values(d), function(g) {
         return { value: g, classes: classes };
@@ -199,6 +209,19 @@ var FEL = React.createClass({
       };
       return {newickString: val, branchLengths: branchLengths};
     });
+
+    data["fits"]["Global MG94xREV"][
+      "branch-annotations"
+    ] = this.formatBranchAnnotations(data);
+    if(data["fits"]["Nucleotide GTR"]) {
+      data["fits"]["Nucleotide GTR"][
+        "branch-annotations"
+      ] = this.formatBranchAnnotations(data);
+    }
+
+    if(data["fits"]["Nucleotide GTR"]){
+      data["fits"]["Nucleotide GTR"]["Rate Distributions"] = {};      
+    }
 
     this.setState({
       mle_headers: mle_headers,
@@ -280,7 +303,7 @@ var FEL = React.createClass({
               <i className="fa fa-plus-circle" aria-hidden="true">
                 {" "}
               </i>{" "}
-              Pervasive Positive/Diversifying selection at
+              pervasive positive/diversifying selection at
               <span className="hyphy-highlight">
                 {" "}{this.state.positively_selected.length}{" "}
               </span>
@@ -290,7 +313,7 @@ var FEL = React.createClass({
               <i className="fa fa-minus-circle" aria-hidden="true">
                 {" "}
               </i>{" "}
-              Pervasive Negative/Purifying selection at
+              pervasive negative/purifying selection at
               <span className="hyphy-highlight">
                 {" "}{this.state.negatively_selected.length}{" "}
               </span>
@@ -307,7 +330,7 @@ var FEL = React.createClass({
                 min="0"
                 max="1"
                 onChange={this.updatePvalThreshold}
-              />
+              />.
             </p>
           </p>
           <hr />
@@ -316,12 +339,12 @@ var FEL = React.createClass({
               See <a href="//hyphy.org/methods/selection-methods/#fel">
                 here
               </a>{" "}
-              for more information about the FEL method
+              for more information about the FEL method.
               <br />
               Please cite PMID{" "}
               <a href="//www.ncbi.nlm.nih.gov/pubmed/15703242">15703242</a> if
               you use this result in a publication, presentation, or other
-              scientific work
+              scientific work.
             </small>
           </p>
         </div>
@@ -363,8 +386,8 @@ in the remaining ${no_selected} sites in your alignment.`;
 
     var scrollspy_info = [
       { label: "summary", href: "summary-tab" },
-      { label: "plot", href: "plot-tab" },
       { label: "table", href: "table-tab" },
+      { label: "plot", href: "plot-tab" },
       { label: "tree", href: "tree-tab" },
       { label: "fits", href: "fits-tab" }
     ];
@@ -386,6 +409,18 @@ in the remaining ${no_selected} sites in your alignment.`;
 
     var Summary = this.getSummary();
 
+    var edgeColorizer = function(element, data, foreground_color) {
+
+      var is_foreground = data.target.annotations.is_foreground,
+        color_fill = foreground_color(0);
+
+      element
+        .style("stroke", is_foreground ? color_fill : "black")
+        .style("stroke-linejoin", "round")
+        .style("stroke-linejoin", "round")
+        .style("stroke-linecap", "round");
+    };
+
     var tree_settings = {
           omegaPlot: {},
           "tree-options": {
@@ -402,7 +437,7 @@ in the remaining ${no_selected} sites in your alignment.`;
           "hyphy-tree-legend-type": "discrete",
           "suppress-tree-render": false,
           "chart-append-html": true,
-          edgeColorizer: function(e,d){return 0} 
+          edgeColorizer: edgeColorizer
         };
 
     var models = {};
@@ -447,6 +482,27 @@ in the remaining ${no_selected} sites in your alignment.`;
                 <InputInfo input_data={this.state.input} />
                 {Summary}
 
+                <div id="table-tab" className="row hyphy-row">
+                  <div id="hyphy-mle-fits" className="col-md-12">
+                    <h3 className="dm-table-header">Table Summary</h3>
+                    <div className="col-md-6 alert positive-selection-row">
+                      Positively selected sites with evidence are highlighted in
+                      green.
+                    </div>
+                    <div className="col-md-6 alert negative-selection-row">
+                      Negatively selected sites with evidence are highlighted in
+                      black.
+                    </div>
+                    <DatamonkeyTable
+                      headerData={this.state.mle_headers}
+                      bodyData={this.state.mle_content}
+                      classes={"table table-condensed table-striped"}
+                      paginate={20}
+                      export_csv
+                    />
+                  </div>
+                </div>
+
                 <div id="plot-tab" className="row hyphy-row">
                   <h3 className="dm-table-header">Plot Summary</h3>
 
@@ -469,27 +525,6 @@ in the remaining ${no_selected} sites in your alignment.`;
                   />
                 </div>
 
-                <div id="table-tab" className="row hyphy-row">
-                  <div id="hyphy-mle-fits" className="col-md-12">
-                    <h3 className="dm-table-header">Table Summary</h3>
-                    <div className="col-md-6 alert alert-success" role="alert">
-                      Positively selected sites with evidence are highlighted in
-                      green.
-                    </div>
-                    <div className="col-md-6 alert alert-warning" role="alert">
-                      Negatively selected sites with evidence are highlighted in
-                      yellow.
-                    </div>
-                    <DatamonkeyTable
-                      headerData={this.state.mle_headers}
-                      bodyData={this.state.mle_content}
-                      classes={"table table-condensed table-striped"}
-                      paginate={20}
-                      export_csv
-                    />
-                  </div>
-                </div>
-
                 <div className="row">
                   <div id="tree-tab" className="col-md-12">
                     <Tree
@@ -497,6 +532,8 @@ in the remaining ${no_selected} sites in your alignment.`;
                       json={this.state.data}
                       settings={tree_settings}
                       method={'fel'}
+                      color_gradient={["#00a99d", "#000000"]}
+                      grayscale_gradient={["#444444","#000000"]}
                       multitree
                     />
                   </div>

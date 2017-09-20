@@ -35,7 +35,7 @@ function MEMESummary(props) {
       </div>
       <div className="col-md-12">
         <div className="main-result">
-          <p>MEME found evidence of</p>
+          <p>MEME <strong className="hyphy-highlight">found evidence</strong> of</p>
           <p>
             <i className="fa fa-plus-circle" aria-hidden="true">
               {" "}
@@ -235,9 +235,9 @@ class MEME extends React.Component {
       scrollspy_info = [
         { label: "summary", href: "summary-tab" },
         { label: "table", href: "table-tab" },
-        { label: "fits", href: "fit-tab" },
         { label: "plot", href: "plot-tab" },
-        { label: "tree", href: "tree-tab" }
+        { label: "tree", href: "tree-tab" },
+        { label: "fits", href: "fit-tab" }
       ];
     
     if(this.state.data){
@@ -287,18 +287,6 @@ class MEME extends React.Component {
                 partitions={self.state.partitions}
                 pValue={self.state.pValue}
               />
-              <div className="row">
-                <div className="col-md-12" id="fit-tab">
-                  <DatamonkeyModelTable fits={self.state.fits} />
-                  <p className="description">
-                    This table reports a statistical summary of the models fit
-                    to the data. Here, <strong>MG94</strong> refers to the
-                    MG94xREV baseline model that infers a single &omega; rate
-                    category per branch.
-                  </p>
-                </div>
-              </div>
-
               <div id="plot-tab" className="row hyphy-row">
                 <div className="col-md-12">
                   <h4 className="dm-table-header">Plot Summary</h4>
@@ -317,6 +305,18 @@ class MEME extends React.Component {
                 />
               </div>
             </div>
+
+              <div className="row">
+                <div className="col-md-12" id="fit-tab">
+                  <DatamonkeyModelTable fits={self.state.fits} />
+                  <p className="description">
+                    This table reports a statistical summary of the models fit
+                    to the data. Here, <strong>MG94</strong> refers to the
+                    MG94xREV baseline model that infers a single &omega; rate
+                    category per branch.
+                  </p>
+                </div>
+              </div>
 
             </div>
           </div>
