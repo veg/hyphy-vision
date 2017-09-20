@@ -3,6 +3,7 @@ var React = require("react"),
   d3 = require("d3"),
   _ = require("underscore");
 
+import { Tree } from "./components/tree.jsx";
 import { InputInfo } from "./components/input_info.jsx";
 import { DatamonkeyTable, DatamonkeyModelTable } from "./components/tables.jsx";
 import { DatamonkeySiteGraph } from "./components/graphs.jsx";
@@ -167,7 +168,8 @@ class MEME extends React.Component {
   processData(data){
     data['trees'] = _.map(data['input']['trees'], (val, key) => {
       var branchLengths = {
-        'Global MG94xREV': _.mapObject(data['branch attributes'][key], val1 => val1['Global MG94xREV'])
+        'Global MG94xREV': _.mapObject(data['branch attributes'][key], val1 => val1['Global MG94xREV']),
+        'Nucleotide GTR': _.mapObject(data['branch attributes'][key], val1 => val1['Nucleotide GTR'])
       };
       return {newickString: val, branchLengths: branchLengths};
     });
@@ -234,7 +236,8 @@ class MEME extends React.Component {
         { label: "summary", href: "summary-tab" },
         { label: "table", href: "table-tab" },
         { label: "fits", href: "fit-tab" },
-        { label: "plot", href: "plot-tab" }
+        { label: "plot", href: "plot-tab" },
+        { label: "tree", href: "tree-tab" }
       ];
     
     if(this.state.data){
@@ -250,6 +253,25 @@ class MEME extends React.Component {
     if (!_.isNull(self.state.data)) {
       models = self.state.data.fits;
     }
+
+    var tree_settings = {
+      omegaPlot: {},
+      "tree-options": {
+        /* value arrays have the following meaning
+                [0] - the value of the attribute
+                [1] - does the change in attribute value trigger tree re-layout?
+            */
+        "hyphy-tree-model": ["Unconstrained model", true],
+        "hyphy-tree-highlight": ["RELAX.test", false],
+        "hyphy-tree-branch-lengths": [false, true],
+        "hyphy-tree-hide-legend": [true, false],
+        "hyphy-tree-fill-color": [true, false]
+      },
+      "hyphy-tree-legend-type": "discrete",
+      "suppress-tree-render": false,
+      "chart-append-html": true,
+      edgeColorizer: function(e,d){return 0} 
+    };
 
     return (
       <div>
@@ -283,6 +305,18 @@ class MEME extends React.Component {
                   {site_graph}
                 </div>
               </div>
+
+            <div className="row">
+              <div id="tree-tab" className="col-md-12">
+                <Tree
+                  models={models}
+                  json={self.state.data}
+                  settings={tree_settings}
+                  method={'meme'}
+                  multitree
+                />
+              </div>
+            </div>
 
             </div>
           </div>

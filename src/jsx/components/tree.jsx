@@ -96,7 +96,8 @@ var Tree = React.createClass({
             self.props.margins["bottom"]
         ]);
 
-    var selected_model = _.first(_.keys(self.props.models));
+    var selected_model = _.first(_.keys(self.props.models)),
+      show_legend = ['meme', 'fel', 'fubar', 'gard'].indexOf(self.props.method) < 0;
 
     return {
       json: this.props.json,
@@ -104,7 +105,7 @@ var Tree = React.createClass({
       fill_color: this.props.fill_color,
       omega_color: omega_color,
       omega_scale: omega_scale,
-      show_legend: true,
+      show_legend: show_legend,
       axis_scale: axis_scale,
       selected_model: selected_model,
       partition: 'None',
@@ -140,14 +141,14 @@ var Tree = React.createClass({
     var branch_lengths;
     if(self.props.method == 'absrel' || self.props.method == 'relax'){
       branch_lengths = self.props.json.trees.branchLengths[self.state.selected_model];
-    } else if(self.props.method == 'busted'){
+    } else if(self.props.method == 'busted' || self.props.method == 'meme'){
       branch_lengths = self.props.json.trees[self.state.current].branchLengths[self.state.selected_model];
     } 
     return branch_lengths;
   },
 
   assignBranchAnnotations: function() {
-    if (this.state.json && this.props.models[this.state.selected_model]) {
+    if (this.props.models[this.state.selected_model] && this.props.models[this.state.selected_model]['branch-annotations']) {
       var attributes = this.props.multitree ? 
         this.props.models[this.state.selected_model]["branch-annotations"][this.state.current] :
         this.props.models[this.state.selected_model]["branch-annotations"];
@@ -573,7 +574,7 @@ var Tree = React.createClass({
 
     if(self.props.method=='absrel' || self.props.method=='relax'){
       var tree_string = self.props.json.input.trees[0];
-    }else if (self.props.method=='busted'){
+    }else if (self.props.method=='busted' || self.props.method=='meme'){
       var tree_string = self.props.json.trees[self.state.current]['newickString']
     }
     self.tree(tree_string).svg(self.svg); 
