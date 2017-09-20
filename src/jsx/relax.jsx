@@ -34,7 +34,7 @@ class RELAXModelTable extends React.Component {
     function makeInactive(){
       this.setState({active: null});
     }
-    var rows = _.map(this.props.fits, (val, key) => {
+    var rows = _.map(_.omit(this.props.fits, ['Nucleotide GTR', 'MG94xREV with separate rates for branch sets']), (val, key) => {
       var distributions = val['Rate Distributions'],
         onMouseEnter = makeActive(key).bind(self),
         onMouseLeave = makeInactive.bind(self),
