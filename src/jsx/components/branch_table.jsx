@@ -106,7 +106,8 @@ var BranchTable = React.createClass({
         this.getLRT(branch),
         this.getPVal(branch),
         this.getUncorrectedPVal(branch),
-        this.getOmegaDistribution(m, annotations)
+        this.getOmegaDistribution(m, annotations),
+        '<i class="fa fa-bar-chart" aria-hidden="true"></i>'
       ];
 
       table_row_data.push(branch_row);
@@ -223,7 +224,7 @@ var BranchTable = React.createClass({
       return d;
     });
 
-    branch_rows.enter().append("td").style("text-align", "left");
+    branch_rows.enter().append("td").style("text-align", "center");
     branch_rows.html(function(d) {
       return d;
     });
@@ -300,6 +301,8 @@ var BranchTable = React.createClass({
                   >
                     ω distribution over sites
                   </span>
+                </th>
+                <th>
                 </th>
               </tr>
             </thead>
