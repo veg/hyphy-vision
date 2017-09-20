@@ -573,7 +573,7 @@ class BUSTEDModelTable extends React.Component {
     function makeInactive(){
       this.setState({active: null});
     }
-    var rows = _.map(this.props.fits, (val, key) => {
+    var rows = _.map(_.pick(this.props.fits,["Unconstrained model", "Constrained model"]), (val, key) => {
       var distributions = val['Rate Distributions'],
         onClick = modalShower(key, "Test").bind(self),
         onMouseEnter = makeActive(key).bind(self),
@@ -887,7 +887,7 @@ var BUSTED = React.createClass({
 
     var models = {};
     if (!_.isNull(self.state.json)) {
-      models = self.state.json.fits;
+      models = _.pick(self.state.json.fits, ['Unconstrained model', 'Constrained model']);
     }
 
     return (
