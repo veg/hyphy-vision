@@ -434,10 +434,10 @@ var SLACSites = React.createClass({
 
   dm_handleRemoveCondition: function(key, e) {
     e.preventDefault();
-
+    var filterState = new Object(null);
     _.extend(filterState, this.state.filters);
     delete filterState[key];
-    //console.log (key, this.state.filters,filterState);
+    //console.log ('dm_handleRemoveCondition', key, this.state.filters,filterState);
 
     this.setState({ filters: filterState });
   },
@@ -451,23 +451,7 @@ var SLACSites = React.createClass({
       if (self.state.hasCI) {
         var ci_menu = [
           <li key="ci_divider" className="divider" />,
-          <li key="intervals">
-            <a
-              href="#"
-              data-value="showIntervals"
-              tabIndex="-1"
-              onClick={self.dm_toggleIntervals}
-            >
-              <input
-                type="checkbox"
-                checked={self.state.showIntervals}
-                defaultChecked={self.state.showIntervals}
-                onChange={self.dm_toggleIntervals}
-              />&nbsp;Show sampling confidence intervals
-            </a>
-          </li>
         ];
-
         if (!self.state.showIntervals) {
           ci_menu.push(
             <li key="coloring">
@@ -566,7 +550,7 @@ var SLACSites = React.createClass({
                     return (
                       <li key={index}>
                         <a
-                          href="#"
+                          href="javascript:void(0);"
                           tabIndex="-1"
                           onClick={_.partial(self.dm_handleFilterField, d)}
                         >
@@ -793,24 +777,16 @@ var SLACBanner = React.createClass({
 
     result.all = datamonkey.helpers.countSitesFromPartitionsJSON(json);
 
-    result.positive = datamonkey.helpers.sum(json["MLE"]["content"], function(
-      partition
-    ) {
-      return _.reduce(
-        partition["by-site"]["RESOLVED"],
-        function(sum, row) {
+    result.positive = datamonkey.helpers.sum(json["MLE"]["content"], function(partition) {
+      return _.reduce(partition["by-site"]["RESOLVED"], function(sum, row) {
           return sum + (row[8] <= cutoff ? 1 : 0);
         },
         0
       );
     });
 
-    result.negative = datamonkey.helpers.sum(json["MLE"]["content"], function(
-      partition
-    ) {
-      return _.reduce(
-        partition["by-site"]["RESOLVED"],
-        function(sum, row) {
+    result.negative = datamonkey.helpers.sum(json["MLE"]["content"], function(partition) {
+      return _.reduce(partition["by-site"]["RESOLVED"], function(sum, row) {
           return sum + (row[9] <= cutoff ? 1 : 0);
         },
         0
@@ -839,75 +815,83 @@ var SLACBanner = React.createClass({
   },
 
   render: function() {
-    return (
-    
-    
-      <div className="row">
+    return (<div className="row">
       <div className="clearance" id="slac-summary"></div>
-        <div className="col-md-12">
-          <h3 className="list-group-item-heading">
-            <span id="summary-method-name">
-            Single-Likelihood Ancestor Counting</span>
-            <br />
-            <span className="results-summary">results summary</span>
-          </h3>
-        </div>
+      <div className="col-md-12">
+        <h3 className="list-group-item-heading">
+          <span id="summary-method-name">
+          Single-Likelihood Ancestor Counting</span>
+          <br />
+          <span className="results-summary">results summary</span>
+        </h3>
+      </div>
 
-        <div className="col-md-12">
-          <InputInfo input_data={this.props.input_data}/>
-        </div>
+      <div className="col-md-12">
+        <InputInfo input_data={this.props.input_data}/>
+      </div>
 
-        <div className="col-md-12">
-          <div className="main-result">
-            <p>
-              Evidence<sup>&dagger;</sup> of pervasive{" "}
-              <span className="hyphy-highlight">diversifying</span>/<span className="hyphy-navy">purifying</span>{" "}
-              selection was found at
-              <strong className="hyphy-highlight">
-                {" "}{this.state.sites.positive}
-              </strong>{" "}
-              /{" "}
-              <strong className="hyphy-navy">
-                {this.state.sites.negative}
-              </strong>{" "}
-              sites
-              among {this.state.sites.all} tested sites.
-            </p>
-            
-            
-            <hr /> 
-            <p>
-              <small>
-                  <sup>&dagger;</sup>Extended binomial test, p &le;{" "}
-                  {this.dm_formatP(this.props.pValue)}
-                  
-                  <emph> not</emph> corrected for multiple testing; ambiguous
-                  characters resolved to minimize substitution counts.
-                  <br />
-                  See{" "}
-                  <a href="http://hyphy.org/methods/selection-methods/#slac">
-                    here
-                  </a>{" "}
-                  for more information about the SLAC method.
-  
-                  Please cite{" "}
-                  <a
-                    href="http://www.ncbi.nlm.nih.gov/pubmed/15703242"
-                    target="_blank"
-                  >
-                    PMID 15703242
-                  </a>{" "}
-                  if you use this result in a publication, presentation, or other
-                  scientific work.
-              </small> 
-            </p>
-            
+      <div className="col-md-12">
+        <div className="main-result">
+          <p>
+            SLAC <strong className="hyphy-highlight">found evidence</strong> of pervasive
+          </p>
+          <p>
+            <i className="fa fa-plus-circle" aria-hidden="true">
+              {" "}
+            </i>{" "}
+            positive/diversifying selection at
+            <span className="hyphy-highlight">
+              {" "}{this.state.sites.positive}{" "}
+            </span>
+            sites
+          </p> 
+          <p>
+            <i className="fa fa-plus-circle" aria-hidden="true">
+              {" "}
+            </i>{" "}
+            negative/purifying selection at
+            <span className="hyphy-highlight">
+              {" "}{this.state.sites.negative}{" "}
+            </span>
+            sites
+          </p> 
+          <p>
+            with p-value threshold of
+            <input
+              style={{display: "inline-block", marginLeft: "5px", width: "100px"}}
+              className="form-control"
+              type="number"
+              defaultValue="0.1"
+              step="0.01"
+              min="0"
+              max="1"
+              onChange={this.props.pAdjuster}
+            />.
+          </p>          
+          <hr /> 
+          <p>
+            <small>
+              See{" "}
+              <a href="http://hyphy.org/methods/selection-methods/#slac">
+                here
+              </a>{" "}
+              for more information about the SLAC method.
 
-            
-          </div>
+              Please cite{" "}
+              <a
+                href="http://www.ncbi.nlm.nih.gov/pubmed/15703242"
+                target="_blank"
+              >
+                PMID 15703242
+              </a>{" "}
+              if you use this result in a publication, presentation, or other
+              scientific work.
+            </small> 
+          </p>
+          
         </div>
       </div>
-    );
+    </div>);
   }
 });
 
@@ -1192,6 +1176,9 @@ var SLAC = React.createClass({
   },
 
   dm_initializeFromJSON: function(data) {
+    if(data["fits"]["Nucleotide GTR"]){
+      data["fits"]["Nucleotide GTR"]["Rate Distributions"] = {};      
+    }
     this.setState({
       analysis_results: data,
       input_data: data.input
