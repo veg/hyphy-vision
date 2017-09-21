@@ -4,6 +4,7 @@ var React = require("react"),
   d3_save_svg = require("d3-save-svg"),
   datamonkey = require("../datamonkey/datamonkey.js");
 
+import { Tree } from "./components/tree.jsx";
 import {
   DatamonkeyTable,
   DatamonkeyPartitionTable,
@@ -1175,10 +1176,38 @@ var SLAC = React.createClass({
     if(data["fits"]["Nucleotide GTR"]){
       data["fits"]["Nucleotide GTR"]["Rate Distributions"] = {};      
     }
+
+    data['trees'] = _.map(data['input']['trees'], (val, key) => {
+      var branchLengths = {
+        'Global MG94xREV': _.mapObject(data['branch attributes'][key], val1 => val1['Global MG94xREV']),
+        'Nucleotide GTR': _.mapObject(data['branch attributes'][key], val1 => val1['Nucleotide GTR'])
+      };
+      return {newickString: val, branchLengths: branchLengths};
+    });
+
+    data["fits"]["Global MG94xREV"][
+      "branch-annotations"
+    ] = this.formatBranchAnnotations(data);
+    if(data["fits"]["Nucleotide GTR"]) {
+      data["fits"]["Nucleotide GTR"][
+        "branch-annotations"
+      ] = this.formatBranchAnnotations(data);
+    }
+
     this.setState({
       analysis_results: data,
       input_data: data.input
     });
+  },
+
+  formatBranchAnnotations: function(json) {
+    // attach is_foreground to branch annotations
+    var branch_annotations = d3.range(json.trees.length).map(i=>{
+      return _.mapObject(json['tested'][i], (val, key)=>{
+        return {is_foreground: val == 'test'};
+      });
+    });
+    return branch_annotations;
   },
 
   getDefaultProps: function() {
@@ -1263,13 +1292,50 @@ var SLAC = React.createClass({
         { label: "summary", href: "slac-summary" },
         { label: "information", href: "datamonkey-slac-tree-summary" },
         { label: "table", href: "slac-table" },
-        { label: "graph", href: "slac-graph" }
+        { label: "graph", href: "slac-graph" },
+        { label: "tree", href: "tree-tab" }
       ];
 
       var trees = self.state.analysis_results ? {
         newick: self.state.analysis_results.input.trees,
         tested: self.state.analysis_results.tested
       } : null;
+
+      var edgeColorizer = function(element, data, foreground_color) {
+
+        var is_foreground = data.target.annotations.is_foreground,
+          color_fill = foreground_color(0);
+
+        element
+          .style("stroke", is_foreground ? color_fill : "black")
+          .style("stroke-linejoin", "round")
+          .style("stroke-linejoin", "round")
+          .style("stroke-linecap", "round");
+      };
+
+      var tree_settings = {
+        omegaPlot: {},
+        "tree-options": {
+          /* value arrays have the following meaning
+                  [0] - the value of the attribute
+                  [1] - does the change in attribute value trigger tree re-layout?
+              */
+          "hyphy-tree-model": ["Unconstrained model", true],
+          "hyphy-tree-highlight": ["RELAX.test", false],
+          "hyphy-tree-branch-lengths": [false, true],
+          "hyphy-tree-hide-legend": [true, false],
+          "hyphy-tree-fill-color": [true, false]
+        },
+        "hyphy-tree-legend-type": "discrete",
+        "suppress-tree-render": false,
+        "chart-append-html": true,
+        edgeColorizer: edgeColorizer
+      };
+
+      var models = {};
+      if (this.state.analysis_results) {
+        models = this.state.analysis_results.fits;
+      }
 
       return (
         <div>
@@ -1402,6 +1468,21 @@ var SLAC = React.createClass({
                     />
                   </div>
                 </div>
+
+                <div className="row">
+                  <div id="tree-tab" className="col-md-12">
+                    <Tree
+                      models={models}
+                      json={this.state.analysis_results}
+                      settings={tree_settings}
+                      method={'slac'}
+                      color_gradient={["#00a99d", "#000000"]}
+                      grayscale_gradient={["#444444","#000000"]}
+                      multitree
+                    />
+                  </div>
+                </div>
+
 
               </div>
               </div>
