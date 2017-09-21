@@ -483,7 +483,6 @@ var SLACSites = React.createClass({
             <div className="form-group navbar-left">
 
               <div className="input-group">
-                <span className="input-group-addon">Display Options </span>
 
                 <ul className="dropdown-menu">
                   <li key="variable">
@@ -510,12 +509,11 @@ var SLACSites = React.createClass({
                   aria-haspopup="true"
                   aria-expanded="false"
                 >
-                  <span className="caret" />
+                  Display<span className="caret" />
                 </button>
               </div>
 
               <div className="input-group">
-                <span className="input-group-addon">Ambiguities </span>
                 <ul className="dropdown-menu">
                   {_.map(this.state.ambigOptions, function(value, index) {
                     return (
@@ -538,7 +536,7 @@ var SLACSites = React.createClass({
                   aria-haspopup="true"
                   aria-expanded="false"
                 >
-                  {self.state.ambigHandling} <span className="caret" />
+                  Ambiguities <span className="caret" />
                 </button>
 
               </div>
@@ -575,6 +573,7 @@ var SLACSites = React.createClass({
                 <input
                   type="text"
                   className="form-control"
+                  style={{width: "75px"}}
                   placeholder="-∞"
                   defaultValue={"-" + String.fromCharCode(8734)}
                   onChange={self.dm_handleLB}
@@ -585,23 +584,12 @@ var SLACSites = React.createClass({
                 <input
                   type="text"
                   className="form-control"
+                  style={{width: "75px"}}
                   placeholder="∞"
                   defaultValue={String.fromCharCode(8734)}
                   onChange={self.dm_handleUB}
                 />
                 <span className="input-group-addon">]</span>
-              </div>
-
-              <div className="input-group">
-                <button
-                  className={
-                    "btn btn-default " +
-                    (self.dm_checkFilterValidity() ? "" : "disabled")
-                  }
-                  onClick={self.dm_handleAddCondition}
-                >
-                  {" "}Add condition as{" "}
-                </button>
               </div>
 
               <div className="input-group">
@@ -633,11 +621,19 @@ var SLACSites = React.createClass({
                 </button>
               </div>
 
-              <span className="badge" style={{ marginLeft: "0.5em" }}>
-                {count}
-              </span>{" "}
-              sites shown
-            </div>
+               <div className="input-group">
+                <button
+                  className={
+                    "btn btn-default " +
+                    (self.dm_checkFilterValidity() ? "" : "disabled")
+                  }
+                  onClick={self.dm_handleAddCondition}
+                >
+                  {" "}Add filter{" "}
+                </button>
+              </div>
+
+           </div>
 
           </form>
         </nav>
