@@ -248,6 +248,60 @@ class FUBARViz extends React.Component {
   }
 }
 
+function FUBARTable(props){
+  if (!props.data) return <div></div>;
+  var flattened = _.flatten(_.values(props.data.MLE.content), true),
+    partition_column = d3.range(flattened.length).map(d=>0);
+  _.each(props.data['data partitions'], (val, key)=>{
+    val.coverage[0].forEach(d=>{
+      partition_column[d] = key;
+    });
+  });
+  var formatter = d3.format(".2f"),
+    new_rows = flattened.map((row, index) => {
+      var selection = row[4] > .9 ? "positive-selection-row" : '';
+        selection = row[3] > .9 ? "negative-selection-row" : selection;
+      var site = {value: index+1, classes: selection},
+        partition = {value: +partition_column[index]+1, classes:selection};
+      return [site, partition].concat(
+        row.map(entry => {
+          return {value: formatter(entry), classes: selection};
+        })
+      )
+    });
+
+  var headerData = [{value:'Site', sortable:true}, {value:'Partition', sortable:true}].concat(
+    props.data.MLE.headers.map(pair => {
+      return {
+        value: pair[0] == 'alpha;' ? '&alpha; ' : pair[0].replace('alpha', '&alpha;').replace('beta', '&beta;'),
+        abbr: pair[1],
+        sortable: true
+      };
+    })
+  );
+
+  return (<div className="row">
+    <div id="tree-tab" className="col-md-12">
+      <Header title="FUBAR Site Table" />
+      <div className="col-md-6 alert positive-selection-row">
+        Positively selected sites with evidence are highlighted in
+        green.
+      </div>
+      <div className="col-md-6 alert negative-selection-row">
+        Negatively selected sites with evidence are highlighted in
+        black.
+      </div>
+      <DatamonkeyTable
+        headerData={headerData}
+        bodyData={new_rows}
+        paginate={20}
+        classes={"table table-condensed table-striped"}
+        export_csv
+      />
+    </div>
+  </div>);
+}
+
 class FUBAR extends React.Component {
   constructor(props) {
     super(props);
@@ -371,6 +425,8 @@ class FUBAR extends React.Component {
               <FUBARSummary json={self.state.data} />
 
               <FUBARViz data={self.state.data ? self.state.data.grid : null} />
+
+              <FUBARTable data={self.state.data} />
 
               <div className="row">
                 <div id="tree-tab" className="col-md-12">
