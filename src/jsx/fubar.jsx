@@ -1,7 +1,8 @@
 var React = require("react"),
   ReactDOM = require("react-dom"),
   d3 = require("d3"),
-  _ = require("underscore");
+  _ = require("underscore"),
+  d3_save_svg = require("d3-save-svg");
 
 import { Tree } from "./components/tree.jsx";
 import { InputInfo } from "./components/input_info.jsx";
@@ -9,6 +10,8 @@ import { DatamonkeyTable, DatamonkeyModelTable } from "./components/tables.jsx";
 import { DatamonkeySiteGraph } from "./components/graphs.jsx";
 import { NavBar } from "./components/navbar.jsx";
 import { ScrollSpy } from "./components/scrollspy.jsx";
+import { saveSvgAsPng } from "save-svg-as-png";
+import { Header } from "./components/header.jsx";
 
 
 function FUBARSummary(props) {
@@ -83,6 +86,166 @@ function FUBARSummary(props) {
       </div>
     </div>
   );
+}
+
+class FUBARViz extends React.Component {
+  componentWillReceiveProps(nextProps){
+    d3.select('#fubar-viz').html('');
+    var grid = nextProps.data.map(row=>[+row[0].toFixed(2), +row[1].toFixed(2), +row[2]]),
+        n_gridpoints = Math.sqrt(grid.length),
+        gridpoints = grid.map(row=>row[1]).slice(0, n_gridpoints);
+
+      var margin = {top: 15, right: 75, bottom: 75, left: 75},
+          width = 800 - margin.left - margin.right,
+          height = 800 - margin.top - margin.bottom;
+
+      var svg = d3.select('#fubar-viz')
+        .attr('width', width + margin.left + margin.right)
+        .attr('height', height + margin.top + margin.bottom);
+
+      svg.append('rect')
+        .attr('width', width + margin.left + margin.right)
+        .attr('height', height + margin.top + margin.bottom)
+        .attr('fill', 'white');
+
+      var main = svg.append('g')
+        .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
+
+      var x = d3.scale.ordinal()
+        .domain(gridpoints)
+        .rangePoints([0, width], 1);
+
+      var y = d3.scale.ordinal()
+        .domain(gridpoints)
+        .rangePoints([height, 0], 1);
+
+      var color = d3.scale.linear()
+        .domain([0, 1, 10, 1e10])
+        .range(['#000000', '#EEEEEE', '#00A99D', '#00A99D']);
+
+      var magnitude = d3.scale.linear()
+        .domain([0, d3.max(grid.map(row=>row[2]))])
+        .range([0, width/n_gridpoints]);
+
+      main.selectAll('.dot')
+        .data(grid)
+        .enter()
+        .append('circle')
+        .attr('cx', d=>x(d[0]))
+        .attr('cy', d=>y(d[1]))
+        .attr('r', d=>magnitude(d[2])/2)
+        .attr('fill', d=>color(d[1]/(d[0]+0.001)));
+
+      var xAxis = d3.svg.axis()
+        .scale(x)
+        .orient("bottom");
+
+      var yAxis = d3.svg.axis()
+        .scale(y)
+        .orient("left");
+
+      main.append("g")
+        .style('font', '12px')
+        .attr('transform', 'translate(0, ' + height + ')')
+        .attr('class', 'axis x-axis')
+        .call(xAxis);
+
+      main.append("g")
+        .attr('class', 'axis axis')
+        .call(yAxis);
+
+      d3.selectAll('.x-axis > .tick > text')
+        .attr('transform', 'rotate(-90) translate(-20, -15)');
+
+      main.append("text")
+        .attr('transform', 'translate(' + (width/2) + ',' + (height+55) + ')')
+        .attr('text-anchor', 'middle')
+        .style('font-weight', 'bold')
+        .text('Synonymous substitution rate');
+
+      main.append("text")
+        .attr('transform', 'translate(' + -45 + ',' + (height/2) + ') rotate(-90)')
+        .attr('text-anchor', 'middle')
+        .style('font-weight', 'bold')
+        .text('Non-synonymous substitution rate');
+
+      var linearGradient = svg.append('defs')
+        .append('linearGradient')
+        .attr('id', 'colorbar-gradient')
+        .attr('x1', '0%')
+        .attr('x2', '0%')
+        .attr('y1', '0%')
+        .attr('y2', '100%');
+
+      linearGradient.append('stop')
+        .attr('offset', '0%')
+        .attr('stop-color', '#00A99D');
+
+      linearGradient.append('stop')
+        .attr('offset', '50%')
+        .attr('stop-color', '#EEEEEE');
+
+      linearGradient.append('stop')
+        .attr('offset', '100%')
+        .attr('stop-color', '#000000');
+
+      var colorbar = svg.append('g')
+        .attr('transform', 'translate(' + (margin.left+width) + ',' + margin.top +')');
+
+      colorbar.append('rect')
+        .attr('fill', 'url(#colorbar-gradient)')
+        .attr('x', 5)
+        .attr('y', 0)
+        .attr('width', 20)
+        .attr('height', height);
+
+      colorbar.append('text')
+        .attr('x', 15)
+        .attr('y', height+15)
+        .attr('text-anchor', 'middle')
+        .text('\u03C9');
+
+      var colorbar_scale = d3.scale.linear()
+        .domain([0, 1, 10])
+        .range([height, height/2, 0]);
+
+      var colorbar_axis = d3.svg.axis()
+        .scale(colorbar_scale)
+        .tickValues([0, 1, 10])
+        .orient("right");
+
+      colorbar.append('g')
+        .attr('class', 'axis')
+        .attr('transform', 'translate(25,0)')
+        .call(colorbar_axis);
+  }
+  render() {
+    return(<div className="row">
+      <div className="col-md-12">
+        <Header title="Posterior rate distribution" />
+        <button
+          id="export-chart-svg"
+          type="button"
+          className="btn btn-default btn-sm pull-right btn-export"
+          onClick={()=>d3_save_svg.save(d3.select("#fubar-viz").node(), {filename: "datamonkey-chart"})}
+        >
+          <span className="glyphicon glyphicon-floppy-save" /> Export Chart to SVG
+        </button>
+        <button
+          id="export-chart-png"
+          type="button"
+          className="btn btn-default btn-sm pull-right btn-export"
+          onClick={()=>saveSvgAsPng(document.getElementById("fubar-viz"), "datamonkey-chart.png")}
+        >
+          <span className="glyphicon glyphicon-floppy-save" /> Export Chart to PNG
+        </button>
+
+      </div>
+      <div className="col-md-12">
+        <svg id="fubar-viz"></svg>
+      </div>
+    </div>);
+  }
 }
 
 class FUBAR extends React.Component {
@@ -198,7 +361,6 @@ class FUBAR extends React.Component {
       "chart-append-html": true,
       edgeColorizer: function(e,d){return 0} 
     };
-
     return (
       <div>
         {this.props.hyphy_vision ? <NavBar onFileChange={this.onFileChange} /> : ''}
@@ -207,6 +369,8 @@ class FUBAR extends React.Component {
             <ScrollSpy info={scrollspy_info} />
             <div className="col-sm-10" id="results">
               <FUBARSummary json={self.state.data} />
+
+              <FUBARViz data={self.state.data ? self.state.data.grid : null} />
 
               <div className="row">
                 <div id="tree-tab" className="col-md-12">
