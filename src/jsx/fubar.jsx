@@ -15,12 +15,15 @@ import { Header } from "./components/header.jsx";
 
 
 function FUBARSummary(props) {
-  var number_of_sites = 0;
-  if (props.json) {
-    number_of_sites = _.flatten(_.values(props.json.MLE.content), true)
-      .filter(row=>row[3]/(row[0] || 1e-10) > 1 && row[6] < props.pValue).length;
-  }
-
+  if(!props.json) return <div></div>;
+  var flattened_data = _.flatten(_.values(props.json.MLE.content), true),
+    positive_sites = flattened_data
+      .map(row => row[4] > props.posteriorProbability ? 1 : 0)
+      .reduce((a,b)=> a+b, 0),
+    negative_sites = flattened_data
+      .map(row => row[3] > props.posteriorProbability ? 1 : 0)
+      .reduce((a,b)=> a+b, 0);
+  debugger;
   return (
     <div className="row" id="summary-tab">
       <div className="clearance" id="summary-div"></div>
@@ -45,21 +48,31 @@ function FUBARSummary(props) {
             </i>{" "}
             episodic positive/diversifying selection at
             <span className="hyphy-highlight">
-              {" "}{" "}
+              {" "}{positive_sites}{" "}
             </span>
             sites
           </p>
           <p>
-            with p-value threshold of
+            <i className="fa fa-plus-circle" aria-hidden="true">
+              {" "}
+            </i>{" "}
+            episodic negative/purifying selection at
+            <span className="hyphy-highlight">
+              {" "}{negative_sites}{" "}
+            </span>
+            sites
+          </p>
+          <p>
+            with posterior probability of
             <input
               style={{display: "inline-block", marginLeft: "5px", width: "100px"}}
               className="form-control"
               type="number"
-              defaultValue="0.1"
+              defaultValue="0.9"
               step="0.01"
               min="0"
               max="1"
-              onChange={props.updatePValue}
+              onChange={props.updatePosteriorProbability}
             />.
           </p>
           <hr />
@@ -220,7 +233,7 @@ class FUBARViz extends React.Component {
         .call(colorbar_axis);
   }
   render() {
-    return(<div className="row">
+    return(<div className="row" id='plot-tab'>
       <div className="col-md-12">
         <Header title="Posterior rate distribution" />
         <button
@@ -259,8 +272,8 @@ function FUBARTable(props){
   });
   var formatter = d3.format(".2f"),
     new_rows = flattened.map((row, index) => {
-      var selection = row[4] > .9 ? "positive-selection-row" : '';
-        selection = row[3] > .9 ? "negative-selection-row" : selection;
+      var selection = row[4] > props.posteriorProbability ? "positive-selection-row" : '';
+        selection = row[3] > props.posteriorProbability ? "negative-selection-row" : selection;
       var site = {value: index+1, classes: selection},
         partition = {value: +partition_column[index]+1, classes:selection};
       return [site, partition].concat(
@@ -281,7 +294,7 @@ function FUBARTable(props){
   );
 
   return (<div className="row">
-    <div id="tree-tab" className="col-md-12">
+    <div id="table-tab" className="col-md-12">
       <Header title="FUBAR Site Table" />
       <div className="col-md-6 alert positive-selection-row">
         Positively selected sites with evidence are highlighted in
@@ -305,8 +318,10 @@ function FUBARTable(props){
 class FUBAR extends React.Component {
   constructor(props) {
     super(props);
-    this.updatePValue = this.updatePValue.bind(this); 
+
+    this.updatePosteriorProbability= this.updatePosteriorProbability.bind(this); 
     this.onFileChange = this.onFileChange.bind(this); 
+
     this.state = {
       input_data: null,
       data: null,
@@ -314,7 +329,7 @@ class FUBAR extends React.Component {
       header: null,
       bodyData: null,
       partitions: null,
-      pValue: .1
+      posteriorProbability: .9
     };
   }
 
@@ -378,16 +393,16 @@ class FUBAR extends React.Component {
     });
   }
 
-  updatePValue(e) {
-    this.setState({pValue: e.target.value});
+  updatePosteriorProbability(e) {
+    this.setState({posteriorProbability: +e.target.value});
   }
 
   render() {
     var self = this,
       scrollspy_info = [
         { label: "summary", href: "summary-tab" },
-        { label: "table", href: "table-tab" },
         { label: "plot", href: "plot-tab" },
+        { label: "table", href: "table-tab" },
         { label: "tree", href: "tree-tab" },
         { label: "fits", href: "fit-tab" }
       ];
@@ -422,11 +437,18 @@ class FUBAR extends React.Component {
           <div className="row">
             <ScrollSpy info={scrollspy_info} />
             <div className="col-sm-10" id="results">
-              <FUBARSummary json={self.state.data} />
+              <FUBARSummary
+                json={self.state.data}
+                updatePosteriorProbability={self.updatePosteriorProbability}
+                posteriorProbability={self.state.posteriorProbability}
+              />
 
               <FUBARViz data={self.state.data ? self.state.data.grid : null} />
 
-              <FUBARTable data={self.state.data} />
+              <FUBARTable
+                posteriorProbability={self.state.posteriorProbability} 
+                data={self.state.data}
+              />
 
               <div className="row">
                 <div id="tree-tab" className="col-md-12">
