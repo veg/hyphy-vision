@@ -23,7 +23,6 @@ function FUBARSummary(props) {
     negative_sites = flattened_data
       .map(row => row[3] > props.posteriorProbability ? 1 : 0)
       .reduce((a,b)=> a+b, 0);
-  debugger;
   return (
     <div className="row" id="summary-tab">
       <div className="clearance" id="summary-div"></div>
