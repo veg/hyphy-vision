@@ -268,7 +268,7 @@ const DatamonkeyTableRow = React.createClass({
             }
 
             return React.createElement(
-              this.state.header ? "th" : "td",
+              this.props.header ? "th" : "td",
               cellProps,
               value
             );

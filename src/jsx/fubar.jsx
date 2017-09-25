@@ -295,7 +295,7 @@ class FUBARViz extends React.Component {
     return(<div className="row" id='plot-tab'>
       <div className="col-md-12">
         <Header title="Posterior rate distribution" />
-        {self.state.input_error ? <div className="alert alert-danger">Enter a valid site (a number from 1 to {this.props.number_of_sites}).</div> : ''}
+        {self.state.input_error ? <div className="alert alert-danger"><span className="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>Enter a valid site (a number from 1 to {this.props.number_of_sites}).</div> : ''}
       </div>
       <div className="col-md-6">
         <div
@@ -349,7 +349,7 @@ function FUBARTable(props){
       partition_column[d] = key;
     });
   });
-  var formatter = d3.format(".2f"),
+  var formatter = d3.format(".3f"),
     new_rows = flattened.map((row, index) => {
       var selection = row[4] > props.posteriorProbability ? "positive-selection-row" : '';
         selection = row[3] > props.posteriorProbability ? "negative-selection-row" : selection;
