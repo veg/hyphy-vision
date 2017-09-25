@@ -101,6 +101,14 @@ function FUBARSummary(props) {
 }
 
 class FUBARViz extends React.Component {
+  constructor(props){
+    super(props);
+    this.handleInputChange = this.handleInputChange.bind(this);
+    this.state = {
+      site: null,
+      input_error: false
+    };
+  }
   componentWillReceiveProps(nextProps){
     d3.select('#fubar-viz').html('');
     var grid = nextProps.data.map(row=>[+row[0].toFixed(2), +row[1].toFixed(2), +row[2]]),
@@ -110,6 +118,9 @@ class FUBARViz extends React.Component {
       var margin = {top: 15, right: 75, bottom: 75, left: 75},
           width = 800 - margin.left - margin.right,
           height = 800 - margin.top - margin.bottom;
+
+      this.width = width;
+      this.n_gridpoints = n_gridpoints;
 
       var svg = d3.select('#fubar-viz')
         .attr('width', width + margin.left + margin.right)
@@ -121,21 +132,22 @@ class FUBARViz extends React.Component {
         .attr('fill', 'white');
 
       var main = svg.append('g')
+        .attr('id', 'fubar-main')
         .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
 
-      var x = d3.scale.ordinal()
+      this.x = d3.scale.ordinal()
         .domain(gridpoints)
         .rangePoints([0, width], 1);
 
-      var y = d3.scale.ordinal()
+      this.y = d3.scale.ordinal()
         .domain(gridpoints)
         .rangePoints([height, 0], 1);
 
-      var color = d3.scale.linear()
+      this.color = d3.scale.linear()
         .domain([0, 1, 10, 1e10])
         .range(['#000000', '#EEEEEE', '#00A99D', '#00A99D']);
 
-      var magnitude = d3.scale.linear()
+      this.magnitude = d3.scale.linear()
         .domain([0, d3.max(grid.map(row=>row[2]))])
         .range([0, width/n_gridpoints]);
 
@@ -143,17 +155,17 @@ class FUBARViz extends React.Component {
         .data(grid)
         .enter()
         .append('circle')
-        .attr('cx', d=>x(d[0]))
-        .attr('cy', d=>y(d[1]))
-        .attr('r', d=>magnitude(d[2])/2)
-        .attr('fill', d=>color(d[1]/(d[0]+0.001)));
+        .attr('cx', d=>this.x(d[0]))
+        .attr('cy', d=>this.y(d[1]))
+        .attr('r', d=>this.magnitude(d[2])/2)
+        .attr('fill', d=>this.color(d[1]/(d[0]+0.001)));
 
       var xAxis = d3.svg.axis()
-        .scale(x)
+        .scale(this.x)
         .orient("bottom");
 
       var yAxis = d3.svg.axis()
-        .scale(y)
+        .scale(this.y)
         .orient("left");
 
       main.append("g")
@@ -231,10 +243,69 @@ class FUBARViz extends React.Component {
         .attr('transform', 'translate(25,0)')
         .call(colorbar_axis);
   }
+  componentWillUpdate(nextProps, nextState){
+    if(nextState.site != this.state.site){
+      var data = nextProps.data.map((d,i) => {
+        return nextState.site ? [d[0],d[1], nextProps.posterior[0][+nextState.site-1][0][i]] : d;
+      });
+
+      this.magnitude = d3.scale.linear()
+        .domain([0, d3.max(data.map(row=>+row[2]))])
+        .range([0, this.width/this.n_gridpoints]);
+
+      d3.selectAll('circle')
+        .data(data)
+        .attr('cx', d=>this.x(+d[0].toFixed(2)))
+        .attr('cy', d=>this.y(+d[1].toFixed(2)))
+        .attr('r', d=>this.magnitude(+d[2])/2)
+        .attr('fill', d=>this.color(+d[1]/(+d[0]+0.001)));
+    }
+  }
+  handleInputChange(e){
+    if(/^\d*$/.test(e.target.value)){
+      var value = +e.target.value;
+      if(value > 0 && value <= this.props.number_of_sites){
+        this.setState({
+          site: value,
+          input_error: false
+        });
+      } else if (value==0) {
+        this.setState({
+          site: '',
+          input_error: false
+        });
+      }
+      else {
+        this.setState({input_error: true});
+      }
+    } else {
+      this.setState({input_error: true});
+    }
+  }
   render() {
+    var self = this;
     return(<div className="row" id='plot-tab'>
       <div className="col-md-12">
         <Header title="Posterior rate distribution" />
+        {self.state.input_error ? <div className="alert alert-danger">Enter a valid site (a number from 1 to {this.props.number_of_sites}).</div> : ''}
+      </div>
+      <div className="col-md-6">
+        <div
+          className={"input-group" + (self.state.input_error ? " has-error" : "")}
+          style={{width:300}}
+        > 
+          <span className="input-group-addon" id="sizing-addon1">Site</span>
+          <input
+            type="text"
+            className="form-control"
+            placeholder="Alignment wide"
+            aria-describedby="sizing-addon1"
+            value={self.state.site}
+            onChange={self.handleInputChange}
+          />
+        </div>
+      </div>
+      <div className="col-md-6">
         <button
           id="export-chart-svg"
           type="button"
@@ -251,10 +322,11 @@ class FUBARViz extends React.Component {
         >
           <span className="glyphicon glyphicon-floppy-save" /> Export Chart to PNG
         </button>
-
       </div>
       <div className="col-md-12">
-        <svg id="fubar-viz"></svg>
+        <center>
+          <svg id="fubar-viz"></svg>
+        </center>
       </div>
     </div>);
   }
@@ -442,7 +514,11 @@ class FUBAR extends React.Component {
                 posteriorProbability={self.state.posteriorProbability}
               />
 
-              <FUBARViz data={self.state.data ? self.state.data.grid : null} />
+              <FUBARViz
+                data={self.state.data ? self.state.data.grid : null}
+                posterior={self.state.data ? self.state.data.posterior : null}
+                number_of_sites={self.state.data ? self.state.data.input['number of sites'] : null}
+              />
 
               <FUBARTable
                 posteriorProbability={self.state.posteriorProbability} 
