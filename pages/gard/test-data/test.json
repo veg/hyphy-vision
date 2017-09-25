@@ -12065,8 +12065,8 @@
     }
   ],
   "input_data": {
-    "filename": "mammalian_cd2.fasta",
-    "sequences": 16,
-    "sites": 561 
+    "file name": "mammalian_cd2.fasta",
+    "number of sequences": 16,
+    "number of sites": 561 
   }
 }

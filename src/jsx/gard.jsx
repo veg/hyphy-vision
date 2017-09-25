@@ -107,10 +107,10 @@ function GARDRecombinationReport(props){
     width = 700,
     height = 20,
     scale = d3.scale.linear()
-      .domain([1, props.data.input_data.sites])
+      .domain([1, props.data.input_data['number of sites']])
       .range([0, width]);
   var segments = [{breakpoints: []}].concat(props.data.improvements).map(function(d){
-    var bp = [0].concat(d.breakpoints).concat([props.data.input_data.sites]),
+    var bp = [0].concat(d.breakpoints).concat([props.data.input_data['number of sites']]),
       individual_segments = [];
     for(var i=0; i<bp.length-1; i++){
       var bp_delta = bp[i+1]-bp[i];
@@ -154,7 +154,7 @@ function GARDRecombinationReport(props){
 function GARDSiteGraph(props){
   if(!props.data) return <div></div>;
   var bestScore = props.data.baselineScore,
-    number_of_sites = props.data.input_data.sites,
+    number_of_sites = props.data.input_data['number of sites'],
     bp_support = d3.range(number_of_sites).map(d=>0*d),
     tree_length = d3.range(number_of_sites).map(d=>0*d),
     normalizer = 0,
@@ -342,6 +342,7 @@ class GARD extends React.Component {
                   models={{}}
                   json={this.state.data}
                   settings={tree_settings}
+                  method={'gard'}
                   multitree
                 />
               </div>
