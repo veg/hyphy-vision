@@ -325,6 +325,7 @@ class GARD extends React.Component {
     };
 
     return (<div>
+      {this.props.hyphy_vision ? <NavBar onFileChange={this.onFileChange} /> : ''}
       <div className="container">
         <div className="row">
           <ScrollSpy info={scrollspy_info} />
@@ -359,5 +360,10 @@ function render_gard(url, element) {
   ReactDOM.render(<GARD url={url} />, document.getElementById(element));
 }
 
+function render_hv_gard(url, element) {
+  ReactDOM.render(<GARD url={url} hyphy_vision />, document.getElementById(element));
+}
+
 module.exports = render_gard
+module.exports.hv = render_hv_gard
 

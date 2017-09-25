@@ -32,5 +32,5 @@ window.meme = meme.hv;
 window.relax = relax.hv;
 window.slac = slac.hv;
 window.fubar = fubar.hv;
-window.gard = gard;
+window.gard = gard.hv;
 window.template = template
