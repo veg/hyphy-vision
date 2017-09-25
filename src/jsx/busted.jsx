@@ -524,6 +524,14 @@ class BUSTEDModelTable extends React.Component {
   constructor(props){
     super(props);
 
+    this.state = {
+      model: "Unconstrained model",
+      branch: "Test",
+      active: null
+    }
+  }
+  render() {
+    if(!this.props.fits) return <div></div>;
     var distro_settings = {
       dimensions: {
         width: 600,
@@ -533,7 +541,7 @@ class BUSTEDModelTable extends React.Component {
         left: 50,
         right: 15,
         bottom: 15,
-        top: 35
+        top: 15
       },
       legend: false,
       domain: [0.00001, 10000],
@@ -543,15 +551,6 @@ class BUSTEDModelTable extends React.Component {
       svg_id: "prop-chart"
     };
 
-    this.state = {
-      model: "Unconstrained model",
-      branch: "Test",
-      distro_settings: distro_settings,
-      active: null
-    }
-  }
-  render() {
-    if(!this.props.fits) return <div></div>;
     var self = this,
       omegas = _.values(this.props.fits[this.state.model]['Rate Distributions'][this.state.branch]).map(val => {
         return {
@@ -585,9 +584,9 @@ class BUSTEDModelTable extends React.Component {
         <td>{val['estimated parameters']}</td>
         <td>{val['AIC-c'].toFixed(1)}</td>
         <td>Test</td>
-        <td>{distributions["Test"]["0"].omega.toFixed(2)} ({(100*distributions["Test"]["0"].proportion).toFixed(0)}%)</td>
-        <td>{distributions["Test"]["1"].omega.toFixed(2)} ({(100*distributions["Test"]["1"].proportion).toFixed(0)}%)</td>
-        <td>{distributions["Test"]["2"].omega.toFixed(2)} ({(100*distributions["Test"]["2"].proportion).toFixed(0)}%)</td>
+        <td>{distributions["Test"]["0"].omega.toFixed(2)} ({(100*distributions["Test"]["0"].proportion).toFixed(2)}%)</td>
+        <td>{distributions["Test"]["1"].omega.toFixed(2)} ({(100*distributions["Test"]["1"].proportion).toFixed(2)}%)</td>
+        <td>{distributions["Test"]["2"].omega.toFixed(2)} ({(100*distributions["Test"]["2"].proportion).toFixed(2)}%)</td>
         <td><i className="fa fa-bar-chart" aria-hidden="true"></i></td>
       </tr>);
       if(distributions['Background']){
@@ -598,9 +597,9 @@ class BUSTEDModelTable extends React.Component {
           <td></td>
           <td></td>
           <td>Background</td>
-          <td>{distributions["Background"]["0"].omega.toFixed(2)} ({(100*distributions["Background"]["0"].proportion).toFixed(0)}%)</td>
-          <td>{distributions["Background"]["1"].omega.toFixed(2)} ({(100*distributions["Background"]["1"].proportion).toFixed(0)}%)</td>
-          <td>{distributions["Background"]["2"].omega.toFixed(2)} ({(100*distributions["Background"]["2"].proportion).toFixed(0)}%)</td>
+          <td>{distributions["Background"]["0"].omega.toFixed(2)} ({(100*distributions["Background"]["0"].proportion).toFixed(2)}%)</td>
+          <td>{distributions["Background"]["1"].omega.toFixed(2)} ({(100*distributions["Background"]["1"].proportion).toFixed(2)}%)</td>
+          <td>{distributions["Background"]["2"].omega.toFixed(2)} ({(100*distributions["Background"]["2"].proportion).toFixed(2)}%)</td>
           <td><i className="fa fa-bar-chart" aria-hidden="true"></i></td>
         </tr>)
         return [test_row, background_row];
@@ -629,13 +628,41 @@ class BUSTEDModelTable extends React.Component {
         <thead id="summary-model-header1">
           <tr>
             <th>Model</th>
-            <th><em>log</em> L</th>
-            <th>#. params</th>
-            <th>AIC<sub>c</sub></th>
-            <th>Branch set</th>
-            <th>&omega;<sub>1</sub></th>
-            <th>&omega;<sub>2</sub></th>
-            <th>&omega;<sub>3</sub></th>
+            <th>
+              <span data-toggle="tooltip" title="" data-original-title="Log likelihood of model fit">
+                <em>log</em> L
+              </span>
+            </th>
+            <th>
+              <span data-toggle="tooltip" title="" data-original-title="Number of parameters">
+                #. params
+              </span>
+            </th>
+            <th>
+              <span data-toggle="tooltip" title="" data-original-title="Small-sample correct Akaike information criterion">
+                AIC<sub>c</sub>
+              </span>
+            </th>
+            <th>
+              <span data-toggle="tooltip" title="" data-original-title="Indicates which branch set each parameter belongs to">
+                Branch set
+              </span>
+            </th>
+            <th>
+              <span data-toggle="tooltip" title="" data-original-title="First omega rate class">
+                &omega;<sub>1</sub>
+              </span>
+            </th>
+            <th>
+              <span data-toggle="tooltip" title="" data-original-title="Second omega rate class">
+                &omega;<sub>2</sub>
+              </span>
+            </th>
+            <th>
+              <span data-toggle="tooltip" title="" data-original-title="Third omega rate class">
+                &omega;<sub>3</sub>
+              </span>
+            </th>
             <th></th>
           </tr>
         </thead>
@@ -671,7 +698,7 @@ class BUSTEDModelTable extends React.Component {
                 <PropChart
                   name={self.state.model + ', ' + self.state.branch + ' branches'}
                   omegas={omegas}
-                  settings={self.state.distro_settings}
+                  settings={distro_settings}
                 />
             </div>
             <div className="modal-footer">
@@ -815,7 +842,7 @@ var BUSTED = React.createClass({
 
     var distro_settings = {
       dimensions: { width: 600, height: 400 },
-      margins: { left: 50, right: 15, bottom: 15, top: 15 },
+      margins: { left: 50, right: 15, bottom: 35, top: 15 },
       legend: false,
       domain: [0.00001, 10000],
       do_log_plot: true,
@@ -873,6 +900,9 @@ var BUSTED = React.createClass({
       offset: 50
     });
     $('[data-toggle="popover"]').popover();
+    $(function () {
+      $('[data-toggle="tooltip"]').tooltip()
+    })
   },
 
   render: function() {

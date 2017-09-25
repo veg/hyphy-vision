@@ -14,24 +14,6 @@ var BranchTable = React.createClass({
         ? this.props.annotations[initial_model_name]["omegas"]
         : null;
 
-    var distro_settings = {
-      dimensions: {
-        width: 600,
-        height: 400
-      },
-      margins: {
-        left: 50,
-        right: 15,
-        bottom: 15,
-        top: 35
-      },
-      legend: false,
-      domain: [0.00001, 10000],
-      do_log_plot: true,
-      k_p: null,
-      plot: null,
-      svg_id: "prop-chart"
-    };
 
     return {
       tree: this.props.tree,
@@ -39,8 +21,7 @@ var BranchTable = React.createClass({
       annotations: this.props.annotations,
       table_row_data: table_row_data,
       current_model_name: initial_model_name,
-      current_omegas: initial_omegas,
-      distro_settings: distro_settings
+      current_omegas: initial_omegas
     };
   },
 
@@ -176,25 +157,6 @@ var BranchTable = React.createClass({
         ? nextProps.annotations[initial_model_name]["omegas"]
         : null;
 
-    var distro_settings = {
-      dimensions: {
-        width: 600,
-        height: 400
-      },
-      margins: {
-        left: 50,
-        right: 15,
-        bottom: 15,
-        top: 15
-      },
-      legend: false,
-      domain: [0.00001, 10000],
-      do_log_plot: true,
-      k_p: null,
-      plot: null,
-      svg_id: "prop-chart"
-    };
-
     if (nextProps.test_results && nextProps.annotations) {
       this.setState({
         tree: nextProps.tree,
@@ -202,8 +164,7 @@ var BranchTable = React.createClass({
         annotations: nextProps.annotations,
         table_row_data: table_row_data,
         current_model_name: initial_model_name,
-        current_omegas: initial_omegas,
-        distro_settings: distro_settings
+        current_omegas: initial_omegas
       });
     }
   },
@@ -235,6 +196,24 @@ var BranchTable = React.createClass({
 
   render: function() {
     var self = this;
+    var distro_settings = {
+      dimensions: {
+        width: 600,
+        height: 400
+      },
+      margins: {
+        left: 50,
+        right: 15,
+        bottom: 15,
+        top: 15
+      },
+      legend: false,
+      domain: [0.00001, 10000],
+      do_log_plot: true,
+      k_p: null,
+      plot: null,
+      svg_id: "prop-chart"
+    };
 
     return (
       <div className="row">
@@ -337,7 +316,7 @@ var BranchTable = React.createClass({
                 <PropChart
                   name={self.state.current_model_name}
                   omegas={self.state.current_omegas}
-                  settings={self.state.distro_settings}
+                  settings={distro_settings}
                 />
               </div>
               <div className="modal-footer">
