@@ -245,8 +245,16 @@ class FUBARViz extends React.Component {
   }
   componentWillUpdate(nextProps, nextState){
     if(nextState.site != this.state.site){
+      var index, partition;
+      for(partition=0; partition < _.values(nextProps.partitions).length; partition++){
+        index = nextProps.partitions[partition].coverage[0].indexOf(nextState.site-1);
+        if (index > -1) {
+          break;
+        }
+      }
+      console.log(partition, index);
       var data = nextProps.data.map((d,i) => {
-        return nextState.site ? [d[0],d[1], nextProps.posterior[0][+nextState.site-1][0][i]] : d;
+        return nextState.site ? [d[0],d[1], nextProps.posterior[partition][index][0][i]] : d;
       });
 
       this.magnitude = d3.scale.linear()
@@ -516,6 +524,7 @@ class FUBAR extends React.Component {
 
               <FUBARViz
                 data={self.state.data ? self.state.data.grid : null}
+                partitions={self.state.data ? self.state.data['data partitions'] : null}
                 posterior={self.state.data ? self.state.data.posterior : null}
                 number_of_sites={self.state.data ? self.state.data.input['number of sites'] : null}
               />
