@@ -840,12 +840,12 @@ input[type=range]:focus::-ms-fill-upper {
 
 .positive-selection-row {
   color: white;
-  background-color: #7EC6B3;
+  background-color: #00A99D;
 }
 
 .negative-selection-row {
   color: white;
-  background-color: black;
+  background-color: #333;
 }
 
 #tooltip_container {

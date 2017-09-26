@@ -82288,8 +82288,8 @@
     }
   ],
   "input_data": {
-    "filename": "Flu.fasta",
-    "sequences": 21,
-    "sites": 1698 
+    "file name": "Flu.fasta",
+    "number of sequences": 21,
+    "number of sites": 1698 
   }
 }

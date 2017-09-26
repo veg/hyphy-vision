@@ -96,7 +96,16 @@ var Tree = React.createClass({
             self.props.margins["bottom"]
         ]);
 
-    var selected_model = _.first(_.keys(self.props.models));
+    this.selected_models = {
+      absrel: "Full adaptive model",
+      busted: "Unconstrained model",
+      relax: "RELAX alternative",
+      fel: "Global MG94xREV",
+      meme: "Global MG94xREV",
+      slac: "Global MG94xREV",
+      fubar: "Nucleotide GTR"
+    };
+    var show_legend = ['meme', 'fubar', 'gard'].indexOf(self.props.method) < 0;
 
     return {
       json: this.props.json,
@@ -104,9 +113,9 @@ var Tree = React.createClass({
       fill_color: this.props.fill_color,
       omega_color: omega_color,
       omega_scale: omega_scale,
-      show_legend: true,
+      show_legend: show_legend,
       axis_scale: axis_scale,
-      selected_model: selected_model,
+      selected_model: this.selected_models[this.props.method],
       partition: 'None',
       current: 0
     };
@@ -140,14 +149,14 @@ var Tree = React.createClass({
     var branch_lengths;
     if(self.props.method == 'absrel' || self.props.method == 'relax'){
       branch_lengths = self.props.json.trees.branchLengths[self.state.selected_model];
-    } else if(self.props.method == 'busted'){
+    } else if(['busted', 'meme', 'fel', 'slac', 'fubar'].indexOf(self.props.method) > -1){
       branch_lengths = self.props.json.trees[self.state.current].branchLengths[self.state.selected_model];
     } 
     return branch_lengths;
   },
 
   assignBranchAnnotations: function() {
-    if (this.state.json && this.props.models[this.state.selected_model]) {
+    if (this.props.models[this.state.selected_model] && this.props.models[this.state.selected_model]['branch-annotations']) {
       var attributes = this.props.multitree ? 
         this.props.models[this.state.selected_model]["branch-annotations"][this.state.current] :
         this.props.models[this.state.selected_model]["branch-annotations"];
@@ -573,7 +582,7 @@ var Tree = React.createClass({
 
     if(self.props.method=='absrel' || self.props.method=='relax'){
       var tree_string = self.props.json.input.trees[0];
-    }else if (self.props.method=='busted'){
+    } else if (['busted', 'meme', 'fel', 'slac', 'gard', 'fubar'].indexOf(self.props.method) > -1){
       var tree_string = self.props.json.trees[self.state.current]['newickString']
     }
     self.tree(tree_string).svg(self.svg); 
@@ -640,7 +649,7 @@ var Tree = React.createClass({
   },
 
   componentWillReceiveProps: function(nextProps) {
-    var selected_model = _.first(_.keys(nextProps.models));
+    var selected_model = this.selected_models[this.props.method];
 
     this.setState({
       json: nextProps.json,
@@ -658,6 +667,16 @@ var Tree = React.createClass({
   },
 
   render: function() {
+    var popovers = {
+      absrel: '<li>Hover over a branch to see its inferred rates and significance for selection.</li>',
+      busted: '<li>Shows different branch partitions.</li><li>Toggle site partition/model in the options menu.</li>',
+      relax: '<li>Use the options menu to toggle the different branch partitions.</li>',
+      fel: '<li>Use the options menu to toggle the different site partitions.</li>',
+      meme: '<li>Use the options menu to toggle the different site partitions.</li>',
+      slac: '<li>Use the options menu to toggle the different site partitions.</li>',
+      fubar: '<li>Use the options menu to toggle the different site partitions.</li>',
+      gard: '<li>Use the options menu to toggle the different site partitions.</li>'
+    };
     return (
       <div>
         <h4 className="dm-table-header">
@@ -670,7 +689,7 @@ var Tree = React.createClass({
             data-trigger="hover"
             title="Actions"
             data-html="true"
-            data-content="<ul><li>Hover over a branch to see its inferred rates and significance for selection.</li><ul>"
+            data-content={"<ul>" + popovers[this.props.method] + "<ul>"}
             data-placement="bottom"
           />
 

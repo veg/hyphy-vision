@@ -24,7 +24,7 @@ class RELAXModelTable extends React.Component {
     var self = this;
     function omegaFormatter(omegaDict){
       if (!omegaDict) return '';
-      return omegaDict.omega.toFixed(2) + ' (' + (100*omegaDict.proportion).toFixed(0) + '%)';
+      return omegaDict.omega.toFixed(2) + ' (' + (100*omegaDict.proportion).toFixed(2) + '%)';
     }
     function makeActive(model){
       return function(){
@@ -34,7 +34,7 @@ class RELAXModelTable extends React.Component {
     function makeInactive(){
       this.setState({active: null});
     }
-    var rows = _.map(this.props.fits, (val, key) => {
+    var rows = _.map(_.omit(this.props.fits, ['Nucleotide GTR', 'MG94xREV with separate rates for branch sets']), (val, key) => {
       var distributions = val['Rate Distributions'],
         onMouseEnter = makeActive(key).bind(self),
         onMouseLeave = makeInactive.bind(self),
@@ -87,13 +87,41 @@ class RELAXModelTable extends React.Component {
         <thead id="summary-model-header1">
           <tr>
             <th>Model</th>
-            <th><em>log</em> L</th>
-            <th>#. params</th>
-            <th>AIC<sub>c</sub></th>
-            <th>Branch set</th>
-            <th>&omega;<sub>1</sub></th>
-            <th>&omega;<sub>2</sub></th>
-            <th>&omega;<sub>3</sub></th>
+            <th>
+              <span data-toggle="tooltip" title="" data-original-title="Log likelihood of model fit">
+                <em>log</em> L
+              </span>
+            </th>
+            <th>
+              <span data-toggle="tooltip" title="" data-original-title="Number of parameters">
+                #. params
+              </span>
+            </th>
+            <th>
+              <span data-toggle="tooltip" title="" data-original-title="Small-sample correct Akaike information criterion">
+                AIC<sub>c</sub>
+              </span>
+            </th>
+            <th>
+              <span data-toggle="tooltip" title="" data-original-title="Indicates which branch set each parameter belongs to">
+                Branch set
+              </span>
+            </th>
+            <th>
+              <span data-toggle="tooltip" title="" data-original-title="First omega rate class">
+                &omega;<sub>1</sub>
+              </span>
+            </th>
+            <th>
+              <span data-toggle="tooltip" title="" data-original-title="Second omega rate class">
+                &omega;<sub>2</sub>
+              </span>
+            </th>
+            <th>
+              <span data-toggle="tooltip" title="" data-original-title="Third omega rate class">
+                &omega;<sub>3</sub>
+              </span>
+            </th>
           </tr>
         </thead>
         <tbody id="summary-model-table">
@@ -218,6 +246,9 @@ class RELAX extends React.Component{
       offset: 50
     });
     $('[data-toggle="popover"]').popover();
+    $(function () {
+      $('[data-toggle="tooltip"]').tooltip()
+    })
   }
 
   formatBranchAnnotations(json, model) {
@@ -348,7 +379,7 @@ class RELAX extends React.Component{
             
             <div id="omega-tab" className="row">
               <div className="col-md-12">
-                <Header title="Omega plots" popover="<p>Needs content.</p>"/>
+                <Header title="Omega plots" popover="<p>Shows the different omega rate distributions under the null and alternative models.</p>"/>
                 <OmegaPlotGrid json={self.state.json} />
               </div>
             </div>
