@@ -13,27 +13,25 @@ import { saveSvgAsPng } from "save-svg-as-png";
 class GraphMenu extends React.Component {
   constructor(props) {
     super(props);
-
     this.state = {
       xaxis: "Site",
-      yaxis: !_.isEmpty(props.y_options) ? props.y_options[0] : "alpha"
+      yaxis: "alpha"
     };
-
   }
 
   handleSelection(e) {
-
     var dimension = e.target.dataset.dimension;
     var axis = e.target.dataset.axis;
 
     var state_to_update = {};
     state_to_update[axis] = dimension;
     this.setState(state_to_update);
-    this.props.axisSelectionEvent(e);
 
+    this.props.axisSelectionEvent(e);
   }
 
   dimensionOptionElement(axis, value) {
+    var self = this;
 
     return (
       <li key={value}>
@@ -42,7 +40,7 @@ class GraphMenu extends React.Component {
           tabIndex="-1"
           data-dimension={value}
           data-axis={axis}
-          onClick={this.handleSelection.bind(this)}
+          onClick={self.handleSelection.bind(self)}
           dangerouslySetInnerHTML={{ __html: value }}
         />
       </li>
@@ -102,16 +100,43 @@ class GraphMenu extends React.Component {
     );
 
     var navStyle = { borderBottom: "none" };
+    var export_buttons;
+
+    if(this.props.export_images){
+      export_buttons = (<div className="form-group navbar-right">
+        <div className="input-group">
+          <button
+            id="export-chart-png"
+            type="button"
+            className="btn btn-default btn-sm pull-right btn-export"
+            onClick={()=>saveSvgAsPng(document.getElementById("dm-chart"), "datamonkey-chart.png")}
+          >
+            <span className="glyphicon glyphicon-floppy-save" /> Export to PNG
+          </button>
+          <button
+            id="export-chart-png"
+            type="button"
+            className="btn btn-default btn-sm pull-right btn-export"
+            onClick={()=>d3_save_svg.save(d3.select("#dm-chart").node(), {filename: "datamonkey-chart"})}
+          >
+            <span className="glyphicon glyphicon-floppy-save" /> Export to SVG
+          </button>
+        </div>
+      </div>);
+    }
 
     return (
       <nav className="navbar" style={navStyle}>
         <form className="navbar-form">
+
           <div className="form-group navbar-left">
             <div className="input-group">
               {XAxisButton}
               {YAxisButton}
             </div>
           </div>
+
+          {export_buttons}
         </form>
       </nav>
     );
@@ -214,10 +239,15 @@ class BaseGraph extends React.Component {
   yAxisLabel() {
     var transform_x = (this.props.marginLeft - 25)/2;
     var transform_y = this.props.height/2;
+    if (this.props.y_label){
+      var y_label = this.props.y_label.indexOf('<sup>' !== -1) ?
+        '<tspan>' + this.props.y_label.replace('<sup>', '<tspan baseline-shift="super">').replace('</sup>','</tspan>') + '</tspan>' :
+        this.props.y_label;
+    }
     return(<text
       textAnchor="middle"
       transform={"translate("+transform_x+","+transform_y+")rotate(-90)"}
-      dangerouslySetInnerHTML={{ __html: this.props.y_label }}
+      dangerouslySetInnerHTML={{ __html: y_label }}
     />);
   }
 
@@ -381,17 +411,14 @@ class LineChart extends BaseGraph {
 }
 
 class ScatterPlot extends BaseGraph {
-
   renderGraph(x_scale, y_scale, dom_element) {
-
     var self = this,
       main_graph = d3.select(dom_element);
 
     _.each(
       this.props.y,
       _.bind(function(y, i) {
-
-        var series_color = this.props.color_pallette(i);
+        var series_color = graphDefaultColorPallette(i);
 
         var data_points = main_graph
           .selectAll("circle.series_" + i)
@@ -423,33 +450,6 @@ class ScatterPlot extends BaseGraph {
     );
   }
 }
-
-ScatterPlot.defaultProps = {
-  color_pallette : d3.scale.category10().domain (_.range (10)),
-  width: 800,
-  height: 400,
-  marginLeft: 35,
-  marginRight: 10,
-  marginTop: 10,
-  marginBottom: 35,
-  marginXaxis: 5,
-  marginYaxis: 5,
-  graphData: null,
-  renderStyle: { axis: { class: "hyphy-axis" }, points: { class: "" } },
-  xScale: "linear",
-  yScale: "linear",
-  xAxis: true,
-  yAxis: true,
-  transitions: false,
-  numberFormat: d3.format(".4r"),
-  tracker: true,
-  xLabel: null,
-  yLabel: null,
-  x: [],
-  y: []
-
-};
-
 
 class Series extends BaseGraph {
   renderGraph(x_scale, y_scale, dom_element) {
@@ -729,6 +729,8 @@ class MultiScatterPlot extends React.Component {
 
   render() {
 
+    var self = this;
+
     return (
       <div style={{ marginTop: "20px" }}>
         <div
@@ -736,29 +738,29 @@ class MultiScatterPlot extends React.Component {
           className="btn-group-justified col-lg-12"
           data-toggle="buttons"
         >
-          {this.getCheckBoxes()}
+          {self.getCheckBoxes()}
         </div>
 
         <svg
           width={
-            this.props.width + this.props.marginLeft + this.props.marginRight
+            self.props.width + self.props.marginLeft + self.props.marginRight
           }
           height={
-            this.props.height + this.props.marginTop + this.props.marginBottom
+            self.props.height + self.props.marginTop + self.props.marginBottom
           }
         >
           <g
             transform={
               "translate(" +
-              this.props.marginLeft +
+              self.props.marginLeft +
               "," +
-              this.props.marginTop +
+              self.props.marginTop +
               ")"
             }
-            ref={_.partial(this.plotDataPoints).bind(this)}
+            ref={_.partial(self.plotDataPoints).bind(self)}
           />
-          {this.props.x_label}
-          {this.props.y_label}
+          {self.props.x_label}
+          {self.props.y_label}
         </svg>
       </div>
     );

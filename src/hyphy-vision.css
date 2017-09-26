@@ -690,13 +690,6 @@ li.active > a:hover {
   margin-top: -20px;
 }
 
-g > text {
-  font-family: "Noto Sans", sans-serif;
-  font-size: 15px !important;
-  font-weight: 600;
-  color: #545454 !important;
-}
-
 .nav-button {
   display: inline-block;
   padding: 0px 24px;
@@ -840,3 +833,17 @@ input[type=range]:focus::-ms-fill-upper {
 }
 
 .modal .modal-dialog { width: 800px; }
+
+.fa-bar-chart:hover {
+    color: #00a99d;
+}
+
+.positive-selection-row {
+  color: white;
+  background-color: #7EC6B3;
+}
+
+.negative-selection-row {
+  color: white;
+  background-color: black;
+}

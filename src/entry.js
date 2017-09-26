@@ -17,16 +17,18 @@ var absrel = require('./jsx/absrel.jsx'),
     relax = require('./jsx/relax.jsx'),
     slac = require('./jsx/slac.jsx'),
     meme = require('./jsx/meme.jsx'),
+    gard = require('./jsx/gard.jsx'),
     template = require('./jsx/template.jsx');
 
 // Create new hyphy-vision export
-window.absrel = absrel;
-window.busted = busted;
+window.absrel = absrel.hv;
+window.busted = busted.hv;
 window.fade = fade;
 window.fade_summary = fade_summary;
-window.fel = fel;
+window.fel = fel.hv;
 window.prime = prime;
-window.meme = meme;
-window.relax = relax;
-window.slac = slac;
+window.meme = meme.hv;
+window.relax = relax.hv;
+window.slac = slac.hv;
+window.gard = gard;
 window.template = template

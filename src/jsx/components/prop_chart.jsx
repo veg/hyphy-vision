@@ -27,7 +27,6 @@ var PropChart = React.createClass({
     return {
       model_name: this.props.name,
       omegas: this.props.omegas,
-      settings: this.props.settings
     };
   },
 
@@ -77,7 +76,7 @@ var PropChart = React.createClass({
       margins["right"]), (this.plot_height =
       dimensions["height"] - margins["top"] - margins["bottom"]);
 
-    var domain = this.state.settings["domain"];
+    var domain = this.props.settings["domain"];
 
     this.omega_scale = (this.do_log_plot ? d3.scale.log() : d3.scale.linear())
       .range([0, this.plot_width])
@@ -385,18 +384,5 @@ var PropChart = React.createClass({
   }
 });
 
-function render_prop_chart(model_name, omegas, settings) {
-  return React.render(
-    <PropChart name={model_name} omegas={omegas} settings={settings} />,
-    document.getElementById("primary-omega-tag")
-  );
-}
-
-function rerender_prop_chart(model_name, omeags, settings) {
-  $("#primary-omega-tag").empty();
-  return render_prop_chart(model_name, omeags, settings);
-}
-
-module.exports.render_prop_chart = render_prop_chart;
-module.exports.rerender_prop_chart = rerender_prop_chart;
 module.exports.PropChart = PropChart;
+

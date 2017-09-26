@@ -9,8 +9,7 @@ custom, interactive, web-based visualizations to help facilitate making
 inferences about your results and less time data munging.
 
 # Start viewing your results now
-Visit the associated site for this page at [here]
-(http://veg.github.io/hyphy-vision/).
+Visit the associated site for this page at [here](http://veg.github.io/hyphy-vision/).
 
 ## I don't have results though, and I'm not sure where to begin
 If you want to start exploring various ways of detecting selection on your

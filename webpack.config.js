@@ -23,11 +23,10 @@ config = {
   },
   output: {
     path: path.resolve(__dirname, "dist/"),
-    filename: "[name].js"
+    filename: "[name].js",
+    library : "hyphyVision"
   },
-  externals: {
-    jsdom: "window"
-  },
+  //externals: ['react', 'react-dom'],
   module: {
     rules: [
       {

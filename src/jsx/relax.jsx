@@ -1,130 +1,115 @@
 import { ModelFits } from "./components/model_fits.jsx";
+import { NavBar } from "./components/navbar.jsx";
+import { ScrollSpy } from "./components/scrollspy.jsx";
+import { InputInfo } from "./components/input_info.jsx";
+import { ErrorMessage } from "./components/error_message.jsx";
 import { Tree } from "./components/tree.jsx";
 import { OmegaPlotGrid } from "./components/omega_plots.jsx";
+import { Header } from "./components/header.jsx";
 
 var React = require("react"),
   ReactDOM = require("react-dom"),
   _ = require("underscore");
 
-var RELAX = React.createClass({
-  float_format: d3.format(".2f"),
-  p_value_format: d3.format(".4f"),
-  fit_format: d3.format(".2f"),
+class RELAXModelTable extends React.Component {
+  constructor(props){
+    super(props);
 
-  loadFromServer: function() {
+    this.state = {
+      model: "MG94xREV with separate rates for branch sets",
+    }
+  }
+  render() {
+    if(!this.props.fits) return <div></div>;
     var self = this;
-
-    d3.json(this.props.url, function(data) {
-      data["fits"]["Partitioned MG94xREV"][
-        "branch-annotations"
-      ] = self.formatBranchAnnotations(data, "Partitioned MG94xREV");
-      data["fits"]["General Descriptive"][
-        "branch-annotations"
-      ] = self.formatBranchAnnotations(data, "General Descriptive");
-      data["fits"]["Null"]["branch-annotations"] = self.formatBranchAnnotations(
-        data,
-        "Null"
-      );
-      data["fits"]["Alternative"][
-        "branch-annotations"
-      ] = self.formatBranchAnnotations(data, "Alternative");
-      data["fits"]["Partitioned Exploratory"][
-        "branch-annotations"
-      ] = self.formatBranchAnnotations(data, "Partitioned Exploratory");
-
-      var annotations =
-        data["fits"]["Partitioned MG94xREV"]["branch-annotations"],
-        json = data,
-        pmid = data["PMID"],
-        test_results = data["relaxation_test"];
-
-      var p = data["relaxation-test"]["p"],
-        direction = data["fits"]["Alternative"]["K"] > 1
-          ? "intensification"
-          : "relaxation",
-        evidence = p <= self.props.alpha_level
-          ? "significant"
-          : "not significant",
-        pvalue = self.p_value_format(p),
-        lrt = self.fit_format(data["relaxation-test"]["LR"]),
-        summary_k = self.fit_format(data["fits"]["Alternative"]["K"]),
-        pmid_text = "PubMed ID " + pmid,
-        pmid_href = "http://www.ncbi.nlm.nih.gov/pubmed/" + pmid;
-
-      self.setState({
-        annotations: annotations,
-        json: json,
-        pmid: pmid,
-        test_results: test_results,
-        p: p,
-        direction: direction,
-        evidence: evidence,
-        pvalue: pvalue,
-        lrt: lrt,
-        summary_k: summary_k,
-        pmid_text: pmid_text,
-        pmid_href: pmid_href
-      });
+    function omegaFormatter(omegaDict){
+      if (!omegaDict) return '';
+      return omegaDict.omega.toFixed(2) + ' (' + (100*omegaDict.proportion).toFixed(0) + '%)';
+    }
+    function makeActive(model){
+      return function(){
+        this.setState({active: model});
+      }
+    }
+    function makeInactive(){
+      this.setState({active: null});
+    }
+    var rows = _.map(this.props.fits, (val, key) => {
+      var distributions = val['Rate Distributions'],
+        onMouseEnter = makeActive(key).bind(self),
+        onMouseLeave = makeInactive.bind(self),
+        className = key == self.state.active ? 'active' : '',
+        branch_set = distributions['Shared'] ? 'Shared' : 'Test',
+        test_row = (<tr onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave} className={className}>
+        <td>{key}</td>
+        <td>{val['Log Likelihood'] ? val['Log Likelihood'].toFixed(1) : null}</td>
+        <td>{val['estimated parameters']}</td>
+        <td>{val['AIC-c'].toFixed(1)}</td>
+        <td>{branch_set}</td>
+        <td>{omegaFormatter(distributions[branch_set]["0"])}</td>
+        <td>{omegaFormatter(distributions[branch_set]["1"])}</td>
+        <td>{omegaFormatter(distributions[branch_set]["2"])}</td>
+      </tr>);
+      if(distributions['Reference']){
+        var background_row = (<tr onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave} className={className}>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td>Reference</td>
+          <td>{omegaFormatter(distributions["Reference"]["0"])}</td>
+          <td>{omegaFormatter(distributions["Reference"]["1"])}</td>
+          <td>{omegaFormatter(distributions["Reference"]["2"])}</td>
+        </tr>)
+        return [test_row, background_row];
+      }
+      return test_row;
     });
-  },
+    return (<div>
+      <h4 className="dm-table-header">
+        Model fits
+        <span
+          className="glyphicon glyphicon-info-sign"
+          style={{ verticalAlign: "middle", float: "right" }}
+          aria-hidden="true"
+          data-toggle="popover"
+          data-trigger="hover"
+          title="Actions"
+          data-html="true"
+          data-content="<ul><li>Hover over a column header for a description of its content.</li></ul>"
+          data-placement="bottom"
+        />
+      </h4>
+      <table
+        className="dm-table table table-hover table-condensed list-group-item-text"
+        style={{ marginTop: "0.5em" }}
+      >
+        <thead id="summary-model-header1">
+          <tr>
+            <th>Model</th>
+            <th><em>log</em> L</th>
+            <th>#. params</th>
+            <th>AIC<sub>c</sub></th>
+            <th>Branch set</th>
+            <th>&omega;<sub>1</sub></th>
+            <th>&omega;<sub>2</sub></th>
+            <th>&omega;<sub>3</sub></th>
+          </tr>
+        </thead>
+        <tbody id="summary-model-table">
+          {_.flatten(rows)}
+        </tbody>
+      </table>
+    </div>); 
+  }
+}
 
-  getDefaultProps: function() {
-    var edgeColorizer = function(element, data) {
-      var self = this,
-        scaling_exponent = 0.33,
-        omega_format = d3.format(".3r");
-
-      var omega_color = d3.scale
-        .pow()
-        .exponent(scaling_exponent)
-        .domain([0, 0.25, 1, 5, 10])
-        .range(
-          self.options()["color-fill"]
-            ? ["#DDDDDD", "#AAAAAA", "#888888", "#444444", "#000000"]
-            : ["#6e4fa2", "#3288bd", "#e6f598", "#f46d43", "#9e0142"]
-        )
-        .clamp(true);
-
-      if (data.target.annotations) {
-        element.style(
-          "stroke",
-          omega_color(data.target.annotations.length) || null
-        );
-        $(element[0][0]).tooltip("destroy");
-        $(element[0][0]).tooltip({
-          title: omega_format(data.target.annotations.length),
-          html: true,
-          trigger: "hover",
-          container: "body",
-          placement: "auto"
-        });
-      } else {
-        element.style("stroke", null);
-        $(element[0][0]).tooltip("destroy");
-      }
-
-      var selected_partition = $("#hyphy-tree-highlight").attr("value");
-
-      if (selected_partition && this.get_partitions()) {
-        var partitions = this.get_partitions()[selected_partition];
-
-        element
-          .style(
-            "stroke-width",
-            partitions && partitions[data.target.name] ? "8" : "4"
-          )
-          .style("stroke-linejoin", "round")
-          .style("stroke-linecap", "round");
-      }
-    };
-
-    return {
-      edgeColorizer: edgeColorizer,
-      alpha_level: 0.05
-    };
-  },
-
-  getInitialState: function() {
+class RELAX extends React.Component{
+  constructor(props){
+    super(props);
+    this.p_value_format = d3.format(".4f");
+    this.fit_format = d3.format(".2f")
+    this.onFileChange = this.onFileChange.bind(this); 
     var tree_settings = {
       omegaPlot: {},
       "tree-options": {
@@ -143,7 +128,7 @@ var RELAX = React.createClass({
       edgeColorizer: this.props.edgeColorizer
     };
 
-    return {
+    this.state = {
       annotations: null,
       json: null,
       pmid: null,
@@ -158,92 +143,100 @@ var RELAX = React.createClass({
       summary_k: "unknown",
       pmid_text: "PubMed ID : Unknown",
       pmid_href: "#",
-      relaxation_K: "unknown"
+      relaxation_K: "unknown",
+      fits: null
     };
-  },
 
-  componentWillMount: function() {
-    this.loadFromServer();
-    this.setEvents();
-  },
+  }
 
-  setEvents: function() {
+  onFileChange(e) {
     var self = this;
+    var files = e.target.files; // FileList object
 
-    $("#datamonkey-relax-load-json").on("change", function(e) {
-      var files = e.target.files; // FileList object
+    if (files.length == 1) {
+      var f = files[0];
+      var reader = new FileReader();
 
-      if (files.length == 1) {
-        var f = files[0];
-        var reader = new FileReader();
+      reader.onload = (function(theFile) {
+        return function(e) {
+          var data = JSON.parse(this.result);
+          self.processData(data);
+        };
+      })(f);
+      reader.readAsText(f);
+    }
+    e.preventDefault();
+  }
 
-        reader.onload = (function(theFile) {
-          return function(e) {
-            var data = JSON.parse(this.result);
-            data["fits"]["Partitioned MG94xREV"][
-              "branch-annotations"
-            ] = self.formatBranchAnnotations(data, "Partitioned MG94xREV");
-            data["fits"]["General Descriptive"][
-              "branch-annotations"
-            ] = self.formatBranchAnnotations(data, "General Descriptive");
-            data["fits"]["Null"][
-              "branch-annotations"
-            ] = self.formatBranchAnnotations(data, "Null");
-            data["fits"]["Alternative"][
-              "branch-annotations"
-            ] = self.formatBranchAnnotations(data, "Alternative");
-            data["fits"]["Partitioned Exploratory"][
-              "branch-annotations"
-            ] = self.formatBranchAnnotations(data, "Partitioned Exploratory");
+  processData(data) {
+    var k = data["test results"]["relaxation or intensification parameter"],
+      p = data["test results"]["p-value"],
+      significant = p <= this.props.alpha_level;
 
-            var annotations =
-              data["fits"]["Partitioned MG94xREV"]["branch-annotations"],
-              json = data,
-              pmid = data["PMID"],
-              test_results = data["relaxation_test"];
+    delete data['fits']['MG94xREV with separate rates for branch sets'];
 
-            var p = data["relaxation-test"]["p"],
-              direction = data["fits"]["Alternative"]["K"] > 1
-                ? "intensification"
-                : "relaxation",
-              evidence = p <= self.props.alpha_level
-                ? "significant"
-                : "not significant",
-              pvalue = self.p_value_format(p),
-              lrt = self.fit_format(data["relaxation-test"]["LR"]),
-              summary_k = self.fit_format(data["fits"]["Alternative"]["K"]),
-              pmid_text = "PubMed ID " + pmid,
-              pmid_href = "http://www.ncbi.nlm.nih.gov/pubmed/" + pmid;
-
-            self.setState({
-              annotations: annotations,
-              json: json,
-              pmid: pmid,
-              test_results: test_results,
-              p: p,
-              direction: direction,
-              evidence: evidence,
-              pvalue: pvalue,
-              lrt: lrt,
-              summary_k: summary_k,
-              pmid_text: pmid_text,
-              pmid_href: pmid_href
-            });
-          };
-        })(f);
-        reader.readAsText(f);
-      }
-
-      $("#datamonkey-absrel-toggle-here").dropdown("toggle");
-      e.preventDefault();
+    data["trees"] = {
+      branchLengths: _.mapObject(data.fits, (model_val, model_key) => {
+        return _.mapObject(data['branch attributes'][0], (branch_val, branch_key) => {
+          return branch_val[model_key]; 
+        });
+      })
+    }
+   
+    _.keys(data.fits).forEach(model=>{
+      data["fits"][model]["branch-annotations"] = this.formatBranchAnnotations(data, model);
+      data["fits"][model]["annotation-tag"] = model == "MG94xREV with separate rates for branch sets" ? "ω" : 'k';
     });
-  },
 
-  formatBranchAnnotations: function(json, key) {
-    var initial_branch_annotations = json["fits"][key]["branch-annotations"];
+    this.setState({
+      json: data,
+      direction: k > 1 ? "intensification" : "relaxation",
+      lrt: data["test results"]["LRT"].toFixed(2),
+      summary_k: k.toFixed(2),
+      evidence: significant ? "significant" : "not significant",
+      p: p.toFixed(3),
+      fits: data["fits"],
+      significant: significant
+    });
+  }
 
-    if (!initial_branch_annotations) {
-      initial_branch_annotations = json["fits"][key]["rate distributions"];
+  componentDidMount(){
+    var self = this;
+    d3.json(this.props.url, function(data){
+      self.processData(data);
+    });
+  }
+
+  componentWillMount() {
+    //this.loadFromServer();
+    //this.setEvents();
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    $("body").scrollspy({
+      target: ".bs-docs-sidebar",
+      offset: 50
+    });
+    $('[data-toggle="popover"]').popover();
+  }
+
+  formatBranchAnnotations(json, model) {
+    if(model == 'MG94xREV with separate rates for branch sets') {
+      var initial_branch_annotations = _.mapObject(json.fits[model]['Rate Distributions'], (val, key) => {
+        return _.values(val).map(d=>[d.omega, d.proportion]);
+      });
+    } else if(model == 'General descriptive') {
+      var initial_branch_annotations = _.mapObject(json['branch attributes'][0], val=>val['k (general descriptive)']);
+    } else if(model == 'RELAX alternative') {
+      var initial_branch_annotations = _.mapObject(json['tested'][0], val => {
+        return val == "Reference" ? 1 : json["test results"]["relaxation or intensification parameter"];
+      });
+    } else if(model == 'RELAX null') {
+      var initial_branch_annotations = _.mapObject(json.tested[0], val=>1);
+    } else if(model == 'RELAX partitioned descriptive') {
+      return null;
+    } else {
+      return null;
     }
 
     // Iterate over objects
@@ -255,76 +248,163 @@ var RELAX = React.createClass({
     });
 
     return branch_annotations;
-  },
+  }
 
-  initialize: function() {},
-
-  render: function() {
-    var self = this;
-
+  getSummary(){
+    if(!this.state.json) return <div></div>;
     return (
-      <div className="tab-content">
-        <div className="tab-pane active" id="datamonkey-relax-summary-tab">
-          <div id="hyphy-relax-summary" className="row">
-            <div className="col-md-12">
-              <ul className="list-group">
-                <li className="list-group-item list-group-item-info">
-                  <h3 className="list-group-item-heading">
-                    <i className="fa fa-list" style={{ marginRight: "10px" }} />
-                    <span id="summary-method-name">
-                      RELAX(ed selection test)
-                    </span>{" "}
-                    summary
-                  </h3>
-                  <p
-                    className="list-group-item-text lead"
-                    style={{ marginTop: "0.5em" }}
-                  >
-                    Test for selection{" "}
-                    <strong id="summary-direction">
-                      {this.state.direction}
-                    </strong>{" "}
+      <div className="row">
+      <div className="clearance" id="summary-tab"></div>
+      <div className="col-md-12">
+        <h3 className="list-group-item-heading">
+          <span id="summary-method-name">
+            RELAX(ed selection test)
+          </span>
+          <br />
+          <span className="results-summary">results summary</span>
+        </h3>
+      </div>
+      <div className="col-md-12">
+        <InputInfo input_data={this.state.json.input} />
+      </div>
+      <div className="col-md-12">
+        <div className="main-result">
+          <p>
+            Test for selection{" "}
+            <strong id="summary-direction">
+              {this.state.direction}
+            </strong>{" "}
 
-                    (<abbr title="Relaxation coefficient">K</abbr> ={" "}
-                    <strong id="summary-K">{this.state.summary_k}</strong>) was{" "}
-                    <strong id="summary-evidence">
-                      {this.state.evidence}
-                    </strong>{" "}
+            (K ={" "}
+            <strong id="summary-K">{this.state.summary_k}</strong>) was{" "}
+            <strong id="summary-evidence" className={this.state.significant ? 'hyphy-highlight' : ''}>
+              {this.state.evidence}
+            </strong>{" "}
 
-                    (p = <strong id="summary-pvalue">
-                      {this.state.p}
-                    </strong>,{" "}
-                    <abbr title="Likelihood ratio statistic">LR</abbr> ={" "}
-                    <strong id="summary-LRT">{this.state.lrt}</strong>)
-                  </p>
-                  <p>
-                    <small>
-                      Please cite{" "}
-                      <a href={this.state.pmid_href} id="summary-pmid">
-                        {this.state.pmid_text}
-                      </a>{" "}
-                      if you use this result in a publication, presentation, or
-                      other scientific work.
-                    </small>
-                  </p>
-                </li>
-              </ul>
-            </div>
-          </div>
-          <div id="hyphy-model-fits" className="row">
-            <ModelFits json={self.state.json} />
-          </div>
-          <div id="hyphy-omega-plots" className="row">
-            <OmegaPlotGrid json={self.state.json} />
-          </div>
-        </div>
-        <div className="tab-pane" id="tree-tab">
-          <Tree json={self.state.json} settings={self.state.settings} />
+            (p = <strong id="summary-pvalue">
+              {this.state.p}
+            </strong>,{" "}
+            LR ={" "}
+            <strong id="summary-LRT">{this.state.lrt}</strong>).
+          </p>
+          <hr />
+          <p>
+            <small>
+              See{" "}
+              <a href="http://hyphy.org/methods/selection-methods/#relax">
+                here
+              </a>{" "}
+              for more information about this method.
+              <br />Please cite{" "}
+              <a
+                href="http://www.ncbi.nlm.nih.gov/pubmed/25540451"
+                id="summary-pmid"
+                target="_blank"
+              >
+                PMID 123456789 
+              </a>{" "}
+              if you use this result in a publication, presentation, or other
+              scientific work.
+            </small>
+          </p>
         </div>
       </div>
-    );
+
+    </div>);
   }
-});
+  render(){
+    var self = this,
+      scrollspy_info = [
+        { label: "summary", href: "summary-tab" },
+        { label: "fits", href: "fits-tab" },
+        { label: "tree", href: "tree-tab" }
+      ];
+
+    var models = {},
+      partition = {'Reference': {}, 'Test': {}, 'Unclassified': {}};
+    if (!_.isNull(self.state.json)) {
+      models = self.state.json.fits,
+      _.each(self.state.json.tested[0], (val, key) => {
+        partition[val][key] = 1;
+      });
+      if(_.size(partition['Unclassified']) == 0){
+        delete partition['Unclassified'];
+      }
+    }
+    return (<div>
+      {self.props.hyphy_vision ? <NavBar onFileChange={this.onFileChange} /> : ''}
+      <div className="container">
+        <div className="row">
+          <ScrollSpy info={scrollspy_info} />
+          <div className="col-sm-10" id="results">
+            <ErrorMessage />
+            {self.getSummary()}
+
+            <div id="fits-tab" className="row">
+              <div className="col-md-12">
+                <RELAXModelTable fits={self.state.fits} />
+              </div>
+            </div>
+            
+            <div id="omega-tab" className="row">
+              <div className="col-md-12">
+                <Header title="Omega plots" popover="<p>Needs content.</p>"/>
+                <OmegaPlotGrid json={self.state.json} />
+              </div>
+            </div>
+
+            <div className="row" id="tree-tab">
+              <Tree
+                json={self.state.json}
+                settings={self.state.settings}
+                models={models}
+                partition={partition}
+                color_gradient={["#000000", "#888888", "#DFDFDF", "#77CCC6", "#00a99d"]}
+                grayscale_gradient={["#DDDDDD", "#AAAAAA", "#888888", "#444444", "#000000"]}
+                method='relax'
+              />              
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>);
+  }
+}
+
+RELAX.defaultProps = {
+  edgeColorizer: function(element, data, omega_color, partition) {
+    var self = this,
+      scaling_exponent = 0.33,
+      omega_format = d3.format(".3r");
+
+    if (data.target.annotations) {
+      element.style(
+        "stroke",
+        omega_color(data.target.annotations.length) || null
+      );
+      $(element[0][0]).tooltip("destroy");
+      $(element[0][0]).tooltip({
+        title: omega_format(data.target.annotations.length),
+        html: true,
+        trigger: "hover",
+        container: "body",
+        placement: "auto"
+      });
+    } else {
+      element.style("stroke", null);
+      $(element[0][0]).tooltip("destroy");
+    }
+
+    var is_in_partition = partition.indexOf(data.target.name) > -1;
+    element
+      .style("stroke-width", is_in_partition ? "6" : "2")
+      .style("stroke-linejoin", "round")
+      .style("stroke-linecap", "round");
+  },
+  alpha_level: 0.05
+};
+
+
 
 // Will need to make a call to this
 // omega distributions
@@ -332,4 +412,10 @@ function render_relax(url, element) {
   ReactDOM.render(<RELAX url={url} />, document.getElementById(element));
 }
 
+function render_hv_relax(url, element) {
+  ReactDOM.render(<RELAX url={url} hyphy_vision />, document.getElementById(element));
+}
+
 module.exports = render_relax;
+module.exports.hv = render_hv_relax;
+

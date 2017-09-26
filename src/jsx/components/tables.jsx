@@ -5,6 +5,7 @@ var React = require("react"),
 
 require('csvexport');
 
+import PropTypes from 'prop-types';
 
 const DatamonkeyTableRow = React.createClass({
   /**
@@ -33,8 +34,8 @@ const DatamonkeyTableRow = React.createClass({
   */
 
   /*propTypes: {
-   rowData: React.PropTypes.arrayOf (React.PropTypes.oneOfType ([React.PropTypes.string,React.PropTypes.number,React.PropTypes.object,React.PropTypes.array])).isRequired,
-   header:  React.PropTypes.bool,
+   rowData: PropTypes.arrayOf (PropTypes.oneOfType ([PropTypes.string,PropTypes.,PropTypes.object,PropTypes.array])).isRequired,
+   header:  PropTypes.bool,
   },*/
 
   dm_compareTwoValues: function(a, b) {
@@ -439,16 +440,15 @@ var DatamonkeyTable = React.createClass({
 
       }
       paginatorControls = (
-        <div>
-          <div className="col-md-6">
+      <div>
+
+          <div className="col-md-12">
             <p>
               Showing entries {this.state.current + 1} through {upperLimit} out
               of {this.state.rowOrder.length}.
             </p>
           </div>
-          <div className="col-md-3">
-            {button}
-          </div>
+
           <div className="col-md-3">
             <div
               className="btn-group btn-group-justified"
@@ -513,7 +513,14 @@ var DatamonkeyTable = React.createClass({
               </div>
             </div>
           </div>
-        </div>
+          
+          <div className="col-md-6"></div>
+          
+          <div className="col-md-3">
+            {button}
+          </div>
+        
+      </div>
       );
     } else {
       paginatorControls = "";
@@ -611,7 +618,7 @@ var DatamonkeyRateDistributionTable = React.createClass({
   */
 
   propTypes: {
-    distribution: React.PropTypes.object.isRequired
+    distribution: PropTypes.object.isRequired
   },
 
   dm_formatterRate: d3.format(".3r"),
@@ -660,13 +667,13 @@ var DatamonkeyPartitionTable = React.createClass({
   dm_formatterProp: d3.format(".3p"),
 
   propTypes: {
-    trees: React.PropTypes.object.isRequired,
-    partitions: React.PropTypes.object.isRequired,
-    branchAttributes: React.PropTypes.object.isRequired,
-    siteResults: React.PropTypes.object.isRequired,
-    accessorNegative: React.PropTypes.func.isRequired,
-    accessorPositive: React.PropTypes.func.isRequired,
-    pValue: React.PropTypes.number.isRequired
+    trees: PropTypes.object.isRequired,
+    partitions: PropTypes.object.isRequired,
+    branchAttributes: PropTypes.object.isRequired,
+    siteResults: PropTypes.object.isRequired,
+    accessorNegative: PropTypes.func.isRequired,
+    accessorPositive: PropTypes.func.isRequired,
+    pValue: PropTypes.number.isRequired
   },
 
   dm_computePartitionInformation: function(
@@ -876,7 +883,7 @@ var DatamonkeyModelTable = React.createClass({
   dm_numberFormatter: d3.format(".2f"),
 
   dm_supportedColumns: {
-    "log-likelihood": {
+    "Log Likelihood": {
       order: 2,
       value: {
         value: "log L",
@@ -884,7 +891,7 @@ var DatamonkeyModelTable = React.createClass({
       },
       display_format: d3.format(".2f")
     },
-    parameters: {
+    "estimated parameters": {
       order: 3,
       value: {
         value: "Parameters",
@@ -899,7 +906,7 @@ var DatamonkeyModelTable = React.createClass({
       },
       display_format: d3.format(".2f")
     },
-    "rate distributions": {
+    "Rate Distributions": {
       order: 4,
       value: "Rate distributions",
       transform: function(value) {
@@ -911,7 +918,7 @@ var DatamonkeyModelTable = React.createClass({
   },
 
   propTypes: {
-    fits: React.PropTypes.object.isRequired
+    fits: PropTypes.object.isRequired
   },
 
   getDefaultProps: function() {
@@ -1053,7 +1060,7 @@ var DatamonkeyTimersTable = React.createClass({
   dm_percentageFormatter: d3.format(".2%"),
 
   propTypes: {
-    timers: React.PropTypes.object.isRequired
+    timers: PropTypes.object.isRequired
   },
 
   dm_formatSeconds: function(seconds) {
@@ -1113,6 +1120,12 @@ var DatamonkeyTimersTable = React.createClass({
       rows: this.dm_extractTimerTable(this.props.timers),
       caption: null
     };
+  },
+
+  componentWillReceiveProps: function(nextProps) {
+    this.setState({
+      rows: this.dm_extractTimerTable(nextProps.timers)
+    });
   },
 
   render: function() {
