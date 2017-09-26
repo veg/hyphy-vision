@@ -15,7 +15,7 @@ class GraphMenu extends React.Component {
     super(props);
     this.state = {
       xaxis: "Site",
-      yaxis: "alpha"
+      yaxis: this.props.y_options[0]
     };
   }
 
@@ -83,6 +83,7 @@ class GraphMenu extends React.Component {
       );
     }
   }
+
 
   render() {
     var self = this;

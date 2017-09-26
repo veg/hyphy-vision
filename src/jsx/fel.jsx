@@ -400,15 +400,7 @@ in the remaining ${no_selected} sites in your alignment.`;
     );
 
     var x_options = "Site";
-    var y_options = _.filter(
-      _.map(this.state.mle_headers, function(d) {
-        return d.value;
-      }),
-      function(d) {
-        return d != "Site" && d != 'Partition';
-      }
-    );
-
+    var y_options = ['alpha', 'beta', 'alpha=beta', 'LRT', 'p-value', 'Total branch length']; 
     var Summary = this.getSummary();
 
     var edgeColorizer = function(element, data, foreground_color) {
