@@ -1133,22 +1133,22 @@ var SLACGraphs = React.createClass({
                           </div>*/}
           </form>
         </nav>
-
-        {self.dm_doScatter()
-          ? <DatamonkeyScatterplot
-              x={x}
-              y={y}
-              marginLeft={50}
-              transitions={true}
-            />
-          : <DatamonkeySeries
-              x={x}
-              y={y}
-              marginLeft={50}
-              transitions={true}
-              doDots={true}
-            />}
-
+        <center>
+          {self.dm_doScatter()
+            ? <DatamonkeyScatterplot
+                x={x}
+                y={y}
+                marginLeft={50}
+                transitions={true}
+              />
+            : <DatamonkeySeries
+                x={x}
+                y={y}
+                marginLeft={50}
+                transitions={true}
+                doDots={true}
+              />}
+          </center>
       </div>
     );
   }

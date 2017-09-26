@@ -29,7 +29,7 @@ function FUBARSummary(props) {
       <div className="col-md-12">
         <h3 className="list-group-item-heading">
           <span id="summary-method-name">
-            FUBAR - A Fast, Unconstrained Bayesian AppRoximation for Inferring Selection
+            Fast Unconstrained Bayesian AppRoximation
           </span>
           <br />
           <span className="results-summary">results summary</span>

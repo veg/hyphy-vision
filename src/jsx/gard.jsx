@@ -49,7 +49,7 @@ function GARDResults(props){
     <div className="col-md-12">
       <h3 className="list-group-item-heading">
         <span id="summary-method-name">
-          Genetic Algorithm Recombination Detection
+          Genetic Algorithm for Recombination Detection
         </span>
         <br />
         <span className="results-summary">results summary</span>
