@@ -389,7 +389,7 @@ var BUSTEDSiteChartAndTable = React.createClass({
     if(_.isEmpty(this.props.data)){
       return (<div className="row" style={{marginBottom:"20px"}}>
         <div className="col-md-12">     
-          <Header title='Model Test Statistics Per Site' />
+          <Header title='Model Test Statistics Per Site' popover='No information to display.' />
           <p className="description">No data to display.</p>
         </div>
       </div>);
@@ -438,7 +438,7 @@ var BUSTEDSiteChartAndTable = React.createClass({
                 data-trigger="hover"
                 title="Actions"
                 data-html="true"
-                data-content="<ul><li>Hover over a column header for a description of its content.</li></ul>"
+                data-content='<ul><li>Click the figure and drag to filter by given sites. The resulting "brush" can be resized, dragged, or cleared by clicking unselected sites.</li><li>Filter out rows below a given statistic value by typing in the input boxes below.</li></ul>'
                 data-placement="bottom"
               />
             </h4>
@@ -617,7 +617,7 @@ class BUSTEDModelTable extends React.Component {
           data-trigger="hover"
           title="Actions"
           data-html="true"
-          data-content="<ul><li>Hover over a column header for a description of its content.</li></ul>"
+          data-content="<ul><li>Hover over a column header for a description of its content.</li><li>Click a row to view the corresponding rate distribution.</li></ul>"
           data-placement="bottom"
         />
       </h4>

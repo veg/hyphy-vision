@@ -3,6 +3,7 @@ var React = require("react"),
   _ = require("underscore");
 
 import { Tree } from "./components/tree.jsx";
+import { Header } from "./components/header.jsx";
 import { InputInfo } from "./components/input_info.jsx";
 import { DatamonkeyTable, DatamonkeyModelTable } from "./components/tables.jsx";
 import { DatamonkeySeries, DatamonkeyGraphMenu } from "./components/graphs.jsx";
@@ -380,6 +381,7 @@ in the remaining ${no_selected} sites in your alignment.`;
       target: ".bs-docs-sidebar",
       offset: 50
     });
+    $('[data-toggle="popover"]').popover();
   },
 
   render: function() {
@@ -484,7 +486,7 @@ in the remaining ${no_selected} sites in your alignment.`;
 
                 <div id="table-tab" className="row hyphy-row">
                   <div id="hyphy-mle-fits" className="col-md-12">
-                    <h3 className="dm-table-header">Table Summary</h3>
+                    <Header title='FEL Table' popover='<p>Hover over a column header for a description of its content.</p>' />
                     <div className="col-md-6 alert positive-selection-row">
                       Positively selected sites with evidence are highlighted in
                       green.
@@ -504,7 +506,7 @@ in the remaining ${no_selected} sites in your alignment.`;
                 </div>
 
                 <div id="plot-tab" className="row hyphy-row">
-                  <h3 className="dm-table-header">Plot Summary</h3>
+                  <h3 className="dm-table-header">FEL Site Plot</h3>
 
                   <DatamonkeyGraphMenu
                     x_options={x_options}

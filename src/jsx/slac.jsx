@@ -5,6 +5,7 @@ var React = require("react"),
   datamonkey = require("../datamonkey/datamonkey.js");
 
 import { Tree } from "./components/tree.jsx";
+import { Header } from "./components/header.jsx";
 import {
   DatamonkeyTable,
   DatamonkeyPartitionTable,
@@ -874,6 +875,8 @@ var SLACBanner = React.createClass({
               </a>{" "}
               for more information about the SLAC method.
 
+              <br />
+        
               Please cite{" "}
               <a
                 href="http://www.ncbi.nlm.nih.gov/pubmed/15703242"
@@ -1420,9 +1423,7 @@ var SLAC = React.createClass({
 
                 <div className="row">
                   <div className="col-md-12" id="slac-table">
-                    <h4 className="dm-table-header">
-                      Site table
-                    </h4>
+                    <Header title='SLAC Site Table' popover='<ul><li>Adjust display or handling of alignment ambiguities with the left navbar.</li><li>Apply filters to columns using the right navbar.</li></ul>' />
                     <SLACSites
                       headers={self.state.analysis_results.MLE.headers}
                       mle={datamonkey.helpers.map(
@@ -1448,9 +1449,7 @@ var SLAC = React.createClass({
 
                 <div className="row">
                   <div className="col-md-12" id="slac-graph">
-                    <h4 className="dm-table-header">
-                      Site graph
-                    </h4>
+                    <Header title='SLAC Site Graph' popover='<p>Changing the x-axis to anything but "Site" results in a scatter plot.' />
                     <SLACGraphs
                       mle={datamonkey.helpers.map(
                         datamonkey.helpers.filter(

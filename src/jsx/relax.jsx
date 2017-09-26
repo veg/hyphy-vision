@@ -379,7 +379,7 @@ class RELAX extends React.Component{
             
             <div id="omega-tab" className="row">
               <div className="col-md-12">
-                <Header title="Omega plots" popover="<p>Needs content.</p>"/>
+                <Header title="Omega plots" popover="<p>Shows the different omega rate distributions under the null and alternative models.</p>"/>
                 <OmegaPlotGrid json={self.state.json} />
               </div>
             </div>

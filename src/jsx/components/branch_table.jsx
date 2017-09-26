@@ -170,12 +170,13 @@ var BranchTable = React.createClass({
   },
 
   componentDidUpdate: function() {
+    d3.select('#table-branch-table').html('');
     var branch_rows = d3
       .select("#table-branch-table")
       .selectAll("tr")
       .data(this.state.table_row_data);
 
-    branch_rows.enter().append("tr");
+    branch_rows.enter().append("tr").attr('class', d=>d[3]<.05?'active':'');
     branch_rows.exit().remove();
     branch_rows.style("font-weight", function(d) {
       return d[3] <= 0.05 ? "bold" : "normal";
@@ -228,7 +229,7 @@ var BranchTable = React.createClass({
               data-trigger="hover"
               title="Detailed results"
               data-html="true"
-              data-content="<ul><li><strong>Bolded rows</strong> correspond to positively-selected branches at P ≤ 0.05.</li><li>Click on a row to see a visualization of its inferred rate distribution.</li><li>Hover over a column header for a description of its content.</li></ul>"
+              data-content="<ul><li><strong>Darker rows</strong> correspond to positively-selected branches at P ≤ 0.05.</li><li>Click on a row to see a visualization of its inferred rate distribution.</li><li>Hover over a column header for a description of its content.</li></ul>"
               data-placement="bottom"
             />
           </h4>

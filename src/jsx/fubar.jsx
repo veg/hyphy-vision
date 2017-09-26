@@ -252,7 +252,6 @@ class FUBARViz extends React.Component {
           break;
         }
       }
-      console.log(partition, index);
       var data = nextProps.data.map((d,i) => {
         return nextState.site ? [d[0],d[1], nextProps.posterior[partition][index][0][i]] : d;
       });
@@ -294,7 +293,7 @@ class FUBARViz extends React.Component {
     var self = this;
     return(<div className="row" id='plot-tab'>
       <div className="col-md-12">
-        <Header title="Posterior rate distribution" />
+        <Header title="Posterior rate distribution" popover='Clear the input box to view the alignment wide distribution.' />
         {self.state.input_error ? <div className="alert alert-danger"><span className="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>Enter a valid site (a number from 1 to {this.props.number_of_sites}).</div> : ''}
       </div>
       <div className="col-md-6">
@@ -335,6 +334,7 @@ class FUBARViz extends React.Component {
         <center>
           <svg id="fubar-viz"></svg>
         </center>
+        <p className="description">This graph shows the posterior distribution over the discretized rate grid. The size of a dot is proportional to the posterior weight allocated to that gridpoint, and the color shows the intensity of selection. Site-specific distributions can be viewed by entering a site number in the input box above the figure. When this is empty, the alignment-wide distribution will be shown.</p>
       </div>
     </div>);
   }
@@ -374,7 +374,7 @@ function FUBARTable(props){
 
   return (<div className="row">
     <div id="table-tab" className="col-md-12">
-      <Header title="FUBAR Site Table" />
+      <Header title="FUBAR Site Table" popover='<p>Hover over a column header for a description of its content.</p>'/>
       <div className="col-md-6 alert positive-selection-row">
         Positively selected sites with evidence are highlighted in
         green.
@@ -470,6 +470,7 @@ class FUBAR extends React.Component {
       target: ".bs-docs-sidebar",
       offset: 50
     });
+    $('[data-toggle="popover"]').popover();
   }
 
   updatePosteriorProbability(e) {
@@ -540,7 +541,7 @@ class FUBAR extends React.Component {
                     models={models}
                     json={self.state.data}
                     settings={tree_settings}
-                    method={'meme'}
+                    method={'fubar'}
                     multitree
                   />
                 </div>
