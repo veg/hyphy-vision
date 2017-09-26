@@ -3,29 +3,19 @@ var React = require("react"),
   d3 = require("d3"),
   _ = require("underscore");
 
+import { Tree } from "./components/tree.jsx";
 import { InputInfo } from "./components/input_info.jsx";
 import { DatamonkeyTable, DatamonkeyModelTable } from "./components/tables.jsx";
 import { DatamonkeySiteGraph } from "./components/graphs.jsx";
 import { NavBar } from "./components/navbar.jsx";
 import { ScrollSpy } from "./components/scrollspy.jsx";
 
+
 function MEMESummary(props) {
-  var user_message,
-    was_evidence = true;
-  if (was_evidence) {
-    user_message = (
-      <p className="list-group-item-text label_and_input">
-        MEME <strong className="hyphy-highlight">found evidence</strong> of
-        natural selection in your phylogeny.
-      </p>
-    );
-  } else {
-    user_message = (
-      <p className="list-group-item-text label_and_input">
-        MEME <strong>found no evidence</strong> of positive selection in your
-        phylogeny.
-      </p>
-    );
+  var number_of_sites = 0;
+  if (props.json) {
+    number_of_sites = _.flatten(_.values(props.json.MLE.content), true)
+      .filter(row=>row[3]/(row[0] || 1e-10) > 1 && row[6] < props.pValue).length;
   }
 
   return (
@@ -45,7 +35,30 @@ function MEMESummary(props) {
       </div>
       <div className="col-md-12">
         <div className="main-result">
-          {user_message}
+          <p>MEME <strong className="hyphy-highlight">found evidence</strong> of</p>
+          <p>
+            <i className="fa fa-plus-circle" aria-hidden="true">
+              {" "}
+            </i>{" "}
+            episodic positive/diversifying selection at
+            <span className="hyphy-highlight">
+              {" "}{number_of_sites}{" "}
+            </span>
+            sites
+          </p>
+          <p>
+            with p-value threshold of
+            <input
+              style={{display: "inline-block", marginLeft: "5px", width: "100px"}}
+              className="form-control"
+              type="number"
+              defaultValue="0.1"
+              step="0.01"
+              min="0"
+              max="1"
+              onChange={props.updatePValue}
+            />.
+          </p>
           <hr />
           <p>
             <small>
@@ -85,10 +98,9 @@ function MEMETable(props) {
       var alpha = row[0] ? row[0] : 1e-10,
         beta_minus = row[1],
         beta_plus = row[3];
-      var selection = beta_minus/alpha < 1 && row[6] < .1 ? "negative-selection-row" : "";
-        selection = beta_plus/alpha > 1 && row[6] < .1 ? "positive-selection-row" : selection;
+      var selection = beta_plus/alpha > 1 && row[6] < props.pValue ? "positive-selection-row" : '';
       var site = {value: index+1, classes: selection},
-        partition = {value: partition_column[index], classes:selection};
+        partition = {value: +partition_column[index]+1, classes:selection};
       return [site, partition].concat(
         row.map(entry => {
           return {value: formatter(entry), classes: selection};
@@ -110,7 +122,7 @@ function MEMETable(props) {
   return (<div className="row">
     <div className="col-md-12" id="table-tab">
       <h4 className="dm-table-header">
-        MEME data
+        MEME Table 
         <span
           className="glyphicon glyphicon-info-sign"
           style={{ verticalAlign: "middle", float: "right" }}
@@ -123,14 +135,9 @@ function MEMETable(props) {
           data-placement="bottom"
         />
       </h4>
-      <div className="col-md-6 positive-selection-row alert" role="alert">
-        Positively selected sites with evidence are highlighted in
-        green.
+      <div className="col-md-12" role="alert">
+        <p className="description">Sites that yielded a statistically significant result are highlighted in green.</p>
       </div>
-      <div className="col-md-6 negative-selection-row alert" role="alert">
-        Negatively selected sites with evidence are highlighted in
-        black.
-      </div>    
       <DatamonkeyTable
         headerData={headerData}
         bodyData={new_rows}
@@ -145,6 +152,7 @@ function MEMETable(props) {
 class MEME extends React.Component {
   constructor(props) {
     super(props);
+    this.updatePValue = this.updatePValue.bind(this); 
     this.onFileChange = this.onFileChange.bind(this); 
     this.state = {
       input_data: null,
@@ -152,17 +160,23 @@ class MEME extends React.Component {
       fits: null,
       header: null,
       bodyData: null,
-      partitions: null
+      partitions: null,
+      pValue: .1
     };
   }
 
   processData(data){
     data['trees'] = _.map(data['input']['trees'], (val, key) => {
       var branchLengths = {
-        'Global MG94xREV': _.mapObject(data['branch attributes'][key], val1 => val1['Global MG94xREV'])
+        'Global MG94xREV': _.mapObject(data['branch attributes'][key], val1 => val1['Global MG94xREV']),
+        'Nucleotide GTR': _.mapObject(data['branch attributes'][key], val1 => val1['Nucleotide GTR'])
       };
       return {newickString: val, branchLengths: branchLengths};
     });
+
+    if(data["fits"]["Nucleotide GTR"]){
+      data["fits"]["Nucleotide GTR"]["Rate Distributions"] = {};      
+    }
 
     this.setState({
       input_data: data["input_data"],
@@ -209,6 +223,11 @@ class MEME extends React.Component {
       target: ".bs-docs-sidebar",
       offset: 50
     });
+    $('[data-toggle="popover"]').popover();
+  }
+
+  updatePValue(e) {
+    this.setState({pValue: e.target.value});
   }
 
   render() {
@@ -217,8 +236,9 @@ class MEME extends React.Component {
       scrollspy_info = [
         { label: "summary", href: "summary-tab" },
         { label: "table", href: "table-tab" },
-        { label: "fits", href: "fit-tab" },
-        { label: "plot", href: "plot-tab" }
+        { label: "plot", href: "plot-tab" },
+        { label: "tree", href: "tree-tab" },
+        { label: "fits", href: "fit-tab" }
       ];
     
     if(this.state.data){
@@ -235,6 +255,25 @@ class MEME extends React.Component {
       models = self.state.data.fits;
     }
 
+    var tree_settings = {
+      omegaPlot: {},
+      "tree-options": {
+        /* value arrays have the following meaning
+                [0] - the value of the attribute
+                [1] - does the change in attribute value trigger tree re-layout?
+            */
+        "hyphy-tree-model": ["Unconstrained model", true],
+        "hyphy-tree-highlight": ["RELAX.test", false],
+        "hyphy-tree-branch-lengths": [false, true],
+        "hyphy-tree-hide-legend": [true, false],
+        "hyphy-tree-fill-color": [true, false]
+      },
+      "hyphy-tree-legend-type": "discrete",
+      "suppress-tree-render": false,
+      "chart-append-html": true,
+      edgeColorizer: function(e,d){return 0} 
+    };
+
     return (
       <div>
         {this.props.hyphy_vision ? <NavBar onFileChange={this.onFileChange} /> : ''}
@@ -242,8 +281,32 @@ class MEME extends React.Component {
           <div className="row">
             <ScrollSpy info={scrollspy_info} />
             <div className="col-sm-10" id="results">
-              <MEMESummary json={self.state.data} />
-              <MEMETable header={self.state.header} body_data={self.state.bodyData} partitions={self.state.partitions}/>
+              <MEMESummary json={self.state.data} updatePValue={self.updatePValue} pValue={self.state.pValue}/>
+              <MEMETable
+                header={self.state.header}
+                body_data={self.state.bodyData}
+                partitions={self.state.partitions}
+                pValue={self.state.pValue}
+              />
+              <div id="plot-tab" className="row hyphy-row">
+                <div className="col-md-12">
+                  <h4 className="dm-table-header">MEME Site Plot</h4>
+                  {site_graph}
+                </div>
+              </div>
+
+            <div className="row">
+              <div id="tree-tab" className="col-md-12">
+                <Tree
+                  models={models}
+                  json={self.state.data}
+                  settings={tree_settings}
+                  method={'meme'}
+                  multitree
+                />
+              </div>
+            </div>
+
               <div className="row">
                 <div className="col-md-12" id="fit-tab">
                   <DatamonkeyModelTable fits={self.state.fits} />
@@ -253,13 +316,6 @@ class MEME extends React.Component {
                     MG94xREV baseline model that infers a single &omega; rate
                     category per branch.
                   </p>
-                </div>
-              </div>
-
-              <div id="plot-tab" className="row hyphy-row">
-                <div className="col-md-12">
-                  <h4 className="dm-table-header">Plot Summary</h4>
-                  {site_graph}
                 </div>
               </div>
 
