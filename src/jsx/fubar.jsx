@@ -52,7 +52,7 @@ function FUBARSummary(props) {
             sites
           </p>
           <p>
-            <i className="fa fa-plus-circle" aria-hidden="true">
+            <i className="fa fa-minus-circle" aria-hidden="true">
               {" "}
             </i>{" "}
             episodic negative/purifying selection at

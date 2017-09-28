@@ -844,7 +844,7 @@ var SLACBanner = React.createClass({
             sites
           </p> 
           <p>
-            <i className="fa fa-plus-circle" aria-hidden="true">
+            <i className="fa fa-minus-circle" aria-hidden="true">
               {" "}
             </i>{" "}
             negative/purifying selection at
