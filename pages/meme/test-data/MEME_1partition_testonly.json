@@ -1,0 +1,189 @@
+{
+ "analysis":{
+   "info":"MEME (Mixed Effects Model of Evolution)\n    estimates a site-wise synonymous (&alpha;) and a two-category mixture of non-synonymous\n    (&beta;-, with proportion p-, and &beta;+ with proportion [1-p-]) rates, and\n    uses a likelihood ratio test to determine if &beta;+ > &alpha; at a site.\n    The estimates aggregate information over a proportion of branches at a site,\n    so the signal is derived from\n    episodic diversification, which is a combination of strength of selection [effect size] and\n    the proportion of the tree affected. A subset of branches can be selected\n    for testing as well, in which case an additional (nuisance) parameter will be\n    inferred -- the non-synonymous rate on branches NOT selected for testing. Multiple partitions within a NEXUS file are also supported\n    for recombination - aware analysis.\n    ",
+   "version":"2.00",
+   "citation":"Detecting Individual Sites Subject to Episodic Diversifying Selection. _PLoS Genet_ 8(7): e1002764.",
+   "authors":"Sergei L. Kosakovsky Pond, Steven Weaver",
+   "contact":"spond@temple.edu",
+   "requirements":"in-frame codon alignment and a phylogenetic tree"
+  },
+ "fits":{
+   "Global MG94xREV":{
+     "Log Likelihood":-445.6038556934684,
+     "estimated parameters":36,
+     "AIC-c":891.2077113869368,
+     "Rate Distributions":{
+       "non-synonymous/synonymous rate ratio for *test*":[
+        [0.7543254002176232, 1]
+        ]
+      },
+     "display order":0
+    }
+  },
+ "timers":{
+   "Total time":{
+     "timer":641,
+     "order":0
+    },
+   "Model fitting":{
+     "timer":94,
+     "order":1
+    },
+   "MEME analysis":{
+     "timer":543,
+     "order":2
+    }
+  },
+ "input":{
+   "file name":"/home/sjspielman/v2.3.1-alpha_json/dat_plain.dat",
+   "number of sequences":12,
+   "number of sites":20,
+   "partition count":1,
+   "trees":{
+     "0":"(t1:0.140821,(((t4:0.0918075,t9:0.0712801)Node5:0.131355,(t10:0.416582,t7:0.0476408)Node8:0.0883192)Node4:0.637702,(t3:0.698741,t12:0.0835068)Node11:0.0469205)Node3:0.0741876,(((t5:0.0865238,t8:0.0535977)Node16:0.10328,t6:0.0885736)Node15:0.250248,(t2:0.0743222,t11:0.183571)Node20:0.644012)Node14:0.438272)"
+    }
+  },
+ "tested":{
+   "0":{
+     "t1":"test",
+     "t4":"test",
+     "t9":"test",
+     "Node5":"test",
+     "t10":"test",
+     "t7":"test",
+     "Node8":"test",
+     "Node4":"test",
+     "t3":"test",
+     "t12":"test",
+     "Node11":"test",
+     "Node3":"test",
+     "t5":"test",
+     "t8":"test",
+     "Node16":"test",
+     "t6":"test",
+     "Node15":"test",
+     "t2":"test",
+     "t11":"test",
+     "Node20":"test",
+     "Node14":"test"
+    }
+  },
+ "data partitions":{
+   "0":{
+     "name":"meme.filter.default",
+     "coverage":[
+      [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19]
+      ]
+    }
+  },
+ "branch attributes":{
+   "0":{
+     "Node11":{
+       "Global MG94xREV":0.03236058848238305
+      },
+     "Node14":{
+       "Global MG94xREV":0.2613342624018294
+      },
+     "Node15":{
+       "Global MG94xREV":0.07010414993907448
+      },
+     "Node16":{
+       "Global MG94xREV":0.01651205062710516
+      },
+     "Node20":{
+       "Global MG94xREV":0.09662325239764379
+      },
+     "Node3":{
+       "Global MG94xREV":0
+      },
+     "Node4":{
+       "Global MG94xREV":0.1970008212365995
+      },
+     "Node5":{
+       "Global MG94xREV":0.04005318608527065
+      },
+     "Node8":{
+       "Global MG94xREV":0.01576834152711746
+      },
+     "t1":{
+       "Global MG94xREV":0.07973133350615293
+      },
+     "t10":{
+       "Global MG94xREV":0.1949769437135001
+      },
+     "t11":{
+       "Global MG94xREV":0.08151166364184949
+      },
+     "t12":{
+       "Global MG94xREV":0.08092720333776504
+      },
+     "t2":{
+       "Global MG94xREV":0.06157080365697357
+      },
+     "t3":{
+       "Global MG94xREV":0.398355635489388
+      },
+     "t4":{
+       "Global MG94xREV":0.03633178402430326
+      },
+     "t5":{
+       "Global MG94xREV":0.05131317947368397
+      },
+     "t6":{
+       "Global MG94xREV":0.0344103863988978
+      },
+     "t7":{
+       "Global MG94xREV":0
+      },
+     "t8":{
+       "Global MG94xREV":0.0168632834551701
+      },
+     "t9":{
+       "Global MG94xREV":0.01755820032088808
+      }
+    },
+   "attributes":{
+     "Global MG94xREV":{
+       "attribute type":"branch length",
+       "display order":0
+      }
+    }
+  },
+ "MLE":{
+   "headers":[
+    ["alpha;", "Synonymous substitution rate at a site"],
+    ["&beta;<sup>-</sup>", "Non-synonymous substitution rate at a site for the negative/neutral evolution component"],
+    ["p<sup>-</sup>", "Mixture distribution weight allocated to &beta;<sup>-</sup>; loosely -- the proportion of the tree evolving neutrally or under negative selection"],
+    ["&beta;<sup>+</sup>", "Non-synonymous substitution rate at a site for the positive/neutral evolution component"],
+    ["p<sup>+</sup>", "Mixture distribution weight allocated to &beta;<sup>+</sup>; loosely -- the proportion of the tree evolving neutrally or under positive selection"],
+    ["LRT", "Likelihood ratio test statistic for episodic diversification, i.e., p<sup>+</sup> &gt; 0 <emph>and<emph> &beta;<sup>+</sup> &gt; &alpha;"],
+    ["p-value", "Asymptotic p-value for episodic diversification, i.e., p<sup>+</sup> &gt; 0 <emph>and<emph> &beta;<sup>+</sup> &gt; &alpha;"],
+    ["# branches under selection", "The (very approximate and rough) estimate of how many branches may have been under selection at this site, i.e., had an empirical Bayes factor of 100 or more for the &beta;<sup>+</sup> rate"],
+    ["Total branch length", "The total length of branches contributing to inference at this site, and used to scale dN-dS"]
+    ],
+   "content":{
+     "0":[
+      [2.077996786589652, 1.333045949173808, 1, 1.296519853913662, 0, 0, 0.6666666666666666, 0, 3.321416867381339],
+      [0, 0, 0.8001742079073674, 1.443019677355614, 0.1998257920926326, 1.164498983125227, 0.2889951073942095, 0, 0.4726622835663813],
+      [1.072432445312228, 0.5259060830902474, 1, 0.3045643083084758, 0, 0, 0.6666666666666666, 0, 1.448494529026252],
+      [0, 0, 1.141129457180247e-08, 0.5350971285724845, 0.9999999885887054, 1.73268420606782, 0.2105990456476133, 0, 0.8771215229618444],
+      [2.388873884610222, 1.268183144779383, 1, 0.8071789951946305, 0, 0, 0.6666666666666666, 0, 3.385092016929708],
+      [0, 0, 0.3785313821274486, 1.702865709471272, 0.6214686178725514, 0.3725184248178977, 0.4668451590441727, 0, 1.734709495305054],
+      [2.312577276929293, 2.296389235990772, 0.8350720813985856, 0, 0.1649279186014144, 0, 0.6666666666666666, 0, 4.407965906695275],
+      [0, 0, 2.194556485782867e-08, 1.747966755927264, 0.9999999780544352, 4.108372354125869, 0.05980703491054962, 0, 2.865235421809944],
+      [0.4719598317670257, 0.4717710478343189, 1.003042853318671e-08, 2.247510323432693, 0.9999999899695715, 2.498733661679246, 0.1392996597140789, 0, 3.942160274483241],
+      [3.460387142846229, 3.937134728910407e-16, 0.6268010737840197, 0, 0.3731989262159803, 0, 0.6666666666666666, 0, 1.892245300091662],
+      [1.584076565809925, 1.227353735676076, 0.5769881443611899, 0, 0.4230118556388101, 0, 0.6666666666666666, 0, 2.027038495184512],
+      [0, 0, 1.01904018398843e-08, 0.5353130960412706, 0.9999999898095981, 1.149785180187944, 0.2914255181545822, 0, 0.8774755339969789],
+      [1.158732464349518, 0.6999127666915714, 1, 0.3589715970971894, 0, 0, 0.6666666666666666, 0, 1.780914621184629],
+      [1.035266977591049, 1.035266977591012, 1.136959948165217e-08, 2.070629597153352, 0.9999999886304005, 0.5675619445577738, 0.4114437071471529, 0, 3.960254137098408],
+      [1.245272170647821, 1.245272170647794, 1.380112619774268e-05, 1.31398935711528, 0.9999861988738022, 0.002165892122057755, 0.6551339615089532, 0, 2.834818857264103],
+      [0, 0, 1.43184481127252e-08, 0.635896787451894, 0.9999999856815519, 1.226949141571392, 0.2789379728227595, 0, 1.042350495363021],
+      [2.41636706788168, 0.6483528432206682, 1, 0.4856492331382487, 0, 0, 0.6666666666666666, 0, 2.384111511366631],
+      [1.001460233209936, 1.001460233209916, 0.295859708096036, 0, 0.7041402919039641, 0, 0.6666666666666666, 0, 1.033305067363663],
+      [0, 0, 1, 0, 0, 0, 1, 0, 0],
+      [0.9758927073965702, 4.014686235564754e-15, 0.1052074661630167, 0, 0.8947925338369833, 0, 0.6666666666666666, 0, 0.5336479164715672]
+      ]
+    }
+  }
+}

@@ -1,7 +1,7 @@
-var React = require('react'),
-		_ = require('underscore');
+var React = require("react"),
+  _ = require("underscore");
 
-import {DatamonkeyTable} from "./shared_summary.jsx";
+import { DatamonkeyTable } from "./tables.jsx";
 
 /**
  * Generates a table that contains tree summary information
@@ -9,128 +9,120 @@ import {DatamonkeyTable} from "./shared_summary.jsx";
  * @param test results -- the general test result information
  */
 var TreeSummary = React.createClass({
-
   getDefaultProps() {
     return {
-      model : {},
-      test_results : {}
-    }
+      model: {},
+      test_results: {}
+    };
   },
 
   getInitialState: function() {
+    var table_row_data = this.getSummaryRows(
+      this.props.model,
+      this.props.test_results,
+      this.props.branch_attributes
+    ),
+      table_columns = this.getTreeSummaryColumns(table_row_data);
 
-    var table_row_data = this.getSummaryRows(this.props.model, this.props.test_results),
-        table_columns = this.getTreeSummaryColumns(table_row_data);
-
-    return { 
-              table_row_data: table_row_data, 
-              table_columns: table_columns,
-           };
+    return {
+      table_row_data: table_row_data,
+      table_columns: table_columns
+    };
   },
 
-  getRateClasses : function(branch_annotations) {
-
+  getRateClasses: function(branch_annotations) {
     // Get count of all rate classes
     var all_branches = _.values(branch_annotations);
 
     return _.countBy(all_branches, function(branch) {
       return branch.omegas.length;
     });
-
   },
 
-  getBranchProportion : function(rate_classes) {
-    var sum = _.reduce(_.values(rate_classes), function(memo, num) { return memo + num; });
-    return _.mapObject(rate_classes, function(val, key) { return d3.format(".2p")(val/sum) } );
+  getBranchProportion: function(rate_classes) {
+    var sum = _.reduce(_.values(rate_classes), function(memo, num) {
+      return memo + num;
+    });
+    return _.mapObject(rate_classes, function(val, key) {
+      return d3.format(".2p")(val / sum);
+    });
   },
 
-  getBranchLengthProportion : function(model, rate_classes, branch_annotations, total_branch_length) {
+  getBranchLengthProportion: function(branch_attributes) {
+    var rate_classes = _.groupBy(branch_attributes, (val, key) => val['Rate Distributions'].length),
+      lengths = _.mapObject(rate_classes, (val,key)=>d3.sum(_.pluck(val,'Full adaptive model'))),
+      total_length = d3.sum(_.values(lengths)),
+      percentages = _.mapObject(lengths, length=>length/total_length),
+      formatter = d3.format(".2p"),
+      formatted_percentages = _.mapObject(percentages, formatter);
+    return formatted_percentages;
+  },
 
-    var self = this;
+  getNumUnderSelection: function(
+    rate_classes,
+    branch_annotations,
+    test_results
+  ) {
+    var num_under_selection = _.mapObject(rate_classes, function(d) {
+      return 0;
+    });
 
-    // get branch lengths of each rate distribution
-    //return prop_format(d[2] / total_tree_length
-    if(_.has(model,"tree string")) {
-      var tree = d3.layout.phylotree("body")(model["tree string"]);
-    } else {
-      return null;
+    for (var key in branch_annotations) {
+      num_under_selection[branch_annotations[key].omegas.length] +=
+        test_results[key]["p"] <= 0.05;
     }
 
-    // Get count of all rate classes
-    var branch_lengths = _.mapObject(rate_classes, function(d) { return 0}); 
-
-    for (var key in branch_annotations) {
-      var node = tree.get_node_by_name(key);
-      branch_lengths[branch_annotations[key].omegas.length] += tree.branch_length()(node);
-    };
-
-    return _.mapObject(branch_lengths, function(val, key) { return d3.format(".2p")(val/total_branch_length) } );
-
-  },
-
-  getNumUnderSelection : function(rate_classes, branch_annotations, test_results) {
-
-    var num_under_selection = _.mapObject(rate_classes, function(d) { return 0}); 
-
-    for (var key in branch_annotations) {
-      num_under_selection[branch_annotations[key].omegas.length] += test_results[key]["p"] <= 0.05;
-    };
-
     return num_under_selection;
-
   },
 
-  getSummaryRows : function(model, test_results) {
-
-    var self = this;
-
-    if(!model || !test_results) {
+  getSummaryRows: function(model, test_results, branch_attributes) {
+    if (!model || !test_results) {
       return [];
     }
 
     // Create an array of phylotrees from fits
-    
+
     var tree_length = model["tree length"];
     var branch_annotations = model["branch-annotations"];
-
     var rate_classes = this.getRateClasses(branch_annotations),
-        proportions = this.getBranchProportion(rate_classes),
-        length_proportions = this.getBranchLengthProportion(model, rate_classes, branch_annotations, tree_length),
-        num_under_selection = this.getNumUnderSelection(rate_classes, branch_annotations, test_results);
+      proportions = this.getBranchProportion(rate_classes),
+      length_proportions = this.getBranchLengthProportion(branch_attributes),
+      num_under_selection = this.getNumUnderSelection(
+        rate_classes,
+        branch_annotations,
+        test_results
+      );
 
     // zip objects into matrix
     var keys = _.keys(rate_classes);
 
     var summary_rows = _.zip(
-      keys
-      ,_.values(rate_classes)
-      ,_.values(proportions)
-      ,_.values(length_proportions)
-      ,_.values(num_under_selection)
-    )
+      keys,
+      _.values(rate_classes),
+      _.values(proportions),
+      _.values(length_proportions),
+      _.values(num_under_selection)
+    );
 
     summary_rows.sort(function(a, b) {
       if (a[0] == b[0]) {
-          return a[1] < b[1] ? -1 : (a[1] == b[1] ? 0 : 1);
+        return a[1] < b[1] ? -1 : a[1] == b[1] ? 0 : 1;
       }
       return a[0] - b[0];
     });
 
     return summary_rows;
-
   },
 
-  getTreeSummaryColumns : function(table_row_data) {
-
-    var omega_header = 'ω rate classes',
-        branch_num_header = '# of branches',
-        branch_prop_header = '% of branches',
-        branch_prop_length_header = '% of tree length',
-        under_selection_header = '# under selection';
-
+  getTreeSummaryColumns: function(table_row_data) {
+    var omega_header = "ω rate classes",
+      branch_num_header = "# of branches",
+      branch_prop_header = "% of branches",
+      branch_prop_length_header = "% of tree length",
+      under_selection_header = "# under selection";
 
     // inspect table_row_data and return header
-    var all_columns = [ 
+    var all_columns = [
       {
         value: omega_header,
         abbr: "Number of ω rate classes inferred"
@@ -154,26 +146,27 @@ var TreeSummary = React.createClass({
     ];
 
     // validate each table row with its associated header
-    if(table_row_data.length == 0) {
+    if (table_row_data.length == 0) {
       return [];
     }
 
     // trim columns to length of table_row_data
-    var column_headers = _.take(all_columns, table_row_data[0].length)
+    var column_headers = _.take(all_columns, table_row_data[0].length);
     return column_headers;
-
   },
 
   componentWillReceiveProps: function(nextProps) {
-
-    var table_row_data = this.getSummaryRows(nextProps.model, nextProps.test_results),
-        table_columns = this.getTreeSummaryColumns(table_row_data);
+    var table_row_data = this.getSummaryRows(
+      nextProps.model,
+      nextProps.test_results,
+      nextProps.branch_attributes
+    ),
+      table_columns = this.getTreeSummaryColumns(table_row_data);
 
     this.setState({
-                    table_row_data: table_row_data, 
-                    table_columns: table_columns
-                  });
-
+      table_row_data: table_row_data,
+      table_columns: table_columns
+    });
   },
 
   render: function() {
@@ -181,15 +174,30 @@ var TreeSummary = React.createClass({
       <div>
         <h4 className="dm-table-header">
           Tree summary
-          <span className="glyphicon glyphicon-info-sign" style={{"verticalAlign": "middle", "float":"right"}} aria-hidden="true" data-toggle="popover" data-trigger="hover" title="Actions" data-html="true" data-content="<ul><li>Hover over a column header for a description of its content.</li></ul>" data-placement="bottom"></span>
+          <span
+            className="glyphicon glyphicon-info-sign"
+            style={{ verticalAlign: "middle", float: "right" }}
+            aria-hidden="true"
+            data-toggle="popover"
+            data-trigger="hover"
+            title="Actions"
+            data-html="true"
+            data-content="<ul><li>Hover over a column header for a description of its content.</li></ul>"
+            data-placement="bottom"
+          />
         </h4>
-        <DatamonkeyTable headerData={this.state.table_columns} bodyData={this.state.table_row_data}/>
-        <p className="description">This table contains a summary of the inferred aBSREL model complexity. Each row provides information about the branches that were best described by the given number of ω rate categories.</p>
+        <DatamonkeyTable
+          headerData={this.state.table_columns}
+          bodyData={this.state.table_row_data}
+        />
+        <p className="description">
+          This table contains a summary of the inferred aBSREL model complexity.
+          Each row provides information about the branches that were best
+          described by the given number of ω rate categories.
+        </p>
       </div>
-    )
-
+    );
   }
-
 });
 
 // Will need to make a call to this
