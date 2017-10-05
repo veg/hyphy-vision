@@ -825,7 +825,7 @@ var SLACBanner = React.createClass({
       </div>
 
       <div className="col-md-12">
-        <InputInfo input_data={this.props.input_data}/>
+        <InputInfo input_data={this.props.input_data} json={this.props.analysis_results}/>
       </div>
 
       <div className="col-md-12">

@@ -473,7 +473,7 @@ in the remaining ${no_selected} sites in your alignment.`;
                   <br />
                   <span className="results-summary">results summary</span>
                 </h3>
-                <InputInfo input_data={this.state.input} />
+                <InputInfo input_data={this.state.input} json={this.state.data}/>
                 {Summary}
 
                 <div id="table-tab" className="row hyphy-row">

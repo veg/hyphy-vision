@@ -106,7 +106,7 @@ var BSRELSummary = React.createClass({
       
       
         <div className="col-md-12">
-          <InputInfo input_data={this.props.input_data}/>
+          <InputInfo input_data={this.props.input_data} json={this.props.json}/>
         </div>
       
       
@@ -461,6 +461,7 @@ var BSREL = React.createClass({
                     test_results={self.state.test_results}
                     pmid={self.state.pmid}
                     input_data={self.state.input_data}
+                    json={self.state.json}
                   />
                   <div className="row">
                     <div id="hyphy-tree-summary" className="col-md-12">
