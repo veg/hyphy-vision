@@ -22,7 +22,7 @@ var Hamburger = React.createClass({
 var Methods = React.createClass({
   render: function() {
     return (
-      <div className="dropdown">
+      <div className="dropdown toolbar-dropdown">
         <button
           className="btn btn-primary dropdown-toggle"
           type="button"
