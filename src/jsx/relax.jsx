@@ -296,7 +296,7 @@ class RELAX extends React.Component{
         </h3>
       </div>
       <div className="col-md-12">
-        <InputInfo input_data={this.state.json.input} />
+        <InputInfo input_data={this.state.json.input} json={this.state.json}/>
       </div>
       <div className="col-md-12">
         <div className="main-result">

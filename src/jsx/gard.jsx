@@ -56,7 +56,7 @@ function GARDResults(props){
       </h3>
     </div>
     <div className="col-md-12">
-      <InputInfo input_data={props.data.input_data} />
+      <InputInfo input_data={props.data.input_data} json={props.data} />
     </div>
     <div className="col-md-12">
       <div className="main-result">

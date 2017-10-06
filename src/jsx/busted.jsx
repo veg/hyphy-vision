@@ -56,7 +56,7 @@ function BUSTEDSummary(props) {
         </h3>
       </div>
       <div className="col-md-12">
-        <InputInfo input_data={props.input_data} />
+        <InputInfo input_data={props.input_data} json={props.json}/>
       </div>
       <div className="col-md-12">
         <div className="main-result">
@@ -933,6 +933,7 @@ var BUSTED = React.createClass({
                   <BUSTEDSummary
                     p={this.state.p}
                     input_data={self.state.input_data}
+                    json={self.state.json}
                   />
                 </div>
               </div>
