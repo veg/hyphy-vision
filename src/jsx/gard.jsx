@@ -49,14 +49,14 @@ function GARDResults(props){
     <div className="col-md-12">
       <h3 className="list-group-item-heading">
         <span id="summary-method-name">
-          Genetic Algorithm Recombination Detection
+          Genetic Algorithm for Recombination Detection
         </span>
         <br />
         <span className="results-summary">results summary</span>
       </h3>
     </div>
     <div className="col-md-12">
-      <InputInfo input_data={props.data.input_data} />
+      <InputInfo input_data={props.data.input_data} json={props.data} />
     </div>
     <div className="col-md-12">
       <div className="main-result">
@@ -107,10 +107,10 @@ function GARDRecombinationReport(props){
     width = 700,
     height = 20,
     scale = d3.scale.linear()
-      .domain([1, props.data.input_data.sites])
+      .domain([1, props.data.input_data['number of sites']])
       .range([0, width]);
   var segments = [{breakpoints: []}].concat(props.data.improvements).map(function(d){
-    var bp = [0].concat(d.breakpoints).concat([props.data.input_data.sites]),
+    var bp = [0].concat(d.breakpoints).concat([props.data.input_data['number of sites']]),
       individual_segments = [];
     for(var i=0; i<bp.length-1; i++){
       var bp_delta = bp[i+1]-bp[i];
@@ -133,14 +133,30 @@ function GARDRecombinationReport(props){
   </tr>);
   return (<div className="row" id="report-tab">
     <div className="col-md-12">
-      <Header title="Recombination report" />
+      <Header title="Recombination report" popover='<p>Hover over a column for a description of its content.</p>'/>
       <table className="table table-condensed tabled-striped">
         <thead>
           <tr>
-            <th>BPs</th>
-            <th>AIC<sub>c</sub></th>
-            <th>&Delta; AIC<sub>c</sub></th>
-            <th>Segments</th>
+            <th>
+              <span data-toggle="tooltip" title="" data-original-title="Number of breakpoints considered">
+                BPs
+              </span>
+            </th>
+            <th>
+              <span data-toggle="tooltip" title="" data-original-title="Small-sample correct Akaike information criterion">
+                AIC<sub>c</sub>
+              </span>
+            </th>
+            <th>
+              <span data-toggle="tooltip" title="" data-original-title="Change in AICc of best scoring models with one fewer breakpoint">
+                &Delta; AIC<sub>c</sub>
+              </span>
+            </th>
+            <th>
+              <span data-toggle="tooltip" title="" data-original-title="Visual depection of recombinant segments">
+                Segments
+              </span>
+            </th>
           </tr>
         </thead>
         <tbody>
@@ -154,7 +170,7 @@ function GARDRecombinationReport(props){
 function GARDSiteGraph(props){
   if(!props.data) return <div></div>;
   var bestScore = props.data.baselineScore,
-    number_of_sites = props.data.input_data.sites,
+    number_of_sites = props.data.input_data['number of sites'],
     bp_support = d3.range(number_of_sites).map(d=>0*d),
     tree_length = d3.range(number_of_sites).map(d=>0*d),
     normalizer = 0,
@@ -227,14 +243,30 @@ function GARDTopologyReport(props){
       <i>at least of one of the breakpoints reflects a true topological incongruence</i>
   return (<div className="row">
     <div className="col-md-12">
-      <Header title="Topological incongruence report" />
+      <Header title="Topological incongruence report" popover="<p>Hover over a column header for a description of its content.</p>"/>
       <table className="table table-condensed tabled-striped">
         <thead>
           <tr>
-            <th>Breakpoints</th>
-            <th>LHS p-value</th>
-            <th>RHS p-value</th>
-            <th>Significance</th>
+            <th>
+              <span data-toggle="tooltip" title="" data-original-title="Location of breakpoints inferred by the algorithm">
+                Breakpoints
+              </span>
+            </th>
+            <th>
+              <span data-toggle="tooltip" title="" data-original-title="P-value for left side">
+                LHS p-value
+              </span>
+            </th>
+            <th>
+              <span data-toggle="tooltip" title="" data-original-title="P-value for right side">
+                RHS p-value
+              </span>
+            </th>
+            <th>
+              <span data-toggle="tooltip" title="" data-original-title="Visual indicator of statistical significance">
+                Significance
+              </span>
+            </th>
           </tr>
         </thead>
         <tbody>
@@ -273,6 +305,9 @@ class GARD extends React.Component {
       offset: 50
     });
     $('[data-toggle="popover"]').popover();
+    $(function () {
+      $('[data-toggle="tooltip"]').tooltip()
+    })
   }
   onFileChange(e){
     var self = this,
@@ -325,6 +360,7 @@ class GARD extends React.Component {
     };
 
     return (<div>
+      {this.props.hyphy_vision ? <NavBar onFileChange={this.onFileChange} /> : ''}
       <div className="container">
         <div className="row">
           <ScrollSpy info={scrollspy_info} />
@@ -342,6 +378,7 @@ class GARD extends React.Component {
                   models={{}}
                   json={this.state.data}
                   settings={tree_settings}
+                  method={'gard'}
                   multitree
                 />
               </div>
@@ -358,5 +395,10 @@ function render_gard(url, element) {
   ReactDOM.render(<GARD url={url} />, document.getElementById(element));
 }
 
+function render_hv_gard(url, element) {
+  ReactDOM.render(<GARD url={url} hyphy_vision />, document.getElementById(element));
+}
+
 module.exports = render_gard
+module.exports.hv = render_hv_gard
 

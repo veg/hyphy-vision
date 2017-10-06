@@ -840,10 +840,27 @@ input[type=range]:focus::-ms-fill-upper {
 
 .positive-selection-row {
   color: white;
-  background-color: #7EC6B3;
+  background-color: #00A99D;
 }
 
 .negative-selection-row {
   color: white;
-  background-color: black;
+  background-color: #333;
 }
+
+#tooltip_container {
+  color: #fff;
+  position: absolute;
+  padding: 20px;
+  max-width: 200px; /* need i.e. rule */
+  background-color: rgba(0,0,0,.85);
+  -webkit-border-radius: 12px;
+  -moz-border-radius: 12px;
+  border-radius: 12px;
+  display: none;
+}
+
+.hyphy-export-dropdown {
+  float: left;
+}
+

@@ -56,7 +56,7 @@ function BUSTEDSummary(props) {
         </h3>
       </div>
       <div className="col-md-12">
-        <InputInfo input_data={props.input_data} />
+        <InputInfo input_data={props.input_data} json={props.json}/>
       </div>
       <div className="col-md-12">
         <div className="main-result">
@@ -94,7 +94,9 @@ var BUSTEDSiteChartAndTable = React.createClass({
       upper_site_range: null,
       constrained_evidence_ratio_threshold: "-Infinity",
       optimized_null_evidence_ratio_threshold: "-Infinity",
-      brushend_event: false
+      brushend_event: false,
+      CERwarning: false,
+      ONERwarning: false,
     };
   },
   componentWillReceiveProps: function(nextProps) {
@@ -298,15 +300,22 @@ var BUSTEDSiteChartAndTable = React.createClass({
   handleONERChange: function(event) {
     if (/^-?[0-9]*(\.[0-9]*)?$/.test(event.target.value)) {
       this.setState({
-        optimized_null_evidence_ratio_threshold: event.target.value
+        optimized_null_evidence_ratio_threshold: event.target.value,
+        ONERwarning: false
       });
     } else if (event.target.value == "-I") {
       this.setState({
-        optimized_null_evidence_ratio_threshold: "-Infinity"
+        optimized_null_evidence_ratio_threshold: "-Infinity",
+        ONERwarning: false
       });
     } else if (event.target.value == "-Infinit") {
       this.setState({
-        optimized_null_evidence_ratio_threshold: ""
+        optimized_null_evidence_ratio_threshold: "",
+        ONERwarning: false
+      });
+    } else {
+      this.setState({
+        ONERwarning: true
       });
     }
   },
@@ -325,15 +334,22 @@ var BUSTEDSiteChartAndTable = React.createClass({
   handleCERChange: function(event) {
     if (/^-?[0-9]*(\.[0-9]*)?$/.test(event.target.value)) {
       this.setState({
-        constrained_evidence_ratio_threshold: event.target.value
+        constrained_evidence_ratio_threshold: event.target.value,
+        CERwarning: false
       });
     } else if (event.target.value == "-I") {
       this.setState({
-        constrained_evidence_ratio_threshold: "-Infinity"
+        constrained_evidence_ratio_threshold: "-Infinity",
+        CERwarning: false
       });
     } else if (event.target.value == "-Infinit") {
       this.setState({
-        constrained_evidence_ratio_threshold: ""
+        constrained_evidence_ratio_threshold: "",
+        CERwarning: false
+      });
+    } else {
+      this.setState({
+        CERwarning: true
       });
     }
   },
@@ -373,7 +389,7 @@ var BUSTEDSiteChartAndTable = React.createClass({
     if(_.isEmpty(this.props.data)){
       return (<div className="row" style={{marginBottom:"20px"}}>
         <div className="col-md-12">     
-          <Header title='Model Test Statistics Per Site' />
+          <Header title='Model Test Statistics Per Site' popover='No information to display.' />
           <p className="description">No data to display.</p>
         </div>
       </div>);
@@ -422,7 +438,7 @@ var BUSTEDSiteChartAndTable = React.createClass({
                 data-trigger="hover"
                 title="Actions"
                 data-html="true"
-                data-content="<ul><li>Hover over a column header for a description of its content.</li></ul>"
+                data-content='<ul><li>Click the figure and drag to filter by given sites. The resulting "brush" can be resized, dragged, or cleared by clicking unselected sites.</li><li>Filter out rows below a given statistic value by typing in the input boxes below.</li></ul>'
                 data-placement="bottom"
               />
             </h4>
@@ -450,7 +466,7 @@ var BUSTEDSiteChartAndTable = React.createClass({
           <div id="chart-id" className="col-lg-12" />
 
           <div className="col-lg-6 clear-padding justify-content">
-            <div className="form-group">
+            <div className={"form-group" + (this.state.CERwarning ? " has-error" : "")}>
               <label for="er-constrained-threshold">
                 Constrained Test Statistic
               </label>
@@ -463,11 +479,12 @@ var BUSTEDSiteChartAndTable = React.createClass({
                 onFocus={this.handleCERFocus}
                 onBlur={this.handleCERBlur}
               />
+            {this.state.CERwarning ? <span className="help-block">Enter a floating point number.</span> : ''}
             </div>
           </div>
           
           <div className="col-lg-6 justify-content">
-            <div className="form-group">
+            <div className={"form-group" + (this.state.ONERwarning ? " has-error" : "")}>
               <label for="er-optimized-null-threshold">
                 Optimized Null Test Statistic
               </label>
@@ -480,6 +497,7 @@ var BUSTEDSiteChartAndTable = React.createClass({
                 onFocus={this.handleONERFocus}
                 onBlur={this.handleONERBlur}
               />
+            {this.state.ONERwarning ? <span className="help-block">Enter a floating point number.</span> : ''}
             </div>
           </div>
 
@@ -506,6 +524,14 @@ class BUSTEDModelTable extends React.Component {
   constructor(props){
     super(props);
 
+    this.state = {
+      model: "Unconstrained model",
+      branch: "Test",
+      active: null
+    }
+  }
+  render() {
+    if(!this.props.fits) return <div></div>;
     var distro_settings = {
       dimensions: {
         width: 600,
@@ -515,7 +541,7 @@ class BUSTEDModelTable extends React.Component {
         left: 50,
         right: 15,
         bottom: 15,
-        top: 35
+        top: 15
       },
       legend: false,
       domain: [0.00001, 10000],
@@ -525,15 +551,6 @@ class BUSTEDModelTable extends React.Component {
       svg_id: "prop-chart"
     };
 
-    this.state = {
-      model: "Unconstrained model",
-      branch: "Test",
-      distro_settings: distro_settings,
-      active: null
-    }
-  }
-  render() {
-    if(!this.props.fits) return <div></div>;
     var self = this,
       omegas = _.values(this.props.fits[this.state.model]['Rate Distributions'][this.state.branch]).map(val => {
         return {
@@ -555,7 +572,7 @@ class BUSTEDModelTable extends React.Component {
     function makeInactive(){
       this.setState({active: null});
     }
-    var rows = _.map(this.props.fits, (val, key) => {
+    var rows = _.map(_.pick(this.props.fits,["Unconstrained model", "Constrained model"]), (val, key) => {
       var distributions = val['Rate Distributions'],
         onClick = modalShower(key, "Test").bind(self),
         onMouseEnter = makeActive(key).bind(self),
@@ -567,9 +584,9 @@ class BUSTEDModelTable extends React.Component {
         <td>{val['estimated parameters']}</td>
         <td>{val['AIC-c'].toFixed(1)}</td>
         <td>Test</td>
-        <td>{distributions["Test"]["0"].omega.toFixed(2)} ({(100*distributions["Test"]["0"].proportion).toFixed(0)}%)</td>
-        <td>{distributions["Test"]["1"].omega.toFixed(2)} ({(100*distributions["Test"]["1"].proportion).toFixed(0)}%)</td>
-        <td>{distributions["Test"]["2"].omega.toFixed(2)} ({(100*distributions["Test"]["2"].proportion).toFixed(0)}%)</td>
+        <td>{distributions["Test"]["0"].omega.toFixed(2)} ({(100*distributions["Test"]["0"].proportion).toFixed(2)}%)</td>
+        <td>{distributions["Test"]["1"].omega.toFixed(2)} ({(100*distributions["Test"]["1"].proportion).toFixed(2)}%)</td>
+        <td>{distributions["Test"]["2"].omega.toFixed(2)} ({(100*distributions["Test"]["2"].proportion).toFixed(2)}%)</td>
         <td><i className="fa fa-bar-chart" aria-hidden="true"></i></td>
       </tr>);
       if(distributions['Background']){
@@ -580,9 +597,9 @@ class BUSTEDModelTable extends React.Component {
           <td></td>
           <td></td>
           <td>Background</td>
-          <td>{distributions["Background"]["0"].omega.toFixed(2)} ({(100*distributions["Background"]["0"].proportion).toFixed(0)}%)</td>
-          <td>{distributions["Background"]["1"].omega.toFixed(2)} ({(100*distributions["Background"]["1"].proportion).toFixed(0)}%)</td>
-          <td>{distributions["Background"]["2"].omega.toFixed(2)} ({(100*distributions["Background"]["2"].proportion).toFixed(0)}%)</td>
+          <td>{distributions["Background"]["0"].omega.toFixed(2)} ({(100*distributions["Background"]["0"].proportion).toFixed(2)}%)</td>
+          <td>{distributions["Background"]["1"].omega.toFixed(2)} ({(100*distributions["Background"]["1"].proportion).toFixed(2)}%)</td>
+          <td>{distributions["Background"]["2"].omega.toFixed(2)} ({(100*distributions["Background"]["2"].proportion).toFixed(2)}%)</td>
           <td><i className="fa fa-bar-chart" aria-hidden="true"></i></td>
         </tr>)
         return [test_row, background_row];
@@ -600,7 +617,7 @@ class BUSTEDModelTable extends React.Component {
           data-trigger="hover"
           title="Actions"
           data-html="true"
-          data-content="<ul><li>Hover over a column header for a description of its content.</li></ul>"
+          data-content="<ul><li>Hover over a column header for a description of its content.</li><li>Click a row to view the corresponding rate distribution.</li></ul>"
           data-placement="bottom"
         />
       </h4>
@@ -611,13 +628,41 @@ class BUSTEDModelTable extends React.Component {
         <thead id="summary-model-header1">
           <tr>
             <th>Model</th>
-            <th><em>log</em> L</th>
-            <th>#. params</th>
-            <th>AIC<sub>c</sub></th>
-            <th>Branch set</th>
-            <th>&omega;<sub>1</sub></th>
-            <th>&omega;<sub>2</sub></th>
-            <th>&omega;<sub>3</sub></th>
+            <th>
+              <span data-toggle="tooltip" title="" data-original-title="Log likelihood of model fit">
+                <em>log</em> L
+              </span>
+            </th>
+            <th>
+              <span data-toggle="tooltip" title="" data-original-title="Number of parameters">
+                #. params
+              </span>
+            </th>
+            <th>
+              <span data-toggle="tooltip" title="" data-original-title="Small-sample correct Akaike information criterion">
+                AIC<sub>c</sub>
+              </span>
+            </th>
+            <th>
+              <span data-toggle="tooltip" title="" data-original-title="Indicates which branch set each parameter belongs to">
+                Branch set
+              </span>
+            </th>
+            <th>
+              <span data-toggle="tooltip" title="" data-original-title="First omega rate class">
+                &omega;<sub>1</sub>
+              </span>
+            </th>
+            <th>
+              <span data-toggle="tooltip" title="" data-original-title="Second omega rate class">
+                &omega;<sub>2</sub>
+              </span>
+            </th>
+            <th>
+              <span data-toggle="tooltip" title="" data-original-title="Third omega rate class">
+                &omega;<sub>3</sub>
+              </span>
+            </th>
             <th></th>
           </tr>
         </thead>
@@ -653,7 +698,7 @@ class BUSTEDModelTable extends React.Component {
                 <PropChart
                   name={self.state.model + ', ' + self.state.branch + ' branches'}
                   omegas={omegas}
-                  settings={self.state.distro_settings}
+                  settings={distro_settings}
                 />
             </div>
             <div className="modal-footer">
@@ -797,7 +842,7 @@ var BUSTED = React.createClass({
 
     var distro_settings = {
       dimensions: { width: 600, height: 400 },
-      margins: { left: 50, right: 15, bottom: 15, top: 15 },
+      margins: { left: 50, right: 15, bottom: 35, top: 15 },
       legend: false,
       domain: [0.00001, 10000],
       do_log_plot: true,
@@ -855,6 +900,9 @@ var BUSTED = React.createClass({
       offset: 50
     });
     $('[data-toggle="popover"]').popover();
+    $(function () {
+      $('[data-toggle="tooltip"]').tooltip()
+    })
   },
 
   render: function() {
@@ -869,7 +917,7 @@ var BUSTED = React.createClass({
 
     var models = {};
     if (!_.isNull(self.state.json)) {
-      models = self.state.json.fits;
+      models = _.pick(self.state.json.fits, ['Unconstrained model', 'Constrained model']);
     }
 
     return (
@@ -885,6 +933,7 @@ var BUSTED = React.createClass({
                   <BUSTEDSummary
                     p={this.state.p}
                     input_data={self.state.input_data}
+                    json={self.state.json}
                   />
                 </div>
               </div>

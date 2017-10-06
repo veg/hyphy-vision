@@ -154,7 +154,9 @@ class RateMatrix extends React.Component {
         </button>
       </div>
       <div className="col-lg-12">
-        <svg id="dm-rate-matrix"></svg>
+        <center>
+          <svg id="dm-rate-matrix"></svg>
+        </center>
       </div>
     </div>);
   }
