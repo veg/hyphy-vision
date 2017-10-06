@@ -859,3 +859,8 @@ input[type=range]:focus::-ms-fill-upper {
   border-radius: 12px;
   display: none;
 }
+
+.hyphy-export-dropdown {
+  float: left;
+}
+
