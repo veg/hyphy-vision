@@ -36,7 +36,10 @@ function FUBARSummary(props) {
         </h3>
       </div>
       <div className="col-md-12">
-        <InputInfo input_data={props.json ? props.json.input : null} />
+        <InputInfo
+          input_data={props.json ? props.json.input : null}
+          json={props.json}
+        />
       </div>
       <div className="col-md-12">
         <div className="main-result">
@@ -52,7 +55,7 @@ function FUBARSummary(props) {
             sites
           </p>
           <p>
-            <i className="fa fa-plus-circle" aria-hidden="true">
+            <i className="fa fa-minus-circle" aria-hidden="true">
               {" "}
             </i>{" "}
             episodic negative/purifying selection at

@@ -362,6 +362,7 @@ var Tree = React.createClass({
       if ($(this).is(":checked")) {
         tree_object.align_tips($(this).data("align") == "right");
         tree_object.placenodes().update();
+        d3.selectAll('.branch-tracer').style('opacity', 1);
       }
     });
 

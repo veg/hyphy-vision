@@ -9170,7 +9170,7 @@ small {
   background-color: #00766e;
   border-color: #11aa9b;
 }
-.dropdown::before {
+.toolbar-dropdown::before {
   content: "";
   height: 68px;
   display: inline-block;
@@ -9417,7 +9417,7 @@ td {
   color: #00a99d;
 }
 #input-info {
-  padding: 25px 20px 30px 23px !important;
+  padding: 5px 20px 5px 23px !important;
 }
 .divider {
   padding: 0px 12px !important;
@@ -9735,8 +9735,7 @@ div.main-result a {
 }
 
 #input-info {
-    line-height: 0;
-    padding: 18px 20px 24px 23px;
+    padding: 0px 20px 0px 23px;
     font-family: "Montserrat", sans-serif;
     font-weight: 500;
 }
@@ -10403,6 +10402,11 @@ input[type=range]:focus::-ms-fill-upper {
   border-radius: 12px;
   display: none;
 }
+
+.hyphy-export-dropdown {
+  float: left;
+}
+
 .axis path,
 .axis line {
   fill: none;

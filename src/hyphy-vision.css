@@ -191,8 +191,7 @@ div.main-result a {
 }
 
 #input-info {
-    line-height: 0;
-    padding: 18px 20px 24px 23px;
+    padding: 0px 20px 0px 23px;
     font-family: "Montserrat", sans-serif;
     font-weight: 500;
 }
@@ -859,3 +858,8 @@ input[type=range]:focus::-ms-fill-upper {
   border-radius: 12px;
   display: none;
 }
+
+.hyphy-export-dropdown {
+  float: left;
+}
+

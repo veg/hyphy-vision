@@ -31,7 +31,7 @@ function MEMESummary(props) {
         </h3>
       </div>
       <div className="col-md-12">
-        <InputInfo input_data={props.json ? props.json.input : null} />
+        <InputInfo input_data={props.json ? props.json.input : null} json={props.json} />
       </div>
       <div className="col-md-12">
         <div className="main-result">
