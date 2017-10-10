@@ -175,8 +175,6 @@ var TreeSummary = React.createClass({
         <h4 className="dm-table-header">
           Tree summary
           <span
-            className="glyphicon glyphicon-info-sign"
-            style={{ verticalAlign: "middle", float: "right" }}
             aria-hidden="true"
             data-toggle="popover"
             data-trigger="hover"
@@ -184,6 +182,8 @@ var TreeSummary = React.createClass({
             data-html="true"
             data-content="<ul><li>Hover over a column header for a description of its content.</li></ul>"
             data-placement="bottom"
+            className="glyphicon glyphicon-info-sign"
+            style={{ verticalAlign: "middle", float: "right", minHeight: "30px", minWidth: "30px"}}
           />
         </h4>
         <DatamonkeyTable
