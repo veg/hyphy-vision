@@ -1,11 +1,13 @@
 var React = require("react"),
   _ = require("underscore");
+var pd = require('pretty-data').pd;
 import { saveAs } from "file-saver";
 
 function InputInfo(props) {
   function saveTheJson() {
-    var blob = new Blob([JSON.stringify(props.json)], {
-      type: "text/plain:charset=utf-8;"
+    var blob = new Blob([pd.json(props.json)], {
+    //var blob = new Blob([JSON.stringify(props.json)], {
+      type: "text/json:charset=utf-8;"
     });
     saveAs(blob, "result.json");
   }
