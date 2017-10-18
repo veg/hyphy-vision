@@ -1,6 +1,7 @@
 var path = require("path"),
   webpack = require("webpack"),
-  cloneDeep = require("lodash.clonedeep");
+  cloneDeep = require("lodash.clonedeep"),
+  CopyWebpackPlugin = require('copy-webpack-plugin');
 
 var ExtractTextPlugin = require("extract-text-webpack-plugin");
 
@@ -32,13 +33,6 @@ config = {
         }
       },
       {
-        test: /\.css$/,
-        loader: ExtractTextPlugin.extract({
-          fallback: "style-loader",
-          use: "css-loader"
-        })
-      },
-      {
         test: /\.(woff|woff2)(\?v=\d+\.\d+\.\d+)?$/,
         loader: "url-loader",
         options: { limit: 10000, mimetype: "application/font-woff" }
@@ -59,20 +53,22 @@ config = {
         exclude: /node_modules/,
         loader: "eslint-loader",
         options: {}
-      },
-      {
-        test: /\.less?$/,
-        use: ExtractTextPlugin.extract({
-          fallback: "style-loader",
-          use: ["css-loader", "less-loader"]
-        })
       }
     ]
   },
   plugins: [
     new webpack.LoaderOptionsPlugin({ debug: true }),
     new webpack.IgnorePlugin(/jsdom$/),
-    new ExtractTextPlugin("[name].css")
+    new ExtractTextPlugin("[name].css"),
+		new CopyWebpackPlugin([
+				// {output}/file.txt
+				{ from: 'src/hyphyvision.css' }
+		], {
+				// By default, we only copy modified files during
+				// a watch or webpack-dev-server build. Setting this
+				// to `true` copies all files.
+				copyUnmodified: true
+		})
   ],
   resolve: {
     alias: {
