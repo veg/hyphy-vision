@@ -77,7 +77,7 @@ class GraphMenu extends React.Component {
             data-toggle="dropdown"
             aria-haspopup="true"
             aria-expanded="false"
-            dangerouslySetInnerHTML={{__html: selected+'<span className="caret" />'}}
+            dangerouslySetInnerHTML={{__html: selected+'<span class="caret" />'}}
           />
         </div>
       );
