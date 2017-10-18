@@ -363,10 +363,10 @@ class BaseGraph extends React.Component {
 BaseGraph.defaultProps = {
   width: 800,
   height: 400,
-  marginLeft: 35,
+  marginLeft: 45,
   marginRight: 10,
   marginTop: 10,
-  marginBottom: 35,
+  marginBottom: 45,
   marginXaxis: 5,
   marginYaxis: 5,
   graphData: null,
