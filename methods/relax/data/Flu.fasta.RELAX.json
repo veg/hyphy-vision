@@ -1,0 +1,569 @@
+{
+ "input":{
+   "file name":"/Users/stephenshank/Documents/Data/Flu.fasta",
+   "number of sequences":21,
+   "number of sites":566,
+   "partition count":1,
+   "trees":{
+     "0":"(((((((TREESPARROW_HENAN_1_2004:0.0101721,TREESPARROW_HENAN_3_2004:0.00720773)Node6:0.0012733,TREESPARROW_HENAN_4_2004:0.00526162)Node5:0.00260618,(CHICKEN_HEBEI_326_2005:0.0193765,(SWINE_ANHUI_2004:0.0103055,TREESPARROW_HENAN_2_2004:0.00655671)Node12:0.00422806)Node10:0.0061954)Node4:0.00347378,(((CHICKEN_HONGKONG_915_97:0.000585087,(GOOSE_HONGKONG_W355_97:1e-10,DUCK_HONGKONG_Y283_97:1e-10)Node19:0.00121193)Node17:0.00122974,HONGKONG_97_98:0.00431391)Node16:1e-10,HONGKONG_538_97:1e-10)Node15:0.0240197)Node3:0.00335514,(((DUCK_GUANGZHOU_20_2005:0.00654724,GOOSE_SHANTOU_2216_2005:0.00605968)Node26:0.00243613,PEREGRINEFALCON_HK_D0028_2004:0.00370079)Node25:0.00365613,CK_HK_WF157_2003:0.00670425)Node24:0.00426377)Node2:0.0132282,(((HUMAN_VIETNAM_CL105_2005:0.00599182,DUCK_VIETNAM_376_2005:0.00853467)Node33:0.00241354,VIETNAM_3062_2004:0.00182644)Node32:1e-10,MALLARD_VIETNAM_16_2003:0.00360607)Node31:1e-10)Node1:0.00113451,CHICKEN_THAILAND_KANCHANABURI_CK_160_2005:0.00674236,DUCK_VIETNAM_272_2005:0.0092524)"
+    }
+  },
+ "fits":{
+   "MG94xREV with separate rates for branch sets":{
+     "Log Likelihood":-4267.872181337253,
+     "estimated parameters":55,
+     "AIC-c":8646.265072733679,
+     "Rate Distributions":{
+       "Reference":{
+         "0":{
+           "omega":0.2247027776907396,
+           "proportion":1
+          }
+        },
+       "Test":{
+         "0":{
+           "omega":0.4743498212411201,
+           "proportion":1
+          }
+        }
+      },
+     "display order":0
+    },
+   "General descriptive":{
+     "Log Likelihood":-4245.87811844332,
+     "estimated parameters":96,
+     "AIC-c":8685.336014645569,
+     "Rate Distributions":{
+       "Shared":{
+         "0":{
+           "omega":1e-08,
+           "proportion":0.9277260305660061
+          },
+         "1":{
+           "omega":1,
+           "proportion":0
+          },
+         "2":{
+           "omega":2.185676077776136,
+           "proportion":0.07227396943399389
+          }
+        }
+      },
+     "display order":1
+    },
+   "RELAX alternative":{
+     "Log Likelihood":-4266.95865626963,
+     "estimated parameters":59,
+     "AIC-c":8652.515993411915,
+     "Rate Distributions":{
+       "Test":{
+         "0":{
+           "omega":0,
+           "proportion":0.005654282358620592
+          },
+         "1":{
+           "omega":0.3875816614422505,
+           "proportion":0.9116125111139368
+          },
+         "2":{
+           "omega":1.227918311323978,
+           "proportion":0.08273320652744258
+          }
+        },
+       "Reference":{
+         "0":{
+           "omega":0,
+           "proportion":0.005654282358620592
+          },
+         "1":{
+           "omega":0.104888352489828,
+           "proportion":0.9116125111139368
+          },
+         "2":{
+           "omega":1.629790435405208,
+           "proportion":0.08273320652744258
+          }
+        }
+      },
+     "display order":2
+    },
+   "RELAX null":{
+     "Log Likelihood":-4270.418122353184,
+     "estimated parameters":58,
+     "AIC-c":8657.414920617419,
+     "Rate Distributions":{
+       "Test":{
+         "0":{
+           "omega":0,
+           "proportion":0.006391878187049967
+          },
+         "1":{
+           "omega":0.09848633216684295,
+           "proportion":0.8853078661359554
+          },
+         "2":{
+           "omega":1.949843885716713,
+           "proportion":0.1083002556769947
+          }
+        },
+       "Reference":{
+         "0":{
+           "omega":0,
+           "proportion":0.006391878187049967
+          },
+         "1":{
+           "omega":0.09848633216684295,
+           "proportion":0.8853078661359554
+          },
+         "2":{
+           "omega":1.949843885716713,
+           "proportion":0.1083002556769947
+          }
+        }
+      },
+     "display order":3
+    },
+   "RELAX partitioned descriptive":{
+     "Log Likelihood":-4263.375781439849,
+     "estimated parameters":62,
+     "AIC-c":8651.412308883249,
+     "Rate Distributions":{
+       "Test":{
+         "0":{
+           "omega":0.4346871982887889,
+           "proportion":0.9865788331124783
+          },
+         "1":{
+           "omega":1,
+           "proportion":0.01235368976996925
+          },
+         "2":{
+           "omega":201.2985266898029,
+           "proportion":0.001067477117552453
+          }
+        },
+       "Reference":{
+         "0":{
+           "omega":0.2173579403828495,
+           "proportion":0.03072041452823502
+          },
+         "1":{
+           "omega":0.2195400891336879,
+           "proportion":0.9691167693805434
+          },
+         "2":{
+           "omega":201.2985266898029,
+           "proportion":0.0001628160912216127
+          }
+        }
+      },
+     "display order":4
+    }
+  },
+ "timers":{
+   "Overall":{
+     "timer":1646,
+     "order":0
+    },
+   "Preliminary model fitting":{
+     "timer":26,
+     "order":1
+    },
+   "General descriptive model fitting":{
+     "timer":343,
+     "order":2
+    },
+   "RELAX alternative model fitting":{
+     "timer":135,
+     "order":3
+    },
+   "RELAX null model fitting":{
+     "timer":83,
+     "order":4
+    },
+   "RELAX partitioned descriptive":{
+     "timer":1057,
+     "order":5
+    }
+  },
+ "test results":{
+   "LRT":6.918932167107414,
+   "p-value":0.008528788967243628,
+   "relaxation or intensification parameter":0.4203494744046274
+  },
+ "tested":{
+   "0":{
+     "TREESPARROW_HENAN_1_2004":"Test",
+     "TREESPARROW_HENAN_3_2004":"Test",
+     "Node6":"Reference",
+     "TREESPARROW_HENAN_4_2004":"Test",
+     "Node5":"Reference",
+     "CHICKEN_HEBEI_326_2005":"Test",
+     "SWINE_ANHUI_2004":"Test",
+     "TREESPARROW_HENAN_2_2004":"Reference",
+     "Node12":"Reference",
+     "Node10":"Reference",
+     "Node4":"Reference",
+     "CHICKEN_HONGKONG_915_97":"Reference",
+     "GOOSE_HONGKONG_W355_97":"Reference",
+     "DUCK_HONGKONG_Y283_97":"Reference",
+     "Node19":"Reference",
+     "Node17":"Reference",
+     "HONGKONG_97_98":"Reference",
+     "Node16":"Reference",
+     "HONGKONG_538_97":"Reference",
+     "Node15":"Reference",
+     "Node3":"Reference",
+     "DUCK_GUANGZHOU_20_2005":"Reference",
+     "GOOSE_SHANTOU_2216_2005":"Reference",
+     "Node26":"Reference",
+     "PEREGRINEFALCON_HK_D0028_2004":"Reference",
+     "Node25":"Reference",
+     "CK_HK_WF157_2003":"Reference",
+     "Node24":"Reference",
+     "Node2":"Reference",
+     "HUMAN_VIETNAM_CL105_2005":"Reference",
+     "DUCK_VIETNAM_376_2005":"Reference",
+     "Node33":"Reference",
+     "VIETNAM_3062_2004":"Reference",
+     "Node32":"Reference",
+     "MALLARD_VIETNAM_16_2003":"Reference",
+     "Node31":"Reference",
+     "Node1":"Reference",
+     "CHICKEN_THAILAND_KANCHANABURI_CK_160_2005":"Test",
+     "DUCK_VIETNAM_272_2005":"Test"
+    }
+  },
+ "data partitions":{
+   "0":{
+     "name":"relax.filter.default",
+     "coverage":[
+      [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 255, 256, 257, 258, 259, 260, 261, 262, 263, 264, 265, 266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 277, 278, 279, 280, 281, 282, 283, 284, 285, 286, 287, 288, 289, 290, 291, 292, 293, 294, 295, 296, 297, 298, 299, 300, 301, 302, 303, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 314, 315, 316, 317, 318, 319, 320, 321, 322, 323, 324, 325, 326, 327, 328, 329, 330, 331, 332, 333, 334, 335, 336, 337, 338, 339, 340, 341, 342, 343, 344, 345, 346, 347, 348, 349, 350, 351, 352, 353, 354, 355, 356, 357, 358, 359, 360, 361, 362, 363, 364, 365, 366, 367, 368, 369, 370, 371, 372, 373, 374, 375, 376, 377, 378, 379, 380, 381, 382, 383, 384, 385, 386, 387, 388, 389, 390, 391, 392, 393, 394, 395, 396, 397, 398, 399, 400, 401, 402, 403, 404, 405, 406, 407, 408, 409, 410, 411, 412, 413, 414, 415, 416, 417, 418, 419, 420, 421, 422, 423, 424, 425, 426, 427, 428, 429, 430, 431, 432, 433, 434, 435, 436, 437, 438, 439, 440, 441, 442, 443, 444, 445, 446, 447, 448, 449, 450, 451, 452, 453, 454, 455, 456, 457, 458, 459, 460, 461, 462, 463, 464, 465, 466, 467, 468, 469, 470, 471, 472, 473, 474, 475, 476, 477, 478, 479, 480, 481, 482, 483, 484, 485, 486, 487, 488, 489, 490, 491, 492, 493, 494, 495, 496, 497, 498, 499, 500, 501, 502, 503, 504, 505, 506, 507, 508, 509, 510, 511, 512, 513, 514, 515, 516, 517, 518, 519, 520, 521, 522, 523, 524, 525, 526, 527, 528, 529, 530, 531, 532, 533, 534, 535, 536, 537, 538, 539, 540, 541, 542, 543, 544, 545, 546, 547, 548, 549, 550, 551, 552, 553, 554, 555, 556, 557, 558, 559, 560, 561, 562, 563, 564, 565]
+      ]
+    }
+  },
+ "branch attributes":{
+   "0":{
+     "TREESPARROW_HENAN_1_2004":{
+       "original name":"TREESPARROW_HENAN_1_2004",
+       "General descriptive":0.01093426520429569,
+       "k (general descriptive)":3.473686306997897,
+       "RELAX alternative":0.01057052079580167,
+       "RELAX null":0.01069940634654949,
+       "RELAX partitioned descriptive":0.0129126426402805
+      },
+     "HUMAN_VIETNAM_CL105_2005":{
+       "original name":"HUMAN_VIETNAM_CL105_2005",
+       "General descriptive":0.006169533074404387,
+       "k (general descriptive)":3.342999461983664,
+       "RELAX alternative":0.006096719894909987,
+       "RELAX null":0.006075744303597434,
+       "RELAX partitioned descriptive":0.00638572968668723
+      },
+     "TREESPARROW_HENAN_4_2004":{
+       "original name":"TREESPARROW_HENAN_4_2004",
+       "General descriptive":0.005560227825360677,
+       "k (general descriptive)":3.835858577287146,
+       "RELAX alternative":0.004911561132799652,
+       "RELAX null":0.004747857681616549,
+       "RELAX partitioned descriptive":0.004550765099886014
+      },
+     "CHICKEN_HEBEI_326_2005":{
+       "original name":"CHICKEN_HEBEI_326_2005",
+       "General descriptive":0.020363717880851,
+       "k (general descriptive)":2.777781944588851,
+       "RELAX alternative":0.01947773782919369,
+       "RELAX null":0.01963225581667854,
+       "RELAX partitioned descriptive":0.02286472719880629
+      },
+     "CHICKEN_HONGKONG_915_97":{
+       "original name":"CHICKEN_HONGKONG_915_97",
+       "General descriptive":0.0005888837142272548,
+       "k (general descriptive)":7.996155182345003,
+       "RELAX alternative":0.0005965877594473079,
+       "RELAX null":0.0005952062908216884,
+       "RELAX partitioned descriptive":0.0005873232679089972
+      },
+     "VIETNAM_3062_2004":{
+       "original name":"VIETNAM_3062_2004",
+       "General descriptive":0.001820061845536136,
+       "k (general descriptive)":0.2985271630057218,
+       "RELAX alternative":0.001803396868413823,
+       "RELAX null":0.001803256436899911,
+       "RELAX partitioned descriptive":0.001875759903480214
+      },
+     "GOOSE_HONGKONG_W355_97":{
+       "original name":"GOOSE_HONGKONG_W355_97",
+       "General descriptive":0,
+       "k (general descriptive)":1.005431116431141,
+       "RELAX alternative":0,
+       "RELAX null":0,
+       "RELAX partitioned descriptive":0
+      },
+     "DUCK_HONGKONG_Y283_97":{
+       "original name":"DUCK_HONGKONG_Y283_97",
+       "General descriptive":0,
+       "k (general descriptive)":1,
+       "RELAX alternative":0,
+       "RELAX null":0,
+       "RELAX partitioned descriptive":0
+      },
+     "DUCK_VIETNAM_376_2005":{
+       "original name":"DUCK_VIETNAM_376_2005",
+       "General descriptive":0.008561415736384399,
+       "k (general descriptive)":0.09872240328245281,
+       "RELAX alternative":0.008569248183810791,
+       "RELAX null":0.008571598915293931,
+       "RELAX partitioned descriptive":0.008970591236502653
+      },
+     "MALLARD_VIETNAM_16_2003":{
+       "original name":"MALLARD_VIETNAM_16_2003",
+       "General descriptive":0.003610687274389532,
+       "k (general descriptive)":0.1078945966072438,
+       "RELAX alternative":0.003618530909238414,
+       "RELAX null":0.003614885748318119,
+       "RELAX partitioned descriptive":0.003762318684450368
+      },
+     "CHICKEN_THAILAND_KANCHANABURI_CK_160_2005":{
+       "original name":"CHICKEN_THAILAND_KANCHANABURI_CK_160_2005",
+       "General descriptive":0.006778054922630957,
+       "k (general descriptive)":0.1391127934283984,
+       "RELAX alternative":0.006632794546796348,
+       "RELAX null":0.006763061934187399,
+       "RELAX partitioned descriptive":0.008109328318912959
+      },
+     "DUCK_GUANGZHOU_20_2005":{
+       "original name":"DUCK_GUANGZHOU_20_2005",
+       "General descriptive":0.006722462701681362,
+       "k (general descriptive)":2.978440479541944,
+       "RELAX alternative":0.006645573554878007,
+       "RELAX null":0.006630103908405895,
+       "RELAX partitioned descriptive":0.006975979771761434
+      },
+     "CK_HK_WF157_2003":{
+       "original name":"CK_HK_WF157_2003",
+       "General descriptive":0.006711647939638056,
+       "k (general descriptive)":0.09688776497759133,
+       "RELAX alternative":0.006730751151488491,
+       "RELAX null":0.006733263442967767,
+       "RELAX partitioned descriptive":0.007022018483747175
+      },
+     "SWINE_ANHUI_2004":{
+       "original name":"SWINE_ANHUI_2004",
+       "General descriptive":0.01070573464140629,
+       "k (general descriptive)":2.76685080571505,
+       "RELAX alternative":0.01038190429630596,
+       "RELAX null":0.01044882240413706,
+       "RELAX partitioned descriptive":0.01266220880689963
+      },
+     "DUCK_VIETNAM_272_2005":{
+       "original name":"DUCK_VIETNAM_272_2005",
+       "General descriptive":0.009290615657548157,
+       "k (general descriptive)":0.141594802130706,
+       "RELAX alternative":0.009109397850023107,
+       "RELAX null":0.009301863817419266,
+       "RELAX partitioned descriptive":0.01124252445334402
+      },
+     "HONGKONG_97_98":{
+       "original name":"HONGKONG_97_98",
+       "General descriptive":0.004315609680485563,
+       "k (general descriptive)":0.07549016457601966,
+       "RELAX alternative":0.004329974939816424,
+       "RELAX null":0.004326486831110463,
+       "RELAX partitioned descriptive":0.004503883893684534
+      },
+     "GOOSE_SHANTOU_2216_2005":{
+       "original name":"GOOSE_SHANTOU_2216_2005",
+       "General descriptive":0.006068964566734819,
+       "k (general descriptive)":0.1231190658216624,
+       "RELAX alternative":0.006098032712198244,
+       "RELAX null":0.006101279319502474,
+       "RELAX partitioned descriptive":0.006342209797129075
+      },
+     "TREESPARROW_HENAN_3_2004":{
+       "original name":"TREESPARROW_HENAN_3_2004",
+       "General descriptive":0.007375679570096018,
+       "k (general descriptive)":2.669395226439531,
+       "RELAX alternative":0.006908308232880074,
+       "RELAX null":0.006843050191623956,
+       "RELAX partitioned descriptive":0.008094489805308835
+      },
+     "PEREGRINEFALCON_HK_D0028_2004":{
+       "original name":"PEREGRINEFALCON_HK_D0028_2004",
+       "General descriptive":0.003710806138889097,
+       "k (general descriptive)":0.2926655809546713,
+       "RELAX alternative":0.003687042442441231,
+       "RELAX null":0.003684548545108848,
+       "RELAX partitioned descriptive":0.00383890513844373
+      },
+     "TREESPARROW_HENAN_2_2004":{
+       "original name":"TREESPARROW_HENAN_2_2004",
+       "General descriptive":0.00682169591249976,
+       "k (general descriptive)":2.063594567195452,
+       "RELAX alternative":0.006594631120977853,
+       "RELAX null":0.006602457024822184,
+       "RELAX partitioned descriptive":0.006788524576485711
+      },
+     "HONGKONG_538_97":{
+       "original name":"HONGKONG_538_97",
+       "General descriptive":0,
+       "k (general descriptive)":1,
+       "RELAX alternative":0,
+       "RELAX null":0,
+       "RELAX partitioned descriptive":0
+      },
+     "Node1":{
+       "General descriptive":0.001099722032952486,
+       "k (general descriptive)":0.298120885057966,
+       "RELAX alternative":0.001152773875204439,
+       "RELAX null":0.001102323346260416,
+       "RELAX partitioned descriptive":0.001192575283162223
+      },
+     "Node10":{
+       "General descriptive":0.006405045288332204,
+       "k (general descriptive)":1.423431690455887,
+       "RELAX alternative":0.006370172846319665,
+       "RELAX null":0.006460888896913305,
+       "RELAX partitioned descriptive":0.005518187712434245
+      },
+     "Node12":{
+       "General descriptive":0.004237797402195485,
+       "k (general descriptive)":0.2942802280170568,
+       "RELAX alternative":0.004113794231639339,
+       "RELAX null":0.004060478114929341,
+       "RELAX partitioned descriptive":0.004334153688021021
+      },
+     "Node15":{
+       "General descriptive":0.02408113723396491,
+       "k (general descriptive)":0.09036488459711314,
+       "RELAX alternative":0.02434286389553644,
+       "RELAX null":0.02448377342586735,
+       "RELAX partitioned descriptive":0.02531781710587886
+      },
+     "Node16":{
+       "General descriptive":0,
+       "k (general descriptive)":1,
+       "RELAX alternative":0,
+       "RELAX null":0,
+       "RELAX partitioned descriptive":0
+      },
+     "Node17":{
+       "General descriptive":0.001239304640817886,
+       "k (general descriptive)":2.314747392920422,
+       "RELAX alternative":0.001229843051950468,
+       "RELAX null":0.00122860060136518,
+       "RELAX partitioned descriptive":0.001247325487316151
+      },
+     "Node19":{
+       "General descriptive":0.001205514814865352,
+       "k (general descriptive)":0.298186414583318,
+       "RELAX alternative":0.001198259074604029,
+       "RELAX null":0.0011976041279157,
+       "RELAX partitioned descriptive":0.001241213859394741
+      },
+     "Node2":{
+       "General descriptive":0.01322572088266331,
+       "k (general descriptive)":0.06773622083981892,
+       "RELAX alternative":0.01340408006254342,
+       "RELAX null":0.01343322566882965,
+       "RELAX partitioned descriptive":0.01404729922251402
+      },
+     "Node24":{
+       "General descriptive":0.00422464380602583,
+       "k (general descriptive)":0.2995513282710945,
+       "RELAX alternative":0.004174455015657999,
+       "RELAX null":0.004176242596994567,
+       "RELAX partitioned descriptive":0.004341467026644203
+      },
+     "Node25":{
+       "General descriptive":0.003671529947144795,
+       "k (general descriptive)":0.2925924694443243,
+       "RELAX alternative":0.003651846244220836,
+       "RELAX null":0.003645559952869356,
+       "RELAX partitioned descriptive":0.003803766487699317
+      },
+     "Node26":{
+       "General descriptive":0.002405801222433051,
+       "k (general descriptive)":0.298654008812162,
+       "RELAX alternative":0.002354063699046007,
+       "RELAX null":0.002359791676772778,
+       "RELAX partitioned descriptive":0.002451454066348344
+      },
+     "Node3":{
+       "General descriptive":0.003366527370031886,
+       "k (general descriptive)":0.278719902625467,
+       "RELAX alternative":0.003091976862993405,
+       "RELAX null":0.003088471096950654,
+       "RELAX partitioned descriptive":0.003214616726304223
+      },
+     "Node31":{
+       "General descriptive":0,
+       "k (general descriptive)":1,
+       "RELAX alternative":0,
+       "RELAX null":0,
+       "RELAX partitioned descriptive":0
+      },
+     "Node32":{
+       "General descriptive":0,
+       "k (general descriptive)":1,
+       "RELAX alternative":0,
+       "RELAX null":0,
+       "RELAX partitioned descriptive":0
+      },
+     "Node33":{
+       "General descriptive":0.002392073054161085,
+       "k (general descriptive)":0.1594077694647451,
+       "RELAX alternative":0.002367052693614859,
+       "RELAX null":0.002369659820704833,
+       "RELAX partitioned descriptive":0.002445119616194901
+      },
+     "Node4":{
+       "General descriptive":0.003532702199706484,
+       "k (general descriptive)":3.052893578305375,
+       "RELAX alternative":0.003698930758804094,
+       "RELAX null":0.003623331899063158,
+       "RELAX partitioned descriptive":0.003821426571636756
+      },
+     "Node5":{
+       "General descriptive":0.00273205832650963,
+       "k (general descriptive)":0.2988740491165709,
+       "RELAX alternative":0.002888057075667242,
+       "RELAX null":0.00302454389779436,
+       "RELAX partitioned descriptive":0.003069322361001676
+      },
+     "Node6":{
+       "General descriptive":0.001305725751577722,
+       "k (general descriptive)":2.582656882540916,
+       "RELAX alternative":0.001342313019348195,
+       "RELAX null":0.00138515375877385,
+       "RELAX partitioned descriptive":0.001374992629937762
+      }
+    },
+   "attributes":{
+     "original name":{
+       "attribute type":"node label",
+       "display order":0
+      },
+     "General descriptive":{
+       "attribute type":"branch length",
+       "display order":1
+      },
+     "k (general descriptive)":{
+       "attribute type":"branch label",
+       "display order":1
+      },
+     "RELAX alternative":{
+       "attribute type":"branch length",
+       "display order":2
+      },
+     "RELAX null":{
+       "attribute type":"branch length",
+       "display order":3
+      },
+     "RELAX partitioned descriptive":{
+       "attribute type":"branch length",
+       "display order":4
+      }
+    }
+  }
+}
