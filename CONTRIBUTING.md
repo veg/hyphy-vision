@@ -23,3 +23,11 @@ The CSS to be packaged should include css that is necessary to view components i
 
 - Method that return elements should have a name with Element suffix
 
+## Release
+For release, the library configuration of webpack must be used. 
+
+```
+webpack --config webpack.config.library.js
+```
+
+Please ensure that any entry level functions are exposed in src/library-entry.js as well as src/entry.js
