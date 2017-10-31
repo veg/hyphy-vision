@@ -106,7 +106,7 @@ var BSRELSummary = React.createClass({
       
       
         <div className="col-md-12">
-          <InputInfo input_data={this.props.input_data}/>
+          <InputInfo input_data={this.props.input_data} json={this.props.json}/>
         </div>
       
       
@@ -277,12 +277,8 @@ var BSREL = React.createClass({
       var annotations = data.target.annotations,
         alpha_level = 0.05,
         tooltip = "<b>" + data.target.name + "</b>";
-        //reference_omega_weight = prop_format(0),
-        //distro = "";
 
       if (annotations) {
-        //reference_omega_weight = annotations.omegas[0].prop;
-
         annotations.omegas.forEach(function(d, i) {
           var omega_value = d.omega > 1e20 ? "&infin;" : omega_format(d.omega),
             omega_weight = prop_format(d.prop);
@@ -295,29 +291,20 @@ var BSREL = React.createClass({
             " (" +
             omega_weight +
             ")";
-
-          //if (i) {
-          //  distro += "<br/>";
-          //}
-
-          //distro +=
-          //  "&omega;<sub>" +
-          //  (i + 1) +
-          //  "</sub> = " +
-          //  omega_value +
-          //  " (" +
-            //omega_weight +
-            //")";
         });
 
         tooltip += "<br/><i>p = " + omega_format(annotations["p"]) + "</i>";
+        $(element[0][0]).mouseover(e=>{
+          $('#tooltip_container').css({'display':'block','opacity':0})
+            .animate({'opacity':1},250)
+            .css('left', e.pageX)
+            .css('top', e.pageY)
+            .html(tooltip);
+        });
 
-        $(element[0][0]).tooltip({
-          title: tooltip,
-          html: true,
-          trigger: "hover",
-          container: "body",
-          placement: "auto"
+        $(element[0][0]).mouseout(e=>{
+          $('#tooltip_container').css({'display':'none'})
+            .html('');
         });
 
         createBranchGradient(data.target);
@@ -436,7 +423,11 @@ var BSREL = React.createClass({
 
     var models = {};
     if (!_.isNull(self.state.json)) {
-      models = self.state.json.fits;
+      // List full adaptive model first
+      models = {
+        "Full adaptive model": self.state.json.fits["Full adaptive model"],
+        "Baseline MG94xREV": self.state.json.fits["Baseline MG94xREV"]
+      };
     }
     return (
       <div>
@@ -470,6 +461,7 @@ var BSREL = React.createClass({
                     test_results={self.state.test_results}
                     pmid={self.state.pmid}
                     input_data={self.state.input_data}
+                    json={self.state.json}
                   />
                   <div className="row">
                     <div id="hyphy-tree-summary" className="col-md-12">
@@ -519,6 +511,7 @@ var BSREL = React.createClass({
             </div>
           </div>
         </div>
+
       </div>
     );
   }
