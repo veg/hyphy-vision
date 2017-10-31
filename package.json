@@ -24,6 +24,7 @@
   "dependencies": {
     "bootstrap": "3.x",
     "chi-squared": "^1.1.0",
+    "copy-webpack-plugin": "^4.1.1",
     "crossfilter": "1.x",
     "csvexport": "^1.0.2",
     "d3": "3.x",

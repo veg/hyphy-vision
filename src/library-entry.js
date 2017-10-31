@@ -1,9 +1,3 @@
-
-require("font-awesome/css/font-awesome.css");
-require('./application.less');
-require('./hyphy-vision.css');
-require('./fade/FADE.css');
-
 require('bootstrap');
 require('./datamonkey/datamonkey.js');
 
