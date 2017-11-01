@@ -2,7 +2,7 @@ window.jQuery = window.$ = $;
 
 require("font-awesome/css/font-awesome.css");
 require('./application.less');
-require('./hyphy-vision.css');
+require('./hyphyvision.css');
 require('./fade/FADE.css');
 
 require('bootstrap');
