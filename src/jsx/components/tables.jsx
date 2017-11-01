@@ -1037,7 +1037,7 @@ var DatamonkeyModelTable = React.createClass({
           Model fits
           <span
             className="glyphicon glyphicon-info-sign"
-            style={{ verticalAlign: "middle", float: "right" }}
+            style={{ verticalAlign: "middle", float: "right", minHeight:"30px", minWidth: "30px"}}
             aria-hidden="true"
             data-toggle="popover"
             data-trigger="hover"

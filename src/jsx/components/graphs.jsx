@@ -78,7 +78,7 @@ class GraphMenu extends React.Component {
             data-toggle="dropdown"
             aria-haspopup="true"
             aria-expanded="false"
-            dangerouslySetInnerHTML={{__html: selected+'<span className="caret" />'}}
+            dangerouslySetInnerHTML={{__html: selected+'<span class="caret" />'}}
           />
         </div>
       );
@@ -337,10 +337,10 @@ BaseGraph.defaultProps = {
   color_pallette : d3.scale.category10().domain (_.range (10)),
   width: 800,
   height: 400,
-  marginLeft: 35,
+  marginLeft: 45,
   marginRight: 10,
   marginTop: 10,
-  marginBottom: 35,
+  marginBottom: 45,
   marginXaxis: 5,
   marginYaxis: 5,
   graphData: null,

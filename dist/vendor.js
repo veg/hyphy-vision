@@ -151,7 +151,7 @@ var hyphyVision =
 /******/ 	__webpack_require__.oe = function(err) { console.error(err); throw err; };
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 266);
+/******/ 	return __webpack_require__(__webpack_require__.s = 265);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -351,9 +351,11 @@ process.umask = function() { return 0; };
 "use strict";
 /* WEBPACK VAR INJECTION */(function(process) {/**
  * Copyright (c) 2013-present, Facebook, Inc.
+ * All rights reserved.
  *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
+ * This source code is licensed under the BSD-style license found in the
+ * LICENSE file in the root directory of this source tree. An additional grant
+ * of patent rights can be found in the PATENTS file in the same directory.
  *
  */
 
@@ -410,10 +412,12 @@ module.exports = invariant;
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(process) {/**
- * Copyright (c) 2014-present, Facebook, Inc.
+ * Copyright 2014-2015, Facebook, Inc.
+ * All rights reserved.
  *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
+ * This source code is licensed under the BSD-style license found in the
+ * LICENSE file in the root directory of this source tree. An additional grant
+ * of patent rights can be found in the PATENTS file in the same directory.
  *
  */
 
@@ -431,43 +435,45 @@ var emptyFunction = __webpack_require__(12);
 var warning = emptyFunction;
 
 if (process.env.NODE_ENV !== 'production') {
-  var printWarning = function printWarning(format) {
-    for (var _len = arguments.length, args = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
-      args[_key - 1] = arguments[_key];
-    }
-
-    var argIndex = 0;
-    var message = 'Warning: ' + format.replace(/%s/g, function () {
-      return args[argIndex++];
-    });
-    if (typeof console !== 'undefined') {
-      console.error(message);
-    }
-    try {
-      // --- Welcome to debugging React ---
-      // This error was thrown as a convenience so that you can use this stack
-      // to find the callsite that caused this warning to fire.
-      throw new Error(message);
-    } catch (x) {}
-  };
-
-  warning = function warning(condition, format) {
-    if (format === undefined) {
-      throw new Error('`warning(condition, format, ...args)` requires a warning ' + 'message argument');
-    }
-
-    if (format.indexOf('Failed Composite propType: ') === 0) {
-      return; // Ignore CompositeComponent proptype check.
-    }
-
-    if (!condition) {
-      for (var _len2 = arguments.length, args = Array(_len2 > 2 ? _len2 - 2 : 0), _key2 = 2; _key2 < _len2; _key2++) {
-        args[_key2 - 2] = arguments[_key2];
+  (function () {
+    var printWarning = function printWarning(format) {
+      for (var _len = arguments.length, args = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+        args[_key - 1] = arguments[_key];
       }
 
-      printWarning.apply(undefined, [format].concat(args));
-    }
-  };
+      var argIndex = 0;
+      var message = 'Warning: ' + format.replace(/%s/g, function () {
+        return args[argIndex++];
+      });
+      if (typeof console !== 'undefined') {
+        console.error(message);
+      }
+      try {
+        // --- Welcome to debugging React ---
+        // This error was thrown as a convenience so that you can use this stack
+        // to find the callsite that caused this warning to fire.
+        throw new Error(message);
+      } catch (x) {}
+    };
+
+    warning = function warning(condition, format) {
+      if (format === undefined) {
+        throw new Error('`warning(condition, format, ...args)` requires a warning ' + 'message argument');
+      }
+
+      if (format.indexOf('Failed Composite propType: ') === 0) {
+        return; // Ignore CompositeComponent proptype check.
+      }
+
+      if (!condition) {
+        for (var _len2 = arguments.length, args = Array(_len2 > 2 ? _len2 - 2 : 0), _key2 = 2; _key2 < _len2; _key2++) {
+          args[_key2 - 2] = arguments[_key2];
+        }
+
+        printWarning.apply(undefined, [format].concat(args));
+      }
+    };
+  })();
 }
 
 module.exports = warning;
@@ -477,8 +483,8 @@ module.exports = warning;
 /* 3 */
 /***/ (function(module, exports, __webpack_require__) {
 
-/* WEBPACK VAR INJECTION */(function(global) {module.exports = global["jQuery"] = __webpack_require__(151);
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(68)))
+/* WEBPACK VAR INJECTION */(function(global) {module.exports = global["jQuery"] = __webpack_require__(149);
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(48)))
 
 /***/ }),
 /* 4 */,
@@ -495,1566 +501,114 @@ module.exports = __webpack_require__(33);
 /* 6 */
 /***/ (function(module, exports, __webpack_require__) {
 
-/* WEBPACK VAR INJECTION */(function(global) {module.exports = global["d3"] = __webpack_require__(149);
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(68)))
+/* WEBPACK VAR INJECTION */(function(global) {module.exports = global["d3"] = __webpack_require__(147);
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(48)))
 
 /***/ }),
 /* 7 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;//     Underscore.js 1.8.3
-//     http://underscorejs.org
-//     (c) 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
-//     Underscore may be freely distributed under the MIT license.
-
-(function() {
-
-  // Baseline setup
-  // --------------
-
-  // Establish the root object, `window` in the browser, or `exports` on the server.
-  var root = this;
-
-  // Save the previous value of the `_` variable.
-  var previousUnderscore = root._;
-
-  // Save bytes in the minified (but not gzipped) version:
-  var ArrayProto = Array.prototype, ObjProto = Object.prototype, FuncProto = Function.prototype;
-
-  // Create quick reference variables for speed access to core prototypes.
-  var
-    push             = ArrayProto.push,
-    slice            = ArrayProto.slice,
-    toString         = ObjProto.toString,
-    hasOwnProperty   = ObjProto.hasOwnProperty;
-
-  // All **ECMAScript 5** native function implementations that we hope to use
-  // are declared here.
-  var
-    nativeIsArray      = Array.isArray,
-    nativeKeys         = Object.keys,
-    nativeBind         = FuncProto.bind,
-    nativeCreate       = Object.create;
-
-  // Naked function reference for surrogate-prototype-swapping.
-  var Ctor = function(){};
-
-  // Create a safe reference to the Underscore object for use below.
-  var _ = function(obj) {
-    if (obj instanceof _) return obj;
-    if (!(this instanceof _)) return new _(obj);
-    this._wrapped = obj;
-  };
-
-  // Export the Underscore object for **Node.js**, with
-  // backwards-compatibility for the old `require()` API. If we're in
-  // the browser, add `_` as a global object.
-  if (true) {
-    if (typeof module !== 'undefined' && module.exports) {
-      exports = module.exports = _;
-    }
-    exports._ = _;
-  } else {
-    root._ = _;
-  }
-
-  // Current version.
-  _.VERSION = '1.8.3';
-
-  // Internal function that returns an efficient (for current engines) version
-  // of the passed-in callback, to be repeatedly applied in other Underscore
-  // functions.
-  var optimizeCb = function(func, context, argCount) {
-    if (context === void 0) return func;
-    switch (argCount == null ? 3 : argCount) {
-      case 1: return function(value) {
-        return func.call(context, value);
-      };
-      case 2: return function(value, other) {
-        return func.call(context, value, other);
-      };
-      case 3: return function(value, index, collection) {
-        return func.call(context, value, index, collection);
-      };
-      case 4: return function(accumulator, value, index, collection) {
-        return func.call(context, accumulator, value, index, collection);
-      };
-    }
-    return function() {
-      return func.apply(context, arguments);
-    };
-  };
-
-  // A mostly-internal function to generate callbacks that can be applied
-  // to each element in a collection, returning the desired result — either
-  // identity, an arbitrary callback, a property matcher, or a property accessor.
-  var cb = function(value, context, argCount) {
-    if (value == null) return _.identity;
-    if (_.isFunction(value)) return optimizeCb(value, context, argCount);
-    if (_.isObject(value)) return _.matcher(value);
-    return _.property(value);
-  };
-  _.iteratee = function(value, context) {
-    return cb(value, context, Infinity);
-  };
-
-  // An internal function for creating assigner functions.
-  var createAssigner = function(keysFunc, undefinedOnly) {
-    return function(obj) {
-      var length = arguments.length;
-      if (length < 2 || obj == null) return obj;
-      for (var index = 1; index < length; index++) {
-        var source = arguments[index],
-            keys = keysFunc(source),
-            l = keys.length;
-        for (var i = 0; i < l; i++) {
-          var key = keys[i];
-          if (!undefinedOnly || obj[key] === void 0) obj[key] = source[key];
-        }
-      }
-      return obj;
-    };
-  };
-
-  // An internal function for creating a new object that inherits from another.
-  var baseCreate = function(prototype) {
-    if (!_.isObject(prototype)) return {};
-    if (nativeCreate) return nativeCreate(prototype);
-    Ctor.prototype = prototype;
-    var result = new Ctor;
-    Ctor.prototype = null;
-    return result;
-  };
-
-  var property = function(key) {
-    return function(obj) {
-      return obj == null ? void 0 : obj[key];
-    };
-  };
-
-  // Helper for collection methods to determine whether a collection
-  // should be iterated as an array or as an object
-  // Related: http://people.mozilla.org/~jorendorff/es6-draft.html#sec-tolength
-  // Avoids a very nasty iOS 8 JIT bug on ARM-64. #2094
-  var MAX_ARRAY_INDEX = Math.pow(2, 53) - 1;
-  var getLength = property('length');
-  var isArrayLike = function(collection) {
-    var length = getLength(collection);
-    return typeof length == 'number' && length >= 0 && length <= MAX_ARRAY_INDEX;
-  };
-
-  // Collection Functions
-  // --------------------
-
-  // The cornerstone, an `each` implementation, aka `forEach`.
-  // Handles raw objects in addition to array-likes. Treats all
-  // sparse array-likes as if they were dense.
-  _.each = _.forEach = function(obj, iteratee, context) {
-    iteratee = optimizeCb(iteratee, context);
-    var i, length;
-    if (isArrayLike(obj)) {
-      for (i = 0, length = obj.length; i < length; i++) {
-        iteratee(obj[i], i, obj);
-      }
-    } else {
-      var keys = _.keys(obj);
-      for (i = 0, length = keys.length; i < length; i++) {
-        iteratee(obj[keys[i]], keys[i], obj);
-      }
-    }
-    return obj;
-  };
-
-  // Return the results of applying the iteratee to each element.
-  _.map = _.collect = function(obj, iteratee, context) {
-    iteratee = cb(iteratee, context);
-    var keys = !isArrayLike(obj) && _.keys(obj),
-        length = (keys || obj).length,
-        results = Array(length);
-    for (var index = 0; index < length; index++) {
-      var currentKey = keys ? keys[index] : index;
-      results[index] = iteratee(obj[currentKey], currentKey, obj);
-    }
-    return results;
-  };
-
-  // Create a reducing function iterating left or right.
-  function createReduce(dir) {
-    // Optimized iterator function as using arguments.length
-    // in the main function will deoptimize the, see #1991.
-    function iterator(obj, iteratee, memo, keys, index, length) {
-      for (; index >= 0 && index < length; index += dir) {
-        var currentKey = keys ? keys[index] : index;
-        memo = iteratee(memo, obj[currentKey], currentKey, obj);
-      }
-      return memo;
-    }
-
-    return function(obj, iteratee, memo, context) {
-      iteratee = optimizeCb(iteratee, context, 4);
-      var keys = !isArrayLike(obj) && _.keys(obj),
-          length = (keys || obj).length,
-          index = dir > 0 ? 0 : length - 1;
-      // Determine the initial value if none is provided.
-      if (arguments.length < 3) {
-        memo = obj[keys ? keys[index] : index];
-        index += dir;
-      }
-      return iterator(obj, iteratee, memo, keys, index, length);
-    };
-  }
-
-  // **Reduce** builds up a single result from a list of values, aka `inject`,
-  // or `foldl`.
-  _.reduce = _.foldl = _.inject = createReduce(1);
-
-  // The right-associative version of reduce, also known as `foldr`.
-  _.reduceRight = _.foldr = createReduce(-1);
-
-  // Return the first value which passes a truth test. Aliased as `detect`.
-  _.find = _.detect = function(obj, predicate, context) {
-    var key;
-    if (isArrayLike(obj)) {
-      key = _.findIndex(obj, predicate, context);
-    } else {
-      key = _.findKey(obj, predicate, context);
-    }
-    if (key !== void 0 && key !== -1) return obj[key];
-  };
-
-  // Return all the elements that pass a truth test.
-  // Aliased as `select`.
-  _.filter = _.select = function(obj, predicate, context) {
-    var results = [];
-    predicate = cb(predicate, context);
-    _.each(obj, function(value, index, list) {
-      if (predicate(value, index, list)) results.push(value);
-    });
-    return results;
-  };
-
-  // Return all the elements for which a truth test fails.
-  _.reject = function(obj, predicate, context) {
-    return _.filter(obj, _.negate(cb(predicate)), context);
-  };
-
-  // Determine whether all of the elements match a truth test.
-  // Aliased as `all`.
-  _.every = _.all = function(obj, predicate, context) {
-    predicate = cb(predicate, context);
-    var keys = !isArrayLike(obj) && _.keys(obj),
-        length = (keys || obj).length;
-    for (var index = 0; index < length; index++) {
-      var currentKey = keys ? keys[index] : index;
-      if (!predicate(obj[currentKey], currentKey, obj)) return false;
-    }
-    return true;
-  };
-
-  // Determine if at least one element in the object matches a truth test.
-  // Aliased as `any`.
-  _.some = _.any = function(obj, predicate, context) {
-    predicate = cb(predicate, context);
-    var keys = !isArrayLike(obj) && _.keys(obj),
-        length = (keys || obj).length;
-    for (var index = 0; index < length; index++) {
-      var currentKey = keys ? keys[index] : index;
-      if (predicate(obj[currentKey], currentKey, obj)) return true;
-    }
-    return false;
-  };
-
-  // Determine if the array or object contains a given item (using `===`).
-  // Aliased as `includes` and `include`.
-  _.contains = _.includes = _.include = function(obj, item, fromIndex, guard) {
-    if (!isArrayLike(obj)) obj = _.values(obj);
-    if (typeof fromIndex != 'number' || guard) fromIndex = 0;
-    return _.indexOf(obj, item, fromIndex) >= 0;
-  };
-
-  // Invoke a method (with arguments) on every item in a collection.
-  _.invoke = function(obj, method) {
-    var args = slice.call(arguments, 2);
-    var isFunc = _.isFunction(method);
-    return _.map(obj, function(value) {
-      var func = isFunc ? method : value[method];
-      return func == null ? func : func.apply(value, args);
-    });
-  };
-
-  // Convenience version of a common use case of `map`: fetching a property.
-  _.pluck = function(obj, key) {
-    return _.map(obj, _.property(key));
-  };
-
-  // Convenience version of a common use case of `filter`: selecting only objects
-  // containing specific `key:value` pairs.
-  _.where = function(obj, attrs) {
-    return _.filter(obj, _.matcher(attrs));
-  };
-
-  // Convenience version of a common use case of `find`: getting the first object
-  // containing specific `key:value` pairs.
-  _.findWhere = function(obj, attrs) {
-    return _.find(obj, _.matcher(attrs));
-  };
-
-  // Return the maximum element (or element-based computation).
-  _.max = function(obj, iteratee, context) {
-    var result = -Infinity, lastComputed = -Infinity,
-        value, computed;
-    if (iteratee == null && obj != null) {
-      obj = isArrayLike(obj) ? obj : _.values(obj);
-      for (var i = 0, length = obj.length; i < length; i++) {
-        value = obj[i];
-        if (value > result) {
-          result = value;
-        }
-      }
-    } else {
-      iteratee = cb(iteratee, context);
-      _.each(obj, function(value, index, list) {
-        computed = iteratee(value, index, list);
-        if (computed > lastComputed || computed === -Infinity && result === -Infinity) {
-          result = value;
-          lastComputed = computed;
-        }
-      });
-    }
-    return result;
-  };
-
-  // Return the minimum element (or element-based computation).
-  _.min = function(obj, iteratee, context) {
-    var result = Infinity, lastComputed = Infinity,
-        value, computed;
-    if (iteratee == null && obj != null) {
-      obj = isArrayLike(obj) ? obj : _.values(obj);
-      for (var i = 0, length = obj.length; i < length; i++) {
-        value = obj[i];
-        if (value < result) {
-          result = value;
-        }
-      }
-    } else {
-      iteratee = cb(iteratee, context);
-      _.each(obj, function(value, index, list) {
-        computed = iteratee(value, index, list);
-        if (computed < lastComputed || computed === Infinity && result === Infinity) {
-          result = value;
-          lastComputed = computed;
-        }
-      });
-    }
-    return result;
-  };
-
-  // Shuffle a collection, using the modern version of the
-  // [Fisher-Yates shuffle](http://en.wikipedia.org/wiki/Fisher–Yates_shuffle).
-  _.shuffle = function(obj) {
-    var set = isArrayLike(obj) ? obj : _.values(obj);
-    var length = set.length;
-    var shuffled = Array(length);
-    for (var index = 0, rand; index < length; index++) {
-      rand = _.random(0, index);
-      if (rand !== index) shuffled[index] = shuffled[rand];
-      shuffled[rand] = set[index];
-    }
-    return shuffled;
-  };
-
-  // Sample **n** random values from a collection.
-  // If **n** is not specified, returns a single random element.
-  // The internal `guard` argument allows it to work with `map`.
-  _.sample = function(obj, n, guard) {
-    if (n == null || guard) {
-      if (!isArrayLike(obj)) obj = _.values(obj);
-      return obj[_.random(obj.length - 1)];
-    }
-    return _.shuffle(obj).slice(0, Math.max(0, n));
-  };
-
-  // Sort the object's values by a criterion produced by an iteratee.
-  _.sortBy = function(obj, iteratee, context) {
-    iteratee = cb(iteratee, context);
-    return _.pluck(_.map(obj, function(value, index, list) {
-      return {
-        value: value,
-        index: index,
-        criteria: iteratee(value, index, list)
-      };
-    }).sort(function(left, right) {
-      var a = left.criteria;
-      var b = right.criteria;
-      if (a !== b) {
-        if (a > b || a === void 0) return 1;
-        if (a < b || b === void 0) return -1;
-      }
-      return left.index - right.index;
-    }), 'value');
-  };
-
-  // An internal function used for aggregate "group by" operations.
-  var group = function(behavior) {
-    return function(obj, iteratee, context) {
-      var result = {};
-      iteratee = cb(iteratee, context);
-      _.each(obj, function(value, index) {
-        var key = iteratee(value, index, obj);
-        behavior(result, value, key);
-      });
-      return result;
-    };
-  };
-
-  // Groups the object's values by a criterion. Pass either a string attribute
-  // to group by, or a function that returns the criterion.
-  _.groupBy = group(function(result, value, key) {
-    if (_.has(result, key)) result[key].push(value); else result[key] = [value];
-  });
-
-  // Indexes the object's values by a criterion, similar to `groupBy`, but for
-  // when you know that your index values will be unique.
-  _.indexBy = group(function(result, value, key) {
-    result[key] = value;
-  });
-
-  // Counts instances of an object that group by a certain criterion. Pass
-  // either a string attribute to count by, or a function that returns the
-  // criterion.
-  _.countBy = group(function(result, value, key) {
-    if (_.has(result, key)) result[key]++; else result[key] = 1;
-  });
-
-  // Safely create a real, live array from anything iterable.
-  _.toArray = function(obj) {
-    if (!obj) return [];
-    if (_.isArray(obj)) return slice.call(obj);
-    if (isArrayLike(obj)) return _.map(obj, _.identity);
-    return _.values(obj);
-  };
-
-  // Return the number of elements in an object.
-  _.size = function(obj) {
-    if (obj == null) return 0;
-    return isArrayLike(obj) ? obj.length : _.keys(obj).length;
-  };
-
-  // Split a collection into two arrays: one whose elements all satisfy the given
-  // predicate, and one whose elements all do not satisfy the predicate.
-  _.partition = function(obj, predicate, context) {
-    predicate = cb(predicate, context);
-    var pass = [], fail = [];
-    _.each(obj, function(value, key, obj) {
-      (predicate(value, key, obj) ? pass : fail).push(value);
-    });
-    return [pass, fail];
-  };
-
-  // Array Functions
-  // ---------------
-
-  // Get the first element of an array. Passing **n** will return the first N
-  // values in the array. Aliased as `head` and `take`. The **guard** check
-  // allows it to work with `_.map`.
-  _.first = _.head = _.take = function(array, n, guard) {
-    if (array == null) return void 0;
-    if (n == null || guard) return array[0];
-    return _.initial(array, array.length - n);
-  };
-
-  // Returns everything but the last entry of the array. Especially useful on
-  // the arguments object. Passing **n** will return all the values in
-  // the array, excluding the last N.
-  _.initial = function(array, n, guard) {
-    return slice.call(array, 0, Math.max(0, array.length - (n == null || guard ? 1 : n)));
-  };
-
-  // Get the last element of an array. Passing **n** will return the last N
-  // values in the array.
-  _.last = function(array, n, guard) {
-    if (array == null) return void 0;
-    if (n == null || guard) return array[array.length - 1];
-    return _.rest(array, Math.max(0, array.length - n));
-  };
-
-  // Returns everything but the first entry of the array. Aliased as `tail` and `drop`.
-  // Especially useful on the arguments object. Passing an **n** will return
-  // the rest N values in the array.
-  _.rest = _.tail = _.drop = function(array, n, guard) {
-    return slice.call(array, n == null || guard ? 1 : n);
-  };
-
-  // Trim out all falsy values from an array.
-  _.compact = function(array) {
-    return _.filter(array, _.identity);
-  };
-
-  // Internal implementation of a recursive `flatten` function.
-  var flatten = function(input, shallow, strict, startIndex) {
-    var output = [], idx = 0;
-    for (var i = startIndex || 0, length = getLength(input); i < length; i++) {
-      var value = input[i];
-      if (isArrayLike(value) && (_.isArray(value) || _.isArguments(value))) {
-        //flatten current level of array or arguments object
-        if (!shallow) value = flatten(value, shallow, strict);
-        var j = 0, len = value.length;
-        output.length += len;
-        while (j < len) {
-          output[idx++] = value[j++];
-        }
-      } else if (!strict) {
-        output[idx++] = value;
-      }
-    }
-    return output;
-  };
-
-  // Flatten out an array, either recursively (by default), or just one level.
-  _.flatten = function(array, shallow) {
-    return flatten(array, shallow, false);
-  };
-
-  // Return a version of the array that does not contain the specified value(s).
-  _.without = function(array) {
-    return _.difference(array, slice.call(arguments, 1));
-  };
-
-  // Produce a duplicate-free version of the array. If the array has already
-  // been sorted, you have the option of using a faster algorithm.
-  // Aliased as `unique`.
-  _.uniq = _.unique = function(array, isSorted, iteratee, context) {
-    if (!_.isBoolean(isSorted)) {
-      context = iteratee;
-      iteratee = isSorted;
-      isSorted = false;
-    }
-    if (iteratee != null) iteratee = cb(iteratee, context);
-    var result = [];
-    var seen = [];
-    for (var i = 0, length = getLength(array); i < length; i++) {
-      var value = array[i],
-          computed = iteratee ? iteratee(value, i, array) : value;
-      if (isSorted) {
-        if (!i || seen !== computed) result.push(value);
-        seen = computed;
-      } else if (iteratee) {
-        if (!_.contains(seen, computed)) {
-          seen.push(computed);
-          result.push(value);
-        }
-      } else if (!_.contains(result, value)) {
-        result.push(value);
-      }
-    }
-    return result;
-  };
-
-  // Produce an array that contains the union: each distinct element from all of
-  // the passed-in arrays.
-  _.union = function() {
-    return _.uniq(flatten(arguments, true, true));
-  };
-
-  // Produce an array that contains every item shared between all the
-  // passed-in arrays.
-  _.intersection = function(array) {
-    var result = [];
-    var argsLength = arguments.length;
-    for (var i = 0, length = getLength(array); i < length; i++) {
-      var item = array[i];
-      if (_.contains(result, item)) continue;
-      for (var j = 1; j < argsLength; j++) {
-        if (!_.contains(arguments[j], item)) break;
-      }
-      if (j === argsLength) result.push(item);
-    }
-    return result;
-  };
-
-  // Take the difference between one array and a number of other arrays.
-  // Only the elements present in just the first array will remain.
-  _.difference = function(array) {
-    var rest = flatten(arguments, true, true, 1);
-    return _.filter(array, function(value){
-      return !_.contains(rest, value);
-    });
-  };
-
-  // Zip together multiple lists into a single array -- elements that share
-  // an index go together.
-  _.zip = function() {
-    return _.unzip(arguments);
-  };
-
-  // Complement of _.zip. Unzip accepts an array of arrays and groups
-  // each array's elements on shared indices
-  _.unzip = function(array) {
-    var length = array && _.max(array, getLength).length || 0;
-    var result = Array(length);
-
-    for (var index = 0; index < length; index++) {
-      result[index] = _.pluck(array, index);
-    }
-    return result;
-  };
-
-  // Converts lists into objects. Pass either a single array of `[key, value]`
-  // pairs, or two parallel arrays of the same length -- one of keys, and one of
-  // the corresponding values.
-  _.object = function(list, values) {
-    var result = {};
-    for (var i = 0, length = getLength(list); i < length; i++) {
-      if (values) {
-        result[list[i]] = values[i];
-      } else {
-        result[list[i][0]] = list[i][1];
-      }
-    }
-    return result;
-  };
-
-  // Generator function to create the findIndex and findLastIndex functions
-  function createPredicateIndexFinder(dir) {
-    return function(array, predicate, context) {
-      predicate = cb(predicate, context);
-      var length = getLength(array);
-      var index = dir > 0 ? 0 : length - 1;
-      for (; index >= 0 && index < length; index += dir) {
-        if (predicate(array[index], index, array)) return index;
-      }
-      return -1;
-    };
-  }
-
-  // Returns the first index on an array-like that passes a predicate test
-  _.findIndex = createPredicateIndexFinder(1);
-  _.findLastIndex = createPredicateIndexFinder(-1);
-
-  // Use a comparator function to figure out the smallest index at which
-  // an object should be inserted so as to maintain order. Uses binary search.
-  _.sortedIndex = function(array, obj, iteratee, context) {
-    iteratee = cb(iteratee, context, 1);
-    var value = iteratee(obj);
-    var low = 0, high = getLength(array);
-    while (low < high) {
-      var mid = Math.floor((low + high) / 2);
-      if (iteratee(array[mid]) < value) low = mid + 1; else high = mid;
-    }
-    return low;
-  };
-
-  // Generator function to create the indexOf and lastIndexOf functions
-  function createIndexFinder(dir, predicateFind, sortedIndex) {
-    return function(array, item, idx) {
-      var i = 0, length = getLength(array);
-      if (typeof idx == 'number') {
-        if (dir > 0) {
-            i = idx >= 0 ? idx : Math.max(idx + length, i);
-        } else {
-            length = idx >= 0 ? Math.min(idx + 1, length) : idx + length + 1;
-        }
-      } else if (sortedIndex && idx && length) {
-        idx = sortedIndex(array, item);
-        return array[idx] === item ? idx : -1;
-      }
-      if (item !== item) {
-        idx = predicateFind(slice.call(array, i, length), _.isNaN);
-        return idx >= 0 ? idx + i : -1;
-      }
-      for (idx = dir > 0 ? i : length - 1; idx >= 0 && idx < length; idx += dir) {
-        if (array[idx] === item) return idx;
-      }
-      return -1;
-    };
-  }
-
-  // Return the position of the first occurrence of an item in an array,
-  // or -1 if the item is not included in the array.
-  // If the array is large and already in sort order, pass `true`
-  // for **isSorted** to use binary search.
-  _.indexOf = createIndexFinder(1, _.findIndex, _.sortedIndex);
-  _.lastIndexOf = createIndexFinder(-1, _.findLastIndex);
-
-  // Generate an integer Array containing an arithmetic progression. A port of
-  // the native Python `range()` function. See
-  // [the Python documentation](http://docs.python.org/library/functions.html#range).
-  _.range = function(start, stop, step) {
-    if (stop == null) {
-      stop = start || 0;
-      start = 0;
-    }
-    step = step || 1;
-
-    var length = Math.max(Math.ceil((stop - start) / step), 0);
-    var range = Array(length);
-
-    for (var idx = 0; idx < length; idx++, start += step) {
-      range[idx] = start;
-    }
-
-    return range;
-  };
-
-  // Function (ahem) Functions
-  // ------------------
-
-  // Determines whether to execute a function as a constructor
-  // or a normal function with the provided arguments
-  var executeBound = function(sourceFunc, boundFunc, context, callingContext, args) {
-    if (!(callingContext instanceof boundFunc)) return sourceFunc.apply(context, args);
-    var self = baseCreate(sourceFunc.prototype);
-    var result = sourceFunc.apply(self, args);
-    if (_.isObject(result)) return result;
-    return self;
-  };
-
-  // Create a function bound to a given object (assigning `this`, and arguments,
-  // optionally). Delegates to **ECMAScript 5**'s native `Function.bind` if
-  // available.
-  _.bind = function(func, context) {
-    if (nativeBind && func.bind === nativeBind) return nativeBind.apply(func, slice.call(arguments, 1));
-    if (!_.isFunction(func)) throw new TypeError('Bind must be called on a function');
-    var args = slice.call(arguments, 2);
-    var bound = function() {
-      return executeBound(func, bound, context, this, args.concat(slice.call(arguments)));
-    };
-    return bound;
-  };
-
-  // Partially apply a function by creating a version that has had some of its
-  // arguments pre-filled, without changing its dynamic `this` context. _ acts
-  // as a placeholder, allowing any combination of arguments to be pre-filled.
-  _.partial = function(func) {
-    var boundArgs = slice.call(arguments, 1);
-    var bound = function() {
-      var position = 0, length = boundArgs.length;
-      var args = Array(length);
-      for (var i = 0; i < length; i++) {
-        args[i] = boundArgs[i] === _ ? arguments[position++] : boundArgs[i];
-      }
-      while (position < arguments.length) args.push(arguments[position++]);
-      return executeBound(func, bound, this, this, args);
-    };
-    return bound;
-  };
-
-  // Bind a number of an object's methods to that object. Remaining arguments
-  // are the method names to be bound. Useful for ensuring that all callbacks
-  // defined on an object belong to it.
-  _.bindAll = function(obj) {
-    var i, length = arguments.length, key;
-    if (length <= 1) throw new Error('bindAll must be passed function names');
-    for (i = 1; i < length; i++) {
-      key = arguments[i];
-      obj[key] = _.bind(obj[key], obj);
-    }
-    return obj;
-  };
-
-  // Memoize an expensive function by storing its results.
-  _.memoize = function(func, hasher) {
-    var memoize = function(key) {
-      var cache = memoize.cache;
-      var address = '' + (hasher ? hasher.apply(this, arguments) : key);
-      if (!_.has(cache, address)) cache[address] = func.apply(this, arguments);
-      return cache[address];
-    };
-    memoize.cache = {};
-    return memoize;
-  };
-
-  // Delays a function for the given number of milliseconds, and then calls
-  // it with the arguments supplied.
-  _.delay = function(func, wait) {
-    var args = slice.call(arguments, 2);
-    return setTimeout(function(){
-      return func.apply(null, args);
-    }, wait);
-  };
-
-  // Defers a function, scheduling it to run after the current call stack has
-  // cleared.
-  _.defer = _.partial(_.delay, _, 1);
-
-  // Returns a function, that, when invoked, will only be triggered at most once
-  // during a given window of time. Normally, the throttled function will run
-  // as much as it can, without ever going more than once per `wait` duration;
-  // but if you'd like to disable the execution on the leading edge, pass
-  // `{leading: false}`. To disable execution on the trailing edge, ditto.
-  _.throttle = function(func, wait, options) {
-    var context, args, result;
-    var timeout = null;
-    var previous = 0;
-    if (!options) options = {};
-    var later = function() {
-      previous = options.leading === false ? 0 : _.now();
-      timeout = null;
-      result = func.apply(context, args);
-      if (!timeout) context = args = null;
-    };
-    return function() {
-      var now = _.now();
-      if (!previous && options.leading === false) previous = now;
-      var remaining = wait - (now - previous);
-      context = this;
-      args = arguments;
-      if (remaining <= 0 || remaining > wait) {
-        if (timeout) {
-          clearTimeout(timeout);
-          timeout = null;
-        }
-        previous = now;
-        result = func.apply(context, args);
-        if (!timeout) context = args = null;
-      } else if (!timeout && options.trailing !== false) {
-        timeout = setTimeout(later, remaining);
-      }
-      return result;
-    };
-  };
-
-  // Returns a function, that, as long as it continues to be invoked, will not
-  // be triggered. The function will be called after it stops being called for
-  // N milliseconds. If `immediate` is passed, trigger the function on the
-  // leading edge, instead of the trailing.
-  _.debounce = function(func, wait, immediate) {
-    var timeout, args, context, timestamp, result;
-
-    var later = function() {
-      var last = _.now() - timestamp;
-
-      if (last < wait && last >= 0) {
-        timeout = setTimeout(later, wait - last);
-      } else {
-        timeout = null;
-        if (!immediate) {
-          result = func.apply(context, args);
-          if (!timeout) context = args = null;
-        }
-      }
-    };
-
-    return function() {
-      context = this;
-      args = arguments;
-      timestamp = _.now();
-      var callNow = immediate && !timeout;
-      if (!timeout) timeout = setTimeout(later, wait);
-      if (callNow) {
-        result = func.apply(context, args);
-        context = args = null;
-      }
-
-      return result;
-    };
-  };
-
-  // Returns the first function passed as an argument to the second,
-  // allowing you to adjust arguments, run code before and after, and
-  // conditionally execute the original function.
-  _.wrap = function(func, wrapper) {
-    return _.partial(wrapper, func);
-  };
-
-  // Returns a negated version of the passed-in predicate.
-  _.negate = function(predicate) {
-    return function() {
-      return !predicate.apply(this, arguments);
-    };
-  };
-
-  // Returns a function that is the composition of a list of functions, each
-  // consuming the return value of the function that follows.
-  _.compose = function() {
-    var args = arguments;
-    var start = args.length - 1;
-    return function() {
-      var i = start;
-      var result = args[start].apply(this, arguments);
-      while (i--) result = args[i].call(this, result);
-      return result;
-    };
-  };
-
-  // Returns a function that will only be executed on and after the Nth call.
-  _.after = function(times, func) {
-    return function() {
-      if (--times < 1) {
-        return func.apply(this, arguments);
-      }
-    };
-  };
-
-  // Returns a function that will only be executed up to (but not including) the Nth call.
-  _.before = function(times, func) {
-    var memo;
-    return function() {
-      if (--times > 0) {
-        memo = func.apply(this, arguments);
-      }
-      if (times <= 1) func = null;
-      return memo;
-    };
-  };
-
-  // Returns a function that will be executed at most one time, no matter how
-  // often you call it. Useful for lazy initialization.
-  _.once = _.partial(_.before, 2);
-
-  // Object Functions
-  // ----------------
-
-  // Keys in IE < 9 that won't be iterated by `for key in ...` and thus missed.
-  var hasEnumBug = !{toString: null}.propertyIsEnumerable('toString');
-  var nonEnumerableProps = ['valueOf', 'isPrototypeOf', 'toString',
-                      'propertyIsEnumerable', 'hasOwnProperty', 'toLocaleString'];
-
-  function collectNonEnumProps(obj, keys) {
-    var nonEnumIdx = nonEnumerableProps.length;
-    var constructor = obj.constructor;
-    var proto = (_.isFunction(constructor) && constructor.prototype) || ObjProto;
-
-    // Constructor is a special case.
-    var prop = 'constructor';
-    if (_.has(obj, prop) && !_.contains(keys, prop)) keys.push(prop);
-
-    while (nonEnumIdx--) {
-      prop = nonEnumerableProps[nonEnumIdx];
-      if (prop in obj && obj[prop] !== proto[prop] && !_.contains(keys, prop)) {
-        keys.push(prop);
-      }
-    }
-  }
-
-  // Retrieve the names of an object's own properties.
-  // Delegates to **ECMAScript 5**'s native `Object.keys`
-  _.keys = function(obj) {
-    if (!_.isObject(obj)) return [];
-    if (nativeKeys) return nativeKeys(obj);
-    var keys = [];
-    for (var key in obj) if (_.has(obj, key)) keys.push(key);
-    // Ahem, IE < 9.
-    if (hasEnumBug) collectNonEnumProps(obj, keys);
-    return keys;
-  };
-
-  // Retrieve all the property names of an object.
-  _.allKeys = function(obj) {
-    if (!_.isObject(obj)) return [];
-    var keys = [];
-    for (var key in obj) keys.push(key);
-    // Ahem, IE < 9.
-    if (hasEnumBug) collectNonEnumProps(obj, keys);
-    return keys;
-  };
-
-  // Retrieve the values of an object's properties.
-  _.values = function(obj) {
-    var keys = _.keys(obj);
-    var length = keys.length;
-    var values = Array(length);
-    for (var i = 0; i < length; i++) {
-      values[i] = obj[keys[i]];
-    }
-    return values;
-  };
-
-  // Returns the results of applying the iteratee to each element of the object
-  // In contrast to _.map it returns an object
-  _.mapObject = function(obj, iteratee, context) {
-    iteratee = cb(iteratee, context);
-    var keys =  _.keys(obj),
-          length = keys.length,
-          results = {},
-          currentKey;
-      for (var index = 0; index < length; index++) {
-        currentKey = keys[index];
-        results[currentKey] = iteratee(obj[currentKey], currentKey, obj);
-      }
-      return results;
-  };
-
-  // Convert an object into a list of `[key, value]` pairs.
-  _.pairs = function(obj) {
-    var keys = _.keys(obj);
-    var length = keys.length;
-    var pairs = Array(length);
-    for (var i = 0; i < length; i++) {
-      pairs[i] = [keys[i], obj[keys[i]]];
-    }
-    return pairs;
-  };
-
-  // Invert the keys and values of an object. The values must be serializable.
-  _.invert = function(obj) {
-    var result = {};
-    var keys = _.keys(obj);
-    for (var i = 0, length = keys.length; i < length; i++) {
-      result[obj[keys[i]]] = keys[i];
-    }
-    return result;
-  };
-
-  // Return a sorted list of the function names available on the object.
-  // Aliased as `methods`
-  _.functions = _.methods = function(obj) {
-    var names = [];
-    for (var key in obj) {
-      if (_.isFunction(obj[key])) names.push(key);
-    }
-    return names.sort();
-  };
-
-  // Extend a given object with all the properties in passed-in object(s).
-  _.extend = createAssigner(_.allKeys);
-
-  // Assigns a given object with all the own properties in the passed-in object(s)
-  // (https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object/assign)
-  _.extendOwn = _.assign = createAssigner(_.keys);
-
-  // Returns the first key on an object that passes a predicate test
-  _.findKey = function(obj, predicate, context) {
-    predicate = cb(predicate, context);
-    var keys = _.keys(obj), key;
-    for (var i = 0, length = keys.length; i < length; i++) {
-      key = keys[i];
-      if (predicate(obj[key], key, obj)) return key;
-    }
-  };
-
-  // Return a copy of the object only containing the whitelisted properties.
-  _.pick = function(object, oiteratee, context) {
-    var result = {}, obj = object, iteratee, keys;
-    if (obj == null) return result;
-    if (_.isFunction(oiteratee)) {
-      keys = _.allKeys(obj);
-      iteratee = optimizeCb(oiteratee, context);
-    } else {
-      keys = flatten(arguments, false, false, 1);
-      iteratee = function(value, key, obj) { return key in obj; };
-      obj = Object(obj);
-    }
-    for (var i = 0, length = keys.length; i < length; i++) {
-      var key = keys[i];
-      var value = obj[key];
-      if (iteratee(value, key, obj)) result[key] = value;
-    }
-    return result;
-  };
-
-   // Return a copy of the object without the blacklisted properties.
-  _.omit = function(obj, iteratee, context) {
-    if (_.isFunction(iteratee)) {
-      iteratee = _.negate(iteratee);
-    } else {
-      var keys = _.map(flatten(arguments, false, false, 1), String);
-      iteratee = function(value, key) {
-        return !_.contains(keys, key);
-      };
-    }
-    return _.pick(obj, iteratee, context);
-  };
-
-  // Fill in a given object with default properties.
-  _.defaults = createAssigner(_.allKeys, true);
-
-  // Creates an object that inherits from the given prototype object.
-  // If additional properties are provided then they will be added to the
-  // created object.
-  _.create = function(prototype, props) {
-    var result = baseCreate(prototype);
-    if (props) _.extendOwn(result, props);
-    return result;
-  };
-
-  // Create a (shallow-cloned) duplicate of an object.
-  _.clone = function(obj) {
-    if (!_.isObject(obj)) return obj;
-    return _.isArray(obj) ? obj.slice() : _.extend({}, obj);
-  };
-
-  // Invokes interceptor with the obj, and then returns obj.
-  // The primary purpose of this method is to "tap into" a method chain, in
-  // order to perform operations on intermediate results within the chain.
-  _.tap = function(obj, interceptor) {
-    interceptor(obj);
-    return obj;
-  };
-
-  // Returns whether an object has a given set of `key:value` pairs.
-  _.isMatch = function(object, attrs) {
-    var keys = _.keys(attrs), length = keys.length;
-    if (object == null) return !length;
-    var obj = Object(object);
-    for (var i = 0; i < length; i++) {
-      var key = keys[i];
-      if (attrs[key] !== obj[key] || !(key in obj)) return false;
-    }
-    return true;
-  };
-
-
-  // Internal recursive comparison function for `isEqual`.
-  var eq = function(a, b, aStack, bStack) {
-    // Identical objects are equal. `0 === -0`, but they aren't identical.
-    // See the [Harmony `egal` proposal](http://wiki.ecmascript.org/doku.php?id=harmony:egal).
-    if (a === b) return a !== 0 || 1 / a === 1 / b;
-    // A strict comparison is necessary because `null == undefined`.
-    if (a == null || b == null) return a === b;
-    // Unwrap any wrapped objects.
-    if (a instanceof _) a = a._wrapped;
-    if (b instanceof _) b = b._wrapped;
-    // Compare `[[Class]]` names.
-    var className = toString.call(a);
-    if (className !== toString.call(b)) return false;
-    switch (className) {
-      // Strings, numbers, regular expressions, dates, and booleans are compared by value.
-      case '[object RegExp]':
-      // RegExps are coerced to strings for comparison (Note: '' + /a/i === '/a/i')
-      case '[object String]':
-        // Primitives and their corresponding object wrappers are equivalent; thus, `"5"` is
-        // equivalent to `new String("5")`.
-        return '' + a === '' + b;
-      case '[object Number]':
-        // `NaN`s are equivalent, but non-reflexive.
-        // Object(NaN) is equivalent to NaN
-        if (+a !== +a) return +b !== +b;
-        // An `egal` comparison is performed for other numeric values.
-        return +a === 0 ? 1 / +a === 1 / b : +a === +b;
-      case '[object Date]':
-      case '[object Boolean]':
-        // Coerce dates and booleans to numeric primitive values. Dates are compared by their
-        // millisecond representations. Note that invalid dates with millisecond representations
-        // of `NaN` are not equivalent.
-        return +a === +b;
-    }
-
-    var areArrays = className === '[object Array]';
-    if (!areArrays) {
-      if (typeof a != 'object' || typeof b != 'object') return false;
-
-      // Objects with different constructors are not equivalent, but `Object`s or `Array`s
-      // from different frames are.
-      var aCtor = a.constructor, bCtor = b.constructor;
-      if (aCtor !== bCtor && !(_.isFunction(aCtor) && aCtor instanceof aCtor &&
-                               _.isFunction(bCtor) && bCtor instanceof bCtor)
-                          && ('constructor' in a && 'constructor' in b)) {
-        return false;
-      }
-    }
-    // Assume equality for cyclic structures. The algorithm for detecting cyclic
-    // structures is adapted from ES 5.1 section 15.12.3, abstract operation `JO`.
-
-    // Initializing stack of traversed objects.
-    // It's done here since we only need them for objects and arrays comparison.
-    aStack = aStack || [];
-    bStack = bStack || [];
-    var length = aStack.length;
-    while (length--) {
-      // Linear search. Performance is inversely proportional to the number of
-      // unique nested structures.
-      if (aStack[length] === a) return bStack[length] === b;
-    }
-
-    // Add the first object to the stack of traversed objects.
-    aStack.push(a);
-    bStack.push(b);
-
-    // Recursively compare objects and arrays.
-    if (areArrays) {
-      // Compare array lengths to determine if a deep comparison is necessary.
-      length = a.length;
-      if (length !== b.length) return false;
-      // Deep compare the contents, ignoring non-numeric properties.
-      while (length--) {
-        if (!eq(a[length], b[length], aStack, bStack)) return false;
-      }
-    } else {
-      // Deep compare objects.
-      var keys = _.keys(a), key;
-      length = keys.length;
-      // Ensure that both objects contain the same number of properties before comparing deep equality.
-      if (_.keys(b).length !== length) return false;
-      while (length--) {
-        // Deep compare each member
-        key = keys[length];
-        if (!(_.has(b, key) && eq(a[key], b[key], aStack, bStack))) return false;
-      }
-    }
-    // Remove the first object from the stack of traversed objects.
-    aStack.pop();
-    bStack.pop();
-    return true;
-  };
-
-  // Perform a deep comparison to check if two objects are equal.
-  _.isEqual = function(a, b) {
-    return eq(a, b);
-  };
-
-  // Is a given array, string, or object empty?
-  // An "empty" object has no enumerable own-properties.
-  _.isEmpty = function(obj) {
-    if (obj == null) return true;
-    if (isArrayLike(obj) && (_.isArray(obj) || _.isString(obj) || _.isArguments(obj))) return obj.length === 0;
-    return _.keys(obj).length === 0;
-  };
-
-  // Is a given value a DOM element?
-  _.isElement = function(obj) {
-    return !!(obj && obj.nodeType === 1);
-  };
-
-  // Is a given value an array?
-  // Delegates to ECMA5's native Array.isArray
-  _.isArray = nativeIsArray || function(obj) {
-    return toString.call(obj) === '[object Array]';
-  };
-
-  // Is a given variable an object?
-  _.isObject = function(obj) {
-    var type = typeof obj;
-    return type === 'function' || type === 'object' && !!obj;
-  };
-
-  // Add some isType methods: isArguments, isFunction, isString, isNumber, isDate, isRegExp, isError.
-  _.each(['Arguments', 'Function', 'String', 'Number', 'Date', 'RegExp', 'Error'], function(name) {
-    _['is' + name] = function(obj) {
-      return toString.call(obj) === '[object ' + name + ']';
-    };
-  });
-
-  // Define a fallback version of the method in browsers (ahem, IE < 9), where
-  // there isn't any inspectable "Arguments" type.
-  if (!_.isArguments(arguments)) {
-    _.isArguments = function(obj) {
-      return _.has(obj, 'callee');
-    };
-  }
-
-  // Optimize `isFunction` if appropriate. Work around some typeof bugs in old v8,
-  // IE 11 (#1621), and in Safari 8 (#1929).
-  if (typeof /./ != 'function' && typeof Int8Array != 'object') {
-    _.isFunction = function(obj) {
-      return typeof obj == 'function' || false;
-    };
-  }
-
-  // Is a given object a finite number?
-  _.isFinite = function(obj) {
-    return isFinite(obj) && !isNaN(parseFloat(obj));
-  };
-
-  // Is the given value `NaN`? (NaN is the only number which does not equal itself).
-  _.isNaN = function(obj) {
-    return _.isNumber(obj) && obj !== +obj;
-  };
-
-  // Is a given value a boolean?
-  _.isBoolean = function(obj) {
-    return obj === true || obj === false || toString.call(obj) === '[object Boolean]';
-  };
-
-  // Is a given value equal to null?
-  _.isNull = function(obj) {
-    return obj === null;
-  };
-
-  // Is a given variable undefined?
-  _.isUndefined = function(obj) {
-    return obj === void 0;
-  };
-
-  // Shortcut function for checking if an object has a given property directly
-  // on itself (in other words, not on a prototype).
-  _.has = function(obj, key) {
-    return obj != null && hasOwnProperty.call(obj, key);
-  };
-
-  // Utility Functions
-  // -----------------
-
-  // Run Underscore.js in *noConflict* mode, returning the `_` variable to its
-  // previous owner. Returns a reference to the Underscore object.
-  _.noConflict = function() {
-    root._ = previousUnderscore;
-    return this;
-  };
-
-  // Keep the identity function around for default iteratees.
-  _.identity = function(value) {
-    return value;
-  };
-
-  // Predicate-generating functions. Often useful outside of Underscore.
-  _.constant = function(value) {
-    return function() {
-      return value;
-    };
-  };
-
-  _.noop = function(){};
-
-  _.property = property;
-
-  // Generates a function for a given object that returns a given property.
-  _.propertyOf = function(obj) {
-    return obj == null ? function(){} : function(key) {
-      return obj[key];
-    };
-  };
-
-  // Returns a predicate for checking whether an object has a given set of
-  // `key:value` pairs.
-  _.matcher = _.matches = function(attrs) {
-    attrs = _.extendOwn({}, attrs);
-    return function(obj) {
-      return _.isMatch(obj, attrs);
-    };
-  };
-
-  // Run a function **n** times.
-  _.times = function(n, iteratee, context) {
-    var accum = Array(Math.max(0, n));
-    iteratee = optimizeCb(iteratee, context, 1);
-    for (var i = 0; i < n; i++) accum[i] = iteratee(i);
-    return accum;
-  };
-
-  // Return a random integer between min and max (inclusive).
-  _.random = function(min, max) {
-    if (max == null) {
-      max = min;
-      min = 0;
-    }
-    return min + Math.floor(Math.random() * (max - min + 1));
-  };
-
-  // A (possibly faster) way to get the current timestamp as an integer.
-  _.now = Date.now || function() {
-    return new Date().getTime();
-  };
-
-   // List of HTML entities for escaping.
-  var escapeMap = {
-    '&': '&amp;',
-    '<': '&lt;',
-    '>': '&gt;',
-    '"': '&quot;',
-    "'": '&#x27;',
-    '`': '&#x60;'
-  };
-  var unescapeMap = _.invert(escapeMap);
-
-  // Functions for escaping and unescaping strings to/from HTML interpolation.
-  var createEscaper = function(map) {
-    var escaper = function(match) {
-      return map[match];
-    };
-    // Regexes for identifying a key that needs to be escaped
-    var source = '(?:' + _.keys(map).join('|') + ')';
-    var testRegexp = RegExp(source);
-    var replaceRegexp = RegExp(source, 'g');
-    return function(string) {
-      string = string == null ? '' : '' + string;
-      return testRegexp.test(string) ? string.replace(replaceRegexp, escaper) : string;
-    };
-  };
-  _.escape = createEscaper(escapeMap);
-  _.unescape = createEscaper(unescapeMap);
-
-  // If the value of the named `property` is a function then invoke it with the
-  // `object` as context; otherwise, return it.
-  _.result = function(object, property, fallback) {
-    var value = object == null ? void 0 : object[property];
-    if (value === void 0) {
-      value = fallback;
-    }
-    return _.isFunction(value) ? value.call(object) : value;
-  };
-
-  // Generate a unique integer id (unique within the entire client session).
-  // Useful for temporary DOM ids.
-  var idCounter = 0;
-  _.uniqueId = function(prefix) {
-    var id = ++idCounter + '';
-    return prefix ? prefix + id : id;
-  };
-
-  // By default, Underscore uses ERB-style template delimiters, change the
-  // following template settings to use alternative delimiters.
-  _.templateSettings = {
-    evaluate    : /<%([\s\S]+?)%>/g,
-    interpolate : /<%=([\s\S]+?)%>/g,
-    escape      : /<%-([\s\S]+?)%>/g
-  };
-
-  // When customizing `templateSettings`, if you don't want to define an
-  // interpolation, evaluation or escaping regex, we need one that is
-  // guaranteed not to match.
-  var noMatch = /(.)^/;
-
-  // Certain characters need to be escaped so that they can be put into a
-  // string literal.
-  var escapes = {
-    "'":      "'",
-    '\\':     '\\',
-    '\r':     'r',
-    '\n':     'n',
-    '\u2028': 'u2028',
-    '\u2029': 'u2029'
-  };
-
-  var escaper = /\\|'|\r|\n|\u2028|\u2029/g;
-
-  var escapeChar = function(match) {
-    return '\\' + escapes[match];
-  };
-
-  // JavaScript micro-templating, similar to John Resig's implementation.
-  // Underscore templating handles arbitrary delimiters, preserves whitespace,
-  // and correctly escapes quotes within interpolated code.
-  // NB: `oldSettings` only exists for backwards compatibility.
-  _.template = function(text, settings, oldSettings) {
-    if (!settings && oldSettings) settings = oldSettings;
-    settings = _.defaults({}, settings, _.templateSettings);
-
-    // Combine delimiters into one regular expression via alternation.
-    var matcher = RegExp([
-      (settings.escape || noMatch).source,
-      (settings.interpolate || noMatch).source,
-      (settings.evaluate || noMatch).source
-    ].join('|') + '|$', 'g');
-
-    // Compile the template source, escaping string literals appropriately.
-    var index = 0;
-    var source = "__p+='";
-    text.replace(matcher, function(match, escape, interpolate, evaluate, offset) {
-      source += text.slice(index, offset).replace(escaper, escapeChar);
-      index = offset + match.length;
-
-      if (escape) {
-        source += "'+\n((__t=(" + escape + "))==null?'':_.escape(__t))+\n'";
-      } else if (interpolate) {
-        source += "'+\n((__t=(" + interpolate + "))==null?'':__t)+\n'";
-      } else if (evaluate) {
-        source += "';\n" + evaluate + "\n__p+='";
-      }
-
-      // Adobe VMs need the match returned to produce the correct offest.
-      return match;
-    });
-    source += "';\n";
-
-    // If a variable is not specified, place data values in local scope.
-    if (!settings.variable) source = 'with(obj||{}){\n' + source + '}\n';
-
-    source = "var __t,__p='',__j=Array.prototype.join," +
-      "print=function(){__p+=__j.call(arguments,'');};\n" +
-      source + 'return __p;\n';
-
-    try {
-      var render = new Function(settings.variable || 'obj', '_', source);
-    } catch (e) {
-      e.source = source;
-      throw e;
-    }
-
-    var template = function(data) {
-      return render.call(this, data, _);
-    };
-
-    // Provide the compiled source as a convenience for precompilation.
-    var argument = settings.variable || 'obj';
-    template.source = 'function(' + argument + '){\n' + source + '}';
-
-    return template;
-  };
-
-  // Add a "chain" function. Start chaining a wrapped Underscore object.
-  _.chain = function(obj) {
-    var instance = _(obj);
-    instance._chain = true;
-    return instance;
-  };
-
-  // OOP
-  // ---------------
-  // If Underscore is called as a function, it returns a wrapped object that
-  // can be used OO-style. This wrapper holds altered versions of all the
-  // underscore functions. Wrapped objects may be chained.
-
-  // Helper function to continue chaining intermediate results.
-  var result = function(instance, obj) {
-    return instance._chain ? _(obj).chain() : obj;
-  };
-
-  // Add your own custom functions to the Underscore object.
-  _.mixin = function(obj) {
-    _.each(_.functions(obj), function(name) {
-      var func = _[name] = obj[name];
-      _.prototype[name] = function() {
-        var args = [this._wrapped];
-        push.apply(args, arguments);
-        return result(this, func.apply(_, args));
-      };
-    });
-  };
-
-  // Add all of the Underscore functions to the wrapper object.
-  _.mixin(_);
-
-  // Add all mutator Array functions to the wrapper.
-  _.each(['pop', 'push', 'reverse', 'shift', 'sort', 'splice', 'unshift'], function(name) {
-    var method = ArrayProto[name];
-    _.prototype[name] = function() {
-      var obj = this._wrapped;
-      method.apply(obj, arguments);
-      if ((name === 'shift' || name === 'splice') && obj.length === 0) delete obj[0];
-      return result(this, obj);
-    };
-  });
-
-  // Add all accessor Array functions to the wrapper.
-  _.each(['concat', 'join', 'slice'], function(name) {
-    var method = ArrayProto[name];
-    _.prototype[name] = function() {
-      return result(this, method.apply(this._wrapped, arguments));
-    };
-  });
-
-  // Extracts the result from a wrapped and chained object.
-  _.prototype.value = function() {
-    return this._wrapped;
-  };
-
-  // Provide unwrapping proxy for some methods used in engine operations
-  // such as arithmetic and JSON stringification.
-  _.prototype.valueOf = _.prototype.toJSON = _.prototype.value;
-
-  _.prototype.toString = function() {
-    return '' + this._wrapped;
-  };
-
-  // AMD registration happens at the end for compatibility with AMD loaders
-  // that may not enforce next-turn semantics on modules. Even though general
-  // practice for AMD registration is to be anonymous, underscore registers
-  // as a named module because, like jQuery, it is a base library that is
-  // popular enough to be bundled in a third party lib, but not be part of
-  // an AMD load request. Those cases could generate an error when an
-  // anonymous define() is called outside of a loader request.
-  if (true) {
-    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [], __WEBPACK_AMD_DEFINE_RESULT__ = function() {
-      return _;
-    }.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
-				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-  }
-}.call(this));
+/* WEBPACK VAR INJECTION */(function(global) {module.exports = global["_"] = __webpack_require__(261);
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(48)))
+
+/***/ }),
+/* 8 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/*
+object-assign
+(c) Sindre Sorhus
+@license MIT
+*/
+
+
+/* eslint-disable no-unused-vars */
+var getOwnPropertySymbols = Object.getOwnPropertySymbols;
+var hasOwnProperty = Object.prototype.hasOwnProperty;
+var propIsEnumerable = Object.prototype.propertyIsEnumerable;
+
+function toObject(val) {
+	if (val === null || val === undefined) {
+		throw new TypeError('Object.assign cannot be called with null or undefined');
+	}
+
+	return Object(val);
+}
+
+function shouldUseNative() {
+	try {
+		if (!Object.assign) {
+			return false;
+		}
+
+		// Detect buggy property enumeration order in older V8 versions.
+
+		// https://bugs.chromium.org/p/v8/issues/detail?id=4118
+		var test1 = new String('abc');  // eslint-disable-line no-new-wrappers
+		test1[5] = 'de';
+		if (Object.getOwnPropertyNames(test1)[0] === '5') {
+			return false;
+		}
+
+		// https://bugs.chromium.org/p/v8/issues/detail?id=3056
+		var test2 = {};
+		for (var i = 0; i < 10; i++) {
+			test2['_' + String.fromCharCode(i)] = i;
+		}
+		var order2 = Object.getOwnPropertyNames(test2).map(function (n) {
+			return test2[n];
+		});
+		if (order2.join('') !== '0123456789') {
+			return false;
+		}
+
+		// https://bugs.chromium.org/p/v8/issues/detail?id=3056
+		var test3 = {};
+		'abcdefghijklmnopqrst'.split('').forEach(function (letter) {
+			test3[letter] = letter;
+		});
+		if (Object.keys(Object.assign({}, test3)).join('') !==
+				'abcdefghijklmnopqrst') {
+			return false;
+		}
+
+		return true;
+	} catch (err) {
+		// We don't expect any of the above to throw, but better to be safe.
+		return false;
+	}
+}
+
+module.exports = shouldUseNative() ? Object.assign : function (target, source) {
+	var from;
+	var to = toObject(target);
+	var symbols;
+
+	for (var s = 1; s < arguments.length; s++) {
+		from = Object(arguments[s]);
+
+		for (var key in from) {
+			if (hasOwnProperty.call(from, key)) {
+				to[key] = from[key];
+			}
+		}
+
+		if (getOwnPropertySymbols) {
+			symbols = getOwnPropertySymbols(from);
+			for (var i = 0; i < symbols.length; i++) {
+				if (propIsEnumerable.call(from, symbols[i])) {
+					to[symbols[i]] = from[symbols[i]];
+				}
+			}
+		}
+	}
+
+	return to;
+};
 
 
 /***/ }),
-/* 8 */,
 /* 9 */,
 /* 10 */,
 /* 11 */
@@ -2062,10 +616,12 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;//     Underscor
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(process) {/**
- * Copyright (c) 2016-present, Facebook, Inc.
+ * Copyright 2016-present, Facebook, Inc.
+ * All rights reserved.
  *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
+ * This source code is licensed under the BSD-style license found in the
+ * LICENSE file in the root directory of this source tree. An additional grant
+ * of patent rights can be found in the PATENTS file in the same directory.
  *
  * 
  */
@@ -2448,9 +1004,11 @@ module.exports = ReactComponentTreeHook;
 
 /**
  * Copyright (c) 2013-present, Facebook, Inc.
+ * All rights reserved.
  *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
+ * This source code is licensed under the BSD-style license found in the
+ * LICENSE file in the root directory of this source tree. An additional grant
+ * of patent rights can be found in the PATENTS file in the same directory.
  *
  * 
  */
@@ -2492,10 +1050,12 @@ module.exports = emptyFunction;
 
 "use strict";
 /**
- * Copyright (c) 2013-present, Facebook, Inc.
+ * Copyright 2013-present, Facebook, Inc.
+ * All rights reserved.
  *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
+ * This source code is licensed under the BSD-style license found in the
+ * LICENSE file in the root directory of this source tree. An additional grant
+ * of patent rights can be found in the PATENTS file in the same directory.
  *
  * 
  */
@@ -2534,16 +1094,18 @@ module.exports = ReactCurrentOwner;
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(process) {/**
- * Copyright (c) 2014-present, Facebook, Inc.
+ * Copyright 2014-present, Facebook, Inc.
+ * All rights reserved.
  *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
+ * This source code is licensed under the BSD-style license found in the
+ * LICENSE file in the root directory of this source tree. An additional grant
+ * of patent rights can be found in the PATENTS file in the same directory.
  *
  */
 
 
 
-var _assign = __webpack_require__(67);
+var _assign = __webpack_require__(8);
 
 var ReactCurrentOwner = __webpack_require__(18);
 
@@ -2551,7 +1113,7 @@ var warning = __webpack_require__(2);
 var canDefineProperty = __webpack_require__(47);
 var hasOwnProperty = Object.prototype.hasOwnProperty;
 
-var REACT_ELEMENT_TYPE = __webpack_require__(103);
+var REACT_ELEMENT_TYPE = __webpack_require__(102);
 
 var RESERVED_PROPS = {
   key: true,
@@ -2882,35 +1444,37 @@ module.exports = ReactElement;
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(process) {/**
- * Copyright (c) 2013-present, Facebook, Inc.
+ * Copyright 2013-present, Facebook, Inc.
+ * All rights reserved.
  *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
+ * This source code is licensed under the BSD-style license found in the
+ * LICENSE file in the root directory of this source tree. An additional grant
+ * of patent rights can be found in the PATENTS file in the same directory.
  *
  */
 
 
 
-var _assign = __webpack_require__(67);
+var _assign = __webpack_require__(8);
 
-var ReactBaseClasses = __webpack_require__(102);
-var ReactChildren = __webpack_require__(251);
-var ReactDOMFactories = __webpack_require__(252);
+var ReactBaseClasses = __webpack_require__(101);
+var ReactChildren = __webpack_require__(249);
+var ReactDOMFactories = __webpack_require__(250);
 var ReactElement = __webpack_require__(29);
-var ReactPropTypes = __webpack_require__(254);
-var ReactVersion = __webpack_require__(256);
+var ReactPropTypes = __webpack_require__(252);
+var ReactVersion = __webpack_require__(254);
 
-var createReactClass = __webpack_require__(258);
-var onlyChild = __webpack_require__(260);
+var createReactClass = __webpack_require__(256);
+var onlyChild = __webpack_require__(258);
 
 var createElement = ReactElement.createElement;
 var createFactory = ReactElement.createFactory;
 var cloneElement = ReactElement.cloneElement;
 
 if (process.env.NODE_ENV !== 'production') {
-  var lowPriorityWarning = __webpack_require__(66);
+  var lowPriorityWarning = __webpack_require__(67);
   var canDefineProperty = __webpack_require__(47);
-  var ReactElementValidator = __webpack_require__(104);
+  var ReactElementValidator = __webpack_require__(103);
   var didWarnPropTypesDeprecated = false;
   createElement = ReactElementValidator.createElement;
   createFactory = ReactElementValidator.createFactory;
@@ -3019,9 +1583,11 @@ module.exports = React;
 "use strict";
 /**
  * Copyright (c) 2013-present, Facebook, Inc.
+ * All rights reserved.
  *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
+ * This source code is licensed under the BSD-style license found in the
+ * LICENSE file in the root directory of this source tree. An additional grant
+ * of patent rights can be found in the PATENTS file in the same directory.
  *
  * 
  */
@@ -5749,9 +4315,11 @@ module.exports = reactProdInvariant;
 "use strict";
 /* WEBPACK VAR INJECTION */(function(process) {/**
  * Copyright (c) 2013-present, Facebook, Inc.
+ * All rights reserved.
  *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
+ * This source code is licensed under the BSD-style license found in the
+ * LICENSE file in the root directory of this source tree. An additional grant
+ * of patent rights can be found in the PATENTS file in the same directory.
  *
  */
 
@@ -5778,10 +4346,12 @@ module.exports = emptyObject;
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(process) {/**
- * Copyright (c) 2013-present, Facebook, Inc.
+ * Copyright 2013-present, Facebook, Inc.
+ * All rights reserved.
  *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
+ * This source code is licensed under the BSD-style license found in the
+ * LICENSE file in the root directory of this source tree. An additional grant
+ * of patent rights can be found in the PATENTS file in the same directory.
  *
  * 
  */
@@ -5803,17 +4373,46 @@ module.exports = canDefineProperty;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
 
 /***/ }),
-/* 48 */,
+/* 48 */
+/***/ (function(module, exports) {
+
+var g;
+
+// This works in non-strict mode
+g = (function() {
+	return this;
+})();
+
+try {
+	// This works if eval is allowed (see CSP)
+	g = g || Function("return this")() || (1,eval)("this");
+} catch(e) {
+	// This works if the window reference is available
+	if(typeof window === "object")
+		g = window;
+}
+
+// g can still be undefined, but nothing to do about it...
+// We return undefined, instead of nothing here, so it's
+// easier to handle this case. if(!global) { ...}
+
+module.exports = g;
+
+
+/***/ }),
 /* 49 */,
-/* 50 */
+/* 50 */,
+/* 51 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /**
- * Copyright (c) 2013-present, Facebook, Inc.
+ * Copyright 2013-present, Facebook, Inc.
+ * All rights reserved.
  *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
+ * This source code is licensed under the BSD-style license found in the
+ * LICENSE file in the root directory of this source tree. An additional grant
+ * of patent rights can be found in the PATENTS file in the same directory.
  */
 
 
@@ -5824,7 +4423,6 @@ module.exports = ReactPropTypesSecret;
 
 
 /***/ }),
-/* 51 */,
 /* 52 */,
 /* 53 */,
 /* 54 */,
@@ -5839,15 +4437,18 @@ module.exports = ReactPropTypesSecret;
 /* 63 */,
 /* 64 */,
 /* 65 */,
-/* 66 */
+/* 66 */,
+/* 67 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(process) {/**
- * Copyright (c) 2014-present, Facebook, Inc.
+ * Copyright 2014-2015, Facebook, Inc.
+ * All rights reserved.
  *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
+ * This source code is licensed under the BSD-style license found in the
+ * LICENSE file in the root directory of this source tree. An additional grant
+ * of patent rights can be found in the PATENTS file in the same directory.
  *
  */
 
@@ -5908,170 +4509,48 @@ module.exports = lowPriorityWarning;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
 
 /***/ }),
-/* 67 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/*
-object-assign
-(c) Sindre Sorhus
-@license MIT
-*/
-
-
-/* eslint-disable no-unused-vars */
-var getOwnPropertySymbols = Object.getOwnPropertySymbols;
-var hasOwnProperty = Object.prototype.hasOwnProperty;
-var propIsEnumerable = Object.prototype.propertyIsEnumerable;
-
-function toObject(val) {
-	if (val === null || val === undefined) {
-		throw new TypeError('Object.assign cannot be called with null or undefined');
-	}
-
-	return Object(val);
-}
-
-function shouldUseNative() {
-	try {
-		if (!Object.assign) {
-			return false;
-		}
-
-		// Detect buggy property enumeration order in older V8 versions.
-
-		// https://bugs.chromium.org/p/v8/issues/detail?id=4118
-		var test1 = new String('abc');  // eslint-disable-line no-new-wrappers
-		test1[5] = 'de';
-		if (Object.getOwnPropertyNames(test1)[0] === '5') {
-			return false;
-		}
-
-		// https://bugs.chromium.org/p/v8/issues/detail?id=3056
-		var test2 = {};
-		for (var i = 0; i < 10; i++) {
-			test2['_' + String.fromCharCode(i)] = i;
-		}
-		var order2 = Object.getOwnPropertyNames(test2).map(function (n) {
-			return test2[n];
-		});
-		if (order2.join('') !== '0123456789') {
-			return false;
-		}
-
-		// https://bugs.chromium.org/p/v8/issues/detail?id=3056
-		var test3 = {};
-		'abcdefghijklmnopqrst'.split('').forEach(function (letter) {
-			test3[letter] = letter;
-		});
-		if (Object.keys(Object.assign({}, test3)).join('') !==
-				'abcdefghijklmnopqrst') {
-			return false;
-		}
-
-		return true;
-	} catch (err) {
-		// We don't expect any of the above to throw, but better to be safe.
-		return false;
-	}
-}
-
-module.exports = shouldUseNative() ? Object.assign : function (target, source) {
-	var from;
-	var to = toObject(target);
-	var symbols;
-
-	for (var s = 1; s < arguments.length; s++) {
-		from = Object(arguments[s]);
-
-		for (var key in from) {
-			if (hasOwnProperty.call(from, key)) {
-				to[key] = from[key];
-			}
-		}
-
-		if (getOwnPropertySymbols) {
-			symbols = getOwnPropertySymbols(from);
-			for (var i = 0; i < symbols.length; i++) {
-				if (propIsEnumerable.call(from, symbols[i])) {
-					to[symbols[i]] = from[symbols[i]];
-				}
-			}
-		}
-	}
-
-	return to;
-};
-
-
-/***/ }),
 /* 68 */
-/***/ (function(module, exports) {
-
-var g;
-
-// This works in non-strict mode
-g = (function() {
-	return this;
-})();
-
-try {
-	// This works if eval is allowed (see CSP)
-	g = g || Function("return this")() || (1,eval)("this");
-} catch(e) {
-	// This works if the window reference is available
-	if(typeof window === "object")
-		g = window;
-}
-
-// g can still be undefined, but nothing to do about it...
-// We return undefined, instead of nothing here, so it's
-// easier to handle this case. if(!global) { ...}
-
-module.exports = g;
-
-
-/***/ }),
-/* 69 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // This file is autogenerated via the `commonjs` Grunt task. You can require() this file in a CommonJS environment.
-__webpack_require__(142)
+__webpack_require__(141)
+__webpack_require__(131)
 __webpack_require__(132)
 __webpack_require__(133)
 __webpack_require__(134)
 __webpack_require__(135)
 __webpack_require__(136)
+__webpack_require__(140)
 __webpack_require__(137)
-__webpack_require__(141)
 __webpack_require__(138)
 __webpack_require__(139)
-__webpack_require__(140)
-__webpack_require__(131)
+__webpack_require__(130)
 
 /***/ }),
-/* 70 */
+/* 69 */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(148).crossfilter;
+module.exports = __webpack_require__(146).crossfilter;
 
 
 /***/ }),
+/* 70 */,
 /* 71 */,
 /* 72 */,
 /* 73 */,
 /* 74 */,
 /* 75 */,
-/* 76 */,
-/* 77 */
+/* 76 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /**
- * Copyright (c) 2013-present, Facebook, Inc.
+ * Copyright 2013-present, Facebook, Inc.
+ * All rights reserved.
  *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
+ * This source code is licensed under the BSD-style license found in the
+ * LICENSE file in the root directory of this source tree. An additional grant
+ * of patent rights can be found in the PATENTS file in the same directory.
  */
 
 
@@ -6080,7 +4559,7 @@ module.exports = __webpack_require__(148).crossfilter;
 // Therefore we re-export development-only version with all the PropTypes checks here.
 // However if one is migrating to the `prop-types` npm library, they will go through the
 // `index.js` entry point, and it will branch depending on the environment.
-var factory = __webpack_require__(78);
+var factory = __webpack_require__(77);
 module.exports = function(isValidElement) {
   // It is still allowed in 15.5.
   var throwOnDirectAccess = false;
@@ -6089,15 +4568,17 @@ module.exports = function(isValidElement) {
 
 
 /***/ }),
-/* 78 */
+/* 77 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(process) {/**
- * Copyright (c) 2013-present, Facebook, Inc.
+ * Copyright 2013-present, Facebook, Inc.
+ * All rights reserved.
  *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
+ * This source code is licensed under the BSD-style license found in the
+ * LICENSE file in the root directory of this source tree. An additional grant
+ * of patent rights can be found in the PATENTS file in the same directory.
  */
 
 
@@ -6105,10 +4586,9 @@ module.exports = function(isValidElement) {
 var emptyFunction = __webpack_require__(12);
 var invariant = __webpack_require__(1);
 var warning = __webpack_require__(2);
-var assign = __webpack_require__(176);
 
-var ReactPropTypesSecret = __webpack_require__(50);
-var checkPropTypes = __webpack_require__(174);
+var ReactPropTypesSecret = __webpack_require__(51);
+var checkPropTypes = __webpack_require__(173);
 
 module.exports = function(isValidElement, throwOnDirectAccess) {
   /* global Symbol */
@@ -6204,8 +4684,7 @@ module.exports = function(isValidElement, throwOnDirectAccess) {
     objectOf: createObjectOfTypeChecker,
     oneOf: createEnumTypeChecker,
     oneOfType: createUnionTypeChecker,
-    shape: createShapeTypeChecker,
-    exact: createStrictShapeTypeChecker,
+    shape: createShapeTypeChecker
   };
 
   /**
@@ -6420,7 +4899,7 @@ module.exports = function(isValidElement, throwOnDirectAccess) {
       if (typeof checker !== 'function') {
         warning(
           false,
-          'Invalid argument supplied to oneOfType. Expected an array of check functions, but ' +
+          'Invalid argument supplid to oneOfType. Expected an array of check functions, but ' +
           'received %s at index %s.',
           getPostfixForTypeWarning(checker),
           i
@@ -6471,36 +4950,6 @@ module.exports = function(isValidElement, throwOnDirectAccess) {
       }
       return null;
     }
-    return createChainableTypeChecker(validate);
-  }
-
-  function createStrictShapeTypeChecker(shapeTypes) {
-    function validate(props, propName, componentName, location, propFullName) {
-      var propValue = props[propName];
-      var propType = getPropType(propValue);
-      if (propType !== 'object') {
-        return new PropTypeError('Invalid ' + location + ' `' + propFullName + '` of type `' + propType + '` ' + ('supplied to `' + componentName + '`, expected `object`.'));
-      }
-      // We need to check all keys in case some are required but missing from
-      // props.
-      var allKeys = assign({}, props[propName], shapeTypes);
-      for (var key in allKeys) {
-        var checker = shapeTypes[key];
-        if (!checker) {
-          return new PropTypeError(
-            'Invalid ' + location + ' `' + propFullName + '` key `' + key + '` supplied to `' + componentName + '`.' +
-            '\nBad object: ' + JSON.stringify(props[propName], null, '  ') +
-            '\nValid keys: ' +  JSON.stringify(Object.keys(shapeTypes), null, '  ')
-          );
-        }
-        var error = checker(propValue, key, componentName, location, propFullName + '.' + key, ReactPropTypesSecret);
-        if (error) {
-          return error;
-        }
-      }
-      return null;
-    }
-
     return createChainableTypeChecker(validate);
   }
 
@@ -6639,6 +5088,7 @@ module.exports = function(isValidElement, throwOnDirectAccess) {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
 
 /***/ }),
+/* 78 */,
 /* 79 */,
 /* 80 */,
 /* 81 */,
@@ -6661,30 +5111,31 @@ module.exports = function(isValidElement, throwOnDirectAccess) {
 /* 98 */,
 /* 99 */,
 /* 100 */,
-/* 101 */,
-/* 102 */
+/* 101 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(process) {/**
- * Copyright (c) 2013-present, Facebook, Inc.
+ * Copyright 2013-present, Facebook, Inc.
+ * All rights reserved.
  *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
+ * This source code is licensed under the BSD-style license found in the
+ * LICENSE file in the root directory of this source tree. An additional grant
+ * of patent rights can be found in the PATENTS file in the same directory.
  *
  */
 
 
 
 var _prodInvariant = __webpack_require__(34),
-    _assign = __webpack_require__(67);
+    _assign = __webpack_require__(8);
 
-var ReactNoopUpdateQueue = __webpack_require__(105);
+var ReactNoopUpdateQueue = __webpack_require__(104);
 
 var canDefineProperty = __webpack_require__(47);
 var emptyObject = __webpack_require__(40);
 var invariant = __webpack_require__(1);
-var lowPriorityWarning = __webpack_require__(66);
+var lowPriorityWarning = __webpack_require__(67);
 
 /**
  * Base class helpers for the updating state of a component.
@@ -6809,15 +5260,17 @@ module.exports = {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
 
 /***/ }),
-/* 103 */
+/* 102 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /**
- * Copyright (c) 2014-present, Facebook, Inc.
+ * Copyright 2014-present, Facebook, Inc.
+ * All rights reserved.
  *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
+ * This source code is licensed under the BSD-style license found in the
+ * LICENSE file in the root directory of this source tree. An additional grant
+ * of patent rights can be found in the PATENTS file in the same directory.
  *
  * 
  */
@@ -6832,15 +5285,17 @@ var REACT_ELEMENT_TYPE = typeof Symbol === 'function' && Symbol['for'] && Symbol
 module.exports = REACT_ELEMENT_TYPE;
 
 /***/ }),
-/* 104 */
+/* 103 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(process) {/**
- * Copyright (c) 2014-present, Facebook, Inc.
+ * Copyright 2014-present, Facebook, Inc.
+ * All rights reserved.
  *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
+ * This source code is licensed under the BSD-style license found in the
+ * LICENSE file in the root directory of this source tree. An additional grant
+ * of patent rights can be found in the PATENTS file in the same directory.
  *
  */
 
@@ -6857,12 +5312,12 @@ var ReactCurrentOwner = __webpack_require__(18);
 var ReactComponentTreeHook = __webpack_require__(11);
 var ReactElement = __webpack_require__(29);
 
-var checkReactTypeSpec = __webpack_require__(257);
+var checkReactTypeSpec = __webpack_require__(255);
 
 var canDefineProperty = __webpack_require__(47);
-var getIteratorFn = __webpack_require__(106);
+var getIteratorFn = __webpack_require__(105);
 var warning = __webpack_require__(2);
-var lowPriorityWarning = __webpack_require__(66);
+var lowPriorityWarning = __webpack_require__(67);
 
 function getDeclarationErrorAddendum() {
   if (ReactCurrentOwner.current) {
@@ -7091,15 +5546,17 @@ module.exports = ReactElementValidator;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
 
 /***/ }),
-/* 105 */
+/* 104 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(process) {/**
- * Copyright (c) 2015-present, Facebook, Inc.
+ * Copyright 2015-present, Facebook, Inc.
+ * All rights reserved.
  *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
+ * This source code is licensed under the BSD-style license found in the
+ * LICENSE file in the root directory of this source tree. An additional grant
+ * of patent rights can be found in the PATENTS file in the same directory.
  *
  */
 
@@ -7190,15 +5647,17 @@ module.exports = ReactNoopUpdateQueue;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
 
 /***/ }),
-/* 106 */
+/* 105 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /**
- * Copyright (c) 2013-present, Facebook, Inc.
+ * Copyright 2013-present, Facebook, Inc.
+ * All rights reserved.
  *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
+ * This source code is licensed under the BSD-style license found in the
+ * LICENSE file in the root directory of this source tree. An additional grant
+ * of patent rights can be found in the PATENTS file in the same directory.
  *
  * 
  */
@@ -7234,19 +5693,19 @@ function getIteratorFn(maybeIterable) {
 module.exports = getIteratorFn;
 
 /***/ }),
-/* 107 */,
-/* 108 */
+/* 106 */,
+/* 107 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!function(){function a(a,b){"use strict";var c={version:"1.7.5",constants:{CHART_CLASS:"dc-chart",DEBUG_GROUP_CLASS:"debug",STACK_CLASS:"stack",DESELECTED_CLASS:"deselected",SELECTED_CLASS:"selected",NODE_INDEX_NAME:"__index__",GROUP_INDEX_NAME:"__group_index__",DEFAULT_CHART_GROUP:"__default_chart_group__",EVENT_DELAY:40,NEGLIGIBLE_NUMBER:1e-10},_renderlet:null};return c.chartRegistry=function(){function a(a){return a||(a=c.constants.DEFAULT_CHART_GROUP),b[a]||(b[a]=[]),a}var b={};return{has:function(a){for(var c in b)if(b[c].indexOf(a)>=0)return!0;return!1},register:function(c,d){d=a(d),b[d].push(c)},clear:function(){b={}},list:function(c){return c=a(c),b[c]}}}(),c.registerChart=function(a,b){c.chartRegistry.register(a,b)},c.hasChart=function(a){return c.chartRegistry.has(a)},c.deregisterAllCharts=function(){c.chartRegistry.clear()},c.filterAll=function(a){for(var b=c.chartRegistry.list(a),d=0;d<b.length;++d)b[d].filterAll()},c.renderAll=function(a){for(var b=c.chartRegistry.list(a),d=0;d<b.length;++d)b[d].render();null!==c._renderlet&&c._renderlet(a)},c.redrawAll=function(a){for(var b=c.chartRegistry.list(a),d=0;d<b.length;++d)b[d].redraw();null!==c._renderlet&&c._renderlet(a)},c.transition=function(a,b,c){if(0>=b||void 0===b)return a;var d=a.transition().duration(b);return c instanceof Function&&c(d),d},c.units={},c.units.integers=function(a,b){return Math.abs(b-a)},c.units.ordinal=function(a,b,c){return c},c.units.fp={},c.units.fp.precision=function(a){var b=function(a,d){var e=Math.abs((d-a)/b.resolution);return c.utils.isNegligible(e-Math.floor(e))?Math.floor(e):Math.ceil(e)};return b.resolution=a,b},c.round={},c.round.floor=function(a){return Math.floor(a)},c.round.ceil=function(a){return Math.ceil(a)},c.round.round=function(a){return Math.round(a)},c.override=function(a,b,c){var d=a[b];a["_"+b]=d,a[b]=c},c.renderlet=function(a){return arguments.length?(c._renderlet=a,c):c._renderlet},c.instanceOfChart=function(a){return a instanceof Object&&a.__dc_flag__},c.errors={},c.errors.Exception=function(a){var b=void 0!==a?a:"Unexpected internal error";this.message=b,this.toString=function(){return b}},c.errors.InvalidStateException=function(){c.errors.Exception.apply(this,arguments)},c.dateFormat=a.time.format("%m/%d/%Y"),c.printers={},c.printers.filters=function(a){for(var b="",d=0;d<a.length;++d)d>0&&(b+=", "),b+=c.printers.filter(a[d]);return b},c.printers.filter=function(a){var b="";return a&&(a instanceof Array?a.length>=2?b="["+c.utils.printSingleValue(a[0])+" -> "+c.utils.printSingleValue(a[1])+"]":a.length>=1&&(b=c.utils.printSingleValue(a[0])):b=c.utils.printSingleValue(a)),b},c.utils={},c.utils.printSingleValue=function(a){var b=""+a;return a instanceof Date?b=c.dateFormat(a):"string"==typeof a?b=a:c.utils.isFloat(a)?b=c.utils.printSingleValue.fformat(a):c.utils.isInteger(a)&&(b=Math.round(a)),b},c.utils.printSingleValue.fformat=a.format(".2f"),c.utils.add=function(a,b){if("string"==typeof b&&(b=b.replace("%","")),a instanceof Date){"string"==typeof b&&(b=+b);var c=new Date;return c.setTime(a.getTime()),c.setDate(a.getDate()+b),c}if("string"==typeof b){var d=+b/100;return a>0?a*(1+d):a*(1-d)}return a+b},c.utils.subtract=function(a,b){if("string"==typeof b&&(b=b.replace("%","")),a instanceof Date){"string"==typeof b&&(b=+b);var c=new Date;return c.setTime(a.getTime()),c.setDate(a.getDate()-b),c}if("string"==typeof b){var d=+b/100;return 0>a?a*(1+d):a*(1-d)}return a-b},c.utils.GroupStack=function(){function a(a){c[a]||(c[a]=[])}var b,c=[[]],d=[];this.setDataPoint=function(b,d,e){a(b),c[b][d]=e},this.getDataPoint=function(b,d){a(b);var e=c[b][d];return void 0===e&&(e=0),e},this.addGroup=function(a,c){return c||(c=b),d.push([a,c]),d.length-1},this.getGroupByIndex=function(a){return d[a][0]},this.getAccessorByIndex=function(a){return d[a][1]},this.size=function(){return d.length},this.clear=function(){c=[],d=[]},this.setDefaultAccessor=function(a){b=a},this.getDataLayers=function(){return c},this.toLayers=function(){for(var a=[],b=0;b<c.length;++b){for(var d={index:b,points:[]},e=c[b],f=0;f<e.length;++f)d.points.push(e[f]);a.push(d)}return a}},c.utils.isNumber=function(a){return a===+a},c.utils.isFloat=function(a){return a===+a&&a!==(0|a)},c.utils.isInteger=function(a){return a===+a&&a===(0|a)},c.utils.isNegligible=function(a){return void 0===a||a<c.constants.NEGLIGIBLE_NUMBER&&a>-c.constants.NEGLIGIBLE_NUMBER},c.utils.groupMax=function(b,d){var e=a.max(b.all(),function(a){return d(a)});return c.utils.isNegligible(e)&&(e=0),e},c.utils.groupMin=function(b,d){var e=a.min(b.all(),function(a){return d(a)});return c.utils.isNegligible(e)&&(e=0),e},c.utils.nameToId=function(a){return a.toLowerCase().replace(/[\s]/g,"_").replace(/[\.']/g,"")},c.utils.appendOrSelect=function(a,b){var c=a.select(b);return c.empty()&&(c=a.append(b)),c},c.utils.createLegendable=function(a,b,c,d){var e={name:a._getGroupName(b,d),data:b};return"function"==typeof a.colors&&(e.color=a.colors()(c)),e},c.utils.safeNumber=function(a){return c.utils.isNumber(+a)?+a:0},c.events={current:null},c.events.trigger=function(a,b){return b?(c.events.current=a,void setTimeout(function(){a==c.events.current&&a()},b)):void a()},c.cumulative={},c.cumulative.Base=function(){this._keyIndex=[],this._map={},this.sanitizeKey=function(a){return a+=""},this.clear=function(){this._keyIndex=[],this._map={}},this.size=function(){return this._keyIndex.length},this.getValueByKey=function(a){a=this.sanitizeKey(a);var b=this._map[a];return b},this.setValueByKey=function(a,b){return a=this.sanitizeKey(a),this._map[a]=b},this.indexOfKey=function(a){return a=this.sanitizeKey(a),this._keyIndex.indexOf(a)},this.addToIndex=function(a){a=this.sanitizeKey(a),this._keyIndex.push(a)},this.getKeyByIndex=function(a){return this._keyIndex[a]}},c.cumulative.Sum=function(){c.cumulative.Base.apply(this,arguments),this.add=function(a,b){b||(b=0),void 0===this.getValueByKey(a)?(this.addToIndex(a),this.setValueByKey(a,b)):this.setValueByKey(a,this.getValueByKey(a)+b)},this.minus=function(a,b){this.setValueByKey(a,this.getValueByKey(a)-b)},this.cumulativeSum=function(a){var b=this.indexOfKey(a);if(0>b)return 0;for(var c=0,d=0;b>=d;++d){var e=this.getKeyByIndex(d);c+=this.getValueByKey(e)}return c}},c.cumulative.Sum.prototype=new c.cumulative.Base,c.cumulative.CountUnique=function(){function a(a){var b,c=0;for(b in a)a.hasOwnProperty(b)&&c++;return c}c.cumulative.Base.apply(this,arguments),this.add=function(a,b){void 0===this.getValueByKey(a)&&(this.setValueByKey(a,{}),this.addToIndex(a)),void 0!==b&&(void 0===this.getValueByKey(a)[b]&&(this.getValueByKey(a)[b]=0),this.getValueByKey(a)[b]+=1)},this.minus=function(a,b){this.getValueByKey(a)[b]-=1,this.getValueByKey(a)[b]<=0&&delete this.getValueByKey(a)[b]},this.count=function(b){return a(this.getValueByKey(b))},this.cumulativeCount=function(a){var b=this.indexOfKey(a);if(0>b)return 0;for(var c=0,d=0;b>=d;++d){var e=this.getKeyByIndex(d);c+=this.count(e)}return c}},c.cumulative.CountUnique.prototype=new c.cumulative.Base,c.baseChart=function(d){function e(a,b,c){var d=a.anchor(),e="__names__";c&&c!=a.valueAccessor()||(c="default"),b[e]||(b[e]={}),b[e][d]||(b[e][d]={a:[],n:[]});var f=b[e][d].a.indexOf(c);return-1==f&&(f=b[e][d].a.length,b[e][d].a[f]=c,b[e][d].n[f]={name:""}),b[e][d].n[f]}function f(){return p=d.root().append("svg").attr("width",d.width()).attr("height",d.height())}function g(a){G.splice(G.indexOf(a),1),j(),d._invokeFilteredListener(a)}function h(a){G.push(a),j(),d._invokeFilteredListener(a)}function i(){G=[],j(),d._invokeFilteredListener(null)}function j(){if(d.dataSet()&&void 0!==d.dimension().filter){var a=H(d.dimension(),G);G=a?a:G}}function k(){for(var a=0;a<C.length;++a)C[a](d)}d.__dc_flag__=!0;var l,m,n,o,p,q,r=200,s=200,t=function(a){return a.key},u=function(a){return a.value},v=function(a){return a.key},w=function(a){return a.key},x=!1,y=function(a){return a.key+": "+a.value},z=!1,A=750,B=c.printers.filters,C=[],D=c.constants.DEFAULT_CHART_GROUP,E=function(){},F={preRender:E,postRender:E,preRedraw:E,postRedraw:E,filtered:E,zoomed:E},G=[],H=function(a,b){return a.filter(null),0===b.length?a.filter(null):1===b.length?a.filter(b[0]):a.filterFunction(function(a){return b.indexOf(a)>=0}),b};return d.width=function(a){return arguments.length?(r=a,d):r},d.height=function(a){return arguments.length?(s=a,d):s},d.dimension=function(a){return arguments.length?(l=a,d.expireCache(),d):l},d.group=function(a,b){return arguments.length?(m=a,d.expireCache(),"string"==typeof b&&d._setGroupName(m,b),d):m},d._getGroupName=function(a,b){return e(d,a,b).name},d._setGroupName=function(a,b,c){e(d,a,c).name=b},d.ordering=function(a){return arguments.length?(v=a,d.expireCache(),d):v},d.computeOrderedGroups=function(a){var c=a?a:d.group().all().slice(0);if(c.length<2)return c;var e=b.quicksort.by(d.ordering());return e(c,0,c.length)},d.filterAll=function(){return d.filter(null)},d.dataSet=function(){return void 0!==l&&void 0!==m},d.select=function(a){return o.select(a)},d.selectAll=function(a){return o?o.selectAll(a):null},d.anchor=function(b,e){return arguments.length?(c.instanceOfChart(b)?(n=b.anchor(),o=b.root()):(n=b,o=a.select(n),o.classed(c.constants.CHART_CLASS,!0),c.registerChart(d,e)),D=e,d):n},d.anchorName=function(){var a=d.anchor();return a&&a.id?a.id:a?a.replace("#",""):""},d.root=function(a){return arguments.length?(o=a,d):o},d.svg=function(a){return arguments.length?(p=a,d):p},d.resetSvg=function(){return d.select("svg").remove(),f()},d.filterPrinter=function(a){return arguments.length?(B=a,d):B},d.turnOnControls=function(){return o&&(d.selectAll(".reset").style("display",null),d.selectAll(".filter").text(B(d.filters())).style("display",null)),d},d.turnOffControls=function(){return o&&(d.selectAll(".reset").style("display","none"),d.selectAll(".filter").style("display","none").text(d.filter())),d},d.transitionDuration=function(a){return arguments.length?(A=a,d):A},d.render=function(){if(F.preRender(d),void 0===l)throw new c.errors.InvalidStateException("Mandatory attribute chart.dimension is missing on chart[#"+d.anchorName()+"]");if(void 0===m)throw new c.errors.InvalidStateException("Mandatory attribute chart.group is missing on chart[#"+d.anchorName()+"]");var a=d.doRender();return q&&q.render(),d.activateRenderlets("postRender"),a},d.activateRenderlets=function(a){d.transitionDuration()>0&&p?p.transition().duration(d.transitionDuration()).each("end",function(){k(),a&&F[a](d)}):(k(),a&&F[a](d))},d.redraw=function(){F.preRedraw(d);var a=d.doRedraw();return d.activateRenderlets("postRedraw"),a},d._invokeFilteredListener=function(a){void 0!==a&&F.filtered(d,a)},d._invokeZoomedListener=function(){F.zoomed(d)},d.hasFilter=function(a){return arguments.length?G.indexOf(a)>=0:G.length>0},d.filter=function(a){return arguments.length?(null===a?i():d.hasFilter(a)?g(a):h(a),null!==o&&d.hasFilter()?d.turnOnControls():d.turnOffControls(),d):G.length>0?G[0]:null},d.filters=function(){return G},d.highlightSelected=function(b){a.select(b).classed(c.constants.SELECTED_CLASS,!0),a.select(b).classed(c.constants.DESELECTED_CLASS,!1)},d.fadeDeselected=function(b){a.select(b).classed(c.constants.SELECTED_CLASS,!1),a.select(b).classed(c.constants.DESELECTED_CLASS,!0)},d.resetHighlight=function(b){a.select(b).classed(c.constants.SELECTED_CLASS,!1),a.select(b).classed(c.constants.DESELECTED_CLASS,!1)},d.onClick=function(a){var b=d.keyAccessor()(a);c.events.trigger(function(){d.filter(b),c.redrawAll(d.chartGroup())})},d.filterHandler=function(a){return arguments.length?(H=a,d):H},d.doRender=function(){return d},d.doRedraw=function(){return d},d.legendables=function(){return[]},d.legendHighlight=function(a){},d.legendReset=function(a){},d.keyAccessor=function(a){return arguments.length?(t=a,d):t},d.valueAccessor=function(a){return arguments.length?(u=a,d):u},d.label=function(a){return arguments.length?(w=a,x=!0,d):w},d.renderLabel=function(a){return arguments.length?(x=a,d):x},d.title=function(a){return arguments.length?(y=a,z=!0,d):y},d.renderTitle=function(a){return arguments.length?(z=a,d):z},d.renderlet=function(a){return C.push(a),d},d.chartGroup=function(a){return arguments.length?(D=a,d):D},d.expireCache=function(){return d},d.legend=function(a){return arguments.length?(q=a,q.parent(d),d):q},d.on=function(a,b){return F[a]=b,d},d},c.marginable=function(a){var b={top:10,right:50,bottom:30,left:30};return a.margins=function(c){return arguments.length?(b=c,a):b},a.effectiveWidth=function(){return a.width()-a.margins().left-a.margins().right},a.effectiveHeight=function(){return a.height()-a.margins().top-a.margins().bottom},a},c.coordinateGridChart=function(b){function d(a){b.elasticX()&&!b.isOrdinal()?x.domain([b.xAxisMin(),b.xAxisMax()]):b.isOrdinal()&&0===x.domain().length&&x.domain(b.computeOrderedGroups().map(function(a){return a.key})),b.isOrdinal()?b.prepareOrdinalXAxis():x.range([0,b.xAxisLength()]),G=G.scale(b.x()).orient("bottom"),e(a)}function e(a){var d=a.selectAll("g."+q);if(S){d.empty()&&(d=a.insert("g",":first-child").attr("class",o+" "+q).attr("transform","translate("+b.yAxisX()+","+b.margins().top+")"));var e=G.tickValues()?G.tickValues():x.ticks(G.ticks()[0]),f=d.selectAll("line").data(e),g=f.enter().append("line").attr("x1",function(a){return x(a)}).attr("y1",b.xAxisY()-b.margins().top).attr("x2",function(a){return x(a)}).attr("y2",0).attr("opacity",0);c.transition(g,b.transitionDuration()).attr("opacity",1),c.transition(f,b.transitionDuration()).attr("x1",function(a){return x(a)}).attr("y1",b.xAxisY()-b.margins().top).attr("x2",function(a){return x(a)}).attr("y2",0),f.exit().remove()}else d.selectAll("line").remove()}function f(c){(void 0===A||b.elasticY())&&(A=a.scale.linear(),A.domain([b.yAxisMin(),b.yAxisMax()]).rangeRound([b.yAxisHeight(),0])),A.range([b.yAxisHeight(),0]),L=L.scale(A).orient("left"),g(c)}function g(a){var d=a.selectAll("g."+p);if(R){var e=L.tickValues()?L.tickValues():A.ticks(L.ticks()[0]);d.empty()&&(d=a.insert("g",":first-child").attr("class",o+" "+p).attr("transform","translate("+b.yAxisX()+","+b.margins().top+")"));var f=d.selectAll("line").data(e),g=f.enter().append("line").attr("x1",1).attr("y1",function(a){return A(a)}).attr("x2",b.xAxisLength()).attr("y2",function(a){return A(a)}).attr("opacity",0);c.transition(g,b.transitionDuration()).attr("opacity",1),c.transition(f,b.transitionDuration()).attr("x1",1).attr("y1",function(a){return A(a)}).attr("x2",b.xAxisLength()).attr("y2",function(a){return A(a)}),f.exit().remove()}else d.selectAll("line").remove()}function h(){return b.xAxisY()-b.margins().top}function i(a){var d=b.extendBrush();b.redrawBrush(v),b.brushIsEmpty(d)?c.events.trigger(function(){b.filter(null),c.redrawAll(b.chartGroup())}):c.events.trigger(function(){b.filter(null),b.filter([d[0],d[1]]),c.redrawAll(b.chartGroup())},c.constants.EVENT_DELAY)}function j(){return b.anchorName()+"-clip"}function k(){var a=c.utils.appendOrSelect(u,"defs"),d=c.utils.appendOrSelect(a,"clipPath").attr("id",j()),e=2*X;c.utils.appendOrSelect(d,"rect").attr("width",b.xAxisLength()+e).attr("height",b.yAxisHeight()+e)}function l(){W&&b.root().call(a.behavior.zoom().x(b.x()).scaleExtent(U).on("zoom",function(){b.focus(b.x().domain()),b._invokeZoomedListener(),m()}))}function m(){if(E){var a=b.x().domain();if(V){var d=E.xOriginalDomain(),e=[a[0]<d[0]?a[0]:d[0],a[1]>d[1]?a[1]:d[1]];E.focus(e)}else E.focus(a);E.filter(null),E.filter(a),c.events.trigger(function(){c.redrawAll(b.chartGroup())})}}function n(a){return a instanceof Array&&a.length>1}var o="grid-line",p="horizontal",q="vertical",r="y-axis-label",s="x-axis-label",t=12;b=c.colorChart(c.marginable(c.baseChart(b))),b.colors(a.scale.category10());var u,v,w,x,y,z,A,B,C,D,E,F,G=a.svg.axis(),H=c.units.integers,I=0,J=!1,K=0,L=a.svg.axis(),M=0,N=!1,O=0,P=a.svg.brush(),Q=!0,R=!1,S=!1,T=!1,U=[-10,100],V=!0,W=!1,X=0;return b.title(function(a){return a.data.key+": "+a.data.value}),b.rescale=function(){D=void 0,b.xUnitCount()},b.rangeChart=function(a){return arguments.length?(E=a,E.focusChart(b),b):E},b.zoomScale=function(a){return arguments.length?(U=a,b):U},b.zoomOutRestrict=function(a){return arguments.length?(V=a,b):V},b._generateG=function(a){return u=void 0===a?b.svg():a,v=u.append("g"),w=v.append("g").attr("class","chart-body").attr("transform","translate("+b.margins().left+", "+b.margins().top+")").attr("clip-path","url(#"+j()+")"),v},b.g=function(a){return arguments.length?(v=a,b):v},b.mouseZoomable=function(a){return arguments.length?(W=a,b):W},b.chartBodyG=function(a){return arguments.length?(w=a,b):w},b.x=function(a){return arguments.length?(x=a,y=x.domain(),b):x},b.xOriginalDomain=function(){return y},b.xUnits=function(a){return arguments.length?(H=a,b):H},b.xAxis=function(a){return arguments.length?(G=a,b):G},b.elasticX=function(a){return arguments.length?(J=a,b):J},b.xAxisPadding=function(a){return arguments.length?(I=a,b):I},b.xUnitCount=function(){if(void 0===D){var a=b.xUnits()(b.x().domain()[0],b.x().domain()[1],b.x().domain());D=a instanceof Array?a.length:a}return D},b.isOrdinal=function(){return b.xUnits()===c.units.ordinal},b.prepareOrdinalXAxis=function(a){a||(a=b.xUnitCount());for(var c=[],d=b.xAxisLength()/(a+1),e=d/2,f=0;a>f;f++)c[f]=e,e+=d;x.range(c)},b.renderXAxis=function(a){var d=a.selectAll("g.x");d.empty()&&(d=a.append("g").attr("class","axis x").attr("transform","translate("+b.margins().left+","+b.xAxisY()+")"));var e=a.selectAll("text."+s);e.empty()&&b.xAxisLabel()&&(e=a.append("text").attr("transform","translate("+b.xAxisLength()/2+","+(b.height()-K)+")").attr("class",s).attr("text-anchor","middle").text(b.xAxisLabel())),b.xAxisLabel()&&e.text()!=b.xAxisLabel()&&axisYLab.text(b.xAxisLabel()),c.transition(d,b.transitionDuration()).call(G)},b.xAxisY=function(){return b.height()-b.margins().bottom},b.xAxisLength=function(){return b.effectiveWidth()},b.xAxisLabel=function(a,c){return arguments.length?(z=a,b.margins().bottom-=K,K=void 0===c?t:c,b.margins().bottom+=K,b):z},b.renderYAxis=function(a){var d=a.selectAll("g.y");d.empty()&&(d=a.append("g").attr("class","axis y").attr("transform","translate("+b.yAxisX()+","+b.margins().top+")"));var e=a.selectAll("text."+r);e.empty()&&b.yAxisLabel()&&(e=a.append("text").attr("transform","translate("+O+","+b.yAxisHeight()/2+"),rotate(-90)").attr("class",r).attr("text-anchor","middle").text(b.yAxisLabel())),b.yAxisLabel()&&e.text()!=b.yAxisLabel()&&e.text(b.yAxisLabel()),c.transition(d,b.transitionDuration()).call(L)},b.yAxisX=function(){return b.margins().left},b.yAxisLabel=function(a,c){return arguments.length?(B=a,b.margins().left-=O,O=void 0===c?t:c,b.margins().left+=O,b):B},b.y=function(a){return arguments.length?(A=a,b):A},b.yAxis=function(a){return arguments.length?(L=a,b):L},b.elasticY=function(a){return arguments.length?(N=a,b):N},b.renderHorizontalGridLines=function(a){return arguments.length?(R=a,b):R},b.renderVerticalGridLines=function(a){return arguments.length?(S=a,b):S},b.xAxisMin=function(){var d=a.min(b.group().all(),function(a){return b.keyAccessor()(a)});return c.utils.subtract(d,I)},b.xAxisMax=function(){var d=a.max(b.group().all(),function(a){return b.keyAccessor()(a)});return c.utils.add(d,I)},b.yAxisMin=function(){var d=a.min(b.group().all(),function(a){return b.valueAccessor()(a)});return d=c.utils.subtract(d,M)},b.yAxisMax=function(){var d=a.max(b.group().all(),function(a){return b.valueAccessor()(a)});return d=c.utils.add(d,M)},b.yAxisPadding=function(a){return arguments.length?(M=a,b):M},b.yAxisHeight=function(){return b.effectiveHeight()},b.round=function(a){return arguments.length?(C=a,b):C},c.override(b,"filter",function(a){return arguments.length?(b._filter(a),a?b.brush().extent(a):b.brush().clear(),b):b._filter()}),b.brush=function(a){return arguments.length?(P=a,b):P},b.renderBrush=function(a){if(b.isOrdinal()&&(Q=!1),Q){P.on("brush",i);var c=a.append("g").attr("class","brush").attr("transform","translate("+b.margins().left+","+b.margins().top+")").call(P.x(b.x()));c.selectAll("rect").attr("height",h()),c.selectAll(".resize").append("path").attr("d",b.resizeHandlePath),b.hasFilter()&&b.redrawBrush(a)}},b.extendBrush=function(){var a=P.extent();return b.round()&&(a[0]=a.map(b.round())[0],a[1]=a.map(b.round())[1],v.select(".brush").call(P.extent(a))),a},b.brushIsEmpty=function(a){return P.empty()||!a||a[1]<=a[0]},b.redrawBrush=function(a){if(Q){b.filter()&&b.brush().empty()&&b.brush().extent(b.filter());var c=a.select("g.brush");c.call(b.brush().x(b.x())),c.selectAll("rect").attr("height",h())}b.fadeDeselectedArea()},b.fadeDeselectedArea=function(){},b.resizeHandlePath=function(a){var b=+("e"==a),c=b?1:-1,d=h()/3;return"M"+.5*c+","+d+"A6,6 0 0 "+b+" "+6.5*c+","+(d+6)+"V"+(2*d-6)+"A6,6 0 0 "+b+" "+.5*c+","+2*d+"ZM"+2.5*c+","+(d+8)+"V"+(2*d-8)+"M"+4.5*c+","+(d+8)+"V"+(2*d-8)},b.clipPadding=function(a){return arguments.length?(X=a,b):X},b.doRender=function(){if(void 0===x)throw new c.errors.InvalidStateException("Mandatory attribute chart.x is missing on chart[#"+b.anchorName()+"]");return b.resetSvg(),b.dataSet()&&(b._generateG(),k(),d(b.g()),f(b.g()),b.plotData(),b.renderXAxis(b.g()),b.renderYAxis(b.g()),b.renderBrush(b.g()),l()),b},b.doRedraw=function(){return d(b.g()),f(b.g()),b.plotData(),b.elasticY()&&b.renderYAxis(b.g()),(b.elasticX()||T)&&b.renderXAxis(b.g()),b.redrawBrush(b.g()),b},b.subRender=function(){return b.dataSet()&&b.plotData(),b},b.brushOn=function(a){return arguments.length?(Q=a,b):Q},b.focus=function(a){T=!0,n(a)?b.x().domain(a):b.x().domain(b.xOriginalDomain()),b.rescale(),b.redraw(),n(a)||(T=!1)},b.refocused=function(){return T},b.focusChart=function(a){return arguments.length?(F=a,b.on("filtered",function(a){c.events.trigger(function(){F.focus(a.filter()),F.filter(a.filter()),c.redrawAll(a.chartGroup())})}),b):F},b},c.colorChart=function(b){var d=a.scale.category20c(),e=[0,d.range().length],f=function(a){var f=e;"function"==typeof e&&(f=e.call(b));var g=f[0],h=f[1];if(isNaN(a)&&(a=0),!c.utils.isNumber(h))return d(a);var i=b.colors().range().length,j=(h-g)/i,k=Math.abs(Math.min(i-1,Math.round((a-g)/j)));return b.colors()(k)},g=function(a,b){return b};return b.colors=function(c){if(!arguments.length)return d;if(c instanceof Array){d=a.scale.ordinal().range(c);for(var f=[],g=0;g<c.length;++g)f.push(g);d.domain(f)}else d=c;return e=[0,d.range().length],b},b.colorCalculator=function(a){return arguments.length?(f=a,b):f},b.getColor=function(a,b){return f(g(a,b))},b.colorAccessor=function(a){return arguments.length?(g=a,b):g},b.colorDomain=function(a){return arguments.length?(e=a,b):e},b},c.stackableChart=function(b){function d(){var c=[];if(b.x()){var d,e=b.x().domain();if(b.isOrdinal()){var f=a.set(e);d=function(a){return f.has(a.x)}}else d=function(a){return a.x>=e[0]&&a.x<=e[e.length-1]};b.stackLayers().forEach(function(a){a.points.forEach(function(a){d(a)&&c.push(a)})})}else b.stackLayers().forEach(function(a){c=c.concat(a.points)});return c}function e(a,c){return b.getKeyAccessorByIndex(a)(c)}function f(a,c){return b.getValueAccessorByIndex(a)(c)}function g(a,b){for(var c=0;c<a.length;++c){var d=a[c],g=e(b,d),h=f(b,d);l.setDataPoint(b,c,{data:d,x:g,y:h,layer:b})}}var h,i,j,k,l=new c.utils.GroupStack,m=a.layout.stack().offset("zero").order("default").values(function(a){return a.points});return b.stack=function(a,c,d){return arguments.length||l.clear(),"string"==typeof c?b._setGroupName(a,c,d):"function"==typeof c&&(d=c),l.setDefaultAccessor(b.valueAccessor()),l.addGroup(a,d),b.expireCache(),b},b.expireCache=function(){return h=null,i=null,j=null,k=null,b},b.allGroups=function(){if(null===h){h=[],h.push(b.group());for(var a=0;a<l.size();++a)h.push(l.getGroupByIndex(a))}return h},b.allValueAccessors=function(){if(null===i){i=[],i.push(b.valueAccessor());for(var a=0;a<l.size();++a)i.push(l.getAccessorByIndex(a))}return i},b.getValueAccessorByIndex=function(a){return b.allValueAccessors()[a]},b.yAxisMin=function(){var e,f=d();return e=a.min(f,function(a){return a.y+a.y0<a.y0?a.y+a.y0:a.y0}),e=c.utils.subtract(e,b.yAxisPadding())},b.yAxisMax=function(){var e,f=d();return e=a.max(f,function(a){return a.y+a.y0}),e=c.utils.add(e,b.yAxisPadding())},b.allKeyAccessors=function(){if(null===j){j=[],j.push(b.keyAccessor());for(var a=0;a<l.size();++a)j.push(b.keyAccessor())}return j},b.getKeyAccessorByIndex=function(a){return b.allKeyAccessors()[a]},b.xAxisMin=function(){for(var a=null,d=b.allGroups(),e=0;e<d.length;++e){var f=d[e],g=c.utils.groupMin(f,b.getKeyAccessorByIndex(e));(null===a||a>g)&&(a=g)}return c.utils.subtract(a,b.xAxisPadding())},b.xAxisMax=function(){for(var a=null,d=b.allGroups(),e=0;e<d.length;++e){var f=d[e],g=c.utils.groupMax(f,b.getKeyAccessorByIndex(e));(null===a||g>a)&&(a=g)}return c.utils.add(a,b.xAxisPadding())},b.calculateDataPointMatrixForAll=function(){for(var a=b.allGroups(),c=0;c<a.length;++c){var d=a[c],e=d.all();g(e,c)}},b.getChartStack=function(){return l},c.override(b,"valueAccessor",function(a){return arguments.length?(b.expireCache(),b._valueAccessor(a)):b._valueAccessor()}),c.override(b,"keyAccessor",function(a){return arguments.length?(b.expireCache(),b._keyAccessor(a)):b._keyAccessor()}),b.stackLayout=function(a){return arguments.length?(m=a,b):m},b.stackLayers=function(a){return arguments.length?void(k=a):(null===k&&(b.calculateDataPointMatrixForAll(),k=b.stackLayout()(l.toLayers())),k)},b.colorAccessor(function(a){return a.layer||a.index}),b.legendables=function(){var a=[];return h.forEach(function(d,e){a.push(c.utils.createLegendable(b,d,e,b.getValueAccessorByIndex(e)))}),a},b},c.abstractBubbleChart=function(b){var d=.3,e=10;b.BUBBLE_NODE_CLASS="node",b.BUBBLE_CLASS="bubble",b.MIN_RADIUS=10,b=c.colorChart(b),b.renderLabel(!0),b.renderTitle(!1);var f=a.scale.linear().domain([0,100]),g=function(a){return a.r};b.r=function(a){return arguments.length?(f=a,b):f},b.radiusValueAccessor=function(a){return arguments.length?(g=a,b):g},b.rMin=function(){var c=a.min(b.group().all(),function(a){return b.radiusValueAccessor()(a)});return c},b.rMax=function(){var c=a.max(b.group().all(),function(a){return b.radiusValueAccessor()(a)});return c},b.bubbleR=function(a){var c=b.radiusValueAccessor()(a),d=b.r()(c);return(isNaN(d)||0>=c)&&(d=0),d};var h=function(a){return b.label()(a)},i=function(a){return b.bubbleR(a)>e?1:0};b.doRenderLabel=function(a){if(b.renderLabel()){var d=a.select("text");d.empty()&&(d=a.append("text").attr("text-anchor","middle").attr("dy",".3em").on("click",b.onClick)),d.attr("opacity",0).text(h),c.transition(d,b.transitionDuration()).attr("opacity",i)}},b.doUpdateLabels=function(a){if(b.renderLabel()){var d=a.selectAll("text").text(h);c.transition(d,b.transitionDuration()).attr("opacity",i)}};var j=function(a){return b.title()(a)};return b.doRenderTitles=function(a){if(b.renderTitle()){var c=a.select("title");c.empty()&&a.append("title").text(j)}},b.doUpdateTitles=function(a){b.renderTitle()&&a.selectAll("title").text(j)},b.minRadiusWithLabel=function(a){return arguments.length?(e=a,b):e},b.maxBubbleRelativeSize=function(a){return arguments.length?(d=a,b):d},b.initBubbleColor=function(a,d){return this[c.constants.NODE_INDEX_NAME]=d,b.getColor(a,d)},b.updateBubbleColor=function(a,d){return b.getColor(a,this[c.constants.NODE_INDEX_NAME])},b.fadeDeselectedArea=function(){b.hasFilter()?b.selectAll("g."+b.BUBBLE_NODE_CLASS).each(function(a){b.isSelectedNode(a)?b.highlightSelected(this):b.fadeDeselected(this)}):b.selectAll("g."+b.BUBBLE_NODE_CLASS).each(function(a){b.resetHighlight(this)})},b.isSelectedNode=function(a){return b.hasFilter(a.key)},b.onClick=function(a){var d=a.key;c.events.trigger(function(){b.filter(d),c.redrawAll(b.chartGroup())})},b},c.pieChart=function(b,d){function e(){if(D.dataSet()){var b=q();x=x?x:a.min([D.width(),D.height()])/2;var c=D.buildArcs(),d=b(D.assembleCappedData());if(y){var e=y.selectAll("g."+A).data(d);f(e,c,d),k(d,c),o(e),p()}}}function f(a,b,c){var d=g(a);h(d,b),i(d),j(c,b)}function g(a){var b=a.enter().append("g").attr("class",function(a,b){return A+" _"+b});return b}function h(a,b){var c=a.append("path").attr("fill",function(a,b){return D.getColor(a,b)}).on("click",v).attr("d",function(a,c){return w(a,c,b)});c.transition().duration(D.transitionDuration()).attrTween("d",t)}function i(a){D.renderTitle()&&a.append("title").text(function(a){return D.title()(a)})}function j(a,b){if(D.renderLabel()){var d=y.selectAll("text."+A).data(a);d.exit().remove();var e=d.enter().append("text").attr("class",function(a,b){return A+" _"+b}).on("click",v);c.transition(e,D.transitionDuration()).attr("transform",function(a){a.innerRadius=D.innerRadius(),a.outerRadius=x;var c=b.centroid(a);return isNaN(c[0])||isNaN(c[1])?"translate(0,0)":"translate("+c+")"}).attr("text-anchor","middle").text(function(a){var b=a.data;return s(b)||r(a)?"":D.label()(a)})}}function k(a,b){l(a,b),m(a,b),n(a)}function l(a,b){var d=y.selectAll("g."+A).data(a).select("path").attr("d",function(a,c){return w(a,c,b)});c.transition(d,D.transitionDuration(),function(a){a.attrTween("d",t)}).attr("fill",function(a,b){return D.getColor(a,b)})}function m(a,b){if(D.renderLabel()){var d=y.selectAll("text."+A).data(a);c.transition(d,D.transitionDuration()).attr("transform",function(a){a.innerRadius=D.innerRadius(),a.outerRadius=x;var c=b.centroid(a);return isNaN(c[0])||isNaN(c[1])?"translate(0,0)":"translate("+c+")"}).attr("text-anchor","middle").text(function(a){var b=a.data;return s(b)||r(a)?"":D.label()(a)})}}function n(a){D.renderTitle()&&y.selectAll("g."+A).data(a).select("title").text(function(a){return D.title()(a)})}function o(a){a.exit().remove()}function p(){D.hasFilter()?D.selectAll("g."+A).each(function(a){D.isSelectedSlice(a)?D.highlightSelected(this):D.fadeDeselected(this)}):D.selectAll("g."+A).each(function(a){D.resetHighlight(this)})}function q(){return a.layout.pie().sort(null).value(function(a){return D.valueAccessor()(a)})}function r(a){var b=a.endAngle-a.startAngle;return isNaN(b)||C>b}function s(a){return 0===D.valueAccessor()(a)}function t(b){b.innerRadius=D.innerRadius();var c=this._current;u(c)&&(c={startAngle:0,endAngle:0});var d=a.interpolate(c,b);return this._current=d(0),function(a){return w(d(a),0,D.buildArcs())}}function u(a){return!a||isNaN(a.startAngle)||isNaN(a.endAngle)}function v(a){D.onClick(a.data)}function w(a,b,c){var d=c(a,b);return d.indexOf("NaN")>=0&&(d="M0,0"),d}var x,y,z=.5,A="pie-slice",B=0,C=z,D=c.capped(c.colorChart(c.baseChart({})));return D.slicesCap=D.cap,D.label(function(a){return D.keyAccessor()(a.data)}),D.renderLabel(!0),D.title(function(a){return D.keyAccessor()(a.data)+": "+D.valueAccessor()(a.data)}),D.transitionDuration(350),D.doRender=function(){return D.resetSvg(),y=D.svg().append("g").attr("transform","translate("+D.cx()+","+D.cy()+")"),e(),D},D.innerRadius=function(a){return arguments.length?(B=a,D):B},D.radius=function(a){return arguments.length?(x=a,D):x},D.cx=function(){return D.width()/2},D.cy=function(){return D.height()/2},D.buildArcs=function(){return a.svg.arc().outerRadius(x).innerRadius(B)},D.isSelectedSlice=function(a){return D.hasFilter(D.keyAccessor()(a.data))},D.doRedraw=function(){return e(),D},D.minAngleForLabel=function(a){return arguments.length?(C=a,D):C},D.anchor(b,d)},c.barChart=function(b,d){function e(a){return c.utils.safeNumber(Math.abs(n.y()(a.y+a.y0)-n.y()(a.y0)))}function f(a,b,d){var f=a.selectAll("rect.bar").data(b.points);f.enter().append("rect").attr("class","bar").attr("fill",n.getColor).append("title").text(n.title()),n.isOrdinal()&&f.on("click",i),c.transition(f,n.transitionDuration()).attr("x",function(a){var b=n.x()(a.x);return(p||n.isOrdinal())&&(b-=k/2),c.utils.safeNumber(b)}).attr("y",function(a){var b=n.y()(a.y+a.y0);return a.y<0&&(b-=e(a)),c.utils.safeNumber(b)}).attr("width",k).attr("height",function(a){return e(a)}).select("title").text(n.title()),c.transition(f.exit(),n.transitionDuration()).attr("height",0).remove()}function g(){if(void 0===k){var a=n.isOrdinal()?h()+1:h(),b=Math.floor((n.xAxisLength()-(a-1)*o)/a);
-(b==1/0||isNaN(b)||l>b)&&(b=l),k=b}}function h(){return void 0===j&&(j=n.xUnitCount()),j}function i(a){n.onClick(a.data)}var j,k,l=1,m=2,n=c.stackableChart(c.coordinateGridChart({})),o=m,p=!1;return c.override(n,"rescale",function(){n._rescale(),j=void 0,k=void 0,h()}),n.plotData=function(){var b=n.chartBodyG().selectAll("g.stack").data(n.stackLayers());g(),b.enter().append("g").attr("class",function(a,b){return"stack _"+b}),b.each(function(b,c){var d=a.select(this);f(d,b,c)}),n.stackLayers(null)},n.fadeDeselectedArea=function(){var a=n.chartBodyG().selectAll("rect.bar"),b=n.brush().extent();if(n.isOrdinal())n.hasFilter()?(a.classed(c.constants.SELECTED_CLASS,function(a){return n.hasFilter(n.keyAccessor()(a.data))}),a.classed(c.constants.DESELECTED_CLASS,function(a){return!n.hasFilter(n.keyAccessor()(a.data))})):(a.classed(c.constants.SELECTED_CLASS,!1),a.classed(c.constants.DESELECTED_CLASS,!1));else if(n.brushIsEmpty(b))a.classed(c.constants.DESELECTED_CLASS,!1);else{var d=b[0],e=b[1];a.classed(c.constants.DESELECTED_CLASS,function(a){var b=n.keyAccessor()(a.data);return d>b||b>=e})}},n.centerBar=function(a){return arguments.length?(p=a,n):p},n.gap=function(a){return arguments.length?(o=a,n):o},n.extendBrush=function(){var a=n.brush().extent();return n.round()&&!p&&(a[0]=a.map(n.round())[0],a[1]=a.map(n.round())[1],n.chartBodyG().select(".brush").call(n.brush().extent(a))),a},n.legendHighlight=function(b){n.select(".chart-body").selectAll("rect.bar").filter(function(){return a.select(this).attr("fill")==b.color}).classed("highlight",!0),n.select(".chart-body").selectAll("rect.bar").filter(function(){return a.select(this).attr("fill")!=b.color}).classed("fadeout",!0)},n.legendReset=function(b){n.selectAll(".chart-body").selectAll("rect.bar").filter(function(){return a.select(this).attr("fill")==b.color}).classed("highlight",!1),n.selectAll(".chart-body").selectAll("rect.bar").filter(function(){return a.select(this).attr("fill")!=b.color}).classed("fadeout",!1)},n.anchor(b,d)},c.lineChart=function(b,d){function e(b,d){var e=a.svg.line().x(function(a){return t.x()(a.x)}).y(function(a){return t.y()(a.y+a.y0)}).interpolate(w).tension(x);n&&e.defined(n),b.append("path").attr("class","line").attr("stroke",t.getColor).attr("fill",t.getColor),c.transition(d.select("path.line"),t.transitionDuration()).attr("d",function(a){return g(e(a.points))})}function f(b,d){if(u){var e=a.svg.area().x(function(a){return t.x()(a.x)}).y(function(a){return t.y()(a.y+a.y0)}).y0(function(a){return t.y()(a.y0)}).interpolate(w).tension(x);n&&e.defined(n),b.append("path").attr("class","area").attr("fill",t.getColor).attr("d",function(a){return g(e(a.points))}),c.transition(d.select("path.area"),t.transitionDuration()).attr("d",function(a){return g(e(a.points))})}}function g(a){return!a||a.indexOf("NaN")>=0?"M0,0":a}function h(b){t.brushOn()||b.each(function(b,d){var e=a.select(this),f=e.select("g."+p);f.empty()&&(f=e.append("g").attr("class",p)),i(f);var g=f.selectAll("circle."+q).data(f.datum().points);g.enter().append("circle").attr("class",q).attr("r",v).attr("fill",t.getColor).style("fill-opacity",1e-6).style("stroke-opacity",1e-6).on("mousemove",function(b){var c=a.select(this);j(c),k(c,f)}).on("mouseout",function(b){var c=a.select(this);l(c),m(f)}).append("title").text(t.title()),g.attr("cx",function(a){return c.utils.safeNumber(t.x()(a.x))}).attr("cy",function(a){return c.utils.safeNumber(t.y()(a.y+a.y0))}).select("title").text(t.title()),g.exit().remove()})}function i(a){var b=a.select("path."+r).empty()?a.append("path").attr("class",r):a.select("path."+r);b.style("display","none").attr("stroke-dasharray","5,5");var c=a.select("path."+s).empty()?a.append("path").attr("class",s):a.select("path."+s);c.style("display","none").attr("stroke-dasharray","5,5")}function j(a){return a.style("fill-opacity",.8),a.style("stroke-opacity",.8),a}function k(a,b){var c=a.attr("cx"),d=a.attr("cy");b.select("path."+r).style("display","").attr("d","M0 "+d+"L"+c+" "+d),b.select("path."+s).style("display","").attr("d","M"+c+" "+t.yAxisHeight()+"L"+c+" "+d)}function l(a){a.style("fill-opacity",1e-6).style("stroke-opacity",1e-6)}function m(a){a.select("path."+r).style("display","none"),a.select("path."+s).style("display","none")}var n,o=5,p="dc-tooltip",q="dot",r="yRef",s="xRef",t=c.stackableChart(c.coordinateGridChart({})),u=!1,v=o,w="linear",x=.7;return t.transitionDuration(500),t.plotData=function(){var a=t.chartBodyG().selectAll("g.stack").data(t.stackLayers()),b=a.enter().append("g").attr("class",function(a,b){return"stack _"+b});e(b,a),f(b,a),h(a),t.stackLayers(null)},t.interpolate=function(a){return arguments.length?(w=a,t):w},t.tension=function(a){return arguments.length?(x=a,t):x},t.defined=function(a){return arguments.length?(n=a,t):n},t.renderArea=function(a){return arguments.length?(u=a,t):u},t.dotRadius=function(a){return arguments.length?(v=a,t):v},t.legendHighlight=function(b){t.selectAll(".chart-body").selectAll("path").filter(function(){return a.select(this).attr("fill")==b.color}).classed("highlight",!0),t.selectAll(".chart-body").selectAll("path").filter(function(){return a.select(this).attr("fill")!=b.color}).classed("fadeout",!0)},t.legendReset=function(b){t.selectAll(".chart-body").selectAll("path").filter(function(){return a.select(this).attr("fill")==b.color}).classed("highlight",!1),t.selectAll(".chart-body").selectAll("path").filter(function(){return a.select(this).attr("fill")!=b.color}).classed("fadeout",!1)},t.anchor(b,d)},c.dataCount=function(b,d){var e=a.format(",d"),f=c.baseChart({});return f.doRender=function(){return f.selectAll(".total-count").text(e(f.dimension().size())),f.selectAll(".filter-count").text(e(f.group().value())),f},f.doRedraw=function(){return f.doRender()},f.anchor(b,d)},c.dataTable=function(d,e){function f(){var a=n.root().selectAll("tbody").data(g(),function(a){return n.keyAccessor()(a)}),b=a.enter().append("tbody");return b.append("tr").attr("class",m).append("td").attr("class",j).attr("colspan",p.length).html(function(a){return n.keyAccessor()(a)}),a.exit().remove(),b}function g(){i||(i=b.quicksort.by(q));var c=n.dimension().top(o);return a.nest().key(n.group()).sortKeys(r).sortValues(r).entries(i(c,0,c.length))}function h(a){for(var b=a.order().selectAll("tr."+k).data(function(a){return a.values}),c=b.enter().append("tr").attr("class",k),d=0;d<p.length;++d){var e=p[d];c.append("td").attr("class",l+" _"+d).html(function(a){return e(a)})}return b.exit().remove(),b}var i,j="dc-table-label",k="dc-table-row",l="dc-table-column",m="dc-table-group",n=c.baseChart({}),o=25,p=[],q=function(a){return a},r=a.ascending;return n.doRender=function(){return n.selectAll("tbody").remove(),h(f()),n},n.doRedraw=function(){return n.doRender()},n.size=function(a){return arguments.length?(o=a,n):o},n.columns=function(a){return arguments.length?(p=a,n):p},n.sortBy=function(a){return arguments.length?(q=a,n):q},n.order=function(a){return arguments.length?(r=a,n):r},n.anchor(d,e)},c.bubbleChart=function(a,b){function d(a){var b=a.enter().append("g");b.attr("class",i.BUBBLE_NODE_CLASS).attr("transform",k).append("circle").attr("class",function(a,b){return i.BUBBLE_CLASS+" _"+b}).on("click",i.onClick).attr("fill",i.initBubbleColor).attr("r",0),c.transition(a,i.transitionDuration()).attr("r",function(a){return i.bubbleR(a)}).attr("opacity",function(a){return i.bubbleR(a)>0?1:0}),i.doRenderLabel(b),i.doRenderTitles(b)}function e(a){c.transition(a,i.transitionDuration()).attr("transform",k).selectAll("circle."+i.BUBBLE_CLASS).attr("fill",i.updateBubbleColor).attr("r",function(a){return i.bubbleR(a)}).attr("opacity",function(a){return i.bubbleR(a)>0?1:0}),i.doUpdateLabels(a),i.doUpdateTitles(a)}function f(a){a.exit().remove()}function g(a){var b=i.x()(i.keyAccessor()(a));return isNaN(b)&&(b=0),b}function h(a){var b=i.y()(i.valueAccessor()(a));return isNaN(b)&&(b=0),b}var i=c.abstractBubbleChart(c.coordinateGridChart({})),j=!1;i.transitionDuration(750);var k=function(a){return"translate("+g(a)+","+h(a)+")"};return i.elasticRadius=function(a){return arguments.length?(j=a,i):j},i.plotData=function(){j&&i.r().domain([i.rMin(),i.rMax()]),i.r().range([i.MIN_RADIUS,i.xAxisLength()*i.maxBubbleRelativeSize()]);var a=i.chartBodyG().selectAll("g."+i.BUBBLE_NODE_CLASS).data(i.group().all());d(a),e(a),f(a),i.fadeDeselectedArea()},i.renderBrush=function(a){},i.redrawBrush=function(a){i.fadeDeselectedArea()},i.anchor(a,b)},c.compositeChart=function(b,d){function e(a,b){a._generateG(k.g()),a.g().attr("class",j+" _"+b)}function f(){for(var a=[],b=0;b<l.length;++b)a.push(l[b].yAxisMin());return a}function g(){for(var a=[],b=0;b<l.length;++b)a.push(l[b].yAxisMax());return a}function h(){for(var a=[],b=0;b<l.length;++b)a.push(l[b].xAxisMin());return a}function i(){for(var a=[],b=0;b<l.length;++b)a.push(l[b].xAxisMax());return a}var j="sub",k=c.coordinateGridChart({}),l=[];return k.transitionDuration(500),k.group({}),c.override(k,"_generateG",function(){for(var a=this.__generateG(),b=0;b<l.length;++b){var c=l[b];e(c,b),void 0===c.dimension()&&c.dimension(k.dimension()),void 0===c.group()&&c.group(k.group()),c.chartGroup(k.chartGroup()),c.svg(k.svg()),c.xUnits(k.xUnits()),c.transitionDuration(k.transitionDuration()),c.brushOn(k.brushOn())}return a}),k.plotData=function(){for(var a=0;a<l.length;++a){var b=l[a];void 0===b.g()&&e(b,a),b.x(k.x()),b.y(k.y()),b.xAxis(k.xAxis()),b.yAxis(k.yAxis()),b.plotData(),b.activateRenderlets()}},k.fadeDeselectedArea=function(){for(var a=0;a<l.length;++a){var b=l[a];b.brush(k.brush()),b.fadeDeselectedArea()}},k.compose=function(a){l=a;for(var b=0;b<l.length;++b){var c=l[b];c.height(k.height()),c.width(k.width()),c.margins(k.margins())}return k},k.children=function(){return l},k.yAxisMin=function(){return a.min(f())},k.yAxisMax=function(){return c.utils.add(a.max(g()),k.yAxisPadding())},k.xAxisMin=function(){return c.utils.subtract(a.min(h()),k.xAxisPadding())},k.xAxisMax=function(){return c.utils.add(a.max(i()),k.xAxisPadding())},k.legendables=function(){var a=[];return l.forEach(function(b,d){var e=b.legendables();e.length>1?a.push.apply(a,e):a.push(c.utils.createLegendable(b,b.group(),d,b.valueAccessor()))}),a},k.legendHighlight=function(a){for(var b=0;b<l.length;++b){var c=l[b];c.legendHighlight(a)}},k.legendReset=function(a){for(var b=0;b<l.length;++b){var c=l[b];c.legendReset(a)}},k.anchor(b,d)},c.geoChoroplethChart=function(b,d){function e(a){var b=f();if(g(a)){var c=h(a);n(c,a,b),o(c,a,b)}}function f(){for(var a={},b=p.group().all(),c=0;c<b.length;++c)a[p.keyAccessor()(b[c])]=p.valueAccessor()(b[c]);return a}function g(a){return m(a).keyAccessor}function h(a){var b=p.svg().selectAll(i(a)).classed("selected",function(b){return j(a,b)}).classed("deselected",function(b){return k(a,b)}).attr("class",function(b){var d=m(a).name,e=c.utils.nameToId(m(a).keyAccessor(b)),f=d+" "+e;return j(a,b)&&(f+=" selected"),k(a,b)&&(f+=" deselected"),f});return b}function i(a){return"g.layer"+a+" g."+m(a).name}function j(a,b){return p.hasFilter()&&p.hasFilter(l(a,b))}function k(a,b){return p.hasFilter()&&!p.hasFilter(l(a,b))}function l(a,b){return m(a).keyAccessor(b)}function m(a){return s[a]}function n(b,d,e){var f=b.select("path").attr("fill",function(b){var c=a.select(this).attr("fill");return c?c:"none"}).on("click",function(a){return p.onClick(a,d)});c.transition(f,p.transitionDuration()).attr("fill",function(a,b){return p.getColor(e[m(d).keyAccessor(a)],b)})}function o(a,b,c){p.renderTitle()&&a.selectAll("title").text(function(a){var d=l(b,a),e=c[d];return p.title()({key:d,value:e})})}var p=c.colorChart(c.baseChart({}));p.colorAccessor(function(a,b){return a});var q,r=a.geo.path(),s=[];return p.doRender=function(){p.resetSvg();for(var a=0;a<s.length;++a){var b=p.svg().append("g").attr("class","layer"+a),c=b.selectAll("g."+m(a).name).data(m(a).data).enter().append("g").attr("class",m(a).name);c.append("path").attr("fill","white").attr("d",r),c.append("title"),e(a)}q=!1},p.onClick=function(a,b){var d=m(b).keyAccessor(a);c.events.trigger(function(){p.filter(d),c.redrawAll(p.chartGroup())})},p.doRedraw=function(){for(var a=0;a<s.length;++a)e(a),q&&p.svg().selectAll("g."+m(a).name+" path").attr("d",r);q=!1},p.overlayGeoJson=function(a,b,c){for(var d=0;d<s.length;++d)if(s[d].name==b)return s[d].data=a,s[d].keyAccessor=c,p;return s.push({name:b,data:a,keyAccessor:c}),p},p.projection=function(a){return r.projection(a),q=!0,p},p.geoJsons=function(){return s},p.removeGeoJson=function(a){for(var b=[],c=0;c<s.length;++c){var d=s[c];d.name!=a&&b.push(d)}return s=b,p},p.anchor(b,d)},c.bubbleOverlay=function(b,d){function e(){return j=n.select("g."+k),j.empty()&&(j=n.svg().append("g").attr("class",k)),j}function f(){var a=g();o.forEach(function(b){var d=h(b,a),e=d.select("circle."+m);e.empty()&&(e=d.append("circle").attr("class",m).attr("r",0).attr("fill",n.initBubbleColor).on("click",n.onClick)),c.transition(e,n.transitionDuration()).attr("r",function(a){return n.bubbleR(a)}),n.doRenderLabel(d),n.doRenderTitles(d)})}function g(){var a={};return n.group().all().forEach(function(b){a[n.keyAccessor()(b)]=b}),a}function h(a,b){var d=l+" "+c.utils.nameToId(a.name),e=j.select("g."+c.utils.nameToId(a.name));return e.empty()&&(e=j.append("g").attr("class",d).attr("transform","translate("+a.x+","+a.y+")")),e.datum(b[a.name]),e}function i(){var a=g();o.forEach(function(b){var d=h(b,a),e=d.select("circle."+m);c.transition(e,n.transitionDuration()).attr("r",function(a){return n.bubbleR(a)}).attr("fill",n.updateBubbleColor),n.doUpdateLabels(d),n.doUpdateTitles(d)})}var j,k="bubble-overlay",l="node",m="bubble",n=c.abstractBubbleChart(c.baseChart({})),o=[];return n.transitionDuration(750),n.radiusValueAccessor(function(a){return a.value}),n.point=function(a,b,c){return o.push({name:a,x:b,y:c}),n},n.doRender=function(){return j=e(),n.r().range([n.MIN_RADIUS,n.width()*n.maxBubbleRelativeSize()]),f(),n.fadeDeselectedArea(),n},n.doRedraw=function(){return i(),n.fadeDeselectedArea(),n},n.debug=function(b){if(b){var d=n.select("g."+c.constants.DEBUG_GROUP_CLASS);d.empty()&&(d=n.svg().append("g").attr("class",c.constants.DEBUG_GROUP_CLASS));var e=d.append("text").attr("x",10).attr("y",20);d.append("rect").attr("width",n.width()).attr("height",n.height()).on("mousemove",function(){var b=a.mouse(d.node()),c=b[0]+", "+b[1];e.text(c)})}else n.selectAll(".debug").remove();return n},n.anchor(b,d),n},c.rowChart=function(b,d){function e(){if(!r||s){var b=a.extent(t,y.valueAccessor());b[0]>0&&(b[0]=0),r=a.scale.linear().domain(b).range([0,y.effectiveWidth()]),z.scale(r)}}function f(){var a=q.select("g.axis");e(),a.empty()&&(a=q.append("g").attr("class","axis").attr("transform","translate(0, "+y.effectiveHeight()+")")),c.transition(a,y.transitionDuration()).call(z)}function g(){q.selectAll("g.tick").select("line.grid-line").remove(),q.selectAll("g.tick").append("line").attr("class","grid-line").attr("x1",0).attr("y1",0).attr("x2",0).attr("y2",function(){return-y.effectiveHeight()})}function h(){t=y.assembleCappedData(),f(),g();var a=q.selectAll("g."+x).data(t);i(a),j(a),k(a)}function i(a){var b=a.enter().append("g").attr("class",function(a,b){return x+" _"+b});b.append("rect").attr("width",0),m(b),n(a)}function j(a){a.exit().remove()}function k(a){var b=t.length,d=(y.effectiveHeight()-(b+1)*w)/b,e=a.attr("transform",function(a,b){return"translate(0,"+((b+1)*w+b*d)+")"}).select("rect").attr("height",d).attr("fill",y.getColor).on("click",o).classed("deselected",function(a){return y.hasFilter()?!y.isSelectedRow(a):!1}).classed("selected",function(a){return y.hasFilter()?y.isSelectedRow(a):!1});c.transition(e,y.transitionDuration()).attr("width",function(a){var b=r(r(0)==-(1/0)?1:0);return Math.abs(b-r(y.valueAccessor()(a)))}).attr("transform",p),l(a),n(a)}function l(a){y.renderTitle()&&(a.selectAll("title").remove(),a.append("title").text(function(a){return y.title()(a)}))}function m(a){y.renderLabel()&&a.append("text").on("click",o)}function n(a){if(y.renderLabel()){var b=a.select("text").attr("x",u).attr("y",v).on("click",o).attr("class",function(a,b){return x+" _"+b}).text(function(a){return y.label()(a)});c.transition(b,y.transitionDuration()).attr("transform",p)}}function o(a){y.onClick(a)}function p(a){var b=r(y.valueAccessor()(a)),c=r(0),d=b>c?c:b;return"translate("+d+",0)"}var q,r,s,t,u=10,v=15,w=5,x="row",y=c.capped(c.marginable(c.colorChart(c.baseChart({})))),z=a.svg.axis().orient("bottom");return y.rowsCap=y.cap,y.doRender=function(){return y.resetSvg(),q=y.svg().append("g").attr("transform","translate("+y.margins().left+","+y.margins().top+")"),h(),y},y.title(function(a){return y.keyAccessor()(a)+": "+y.valueAccessor()(a)}),y.label(function(a){return y.keyAccessor()(a)}),y.x=function(a){return arguments.length?(r=a,y):r},y.doRedraw=function(){return h(),y},y.xAxis=function(){return z},y.gap=function(a){return arguments.length?(w=a,y):w},y.elasticX=function(a){return arguments.length?(s=a,y):s},y.labelOffsetX=function(a){return arguments.length?(u=a,y):u},y.labelOffsetY=function(a){return arguments.length?(v=a,y):v},y.isSelectedRow=function(a){return y.hasFilter(y.keyAccessor()(a))},y.anchor(b,d)},c.legend=function(){function a(){return i+h}var b,c,d=2,e={},f=0,g=0,h=12,i=5;return e.parent=function(a){return arguments.length?(b=a,e):b},e.render=function(){c=b.svg().append("g").attr("class","dc-legend").attr("transform","translate("+f+","+g+")");var e=c.selectAll("g.dc-legend-item").data(b.legendables()).enter().append("g").attr("class","dc-legend-item").attr("transform",function(b,c){return"translate(0,"+c*a()+")"}).on("mouseover",function(a){b.legendHighlight(a)}).on("mouseout",function(a){b.legendReset(a)});e.append("rect").attr("width",h).attr("height",h).attr("fill",function(a){return a.color}),e.append("text").text(function(a){return a.name}).attr("x",h+d).attr("y",function(){return h/2+(this.clientHeight?this.clientHeight:13)/2-2})},e.x=function(a){return arguments.length?(f=a,e):f},e.y=function(a){return arguments.length?(g=a,e):g},e.gap=function(a){return arguments.length?(i=a,e):i},e.itemHeight=function(a){return arguments.length?(h=a,e):h},e},c.capped=function(b){var d=1/0,e="Others",f=function(c){var d=a.sum(c,b.valueAccessor()),f=b.group().all(),g=a.sum(f,b.valueAccessor()),h=c.map(b.keyAccessor()),i=f.map(b.keyAccessor()),j=a.set(h),k=i.filter(function(a){return!j.has(a)});c.push({others:k,key:e,value:g-d})};return b.assembleCappedData=function(){if(d==1/0)return b.computeOrderedGroups();var a=b.group().top(d);return a=b.computeOrderedGroups(a),f&&f(a),a},b.cap=function(a){return arguments.length?(d=a,b):d},b.othersLabel=function(a){return arguments.length?(e=a,b):e},b.othersGrouper=function(a){return arguments.length?(f=a,b):f},c.override(b,"onClick",function(a){a.others&&a.others.forEach(function(a){b.filter(a)}),b._onClick(a)}),b},c.numberDisplay=function(b,d){var e="number-display",f=a.format(".2s"),g=c.baseChart({});return g.dimension({}),g.value=function(){var a=g.group().all&&g.group().all()[0]||g.group().value();return g.valueAccessor()(a)},g.transitionDuration(250),g.doRender=function(){var b=g.value(),c=g.selectAll("."+e);return c.empty()&&(c=c.data([0]).enter().append("span").attr("class",e)),c.transition().duration(g.transitionDuration()).ease("quad-out-in").tween("text",function(){var c=a.interpolateNumber(this.lastValue||0,b);return this.lastValue=b,function(a){this.textContent=g.formatNumber()(c(a))}}),g},g.doRedraw=function(){return g.doRender()},g.formatNumber=function(a){return arguments.length?(f=a,g):f},g.anchor(b,d)},c}if(true)!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(6),__webpack_require__(70)], __WEBPACK_AMD_DEFINE_FACTORY__ = (a),
+(b==1/0||isNaN(b)||l>b)&&(b=l),k=b}}function h(){return void 0===j&&(j=n.xUnitCount()),j}function i(a){n.onClick(a.data)}var j,k,l=1,m=2,n=c.stackableChart(c.coordinateGridChart({})),o=m,p=!1;return c.override(n,"rescale",function(){n._rescale(),j=void 0,k=void 0,h()}),n.plotData=function(){var b=n.chartBodyG().selectAll("g.stack").data(n.stackLayers());g(),b.enter().append("g").attr("class",function(a,b){return"stack _"+b}),b.each(function(b,c){var d=a.select(this);f(d,b,c)}),n.stackLayers(null)},n.fadeDeselectedArea=function(){var a=n.chartBodyG().selectAll("rect.bar"),b=n.brush().extent();if(n.isOrdinal())n.hasFilter()?(a.classed(c.constants.SELECTED_CLASS,function(a){return n.hasFilter(n.keyAccessor()(a.data))}),a.classed(c.constants.DESELECTED_CLASS,function(a){return!n.hasFilter(n.keyAccessor()(a.data))})):(a.classed(c.constants.SELECTED_CLASS,!1),a.classed(c.constants.DESELECTED_CLASS,!1));else if(n.brushIsEmpty(b))a.classed(c.constants.DESELECTED_CLASS,!1);else{var d=b[0],e=b[1];a.classed(c.constants.DESELECTED_CLASS,function(a){var b=n.keyAccessor()(a.data);return d>b||b>=e})}},n.centerBar=function(a){return arguments.length?(p=a,n):p},n.gap=function(a){return arguments.length?(o=a,n):o},n.extendBrush=function(){var a=n.brush().extent();return n.round()&&!p&&(a[0]=a.map(n.round())[0],a[1]=a.map(n.round())[1],n.chartBodyG().select(".brush").call(n.brush().extent(a))),a},n.legendHighlight=function(b){n.select(".chart-body").selectAll("rect.bar").filter(function(){return a.select(this).attr("fill")==b.color}).classed("highlight",!0),n.select(".chart-body").selectAll("rect.bar").filter(function(){return a.select(this).attr("fill")!=b.color}).classed("fadeout",!0)},n.legendReset=function(b){n.selectAll(".chart-body").selectAll("rect.bar").filter(function(){return a.select(this).attr("fill")==b.color}).classed("highlight",!1),n.selectAll(".chart-body").selectAll("rect.bar").filter(function(){return a.select(this).attr("fill")!=b.color}).classed("fadeout",!1)},n.anchor(b,d)},c.lineChart=function(b,d){function e(b,d){var e=a.svg.line().x(function(a){return t.x()(a.x)}).y(function(a){return t.y()(a.y+a.y0)}).interpolate(w).tension(x);n&&e.defined(n),b.append("path").attr("class","line").attr("stroke",t.getColor).attr("fill",t.getColor),c.transition(d.select("path.line"),t.transitionDuration()).attr("d",function(a){return g(e(a.points))})}function f(b,d){if(u){var e=a.svg.area().x(function(a){return t.x()(a.x)}).y(function(a){return t.y()(a.y+a.y0)}).y0(function(a){return t.y()(a.y0)}).interpolate(w).tension(x);n&&e.defined(n),b.append("path").attr("class","area").attr("fill",t.getColor).attr("d",function(a){return g(e(a.points))}),c.transition(d.select("path.area"),t.transitionDuration()).attr("d",function(a){return g(e(a.points))})}}function g(a){return!a||a.indexOf("NaN")>=0?"M0,0":a}function h(b){t.brushOn()||b.each(function(b,d){var e=a.select(this),f=e.select("g."+p);f.empty()&&(f=e.append("g").attr("class",p)),i(f);var g=f.selectAll("circle."+q).data(f.datum().points);g.enter().append("circle").attr("class",q).attr("r",v).attr("fill",t.getColor).style("fill-opacity",1e-6).style("stroke-opacity",1e-6).on("mousemove",function(b){var c=a.select(this);j(c),k(c,f)}).on("mouseout",function(b){var c=a.select(this);l(c),m(f)}).append("title").text(t.title()),g.attr("cx",function(a){return c.utils.safeNumber(t.x()(a.x))}).attr("cy",function(a){return c.utils.safeNumber(t.y()(a.y+a.y0))}).select("title").text(t.title()),g.exit().remove()})}function i(a){var b=a.select("path."+r).empty()?a.append("path").attr("class",r):a.select("path."+r);b.style("display","none").attr("stroke-dasharray","5,5");var c=a.select("path."+s).empty()?a.append("path").attr("class",s):a.select("path."+s);c.style("display","none").attr("stroke-dasharray","5,5")}function j(a){return a.style("fill-opacity",.8),a.style("stroke-opacity",.8),a}function k(a,b){var c=a.attr("cx"),d=a.attr("cy");b.select("path."+r).style("display","").attr("d","M0 "+d+"L"+c+" "+d),b.select("path."+s).style("display","").attr("d","M"+c+" "+t.yAxisHeight()+"L"+c+" "+d)}function l(a){a.style("fill-opacity",1e-6).style("stroke-opacity",1e-6)}function m(a){a.select("path."+r).style("display","none"),a.select("path."+s).style("display","none")}var n,o=5,p="dc-tooltip",q="dot",r="yRef",s="xRef",t=c.stackableChart(c.coordinateGridChart({})),u=!1,v=o,w="linear",x=.7;return t.transitionDuration(500),t.plotData=function(){var a=t.chartBodyG().selectAll("g.stack").data(t.stackLayers()),b=a.enter().append("g").attr("class",function(a,b){return"stack _"+b});e(b,a),f(b,a),h(a),t.stackLayers(null)},t.interpolate=function(a){return arguments.length?(w=a,t):w},t.tension=function(a){return arguments.length?(x=a,t):x},t.defined=function(a){return arguments.length?(n=a,t):n},t.renderArea=function(a){return arguments.length?(u=a,t):u},t.dotRadius=function(a){return arguments.length?(v=a,t):v},t.legendHighlight=function(b){t.selectAll(".chart-body").selectAll("path").filter(function(){return a.select(this).attr("fill")==b.color}).classed("highlight",!0),t.selectAll(".chart-body").selectAll("path").filter(function(){return a.select(this).attr("fill")!=b.color}).classed("fadeout",!0)},t.legendReset=function(b){t.selectAll(".chart-body").selectAll("path").filter(function(){return a.select(this).attr("fill")==b.color}).classed("highlight",!1),t.selectAll(".chart-body").selectAll("path").filter(function(){return a.select(this).attr("fill")!=b.color}).classed("fadeout",!1)},t.anchor(b,d)},c.dataCount=function(b,d){var e=a.format(",d"),f=c.baseChart({});return f.doRender=function(){return f.selectAll(".total-count").text(e(f.dimension().size())),f.selectAll(".filter-count").text(e(f.group().value())),f},f.doRedraw=function(){return f.doRender()},f.anchor(b,d)},c.dataTable=function(d,e){function f(){var a=n.root().selectAll("tbody").data(g(),function(a){return n.keyAccessor()(a)}),b=a.enter().append("tbody");return b.append("tr").attr("class",m).append("td").attr("class",j).attr("colspan",p.length).html(function(a){return n.keyAccessor()(a)}),a.exit().remove(),b}function g(){i||(i=b.quicksort.by(q));var c=n.dimension().top(o);return a.nest().key(n.group()).sortKeys(r).sortValues(r).entries(i(c,0,c.length))}function h(a){for(var b=a.order().selectAll("tr."+k).data(function(a){return a.values}),c=b.enter().append("tr").attr("class",k),d=0;d<p.length;++d){var e=p[d];c.append("td").attr("class",l+" _"+d).html(function(a){return e(a)})}return b.exit().remove(),b}var i,j="dc-table-label",k="dc-table-row",l="dc-table-column",m="dc-table-group",n=c.baseChart({}),o=25,p=[],q=function(a){return a},r=a.ascending;return n.doRender=function(){return n.selectAll("tbody").remove(),h(f()),n},n.doRedraw=function(){return n.doRender()},n.size=function(a){return arguments.length?(o=a,n):o},n.columns=function(a){return arguments.length?(p=a,n):p},n.sortBy=function(a){return arguments.length?(q=a,n):q},n.order=function(a){return arguments.length?(r=a,n):r},n.anchor(d,e)},c.bubbleChart=function(a,b){function d(a){var b=a.enter().append("g");b.attr("class",i.BUBBLE_NODE_CLASS).attr("transform",k).append("circle").attr("class",function(a,b){return i.BUBBLE_CLASS+" _"+b}).on("click",i.onClick).attr("fill",i.initBubbleColor).attr("r",0),c.transition(a,i.transitionDuration()).attr("r",function(a){return i.bubbleR(a)}).attr("opacity",function(a){return i.bubbleR(a)>0?1:0}),i.doRenderLabel(b),i.doRenderTitles(b)}function e(a){c.transition(a,i.transitionDuration()).attr("transform",k).selectAll("circle."+i.BUBBLE_CLASS).attr("fill",i.updateBubbleColor).attr("r",function(a){return i.bubbleR(a)}).attr("opacity",function(a){return i.bubbleR(a)>0?1:0}),i.doUpdateLabels(a),i.doUpdateTitles(a)}function f(a){a.exit().remove()}function g(a){var b=i.x()(i.keyAccessor()(a));return isNaN(b)&&(b=0),b}function h(a){var b=i.y()(i.valueAccessor()(a));return isNaN(b)&&(b=0),b}var i=c.abstractBubbleChart(c.coordinateGridChart({})),j=!1;i.transitionDuration(750);var k=function(a){return"translate("+g(a)+","+h(a)+")"};return i.elasticRadius=function(a){return arguments.length?(j=a,i):j},i.plotData=function(){j&&i.r().domain([i.rMin(),i.rMax()]),i.r().range([i.MIN_RADIUS,i.xAxisLength()*i.maxBubbleRelativeSize()]);var a=i.chartBodyG().selectAll("g."+i.BUBBLE_NODE_CLASS).data(i.group().all());d(a),e(a),f(a),i.fadeDeselectedArea()},i.renderBrush=function(a){},i.redrawBrush=function(a){i.fadeDeselectedArea()},i.anchor(a,b)},c.compositeChart=function(b,d){function e(a,b){a._generateG(k.g()),a.g().attr("class",j+" _"+b)}function f(){for(var a=[],b=0;b<l.length;++b)a.push(l[b].yAxisMin());return a}function g(){for(var a=[],b=0;b<l.length;++b)a.push(l[b].yAxisMax());return a}function h(){for(var a=[],b=0;b<l.length;++b)a.push(l[b].xAxisMin());return a}function i(){for(var a=[],b=0;b<l.length;++b)a.push(l[b].xAxisMax());return a}var j="sub",k=c.coordinateGridChart({}),l=[];return k.transitionDuration(500),k.group({}),c.override(k,"_generateG",function(){for(var a=this.__generateG(),b=0;b<l.length;++b){var c=l[b];e(c,b),void 0===c.dimension()&&c.dimension(k.dimension()),void 0===c.group()&&c.group(k.group()),c.chartGroup(k.chartGroup()),c.svg(k.svg()),c.xUnits(k.xUnits()),c.transitionDuration(k.transitionDuration()),c.brushOn(k.brushOn())}return a}),k.plotData=function(){for(var a=0;a<l.length;++a){var b=l[a];void 0===b.g()&&e(b,a),b.x(k.x()),b.y(k.y()),b.xAxis(k.xAxis()),b.yAxis(k.yAxis()),b.plotData(),b.activateRenderlets()}},k.fadeDeselectedArea=function(){for(var a=0;a<l.length;++a){var b=l[a];b.brush(k.brush()),b.fadeDeselectedArea()}},k.compose=function(a){l=a;for(var b=0;b<l.length;++b){var c=l[b];c.height(k.height()),c.width(k.width()),c.margins(k.margins())}return k},k.children=function(){return l},k.yAxisMin=function(){return a.min(f())},k.yAxisMax=function(){return c.utils.add(a.max(g()),k.yAxisPadding())},k.xAxisMin=function(){return c.utils.subtract(a.min(h()),k.xAxisPadding())},k.xAxisMax=function(){return c.utils.add(a.max(i()),k.xAxisPadding())},k.legendables=function(){var a=[];return l.forEach(function(b,d){var e=b.legendables();e.length>1?a.push.apply(a,e):a.push(c.utils.createLegendable(b,b.group(),d,b.valueAccessor()))}),a},k.legendHighlight=function(a){for(var b=0;b<l.length;++b){var c=l[b];c.legendHighlight(a)}},k.legendReset=function(a){for(var b=0;b<l.length;++b){var c=l[b];c.legendReset(a)}},k.anchor(b,d)},c.geoChoroplethChart=function(b,d){function e(a){var b=f();if(g(a)){var c=h(a);n(c,a,b),o(c,a,b)}}function f(){for(var a={},b=p.group().all(),c=0;c<b.length;++c)a[p.keyAccessor()(b[c])]=p.valueAccessor()(b[c]);return a}function g(a){return m(a).keyAccessor}function h(a){var b=p.svg().selectAll(i(a)).classed("selected",function(b){return j(a,b)}).classed("deselected",function(b){return k(a,b)}).attr("class",function(b){var d=m(a).name,e=c.utils.nameToId(m(a).keyAccessor(b)),f=d+" "+e;return j(a,b)&&(f+=" selected"),k(a,b)&&(f+=" deselected"),f});return b}function i(a){return"g.layer"+a+" g."+m(a).name}function j(a,b){return p.hasFilter()&&p.hasFilter(l(a,b))}function k(a,b){return p.hasFilter()&&!p.hasFilter(l(a,b))}function l(a,b){return m(a).keyAccessor(b)}function m(a){return s[a]}function n(b,d,e){var f=b.select("path").attr("fill",function(b){var c=a.select(this).attr("fill");return c?c:"none"}).on("click",function(a){return p.onClick(a,d)});c.transition(f,p.transitionDuration()).attr("fill",function(a,b){return p.getColor(e[m(d).keyAccessor(a)],b)})}function o(a,b,c){p.renderTitle()&&a.selectAll("title").text(function(a){var d=l(b,a),e=c[d];return p.title()({key:d,value:e})})}var p=c.colorChart(c.baseChart({}));p.colorAccessor(function(a,b){return a});var q,r=a.geo.path(),s=[];return p.doRender=function(){p.resetSvg();for(var a=0;a<s.length;++a){var b=p.svg().append("g").attr("class","layer"+a),c=b.selectAll("g."+m(a).name).data(m(a).data).enter().append("g").attr("class",m(a).name);c.append("path").attr("fill","white").attr("d",r),c.append("title"),e(a)}q=!1},p.onClick=function(a,b){var d=m(b).keyAccessor(a);c.events.trigger(function(){p.filter(d),c.redrawAll(p.chartGroup())})},p.doRedraw=function(){for(var a=0;a<s.length;++a)e(a),q&&p.svg().selectAll("g."+m(a).name+" path").attr("d",r);q=!1},p.overlayGeoJson=function(a,b,c){for(var d=0;d<s.length;++d)if(s[d].name==b)return s[d].data=a,s[d].keyAccessor=c,p;return s.push({name:b,data:a,keyAccessor:c}),p},p.projection=function(a){return r.projection(a),q=!0,p},p.geoJsons=function(){return s},p.removeGeoJson=function(a){for(var b=[],c=0;c<s.length;++c){var d=s[c];d.name!=a&&b.push(d)}return s=b,p},p.anchor(b,d)},c.bubbleOverlay=function(b,d){function e(){return j=n.select("g."+k),j.empty()&&(j=n.svg().append("g").attr("class",k)),j}function f(){var a=g();o.forEach(function(b){var d=h(b,a),e=d.select("circle."+m);e.empty()&&(e=d.append("circle").attr("class",m).attr("r",0).attr("fill",n.initBubbleColor).on("click",n.onClick)),c.transition(e,n.transitionDuration()).attr("r",function(a){return n.bubbleR(a)}),n.doRenderLabel(d),n.doRenderTitles(d)})}function g(){var a={};return n.group().all().forEach(function(b){a[n.keyAccessor()(b)]=b}),a}function h(a,b){var d=l+" "+c.utils.nameToId(a.name),e=j.select("g."+c.utils.nameToId(a.name));return e.empty()&&(e=j.append("g").attr("class",d).attr("transform","translate("+a.x+","+a.y+")")),e.datum(b[a.name]),e}function i(){var a=g();o.forEach(function(b){var d=h(b,a),e=d.select("circle."+m);c.transition(e,n.transitionDuration()).attr("r",function(a){return n.bubbleR(a)}).attr("fill",n.updateBubbleColor),n.doUpdateLabels(d),n.doUpdateTitles(d)})}var j,k="bubble-overlay",l="node",m="bubble",n=c.abstractBubbleChart(c.baseChart({})),o=[];return n.transitionDuration(750),n.radiusValueAccessor(function(a){return a.value}),n.point=function(a,b,c){return o.push({name:a,x:b,y:c}),n},n.doRender=function(){return j=e(),n.r().range([n.MIN_RADIUS,n.width()*n.maxBubbleRelativeSize()]),f(),n.fadeDeselectedArea(),n},n.doRedraw=function(){return i(),n.fadeDeselectedArea(),n},n.debug=function(b){if(b){var d=n.select("g."+c.constants.DEBUG_GROUP_CLASS);d.empty()&&(d=n.svg().append("g").attr("class",c.constants.DEBUG_GROUP_CLASS));var e=d.append("text").attr("x",10).attr("y",20);d.append("rect").attr("width",n.width()).attr("height",n.height()).on("mousemove",function(){var b=a.mouse(d.node()),c=b[0]+", "+b[1];e.text(c)})}else n.selectAll(".debug").remove();return n},n.anchor(b,d),n},c.rowChart=function(b,d){function e(){if(!r||s){var b=a.extent(t,y.valueAccessor());b[0]>0&&(b[0]=0),r=a.scale.linear().domain(b).range([0,y.effectiveWidth()]),z.scale(r)}}function f(){var a=q.select("g.axis");e(),a.empty()&&(a=q.append("g").attr("class","axis").attr("transform","translate(0, "+y.effectiveHeight()+")")),c.transition(a,y.transitionDuration()).call(z)}function g(){q.selectAll("g.tick").select("line.grid-line").remove(),q.selectAll("g.tick").append("line").attr("class","grid-line").attr("x1",0).attr("y1",0).attr("x2",0).attr("y2",function(){return-y.effectiveHeight()})}function h(){t=y.assembleCappedData(),f(),g();var a=q.selectAll("g."+x).data(t);i(a),j(a),k(a)}function i(a){var b=a.enter().append("g").attr("class",function(a,b){return x+" _"+b});b.append("rect").attr("width",0),m(b),n(a)}function j(a){a.exit().remove()}function k(a){var b=t.length,d=(y.effectiveHeight()-(b+1)*w)/b,e=a.attr("transform",function(a,b){return"translate(0,"+((b+1)*w+b*d)+")"}).select("rect").attr("height",d).attr("fill",y.getColor).on("click",o).classed("deselected",function(a){return y.hasFilter()?!y.isSelectedRow(a):!1}).classed("selected",function(a){return y.hasFilter()?y.isSelectedRow(a):!1});c.transition(e,y.transitionDuration()).attr("width",function(a){var b=r(r(0)==-(1/0)?1:0);return Math.abs(b-r(y.valueAccessor()(a)))}).attr("transform",p),l(a),n(a)}function l(a){y.renderTitle()&&(a.selectAll("title").remove(),a.append("title").text(function(a){return y.title()(a)}))}function m(a){y.renderLabel()&&a.append("text").on("click",o)}function n(a){if(y.renderLabel()){var b=a.select("text").attr("x",u).attr("y",v).on("click",o).attr("class",function(a,b){return x+" _"+b}).text(function(a){return y.label()(a)});c.transition(b,y.transitionDuration()).attr("transform",p)}}function o(a){y.onClick(a)}function p(a){var b=r(y.valueAccessor()(a)),c=r(0),d=b>c?c:b;return"translate("+d+",0)"}var q,r,s,t,u=10,v=15,w=5,x="row",y=c.capped(c.marginable(c.colorChart(c.baseChart({})))),z=a.svg.axis().orient("bottom");return y.rowsCap=y.cap,y.doRender=function(){return y.resetSvg(),q=y.svg().append("g").attr("transform","translate("+y.margins().left+","+y.margins().top+")"),h(),y},y.title(function(a){return y.keyAccessor()(a)+": "+y.valueAccessor()(a)}),y.label(function(a){return y.keyAccessor()(a)}),y.x=function(a){return arguments.length?(r=a,y):r},y.doRedraw=function(){return h(),y},y.xAxis=function(){return z},y.gap=function(a){return arguments.length?(w=a,y):w},y.elasticX=function(a){return arguments.length?(s=a,y):s},y.labelOffsetX=function(a){return arguments.length?(u=a,y):u},y.labelOffsetY=function(a){return arguments.length?(v=a,y):v},y.isSelectedRow=function(a){return y.hasFilter(y.keyAccessor()(a))},y.anchor(b,d)},c.legend=function(){function a(){return i+h}var b,c,d=2,e={},f=0,g=0,h=12,i=5;return e.parent=function(a){return arguments.length?(b=a,e):b},e.render=function(){c=b.svg().append("g").attr("class","dc-legend").attr("transform","translate("+f+","+g+")");var e=c.selectAll("g.dc-legend-item").data(b.legendables()).enter().append("g").attr("class","dc-legend-item").attr("transform",function(b,c){return"translate(0,"+c*a()+")"}).on("mouseover",function(a){b.legendHighlight(a)}).on("mouseout",function(a){b.legendReset(a)});e.append("rect").attr("width",h).attr("height",h).attr("fill",function(a){return a.color}),e.append("text").text(function(a){return a.name}).attr("x",h+d).attr("y",function(){return h/2+(this.clientHeight?this.clientHeight:13)/2-2})},e.x=function(a){return arguments.length?(f=a,e):f},e.y=function(a){return arguments.length?(g=a,e):g},e.gap=function(a){return arguments.length?(i=a,e):i},e.itemHeight=function(a){return arguments.length?(h=a,e):h},e},c.capped=function(b){var d=1/0,e="Others",f=function(c){var d=a.sum(c,b.valueAccessor()),f=b.group().all(),g=a.sum(f,b.valueAccessor()),h=c.map(b.keyAccessor()),i=f.map(b.keyAccessor()),j=a.set(h),k=i.filter(function(a){return!j.has(a)});c.push({others:k,key:e,value:g-d})};return b.assembleCappedData=function(){if(d==1/0)return b.computeOrderedGroups();var a=b.group().top(d);return a=b.computeOrderedGroups(a),f&&f(a),a},b.cap=function(a){return arguments.length?(d=a,b):d},b.othersLabel=function(a){return arguments.length?(e=a,b):e},b.othersGrouper=function(a){return arguments.length?(f=a,b):f},c.override(b,"onClick",function(a){a.others&&a.others.forEach(function(a){b.filter(a)}),b._onClick(a)}),b},c.numberDisplay=function(b,d){var e="number-display",f=a.format(".2s"),g=c.baseChart({});return g.dimension({}),g.value=function(){var a=g.group().all&&g.group().all()[0]||g.group().value();return g.valueAccessor()(a)},g.transitionDuration(250),g.doRender=function(){var b=g.value(),c=g.selectAll("."+e);return c.empty()&&(c=c.data([0]).enter().append("span").attr("class",e)),c.transition().duration(g.transitionDuration()).ease("quad-out-in").tween("text",function(){var c=a.interpolateNumber(this.lastValue||0,b);return this.lastValue=b,function(a){this.textContent=g.formatNumber()(c(a))}}),g},g.doRedraw=function(){return g.doRender()},g.formatNumber=function(a){return arguments.length?(f=a,g):f},g.anchor(b,d)},c}if(true)!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(6),__webpack_require__(69)], __WEBPACK_AMD_DEFINE_FACTORY__ = (a),
 				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
 				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));else if("object"==typeof module&&module.exports){var b=require("d3"),c=require("crossfilter");"function"!=typeof c&&(c=c.crossfilter),module.exports=a(b,c)}else this.dc=a(d3,crossfilter)}();
 //# sourceMappingURL=dc.min.js.map
 
 /***/ }),
-/* 109 */
+/* 108 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /**
@@ -12230,7 +10689,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 }));
 
 /***/ }),
-/* 110 */
+/* 109 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*! jQuery UI - v1.12.1 - 2017-03-19
@@ -30944,6 +29403,7 @@ var effectsEffectTransfer = effect;
 }));
 
 /***/ }),
+/* 110 */,
 /* 111 */,
 /* 112 */,
 /* 113 */,
@@ -30963,8 +29423,7 @@ var effectsEffectTransfer = effect;
 /* 127 */,
 /* 128 */,
 /* 129 */,
-/* 130 */,
-/* 131 */
+/* 130 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(jQuery) {/* ========================================================================
@@ -31133,7 +29592,7 @@ var effectsEffectTransfer = effect;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ }),
-/* 132 */
+/* 131 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(jQuery) {/* ========================================================================
@@ -31234,7 +29693,7 @@ var effectsEffectTransfer = effect;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ }),
-/* 133 */
+/* 132 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(jQuery) {/* ========================================================================
@@ -31366,7 +29825,7 @@ var effectsEffectTransfer = effect;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ }),
-/* 134 */
+/* 133 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(jQuery) {/* ========================================================================
@@ -31610,7 +30069,7 @@ var effectsEffectTransfer = effect;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ }),
-/* 135 */
+/* 134 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(jQuery) {/* ========================================================================
@@ -31829,7 +30288,7 @@ var effectsEffectTransfer = effect;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ }),
-/* 136 */
+/* 135 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(jQuery) {/* ========================================================================
@@ -32001,7 +30460,7 @@ var effectsEffectTransfer = effect;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ }),
-/* 137 */
+/* 136 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(jQuery) {/* ========================================================================
@@ -32347,7 +30806,7 @@ var effectsEffectTransfer = effect;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ }),
-/* 138 */
+/* 137 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(jQuery) {/* ========================================================================
@@ -32462,7 +30921,7 @@ var effectsEffectTransfer = effect;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ }),
-/* 139 */
+/* 138 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(jQuery) {/* ========================================================================
@@ -32641,7 +31100,7 @@ var effectsEffectTransfer = effect;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ }),
-/* 140 */
+/* 139 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(jQuery) {/* ========================================================================
@@ -32803,7 +31262,7 @@ var effectsEffectTransfer = effect;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ }),
-/* 141 */
+/* 140 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(jQuery) {/* ========================================================================
@@ -33330,7 +31789,7 @@ var effectsEffectTransfer = effect;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ }),
-/* 142 */
+/* 141 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(jQuery) {/* ========================================================================
@@ -33396,24 +31855,26 @@ var effectsEffectTransfer = effect;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ }),
+/* 142 */,
 /* 143 */,
 /* 144 */,
-/* 145 */,
-/* 146 */
+/* 145 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(process) {/**
- * Copyright (c) 2013-present, Facebook, Inc.
+ * Copyright 2013-present, Facebook, Inc.
+ * All rights reserved.
  *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
+ * This source code is licensed under the BSD-style license found in the
+ * LICENSE file in the root directory of this source tree. An additional grant
+ * of patent rights can be found in the PATENTS file in the same directory.
  *
  */
 
 
 
-var _assign = __webpack_require__(147);
+var _assign = __webpack_require__(8);
 
 var emptyObject = __webpack_require__(40);
 var _invariant = __webpack_require__(1);
@@ -34277,104 +32738,7 @@ module.exports = factory;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
 
 /***/ }),
-/* 147 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/*
-object-assign
-(c) Sindre Sorhus
-@license MIT
-*/
-
-
-/* eslint-disable no-unused-vars */
-var getOwnPropertySymbols = Object.getOwnPropertySymbols;
-var hasOwnProperty = Object.prototype.hasOwnProperty;
-var propIsEnumerable = Object.prototype.propertyIsEnumerable;
-
-function toObject(val) {
-	if (val === null || val === undefined) {
-		throw new TypeError('Object.assign cannot be called with null or undefined');
-	}
-
-	return Object(val);
-}
-
-function shouldUseNative() {
-	try {
-		if (!Object.assign) {
-			return false;
-		}
-
-		// Detect buggy property enumeration order in older V8 versions.
-
-		// https://bugs.chromium.org/p/v8/issues/detail?id=4118
-		var test1 = new String('abc');  // eslint-disable-line no-new-wrappers
-		test1[5] = 'de';
-		if (Object.getOwnPropertyNames(test1)[0] === '5') {
-			return false;
-		}
-
-		// https://bugs.chromium.org/p/v8/issues/detail?id=3056
-		var test2 = {};
-		for (var i = 0; i < 10; i++) {
-			test2['_' + String.fromCharCode(i)] = i;
-		}
-		var order2 = Object.getOwnPropertyNames(test2).map(function (n) {
-			return test2[n];
-		});
-		if (order2.join('') !== '0123456789') {
-			return false;
-		}
-
-		// https://bugs.chromium.org/p/v8/issues/detail?id=3056
-		var test3 = {};
-		'abcdefghijklmnopqrst'.split('').forEach(function (letter) {
-			test3[letter] = letter;
-		});
-		if (Object.keys(Object.assign({}, test3)).join('') !==
-				'abcdefghijklmnopqrst') {
-			return false;
-		}
-
-		return true;
-	} catch (err) {
-		// We don't expect any of the above to throw, but better to be safe.
-		return false;
-	}
-}
-
-module.exports = shouldUseNative() ? Object.assign : function (target, source) {
-	var from;
-	var to = toObject(target);
-	var symbols;
-
-	for (var s = 1; s < arguments.length; s++) {
-		from = Object(arguments[s]);
-
-		for (var key in from) {
-			if (hasOwnProperty.call(from, key)) {
-				to[key] = from[key];
-			}
-		}
-
-		if (getOwnPropertySymbols) {
-			symbols = getOwnPropertySymbols(from);
-			for (var i = 0; i < symbols.length; i++) {
-				if (propIsEnumerable.call(from, symbols[i])) {
-					to[symbols[i]] = from[symbols[i]];
-				}
-			}
-		}
-	}
-
-	return to;
-};
-
-
-/***/ }),
-/* 148 */
+/* 146 */
 /***/ (function(module, exports) {
 
 (function(exports){
@@ -35781,7 +34145,7 @@ function crossfilter_capacity(w) {
 
 
 /***/ }),
-/* 149 */
+/* 147 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_RESULT__;!function() {
@@ -45344,14 +43708,16 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_RESULT__;!function() {
 }();
 
 /***/ }),
-/* 150 */,
-/* 151 */
+/* 148 */,
+/* 149 */
 /***/ (function(module, exports, __webpack_require__) {
 
-/* WEBPACK VAR INJECTION */(function(global) {module.exports = global["$"] = __webpack_require__(173);
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(68)))
+/* WEBPACK VAR INJECTION */(function(global) {module.exports = global["$"] = __webpack_require__(171);
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(48)))
 
 /***/ }),
+/* 150 */,
+/* 151 */,
 /* 152 */,
 /* 153 */,
 /* 154 */,
@@ -45371,9 +43737,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_RESULT__;!function() {
 /* 168 */,
 /* 169 */,
 /* 170 */,
-/* 171 */,
-/* 172 */,
-/* 173 */
+/* 171 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
@@ -56388,15 +54752,18 @@ return jQuery;
 
 
 /***/ }),
-/* 174 */
+/* 172 */,
+/* 173 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(process) {/**
- * Copyright (c) 2013-present, Facebook, Inc.
+ * Copyright 2013-present, Facebook, Inc.
+ * All rights reserved.
  *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
+ * This source code is licensed under the BSD-style license found in the
+ * LICENSE file in the root directory of this source tree. An additional grant
+ * of patent rights can be found in the PATENTS file in the same directory.
  */
 
 
@@ -56404,7 +54771,7 @@ return jQuery;
 if (process.env.NODE_ENV !== 'production') {
   var invariant = __webpack_require__(1);
   var warning = __webpack_require__(2);
-  var ReactPropTypesSecret = __webpack_require__(50);
+  var ReactPropTypesSecret = __webpack_require__(51);
   var loggedTypeFailures = {};
 }
 
@@ -56430,7 +54797,7 @@ function checkPropTypes(typeSpecs, values, location, componentName, getStack) {
         try {
           // This is intentionally an invariant that gets caught. It's the same
           // behavior as without this statement except with a better message.
-          invariant(typeof typeSpecs[typeSpecName] === 'function', '%s: %s type `%s` is invalid; it must be a function, usually from ' + 'the `prop-types` package, but received `%s`.', componentName || 'React class', location, typeSpecName, typeof typeSpecs[typeSpecName]);
+          invariant(typeof typeSpecs[typeSpecName] === 'function', '%s: %s type `%s` is invalid; it must be a function, usually from ' + 'React.PropTypes.', componentName || 'React class', location, typeSpecName);
           error = typeSpecs[typeSpecName](values, typeSpecName, componentName, location, null, ReactPropTypesSecret);
         } catch (ex) {
           error = ex;
@@ -56455,104 +54822,9 @@ module.exports = checkPropTypes;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
 
 /***/ }),
+/* 174 */,
 /* 175 */,
-/* 176 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/*
-object-assign
-(c) Sindre Sorhus
-@license MIT
-*/
-
-
-/* eslint-disable no-unused-vars */
-var getOwnPropertySymbols = Object.getOwnPropertySymbols;
-var hasOwnProperty = Object.prototype.hasOwnProperty;
-var propIsEnumerable = Object.prototype.propertyIsEnumerable;
-
-function toObject(val) {
-	if (val === null || val === undefined) {
-		throw new TypeError('Object.assign cannot be called with null or undefined');
-	}
-
-	return Object(val);
-}
-
-function shouldUseNative() {
-	try {
-		if (!Object.assign) {
-			return false;
-		}
-
-		// Detect buggy property enumeration order in older V8 versions.
-
-		// https://bugs.chromium.org/p/v8/issues/detail?id=4118
-		var test1 = new String('abc');  // eslint-disable-line no-new-wrappers
-		test1[5] = 'de';
-		if (Object.getOwnPropertyNames(test1)[0] === '5') {
-			return false;
-		}
-
-		// https://bugs.chromium.org/p/v8/issues/detail?id=3056
-		var test2 = {};
-		for (var i = 0; i < 10; i++) {
-			test2['_' + String.fromCharCode(i)] = i;
-		}
-		var order2 = Object.getOwnPropertyNames(test2).map(function (n) {
-			return test2[n];
-		});
-		if (order2.join('') !== '0123456789') {
-			return false;
-		}
-
-		// https://bugs.chromium.org/p/v8/issues/detail?id=3056
-		var test3 = {};
-		'abcdefghijklmnopqrst'.split('').forEach(function (letter) {
-			test3[letter] = letter;
-		});
-		if (Object.keys(Object.assign({}, test3)).join('') !==
-				'abcdefghijklmnopqrst') {
-			return false;
-		}
-
-		return true;
-	} catch (err) {
-		// We don't expect any of the above to throw, but better to be safe.
-		return false;
-	}
-}
-
-module.exports = shouldUseNative() ? Object.assign : function (target, source) {
-	var from;
-	var to = toObject(target);
-	var symbols;
-
-	for (var s = 1; s < arguments.length; s++) {
-		from = Object(arguments[s]);
-
-		for (var key in from) {
-			if (hasOwnProperty.call(from, key)) {
-				to[key] = from[key];
-			}
-		}
-
-		if (getOwnPropertySymbols) {
-			symbols = getOwnPropertySymbols(from);
-			for (var i = 0; i < symbols.length; i++) {
-				if (propIsEnumerable.call(from, symbols[i])) {
-					to[symbols[i]] = from[symbols[i]];
-				}
-			}
-		}
-	}
-
-	return to;
-};
-
-
-/***/ }),
+/* 176 */,
 /* 177 */,
 /* 178 */,
 /* 179 */,
@@ -56623,17 +54895,17 @@ module.exports = shouldUseNative() ? Object.assign : function (target, source) {
 /* 244 */,
 /* 245 */,
 /* 246 */,
-/* 247 */,
-/* 248 */,
-/* 249 */
+/* 247 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /**
- * Copyright (c) 2013-present, Facebook, Inc.
+ * Copyright 2013-present, Facebook, Inc.
+ * All rights reserved.
  *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
+ * This source code is licensed under the BSD-style license found in the
+ * LICENSE file in the root directory of this source tree. An additional grant
+ * of patent rights can be found in the PATENTS file in the same directory.
  *
  * 
  */
@@ -56687,15 +54959,17 @@ var KeyEscapeUtils = {
 module.exports = KeyEscapeUtils;
 
 /***/ }),
-/* 250 */
+/* 248 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(process) {/**
- * Copyright (c) 2013-present, Facebook, Inc.
+ * Copyright 2013-present, Facebook, Inc.
+ * All rights reserved.
  *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
+ * This source code is licensed under the BSD-style license found in the
+ * LICENSE file in the root directory of this source tree. An additional grant
+ * of patent rights can be found in the PATENTS file in the same directory.
  *
  * 
  */
@@ -56803,25 +55077,27 @@ module.exports = PooledClass;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
 
 /***/ }),
-/* 251 */
+/* 249 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /**
- * Copyright (c) 2013-present, Facebook, Inc.
+ * Copyright 2013-present, Facebook, Inc.
+ * All rights reserved.
  *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
+ * This source code is licensed under the BSD-style license found in the
+ * LICENSE file in the root directory of this source tree. An additional grant
+ * of patent rights can be found in the PATENTS file in the same directory.
  *
  */
 
 
 
-var PooledClass = __webpack_require__(250);
+var PooledClass = __webpack_require__(248);
 var ReactElement = __webpack_require__(29);
 
 var emptyFunction = __webpack_require__(12);
-var traverseAllChildren = __webpack_require__(261);
+var traverseAllChildren = __webpack_require__(259);
 
 var twoArgumentPooler = PooledClass.twoArgumentPooler;
 var fourArgumentPooler = PooledClass.fourArgumentPooler;
@@ -56997,15 +55273,17 @@ var ReactChildren = {
 module.exports = ReactChildren;
 
 /***/ }),
-/* 252 */
+/* 250 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(process) {/**
- * Copyright (c) 2013-present, Facebook, Inc.
+ * Copyright 2013-present, Facebook, Inc.
+ * All rights reserved.
  *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
+ * This source code is licensed under the BSD-style license found in the
+ * LICENSE file in the root directory of this source tree. An additional grant
+ * of patent rights can be found in the PATENTS file in the same directory.
  *
  */
 
@@ -57020,7 +55298,7 @@ var ReactElement = __webpack_require__(29);
  */
 var createDOMFactory = ReactElement.createFactory;
 if (process.env.NODE_ENV !== 'production') {
-  var ReactElementValidator = __webpack_require__(104);
+  var ReactElementValidator = __webpack_require__(103);
   createDOMFactory = ReactElementValidator.createFactory;
 }
 
@@ -57170,15 +55448,17 @@ module.exports = ReactDOMFactories;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
 
 /***/ }),
-/* 253 */
+/* 251 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(process) {/**
- * Copyright (c) 2013-present, Facebook, Inc.
+ * Copyright 2013-present, Facebook, Inc.
+ * All rights reserved.
  *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
+ * This source code is licensed under the BSD-style license found in the
+ * LICENSE file in the root directory of this source tree. An additional grant
+ * of patent rights can be found in the PATENTS file in the same directory.
  *
  * 
  */
@@ -57199,15 +55479,17 @@ module.exports = ReactPropTypeLocationNames;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
 
 /***/ }),
-/* 254 */
+/* 252 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /**
- * Copyright (c) 2013-present, Facebook, Inc.
+ * Copyright 2013-present, Facebook, Inc.
+ * All rights reserved.
  *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
+ * This source code is licensed under the BSD-style license found in the
+ * LICENSE file in the root directory of this source tree. An additional grant
+ * of patent rights can be found in the PATENTS file in the same directory.
  *
  */
 
@@ -57216,20 +55498,22 @@ module.exports = ReactPropTypeLocationNames;
 var _require = __webpack_require__(29),
     isValidElement = _require.isValidElement;
 
-var factory = __webpack_require__(77);
+var factory = __webpack_require__(76);
 
 module.exports = factory(isValidElement);
 
 /***/ }),
-/* 255 */
+/* 253 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /**
- * Copyright (c) 2013-present, Facebook, Inc.
+ * Copyright 2013-present, Facebook, Inc.
+ * All rights reserved.
  *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
+ * This source code is licensed under the BSD-style license found in the
+ * LICENSE file in the root directory of this source tree. An additional grant
+ * of patent rights can be found in the PATENTS file in the same directory.
  *
  * 
  */
@@ -57241,32 +55525,36 @@ var ReactPropTypesSecret = 'SECRET_DO_NOT_PASS_THIS_OR_YOU_WILL_BE_FIRED';
 module.exports = ReactPropTypesSecret;
 
 /***/ }),
-/* 256 */
+/* 254 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /**
- * Copyright (c) 2013-present, Facebook, Inc.
+ * Copyright 2013-present, Facebook, Inc.
+ * All rights reserved.
  *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
+ * This source code is licensed under the BSD-style license found in the
+ * LICENSE file in the root directory of this source tree. An additional grant
+ * of patent rights can be found in the PATENTS file in the same directory.
  *
  */
 
 
 
-module.exports = '15.6.2';
+module.exports = '15.6.1';
 
 /***/ }),
-/* 257 */
+/* 255 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(process) {/**
- * Copyright (c) 2013-present, Facebook, Inc.
+ * Copyright 2013-present, Facebook, Inc.
+ * All rights reserved.
  *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
+ * This source code is licensed under the BSD-style license found in the
+ * LICENSE file in the root directory of this source tree. An additional grant
+ * of patent rights can be found in the PATENTS file in the same directory.
  *
  */
 
@@ -57274,8 +55562,8 @@ module.exports = '15.6.2';
 
 var _prodInvariant = __webpack_require__(34);
 
-var ReactPropTypeLocationNames = __webpack_require__(253);
-var ReactPropTypesSecret = __webpack_require__(255);
+var ReactPropTypeLocationNames = __webpack_require__(251);
+var ReactPropTypesSecret = __webpack_require__(253);
 
 var invariant = __webpack_require__(1);
 var warning = __webpack_require__(2);
@@ -57349,42 +55637,46 @@ module.exports = checkReactTypeSpec;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
 
 /***/ }),
-/* 258 */
+/* 256 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /**
- * Copyright (c) 2013-present, Facebook, Inc.
+ * Copyright 2013-present, Facebook, Inc.
+ * All rights reserved.
  *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
+ * This source code is licensed under the BSD-style license found in the
+ * LICENSE file in the root directory of this source tree. An additional grant
+ * of patent rights can be found in the PATENTS file in the same directory.
  *
  */
 
 
 
-var _require = __webpack_require__(102),
+var _require = __webpack_require__(101),
     Component = _require.Component;
 
 var _require2 = __webpack_require__(29),
     isValidElement = _require2.isValidElement;
 
-var ReactNoopUpdateQueue = __webpack_require__(105);
-var factory = __webpack_require__(146);
+var ReactNoopUpdateQueue = __webpack_require__(104);
+var factory = __webpack_require__(145);
 
 module.exports = factory(Component, isValidElement, ReactNoopUpdateQueue);
 
 /***/ }),
-/* 259 */,
-/* 260 */
+/* 257 */,
+/* 258 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(process) {/**
- * Copyright (c) 2013-present, Facebook, Inc.
+ * Copyright 2013-present, Facebook, Inc.
+ * All rights reserved.
  *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
+ * This source code is licensed under the BSD-style license found in the
+ * LICENSE file in the root directory of this source tree. An additional grant
+ * of patent rights can be found in the PATENTS file in the same directory.
  *
  */
 
@@ -57418,15 +55710,17 @@ module.exports = onlyChild;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
 
 /***/ }),
-/* 261 */
+/* 259 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(process) {/**
- * Copyright (c) 2013-present, Facebook, Inc.
+ * Copyright 2013-present, Facebook, Inc.
+ * All rights reserved.
  *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
+ * This source code is licensed under the BSD-style license found in the
+ * LICENSE file in the root directory of this source tree. An additional grant
+ * of patent rights can be found in the PATENTS file in the same directory.
  *
  */
 
@@ -57435,11 +55729,11 @@ module.exports = onlyChild;
 var _prodInvariant = __webpack_require__(34);
 
 var ReactCurrentOwner = __webpack_require__(18);
-var REACT_ELEMENT_TYPE = __webpack_require__(103);
+var REACT_ELEMENT_TYPE = __webpack_require__(102);
 
-var getIteratorFn = __webpack_require__(106);
+var getIteratorFn = __webpack_require__(105);
 var invariant = __webpack_require__(1);
-var KeyEscapeUtils = __webpack_require__(249);
+var KeyEscapeUtils = __webpack_require__(247);
 var warning = __webpack_require__(2);
 
 var SEPARATOR = '.';
@@ -57598,20 +55892,1575 @@ module.exports = traverseAllChildren;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
 
 /***/ }),
+/* 260 */,
+/* 261 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;//     Underscore.js 1.8.3
+//     http://underscorejs.org
+//     (c) 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
+//     Underscore may be freely distributed under the MIT license.
+
+(function() {
+
+  // Baseline setup
+  // --------------
+
+  // Establish the root object, `window` in the browser, or `exports` on the server.
+  var root = this;
+
+  // Save the previous value of the `_` variable.
+  var previousUnderscore = root._;
+
+  // Save bytes in the minified (but not gzipped) version:
+  var ArrayProto = Array.prototype, ObjProto = Object.prototype, FuncProto = Function.prototype;
+
+  // Create quick reference variables for speed access to core prototypes.
+  var
+    push             = ArrayProto.push,
+    slice            = ArrayProto.slice,
+    toString         = ObjProto.toString,
+    hasOwnProperty   = ObjProto.hasOwnProperty;
+
+  // All **ECMAScript 5** native function implementations that we hope to use
+  // are declared here.
+  var
+    nativeIsArray      = Array.isArray,
+    nativeKeys         = Object.keys,
+    nativeBind         = FuncProto.bind,
+    nativeCreate       = Object.create;
+
+  // Naked function reference for surrogate-prototype-swapping.
+  var Ctor = function(){};
+
+  // Create a safe reference to the Underscore object for use below.
+  var _ = function(obj) {
+    if (obj instanceof _) return obj;
+    if (!(this instanceof _)) return new _(obj);
+    this._wrapped = obj;
+  };
+
+  // Export the Underscore object for **Node.js**, with
+  // backwards-compatibility for the old `require()` API. If we're in
+  // the browser, add `_` as a global object.
+  if (true) {
+    if (typeof module !== 'undefined' && module.exports) {
+      exports = module.exports = _;
+    }
+    exports._ = _;
+  } else {
+    root._ = _;
+  }
+
+  // Current version.
+  _.VERSION = '1.8.3';
+
+  // Internal function that returns an efficient (for current engines) version
+  // of the passed-in callback, to be repeatedly applied in other Underscore
+  // functions.
+  var optimizeCb = function(func, context, argCount) {
+    if (context === void 0) return func;
+    switch (argCount == null ? 3 : argCount) {
+      case 1: return function(value) {
+        return func.call(context, value);
+      };
+      case 2: return function(value, other) {
+        return func.call(context, value, other);
+      };
+      case 3: return function(value, index, collection) {
+        return func.call(context, value, index, collection);
+      };
+      case 4: return function(accumulator, value, index, collection) {
+        return func.call(context, accumulator, value, index, collection);
+      };
+    }
+    return function() {
+      return func.apply(context, arguments);
+    };
+  };
+
+  // A mostly-internal function to generate callbacks that can be applied
+  // to each element in a collection, returning the desired result — either
+  // identity, an arbitrary callback, a property matcher, or a property accessor.
+  var cb = function(value, context, argCount) {
+    if (value == null) return _.identity;
+    if (_.isFunction(value)) return optimizeCb(value, context, argCount);
+    if (_.isObject(value)) return _.matcher(value);
+    return _.property(value);
+  };
+  _.iteratee = function(value, context) {
+    return cb(value, context, Infinity);
+  };
+
+  // An internal function for creating assigner functions.
+  var createAssigner = function(keysFunc, undefinedOnly) {
+    return function(obj) {
+      var length = arguments.length;
+      if (length < 2 || obj == null) return obj;
+      for (var index = 1; index < length; index++) {
+        var source = arguments[index],
+            keys = keysFunc(source),
+            l = keys.length;
+        for (var i = 0; i < l; i++) {
+          var key = keys[i];
+          if (!undefinedOnly || obj[key] === void 0) obj[key] = source[key];
+        }
+      }
+      return obj;
+    };
+  };
+
+  // An internal function for creating a new object that inherits from another.
+  var baseCreate = function(prototype) {
+    if (!_.isObject(prototype)) return {};
+    if (nativeCreate) return nativeCreate(prototype);
+    Ctor.prototype = prototype;
+    var result = new Ctor;
+    Ctor.prototype = null;
+    return result;
+  };
+
+  var property = function(key) {
+    return function(obj) {
+      return obj == null ? void 0 : obj[key];
+    };
+  };
+
+  // Helper for collection methods to determine whether a collection
+  // should be iterated as an array or as an object
+  // Related: http://people.mozilla.org/~jorendorff/es6-draft.html#sec-tolength
+  // Avoids a very nasty iOS 8 JIT bug on ARM-64. #2094
+  var MAX_ARRAY_INDEX = Math.pow(2, 53) - 1;
+  var getLength = property('length');
+  var isArrayLike = function(collection) {
+    var length = getLength(collection);
+    return typeof length == 'number' && length >= 0 && length <= MAX_ARRAY_INDEX;
+  };
+
+  // Collection Functions
+  // --------------------
+
+  // The cornerstone, an `each` implementation, aka `forEach`.
+  // Handles raw objects in addition to array-likes. Treats all
+  // sparse array-likes as if they were dense.
+  _.each = _.forEach = function(obj, iteratee, context) {
+    iteratee = optimizeCb(iteratee, context);
+    var i, length;
+    if (isArrayLike(obj)) {
+      for (i = 0, length = obj.length; i < length; i++) {
+        iteratee(obj[i], i, obj);
+      }
+    } else {
+      var keys = _.keys(obj);
+      for (i = 0, length = keys.length; i < length; i++) {
+        iteratee(obj[keys[i]], keys[i], obj);
+      }
+    }
+    return obj;
+  };
+
+  // Return the results of applying the iteratee to each element.
+  _.map = _.collect = function(obj, iteratee, context) {
+    iteratee = cb(iteratee, context);
+    var keys = !isArrayLike(obj) && _.keys(obj),
+        length = (keys || obj).length,
+        results = Array(length);
+    for (var index = 0; index < length; index++) {
+      var currentKey = keys ? keys[index] : index;
+      results[index] = iteratee(obj[currentKey], currentKey, obj);
+    }
+    return results;
+  };
+
+  // Create a reducing function iterating left or right.
+  function createReduce(dir) {
+    // Optimized iterator function as using arguments.length
+    // in the main function will deoptimize the, see #1991.
+    function iterator(obj, iteratee, memo, keys, index, length) {
+      for (; index >= 0 && index < length; index += dir) {
+        var currentKey = keys ? keys[index] : index;
+        memo = iteratee(memo, obj[currentKey], currentKey, obj);
+      }
+      return memo;
+    }
+
+    return function(obj, iteratee, memo, context) {
+      iteratee = optimizeCb(iteratee, context, 4);
+      var keys = !isArrayLike(obj) && _.keys(obj),
+          length = (keys || obj).length,
+          index = dir > 0 ? 0 : length - 1;
+      // Determine the initial value if none is provided.
+      if (arguments.length < 3) {
+        memo = obj[keys ? keys[index] : index];
+        index += dir;
+      }
+      return iterator(obj, iteratee, memo, keys, index, length);
+    };
+  }
+
+  // **Reduce** builds up a single result from a list of values, aka `inject`,
+  // or `foldl`.
+  _.reduce = _.foldl = _.inject = createReduce(1);
+
+  // The right-associative version of reduce, also known as `foldr`.
+  _.reduceRight = _.foldr = createReduce(-1);
+
+  // Return the first value which passes a truth test. Aliased as `detect`.
+  _.find = _.detect = function(obj, predicate, context) {
+    var key;
+    if (isArrayLike(obj)) {
+      key = _.findIndex(obj, predicate, context);
+    } else {
+      key = _.findKey(obj, predicate, context);
+    }
+    if (key !== void 0 && key !== -1) return obj[key];
+  };
+
+  // Return all the elements that pass a truth test.
+  // Aliased as `select`.
+  _.filter = _.select = function(obj, predicate, context) {
+    var results = [];
+    predicate = cb(predicate, context);
+    _.each(obj, function(value, index, list) {
+      if (predicate(value, index, list)) results.push(value);
+    });
+    return results;
+  };
+
+  // Return all the elements for which a truth test fails.
+  _.reject = function(obj, predicate, context) {
+    return _.filter(obj, _.negate(cb(predicate)), context);
+  };
+
+  // Determine whether all of the elements match a truth test.
+  // Aliased as `all`.
+  _.every = _.all = function(obj, predicate, context) {
+    predicate = cb(predicate, context);
+    var keys = !isArrayLike(obj) && _.keys(obj),
+        length = (keys || obj).length;
+    for (var index = 0; index < length; index++) {
+      var currentKey = keys ? keys[index] : index;
+      if (!predicate(obj[currentKey], currentKey, obj)) return false;
+    }
+    return true;
+  };
+
+  // Determine if at least one element in the object matches a truth test.
+  // Aliased as `any`.
+  _.some = _.any = function(obj, predicate, context) {
+    predicate = cb(predicate, context);
+    var keys = !isArrayLike(obj) && _.keys(obj),
+        length = (keys || obj).length;
+    for (var index = 0; index < length; index++) {
+      var currentKey = keys ? keys[index] : index;
+      if (predicate(obj[currentKey], currentKey, obj)) return true;
+    }
+    return false;
+  };
+
+  // Determine if the array or object contains a given item (using `===`).
+  // Aliased as `includes` and `include`.
+  _.contains = _.includes = _.include = function(obj, item, fromIndex, guard) {
+    if (!isArrayLike(obj)) obj = _.values(obj);
+    if (typeof fromIndex != 'number' || guard) fromIndex = 0;
+    return _.indexOf(obj, item, fromIndex) >= 0;
+  };
+
+  // Invoke a method (with arguments) on every item in a collection.
+  _.invoke = function(obj, method) {
+    var args = slice.call(arguments, 2);
+    var isFunc = _.isFunction(method);
+    return _.map(obj, function(value) {
+      var func = isFunc ? method : value[method];
+      return func == null ? func : func.apply(value, args);
+    });
+  };
+
+  // Convenience version of a common use case of `map`: fetching a property.
+  _.pluck = function(obj, key) {
+    return _.map(obj, _.property(key));
+  };
+
+  // Convenience version of a common use case of `filter`: selecting only objects
+  // containing specific `key:value` pairs.
+  _.where = function(obj, attrs) {
+    return _.filter(obj, _.matcher(attrs));
+  };
+
+  // Convenience version of a common use case of `find`: getting the first object
+  // containing specific `key:value` pairs.
+  _.findWhere = function(obj, attrs) {
+    return _.find(obj, _.matcher(attrs));
+  };
+
+  // Return the maximum element (or element-based computation).
+  _.max = function(obj, iteratee, context) {
+    var result = -Infinity, lastComputed = -Infinity,
+        value, computed;
+    if (iteratee == null && obj != null) {
+      obj = isArrayLike(obj) ? obj : _.values(obj);
+      for (var i = 0, length = obj.length; i < length; i++) {
+        value = obj[i];
+        if (value > result) {
+          result = value;
+        }
+      }
+    } else {
+      iteratee = cb(iteratee, context);
+      _.each(obj, function(value, index, list) {
+        computed = iteratee(value, index, list);
+        if (computed > lastComputed || computed === -Infinity && result === -Infinity) {
+          result = value;
+          lastComputed = computed;
+        }
+      });
+    }
+    return result;
+  };
+
+  // Return the minimum element (or element-based computation).
+  _.min = function(obj, iteratee, context) {
+    var result = Infinity, lastComputed = Infinity,
+        value, computed;
+    if (iteratee == null && obj != null) {
+      obj = isArrayLike(obj) ? obj : _.values(obj);
+      for (var i = 0, length = obj.length; i < length; i++) {
+        value = obj[i];
+        if (value < result) {
+          result = value;
+        }
+      }
+    } else {
+      iteratee = cb(iteratee, context);
+      _.each(obj, function(value, index, list) {
+        computed = iteratee(value, index, list);
+        if (computed < lastComputed || computed === Infinity && result === Infinity) {
+          result = value;
+          lastComputed = computed;
+        }
+      });
+    }
+    return result;
+  };
+
+  // Shuffle a collection, using the modern version of the
+  // [Fisher-Yates shuffle](http://en.wikipedia.org/wiki/Fisher–Yates_shuffle).
+  _.shuffle = function(obj) {
+    var set = isArrayLike(obj) ? obj : _.values(obj);
+    var length = set.length;
+    var shuffled = Array(length);
+    for (var index = 0, rand; index < length; index++) {
+      rand = _.random(0, index);
+      if (rand !== index) shuffled[index] = shuffled[rand];
+      shuffled[rand] = set[index];
+    }
+    return shuffled;
+  };
+
+  // Sample **n** random values from a collection.
+  // If **n** is not specified, returns a single random element.
+  // The internal `guard` argument allows it to work with `map`.
+  _.sample = function(obj, n, guard) {
+    if (n == null || guard) {
+      if (!isArrayLike(obj)) obj = _.values(obj);
+      return obj[_.random(obj.length - 1)];
+    }
+    return _.shuffle(obj).slice(0, Math.max(0, n));
+  };
+
+  // Sort the object's values by a criterion produced by an iteratee.
+  _.sortBy = function(obj, iteratee, context) {
+    iteratee = cb(iteratee, context);
+    return _.pluck(_.map(obj, function(value, index, list) {
+      return {
+        value: value,
+        index: index,
+        criteria: iteratee(value, index, list)
+      };
+    }).sort(function(left, right) {
+      var a = left.criteria;
+      var b = right.criteria;
+      if (a !== b) {
+        if (a > b || a === void 0) return 1;
+        if (a < b || b === void 0) return -1;
+      }
+      return left.index - right.index;
+    }), 'value');
+  };
+
+  // An internal function used for aggregate "group by" operations.
+  var group = function(behavior) {
+    return function(obj, iteratee, context) {
+      var result = {};
+      iteratee = cb(iteratee, context);
+      _.each(obj, function(value, index) {
+        var key = iteratee(value, index, obj);
+        behavior(result, value, key);
+      });
+      return result;
+    };
+  };
+
+  // Groups the object's values by a criterion. Pass either a string attribute
+  // to group by, or a function that returns the criterion.
+  _.groupBy = group(function(result, value, key) {
+    if (_.has(result, key)) result[key].push(value); else result[key] = [value];
+  });
+
+  // Indexes the object's values by a criterion, similar to `groupBy`, but for
+  // when you know that your index values will be unique.
+  _.indexBy = group(function(result, value, key) {
+    result[key] = value;
+  });
+
+  // Counts instances of an object that group by a certain criterion. Pass
+  // either a string attribute to count by, or a function that returns the
+  // criterion.
+  _.countBy = group(function(result, value, key) {
+    if (_.has(result, key)) result[key]++; else result[key] = 1;
+  });
+
+  // Safely create a real, live array from anything iterable.
+  _.toArray = function(obj) {
+    if (!obj) return [];
+    if (_.isArray(obj)) return slice.call(obj);
+    if (isArrayLike(obj)) return _.map(obj, _.identity);
+    return _.values(obj);
+  };
+
+  // Return the number of elements in an object.
+  _.size = function(obj) {
+    if (obj == null) return 0;
+    return isArrayLike(obj) ? obj.length : _.keys(obj).length;
+  };
+
+  // Split a collection into two arrays: one whose elements all satisfy the given
+  // predicate, and one whose elements all do not satisfy the predicate.
+  _.partition = function(obj, predicate, context) {
+    predicate = cb(predicate, context);
+    var pass = [], fail = [];
+    _.each(obj, function(value, key, obj) {
+      (predicate(value, key, obj) ? pass : fail).push(value);
+    });
+    return [pass, fail];
+  };
+
+  // Array Functions
+  // ---------------
+
+  // Get the first element of an array. Passing **n** will return the first N
+  // values in the array. Aliased as `head` and `take`. The **guard** check
+  // allows it to work with `_.map`.
+  _.first = _.head = _.take = function(array, n, guard) {
+    if (array == null) return void 0;
+    if (n == null || guard) return array[0];
+    return _.initial(array, array.length - n);
+  };
+
+  // Returns everything but the last entry of the array. Especially useful on
+  // the arguments object. Passing **n** will return all the values in
+  // the array, excluding the last N.
+  _.initial = function(array, n, guard) {
+    return slice.call(array, 0, Math.max(0, array.length - (n == null || guard ? 1 : n)));
+  };
+
+  // Get the last element of an array. Passing **n** will return the last N
+  // values in the array.
+  _.last = function(array, n, guard) {
+    if (array == null) return void 0;
+    if (n == null || guard) return array[array.length - 1];
+    return _.rest(array, Math.max(0, array.length - n));
+  };
+
+  // Returns everything but the first entry of the array. Aliased as `tail` and `drop`.
+  // Especially useful on the arguments object. Passing an **n** will return
+  // the rest N values in the array.
+  _.rest = _.tail = _.drop = function(array, n, guard) {
+    return slice.call(array, n == null || guard ? 1 : n);
+  };
+
+  // Trim out all falsy values from an array.
+  _.compact = function(array) {
+    return _.filter(array, _.identity);
+  };
+
+  // Internal implementation of a recursive `flatten` function.
+  var flatten = function(input, shallow, strict, startIndex) {
+    var output = [], idx = 0;
+    for (var i = startIndex || 0, length = getLength(input); i < length; i++) {
+      var value = input[i];
+      if (isArrayLike(value) && (_.isArray(value) || _.isArguments(value))) {
+        //flatten current level of array or arguments object
+        if (!shallow) value = flatten(value, shallow, strict);
+        var j = 0, len = value.length;
+        output.length += len;
+        while (j < len) {
+          output[idx++] = value[j++];
+        }
+      } else if (!strict) {
+        output[idx++] = value;
+      }
+    }
+    return output;
+  };
+
+  // Flatten out an array, either recursively (by default), or just one level.
+  _.flatten = function(array, shallow) {
+    return flatten(array, shallow, false);
+  };
+
+  // Return a version of the array that does not contain the specified value(s).
+  _.without = function(array) {
+    return _.difference(array, slice.call(arguments, 1));
+  };
+
+  // Produce a duplicate-free version of the array. If the array has already
+  // been sorted, you have the option of using a faster algorithm.
+  // Aliased as `unique`.
+  _.uniq = _.unique = function(array, isSorted, iteratee, context) {
+    if (!_.isBoolean(isSorted)) {
+      context = iteratee;
+      iteratee = isSorted;
+      isSorted = false;
+    }
+    if (iteratee != null) iteratee = cb(iteratee, context);
+    var result = [];
+    var seen = [];
+    for (var i = 0, length = getLength(array); i < length; i++) {
+      var value = array[i],
+          computed = iteratee ? iteratee(value, i, array) : value;
+      if (isSorted) {
+        if (!i || seen !== computed) result.push(value);
+        seen = computed;
+      } else if (iteratee) {
+        if (!_.contains(seen, computed)) {
+          seen.push(computed);
+          result.push(value);
+        }
+      } else if (!_.contains(result, value)) {
+        result.push(value);
+      }
+    }
+    return result;
+  };
+
+  // Produce an array that contains the union: each distinct element from all of
+  // the passed-in arrays.
+  _.union = function() {
+    return _.uniq(flatten(arguments, true, true));
+  };
+
+  // Produce an array that contains every item shared between all the
+  // passed-in arrays.
+  _.intersection = function(array) {
+    var result = [];
+    var argsLength = arguments.length;
+    for (var i = 0, length = getLength(array); i < length; i++) {
+      var item = array[i];
+      if (_.contains(result, item)) continue;
+      for (var j = 1; j < argsLength; j++) {
+        if (!_.contains(arguments[j], item)) break;
+      }
+      if (j === argsLength) result.push(item);
+    }
+    return result;
+  };
+
+  // Take the difference between one array and a number of other arrays.
+  // Only the elements present in just the first array will remain.
+  _.difference = function(array) {
+    var rest = flatten(arguments, true, true, 1);
+    return _.filter(array, function(value){
+      return !_.contains(rest, value);
+    });
+  };
+
+  // Zip together multiple lists into a single array -- elements that share
+  // an index go together.
+  _.zip = function() {
+    return _.unzip(arguments);
+  };
+
+  // Complement of _.zip. Unzip accepts an array of arrays and groups
+  // each array's elements on shared indices
+  _.unzip = function(array) {
+    var length = array && _.max(array, getLength).length || 0;
+    var result = Array(length);
+
+    for (var index = 0; index < length; index++) {
+      result[index] = _.pluck(array, index);
+    }
+    return result;
+  };
+
+  // Converts lists into objects. Pass either a single array of `[key, value]`
+  // pairs, or two parallel arrays of the same length -- one of keys, and one of
+  // the corresponding values.
+  _.object = function(list, values) {
+    var result = {};
+    for (var i = 0, length = getLength(list); i < length; i++) {
+      if (values) {
+        result[list[i]] = values[i];
+      } else {
+        result[list[i][0]] = list[i][1];
+      }
+    }
+    return result;
+  };
+
+  // Generator function to create the findIndex and findLastIndex functions
+  function createPredicateIndexFinder(dir) {
+    return function(array, predicate, context) {
+      predicate = cb(predicate, context);
+      var length = getLength(array);
+      var index = dir > 0 ? 0 : length - 1;
+      for (; index >= 0 && index < length; index += dir) {
+        if (predicate(array[index], index, array)) return index;
+      }
+      return -1;
+    };
+  }
+
+  // Returns the first index on an array-like that passes a predicate test
+  _.findIndex = createPredicateIndexFinder(1);
+  _.findLastIndex = createPredicateIndexFinder(-1);
+
+  // Use a comparator function to figure out the smallest index at which
+  // an object should be inserted so as to maintain order. Uses binary search.
+  _.sortedIndex = function(array, obj, iteratee, context) {
+    iteratee = cb(iteratee, context, 1);
+    var value = iteratee(obj);
+    var low = 0, high = getLength(array);
+    while (low < high) {
+      var mid = Math.floor((low + high) / 2);
+      if (iteratee(array[mid]) < value) low = mid + 1; else high = mid;
+    }
+    return low;
+  };
+
+  // Generator function to create the indexOf and lastIndexOf functions
+  function createIndexFinder(dir, predicateFind, sortedIndex) {
+    return function(array, item, idx) {
+      var i = 0, length = getLength(array);
+      if (typeof idx == 'number') {
+        if (dir > 0) {
+            i = idx >= 0 ? idx : Math.max(idx + length, i);
+        } else {
+            length = idx >= 0 ? Math.min(idx + 1, length) : idx + length + 1;
+        }
+      } else if (sortedIndex && idx && length) {
+        idx = sortedIndex(array, item);
+        return array[idx] === item ? idx : -1;
+      }
+      if (item !== item) {
+        idx = predicateFind(slice.call(array, i, length), _.isNaN);
+        return idx >= 0 ? idx + i : -1;
+      }
+      for (idx = dir > 0 ? i : length - 1; idx >= 0 && idx < length; idx += dir) {
+        if (array[idx] === item) return idx;
+      }
+      return -1;
+    };
+  }
+
+  // Return the position of the first occurrence of an item in an array,
+  // or -1 if the item is not included in the array.
+  // If the array is large and already in sort order, pass `true`
+  // for **isSorted** to use binary search.
+  _.indexOf = createIndexFinder(1, _.findIndex, _.sortedIndex);
+  _.lastIndexOf = createIndexFinder(-1, _.findLastIndex);
+
+  // Generate an integer Array containing an arithmetic progression. A port of
+  // the native Python `range()` function. See
+  // [the Python documentation](http://docs.python.org/library/functions.html#range).
+  _.range = function(start, stop, step) {
+    if (stop == null) {
+      stop = start || 0;
+      start = 0;
+    }
+    step = step || 1;
+
+    var length = Math.max(Math.ceil((stop - start) / step), 0);
+    var range = Array(length);
+
+    for (var idx = 0; idx < length; idx++, start += step) {
+      range[idx] = start;
+    }
+
+    return range;
+  };
+
+  // Function (ahem) Functions
+  // ------------------
+
+  // Determines whether to execute a function as a constructor
+  // or a normal function with the provided arguments
+  var executeBound = function(sourceFunc, boundFunc, context, callingContext, args) {
+    if (!(callingContext instanceof boundFunc)) return sourceFunc.apply(context, args);
+    var self = baseCreate(sourceFunc.prototype);
+    var result = sourceFunc.apply(self, args);
+    if (_.isObject(result)) return result;
+    return self;
+  };
+
+  // Create a function bound to a given object (assigning `this`, and arguments,
+  // optionally). Delegates to **ECMAScript 5**'s native `Function.bind` if
+  // available.
+  _.bind = function(func, context) {
+    if (nativeBind && func.bind === nativeBind) return nativeBind.apply(func, slice.call(arguments, 1));
+    if (!_.isFunction(func)) throw new TypeError('Bind must be called on a function');
+    var args = slice.call(arguments, 2);
+    var bound = function() {
+      return executeBound(func, bound, context, this, args.concat(slice.call(arguments)));
+    };
+    return bound;
+  };
+
+  // Partially apply a function by creating a version that has had some of its
+  // arguments pre-filled, without changing its dynamic `this` context. _ acts
+  // as a placeholder, allowing any combination of arguments to be pre-filled.
+  _.partial = function(func) {
+    var boundArgs = slice.call(arguments, 1);
+    var bound = function() {
+      var position = 0, length = boundArgs.length;
+      var args = Array(length);
+      for (var i = 0; i < length; i++) {
+        args[i] = boundArgs[i] === _ ? arguments[position++] : boundArgs[i];
+      }
+      while (position < arguments.length) args.push(arguments[position++]);
+      return executeBound(func, bound, this, this, args);
+    };
+    return bound;
+  };
+
+  // Bind a number of an object's methods to that object. Remaining arguments
+  // are the method names to be bound. Useful for ensuring that all callbacks
+  // defined on an object belong to it.
+  _.bindAll = function(obj) {
+    var i, length = arguments.length, key;
+    if (length <= 1) throw new Error('bindAll must be passed function names');
+    for (i = 1; i < length; i++) {
+      key = arguments[i];
+      obj[key] = _.bind(obj[key], obj);
+    }
+    return obj;
+  };
+
+  // Memoize an expensive function by storing its results.
+  _.memoize = function(func, hasher) {
+    var memoize = function(key) {
+      var cache = memoize.cache;
+      var address = '' + (hasher ? hasher.apply(this, arguments) : key);
+      if (!_.has(cache, address)) cache[address] = func.apply(this, arguments);
+      return cache[address];
+    };
+    memoize.cache = {};
+    return memoize;
+  };
+
+  // Delays a function for the given number of milliseconds, and then calls
+  // it with the arguments supplied.
+  _.delay = function(func, wait) {
+    var args = slice.call(arguments, 2);
+    return setTimeout(function(){
+      return func.apply(null, args);
+    }, wait);
+  };
+
+  // Defers a function, scheduling it to run after the current call stack has
+  // cleared.
+  _.defer = _.partial(_.delay, _, 1);
+
+  // Returns a function, that, when invoked, will only be triggered at most once
+  // during a given window of time. Normally, the throttled function will run
+  // as much as it can, without ever going more than once per `wait` duration;
+  // but if you'd like to disable the execution on the leading edge, pass
+  // `{leading: false}`. To disable execution on the trailing edge, ditto.
+  _.throttle = function(func, wait, options) {
+    var context, args, result;
+    var timeout = null;
+    var previous = 0;
+    if (!options) options = {};
+    var later = function() {
+      previous = options.leading === false ? 0 : _.now();
+      timeout = null;
+      result = func.apply(context, args);
+      if (!timeout) context = args = null;
+    };
+    return function() {
+      var now = _.now();
+      if (!previous && options.leading === false) previous = now;
+      var remaining = wait - (now - previous);
+      context = this;
+      args = arguments;
+      if (remaining <= 0 || remaining > wait) {
+        if (timeout) {
+          clearTimeout(timeout);
+          timeout = null;
+        }
+        previous = now;
+        result = func.apply(context, args);
+        if (!timeout) context = args = null;
+      } else if (!timeout && options.trailing !== false) {
+        timeout = setTimeout(later, remaining);
+      }
+      return result;
+    };
+  };
+
+  // Returns a function, that, as long as it continues to be invoked, will not
+  // be triggered. The function will be called after it stops being called for
+  // N milliseconds. If `immediate` is passed, trigger the function on the
+  // leading edge, instead of the trailing.
+  _.debounce = function(func, wait, immediate) {
+    var timeout, args, context, timestamp, result;
+
+    var later = function() {
+      var last = _.now() - timestamp;
+
+      if (last < wait && last >= 0) {
+        timeout = setTimeout(later, wait - last);
+      } else {
+        timeout = null;
+        if (!immediate) {
+          result = func.apply(context, args);
+          if (!timeout) context = args = null;
+        }
+      }
+    };
+
+    return function() {
+      context = this;
+      args = arguments;
+      timestamp = _.now();
+      var callNow = immediate && !timeout;
+      if (!timeout) timeout = setTimeout(later, wait);
+      if (callNow) {
+        result = func.apply(context, args);
+        context = args = null;
+      }
+
+      return result;
+    };
+  };
+
+  // Returns the first function passed as an argument to the second,
+  // allowing you to adjust arguments, run code before and after, and
+  // conditionally execute the original function.
+  _.wrap = function(func, wrapper) {
+    return _.partial(wrapper, func);
+  };
+
+  // Returns a negated version of the passed-in predicate.
+  _.negate = function(predicate) {
+    return function() {
+      return !predicate.apply(this, arguments);
+    };
+  };
+
+  // Returns a function that is the composition of a list of functions, each
+  // consuming the return value of the function that follows.
+  _.compose = function() {
+    var args = arguments;
+    var start = args.length - 1;
+    return function() {
+      var i = start;
+      var result = args[start].apply(this, arguments);
+      while (i--) result = args[i].call(this, result);
+      return result;
+    };
+  };
+
+  // Returns a function that will only be executed on and after the Nth call.
+  _.after = function(times, func) {
+    return function() {
+      if (--times < 1) {
+        return func.apply(this, arguments);
+      }
+    };
+  };
+
+  // Returns a function that will only be executed up to (but not including) the Nth call.
+  _.before = function(times, func) {
+    var memo;
+    return function() {
+      if (--times > 0) {
+        memo = func.apply(this, arguments);
+      }
+      if (times <= 1) func = null;
+      return memo;
+    };
+  };
+
+  // Returns a function that will be executed at most one time, no matter how
+  // often you call it. Useful for lazy initialization.
+  _.once = _.partial(_.before, 2);
+
+  // Object Functions
+  // ----------------
+
+  // Keys in IE < 9 that won't be iterated by `for key in ...` and thus missed.
+  var hasEnumBug = !{toString: null}.propertyIsEnumerable('toString');
+  var nonEnumerableProps = ['valueOf', 'isPrototypeOf', 'toString',
+                      'propertyIsEnumerable', 'hasOwnProperty', 'toLocaleString'];
+
+  function collectNonEnumProps(obj, keys) {
+    var nonEnumIdx = nonEnumerableProps.length;
+    var constructor = obj.constructor;
+    var proto = (_.isFunction(constructor) && constructor.prototype) || ObjProto;
+
+    // Constructor is a special case.
+    var prop = 'constructor';
+    if (_.has(obj, prop) && !_.contains(keys, prop)) keys.push(prop);
+
+    while (nonEnumIdx--) {
+      prop = nonEnumerableProps[nonEnumIdx];
+      if (prop in obj && obj[prop] !== proto[prop] && !_.contains(keys, prop)) {
+        keys.push(prop);
+      }
+    }
+  }
+
+  // Retrieve the names of an object's own properties.
+  // Delegates to **ECMAScript 5**'s native `Object.keys`
+  _.keys = function(obj) {
+    if (!_.isObject(obj)) return [];
+    if (nativeKeys) return nativeKeys(obj);
+    var keys = [];
+    for (var key in obj) if (_.has(obj, key)) keys.push(key);
+    // Ahem, IE < 9.
+    if (hasEnumBug) collectNonEnumProps(obj, keys);
+    return keys;
+  };
+
+  // Retrieve all the property names of an object.
+  _.allKeys = function(obj) {
+    if (!_.isObject(obj)) return [];
+    var keys = [];
+    for (var key in obj) keys.push(key);
+    // Ahem, IE < 9.
+    if (hasEnumBug) collectNonEnumProps(obj, keys);
+    return keys;
+  };
+
+  // Retrieve the values of an object's properties.
+  _.values = function(obj) {
+    var keys = _.keys(obj);
+    var length = keys.length;
+    var values = Array(length);
+    for (var i = 0; i < length; i++) {
+      values[i] = obj[keys[i]];
+    }
+    return values;
+  };
+
+  // Returns the results of applying the iteratee to each element of the object
+  // In contrast to _.map it returns an object
+  _.mapObject = function(obj, iteratee, context) {
+    iteratee = cb(iteratee, context);
+    var keys =  _.keys(obj),
+          length = keys.length,
+          results = {},
+          currentKey;
+      for (var index = 0; index < length; index++) {
+        currentKey = keys[index];
+        results[currentKey] = iteratee(obj[currentKey], currentKey, obj);
+      }
+      return results;
+  };
+
+  // Convert an object into a list of `[key, value]` pairs.
+  _.pairs = function(obj) {
+    var keys = _.keys(obj);
+    var length = keys.length;
+    var pairs = Array(length);
+    for (var i = 0; i < length; i++) {
+      pairs[i] = [keys[i], obj[keys[i]]];
+    }
+    return pairs;
+  };
+
+  // Invert the keys and values of an object. The values must be serializable.
+  _.invert = function(obj) {
+    var result = {};
+    var keys = _.keys(obj);
+    for (var i = 0, length = keys.length; i < length; i++) {
+      result[obj[keys[i]]] = keys[i];
+    }
+    return result;
+  };
+
+  // Return a sorted list of the function names available on the object.
+  // Aliased as `methods`
+  _.functions = _.methods = function(obj) {
+    var names = [];
+    for (var key in obj) {
+      if (_.isFunction(obj[key])) names.push(key);
+    }
+    return names.sort();
+  };
+
+  // Extend a given object with all the properties in passed-in object(s).
+  _.extend = createAssigner(_.allKeys);
+
+  // Assigns a given object with all the own properties in the passed-in object(s)
+  // (https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object/assign)
+  _.extendOwn = _.assign = createAssigner(_.keys);
+
+  // Returns the first key on an object that passes a predicate test
+  _.findKey = function(obj, predicate, context) {
+    predicate = cb(predicate, context);
+    var keys = _.keys(obj), key;
+    for (var i = 0, length = keys.length; i < length; i++) {
+      key = keys[i];
+      if (predicate(obj[key], key, obj)) return key;
+    }
+  };
+
+  // Return a copy of the object only containing the whitelisted properties.
+  _.pick = function(object, oiteratee, context) {
+    var result = {}, obj = object, iteratee, keys;
+    if (obj == null) return result;
+    if (_.isFunction(oiteratee)) {
+      keys = _.allKeys(obj);
+      iteratee = optimizeCb(oiteratee, context);
+    } else {
+      keys = flatten(arguments, false, false, 1);
+      iteratee = function(value, key, obj) { return key in obj; };
+      obj = Object(obj);
+    }
+    for (var i = 0, length = keys.length; i < length; i++) {
+      var key = keys[i];
+      var value = obj[key];
+      if (iteratee(value, key, obj)) result[key] = value;
+    }
+    return result;
+  };
+
+   // Return a copy of the object without the blacklisted properties.
+  _.omit = function(obj, iteratee, context) {
+    if (_.isFunction(iteratee)) {
+      iteratee = _.negate(iteratee);
+    } else {
+      var keys = _.map(flatten(arguments, false, false, 1), String);
+      iteratee = function(value, key) {
+        return !_.contains(keys, key);
+      };
+    }
+    return _.pick(obj, iteratee, context);
+  };
+
+  // Fill in a given object with default properties.
+  _.defaults = createAssigner(_.allKeys, true);
+
+  // Creates an object that inherits from the given prototype object.
+  // If additional properties are provided then they will be added to the
+  // created object.
+  _.create = function(prototype, props) {
+    var result = baseCreate(prototype);
+    if (props) _.extendOwn(result, props);
+    return result;
+  };
+
+  // Create a (shallow-cloned) duplicate of an object.
+  _.clone = function(obj) {
+    if (!_.isObject(obj)) return obj;
+    return _.isArray(obj) ? obj.slice() : _.extend({}, obj);
+  };
+
+  // Invokes interceptor with the obj, and then returns obj.
+  // The primary purpose of this method is to "tap into" a method chain, in
+  // order to perform operations on intermediate results within the chain.
+  _.tap = function(obj, interceptor) {
+    interceptor(obj);
+    return obj;
+  };
+
+  // Returns whether an object has a given set of `key:value` pairs.
+  _.isMatch = function(object, attrs) {
+    var keys = _.keys(attrs), length = keys.length;
+    if (object == null) return !length;
+    var obj = Object(object);
+    for (var i = 0; i < length; i++) {
+      var key = keys[i];
+      if (attrs[key] !== obj[key] || !(key in obj)) return false;
+    }
+    return true;
+  };
+
+
+  // Internal recursive comparison function for `isEqual`.
+  var eq = function(a, b, aStack, bStack) {
+    // Identical objects are equal. `0 === -0`, but they aren't identical.
+    // See the [Harmony `egal` proposal](http://wiki.ecmascript.org/doku.php?id=harmony:egal).
+    if (a === b) return a !== 0 || 1 / a === 1 / b;
+    // A strict comparison is necessary because `null == undefined`.
+    if (a == null || b == null) return a === b;
+    // Unwrap any wrapped objects.
+    if (a instanceof _) a = a._wrapped;
+    if (b instanceof _) b = b._wrapped;
+    // Compare `[[Class]]` names.
+    var className = toString.call(a);
+    if (className !== toString.call(b)) return false;
+    switch (className) {
+      // Strings, numbers, regular expressions, dates, and booleans are compared by value.
+      case '[object RegExp]':
+      // RegExps are coerced to strings for comparison (Note: '' + /a/i === '/a/i')
+      case '[object String]':
+        // Primitives and their corresponding object wrappers are equivalent; thus, `"5"` is
+        // equivalent to `new String("5")`.
+        return '' + a === '' + b;
+      case '[object Number]':
+        // `NaN`s are equivalent, but non-reflexive.
+        // Object(NaN) is equivalent to NaN
+        if (+a !== +a) return +b !== +b;
+        // An `egal` comparison is performed for other numeric values.
+        return +a === 0 ? 1 / +a === 1 / b : +a === +b;
+      case '[object Date]':
+      case '[object Boolean]':
+        // Coerce dates and booleans to numeric primitive values. Dates are compared by their
+        // millisecond representations. Note that invalid dates with millisecond representations
+        // of `NaN` are not equivalent.
+        return +a === +b;
+    }
+
+    var areArrays = className === '[object Array]';
+    if (!areArrays) {
+      if (typeof a != 'object' || typeof b != 'object') return false;
+
+      // Objects with different constructors are not equivalent, but `Object`s or `Array`s
+      // from different frames are.
+      var aCtor = a.constructor, bCtor = b.constructor;
+      if (aCtor !== bCtor && !(_.isFunction(aCtor) && aCtor instanceof aCtor &&
+                               _.isFunction(bCtor) && bCtor instanceof bCtor)
+                          && ('constructor' in a && 'constructor' in b)) {
+        return false;
+      }
+    }
+    // Assume equality for cyclic structures. The algorithm for detecting cyclic
+    // structures is adapted from ES 5.1 section 15.12.3, abstract operation `JO`.
+
+    // Initializing stack of traversed objects.
+    // It's done here since we only need them for objects and arrays comparison.
+    aStack = aStack || [];
+    bStack = bStack || [];
+    var length = aStack.length;
+    while (length--) {
+      // Linear search. Performance is inversely proportional to the number of
+      // unique nested structures.
+      if (aStack[length] === a) return bStack[length] === b;
+    }
+
+    // Add the first object to the stack of traversed objects.
+    aStack.push(a);
+    bStack.push(b);
+
+    // Recursively compare objects and arrays.
+    if (areArrays) {
+      // Compare array lengths to determine if a deep comparison is necessary.
+      length = a.length;
+      if (length !== b.length) return false;
+      // Deep compare the contents, ignoring non-numeric properties.
+      while (length--) {
+        if (!eq(a[length], b[length], aStack, bStack)) return false;
+      }
+    } else {
+      // Deep compare objects.
+      var keys = _.keys(a), key;
+      length = keys.length;
+      // Ensure that both objects contain the same number of properties before comparing deep equality.
+      if (_.keys(b).length !== length) return false;
+      while (length--) {
+        // Deep compare each member
+        key = keys[length];
+        if (!(_.has(b, key) && eq(a[key], b[key], aStack, bStack))) return false;
+      }
+    }
+    // Remove the first object from the stack of traversed objects.
+    aStack.pop();
+    bStack.pop();
+    return true;
+  };
+
+  // Perform a deep comparison to check if two objects are equal.
+  _.isEqual = function(a, b) {
+    return eq(a, b);
+  };
+
+  // Is a given array, string, or object empty?
+  // An "empty" object has no enumerable own-properties.
+  _.isEmpty = function(obj) {
+    if (obj == null) return true;
+    if (isArrayLike(obj) && (_.isArray(obj) || _.isString(obj) || _.isArguments(obj))) return obj.length === 0;
+    return _.keys(obj).length === 0;
+  };
+
+  // Is a given value a DOM element?
+  _.isElement = function(obj) {
+    return !!(obj && obj.nodeType === 1);
+  };
+
+  // Is a given value an array?
+  // Delegates to ECMA5's native Array.isArray
+  _.isArray = nativeIsArray || function(obj) {
+    return toString.call(obj) === '[object Array]';
+  };
+
+  // Is a given variable an object?
+  _.isObject = function(obj) {
+    var type = typeof obj;
+    return type === 'function' || type === 'object' && !!obj;
+  };
+
+  // Add some isType methods: isArguments, isFunction, isString, isNumber, isDate, isRegExp, isError.
+  _.each(['Arguments', 'Function', 'String', 'Number', 'Date', 'RegExp', 'Error'], function(name) {
+    _['is' + name] = function(obj) {
+      return toString.call(obj) === '[object ' + name + ']';
+    };
+  });
+
+  // Define a fallback version of the method in browsers (ahem, IE < 9), where
+  // there isn't any inspectable "Arguments" type.
+  if (!_.isArguments(arguments)) {
+    _.isArguments = function(obj) {
+      return _.has(obj, 'callee');
+    };
+  }
+
+  // Optimize `isFunction` if appropriate. Work around some typeof bugs in old v8,
+  // IE 11 (#1621), and in Safari 8 (#1929).
+  if (typeof /./ != 'function' && typeof Int8Array != 'object') {
+    _.isFunction = function(obj) {
+      return typeof obj == 'function' || false;
+    };
+  }
+
+  // Is a given object a finite number?
+  _.isFinite = function(obj) {
+    return isFinite(obj) && !isNaN(parseFloat(obj));
+  };
+
+  // Is the given value `NaN`? (NaN is the only number which does not equal itself).
+  _.isNaN = function(obj) {
+    return _.isNumber(obj) && obj !== +obj;
+  };
+
+  // Is a given value a boolean?
+  _.isBoolean = function(obj) {
+    return obj === true || obj === false || toString.call(obj) === '[object Boolean]';
+  };
+
+  // Is a given value equal to null?
+  _.isNull = function(obj) {
+    return obj === null;
+  };
+
+  // Is a given variable undefined?
+  _.isUndefined = function(obj) {
+    return obj === void 0;
+  };
+
+  // Shortcut function for checking if an object has a given property directly
+  // on itself (in other words, not on a prototype).
+  _.has = function(obj, key) {
+    return obj != null && hasOwnProperty.call(obj, key);
+  };
+
+  // Utility Functions
+  // -----------------
+
+  // Run Underscore.js in *noConflict* mode, returning the `_` variable to its
+  // previous owner. Returns a reference to the Underscore object.
+  _.noConflict = function() {
+    root._ = previousUnderscore;
+    return this;
+  };
+
+  // Keep the identity function around for default iteratees.
+  _.identity = function(value) {
+    return value;
+  };
+
+  // Predicate-generating functions. Often useful outside of Underscore.
+  _.constant = function(value) {
+    return function() {
+      return value;
+    };
+  };
+
+  _.noop = function(){};
+
+  _.property = property;
+
+  // Generates a function for a given object that returns a given property.
+  _.propertyOf = function(obj) {
+    return obj == null ? function(){} : function(key) {
+      return obj[key];
+    };
+  };
+
+  // Returns a predicate for checking whether an object has a given set of
+  // `key:value` pairs.
+  _.matcher = _.matches = function(attrs) {
+    attrs = _.extendOwn({}, attrs);
+    return function(obj) {
+      return _.isMatch(obj, attrs);
+    };
+  };
+
+  // Run a function **n** times.
+  _.times = function(n, iteratee, context) {
+    var accum = Array(Math.max(0, n));
+    iteratee = optimizeCb(iteratee, context, 1);
+    for (var i = 0; i < n; i++) accum[i] = iteratee(i);
+    return accum;
+  };
+
+  // Return a random integer between min and max (inclusive).
+  _.random = function(min, max) {
+    if (max == null) {
+      max = min;
+      min = 0;
+    }
+    return min + Math.floor(Math.random() * (max - min + 1));
+  };
+
+  // A (possibly faster) way to get the current timestamp as an integer.
+  _.now = Date.now || function() {
+    return new Date().getTime();
+  };
+
+   // List of HTML entities for escaping.
+  var escapeMap = {
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#x27;',
+    '`': '&#x60;'
+  };
+  var unescapeMap = _.invert(escapeMap);
+
+  // Functions for escaping and unescaping strings to/from HTML interpolation.
+  var createEscaper = function(map) {
+    var escaper = function(match) {
+      return map[match];
+    };
+    // Regexes for identifying a key that needs to be escaped
+    var source = '(?:' + _.keys(map).join('|') + ')';
+    var testRegexp = RegExp(source);
+    var replaceRegexp = RegExp(source, 'g');
+    return function(string) {
+      string = string == null ? '' : '' + string;
+      return testRegexp.test(string) ? string.replace(replaceRegexp, escaper) : string;
+    };
+  };
+  _.escape = createEscaper(escapeMap);
+  _.unescape = createEscaper(unescapeMap);
+
+  // If the value of the named `property` is a function then invoke it with the
+  // `object` as context; otherwise, return it.
+  _.result = function(object, property, fallback) {
+    var value = object == null ? void 0 : object[property];
+    if (value === void 0) {
+      value = fallback;
+    }
+    return _.isFunction(value) ? value.call(object) : value;
+  };
+
+  // Generate a unique integer id (unique within the entire client session).
+  // Useful for temporary DOM ids.
+  var idCounter = 0;
+  _.uniqueId = function(prefix) {
+    var id = ++idCounter + '';
+    return prefix ? prefix + id : id;
+  };
+
+  // By default, Underscore uses ERB-style template delimiters, change the
+  // following template settings to use alternative delimiters.
+  _.templateSettings = {
+    evaluate    : /<%([\s\S]+?)%>/g,
+    interpolate : /<%=([\s\S]+?)%>/g,
+    escape      : /<%-([\s\S]+?)%>/g
+  };
+
+  // When customizing `templateSettings`, if you don't want to define an
+  // interpolation, evaluation or escaping regex, we need one that is
+  // guaranteed not to match.
+  var noMatch = /(.)^/;
+
+  // Certain characters need to be escaped so that they can be put into a
+  // string literal.
+  var escapes = {
+    "'":      "'",
+    '\\':     '\\',
+    '\r':     'r',
+    '\n':     'n',
+    '\u2028': 'u2028',
+    '\u2029': 'u2029'
+  };
+
+  var escaper = /\\|'|\r|\n|\u2028|\u2029/g;
+
+  var escapeChar = function(match) {
+    return '\\' + escapes[match];
+  };
+
+  // JavaScript micro-templating, similar to John Resig's implementation.
+  // Underscore templating handles arbitrary delimiters, preserves whitespace,
+  // and correctly escapes quotes within interpolated code.
+  // NB: `oldSettings` only exists for backwards compatibility.
+  _.template = function(text, settings, oldSettings) {
+    if (!settings && oldSettings) settings = oldSettings;
+    settings = _.defaults({}, settings, _.templateSettings);
+
+    // Combine delimiters into one regular expression via alternation.
+    var matcher = RegExp([
+      (settings.escape || noMatch).source,
+      (settings.interpolate || noMatch).source,
+      (settings.evaluate || noMatch).source
+    ].join('|') + '|$', 'g');
+
+    // Compile the template source, escaping string literals appropriately.
+    var index = 0;
+    var source = "__p+='";
+    text.replace(matcher, function(match, escape, interpolate, evaluate, offset) {
+      source += text.slice(index, offset).replace(escaper, escapeChar);
+      index = offset + match.length;
+
+      if (escape) {
+        source += "'+\n((__t=(" + escape + "))==null?'':_.escape(__t))+\n'";
+      } else if (interpolate) {
+        source += "'+\n((__t=(" + interpolate + "))==null?'':__t)+\n'";
+      } else if (evaluate) {
+        source += "';\n" + evaluate + "\n__p+='";
+      }
+
+      // Adobe VMs need the match returned to produce the correct offest.
+      return match;
+    });
+    source += "';\n";
+
+    // If a variable is not specified, place data values in local scope.
+    if (!settings.variable) source = 'with(obj||{}){\n' + source + '}\n';
+
+    source = "var __t,__p='',__j=Array.prototype.join," +
+      "print=function(){__p+=__j.call(arguments,'');};\n" +
+      source + 'return __p;\n';
+
+    try {
+      var render = new Function(settings.variable || 'obj', '_', source);
+    } catch (e) {
+      e.source = source;
+      throw e;
+    }
+
+    var template = function(data) {
+      return render.call(this, data, _);
+    };
+
+    // Provide the compiled source as a convenience for precompilation.
+    var argument = settings.variable || 'obj';
+    template.source = 'function(' + argument + '){\n' + source + '}';
+
+    return template;
+  };
+
+  // Add a "chain" function. Start chaining a wrapped Underscore object.
+  _.chain = function(obj) {
+    var instance = _(obj);
+    instance._chain = true;
+    return instance;
+  };
+
+  // OOP
+  // ---------------
+  // If Underscore is called as a function, it returns a wrapped object that
+  // can be used OO-style. This wrapper holds altered versions of all the
+  // underscore functions. Wrapped objects may be chained.
+
+  // Helper function to continue chaining intermediate results.
+  var result = function(instance, obj) {
+    return instance._chain ? _(obj).chain() : obj;
+  };
+
+  // Add your own custom functions to the Underscore object.
+  _.mixin = function(obj) {
+    _.each(_.functions(obj), function(name) {
+      var func = _[name] = obj[name];
+      _.prototype[name] = function() {
+        var args = [this._wrapped];
+        push.apply(args, arguments);
+        return result(this, func.apply(_, args));
+      };
+    });
+  };
+
+  // Add all of the Underscore functions to the wrapper object.
+  _.mixin(_);
+
+  // Add all mutator Array functions to the wrapper.
+  _.each(['pop', 'push', 'reverse', 'shift', 'sort', 'splice', 'unshift'], function(name) {
+    var method = ArrayProto[name];
+    _.prototype[name] = function() {
+      var obj = this._wrapped;
+      method.apply(obj, arguments);
+      if ((name === 'shift' || name === 'splice') && obj.length === 0) delete obj[0];
+      return result(this, obj);
+    };
+  });
+
+  // Add all accessor Array functions to the wrapper.
+  _.each(['concat', 'join', 'slice'], function(name) {
+    var method = ArrayProto[name];
+    _.prototype[name] = function() {
+      return result(this, method.apply(this._wrapped, arguments));
+    };
+  });
+
+  // Extracts the result from a wrapped and chained object.
+  _.prototype.value = function() {
+    return this._wrapped;
+  };
+
+  // Provide unwrapping proxy for some methods used in engine operations
+  // such as arithmetic and JSON stringification.
+  _.prototype.valueOf = _.prototype.toJSON = _.prototype.value;
+
+  _.prototype.toString = function() {
+    return '' + this._wrapped;
+  };
+
+  // AMD registration happens at the end for compatibility with AMD loaders
+  // that may not enforce next-turn semantics on modules. Even though general
+  // practice for AMD registration is to be anonymous, underscore registers
+  // as a named module because, like jQuery, it is a base library that is
+  // popular enough to be bundled in a third party lib, but not be part of
+  // an AMD load request. Those cases could generate an error when an
+  // anonymous define() is called outside of a loader request.
+  if (true) {
+    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [], __WEBPACK_AMD_DEFINE_RESULT__ = function() {
+      return _;
+    }.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+  }
+}.call(this));
+
+
+/***/ }),
 /* 262 */,
 /* 263 */,
 /* 264 */,
-/* 265 */,
-/* 266 */
+/* 265 */
 /***/ (function(module, exports, __webpack_require__) {
 
 __webpack_require__(3);
-__webpack_require__(110);
-__webpack_require__(69);
-__webpack_require__(6);
-__webpack_require__(70);
-__webpack_require__(108);
 __webpack_require__(109);
+__webpack_require__(68);
+__webpack_require__(6);
+__webpack_require__(69);
+__webpack_require__(107);
+__webpack_require__(108);
 __webpack_require__(7);
 __webpack_require__(39);
 module.exports = __webpack_require__(5);

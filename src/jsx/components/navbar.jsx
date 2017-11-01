@@ -42,10 +42,19 @@ var Methods = React.createClass({
             <a href="../busted">BUSTED</a>
           </li>
           <li>
-            <a href="../fade">FADE</a>
+            <a href="../slac">SLAC</a>
           </li>
           <li>
-            <a href="../slac">SLAC</a>
+            <a href="../fel">FEL</a>
+          </li>
+          <li>
+            <a href="../meme">MEME</a>
+          </li>
+          <li>
+            <a href="../fubar">FUBAR</a>
+          </li>
+          <li>
+            <a href="../gard">GARD</a>
           </li>
         </ul>
       </div>
