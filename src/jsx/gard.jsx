@@ -36,12 +36,13 @@ function GARDResults(props){
   timeString += hours > 0 ? hours + ':' : '';
   timeString += minutes + ':' + String(seconds).padStart(2, '0');
 
-  var totalPossibleModels = _.range(props.data.numberOfFrags)
-    .map(k=>binomial(props.data.totalBP, k+1))
+  var number_of_fragments = props.data.improvements ? props.data.improvements.length+1 : 2;
+  var totalPossibleModels = _.range(number_of_fragments)
+    .map(k=>binomial(props.data.potentialBreakpoints, k+1))
     .reduce((a,b)=>a+b,0);
-
-  var percentageExplored = (100*props.data.totalModelCount/totalPossibleModels).toFixed(2);
-  var evidence_statement = props.data.lastImprovedBPC ?
+  var totalModelCount = props.data.models.length;
+  var percentageExplored = (100*totalModelCount/totalPossibleModels).toFixed(2);
+  var evidence_statement = props.data.improvements ?
     <span><strong className="hyphy-highlight">found evidence</strong> of {props.data.lastImprovedBPC} recombination breakpoint{props.data.lastImprovedBPC == 1 ? '' : 's'}</span> :
     <span><strong>found no evidence</strong> of recombination</span>;
   return (<div className="row" id="summary-tab">
@@ -56,15 +57,15 @@ function GARDResults(props){
       </h3>
     </div>
     <div className="col-md-12">
-      <InputInfo input_data={props.data.input_data} json={props.data} />
+      <InputInfo input_data={props.data.input} json={props.data} />
     </div>
     <div className="col-md-12">
       <div className="main-result">
         <p>
           GARD {evidence_statement}.
-          GARD examined {props.data.totalModelCount} models in {timeString} wallclock time, at a rate of {(props.data.totalModelCount/props.data.timeElapsed).toFixed(2)} models
-          per second. The alignment contained {props.data.totalBP} potential breakpoints, translating into a search space of {totalPossibleModels} models
-          with up to {props.data.numberOfFrags} breakpoints, of which {percentageExplored}% was explored by the genetic algorithm.
+          GARD examined {totalModelCount} models in {timeString} wallclock time, at a rate of {(totalModelCount/props.data.timeElapsed).toFixed(2)} models
+          per second. The alignment contained {props.data.potentialBreakpoints} potential breakpoints, translating into a search space of {totalPossibleModels} models
+          with up to {number_of_fragments} breakpoints, of which {percentageExplored}% was explored by the genetic algorithm.
         </p>
         <hr />
         <p>
@@ -107,10 +108,10 @@ function GARDRecombinationReport(props){
     width = 700,
     height = 20,
     scale = d3.scale.linear()
-      .domain([1, props.data.input_data['number of sites']])
+      .domain([1, props.data.input['number of sites']])
       .range([0, width]);
   var segments = [{breakpoints: []}].concat(props.data.improvements).map(function(d){
-    var bp = [0].concat(d.breakpoints).concat([props.data.input_data['number of sites']]),
+    var bp = [0].concat(d.breakpoints).concat([props.data.input['number of sites']]),
       individual_segments = [];
     for(var i=0; i<bp.length-1; i++){
       var bp_delta = bp[i+1]-bp[i];
@@ -170,7 +171,7 @@ function GARDRecombinationReport(props){
 function GARDSiteGraph(props){
   if(!props.data) return <div></div>;
   var bestScore = props.data.baselineScore,
-    number_of_sites = props.data.input_data['number of sites'],
+    number_of_sites = props.data.input['number of sites'],
     bp_support = d3.range(number_of_sites).map(d=>0*d),
     tree_length = d3.range(number_of_sites).map(d=>0*d),
     normalizer = 0,
@@ -186,9 +187,9 @@ function GARDSiteGraph(props){
         fromSite = model.breakpoints[j][0];
         toSite = model.breakpoints[j][1];
         if(j>0) bp_support[fromSite] += modelScore;
-        for(var k=fromSite; k<toSite; k++){
-          tree_length[k] += model.tree_lengths[j]*modelScore;
-        }
+        //for(var k=fromSite; k<toSite; k++){
+        //  tree_length[k] += model.tree_lengths[j]*modelScore;
+        //}
       }
       normalizer += modelScore;
     }
@@ -199,7 +200,7 @@ function GARDSiteGraph(props){
     <div className="col-md-12">
       <Header title="GARD Site Graph" />
       <DatamonkeySiteGraph 
-        columns={["Breakpoint support", "Tree length"]}
+        columns={["Breakpoint support"]}
         rows={_.zip(bp_support, tree_length)}
       />
     </div>
@@ -208,15 +209,15 @@ function GARDSiteGraph(props){
 
 function GARDTopologyReport(props){
   if(!props.data) return <div></div>;
-  if(!props.data.lastImprovedBPC) return <div></div>;
-  var readPCount = props.data.pairwisePValues.length,
+  if(!props.data.improvements) return <div></div>;
+  var readPCount = props.data.pairwiseP.length,
     totalComparisons = (readPCount-1)*2,
     threshP = 0.01/totalComparisons,
     bypvalue = [[.01, 0], [.05, 0], [0.1, 0]].map(row=>row.map(entry=>entry/totalComparisons)),
     rows = [];
   for (var pcounter = 1; pcounter < readPCount; pcounter++){
-    var lhs = props.data.pairwisePValues[pcounter][pcounter-1],
-      rhs = props.data.pairwisePValues[pcounter-1][pcounter],
+    var lhs = props.data.pairwiseP[pcounter][pcounter-1],
+      rhs = props.data.pairwiseP[pcounter-1][pcounter],
       sig = 0;
     for(var k=0; k<bypvalue.length; k++){
       threshP = bypvalue[k][0];

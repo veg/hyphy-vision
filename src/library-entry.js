@@ -1,9 +1,3 @@
-
-require("font-awesome/css/font-awesome.css");
-require('./application.less');
-require('./hyphy-vision.css');
-require('./fade/FADE.css');
-
 require('bootstrap');
 require('./datamonkey/datamonkey.js');
 
@@ -16,3 +10,4 @@ export {default as prime} from './jsx/prime.jsx';
 export {default as relax} from './jsx/relax.jsx';
 export {default as slac} from './jsx/slac.jsx';
 export {default as fubar} from './jsx/fubar.jsx';
+export {default as gard} from './jsx/gard.jsx';
