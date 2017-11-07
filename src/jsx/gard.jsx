@@ -44,6 +44,9 @@ function InputInfo(props) {
     filename = is_full_path
       ? _.last(props.input_data["file name"].split("/"))
       : props.input_data["file name"];
+  var original_button = (<li className="dropdown-item">
+    <a href={window.location.href+"/original_file/original.fasta"}>Original file</a>
+  </li>);
   var partition_button = (<li className="dropdown-item">
     <a href={window.location.href+"/screened_data/"}>Partitioned data</a>
   </li>);
@@ -77,7 +80,7 @@ function InputInfo(props) {
               <i className="fa fa-download" aria-hidden="true" /> Export Results
             </button>
             <ul className="dropdown-menu" aria-labelledby="dropdown-menu-button">
-              {props.hyphy_vision ? '' : partition_button} 
+              {props.hyphy_vision ? '' : [partition_button, original_button]} 
               <li className="dropdown-item">
                 <a onClick={saveTheJson}>JSON</a>
               </li>
