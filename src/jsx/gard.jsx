@@ -1,12 +1,13 @@
 var React = require('react'),
   ReactDOM = require("react-dom"),
   d3 = require("d3"),
-  _ = require("underscore");
+  _ = require("underscore"),
+  pd = require('pretty-data').pd;
 
+import { saveAs } from "file-saver";
 import { Tree } from "./components/tree.jsx";
 import { NavBar } from "./components/navbar.jsx";
 import { ScrollSpy } from "./components/scrollspy.jsx";
-import { InputInfo } from "./components/input_info.jsx";
 import { ErrorMessage } from "./components/error_message.jsx";
 import { Header } from "./components/header.jsx";
 import { RateMatrix } from "./components/rate_matrix.jsx";
@@ -20,6 +21,72 @@ function binomial(n, k) {
     for (var x = n-k+1; x <= n; x++) coeff *= x;
     for (x = 1; x <= k; x++) coeff /= x;
     return coeff;
+}
+
+function InputInfo(props) {
+  function saveTheJson() {
+    var blob = new Blob([pd.json(props.json)], {
+    //var blob = new Blob([JSON.stringify(props.json)], {
+      type: "text/json:charset=utf-8;"
+    });
+    saveAs(blob, "result.json");
+  }
+  if (!props.input_data) return <div />;
+  function getTheScreenedData(){
+    console.log('fetching data');
+    fetch('screened_data').then(response => {
+      console.log('saving data');
+      saveAs(response.blob(), "screened_data.nex");
+      console.log('data saved');
+    });
+  }
+  var is_full_path = props.input_data["file name"].indexOf("/") != -1,
+    filename = is_full_path
+      ? _.last(props.input_data["file name"].split("/"))
+      : props.input_data["file name"];
+  var partition_button = (<li className="dropdown-item">
+    <a href={window.location.href+"/screened_data/"}>Partitioned data</a>
+  </li>);
+  return (
+    <div className="row" id="input-info">
+
+        <div className="col-md-8">
+          <span className="hyphy-highlight">INPUT DATA</span>{" "}
+          <span className="divider">|</span>
+          <span className="hyphy-highlight">{filename}</span>
+          <span className="divider">|</span>
+          <span className="hyphy-highlight">
+            {props.input_data["number of sequences"]}
+          </span>{" "}
+          sequences <span className="divider">|</span>
+          <span className="hyphy-highlight">
+            {props.input_data["number of sites"]}
+          </span>{" "}
+          sites
+        </div>
+        
+        <div className="col-md-4" style={{height:0}}>
+          <div className="dropdown hyphy-export-dropdown pull-right">
+            <button
+              id="dropdown-menu-button"
+              className="btn btn-secondary dropdown-toggle"
+              data-toggle="dropdown"
+              type="button"
+              style={{height:30}}
+            >
+              <i className="fa fa-download" aria-hidden="true" /> Export Results
+            </button>
+            <ul className="dropdown-menu" aria-labelledby="dropdown-menu-button">
+              {props.hyphy_vision ? '' : partition_button} 
+              <li className="dropdown-item">
+                <a onClick={saveTheJson}>JSON</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+    </div>
+  );
 }
 
 function GARDResults(props){
@@ -57,7 +124,7 @@ function GARDResults(props){
       </h3>
     </div>
     <div className="col-md-12">
-      <InputInfo input_data={props.data.input} json={props.data} />
+      <InputInfo input_data={props.data.input} json={props.data} hyphy_vision={props.hyphy_vision}/>
     </div>
     <div className="col-md-12">
       <div className="main-result">
@@ -309,6 +376,7 @@ class GARD extends React.Component {
     $(function () {
       $('[data-toggle="tooltip"]').tooltip()
     })
+    $('.dropdown-toggle').dropdown()
   }
   onFileChange(e){
     var self = this,
@@ -367,7 +435,7 @@ class GARD extends React.Component {
           <ScrollSpy info={scrollspy_info} />
           <div className="col-sm-10" id="results">
             <ErrorMessage />
-            <GARDResults data={this.state.data} />
+            <GARDResults data={this.state.data} hyphy_vision={this.props.hyphy_vision}/>
             <GARDRecombinationReport data={this.state.data} />
             <GARDTopologyReport data={this.state.data} />
             <GARDSiteGraph data={this.state.data} />
