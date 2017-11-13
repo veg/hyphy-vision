@@ -22,7 +22,7 @@ var Hamburger = React.createClass({
 var Methods = React.createClass({
   render: function() {
     return (
-      <div className="dropdown">
+      <div className="dropdown toolbar-dropdown">
         <button
           className="btn btn-primary dropdown-toggle"
           type="button"
@@ -42,10 +42,19 @@ var Methods = React.createClass({
             <a href="../busted">BUSTED</a>
           </li>
           <li>
-            <a href="../fade">FADE</a>
+            <a href="../slac">SLAC</a>
           </li>
           <li>
-            <a href="../slac">SLAC</a>
+            <a href="../fel">FEL</a>
+          </li>
+          <li>
+            <a href="../meme">MEME</a>
+          </li>
+          <li>
+            <a href="../fubar">FUBAR</a>
+          </li>
+          <li>
+            <a href="../gard">GARD</a>
           </li>
         </ul>
       </div>
@@ -84,7 +93,7 @@ var NavBar = React.createClass({
         <div className="container">
           <div className="row">
             <div className="col-sm-12">
-              <a href="#">
+              <a href="/">
                 <img id="hyphy-logo" src="../../images/hyphy-logo.svg" />
               </a>
               <div className="navbar-header">

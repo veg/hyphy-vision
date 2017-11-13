@@ -1,6 +1,9 @@
 var React = require("react");
 var datamonkey = require("../../datamonkey/datamonkey.js");
 
+import { saveSvgAsPng } from "save-svg-as-png";
+
+
 var PropChart = React.createClass({
   getDefaultProps: function() {
     return {
@@ -11,7 +14,7 @@ var PropChart = React.createClass({
       },
       margins: {
         left: 50,
-        right: 15,
+        right: 25,
         bottom: 25,
         top: 35
       },
@@ -35,10 +38,6 @@ var PropChart = React.createClass({
 
     d3.select("#" + this.save_svg_id).on("click", function(e) {
       datamonkey.save_image("svg", "#" + self.svg_id);
-    });
-
-    d3.select("#" + this.save_png_id).on("click", function(e) {
-      datamonkey.save_image("png", "#" + self.svg_id);
     });
   },
 
@@ -100,6 +99,11 @@ var PropChart = React.createClass({
         "0 0 " + this.dimensions.width + " " + this.dimensions.height
       )
       .attr("height", dimensions.height + margins["top"] + margins["bottom"]);
+
+    this.svg.append('rect')
+      .attr("width", dimensions['width'])
+      .attr("height", dimensions['height'])
+      .attr("fill", "white");
 
     this.plot = this.svg.selectAll(".container");
 
@@ -367,6 +371,7 @@ var PropChart = React.createClass({
                   id={this.save_png_id}
                   type="button"
                   className="btn btn-default btn-sm"
+                  onClick={()=>saveSvgAsPng(document.getElementById(this.svg_id), "datamonkey-chart.png", {scale: 2})}
                 >
                   <span className="glyphicon glyphicon-floppy-save" /> PNG
                 </button>

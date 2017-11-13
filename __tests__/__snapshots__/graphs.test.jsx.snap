@@ -18,7 +18,7 @@ exports[`DatamonkeyScatterplot should create an svg element 1`] = `
     <g
       className="hyphy-axis"
       style={null}
-      transform="translate(50,370)"
+      transform="translate(50,360)"
     />
     <g
       className="hyphy-axis"
@@ -60,7 +60,7 @@ exports[`DatamonkeySeries should create an svg element 1`] = `
     <g
       className="hyphy-axis"
       style={null}
-      transform="translate(50,370)"
+      transform="translate(50,360)"
     />
     <g
       className="hyphy-axis"
