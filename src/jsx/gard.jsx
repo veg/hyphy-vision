@@ -32,14 +32,6 @@ function InputInfo(props) {
     saveAs(blob, "result.json");
   }
   if (!props.input_data) return <div />;
-  function getTheScreenedData(){
-    console.log('fetching data');
-    fetch('screened_data').then(response => {
-      console.log('saving data');
-      saveAs(response.blob(), "screened_data.nex");
-      console.log('data saved');
-    });
-  }
   var is_full_path = props.input_data["file name"].indexOf("/") != -1,
     filename = is_full_path
       ? _.last(props.input_data["file name"].split("/"))
@@ -240,26 +232,20 @@ function GARDRecombinationReport(props){
 
 function GARDSiteGraph(props){
   if(!props.data) return <div></div>;
-  var bestScore = props.data.baselineScore,
-    number_of_sites = props.data.input['number of sites'],
+  var number_of_sites = props.data.input['number of sites'],
     bp_support = d3.range(number_of_sites).map(d=>0*d),
     tree_length = d3.range(number_of_sites).map(d=>0*d),
     normalizer = 0,
     model,
     modelScore,
-    fromSite,
-    toSite;
+    fromSite;
   for(var i=0; i<props.data.models.length; i++){
     model = props.data.models[i];
     modelScore = Math.exp(.5*(props.data.baselineScore-model.aicc));
     if (modelScore > .00001){
       for(var j=0; j<model.breakpoints.length; j++){
         fromSite = model.breakpoints[j][0];
-        toSite = model.breakpoints[j][1];
         if(j>0) bp_support[fromSite] += modelScore;
-        //for(var k=fromSite; k<toSite; k++){
-        //  tree_length[k] += model.tree_lengths[j]*modelScore;
-        //}
       }
       normalizer += modelScore;
     }
@@ -404,14 +390,13 @@ class GARD extends React.Component {
 
   }
   render(){
-    var self = this,
-      scrollspy_info = [
-        { label: "summary", href: "summary-tab" },
-        { label: "report", href: "report-tab" },
-        { label: "graph", href: "graph-tab" },
-        { label: "matrix", href: "matrix-tab" },
-        { label: "tree", href: "tree-tab" },
-      ];
+    var scrollspy_info = [
+      { label: "summary", href: "summary-tab" },
+      { label: "report", href: "report-tab" },
+      { label: "graph", href: "graph-tab" },
+      { label: "matrix", href: "matrix-tab" },
+      { label: "tree", href: "tree-tab" },
+    ];
     var tree_settings = {
       omegaPlot: {},
       "tree-options": {

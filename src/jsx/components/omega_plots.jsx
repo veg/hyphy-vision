@@ -1,7 +1,6 @@
 import { saveSvgAsPng } from "save-svg-as-png";
 
 var React = require("react");
-var datamonkey = require("../../datamonkey/datamonkey.js");
 var _ = require("underscore");
 var d3_save_svg = require("d3-save-svg");
 

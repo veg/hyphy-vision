@@ -1,4 +1,3 @@
-import { ModelFits } from "./components/model_fits.jsx";
 import { NavBar } from "./components/navbar.jsx";
 import { ScrollSpy } from "./components/scrollspy.jsx";
 import { InputInfo } from "./components/input_info.jsx";
@@ -404,9 +403,7 @@ class RELAX extends React.Component{
 
 RELAX.defaultProps = {
   edgeColorizer: function(element, data, omega_color, partition) {
-    var self = this,
-      scaling_exponent = 0.33,
-      omega_format = d3.format(".3r");
+    var omega_format = d3.format(".3r");
 
     if (data.target.annotations) {
       element.style(

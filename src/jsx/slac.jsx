@@ -446,7 +446,7 @@ var SLACSites = React.createClass({
 
   render: function() {
     var self = this;
-    var { rows, count } = this.dm_makeDataRows(this.dm_makeFilterFunction());
+    var { rows } = this.dm_makeDataRows(this.dm_makeFilterFunction());
     var { headers, filterable } = this.dm_makeHeaderRow();
 
     var show_ci_menu = function() {
