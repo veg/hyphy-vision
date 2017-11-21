@@ -234,13 +234,15 @@ function GARDRecombinationReport(props){
 
 function GARDSiteGraph(props){
   if(!props.data) return <div></div>;
-  var number_of_sites = props.data.input['number of sites'],
+  var bestScore = props.data.baselineScore,
+    number_of_sites = props.data.input['number of sites'],
     bp_support = d3.range(number_of_sites).map(d=>0*d),
     tree_length = d3.range(number_of_sites).map(d=>0*d),
     normalizer = 0,
     model,
     modelScore,
-    fromSite;
+    fromSite,
+    toSite;
   for(var i=0; i<props.data.models.length; i++){
     model = props.data.models[i];
     modelScore = Math.exp(.5*(props.data.baselineScore-model.aicc));
@@ -396,7 +398,8 @@ class GARD extends React.Component {
 
   }
   render(){
-    var scrollspy_info = [
+    var self = this,
+      scrollspy_info = [
         { label: "summary", href: "summary-tab" },
         { label: "report", href: "report-tab" },
         { label: "graph", href: "graph-tab" },
