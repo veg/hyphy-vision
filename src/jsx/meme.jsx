@@ -96,7 +96,6 @@ function MEMETable(props) {
   var formatter = d3.format(".2f"),
     new_rows = flattened.map((row, index) => {
       var alpha = row[0] ? row[0] : 1e-10,
-        beta_minus = row[1],
         beta_plus = row[3];
       var selection = beta_plus/alpha > 1 && row[6] < props.pValue ? "positive-selection-row" : '';
       var site = {value: index+1, classes: selection},

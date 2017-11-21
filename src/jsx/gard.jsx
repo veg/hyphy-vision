@@ -33,11 +33,8 @@ function InputInfo(props) {
   }
   if (!props.input_data) return <div />;
   function getTheScreenedData(){
-    console.log('fetching data');
     fetch('screened_data').then(response => {
-      console.log('saving data');
       saveAs(response.blob(), "screened_data.nex");
-      console.log('data saved');
     });
   }
   var is_full_path = props.input_data["file name"].indexOf("/") != -1,
@@ -237,15 +234,13 @@ function GARDRecombinationReport(props){
 
 function GARDSiteGraph(props){
   if(!props.data) return <div></div>;
-  var bestScore = props.data.baselineScore,
-    number_of_sites = props.data.input['number of sites'],
+  var number_of_sites = props.data.input['number of sites'],
     bp_support = d3.range(number_of_sites).map(d=>0*d),
     tree_length = d3.range(number_of_sites).map(d=>0*d),
     normalizer = 0,
     model,
     modelScore,
-    fromSite,
-    toSite;
+    fromSite;
   for(var i=0; i<props.data.models.length; i++){
     model = props.data.models[i];
     modelScore = Math.exp(.5*(props.data.baselineScore-model.aicc));
@@ -401,8 +396,7 @@ class GARD extends React.Component {
 
   }
   render(){
-    var self = this,
-      scrollspy_info = [
+    var scrollspy_info = [
         { label: "summary", href: "summary-tab" },
         { label: "report", href: "report-tab" },
         { label: "graph", href: "graph-tab" },
