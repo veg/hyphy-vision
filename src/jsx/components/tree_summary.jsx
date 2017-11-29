@@ -82,7 +82,6 @@ var TreeSummary = React.createClass({
 
     // Create an array of phylotrees from fits
 
-    var tree_length = model["tree length"];
     var branch_annotations = model["branch-annotations"];
     var rate_classes = this.getRateClasses(branch_annotations),
       proportions = this.getBranchProportion(rate_classes),

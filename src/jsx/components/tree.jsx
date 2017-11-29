@@ -1,5 +1,4 @@
 var React = require("react");
-var datamonkey = require("../../datamonkey/datamonkey.js");
 var download = require("in-browser-download");
 var d3_save_svg = require("d3-save-svg");
 
@@ -527,8 +526,6 @@ var Tree = React.createClass({
 
   initializeTree: function() {
     var self = this;
-
-    var analysis_data = self.state.json;
 
     var width = this.width,
       height = this.height;

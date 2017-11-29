@@ -33,11 +33,8 @@ function InputInfo(props) {
   }
   if (!props.input_data) return <div />;
   function getTheScreenedData(){
-    console.log('fetching data');
     fetch('screened_data').then(response => {
-      console.log('saving data');
       saveAs(response.blob(), "screened_data.nex");
-      console.log('data saved');
     });
   }
   var is_full_path = props.input_data["file name"].indexOf("/") != -1,
