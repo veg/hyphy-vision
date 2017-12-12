@@ -61,6 +61,7 @@
     "bootstrap-webpack": "0.0.x",
     "copy-webpack-plugin": "^4.1.1",
     "css-loader": "^0.25.0",
+    "electron": "^1.7.9",
     "enzyme": "^2.9.1",
     "eslint": "^4.0.0",
     "eslint-loader": "^1.8.0",
@@ -87,7 +88,9 @@
   },
   "scripts": {
     "lint": "eslint dist/hyphyvision.js",
-    "jest": "node ./node_modules/jest-cli/bin/jest.js"
+    "jest": "node ./node_modules/jest-cli/bin/jest.js",
+    "start": "node_modules/.bin/webpack-dev-server --open",
+    "electron": "node_modules/.bin/electron electron.js"
   },
   "license": "MIT",
   "files": [

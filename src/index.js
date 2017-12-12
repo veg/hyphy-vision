@@ -9,8 +9,13 @@ class Hello extends React.Component {
     this.state = {data: null};
   }
   componentDidMount(){
-    var self = this;
-    d3.json('/methods/absrel/data/ABSREL.json', (error, data) => {
+    var self = this,
+      // SDS, 12/12/17: This is a quick hack that needs a better solution...
+      // Use this path for web development
+      path = '/methods/absrel/data/ABSREL.json';
+      // Use this path when testing electron
+      // path = '/Users/stephenshank/Documents/hyphy-vision/methods/absrel/data/ABSREL.json';
+    d3.json(path, (error, data) => {
       self.setState({data: data});
     });
   }
