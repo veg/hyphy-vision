@@ -417,18 +417,6 @@ var Tree = React.createClass({
       }
       menu = menu.concat(<li className="dropdown-header">Models</li>)
 
-      var createListElement = function(model_type) {
-        return (<li>
-          <a
-            href="javascript:;"
-            data-type={model_type}
-            onClick={self.changeModelSelection}
-          >
-            {model_type}
-          </a>
-        </li>);
-      };
-
       var model_list = _.map(this.props.models, (d, model_type) => (<li style={{backgroundColor: model_type==self.state.selected_model ? 'lightGrey' : 'white'}}>
           <a
             href="javascript:;"
@@ -566,17 +554,6 @@ var Tree = React.createClass({
     );
 
     this.assignBranchAnnotations();
-
-    //if (_.indexOf(_.keys(analysis_data), "tree") > -1) {
-    //  self.tree(analysis_data["tree"]).svg(self.svg);
-    //} else if(self.props.multitree){
-    //  self.tree(self.props.json.trees[self.state.current]['newickString'])
-    //    .svg(self.svg);      
-    //} else {
-    //  self
-    //    .tree(self.props.models[self.state.selected_model]["tree string"])
-    //    .svg(self.svg);
-    //}
 
     if(self.props.method=='absrel' || self.props.method=='relax'){
       var tree_string = self.props.json.input.trees[0];

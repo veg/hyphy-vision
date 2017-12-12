@@ -7,7 +7,6 @@ var React = require("react"),
 import { Tree } from "./components/tree.jsx";
 import { InputInfo } from "./components/input_info.jsx";
 import { DatamonkeyTable, DatamonkeyModelTable } from "./components/tables.jsx";
-import { DatamonkeySiteGraph } from "./components/graphs.jsx";
 import { NavBar } from "./components/navbar.jsx";
 import { ScrollSpy } from "./components/scrollspy.jsx";
 import { saveSvgAsPng } from "save-svg-as-png";
