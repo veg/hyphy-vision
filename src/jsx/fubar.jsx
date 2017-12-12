@@ -38,6 +38,7 @@ function FUBARSummary(props) {
         <InputInfo
           input_data={props.json ? props.json.input : null}
           json={props.json}
+          hyphy_vision={props.hyphy_vision}
         />
       </div>
       <div className="col-md-12">
@@ -523,6 +524,7 @@ class FUBAR extends React.Component {
                 json={self.state.data}
                 updatePosteriorProbability={self.updatePosteriorProbability}
                 posteriorProbability={self.state.posteriorProbability}
+                hyphy_vision={self.props.hyphy_vision}
               />
 
               <FUBARViz

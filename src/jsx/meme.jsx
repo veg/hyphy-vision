@@ -31,7 +31,7 @@ function MEMESummary(props) {
         </h3>
       </div>
       <div className="col-md-12">
-        <InputInfo input_data={props.json ? props.json.input : null} json={props.json} />
+        <InputInfo input_data={props.json ? props.json.input : null} json={props.json} hyphy_vision={props.hyphy_vision}/>
       </div>
       <div className="col-md-12">
         <div className="main-result">
@@ -280,7 +280,12 @@ class MEME extends React.Component {
           <div className="row">
             <ScrollSpy info={scrollspy_info} />
             <div className="col-sm-10" id="results">
-              <MEMESummary json={self.state.data} updatePValue={self.updatePValue} pValue={self.state.pValue}/>
+              <MEMESummary
+                json={self.state.data}
+                updatePValue={self.updatePValue}
+                pValue={self.state.pValue}
+                hyphy_vision={self.props.hyphy_vision}
+              />
               <MEMETable
                 header={self.state.header}
                 body_data={self.state.bodyData}
