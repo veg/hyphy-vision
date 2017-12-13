@@ -3,6 +3,14 @@ import ReactDOM from 'react-dom';
 
 const d3 = require('d3');
 
+require("font-awesome/css/font-awesome.css");
+require('./application.less');
+require('./hyphyvision.css');
+require('./fade/FADE.css');
+
+require('bootstrap');
+require('./datamonkey/datamonkey.js');
+
 class Hello extends React.Component {
   constructor(props){
     super(props);
