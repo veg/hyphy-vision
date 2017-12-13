@@ -45,8 +45,10 @@
     "pretty-data": "^0.40.0",
     "prop-types": "^15.5.10",
     "react": "15.x.x",
+    "react-bootstrap": "^0.31.5",
     "react-copy-to-clipboard": "^5.0.0",
     "react-dom": "^15.4.1",
+    "react-json-view": "^1.14.0",
     "save-svg-as-png": "^1.2.0",
     "underscore": "^1.8.3"
   },
