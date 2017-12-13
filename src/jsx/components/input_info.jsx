@@ -2,7 +2,7 @@ var React = require("react"),
   _ = require("underscore");
 var pd = require('pretty-data').pd;
 import { saveAs } from "file-saver";
-import { Modal } from 'react-bootstrap';
+import { Modal, Button, Glyphicon } from 'react-bootstrap';
 import ReactJson from 'react-json-view';
 
 class InputInfo extends React.Component {
@@ -34,54 +34,55 @@ class InputInfo extends React.Component {
     </li>);
     return (
       <div className="row" id="input-info">
-          <div className="col-md-8">
-            <span className="hyphy-highlight">INPUT DATA</span>{" "}
-            <span className="divider">|</span>
-            <span className="hyphy-highlight">{filename}</span>
-            <span className="divider">|</span>
-            <span className="hyphy-highlight">
-              {this.props.input_data["number of sequences"]}
-            </span>{" "}
-            sequences <span className="divider">|</span>
-            <span className="hyphy-highlight">
-              {this.props.input_data["number of sites"]}
-            </span>{" "}
-            sites
-          </div>
-          
-          <div className="col-md-4" style={{height:0}}>
+        <div className="col-md-8">
+          <span className="hyphy-highlight">INPUT DATA</span>{" "}
+          <span className="divider">|</span>
+          <span className="hyphy-highlight">{filename}</span>
+          <span className="divider">|</span>
+          <span className="hyphy-highlight">
+            {this.props.input_data["number of sequences"]}
+          </span>{" "}
+          sequences <span className="divider">|</span>
+          <span className="hyphy-highlight">
+            {this.props.input_data["number of sites"]}
+          </span>{" "}
+          sites
+        </div>
+        
+        <div className="col-md-4" style={{height:0}}>
+          <div className="dropdown hyphy-export-dropdown pull-right">
             <button
               id="dropdown-menu-button"
               className="btn btn-secondary dropdown-toggle"
               data-toggle="dropdown"
               type="button"
               style={{height:30}}
-              onClick={()=>this.open()}
             >
-              <i className="fa fa-list" aria-hidden="true" /> View JSON
+              <i className="fa fa-download" aria-hidden="true" /> Export 
             </button>
-            <div className="dropdown hyphy-export-dropdown pull-right">
-              <button
-                id="dropdown-menu-button"
-                className="btn btn-secondary dropdown-toggle"
-                data-toggle="dropdown"
-                type="button"
-                style={{height:30}}
-              >
-                <i className="fa fa-download" aria-hidden="true" /> Export 
-              </button>
-              <ul className="dropdown-menu" aria-labelledby="dropdown-menu-button">
-                {this.props.hyphy_vision ? '' : original_button}
-                <li className="dropdown-item">
-                  <a onClick={saveTheJson}>JSON</a>
-                </li>
-              </ul>
-            </div>
+            <ul className="dropdown-menu" aria-labelledby="dropdown-menu-button">
+              {this.props.hyphy_vision ? '' : original_button}
+              <li className="dropdown-item">
+                <a onClick={saveTheJson}>Save JSON</a>
+              </li>
+              <li className="dropdown-item">
+                <a onClick={()=>this.open()}>View JSON</a>
+              </li>
+            </ul>
           </div>
+        </div>
 
         <Modal show={this.state.showModal} onHide={()=>this.close()}>
-          <Modal.Header closeButton>
-            JSON viewer
+          <Modal.Header>
+            <div style={{display:'flex', alignItems: 'center', justifyContent: 'space-between'}}>
+              <strong style={{fontSize: 24}}>JSON viewer</strong>
+              <div className="pull-right">
+                <Button>
+                  <Glyphicon glyph="share-alt" />
+                  <a href="http://hyphy.org/resources/json-fields.pdf" target="_blank">Description of JSON fields</a>
+                </Button>
+              </div>
+            </div>
           </Modal.Header>
           <Modal.Body>
             <ReactJson src={this.props.json} collapsed={1} displayDataTypes={false} />
