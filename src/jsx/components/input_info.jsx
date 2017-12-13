@@ -16,14 +16,13 @@ class InputInfo extends React.Component {
   open() {
     this.setState({ showModal: true});
   }
+  saveTheJSON() {
+    var blob = new Blob([pd.json(this.props.json)], {
+      type: "text/json:charset=utf-8;"
+    });
+    saveAs(blob, "result.json");
+  }
   render(){
-    var self = this;
-    function saveTheJson() {
-      var blob = new Blob([pd.json(this.props.json)], {
-        type: "text/json:charset=utf-8;"
-      });
-      saveAs(blob, "result.json");
-    }
     if (!this.props.input_data) return <div />;
     var is_full_path = this.props.input_data["file name"].indexOf("/") != -1,
       filename = is_full_path
@@ -63,7 +62,7 @@ class InputInfo extends React.Component {
             <ul className="dropdown-menu" aria-labelledby="dropdown-menu-button">
               {this.props.hyphy_vision ? '' : original_button}
               <li className="dropdown-item">
-                <a onClick={saveTheJson}>Save JSON</a>
+                <a onClick={()=>this.saveTheJSON()}>Save JSON</a>
               </li>
               <li className="dropdown-item">
                 <a onClick={()=>this.open()}>View JSON</a>
