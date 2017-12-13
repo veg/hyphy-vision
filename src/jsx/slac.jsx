@@ -447,7 +447,7 @@ var SLACSites = React.createClass({
   render: function() {
 
     var self = this;
-    var { rows, count } = this.dm_makeDataRows(this.dm_makeFilterFunction());
+    var { rows } = this.dm_makeDataRows(this.dm_makeFilterFunction());
     var { headers, filterable } = this.dm_makeHeaderRow();
 
     var show_ci_menu = function() {
@@ -826,7 +826,11 @@ var SLACBanner = React.createClass({
       </div>
 
       <div className="col-md-12">
-        <InputInfo input_data={this.props.input_data} json={this.props.analysis_results}/>
+        <InputInfo
+          input_data={this.props.input_data}
+          json={this.props.analysis_results}
+          hyphy_vision={this.props.hyphy_vision}
+        />
       </div>
 
       <div className="col-md-12">
@@ -1358,6 +1362,7 @@ var SLAC = React.createClass({
                   pValue={self.state.pValue}
                   pAdjuster={_.bind(self.dm_adjustPvalue, self)}
                   input_data={self.state.input_data}
+                  hyphy_vision={self.props.hyphy_vision}
                 />
 
                 <div className="row hidden-print">
