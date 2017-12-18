@@ -99,11 +99,11 @@ config = {
   },
   plugins: [
     new webpack.LoaderOptionsPlugin({ debug: true }),
-    new webpack.optimize.CommonsChunkPlugin({
-      name: "vendor",
-      filename: "vendor.js",
-      minChunks: ({resource}) => /node_modules/.test(resource)
-    }),
+    //new webpack.optimize.CommonsChunkPlugin({
+    //  name: "vendor",
+    //  filename: "vendor.js",
+    //  minChunks: ({resource}) => /node_modules/.test(resource)
+    //}),
     new webpack.ProvidePlugin({
       $: "jquery",
       jQuery: "jquery",
