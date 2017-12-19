@@ -365,7 +365,7 @@ class GARD extends React.Component {
     $(function () {
       $('[data-toggle="tooltip"]').tooltip()
     })
-    $('.dropdown-toggle').dropdown()
+    $('.dropdown-toggle').dropdown();
   }
   onFileChange(e){
     var self = this,

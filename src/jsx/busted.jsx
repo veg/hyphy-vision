@@ -903,6 +903,7 @@ var BUSTED = React.createClass({
     $(function () {
       $('[data-toggle="tooltip"]').tooltip()
     })
+    $('.dropdown-toggle').dropdown();
   },
 
   render: function() {
