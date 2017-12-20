@@ -27,7 +27,9 @@ class InputInfo extends React.Component {
     var is_full_path = this.props.input_data["file name"].indexOf("/") != -1,
       filename = is_full_path
         ? _.last(this.props.input_data["file name"].split("/"))
-        : this.props.input_data["file name"];
+        : this.props.input_data["file name"],
+      on_datamonkey = !this.props.hyphy_vision,
+      show_partition_button = on_datamonkey && this.props.gard;
     var original_button = (<li className="dropdown-item">
       <a href={window.location.href+"/original_file/original.fasta"}>Original file</a>
     </li>);
@@ -60,7 +62,14 @@ class InputInfo extends React.Component {
               <i className="fa fa-download" aria-hidden="true" /> Export 
             </button>
             <ul className="dropdown-menu" aria-labelledby="dropdown-menu-button">
-              {this.props.hyphy_vision ? '' : original_button}
+              {on_datamonkey ? [(<li className="dropdown-item">
+                <a href={window.location.href+"/original_file/original.fasta"}>Original file</a>
+              </li>),(<li className="dropdown-item">
+                <a href={window.location.href+"/log.txt/"}>Analysis log</a>
+              </li>)] : null}
+              {show_partition_button ? (<li className="dropdown-item">
+                <a href={window.location.href+"/screened_data/"}>Partitioned data</a>
+              </li>) : null }
               <li className="dropdown-item">
                 <a onClick={()=>this.saveTheJSON()}>Save JSON</a>
               </li>

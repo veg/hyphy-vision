@@ -88,7 +88,7 @@ var BranchTable = React.createClass({
         this.getPVal(branch),
         this.getUncorrectedPVal(branch),
         this.getOmegaDistribution(m, annotations),
-        '<i class="fa fa-bar-chart" aria-hidden="true"></i>'
+        `<i id=${m} class="fa fa-bar-chart" aria-hidden="true"></i>`
       ];
 
       table_row_data.push(branch_row);
@@ -112,10 +112,10 @@ var BranchTable = React.createClass({
     var self = this;
 
     if (self.state.annotations) {
-      var branch_table = d3.select("#table-branch-table").selectAll("tr");
+      var chart_links =  d3.select("#table-branch-table").selectAll("i");
 
-      branch_table.on("click", function(d) {
-        var label = d[0];
+      chart_links.on("click", function(d) {
+        var label = this.id;
         self.setState({
           current_model_name: label,
           current_omegas: self.state.annotations[label]["omegas"]
@@ -176,7 +176,7 @@ var BranchTable = React.createClass({
       .selectAll("tr")
       .data(this.state.table_row_data);
 
-    branch_rows.enter().append("tr").attr('class', d=>d[3]<.05?'active':'');
+    branch_rows.enter().append("tr").attr('class', d=>d[3]<.05?'highlight':'');
     branch_rows.exit().remove();
     branch_rows.style("font-weight", function(d) {
       return d[3] <= 0.05 ? "bold" : "normal";
@@ -229,7 +229,7 @@ var BranchTable = React.createClass({
               data-trigger="hover"
               title="Detailed results"
               data-html="true"
-              data-content="<ul><li><strong>Darker rows</strong> correspond to positively-selected branches at P ≤ 0.05.</li><li>Click on a row to see a visualization of its inferred rate distribution.</li><li>Hover over a column header for a description of its content.</li></ul>"
+              data-content="<ul><li><strong>Darker rows</strong> correspond to positively-selected branches at P ≤ 0.05.</li><li>Click on the chart icon at the end of any row to see a visualization of its inferred rate distribution.</li><li>Hover over a column header for a description of its content.</li></ul>"
               data-placement="bottom"
             />
           </h4>

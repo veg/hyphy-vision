@@ -247,7 +247,8 @@ class RELAX extends React.Component{
     $('[data-toggle="popover"]').popover();
     $(function () {
       $('[data-toggle="tooltip"]').tooltip()
-    })
+    });
+    $('.dropdown-toggle').dropdown();
   }
 
   formatBranchAnnotations(json, model) {

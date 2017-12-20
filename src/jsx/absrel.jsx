@@ -409,6 +409,7 @@ var BSREL = React.createClass({
       offset: 50
     });
     $('[data-toggle="popover"]').popover();
+    $('.dropdown-toggle').dropdown();
   },
 
   render: function() {

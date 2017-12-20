@@ -474,6 +474,7 @@ class FUBAR extends React.Component {
       offset: 50
     });
     $('[data-toggle="popover"]').popover();
+    $('.dropdown-toggle').dropdown();
   }
 
   updatePosteriorProbability(e) {
