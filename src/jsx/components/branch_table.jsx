@@ -75,6 +75,7 @@ var BranchTable = React.createClass({
   },
 
   getBranchRows: function(tree, test_results, annotations) {
+
     var table_row_data = [];
 
     for (var m in test_results) {
@@ -88,7 +89,7 @@ var BranchTable = React.createClass({
         this.getPVal(branch),
         this.getUncorrectedPVal(branch),
         this.getOmegaDistribution(m, annotations),
-        `<i id=${m} class="fa fa-bar-chart" aria-hidden="true"></i>`
+        `<button id=${m} class="fa fa-bar-chart hyphy-omega-chart-btn" aria-hidden="true"></button>`
       ];
 
       table_row_data.push(branch_row);
@@ -112,7 +113,7 @@ var BranchTable = React.createClass({
     var self = this;
 
     if (self.state.annotations) {
-      var chart_links =  d3.select("#table-branch-table").selectAll("i");
+      var chart_links =  d3.selectAll(".hyphy-omega-chart-btn");
 
       chart_links.on("click", function(d) {
         var label = this.id;
