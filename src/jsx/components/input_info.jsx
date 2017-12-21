@@ -30,9 +30,6 @@ class InputInfo extends React.Component {
         : this.props.input_data["file name"],
       on_datamonkey = !this.props.hyphy_vision,
       show_partition_button = on_datamonkey && this.props.gard;
-    var original_button = (<li className="dropdown-item">
-      <a href={window.location.href+"/original_file/original.fasta"}>Original file</a>
-    </li>);
     return (
       <div className="row" id="input-info">
         <div className="col-md-8">

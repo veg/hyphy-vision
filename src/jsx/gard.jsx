@@ -1,10 +1,8 @@
 var React = require('react'),
   ReactDOM = require("react-dom"),
   d3 = require("d3"),
-  _ = require("underscore"),
-  pd = require('pretty-data').pd;
+  _ = require("underscore");
 
-import { saveAs } from "file-saver";
 import { Tree } from "./components/tree.jsx";
 import { NavBar } from "./components/navbar.jsx";
 import { ScrollSpy } from "./components/scrollspy.jsx";
