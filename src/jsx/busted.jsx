@@ -49,7 +49,7 @@ function BUSTEDSummary(props) {
         <h3 className="list-group-item-heading">
           <span id="summary-method-name">
             Branch-site Unrestricted Statistical Test for Episodic
-            Diversification!
+            Diversification
           </span>
           <br />
           <span className="results-summary">results summary</span>
@@ -990,4 +990,4 @@ var render_hv_busted = function(url, element) {
 
 module.exports = render_busted;
 module.exports.hv = render_hv_busted;
-module.exports.BUSTED = BUSTED;
+

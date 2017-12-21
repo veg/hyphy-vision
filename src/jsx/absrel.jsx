@@ -530,4 +530,4 @@ function render_hv_absrel(url, element) {
 
 module.exports = render_absrel;
 module.exports.hv = render_hv_absrel;
-module.exports.BSREL = BSREL;
+

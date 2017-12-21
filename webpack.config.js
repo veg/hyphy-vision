@@ -22,7 +22,6 @@ config = {
     ]
   },
   devServer: {
-    historyApiFallback: true,
     contentBase: '.'
   },
   output: {
