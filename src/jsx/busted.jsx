@@ -990,4 +990,5 @@ var render_hv_busted = function(url, element) {
 
 module.exports = render_busted;
 module.exports.hv = render_hv_busted;
+module.exports.BUSTED = BUSTED;
 

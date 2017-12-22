@@ -1,5 +1,7 @@
 var React = require("react");
 
+const hyphy_logo = require("../../../images/hyphy-logo.svg");
+
 
 var Hamburger = React.createClass({
   render: function() {
@@ -56,6 +58,10 @@ var Methods = React.createClass({
           <li>
             <a href="../gard">GARD</a>
           </li>
+          <li role="separator" className="divider"></li>
+          <li>
+            <a href="/">Home</a>
+          </li>
         </ul>
       </div>
     );
@@ -94,7 +100,7 @@ var NavBar = React.createClass({
           <div className="row">
             <div className="col-sm-12">
               <a href="/">
-                <img id="hyphy-logo" src="../../images/hyphy-logo.svg" />
+                <img id="hyphy-logo" src={hyphy_logo} />
               </a>
               <div className="navbar-header">
                 <Hamburger />
@@ -108,12 +114,12 @@ var NavBar = React.createClass({
                     role="button"
                     style={{ position: "relative", overflow: "hidden" }}
                   >
-                    <input 
+                    { this.props.onFileChange ? (<input 
                       type="file"
                       style={input_style}
                       id="dm-file"
                       onChange={self.props.onFileChange}
-                    />
+                    />) : null }
                     Load
                   </a>
                   <a

@@ -446,4 +446,5 @@ function render_hv_relax(url, element) {
 
 module.exports = render_relax;
 module.exports.hv = render_hv_relax;
+module.exports.RELAX = RELAX;
 

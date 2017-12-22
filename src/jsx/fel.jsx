@@ -568,4 +568,5 @@ function render_hv_fel(url, element) {
 
 module.exports = render_fel;
 module.exports.hv = render_hv_fel;
+module.exports.FEL = FEL;
 

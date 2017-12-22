@@ -581,4 +581,5 @@ function render_hv_fubar(url, element) {
 
 module.exports = render_fubar;
 module.exports.hv = render_hv_fubar;
+module.exports.FUBAR = FUBAR;
 

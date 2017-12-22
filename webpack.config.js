@@ -22,7 +22,8 @@ config = {
     ]
   },
   devServer: {
-    contentBase: '.'
+    contentBase: '.',
+    historyApiFallback: true
   },
   output: {
     path: path.resolve(__dirname, "dist/"),
@@ -91,11 +92,7 @@ config = {
         options: { limit: 10000, mimetype: "application/octet-stream" }
       },
       { test: /\.eot(\?v=\d+\.\d+\.\d+)?$/, loaders: "file-loader" },
-      {
-        test: /\.svg(\?v=\d+\.\d+\.\d+)?$/,
-        loaders: "url-loader",
-        options: { limit: 10000, mimetype: "image/svg+xml" }
-      },
+      { test: /\.(png|svg|jpg|gif)$/, use: ['file-loader'] },
       {
         test: /\.(js|jsx)?$/,
         exclude: /node_modules/,
