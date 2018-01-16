@@ -223,6 +223,7 @@ class MEME extends React.Component {
       offset: 50
     });
     $('[data-toggle="popover"]').popover();
+    $('.dropdown-toggle').dropdown();
   }
 
   updatePValue(e) {

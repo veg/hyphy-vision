@@ -382,6 +382,7 @@ in the remaining ${no_selected} sites in your alignment.`;
       offset: 50
     });
     $('[data-toggle="popover"]').popover();
+    $('.dropdown-toggle').dropdown();
   },
 
   render: function() {
