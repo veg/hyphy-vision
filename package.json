@@ -80,7 +80,7 @@
     "react-lazy-render": "0.3.0",
     "react-test-renderer": "^15.5.4",
     "style-loader": "^0.13.1",
-    "uglify-js": "~3",
+    "uglify-js": "^3.3.7",
     "url-loader": "^0.5.7",
     "webpack": "^2.0.0",
     "webpack-eslint-plugin": "^1.2.0"
