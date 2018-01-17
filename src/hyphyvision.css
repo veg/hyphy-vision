@@ -112,8 +112,12 @@
   color: #001f3f;
 }
 
-#table-branch-table tr{
-  cursor : pointer;
+.hyphy-omega-chart-btn {
+  color: black;
+  padding-left: 15px;
+  padding-right: 15px;
+  padding-top: 5px;
+  padding-bottom: 5px;
 }
 
 #hyphy-logo {

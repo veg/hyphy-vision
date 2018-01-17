@@ -106,7 +106,7 @@ var BSRELSummary = React.createClass({
       
       
         <div className="col-md-12">
-          <InputInfo input_data={this.props.input_data} json={this.props.json}/>
+          <InputInfo input_data={this.props.input_data} json={this.props.json} hyphy_vision={this.props.hyphy_vision}/>
         </div>
       
       
@@ -409,6 +409,7 @@ var BSREL = React.createClass({
       offset: 50
     });
     $('[data-toggle="popover"]').popover();
+    $('.dropdown-toggle').dropdown();
   },
 
   render: function() {
@@ -462,6 +463,7 @@ var BSREL = React.createClass({
                     pmid={self.state.pmid}
                     input_data={self.state.input_data}
                     json={self.state.json}
+                    hyphy_vision={self.props.hyphy_vision}
                   />
                   <div className="row">
                     <div id="hyphy-tree-summary" className="col-md-12">
@@ -524,7 +526,7 @@ function render_absrel(url, element) {
 }
 
 function render_hv_absrel(url, element) {
-  ReactDOM.render(<BSREL url={url} hyphy_vision />, document.getElementById(element));
+  ReactDOM.render(<BSREL url={url} hyphy_vision={true} />, document.getElementById(element));
 }
 
 module.exports = render_absrel;

@@ -56,7 +56,7 @@ function BUSTEDSummary(props) {
         </h3>
       </div>
       <div className="col-md-12">
-        <InputInfo input_data={props.input_data} json={props.json}/>
+        <InputInfo input_data={props.input_data} json={props.json} hyphy_vision={props.hyphy_vision}/>
       </div>
       <div className="col-md-12">
         <div className="main-result">
@@ -903,6 +903,7 @@ var BUSTED = React.createClass({
     $(function () {
       $('[data-toggle="tooltip"]').tooltip()
     })
+    $('.dropdown-toggle').dropdown();
   },
 
   render: function() {
@@ -933,6 +934,7 @@ var BUSTED = React.createClass({
                   <BUSTEDSummary
                     p={this.state.p}
                     input_data={self.state.input_data}
+                    hyphy_vision={self.props.hyphy_vision}
                     json={self.state.json}
                   />
                 </div>

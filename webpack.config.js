@@ -7,19 +7,7 @@ var ExtractTextPlugin = require("extract-text-webpack-plugin");
 config = {
   devtool: "source-map",
   entry: {
-    hyphyvision: ["./src/entry.js"],
-    vendor: [
-      "jquery",
-      "jquery-ui-bundle",
-      "bootstrap",
-      "d3",
-      "crossfilter",
-      "dc",
-      "immutable",
-      "underscore",
-      "phylotree",
-      "react"
-    ]
+    hyphyvision: ["./src/entry.js"]
   },
   output: {
     path: path.resolve(__dirname, "dist/"),
@@ -111,10 +99,11 @@ config = {
   },
   plugins: [
     new webpack.LoaderOptionsPlugin({ debug: true }),
-    new webpack.optimize.CommonsChunkPlugin({
-      name: "vendor",
-      filename: "vendor.js"
-    }),
+    //new webpack.optimize.CommonsChunkPlugin({
+    //  name: "vendor",
+    //  filename: "vendor.js",
+    //  minChunks: ({resource}) => /node_modules/.test(resource)
+    //}),
     new webpack.ProvidePlugin({
       $: "jquery",
       jQuery: "jquery",

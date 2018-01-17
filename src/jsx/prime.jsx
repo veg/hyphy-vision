@@ -7,7 +7,6 @@ import { DatamonkeyTable } from "./components/tables.jsx";
 import {
   DatamonkeyMultiScatterplot
 } from "./components/graphs.jsx";
-import { NavBar } from "./components/navbar.jsx";
 import { ScrollSpy } from "./components/scrollspy.jsx";
 
 class PRIME extends React.Component {

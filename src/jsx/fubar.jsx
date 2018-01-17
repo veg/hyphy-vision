@@ -7,7 +7,6 @@ var React = require("react"),
 import { Tree } from "./components/tree.jsx";
 import { InputInfo } from "./components/input_info.jsx";
 import { DatamonkeyTable, DatamonkeyModelTable } from "./components/tables.jsx";
-import { DatamonkeySiteGraph } from "./components/graphs.jsx";
 import { NavBar } from "./components/navbar.jsx";
 import { ScrollSpy } from "./components/scrollspy.jsx";
 import { saveSvgAsPng } from "save-svg-as-png";
@@ -39,6 +38,7 @@ function FUBARSummary(props) {
         <InputInfo
           input_data={props.json ? props.json.input : null}
           json={props.json}
+          hyphy_vision={props.hyphy_vision}
         />
       </div>
       <div className="col-md-12">
@@ -474,6 +474,7 @@ class FUBAR extends React.Component {
       offset: 50
     });
     $('[data-toggle="popover"]').popover();
+    $('.dropdown-toggle').dropdown();
   }
 
   updatePosteriorProbability(e) {
@@ -524,6 +525,7 @@ class FUBAR extends React.Component {
                 json={self.state.data}
                 updatePosteriorProbability={self.updatePosteriorProbability}
                 posteriorProbability={self.state.posteriorProbability}
+                hyphy_vision={self.props.hyphy_vision}
               />
 
               <FUBARViz

@@ -1,4 +1,3 @@
-import { ModelFits } from "./components/model_fits.jsx";
 import { NavBar } from "./components/navbar.jsx";
 import { ScrollSpy } from "./components/scrollspy.jsx";
 import { InputInfo } from "./components/input_info.jsx";
@@ -248,7 +247,8 @@ class RELAX extends React.Component{
     $('[data-toggle="popover"]').popover();
     $(function () {
       $('[data-toggle="tooltip"]').tooltip()
-    })
+    });
+    $('.dropdown-toggle').dropdown();
   }
 
   formatBranchAnnotations(json, model) {
@@ -296,7 +296,7 @@ class RELAX extends React.Component{
         </h3>
       </div>
       <div className="col-md-12">
-        <InputInfo input_data={this.state.json.input} json={this.state.json}/>
+        <InputInfo input_data={this.state.json.input} json={this.state.json} hyphy_vision={this.props.hyphy_vision}/>
       </div>
       <div className="col-md-12">
         <div className="main-result">
@@ -404,9 +404,7 @@ class RELAX extends React.Component{
 
 RELAX.defaultProps = {
   edgeColorizer: function(element, data, omega_color, partition) {
-    var self = this,
-      scaling_exponent = 0.33,
-      omega_format = d3.format(".3r");
+    var omega_format = d3.format(".3r");
 
     if (data.target.annotations) {
       element.style(

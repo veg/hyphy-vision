@@ -31,7 +31,7 @@ function MEMESummary(props) {
         </h3>
       </div>
       <div className="col-md-12">
-        <InputInfo input_data={props.json ? props.json.input : null} json={props.json} />
+        <InputInfo input_data={props.json ? props.json.input : null} json={props.json} hyphy_vision={props.hyphy_vision}/>
       </div>
       <div className="col-md-12">
         <div className="main-result">
@@ -96,7 +96,6 @@ function MEMETable(props) {
   var formatter = d3.format(".2f"),
     new_rows = flattened.map((row, index) => {
       var alpha = row[0] ? row[0] : 1e-10,
-        beta_minus = row[1],
         beta_plus = row[3];
       var selection = beta_plus/alpha > 1 && row[6] < props.pValue ? "positive-selection-row" : '';
       var site = {value: index+1, classes: selection},
@@ -224,6 +223,7 @@ class MEME extends React.Component {
       offset: 50
     });
     $('[data-toggle="popover"]').popover();
+    $('.dropdown-toggle').dropdown();
   }
 
   updatePValue(e) {
@@ -281,7 +281,12 @@ class MEME extends React.Component {
           <div className="row">
             <ScrollSpy info={scrollspy_info} />
             <div className="col-sm-10" id="results">
-              <MEMESummary json={self.state.data} updatePValue={self.updatePValue} pValue={self.state.pValue}/>
+              <MEMESummary
+                json={self.state.data}
+                updatePValue={self.updatePValue}
+                pValue={self.state.pValue}
+                hyphy_vision={self.props.hyphy_vision}
+              />
               <MEMETable
                 header={self.state.header}
                 body_data={self.state.bodyData}

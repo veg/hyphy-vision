@@ -1,10 +1,8 @@
 var React = require('react'),
   ReactDOM = require("react-dom"),
   d3 = require("d3"),
-  _ = require("underscore"),
-  pd = require('pretty-data').pd;
+  _ = require("underscore");
 
-import { saveAs } from "file-saver";
 import { Tree } from "./components/tree.jsx";
 import { NavBar } from "./components/navbar.jsx";
 import { ScrollSpy } from "./components/scrollspy.jsx";
@@ -12,6 +10,7 @@ import { ErrorMessage } from "./components/error_message.jsx";
 import { Header } from "./components/header.jsx";
 import { RateMatrix } from "./components/rate_matrix.jsx";
 import { DatamonkeySiteGraph } from "./components/graphs.jsx";
+import { InputInfo } from "./components/input_info.jsx";
 
 
 function binomial(n, k) {
@@ -21,72 +20,6 @@ function binomial(n, k) {
     for (var x = n-k+1; x <= n; x++) coeff *= x;
     for (x = 1; x <= k; x++) coeff /= x;
     return coeff;
-}
-
-function InputInfo(props) {
-  function saveTheJson() {
-    var blob = new Blob([pd.json(props.json)], {
-    //var blob = new Blob([JSON.stringify(props.json)], {
-      type: "text/json:charset=utf-8;"
-    });
-    saveAs(blob, "result.json");
-  }
-  if (!props.input_data) return <div />;
-  function getTheScreenedData(){
-    console.log('fetching data');
-    fetch('screened_data').then(response => {
-      console.log('saving data');
-      saveAs(response.blob(), "screened_data.nex");
-      console.log('data saved');
-    });
-  }
-  var is_full_path = props.input_data["file name"].indexOf("/") != -1,
-    filename = is_full_path
-      ? _.last(props.input_data["file name"].split("/"))
-      : props.input_data["file name"];
-  var partition_button = (<li className="dropdown-item">
-    <a href={window.location.href+"/screened_data/"}>Partitioned data</a>
-  </li>);
-  return (
-    <div className="row" id="input-info">
-
-        <div className="col-md-8">
-          <span className="hyphy-highlight">INPUT DATA</span>{" "}
-          <span className="divider">|</span>
-          <span className="hyphy-highlight">{filename}</span>
-          <span className="divider">|</span>
-          <span className="hyphy-highlight">
-            {props.input_data["number of sequences"]}
-          </span>{" "}
-          sequences <span className="divider">|</span>
-          <span className="hyphy-highlight">
-            {props.input_data["number of sites"]}
-          </span>{" "}
-          sites
-        </div>
-        
-        <div className="col-md-4" style={{height:0}}>
-          <div className="dropdown hyphy-export-dropdown pull-right">
-            <button
-              id="dropdown-menu-button"
-              className="btn btn-secondary dropdown-toggle"
-              data-toggle="dropdown"
-              type="button"
-              style={{height:30}}
-            >
-              <i className="fa fa-download" aria-hidden="true" /> Export Results
-            </button>
-            <ul className="dropdown-menu" aria-labelledby="dropdown-menu-button">
-              {props.hyphy_vision ? '' : partition_button} 
-              <li className="dropdown-item">
-                <a onClick={saveTheJson}>JSON</a>
-              </li>
-            </ul>
-          </div>
-        </div>
-
-    </div>
-  );
 }
 
 function GARDResults(props){
@@ -124,7 +57,7 @@ function GARDResults(props){
       </h3>
     </div>
     <div className="col-md-12">
-      <InputInfo input_data={props.data.input} json={props.data} hyphy_vision={props.hyphy_vision}/>
+      <InputInfo input_data={props.data.input} json={props.data} hyphy_vision={props.hyphy_vision} gard/>
     </div>
     <div className="col-md-12">
       <div className="main-result">
@@ -237,26 +170,20 @@ function GARDRecombinationReport(props){
 
 function GARDSiteGraph(props){
   if(!props.data) return <div></div>;
-  var bestScore = props.data.baselineScore,
-    number_of_sites = props.data.input['number of sites'],
+  var number_of_sites = props.data.input['number of sites'],
     bp_support = d3.range(number_of_sites).map(d=>0*d),
     tree_length = d3.range(number_of_sites).map(d=>0*d),
     normalizer = 0,
     model,
     modelScore,
-    fromSite,
-    toSite;
+    fromSite;
   for(var i=0; i<props.data.models.length; i++){
     model = props.data.models[i];
     modelScore = Math.exp(.5*(props.data.baselineScore-model.aicc));
     if (modelScore > .00001){
       for(var j=0; j<model.breakpoints.length; j++){
         fromSite = model.breakpoints[j][0];
-        toSite = model.breakpoints[j][1];
         if(j>0) bp_support[fromSite] += modelScore;
-        //for(var k=fromSite; k<toSite; k++){
-        //  tree_length[k] += model.tree_lengths[j]*modelScore;
-        //}
       }
       normalizer += modelScore;
     }
@@ -376,7 +303,7 @@ class GARD extends React.Component {
     $(function () {
       $('[data-toggle="tooltip"]').tooltip()
     })
-    $('.dropdown-toggle').dropdown()
+    $('.dropdown-toggle').dropdown();
   }
   onFileChange(e){
     var self = this,
@@ -401,14 +328,13 @@ class GARD extends React.Component {
 
   }
   render(){
-    var self = this,
-      scrollspy_info = [
-        { label: "summary", href: "summary-tab" },
-        { label: "report", href: "report-tab" },
-        { label: "graph", href: "graph-tab" },
-        { label: "matrix", href: "matrix-tab" },
-        { label: "tree", href: "tree-tab" },
-      ];
+    var scrollspy_info = [
+      { label: "summary", href: "summary-tab" },
+      { label: "report", href: "report-tab" },
+      { label: "graph", href: "graph-tab" },
+      { label: "matrix", href: "matrix-tab" },
+      { label: "tree", href: "tree-tab" },
+    ];
     var tree_settings = {
       omegaPlot: {},
       "tree-options": {

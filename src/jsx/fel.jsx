@@ -382,6 +382,7 @@ in the remaining ${no_selected} sites in your alignment.`;
       offset: 50
     });
     $('[data-toggle="popover"]').popover();
+    $('.dropdown-toggle').dropdown();
   },
 
   render: function() {
@@ -473,7 +474,7 @@ in the remaining ${no_selected} sites in your alignment.`;
                   <br />
                   <span className="results-summary">results summary</span>
                 </h3>
-                <InputInfo input_data={this.state.input} json={this.state.data}/>
+                <InputInfo input_data={this.state.input} json={this.state.data} hyphy_vision={this.props.hyphy_vision}/>
                 {Summary}
 
                 <div id="table-tab" className="row hyphy-row">
