@@ -19,7 +19,7 @@
     "no-unused-vars": [1, {"vars":"all", "args":"none"}],
     "no-self-assign": 1,
     "no-unreachable": 2,
-    "no-debugger": 2,
+    "no-debugger": 1,
     "no-console":1
   },
   "plugins": [

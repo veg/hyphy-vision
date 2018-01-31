@@ -2,7 +2,8 @@ var path = require("path"),
   webpack = require("webpack"),
   cloneDeep = require("lodash.clonedeep"),
   ExtractTextPlugin = require("extract-text-webpack-plugin"),
-  HtmlWebpackPlugin = require('html-webpack-plugin');
+  HtmlWebpackPlugin = require('html-webpack-plugin'),
+  { BaseHrefWebpackPlugin } = require('base-href-webpack-plugin');
 
 config = {
   devtool: "source-map",
@@ -109,6 +110,7 @@ config = {
     ]
   },
   plugins: [
+    new BaseHrefWebpackPlugin({ baseHref: '.' }),
     new HtmlWebpackPlugin({ title: 'HyPhy Vision'}),
     new webpack.LoaderOptionsPlugin({ debug: true }),
     new webpack.optimize.CommonsChunkPlugin({
