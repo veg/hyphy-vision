@@ -1,4 +1,5 @@
 var React = require("react");
+import Scrollchor from "react-scrollchor";
 
 var ScrollSpy = React.createClass({
   render: function() {
@@ -7,7 +8,7 @@ var ScrollSpy = React.createClass({
         href = "#" + item.href;
       return (
         <li className={is_active} key={item.label}>
-          <a href={href}>{item.label}</a>
+          <Scrollchor animate={{offset: -50, duration: 20}} to={href}>{item.label}</Scrollchor>
         </li>
       );
     });

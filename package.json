@@ -52,6 +52,7 @@
     "react-dom": "^15.4.1",
     "react-json-view": "^1.14.0",
     "react-router-dom": "^4.2.2",
+    "react-scrollchor": "^4.2.1",
     "save-svg-as-png": "^1.2.0",
     "supervisor": "^0.12.0",
     "underscore": "^1.8.3"

@@ -619,6 +619,10 @@ var Tree = React.createClass({
 
   },
 
+  shouldComponentUpdate: function(nextProps) {
+    return JSON.stringify(nextProps.json) != JSON.stringify(this.props.json);
+  },
+
   componentDidMount: function() {
     this.initialize();
   },
