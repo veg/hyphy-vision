@@ -127,6 +127,10 @@ config = {
       _: "underscore"
     }),
     new webpack.IgnorePlugin(/jsdom$/),
+    new HtmlWebpackPlugin({
+      title: 'HyPhy Vision',
+      filename: path.resolve('dist', 'index.html')
+    }),
     new ExtractTextPlugin("[name].css")
   ],
   resolve: {

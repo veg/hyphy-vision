@@ -2,6 +2,7 @@
 const electron = require('electron')
 // Module to control application life.
 const app = electron.app
+const protocol = electron.protocol
 // Module to create native browser window.
 const BrowserWindow = electron.BrowserWindow
 
@@ -18,7 +19,7 @@ function createWindow () {
 
   // and load the index.html of the app.
   mainWindow.loadURL(url.format({
-    pathname: 'index.html',
+    pathname: path.resolve(__dirname, 'dist', 'index.html'),
     protocol: 'file:',
     slashes: true
   }))
@@ -38,15 +39,7 @@ function createWindow () {
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
-app.on('ready', () => {
-  protocol.interceptFileProtocol('file', (request, callback) => {
-    const url = request.url.substr(7)    /* all urls start with 'file://' */
-    callback({ path: path.normalize(`${__dirname}/dist/${url}`)})
-  }, (err) => {
-    if (err) console.error('Failed to register protocol')
-  });
-  createWindow();
-});
+app.on('ready', createWindow);
 
 // Quit when all windows are closed.
 app.on('window-all-closed', function () {
