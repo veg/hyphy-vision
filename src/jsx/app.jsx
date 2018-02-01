@@ -105,6 +105,14 @@ class HyPhyVision extends React.Component {
     super(props);
     this.state = {page: 'home'};
   }
+  componentDidMount(){
+    // Corrects navbar offset when clicking anchor hash
+    var shiftWindow = function() {
+      scrollBy(0, -40);
+    };
+    if (location.hash) shiftWindow();
+    window.addEventListener("hashchange", shiftWindow);
+  }
   render() {
     return (<BrowserRouter>
       <div>

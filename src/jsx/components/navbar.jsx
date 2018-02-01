@@ -1,4 +1,5 @@
 var React = require("react");
+import { Link } from 'react-router-dom';
 
 const hyphy_logo = require("../../../images/hyphy-logo.svg");
 
@@ -35,32 +36,32 @@ var Methods = React.createClass({
         </button>
         <ul className="dropdown-menu">
           <li>
-            <a href="../absrel">aBSREL</a>
+            <Link to="../absrel">aBSREL</Link>
           </li>
           <li>
-            <a href="../relax">RELAX</a>
+            <Link to="../relax">RELAX</Link>
           </li>
           <li>
-            <a href="../busted">BUSTED</a>
+            <Link to="../busted">BUSTED</Link>
           </li>
           <li>
-            <a href="../slac">SLAC</a>
+            <Link to="../slac">SLAC</Link>
           </li>
           <li>
-            <a href="../fel">FEL</a>
+            <Link to="../fel">FEL</Link>
           </li>
           <li>
-            <a href="../meme">MEME</a>
+            <Link to="../meme">MEME</Link>
           </li>
           <li>
-            <a href="../fubar">FUBAR</a>
+            <Link to="../fubar">FUBAR</Link>
           </li>
           <li>
-            <a href="../gard">GARD</a>
+            <Link to="../gard">GARD</Link>
           </li>
           <li role="separator" className="divider"></li>
           <li>
-            <a href="/">Home</a>
+            <Link to="/">Home</Link>
           </li>
         </ul>
       </div>
@@ -69,14 +70,6 @@ var Methods = React.createClass({
 });
 
 var NavBar = React.createClass({
-  componentDidMount: function() {
-    // Corrects navbar offset when clicking anchor hash
-    var shiftWindow = function() {
-      scrollBy(0, -50);
-    };
-    if (location.hash) shiftWindow();
-    window.addEventListener("hashchange", shiftWindow);
-  },
   render: function() {
     var self = this,
       input_style = {
@@ -99,9 +92,9 @@ var NavBar = React.createClass({
         <div className="container">
           <div className="row">
             <div className="col-sm-12">
-              <a href="/">
+              <Link to="/">
                 <img id="hyphy-logo" src={hyphy_logo} />
-              </a>
+              </Link>
               <div className="navbar-header">
                 <Hamburger />
               </div>

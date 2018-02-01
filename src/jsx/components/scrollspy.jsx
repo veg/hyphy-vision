@@ -8,7 +8,7 @@ var ScrollSpy = React.createClass({
         href = "#" + item.href;
       return (
         <li className={is_active} key={item.label}>
-          <Scrollchor animate={{offset: -50, duration: 20}} to={href}>{item.label}</Scrollchor>
+          <Scrollchor animate={{duration: 20}} to={href}>{item.label}</Scrollchor>
         </li>
       );
     });
