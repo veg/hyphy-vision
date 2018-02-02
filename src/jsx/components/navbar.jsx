@@ -102,7 +102,6 @@ var NavBar = React.createClass({
               <div className="collapse navbar-collapse" id="navbar-collapse-1">
                 <ul className="nav navbar-nav">
                   <a
-                    href="#"
                     className="nav-button"
                     role="button"
                     style={{ position: "relative", overflow: "hidden" }}

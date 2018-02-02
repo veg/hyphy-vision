@@ -412,6 +412,25 @@ var BSREL = React.createClass({
     $('.dropdown-toggle').dropdown();
   },
 
+  onFileChange: function(e) {
+    var self = this;
+    var files = e.target.files; // FileList object
+
+    if (files.length == 1) {
+      var f = files[0];
+      var reader = new FileReader();
+
+      reader.onload = (function(theFile) {
+        return function(e) {
+          var data = JSON.parse(this.result);
+          self.processData(data);
+        };
+      })(f);
+      reader.readAsText(f);
+    }
+    e.preventDefault();
+  },
+
   render: function() {
     var self = this;
 
@@ -432,7 +451,7 @@ var BSREL = React.createClass({
     }
     return (
       <div>
-        {self.props.hyphy_vision ? <NavBar /> : ''}
+        {self.props.hyphy_vision ? <NavBar onFileChange={this.onFileChange} /> : ''}
         <div className="container">
           <div className="row">
             <ScrollSpy info={scrollspy_info} />
