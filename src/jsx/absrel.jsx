@@ -512,7 +512,7 @@ var BSREL = React.createClass({
             </div>
           </div>
         </div>
-
+        <div id="tooltip_container">This is my tooltip.</div>
       </div>
     );
   }
