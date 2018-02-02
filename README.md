@@ -21,3 +21,39 @@ or NEXUS format). You can also run our methods locally by installing
 # Contributing
 Read our [contributing guide](CONTRIBUTING.md) to learn about our development process, how to
 propose bugfixes and improvements, and how to build and test your changes.
+
+# Development
+
+## Installation
+HyPhy Vision uses [yarn](https://yarnpkg.com/lang/en/docs/install/) for package management.
+
+```
+git clone https://github.com/veg/hyphy-vision
+cd hyphy-vision
+yarn
+```
+
+## Dev Server
+
+Start the development server:
+
+```
+yarn start
+```
+
+## Deployment
+
+Deploy in a production environment:
+
+```
+webpack
+supervisor server.js
+```
+
+## Electron
+
+Start the desktop application:
+
+```
+yarn run electron
+```
