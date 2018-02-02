@@ -879,17 +879,6 @@ var BUSTED = React.createClass({
     return branch_annotations;
   },
 
-  initialize: function() {
-    var json = this.state.json;
-
-    if (!json) {
-      return;
-    }
-
-    // delete existing tree
-    d3.select("#tree_container").select("svg").remove();
-  },
-
   componentWillMount: function() {
     this.loadFromServer();
   },
@@ -908,7 +897,6 @@ var BUSTED = React.createClass({
   render: function() {
 
     var self = this;
-    self.initialize();
     var scrollspy_info = [
       { label: "summary", href: "summary-div" },
       { label: "model statistics", href: "hyphy-model-fits" },
