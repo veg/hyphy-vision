@@ -513,7 +513,7 @@ var BSREL = React.createClass({
             </div>
           </div>
         </div>
-
+        <div id="tooltip_container">This is my tooltip.</div>
       </div>
     );
   }
@@ -531,4 +531,5 @@ function render_hv_absrel(url, element) {
 
 module.exports = render_absrel;
 module.exports.hv = render_hv_absrel;
+module.exports.BSREL = BSREL;
 
