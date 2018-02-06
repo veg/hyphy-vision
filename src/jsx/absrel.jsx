@@ -295,7 +295,7 @@ var BSREL = React.createClass({
 
         tooltip += "<br/><i>p = " + omega_format(annotations["p"]) + "</i>";
         $(element[0][0]).mouseover(e=>{
-          $('#tooltip_container').css({'display':'block','opacity':0})
+          $('#tree_tooltip').css({'display':'block','opacity':0})
             .animate({'opacity':1},250)
             .css('left', e.pageX)
             .css('top', e.pageY)
@@ -303,7 +303,7 @@ var BSREL = React.createClass({
         });
 
         $(element[0][0]).mouseout(e=>{
-          $('#tooltip_container').css({'display':'none'})
+          $('#tree_tooltip').css({'display':'none'})
             .html('');
         });
 
@@ -532,7 +532,7 @@ var BSREL = React.createClass({
             </div>
           </div>
         </div>
-        <div id="tooltip_container">This is my tooltip.</div>
+        <div id="tree_tooltip"></div>
       </div>
     );
   }
