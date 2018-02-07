@@ -1519,4 +1519,5 @@ function render_hv_slac(url, element) {
 
 module.exports = render_slac;
 module.exports.hv = render_hv_slac;
+module.exports.SLAC = SLAC;
 

@@ -90,7 +90,7 @@ class InputInfo extends React.Component {
             </div>
           </Modal.Header>
           <Modal.Body>
-            <ReactJson src={this.props.json} collapsed={1} displayDataTypes={false} />
+            <ReactJson src={this.props.json} collapsed={1} displayDataTypes={false} enableClipboard={false} />
           </Modal.Body>
           <Modal.Footer>
             <button

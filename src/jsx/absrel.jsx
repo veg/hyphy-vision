@@ -295,7 +295,7 @@ var BSREL = React.createClass({
 
         tooltip += "<br/><i>p = " + omega_format(annotations["p"]) + "</i>";
         $(element[0][0]).mouseover(e=>{
-          $('#tooltip_container').css({'display':'block','opacity':0})
+          $('#tree_tooltip').css({'display':'block','opacity':0})
             .animate({'opacity':1},250)
             .css('left', e.pageX)
             .css('top', e.pageY)
@@ -303,7 +303,7 @@ var BSREL = React.createClass({
         });
 
         $(element[0][0]).mouseout(e=>{
-          $('#tooltip_container').css({'display':'none'})
+          $('#tree_tooltip').css({'display':'none'})
             .html('');
         });
 
@@ -412,6 +412,25 @@ var BSREL = React.createClass({
     $('.dropdown-toggle').dropdown();
   },
 
+  onFileChange: function(e) {
+    var self = this;
+    var files = e.target.files; // FileList object
+
+    if (files.length == 1) {
+      var f = files[0];
+      var reader = new FileReader();
+
+      reader.onload = (function(theFile) {
+        return function(e) {
+          var data = JSON.parse(this.result);
+          self.processData(data);
+        };
+      })(f);
+      reader.readAsText(f);
+    }
+    e.preventDefault();
+  },
+
   render: function() {
     var self = this;
 
@@ -432,7 +451,7 @@ var BSREL = React.createClass({
     }
     return (
       <div>
-        {self.props.hyphy_vision ? <NavBar /> : ''}
+        {self.props.hyphy_vision ? <NavBar onFileChange={this.onFileChange} /> : ''}
         <div className="container">
           <div className="row">
             <ScrollSpy info={scrollspy_info} />
@@ -513,7 +532,7 @@ var BSREL = React.createClass({
             </div>
           </div>
         </div>
-
+        <div id="tree_tooltip"></div>
       </div>
     );
   }
@@ -531,4 +550,5 @@ function render_hv_absrel(url, element) {
 
 module.exports = render_absrel;
 module.exports.hv = render_hv_absrel;
+module.exports.BSREL = BSREL;
 

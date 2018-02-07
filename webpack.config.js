@@ -1,20 +1,24 @@
 var path = require("path"),
   webpack = require("webpack"),
-  cloneDeep = require("lodash.clonedeep");
-
-var ExtractTextPlugin = require("extract-text-webpack-plugin");
+  cloneDeep = require("lodash.clonedeep"),
+  ExtractTextPlugin = require("extract-text-webpack-plugin"),
+  HtmlWebpackPlugin = require('html-webpack-plugin'),
+  { BaseHrefWebpackPlugin } = require('base-href-webpack-plugin');
 
 config = {
   devtool: "source-map",
   entry: {
-    hyphyvision: ["./src/entry.js"]
+    hyphyvision: ["./src/index.js"]
+  },
+  devServer: {
+    contentBase: '.',
+    historyApiFallback: true
   },
   output: {
     path: path.resolve(__dirname, "dist/"),
     filename: "[name].js",
     library : "hyphyVision"
   },
-  //externals: ['react', 'react-dom'],
   module: {
     rules: [
       {
@@ -77,11 +81,7 @@ config = {
         options: { limit: 10000, mimetype: "application/octet-stream" }
       },
       { test: /\.eot(\?v=\d+\.\d+\.\d+)?$/, loaders: "file-loader" },
-      {
-        test: /\.svg(\?v=\d+\.\d+\.\d+)?$/,
-        loaders: "url-loader",
-        options: { limit: 10000, mimetype: "image/svg+xml" }
-      },
+      { test: /\.(png|svg|jpg|gif)$/, use: ['file-loader'] },
       {
         test: /\.(js|jsx)?$/,
         exclude: /node_modules/,
@@ -98,6 +98,8 @@ config = {
     ]
   },
   plugins: [
+    new BaseHrefWebpackPlugin({ baseHref: '.' }),
+    new HtmlWebpackPlugin({ title: 'HyPhy Vision'}),
     new webpack.LoaderOptionsPlugin({ debug: true }),
     //new webpack.optimize.CommonsChunkPlugin({
     //  name: "vendor",
@@ -114,6 +116,10 @@ config = {
       _: "underscore"
     }),
     new webpack.IgnorePlugin(/jsdom$/),
+    new HtmlWebpackPlugin({
+      title: 'HyPhy Vision',
+      filename: path.resolve('dist', 'index.html')
+    }),
     new ExtractTextPlugin("[name].css")
   ],
   resolve: {

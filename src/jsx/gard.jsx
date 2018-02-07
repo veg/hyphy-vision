@@ -396,4 +396,5 @@ function render_hv_gard(url, element) {
 
 module.exports = render_gard
 module.exports.hv = render_hv_gard
+module.exports.GARD = GARD;
 

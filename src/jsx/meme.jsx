@@ -342,4 +342,5 @@ function render_hv_meme(url, element) {
 
 module.exports = render_meme;
 module.exports.hv = render_hv_meme;
+module.exports.MEME = MEME;
 
