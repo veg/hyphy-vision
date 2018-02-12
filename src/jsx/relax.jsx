@@ -5,6 +5,7 @@ import { ErrorMessage } from "./components/error_message.jsx";
 import { Tree } from "./components/tree.jsx";
 import { OmegaPlotGrid } from "./components/omega_plots.jsx";
 import { Header } from "./components/header.jsx";
+import {DatamonkeyTable} from "./components/tables.jsx"
 
 var React = require("react"),
   ReactDOM = require("react-dom"),
@@ -127,7 +128,7 @@ class RELAXModelTable extends React.Component {
           {_.flatten(rows)}
         </tbody>
       </table>
-    </div>); 
+    </div>);
   }
 }
 
@@ -136,7 +137,7 @@ class RELAX extends React.Component{
     super(props);
     this.p_value_format = d3.format(".4f");
     this.fit_format = d3.format(".2f")
-    this.onFileChange = this.onFileChange.bind(this); 
+    this.onFileChange = this.onFileChange.bind(this);
     var tree_settings = {
       omegaPlot: {},
       "tree-options": {
@@ -205,15 +206,42 @@ class RELAX extends React.Component{
     data["trees"] = {
       branchLengths: _.mapObject(data.fits, (model_val, model_key) => {
         return _.mapObject(data['branch attributes'][0], (branch_val, branch_key) => {
-          return branch_val[model_key]; 
+          return branch_val[model_key];
         });
       })
     }
-   
+
     _.keys(data.fits).forEach(model=>{
       data["fits"][model]["branch-annotations"] = this.formatBranchAnnotations(data, model);
       data["fits"][model]["annotation-tag"] = model == "MG94xREV with separate rates for branch sets" ? "ω" : 'k';
     });
+
+    /*
+    Data munge for the branch attribute table.
+      Adds two arrays to RELAX state: an array for headers and an array for rows.
+      These arrays will be consumed by the DatamonkeyTable component.
+    */
+    // Step 1: Get individual branch information from JSON sources.
+    var branchAttributes = data["branch attributes"][0];
+    var branchTestedStatuses = data["tested"][0];
+    var branchLengthsGTR = data["trees"]["branchLengths"]["Nucleotide GTR"];
+    // Step 2: Combine the info into one object.
+    var branchAttributesCombined = {};
+    for (var key in branchAttributes){
+      branchAttributesCombined[key] = {"Branch name": key, "Partition": branchTestedStatuses[key], "Branch length": branchLengthsGTR[key]};
+    }
+    // Step 3: Add "k" if it exists (i.e. the analysis was run as "all" vs. "minimal").
+    if(branchAttributes[_.keys(branchAttributes)[0]]["k (general descriptive)"]) {
+      for (var key in branchAttributesCombined){
+        branchAttributesCombined[key]["k"] = branchAttributes[key]["k (general descriptive)"]
+      };
+    }
+    // Step 4: Create the two arrays.
+    var branchAttributeHeaders = _.keys(branchAttributesCombined[_.keys(branchAttributesCombined)[0]]);
+    var branchAttributeRows = [];
+    for (var key in branchAttributesCombined) {
+      branchAttributeRows.push(_.values(branchAttributesCombined[key]));
+    }
 
     this.setState({
       json: data,
@@ -223,7 +251,9 @@ class RELAX extends React.Component{
       evidence: significant ? "significant" : "not significant",
       p: p.toFixed(3),
       fits: data["fits"],
-      significant: significant
+      significant: significant,
+      branchAttributeHeaders: branchAttributeHeaders,
+      branchAttributeRows: branchAttributeRows
     });
   }
 
@@ -332,7 +362,7 @@ class RELAX extends React.Component{
                 id="summary-pmid"
                 target="_blank"
               >
-                PMID 123456789 
+                PMID 123456789
               </a>{" "}
               if you use this result in a publication, presentation, or other
               scientific work.
@@ -376,7 +406,7 @@ class RELAX extends React.Component{
                 <RELAXModelTable fits={self.state.fits} />
               </div>
             </div>
-            
+
             <div id="omega-tab" className="row">
               <div className="col-md-12">
                 <Header title="Omega plots" popover="<p>Shows the different omega rate distributions under the null and alternative models.</p>"/>
@@ -393,11 +423,23 @@ class RELAX extends React.Component{
                 color_gradient={["#000000", "#888888", "#DFDFDF", "#77CCC6", "#00a99d"]}
                 grayscale_gradient={["#DDDDDD", "#AAAAAA", "#888888", "#444444", "#000000"]}
                 method='relax'
-              />              
+              />
+            </div>
+
+            <div id="branch-attribute-table" className="col-md-12">
+              <Header title="Branch attributes"></Header>
+                <DatamonkeyTable
+                  headerData={self.state.branchAttributeHeaders}
+                  bodyData={self.state.branchAttributeRows}
+                  initialSort={1}
+                  paginate={10}
+                  export_csv
+                />
+              </div>
+
             </div>
           </div>
         </div>
-      </div>
     </div>);
   }
 }
@@ -448,4 +490,3 @@ function render_hv_relax(url, element) {
 module.exports = render_relax;
 module.exports.hv = render_hv_relax;
 module.exports.RELAX = RELAX;
-
