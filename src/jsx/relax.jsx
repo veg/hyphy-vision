@@ -231,18 +231,30 @@ class RELAX extends React.Component{
       branchAttributesCombined[key] = {"Branch name": key, "Partition": branchTestedStatuses[key], "Branch length": branchLengthsGTR[key]};
     }
     // Step 3: Add "k" if it exists (i.e. the analysis was run as "all" vs. "minimal").
-    if(branchAttributes[_.keys(branchAttributes)[0]]["k (general descriptive)"]) {
+    if( "k (general descriptive)" in branchAttributes[_.keys(branchAttributes)[0]]) {
       for (var key in branchAttributesCombined){
         branchAttributesCombined[key]["k"] = branchAttributes[key]["k (general descriptive)"]
       };
     }
-    // Step 4: Create the two arrays.
+    // Step 4: Add formatting for the numeric values.
+    for (var key in branchAttributesCombined) {      
+      branchAttributesCombined[key]["Branch length"] = {"value": branchAttributesCombined[key]["Branch length"], "format": d3.format(".3r")};
+      if( "k (general descriptive)" in branchAttributes[_.keys(branchAttributes)[0]]) {
+        branchAttributesCombined[key]["k"] = {"value": branchAttributesCombined[key]["k"], "format": d3.format(".3r")};
+      }
+    }
+    // Step 5: Create the two arrays.
     var branchAttributeHeaders = _.keys(branchAttributesCombined[_.keys(branchAttributesCombined)[0]]);
     var branchAttributeRows = [];
     for (var key in branchAttributesCombined) {
       branchAttributeRows.push(_.values(branchAttributesCombined[key]));
     }
-
+    // Setp 6: Add "abbr" and "sortable" to headers.
+    var headerDescriptions = {"Branch": "", "k": "General Descriptive K", "Branch length": "Nucleotide GTR Branch Length", "Partition": "Reference, Tested or Not Tested"}
+    for (var i = 0; i < branchAttributeHeaders.length; i++) {
+      branchAttributeHeaders[i] = {"abbr": headerDescriptions[branchAttributeHeaders[i]], "sortable": true, "value": branchAttributeHeaders[i]};      
+    }
+            
     this.setState({
       json: data,
       direction: k > 1 ? "intensification" : "relaxation",
@@ -253,7 +265,7 @@ class RELAX extends React.Component{
       fits: data["fits"],
       significant: significant,
       branchAttributeHeaders: branchAttributeHeaders,
-      branchAttributeRows: branchAttributeRows
+      branchAttributeRows: branchAttributeRows      
     });
   }
 
