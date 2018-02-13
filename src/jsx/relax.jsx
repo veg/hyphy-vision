@@ -225,10 +225,11 @@ class RELAX extends React.Component{
     var branchLengthsGTR = data["trees"]["branchLengths"]["Nucleotide GTR"];
     var branchAttributesCombined = {};
     for (var key in branchAttributes){
-      branchAttributesCombined[key] = {"Branch name": key, 
-                                       "Partition": branchTestedStatuses[key], 
-                                       "Branch length": branchLengthsGTR[key]
-                                     };
+      branchAttributesCombined[key] = {
+        "Branch name": key, 
+        "Branch partition": branchTestedStatuses[key], 
+        "Branch length": branchLengthsGTR[key]
+      };
     }
     // Add "k" if it exists (i.e. the analysis was run as "all" vs. "minimal").
     if( "k (general descriptive)" in branchAttributes[_.keys(branchAttributes)[0]]) {
@@ -237,13 +238,17 @@ class RELAX extends React.Component{
       };
     }
     // Add formatting for the numeric values.
+    var branch_attribute_format = d3.format(".3r");
     for (var key in branchAttributesCombined) {      
-      branchAttributesCombined[key]["Branch length"] = {"value": branchAttributesCombined[key]["Branch length"], 
-                                                        "format": d3.format(".3r")
-                                                      };
+      branchAttributesCombined[key]["Branch length"] = {
+        "value": branchAttributesCombined[key]["Branch length"], 
+        "format": branch_attribute_format
+      };
       if( "k (general descriptive)" in branchAttributes[_.keys(branchAttributes)[0]]) {
-        branchAttributesCombined[key]["k"] = {"value": branchAttributesCombined[key]["k"], 
-                                              "format": d3.format(".3r")};
+        branchAttributesCombined[key]["k"] = {
+          "value": branchAttributesCombined[key]["k"], 
+          "format": branch_attribute_format
+        };
       }
     }
     // Create the two arrays (headers and rows).
@@ -253,15 +258,17 @@ class RELAX extends React.Component{
       branchAttributeRows.push(_.values(branchAttributesCombined[key]));
     }
     // Add "abbr" and "sortable" to headers.
-    var headerDescriptions = {"Branch": "", 
-                              "k": "General Descriptive K", 
-                              "Branch length": "Nucleotide GTR Branch Length", 
-                              "Partition": "Reference, Tested or Not Tested"
-                            }
+    var headerDescriptions = {
+      "Branch": "", 
+      "k": "Branch specific relaxation parameter", 
+      "Branch length": "Nucleotide GTR Branch Length", 
+      "Branch partition": "Reference, Test or Not Tested"
+    };
     for (var i = 0; i < branchAttributeHeaders.length; i++) {
-      branchAttributeHeaders[i] = {"abbr": headerDescriptions[branchAttributeHeaders[i]], 
-                                  "sortable": true, "value": branchAttributeHeaders[i]
-                                };      
+      branchAttributeHeaders[i] = {
+        "abbr": headerDescriptions[branchAttributeHeaders[i]], 
+        "sortable": true, "value": branchAttributeHeaders[i]
+      };      
     }
             
     this.setState({
