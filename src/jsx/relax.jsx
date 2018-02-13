@@ -135,8 +135,6 @@ class RELAXModelTable extends React.Component {
 class RELAX extends React.Component{
   constructor(props){
     super(props);
-    this.p_value_format = d3.format(".4f");
-    this.fit_format = d3.format(".2f")
     this.onFileChange = this.onFileChange.bind(this);
     var tree_settings = {
       omegaPlot: {},
@@ -442,7 +440,7 @@ class RELAX extends React.Component{
               </div>
             </div>
 
-            <div className="row" id="tree-tab">
+            <div id="tree-tab" className="row">
               <Tree
                 json={self.state.json}
                 settings={self.state.settings}
