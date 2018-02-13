@@ -216,43 +216,52 @@ class RELAX extends React.Component{
       data["fits"][model]["annotation-tag"] = model == "MG94xREV with separate rates for branch sets" ? "ω" : 'k';
     });
 
-    /*
-    Data munge for the branch attribute table.
-      Adds two arrays to RELAX state: an array for headers and an array for rows.
-      These arrays will be consumed by the DatamonkeyTable component.
-    */
-    // Step 1: Get individual branch information from JSON sources.
+    
+    // Data munge for the branch attribute table.
+        
+    // Get branch information from JSON sources.
     var branchAttributes = data["branch attributes"][0];
     var branchTestedStatuses = data["tested"][0];
     var branchLengthsGTR = data["trees"]["branchLengths"]["Nucleotide GTR"];
-    // Step 2: Combine the info into one object.
     var branchAttributesCombined = {};
     for (var key in branchAttributes){
-      branchAttributesCombined[key] = {"Branch name": key, "Partition": branchTestedStatuses[key], "Branch length": branchLengthsGTR[key]};
+      branchAttributesCombined[key] = {"Branch name": key, 
+                                       "Partition": branchTestedStatuses[key], 
+                                       "Branch length": branchLengthsGTR[key]
+                                     };
     }
-    // Step 3: Add "k" if it exists (i.e. the analysis was run as "all" vs. "minimal").
+    // Add "k" if it exists (i.e. the analysis was run as "all" vs. "minimal").
     if( "k (general descriptive)" in branchAttributes[_.keys(branchAttributes)[0]]) {
       for (var key in branchAttributesCombined){
         branchAttributesCombined[key]["k"] = branchAttributes[key]["k (general descriptive)"]
       };
     }
-    // Step 4: Add formatting for the numeric values.
+    // Add formatting for the numeric values.
     for (var key in branchAttributesCombined) {      
-      branchAttributesCombined[key]["Branch length"] = {"value": branchAttributesCombined[key]["Branch length"], "format": d3.format(".3r")};
+      branchAttributesCombined[key]["Branch length"] = {"value": branchAttributesCombined[key]["Branch length"], 
+                                                        "format": d3.format(".3r")
+                                                      };
       if( "k (general descriptive)" in branchAttributes[_.keys(branchAttributes)[0]]) {
-        branchAttributesCombined[key]["k"] = {"value": branchAttributesCombined[key]["k"], "format": d3.format(".3r")};
+        branchAttributesCombined[key]["k"] = {"value": branchAttributesCombined[key]["k"], 
+                                              "format": d3.format(".3r")};
       }
     }
-    // Step 5: Create the two arrays.
+    // Create the two arrays (headers and rows).
     var branchAttributeHeaders = _.keys(branchAttributesCombined[_.keys(branchAttributesCombined)[0]]);
     var branchAttributeRows = [];
     for (var key in branchAttributesCombined) {
       branchAttributeRows.push(_.values(branchAttributesCombined[key]));
     }
-    // Setp 6: Add "abbr" and "sortable" to headers.
-    var headerDescriptions = {"Branch": "", "k": "General Descriptive K", "Branch length": "Nucleotide GTR Branch Length", "Partition": "Reference, Tested or Not Tested"}
+    // Add "abbr" and "sortable" to headers.
+    var headerDescriptions = {"Branch": "", 
+                              "k": "General Descriptive K", 
+                              "Branch length": "Nucleotide GTR Branch Length", 
+                              "Partition": "Reference, Tested or Not Tested"
+                            }
     for (var i = 0; i < branchAttributeHeaders.length; i++) {
-      branchAttributeHeaders[i] = {"abbr": headerDescriptions[branchAttributeHeaders[i]], "sortable": true, "value": branchAttributeHeaders[i]};      
+      branchAttributeHeaders[i] = {"abbr": headerDescriptions[branchAttributeHeaders[i]], 
+                                  "sortable": true, "value": branchAttributeHeaders[i]
+                                };      
     }
             
     this.setState({
