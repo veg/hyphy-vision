@@ -774,7 +774,7 @@ var SLACBanner = React.createClass({
       positive: 0,
       negative: 0
     };
-    
+
     result.all = datamonkey.helpers.countSitesFromPartitionsJSON(json);
 
     result.positive = datamonkey.helpers.sum(json["MLE"]["content"], function(partition) {
@@ -784,7 +784,7 @@ var SLACBanner = React.createClass({
         0
       );
     });
-    
+
     result.negative = datamonkey.helpers.sum(json["MLE"]["content"], function(partition) {
       return _.reduce(partition["by-site"][DEFAULT_AMBIGUITY_HANDLING], function(sum, row) {
           return sum + (row[9] <= cutoff ? 1 : 0);
@@ -848,7 +848,7 @@ var SLACBanner = React.createClass({
               {" "}{this.state.sites.positive}{" "}
             </span>
             sites
-          </p>
+          </p> 
           <p>
             <i className="fa fa-minus-circle" aria-hidden="true">
               {" "}
@@ -858,7 +858,7 @@ var SLACBanner = React.createClass({
               {" "}{this.state.sites.negative}{" "}
             </span>
             sites
-          </p>
+          </p> 
           <p>
             with p-value threshold of
             <input
@@ -871,8 +871,8 @@ var SLACBanner = React.createClass({
               max="1"
               onChange={this.props.pAdjuster}
             />.
-          </p>
-          <hr />
+          </p>          
+          <hr /> 
           <p>
             <small>
               See{" "}
@@ -882,7 +882,7 @@ var SLACBanner = React.createClass({
               for more information about the SLAC method.
 
               <br />
-
+        
               Please cite{" "}
               <a
                 href="http://www.ncbi.nlm.nih.gov/pubmed/15703242"
@@ -892,9 +892,9 @@ var SLACBanner = React.createClass({
               </a>{" "}
               if you use this result in a publication, presentation, or other
               scientific work.
-            </small>
+            </small> 
           </p>
-
+          
         </div>
       </div>
     </div>);
@@ -1005,7 +1005,7 @@ var SLACGraphs = React.createClass({
   savePNG(){
     saveSvgAsPng(document.getElementById("dm-chart"), "datamonkey-chart.png");
   },
-
+  
   saveSVG(){
     d3_save_svg.save(d3.select("#dm-chart").node(), {filename: "datamonkey-chart"});
   },
@@ -1187,7 +1187,7 @@ var SLAC = React.createClass({
 
   dm_initializeFromJSON: function(data) {
     if(data["fits"]["Nucleotide GTR"]){
-      data["fits"]["Nucleotide GTR"]["Rate Distributions"] = {};
+      data["fits"]["Nucleotide GTR"]["Rate Distributions"] = {};      
     }
 
     data['trees'] = _.map(data['input']['trees'], (val, key) => {
@@ -1279,7 +1279,7 @@ var SLAC = React.createClass({
 
   render: function() {
     var self = this;
-    
+
     if (self.state.error_message) {
       return (
         <div
@@ -1375,7 +1375,7 @@ var SLAC = React.createClass({
                     <h4 className="dm-table-header">
                       Partition information
                     </h4>
-
+                     
                       <DatamonkeyPartitionTable
                         pValue={self.state.pValue}
                         trees={trees}
@@ -1403,19 +1403,19 @@ var SLAC = React.createClass({
                           );
                         }}
                       />
-
+                     
                   </div>
                   <div
                     id="datamonkey-slac-model-fits"
                     className="col-md-8"
                   >
-
+                     
                       {
                         <DatamonkeyModelTable
                           fits={self.state.analysis_results.fits}
                         />
                       }
-
+                     
                   </div>
                   <div
                     id="datamonkey-slac-timers"
@@ -1424,12 +1424,12 @@ var SLAC = React.createClass({
                     <h4 className="dm-table-header">
                       Execution time
                     </h4>
-
+                     
                       <DatamonkeyTimersTable
                         timers={self.state.analysis_results.timers}
                         totalTime={"Total time"}
                       />
-
+                     
                   </div>
                 </div>
 
@@ -1521,3 +1521,4 @@ function render_hv_slac(url, element) {
 module.exports = render_slac;
 module.exports.hv = render_hv_slac;
 module.exports.SLAC = SLAC;
+
