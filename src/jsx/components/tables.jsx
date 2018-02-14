@@ -117,11 +117,17 @@ const DatamonkeyTableRow = React.createClass({
   shouldComponentUpdate: function(nextProps) {
 
     var self = this;
-
+    
     if (this.state.header !== nextProps.header) {
       return true;
     }
-
+    
+    if (this.state.header) {      
+      if(this.props.rowData !== nextProps.rowData) {
+        return true;
+      }
+    }
+    
     if (this.props.sortOn != nextProps.sortOn) {
       return true;
     }
