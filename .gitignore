@@ -6,6 +6,7 @@
 node_modules
 bower_components
 vendor
+config.json
 
 # ide files
 *.iml
