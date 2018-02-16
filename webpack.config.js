@@ -27,7 +27,7 @@ config = {
           path.resolve(__dirname, "src"),
           path.resolve(__dirname, "node_modules/csvexport")
         ],
-        loaders: "babel-loader",
+        loaders: "babel-loader", 
         query: {
           presets: ["react"]
         }
@@ -94,6 +94,10 @@ config = {
           fallback: "style-loader",
           use: ["css-loader", "less-loader"]
         })
+      },
+      { 
+        test: /\.json$/,
+        loader: "json-loader"
       }
     ]
   },

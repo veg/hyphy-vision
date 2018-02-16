@@ -24,6 +24,8 @@ The CSS to be packaged should include css that is necessary to view components i
 - Method that return elements should have a name with Element suffix
 
 ## Release
+
+### Library
 For release, the library configuration of webpack must be used. 
 
 ```
@@ -31,3 +33,33 @@ webpack --config webpack.config.library.js
 ```
 
 Please ensure that any entry level functions are exposed in src/library-entry.js as well as src/entry.js
+
+### Mac OS X Desktop Application
+
+1. Obtain a copy of the [Electron binaries](https://github.com/electron/electron/releases) (e.g. `electron-vx.x.x-darwin-x64.zip`) and decompress
+2. Rename the Electron binary folder and Electron binary to HyPhy Vision and HyPhy Vision.app, respectively
+3. TBD: Get icon working
+4. `cd HyPhy\ Vision/Hyphy\ Vision.app/Contents/Resources/`
+5. `mkdir app && cd app`
+6. `git clone https://github.com/veg/hyphy-vision .`
+7. Edit the `main` entry of `package.json` to be `electron.js`
+8. Save `config.json.template` as `config.json`
+9. `yarn`
+10. `webpack`
+11. `rm -rf node_modules`
+12. The app should now function. Tar/zip base directory and release
+
+### Windows Desktop Application
+
+1. Obtain a copy of the [Electron binaries](https://github.com/electron/electron/releases) (e.g. `electron-vx.x.x-win32-x64.zip`) and decompress
+2. Rename the Electron binary folder and Electron binary to HyPhy Vision and HyPhy Vision.exe, respectively
+3. TBD: Get icon working
+4. `cd HyPhy\ Vision/resources`
+5. `mkdir app && cd app`
+6. `git clone https://github.com/veg/hyphy-vision .`
+7. Edit the `main` entry of `package.json` to be `electron.js`
+8. Save `config.json.template` as `config.json` and edit `"env"` to be `"windows electron"`
+9. `yarn`
+10. `webpack`
+11. `rm -rf node_modules`
+12. The app should now function. Tar/zip base directory and release

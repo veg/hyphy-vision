@@ -12,10 +12,11 @@ import { FUBAR } from './fubar.jsx';
 import { GARD } from './gard.jsx';
 import { NavBar } from './components/navbar.jsx';
 
+const path = require('path');
 
 const href = window.location.href,
   is_electron = href.slice(0,4) == 'file',
-  base_url = is_electron ? href.slice(0, href.indexOf('vision')+6) : '',
+  base_url = is_electron ? path.dirname(path.dirname(href)) : '',
   thumbs = {
     aBSREL: require("../../images/aBSREL-thumb.png"),
     BUSTED: require("../../images/BUSTED-thumb.png"),
@@ -49,11 +50,9 @@ function MethodBanner(props){
         />
       </div>
       <div style={{padding: 25}}>
-        <a href="javascript:void(0);">
           <Link to={'/'+props.method}>
             <h3 style={headerStyle}>{props.method}</h3>
           </Link>
-        </a>
         <p style={textStyle}>{props.text}</p>
       </div>
     </div>
