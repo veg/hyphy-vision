@@ -50,11 +50,9 @@ function MethodBanner(props){
         />
       </div>
       <div style={{padding: 25}}>
-        <a href="javascript:void(0);">
           <Link to={'/'+props.method}>
             <h3 style={headerStyle}>{props.method}</h3>
           </Link>
-        </a>
         <p style={textStyle}>{props.text}</p>
       </div>
     </div>
