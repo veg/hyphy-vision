@@ -12,6 +12,7 @@ import { BranchTable } from "./components/branch_table.jsx";
 import { NavBar } from "./components/navbar.jsx";
 import { ScrollSpy } from "./components/scrollspy.jsx";
 import { InputInfo } from "./components/input_info.jsx";
+import CopyToClipboard from "react-copy-to-clipboard";
 
 
 var BSRELSummary = React.createClass({
@@ -40,7 +41,26 @@ var BSRELSummary = React.createClass({
   getTotalBranches: function(test_results) {
     return _.keys(test_results).length;
   },
-
+  
+  getClipboard() {
+    if (this.state.copy_transition) {
+      return <i>Copied!</i>;
+    } else {
+      return (
+        <a>
+          <i className="fa fa-clipboard" aria-hidden="true" />
+        </a>
+      );
+    }
+  },
+  
+  onCopy() {
+    this.setState({ copy_transition: true });
+    setTimeout(() => {
+      this.setState({ copy_transition: false });
+    }, 1000);
+  },
+  
   getInitialState: function() {
     var self = this;
 
@@ -49,7 +69,8 @@ var BSRELSummary = React.createClass({
         self.props.test_results
       ),
       test_branches: this.getTestBranches(self.props.test_results),
-      total_branches: this.getTotalBranches(self.props.test_results)
+      total_branches: this.getTotalBranches(self.props.test_results),
+      copy_transition: false
     };
   },
 
@@ -59,16 +80,16 @@ var BSRELSummary = React.createClass({
         nextProps.test_results
       ),
       test_branches: this.getTestBranches(nextProps.test_results),
-      total_branches: this.getTotalBranches(nextProps.test_results)
+      total_branches: this.getTotalBranches(nextProps.test_results),
+      was_evidence: this.getBranchesWithEvidence(nextProps.test_results) > 0      
     });
   },
-
+  
   render: function() {
     var self = this,
-      user_message,
-      was_evidence = self.state.branches_with_evidence > 0;
-
-    if (was_evidence) {
+      user_message
+      
+    if (self.state.was_evidence) {
       user_message = (
         <p className="list-group-item-text label_and_input">
           aBSREL <strong className="hyphy-highlight">found evidence</strong> of
@@ -93,7 +114,7 @@ var BSRELSummary = React.createClass({
       );
     }
 
-    return (
+    return (      
       <div className="row">
       <div className="clearance" id="summary-div"></div>
         <div className="col-md-12">
@@ -111,7 +132,14 @@ var BSRELSummary = React.createClass({
       
       
         <div className="col-md-12">
-          <div className="main-result">
+          <div className="main-result">            
+            <p>
+              <CopyToClipboard text={this.getSummaryText()} onCopy={this.onCopy}>
+                <span id="copy-it" className="pull-right">
+                  {this.getClipboard()}
+                </span>
+              </CopyToClipboard>
+            </p>
             {user_message}
             <p>
               A total of{" "}
@@ -149,7 +177,28 @@ var BSRELSummary = React.createClass({
         </div>
       </div>
     );
-  }
+  },
+  
+  getSummaryText() {    
+    var userMessageForClipboard = ""
+    if (this.state.was_evidence) {
+      userMessageForClipboard = "aBSREL found evidence of episodic diversifying selection on " +          
+        this.state.branches_with_evidence +
+        " out of " +
+        this.state.total_branches +
+        " branches in your phylogeny. "        
+    }
+    else {
+      userMessageForClipboard = "aBSREL found no evidence of episodic diversifying selection in your phylogeny. "
+    }
+    
+    var summaryTextForClipboard = userMessageForClipboard +
+      "A total of " + 
+      this.state.test_branches +
+      " branches were formally tested for diversifying selection. Significance was assessed using the Likelihood Ratio Test at a threshold of p ≤ 0.05, after correcting for multiple testing. Significance and number of rate categories inferred at each branch are provided in the detailed results table."
+    
+    return summaryTextForClipboard ;
+  },  
 });
 
 var BSREL = React.createClass({
