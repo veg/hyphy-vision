@@ -62,5 +62,5 @@ Please ensure that any entry level functions are exposed in src/library-entry.js
 9. `yarn`
 10. `webpack`
 11. `rm -rf node_modules`
-12. Hide all files exept for `HyPhy Vision.exe', `LICENSE`, LICENSES.chromium.html` and `version`
+12. Hide all files exept for `HyPhy Vision.exe`, `LICENSE`, `LICENSES.chromium.html` and `version`
 13. The app should now function. Zip base directory and release
