@@ -35,44 +35,29 @@ webpack --config webpack.config.library.js
 Please ensure that any entry level functions are exposed in src/library-entry.js as well as src/entry.js
 
 ### Mac OS X Desktop Application
-
 1. Obtain a copy of the [Electron binaries](https://github.com/electron/electron/releases) (e.g. `electron-vx.x.x-darwin-x64.zip`) and decompress
-<<<<<<< HEAD
 2. Rename the Electron binary folder and Electron binary to HyPhy Vision and HyPhy Vision.app, respectively
-3. TBD: Get icon working
-4. `cd HyPhy\ Vision/Hyphy\ Vision.app/Contents/Resources/`
-5. `mkdir app && cd app`
-6. `git clone https://github.com/veg/hyphy-vision .`
-7. Edit the `main` entry of `package.json` to be `electron.js`
-8. Save `config.json.template` as `config.json`
-9. `yarn`
-10. `webpack`
-11. `rm -rf node_modules`
+3. `cd HyPhy\ Vision/HyPhy\ Vision.app/Contents/Resources/`
+4. `mkdir app && cd app`
+5. `git clone https://github.com/veg/hyphy-vision .`
+6. Edit the `main` entry of `package.json` to be `electron.js`
+7. Save `config.json.template` as `config.json`
+8. `yarn`
+9. `webpack`
+10. `rm -rf node_modules`
+11. Open `images/app-icon.icns` and copy to clipboard, select HyPhy Vision.app and press &#8984;I to get information, click the icon and paste from clipboard
 12. The app should now function. Tar/zip base directory and release
 
 ### Windows Desktop Application
-
 1. Obtain a copy of the [Electron binaries](https://github.com/electron/electron/releases) (e.g. `electron-vx.x.x-win32-x64.zip`) and decompress
 2. Rename the Electron binary folder and Electron binary to HyPhy Vision and HyPhy Vision.exe, respectively
-3. TBD: Get icon working
-4. `cd HyPhy\ Vision/resources`
-5. `mkdir app && cd app`
-6. `git clone https://github.com/veg/hyphy-vision .`
-7. Edit the `main` entry of `package.json` to be `electron.js`
-8. Save `config.json.template` as `config.json` and edit `"env"` to be `"windows electron"`
-9. `yarn`
-10. `webpack`
-11. `rm -rf node_modules`
-12. Hide all files exept for `HyPhy Vision.exe`, `LICENSE`, `LICENSES.chromium.html` and `version`
-13. The app should now function. Zip base directory and release
-=======
-2. Rename the Electron binary folder and Electron binary to HyPhy Vision and Hyphy Vision.app, respectively
-3. Open `images/app-icon.icns` and copy to clipboard, select HyPhy Vision.app and press &#8984;I to get information, click the icon and paste from clipboard
-4. `cd Hyphy\ Vision/Hyphy\ Vision.app/Contents/Resources/`
-5. `mkdir app && cd app`
+3. `cd HyPhy\ Vision/resources`
+4. `mkdir app && cd app`
 5. `git clone https://github.com/veg/hyphy-vision .`
-6. `yarn`
-7. `webpack`
-8. `rm -rf node_modules`
-9. Edit the `main` entry of `package.json` to be `electron.js`
-10. The app should now function. Tar/zip base directory and release
+6. Edit the `main` entry of `package.json` to be `electron.js`
+7. Save `config.json.template` as `config.json` and edit `"env"` to be `"windows electron"`
+8. `yarn`
+9. `webpack`
+10. `rm -rf node_modules`
+11. Use [Resource Hacker](https://www.angusj.com/resourcehacker) to change the app icon to `images/app-icon.ico` Here's a [helpful link](https://www.howtogeek.com/75983/stupid-geek-tricks-how-to-modify-the-icon-of-an-.exe-file/) for using Resource Hacker
+12. Hide all files exept for `HyPhy Vision.exe`, `LICENSE`, `LICENSES.chromium.html` and `version`
