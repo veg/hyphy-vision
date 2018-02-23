@@ -29,7 +29,7 @@ var ScrollSpy = React.createClass({
       );
     });
     return (
-      <nav className="col-sm-2 bs-docs-sidebar hidden-xs hidden-sm">
+      <nav className="col-sm-2 bs-docs-sidebar hidden-xs hidden-sm hidden-md">
         <ul className="nav nav-pills nav-stacked fixed">
           {list_items}
         </ul>

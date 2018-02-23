@@ -37,6 +37,7 @@ Please ensure that any entry level functions are exposed in src/library-entry.js
 ### Mac OS X Desktop Application
 
 1. Obtain a copy of the [Electron binaries](https://github.com/electron/electron/releases) (e.g. `electron-vx.x.x-darwin-x64.zip`) and decompress
+<<<<<<< HEAD
 2. Rename the Electron binary folder and Electron binary to HyPhy Vision and HyPhy Vision.app, respectively
 3. TBD: Get icon working
 4. `cd HyPhy\ Vision/Hyphy\ Vision.app/Contents/Resources/`
@@ -64,3 +65,14 @@ Please ensure that any entry level functions are exposed in src/library-entry.js
 11. `rm -rf node_modules`
 12. Hide all files exept for `HyPhy Vision.exe`, `LICENSE`, `LICENSES.chromium.html` and `version`
 13. The app should now function. Zip base directory and release
+=======
+2. Rename the Electron binary folder and Electron binary to HyPhy Vision and Hyphy Vision.app, respectively
+3. Open `images/app-icon.icns` and copy to clipboard, select HyPhy Vision.app and press &#8984;I to get information, click the icon and paste from clipboard
+4. `cd Hyphy\ Vision/Hyphy\ Vision.app/Contents/Resources/`
+5. `mkdir app && cd app`
+5. `git clone https://github.com/veg/hyphy-vision .`
+6. `yarn`
+7. `webpack`
+8. `rm -rf node_modules`
+9. Edit the `main` entry of `package.json` to be `electron.js`
+10. The app should now function. Tar/zip base directory and release
