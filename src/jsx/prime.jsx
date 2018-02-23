@@ -306,6 +306,7 @@ class PRIME extends React.Component {
 
     var order_table_rows = _.unzip(this.state.table_property_values);
 
+    // SDS 2-23-18: Make sure CSS for NavBar buffer consistent with other pages!
     return (
       <div>
         <div className="container">

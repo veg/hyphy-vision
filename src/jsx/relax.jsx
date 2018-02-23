@@ -423,7 +423,7 @@ class RELAX extends React.Component{
       <div className="container">
         <div className="row">
           <ScrollSpy info={scrollspy_info} />
-          <div className="col-sm-10" id="results">
+          <div className="col-md-12 col-lg-10">
             <ErrorMessage />
             {self.getSummary()}
 
