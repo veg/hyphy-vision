@@ -916,8 +916,8 @@ var BUSTED = React.createClass({
           <div className="row">
             <ScrollSpy info={scrollspy_info} />
 
-            <div className="col-lg-10">
-              <div id="results">
+            <div className="col-md-12 col-lg-10">
+              <div>
                 <div id="summary-tab">
                   <BUSTEDSummary
                     p={this.state.p}

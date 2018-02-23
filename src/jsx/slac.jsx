@@ -21,6 +21,7 @@ import { saveSvgAsPng } from "save-svg-as-png";
 
 require("../datamonkey/helpers.js");
 
+const DEFAULT_AMBIGUITY_HANDLING = "RESOLVED"
 
 var SLACSites = React.createClass({
   propTypes: {
@@ -59,7 +60,7 @@ var SLACSites = React.createClass({
       sample25: null,
       sampleMedian: null,
       sample975: null,
-      initialAmbigHandling: "RESOLVED"
+      initialAmbigHandling: DEFAULT_AMBIGUITY_HANDLING
     };
   },
 
@@ -777,7 +778,7 @@ var SLACBanner = React.createClass({
     result.all = datamonkey.helpers.countSitesFromPartitionsJSON(json);
 
     result.positive = datamonkey.helpers.sum(json["MLE"]["content"], function(partition) {
-      return _.reduce(partition["by-site"]["RESOLVED"], function(sum, row) {
+      return _.reduce(partition["by-site"][DEFAULT_AMBIGUITY_HANDLING], function(sum, row) {
           return sum + (row[8] <= cutoff ? 1 : 0);
         },
         0
@@ -785,7 +786,7 @@ var SLACBanner = React.createClass({
     });
 
     result.negative = datamonkey.helpers.sum(json["MLE"]["content"], function(partition) {
-      return _.reduce(partition["by-site"]["RESOLVED"], function(sum, row) {
+      return _.reduce(partition["by-site"][DEFAULT_AMBIGUITY_HANDLING], function(sum, row) {
           return sum + (row[9] <= cutoff ? 1 : 0);
         },
         0
@@ -914,7 +915,7 @@ var SLACGraphs = React.createClass({
     return {
       mle: null,
       partitionSites: null,
-      initialAmbigHandling: "RESOLVED"
+      initialAmbigHandling: DEFAULT_AMBIGUITY_HANDLING
     };
   },
 
@@ -1356,8 +1357,8 @@ var SLAC = React.createClass({
           <div className="container">
             <div className="row">
               <ScrollSpy info={scrollspy_info} />
-              <div className="col-md-10">
-              <div id="results">
+              <div className="col-md-12 col-lg-10">
+              <div>
                 <SLACBanner
                   analysis_results={self.state.analysis_results}
                   pValue={self.state.pValue}
@@ -1386,7 +1387,7 @@ var SLAC = React.createClass({
                         accessorPositive={function(json, partition) {
                           if(!json["content"][partition]) return null;
                           return _.map(
-                            json["content"][partition]["by-site"]["AVERAGED"],
+                            json["content"][partition]["by-site"][DEFAULT_AMBIGUITY_HANDLING],
                             function(v) {
                               return v[8];
                             }
@@ -1395,7 +1396,7 @@ var SLAC = React.createClass({
                         accessorNegative={function(json, partition) {
                           if(!json["content"][partition]) return null;
                           return _.map(
-                            json["content"][partition]["by-site"]["AVERAGED"],
+                            json["content"][partition]["by-site"][DEFAULT_AMBIGUITY_HANDLING],
                             function(v) {
                               return v[9];
                             }
