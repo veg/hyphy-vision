@@ -38,7 +38,7 @@ Please ensure that any entry level functions are exposed in src/library-entry.js
 
 1. Obtain a copy of the [Electron binaries](https://github.com/electron/electron/releases) (e.g. `electron-vx.x.x-darwin-x64.zip`) and decompress
 2. Rename the Electron binary folder and Electron binary to HyPhy Vision and Hyphy Vision.app, respectively
-3. TBD: Get icon working
+3. Open `images/app-icon.icns` and copy to clipboard, select HyPhy Vision.app and press &#8984;I to get information, click the icon and paste from clipboard
 4. `cd Hyphy\ Vision/Hyphy\ Vision.app/Contents/Resources/`
 5. `mkdir app && cd app`
 5. `git clone https://github.com/veg/hyphy-vision .`
