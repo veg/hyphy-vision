@@ -41,12 +41,11 @@ Please ensure that any entry level functions are exposed in src/library-entry.js
 4. `mkdir app && cd app`
 5. `git clone https://github.com/veg/hyphy-vision .`
 6. Edit the `main` entry of `package.json` to be `electron.js`
-7. Save `config.json.template` as `config.json`
-8. `yarn`
-9. `webpack`
-10. `rm -rf node_modules`
-11. Open `images/app-icon.icns` and copy to clipboard, select HyPhy Vision.app and press &#8984;I to get information, click the icon and paste from clipboard
-12. The app should now function. Tar/zip base directory and release
+7. `yarn`
+8. `webpack`
+9. `rm -rf node_modules`
+10. Open `images/app-icon.icns` and copy to clipboard, select HyPhy Vision.app and press &#8984;I to get information, click the icon and paste from clipboard
+11. The app should now function. Tar/zip base directory and release
 
 ### Windows Desktop Application
 1. Obtain a copy of the [Electron binaries](https://github.com/electron/electron/releases) (e.g. `electron-vx.x.x-win32-x64.zip`) and decompress
@@ -55,7 +54,7 @@ Please ensure that any entry level functions are exposed in src/library-entry.js
 4. `mkdir app && cd app`
 5. `git clone https://github.com/veg/hyphy-vision .`
 6. Edit the `main` entry of `package.json` to be `electron.js`
-7. Save `config.json.template` as `config.json` and edit `"env"` to be `"windows electron"`
+7. Edit `config.json` to be, `"env": "windows electron"`
 8. `yarn`
 9. `webpack`
 10. `rm -rf node_modules`
