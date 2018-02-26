@@ -447,7 +447,7 @@ in the remaining ${no_selected} sites in your alignment.`;
           <div className="row">
             <ScrollSpy info={scrollspy_info} />
 
-            <div className="col-sm-10">
+            <div className="col-md-12 col-lg-10">
               <div
                 id="datamonkey-fel-error"
                 className="alert alert-danger alert-dismissible"
@@ -466,7 +466,7 @@ in the remaining ${no_selected} sites in your alignment.`;
               </div>
 
               <div className="clearance" id="summary-tab"></div>
-              <div id="results">
+              <div>
                 <h3 className="list-group-item-heading">
                   <span id="summary-method-name">
                     Fixed Effects Likelihood

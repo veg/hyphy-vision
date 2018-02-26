@@ -735,11 +735,7 @@ li.active > a:hover {
   vertical-align: sub;
 }
 
-#results {
-  margin-top: 40px;
-}
-
-.brush .extent {
+brush .extent {
   stroke: #fff;
   fill-opacity: .125;
   shape-rendering: crispEdges;

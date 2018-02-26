@@ -1357,8 +1357,8 @@ var SLAC = React.createClass({
           <div className="container">
             <div className="row">
               <ScrollSpy info={scrollspy_info} />
-              <div className="col-md-10">
-              <div id="results">
+              <div className="col-md-12 col-lg-10">
+              <div>
                 <SLACBanner
                   analysis_results={self.state.analysis_results}
                   pValue={self.state.pValue}

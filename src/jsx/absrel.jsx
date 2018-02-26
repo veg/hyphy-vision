@@ -505,7 +505,7 @@ var BSREL = React.createClass({
           <div className="row">
             <ScrollSpy info={scrollspy_info} />
 
-            <div className="col-sm-10">
+            <div className="col-md-12 col-lg-10">
               <div
                 id="datamonkey-absrel-error"
                 className="alert alert-danger alert-dismissible"
@@ -524,7 +524,7 @@ var BSREL = React.createClass({
                 <span id="datamonkey-absrel-error-text" />
               </div>
 
-              <div id="results">
+              <div>
                 <div id="summary-tab">
                   <BSRELSummary
                     test_results={self.state.test_results}
