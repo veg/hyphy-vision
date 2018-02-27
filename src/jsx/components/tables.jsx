@@ -925,7 +925,7 @@ var DatamonkeyModelTable = React.createClass({
   },
 
   propTypes: {
-    fits: PropTypes.object.isRequired
+    fits: PropTypes.object
   },
 
   getDefaultProps: function() {

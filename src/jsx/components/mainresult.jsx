@@ -38,8 +38,8 @@ class MainResult extends Component{
                   {this.getClipboard()}
                 </span>
               </CopyToClipboard>
-              {this.props.user_message}
             </p>
+            {this.props.summary_for_rendering}
             <hr />
             <p>
               <small>
