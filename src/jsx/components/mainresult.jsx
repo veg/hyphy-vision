@@ -8,7 +8,6 @@ class MainResult extends Component{
     this.state = {
       copy_transition: false
     }
-    this.onCopy = this.onCopy.bind(this);
   }
    
   getClipboard() {
@@ -23,8 +22,7 @@ class MainResult extends Component{
     }
   }
   
-  onCopy() {
-    var self = this
+  onCopy = () => {
     this.setState({ copy_transition: true });
     setTimeout(() => {
       this.setState({ copy_transition: false });
@@ -32,7 +30,6 @@ class MainResult extends Component{
   }
 
   render() {
-    var self = this
     return (
           <div className="main-result">            
             <p>
@@ -41,9 +38,7 @@ class MainResult extends Component{
                   {this.getClipboard()}
                 </span>
               </CopyToClipboard>
-              <p>
-                {this.props.user_message}
-              </p>
+              {this.props.user_message}
             </p>
             <hr />
             <p>
