@@ -423,7 +423,6 @@ var FEL = React.createClass({
 
     var x_options = "Site";
     var y_options = ['alpha', 'beta', 'alpha=beta', 'LRT', 'p-value', 'Total branch length']; 
-    var Summary = this.getSummary();
 
     var edgeColorizer = function(element, data, foreground_color) {
 
@@ -486,7 +485,7 @@ var FEL = React.createClass({
                 <strong>Error!</strong> <span id="datamonkey-fel-error-text" />
               </div>
 
-              <div className="clearance" id="summary-tab"></div>
+              <div id="summary-tab"></div>
               <div id="results">
                <MethodHeader
                     methodName="Fixed Effects Likelihood"
