@@ -12,80 +12,10 @@ import { NavBar } from "./components/navbar.jsx";
 import { ScrollSpy } from "./components/scrollspy.jsx";
 import { DatamonkeyTable } from "./components/tables.jsx";
 import { saveSvgAsPng } from "save-svg-as-png";
-import { InputInfo } from "./components/input_info";
 import { Header } from "./components/header.jsx";
+import { MethodHeader } from "./components/methodheader.jsx";
+import { MainResult } from "./components/mainresult.jsx";
 
-
-function BUSTEDSummary(props) {
-  var significant = props.p < 0.05,
-    message;
-  if (significant) {
-    message = (<p>
-      BUSTED <strong className="hyphy-highlight">
-        found evidence
-      </strong>{" "}
-      (LRT, p-value = {props.p ? props.p.toFixed(3) : null} &le; .05) of gene-wide episodic diversifying selection
-      in the selected test branches of your phylogeny. Therefore, there is
-      evidence that at least one site on at least one test branch has
-      experienced diversifying selection.{" "}
-    </p>);
-  } else {
-    message = (
-      <p>
-        BUSTED <strong>
-          found no evidence
-        </strong>{" "}
-        (LRT, p-value = {props.p ? props.p.toFixed(3) : null} &ge; .05) of gene-wide episodic diversifying selection
-        in the selected test branches of your phylogeny. Therefore, there is no
-        evidence that any sites have experienced diversifying selection along
-        the test branch(es).{" "}
-      </p>
-    );
-  }
-  return (
-    <div className="row">
-    <div className="clearance" id="summary-div"></div>
-      <div className="col-md-12">
-        <h3 className="list-group-item-heading">
-          <span id="summary-method-name">
-            Branch-site Unrestricted Statistical Test for Episodic
-            Diversification
-          </span>
-          <br />
-          <span className="results-summary">results summary</span>
-        </h3>
-      </div>
-      <div className="col-md-12">
-        <InputInfo input_data={props.input_data} json={props.json} hyphy_vision={props.hyphy_vision}/>
-      </div>
-      <div className="col-md-12">
-        <div className="main-result">
-          {message}
-          <hr />
-          <p>
-            <small>
-              See{" "}
-              <a href="http://hyphy.org/methods/selection-methods/#busted">
-                here
-              </a>{" "}
-              for more information about the BUSTED method.
-              <br />Please cite{" "}
-              <a
-                href="http://www.ncbi.nlm.nih.gov/pubmed/25701167"
-                id="summary-pmid"
-                target="_blank"
-              >
-                PMID 25701167
-              </a>{" "}
-              if you use this result in a publication, presentation, or other
-              scientific work.
-            </small>
-          </p>
-        </div>
-      </div>
-    </div>
-  );
-}
 
 var BUSTEDSiteChartAndTable = React.createClass({
   getInitialState: function() {
@@ -774,6 +704,39 @@ var BUSTED = React.createClass({
     });
   },
 
+  getSummaryForClipboard: function() {
+    return "TODO: add text for clipboard";
+  },
+
+  getSummaryForRendering: function() {
+    var significant = this.state.p < 0.05, 
+      message;
+    if (significant) {
+      message = (<p>
+        BUSTED <strong className="hyphy-highlight">
+          found evidence
+        </strong>{" "}
+        (LRT, p-value = {this.state.p ? this.state.p.toFixed(3) : null} &le; .05) of gene-wide episodic diversifying selection
+        in the selected test branches of your phylogeny. Therefore, there is
+        evidence that at least one site on at least one test branch has
+        experienced diversifying selection.{" "}
+      </p>);
+    } else {
+      message = (
+        <p>
+          BUSTED <strong>
+            found no evidence
+          </strong>{" "}
+          (LRT, p-value = {this.state.p ? this.state.p.toFixed(3) : null} &ge; .05) of gene-wide episodic diversifying selection
+          in the selected test branches of your phylogeny. Therefore, there is no
+          evidence that any sites have experienced diversifying selection along
+          the test branch(es).{" "}
+        </p>
+      );
+    }
+    return (message);
+  },
+
   loadFromServer: function() {
     var self = this;
 
@@ -919,11 +882,18 @@ var BUSTED = React.createClass({
             <div className="col-md-12 col-lg-10">
               <div>
                 <div id="summary-tab">
-                  <BUSTEDSummary
-                    p={this.state.p}
+                 <MethodHeader
+                    methodName="Branch-site Unrestricted Statistical Test for Episodic Diversification"
                     input_data={self.state.input_data}
-                    hyphy_vision={self.props.hyphy_vision}
                     json={self.state.json}
+                    hyphy_vision={self.props.hyphy_vision}
+                  />
+                  <MainResult
+                    summary_for_clipboard={this.getSummaryForClipboard()}
+                    summary_for_rendering={this.getSummaryForRendering()} 
+                    method_ref="http://hyphy.org/methods/selection-methods/#busted"
+                    citation_ref="hhttp://www.ncbi.nlm.nih.gov/pubmed/25701167"
+                    citation_number="PMID 25701167"
                   />
                 </div>
               </div>
