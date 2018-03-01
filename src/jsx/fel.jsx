@@ -284,7 +284,6 @@ var FEL = React.createClass({
 
   getSummaryForRendering() {
     return (
-      <div className="main-result">
         <p>
           <p>
             FEL <strong className="hyphy-highlight">
@@ -326,8 +325,6 @@ var FEL = React.createClass({
             />.
           </p>
         </p>
-      </div>
-
     );
   },     
 
@@ -490,7 +487,7 @@ var FEL = React.createClass({
               </div>
 
               <div className="clearance" id="summary-tab"></div>
-              <div>
+              <div id="results">
                <MethodHeader
                     methodName="Fixed Effects Likelihood"
                     input_data={this.state.input}
