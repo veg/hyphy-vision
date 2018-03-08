@@ -268,7 +268,6 @@ var FEL = React.createClass({
           this.state.mle_content.length -
           this.state.positively_selected.length -
           this.state.negatively_selected.length;
-
     var summary_text = "FEL found evidence of pervasive positive/diversifying selection at " +
       this.state.positively_selected.length +
       " sites in your alignment. In addition, FEL found evidence with p-value " +
@@ -278,7 +277,6 @@ var FEL = React.createClass({
       " sites in your alignment. FEL did not find evidence for either positive or negative selection in the remaining " + 
       no_selected +
       " sites in your alignment.";
-
    return summary_text;
   },
 

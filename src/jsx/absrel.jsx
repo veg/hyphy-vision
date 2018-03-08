@@ -18,6 +18,30 @@ import { MainResult } from "./components/mainresult.jsx";
 var BSRELSummary = React.createClass({
   float_format: d3.format(".2f"),
 
+  componentWillReceiveProps: function(nextProps) {
+    this.setState({
+      branches_with_evidence: this.getBranchesWithEvidence(
+        nextProps.test_results
+      ),
+      test_branches: this.getTestBranches(nextProps.test_results),
+      total_branches: this.getTotalBranches(nextProps.test_results),
+      was_evidence: this.getBranchesWithEvidence(nextProps.test_results) > 0      
+    });
+  },
+ 
+  getInitialState: function() {
+    var self = this;
+
+    return {
+      branches_with_evidence: this.getBranchesWithEvidence(
+        self.props.test_results
+      ),
+      test_branches: this.getTestBranches(self.props.test_results),
+      total_branches: this.getTotalBranches(self.props.test_results),
+      copy_transition: false
+    };
+  },
+
   countBranchesTested: function(branches_tested) {
     if (branches_tested) {
       return branches_tested.split(";").length;
@@ -43,7 +67,7 @@ var BSRELSummary = React.createClass({
   },
   
   getSummaryForClipboard() {    
-    var userMessageForClipboard = ""
+    var userMessageForClipboard
     if (this.state.was_evidence) {
       userMessageForClipboard = "aBSREL found evidence of episodic diversifying selection on " +          
         this.state.branches_with_evidence +
@@ -58,7 +82,7 @@ var BSRELSummary = React.createClass({
     var summaryTextForClipboard = userMessageForClipboard +
       "A total of " + 
       this.state.test_branches +
-      " branches were formally tested for diversifying selection. Significance was assessed using the Likelihood Ratio Test at a threshold of p ≤ 0.05, after correcting for multiple testing. Significance and number of rate categories inferred at each branch are provided in the detailed results table."
+      " branches were formally tested for diversifying selection. Significance was assessed using the Likelihood Ratio Test at a threshold of p ≤ 0.05, after correcting for multiple testing."
     
     return summaryTextForClipboard;
   },
@@ -102,37 +126,13 @@ var BSRELSummary = React.createClass({
             Significance was assessed using the Likelihood Ratio Test at a
             threshold of p ≤ 0.05, after correcting for multiple testing.
             Significance and number of rate categories inferred at each branch
-            are provided in the <a href="#table-tab">detailed results</a>{" "}
+            are provided in the <a href="aBSREL#table-tab">detailed results</a>{" "}
             table.
           </p>
         </div>  
     )
   },
-
-  getInitialState: function() {
-    var self = this;
-
-    return {
-      branches_with_evidence: this.getBranchesWithEvidence(
-        self.props.test_results
-      ),
-      test_branches: this.getTestBranches(self.props.test_results),
-      total_branches: this.getTotalBranches(self.props.test_results),
-      copy_transition: false
-    };
-  },
-
-  componentWillReceiveProps: function(nextProps) {
-    this.setState({
-      branches_with_evidence: this.getBranchesWithEvidence(
-        nextProps.test_results
-      ),
-      test_branches: this.getTestBranches(nextProps.test_results),
-      total_branches: this.getTotalBranches(nextProps.test_results),
-      was_evidence: this.getBranchesWithEvidence(nextProps.test_results) > 0      
-    });
-  },
-  
+ 
   render: function() {
     return (      
       <div className="row">
@@ -145,7 +145,7 @@ var BSRELSummary = React.createClass({
         />
       </div>
     );
-  },
+  }
   
 });
 

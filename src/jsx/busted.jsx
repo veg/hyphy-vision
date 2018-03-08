@@ -708,15 +708,14 @@ var BUSTED = React.createClass({
     var self = this;
     var significant = this.state.p < 0.05; 
     var userMessageForClipboard;
+    var formattedP = self.state.p ? self.state.p.toFixed(3).toString() : null;
     if (significant) {
       userMessageForClipboard = "BUSTED found evidence (LRT, p-value = " +
-        // TODO: Format the pValue (I want to just use "self.state.p ? self.state.toFixted(3) : null" but this isn't working and I think the issue may be easier to fix if this page was using the resultsPageTemplate component so that the lifecyle would be easier to understand
-        self.state.p +
+        formattedP +
         " < .05) of gene-wide episodic diversifying selection in the selected test branches of your phylogeny. Therefore, there is evidence that at least one site on at least one test branch has experienced diversifying selection."
     } else {
       userMessageForClipboard = "BUSTED found no evidence (LRT, p-value = " +
-        // TODO: Format the pValue (I want to just use "self.state.p ? self.state.toFixted(3) : null" but this isn't working and I think the issue may be easier to fix if this page was using the resultsPageTemplate component so that the lifecyle would be easier to understand
-        self.state.p +
+        formattedP +
         " > .05) of gene-wide episodic diversifying selection in the selected test branches of your phylogeny. Therefore, there is no evidence that any sites have experienced diversifying selection along the test branch(es)."
     }
     return (userMessageForClipboard);
@@ -906,7 +905,7 @@ var BUSTED = React.createClass({
                     summary_for_clipboard={this.getSummaryForClipboard()}
                     summary_for_rendering={this.getSummaryForRendering()} 
                     method_ref="http://hyphy.org/methods/selection-methods/#busted"
-                    citation_ref="hhttp://www.ncbi.nlm.nih.gov/pubmed/25701167"
+                    citation_ref="http://www.ncbi.nlm.nih.gov/pubmed/25701167"
                     citation_number="PMID 25701167"
                   />
                 </div>

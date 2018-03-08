@@ -4,12 +4,11 @@ var React = require("react"),
   _ = require("underscore");
 
 import { Tree } from "./components/tree.jsx";
+import { InputInfo } from "./components/input_info.jsx";
 import { DatamonkeyTable, DatamonkeyModelTable } from "./components/tables.jsx";
 import { DatamonkeySiteGraph } from "./components/graphs.jsx";
 import { NavBar } from "./components/navbar.jsx";
 import { ScrollSpy } from "./components/scrollspy.jsx";
-import { MethodHeader } from "./components/methodheader.jsx";
-import { MainResult } from "./components/mainresult.jsx";
 
 
 function MEMESummary(props) {
@@ -19,53 +18,24 @@ function MEMESummary(props) {
       .filter(row=>row[3]/(row[0] || 1e-10) > 1 && row[6] < props.pValue).length;
   }
 
-  getSummaryForClipboard() {
-    return(
-      <p>MEME <strong className="hyphy-highlight">found evidence</strong> of</p>
-      <p>
-        <i className="fa fa-plus-circle" aria-hidden="true">
-          {" "}
-        </i>{" "}
-        episodic positive/diversifying selection at
-        <span className="hyphy-highlight">
-          {" "}{number_of_sites}{" "}
-        </span>
-        sites
-      </p>
-      <p>
-        with p-value threshold of
-        <input
-          style={{display: "inline-block", marginLeft: "5px", width: "100px"}}
-          className="form-control"
-          type="number"
-          defaultValue="0.1"
-          step="0.01"
-          min="0"
-          max="1"
-          onChange={props.updatePValue}
-        />.
-      </p>
-    );
-  };
-
   return (
     <div className="row" id="summary-tab">
-      <MethodHeader
-        methodName="Mixed Effects Model of Evolution"
-        input_data={props.json ? props.json.input : null}
-        json={props.json}
-        hyphy_vision={props.hyphy_vision}
-      />
+      <div className="clearance" id="summary-div"></div>
+      <div className="col-md-12">
+        <h3 className="list-group-item-heading">
+          <span id="summary-method-name">
+            Mixed Effects Model of Evolution
+          </span>
+          <br />
+          <span className="results-summary">results summary</span>
+        </h3>
+      </div>
+      <div className="col-md-12">
+        <InputInfo input_data={props.json ? props.json.input : null} json={props.json} hyphy_vision={props.hyphy_vision}/>
+      </div>
       <div className="col-md-12">
         <div className="main-result">
-          <MainResult
-            summary_for_clipboard={this.getSummaryForClipboard()}
-            summary_for_rendering={this.getSummaryForRendering()}                    
-            method_ref="http://www.hyphy.org/methods/selection-methods/#meme"
-            citation_ref="http://www.ncbi.nlm.nih.gov/pubmed/22807683"
-            citation_number="PMID 22807683"
-          />
-
+          <p>MEME <strong className="hyphy-highlight">found evidence</strong> of</p>
           <p>
             <i className="fa fa-plus-circle" aria-hidden="true">
               {" "}
