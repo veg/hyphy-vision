@@ -67,7 +67,7 @@ Please ensure that any entry level functions are exposed in src/library-entry.js
 3. `cd HyPhy\ Vision/resources`
 4. `mkdir app && cd app`
 5. `git clone https://github.com/veg/hyphy-vision .`
-6. Edit the `main` entry of `package.json` to be `electron.js`we
+6. Edit the `main` entry of `package.json` to be `electron.js`
 8. `yarn`
 9. `node_modules/.bin/webpack`
 10. `rm -rf node_modules`
