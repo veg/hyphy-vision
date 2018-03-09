@@ -11,11 +11,36 @@ import { Tree } from "./components/tree.jsx";
 import { BranchTable } from "./components/branch_table.jsx";
 import { NavBar } from "./components/navbar.jsx";
 import { ScrollSpy } from "./components/scrollspy.jsx";
-import { InputInfo } from "./components/input_info.jsx";
+import { MethodHeader } from "./components/methodheader.jsx";
+import { MainResult } from "./components/mainresult.jsx";
 
 
 var BSRELSummary = React.createClass({
   float_format: d3.format(".2f"),
+
+  componentWillReceiveProps: function(nextProps) {
+    this.setState({
+      branches_with_evidence: this.getBranchesWithEvidence(
+        nextProps.test_results
+      ),
+      test_branches: this.getTestBranches(nextProps.test_results),
+      total_branches: this.getTotalBranches(nextProps.test_results),
+      was_evidence: this.getBranchesWithEvidence(nextProps.test_results) > 0      
+    });
+  },
+ 
+  getInitialState: function() {
+    var self = this;
+
+    return {
+      branches_with_evidence: this.getBranchesWithEvidence(
+        self.props.test_results
+      ),
+      test_branches: this.getTestBranches(self.props.test_results),
+      total_branches: this.getTotalBranches(self.props.test_results),
+      copy_transition: false
+    };
+  },
 
   countBranchesTested: function(branches_tested) {
     if (branches_tested) {
@@ -40,46 +65,42 @@ var BSRELSummary = React.createClass({
   getTotalBranches: function(test_results) {
     return _.keys(test_results).length;
   },
-
-  getInitialState: function() {
-    var self = this;
-
-    return {
-      branches_with_evidence: this.getBranchesWithEvidence(
-        self.props.test_results
-      ),
-      test_branches: this.getTestBranches(self.props.test_results),
-      total_branches: this.getTotalBranches(self.props.test_results)
-    };
+  
+  getSummaryForClipboard() {    
+    var userMessageForClipboard
+    if (this.state.was_evidence) {
+      userMessageForClipboard = "aBSREL found evidence of episodic diversifying selection on " +          
+        this.state.branches_with_evidence +
+        " out of " +
+        this.state.total_branches +
+        " branches in your phylogeny. "        
+    }
+    else {
+      userMessageForClipboard = "aBSREL found no evidence of episodic diversifying selection in your phylogeny. "
+    }
+    
+    var summaryTextForClipboard = userMessageForClipboard +
+      "A total of " + 
+      this.state.test_branches +
+      " branches were formally tested for diversifying selection. Significance was assessed using the Likelihood Ratio Test at a threshold of p ≤ 0.05, after correcting for multiple testing."
+    
+    return summaryTextForClipboard;
   },
 
-  componentWillReceiveProps: function(nextProps) {
-    this.setState({
-      branches_with_evidence: this.getBranchesWithEvidence(
-        nextProps.test_results
-      ),
-      test_branches: this.getTestBranches(nextProps.test_results),
-      total_branches: this.getTotalBranches(nextProps.test_results)
-    });
-  },
-
-  render: function() {
-    var self = this,
-      user_message,
-      was_evidence = self.state.branches_with_evidence > 0;
-
-    if (was_evidence) {
+  getSummaryForRendering() {
+    var user_message
+    if (this.state.was_evidence) {
       user_message = (
         <p className="list-group-item-text label_and_input">
           aBSREL <strong className="hyphy-highlight">found evidence</strong> of
           episodic diversifying selection on{" "}
           <span className="hyphy-highlight">
-            <strong>{self.state.branches_with_evidence}</strong>
+            <strong>{this.state.branches_with_evidence}</strong>
           </span>{" "}
           out
           of{" "}
           <span className="hyphy-highlight">
-            <strong>{self.state.total_branches}</strong>
+            <strong>{this.state.total_branches}</strong>
           </span>{" "}
           branches in your phylogeny.
         </p>
@@ -94,62 +115,38 @@ var BSRELSummary = React.createClass({
     }
 
     return (
+        <div>  
+          {user_message} 
+          <p>
+            A total of{" "}
+            <strong className="hyphy-highlight">
+              {this.state.test_branches}
+            </strong>{" "}
+            branches were formally tested for diversifying selection.
+            Significance was assessed using the Likelihood Ratio Test at a
+            threshold of p ≤ 0.05, after correcting for multiple testing.
+            Significance and number of rate categories inferred at each branch
+            are provided in the <a href="aBSREL#table-tab">detailed results</a>{" "}
+            table.
+          </p>
+        </div>  
+    )
+  },
+ 
+  render: function() {
+    return (      
       <div className="row">
-      <div className="clearance" id="summary-div"></div>
-        <div className="col-md-12">
-          <h3 className="list-group-item-heading">
-            <span id="summary-method-name">adaptive Branch Site REL</span>
-            <br />
-            <span className="results-summary">results summary</span>
-          </h3>
-      </div>
-      
-      
-        <div className="col-md-12">
-          <InputInfo input_data={this.props.input_data} json={this.props.json} hyphy_vision={this.props.hyphy_vision}/>
-        </div>
-      
-      
-        <div className="col-md-12">
-          <div className="main-result">
-            {user_message}
-            <p>
-              A total of{" "}
-              <strong className="hyphy-highlight">
-                {self.state.test_branches}
-              </strong>{" "}
-              branches were formally tested for diversifying selection.
-              Significance was assessed using the Likelihood Ratio Test at a
-              threshold of p ≤ 0.05, after correcting for multiple testing.
-              Significance and number of rate categories inferred at each branch
-              are provided in the <a href="#table-tab">detailed results</a>{" "}
-              table.
-            </p>
-            <hr />
-            <p>
-              <small>
-                See{" "}
-                <a href="http://hyphy.org/methods/selection-methods/#absrel">
-                  here
-                </a>{" "}
-                for more information about the aBSREL method.
-                <br />Please cite{" "}
-                <a
-                  href="http://www.ncbi.nlm.nih.gov/pubmed/25697341"
-                  id="summary-pmid"
-                  target="_blank"
-                >
-                  PMID 25697341
-                </a>{" "}
-                if you use this result in a publication, presentation, or other
-                scientific work.
-              </small>
-            </p>
-          </div>
-        </div>
+        <MainResult
+          summary_for_clipboard={this.getSummaryForClipboard()}
+          summary_for_rendering={this.getSummaryForRendering()}                    
+          method_ref="http://hyphy.org/methods/selection-methods/#absrel"
+          citation_ref="http://www.ncbi.nlm.nih.gov/pubmed/25697341"
+          citation_number="PMID 25697341"
+        />
       </div>
     );
   }
+  
 });
 
 var BSREL = React.createClass({
@@ -477,6 +474,12 @@ var BSREL = React.createClass({
 
               <div>
                 <div id="summary-tab">
+                  <MethodHeader
+                    methodName="adaptive Branch Site REL"
+                    input_data={self.state.input_data}
+                    json={self.state.json}
+                    hyphy_vision={self.props.hyphy_vision}
+                  />
                   <BSRELSummary
                     test_results={self.state.test_results}
                     pmid={self.state.pmid}
