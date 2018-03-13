@@ -1,3 +1,4 @@
+// TODO: The tree component curently renders blank on the initial page load.
 import { Tree } from "./components/tree.jsx";
 import { OmegaPlotGrid } from "./components/omega_plots.jsx";
 import { Header } from "./components/header.jsx";
@@ -179,7 +180,6 @@ class RELAX extends React.Component{
     this.processData(nextProps.json);
   };
 
-  // TODO: I don't understand what componentDidUpdate is doing... Is it even neessary?
   componentDidUpdate(prevProps, prevState) {
     $("body").scrollspy({
       target: ".bs-docs-sidebar",

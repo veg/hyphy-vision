@@ -132,7 +132,7 @@ var BSRELSummary = React.createClass({
   
   render: function() {
     return (      
-      <div className="row">
+      <div>
         <MainResult
           summary_for_clipboard={this.getSummaryForClipboard()}
           summary_for_rendering={this.getSummaryForRendering()}                    
@@ -293,17 +293,11 @@ class BSREL extends React.Component{
 
   };
   
-  // TODO: I think "componentWillMount" and "LoadFromServer" can be removed (this needs to be confirmed).
-  componentWillMount() {
-    this.loadFromServer();
-  };
-
   componentDidMount() {
     this.processData(this.props.json);
     this.setEvents();
   };
 
-  // TODO: I don't understand what componentDidUpdate is doing... Is it even neessary?
   componentDidUpdate(prevProps, prevState) {
     $("body").scrollspy({
       target: ".bs-docs-sidebar",
@@ -355,13 +349,6 @@ class BSREL extends React.Component{
       input_data: data["input"],
       tree: d3.layout.phylotree()(data.input['trees'][0]),
       branch_attributes: data["branch attributes"][0]
-    });
-  };
-
-  loadFromServer() {
-    var self = this;
-    d3.json(self.props.url, function(data) {
-      self.processData(data);
     });
   };
 
@@ -439,53 +426,51 @@ class BSREL extends React.Component{
     }
     return (
       <div>
-        <div>
-          <BSRELSummary
+        <BSRELSummary
+          test_results={self.state.test_results}
+          pmid={self.state.pmid}
+          input_data={self.state.input_data}
+          json={self.state.json}
+          hyphy_vision={self.props.hyphy_vision}
+        />
+
+        <div id="hyphy-tree-summary">
+          <TreeSummary
+            model={self.state.full_model}
             test_results={self.state.test_results}
-            pmid={self.state.pmid}
-            input_data={self.state.input_data}
-            json={self.state.json}
-            hyphy_vision={self.props.hyphy_vision}
+            branch_attributes={self.state.branch_attributes}
           />
+        </div>
 
-          <div id="hyphy-tree-summary" className="col-md-12">
-            <TreeSummary
-              model={self.state.full_model}
-              test_results={self.state.test_results}
-              branch_attributes={self.state.branch_attributes}
-            />
-          </div>
+        <div id="tree-tab">
+          <Tree
+            json={self.state.json}
+            settings={self.state.settings}
+            models={models}
+            color_gradient={self.omegaColorGradient}
+            grayscale_gradient={self.omegaGrayscaleGradient}
+            method='absrel'
+          />
+        </div>
 
-          <div id="tree-tab" className="col-md-12">
-            <Tree
-              json={self.state.json}
-              settings={self.state.settings}
-              models={models}
-              color_gradient={self.omegaColorGradient}
-              grayscale_gradient={self.omegaGrayscaleGradient}
-              method='absrel'
-            />
-          </div>
+        <div id="table-tab">
+          <BranchTable
+            tree={self.state.tree}
+            test_results={self.state.test_results}
+            annotations={self.state.annotations}
+          />
+        </div>
 
-          <div id="table-tab" className="col-md-12">
-            <BranchTable
-              tree={self.state.tree}
-              test_results={self.state.test_results}
-              annotations={self.state.annotations}
-            />
-          </div>
-
-          <div id="hyphy-model-fits" className="col-md-12">
-            <DatamonkeyModelTable fits={self.state.fits} />
-            <p className="description">
-              This table reports a statistical summary of the models fit
-              to the data. Here, <strong>Baseline MG94xREV</strong> refers to the
-              MG94xREV baseline model that infers a single &omega; rate
-              category per branch. <strong>Full adaptive model</strong> refers to
-              the adaptive aBSREL model that infers an optimized number
-              of &omega; rate categories per branch.
-            </p>
-          </div>
+        <div id="hyphy-model-fits">
+          <DatamonkeyModelTable fits={self.state.fits} />
+          <p className="description">
+            This table reports a statistical summary of the models fit
+            to the data. Here, <strong>Baseline MG94xREV</strong> refers to the
+            MG94xREV baseline model that infers a single &omega; rate
+            category per branch. <strong>Full adaptive model</strong> refers to
+            the adaptive aBSREL model that infers an optimized number
+            of &omega; rate categories per branch.
+          </p>
         </div>
       <div id="tree_tooltip"></div>
       </div>

@@ -41,32 +41,13 @@ function HyPhyVision(props) {
         { is_electron ? <Redirect to="/" /> : null }
         <Route exact path="/" component={()=><Home />} />  
         <Route path="/aBSREL" component={()=>
-          <ResultsPage
-            data={base_url+'/methods/absrel/data/ABSREL.json'}  
-            hyphy_vision
-            scrollspy_info={[
-              { label: "summary", href: "summary-tab" },
-              { label: "tree", href: "hyphy-tree-summary" },
-              { label: "table", href: "table-tab" },
-              { label: "model fits", href: "hyphy-model-fits" }
-            ]}
-            methodName={"adaptive Branch Site REL"}
-          >
+          <ResultsPage data={base_url+'/methods/absrel/data/ABSREL.json'} method='aBSREL' hyphy_vision >
             {BSREL}
           </ResultsPage>
           } />
         <Route path="/BUSTED" component={()=><BUSTED url={base_url+'/methods/busted/data/BUSTED.json'} hyphy_vision />} />
         <Route path="/RELAX" component={()=>
-          <ResultsPage
-            data={base_url+'/methods/relax/data/RELAX.json'} 
-            hyphy_vision
-            scrollspy_info={[
-              { label: "summary", href: "summary-tab" },
-              { label: "fits", href: "fits-tab" },
-              { label: "tree", href: "tree-tab" }
-            ]}
-            methodName={"RELAX(ed selection test)"}
-          >
+          <ResultsPage data={base_url+'/methods/relax/data/RELAX.json'} method='RELAX' hyphy_vision > 
             {RELAX}
           </ResultsPage>
           } />
