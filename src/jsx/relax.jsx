@@ -1,4 +1,3 @@
-// TODO: The tree component curently renders blank on the initial page load.
 import { Tree } from "./components/tree.jsx";
 import { OmegaPlotGrid } from "./components/omega_plots.jsx";
 import { Header } from "./components/header.jsx";
