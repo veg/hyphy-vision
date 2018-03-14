@@ -398,4 +398,35 @@ class RELAX extends React.Component{
   };
 }
 
+RELAX.defaultProps = {
+  edgeColorizer: function(element, data, omega_color, partition) {
+    var omega_format = d3.format(".3r");
+
+    if (data.target.annotations) {
+      element.style(
+        "stroke",
+        omega_color(data.target.annotations.length) || null
+      );
+      $(element[0][0]).tooltip("destroy");
+      $(element[0][0]).tooltip({
+        title: omega_format(data.target.annotations.length),
+        html: true,
+        trigger: "hover",
+        container: "body",
+        placement: "auto"
+      });
+    } else {
+      element.style("stroke", null);
+      $(element[0][0]).tooltip("destroy");
+    }
+
+    var is_in_partition = partition.indexOf(data.target.name) > -1;
+    element
+      .style("stroke-width", is_in_partition ? "6" : "2")
+      .style("stroke-linejoin", "round")
+      .style("stroke-linecap", "round");
+  },
+  alpha_level: 0.05
+};
+
 module.exports.RELAX = RELAX;
