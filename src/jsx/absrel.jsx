@@ -10,6 +10,7 @@ import { TreeSummary } from "./components/tree_summary.jsx";
 import { Tree } from "./components/tree.jsx";
 import { BranchTable } from "./components/branch_table.jsx";
 import { MainResult } from "./components/mainresult.jsx";
+import { ResultsPage } from "./components/results_page.jsx";
 
 
 var BSRELSummary = React.createClass({
@@ -146,10 +147,11 @@ var BSRELSummary = React.createClass({
   
 });
 
-class BSREL extends React.Component{
+class BSRELContents extends React.Component{
   constructor(props){
     super(props);
-    var float_format = d3.format(".2f");var omegaColorGradient = ["#000000", "#888888", "#DFDFDF", "#77CCC6", "#00a99d"];
+    var float_format = d3.format(".2f");
+    var omegaColorGradient = ["#000000", "#888888", "#DFDFDF", "#77CCC6", "#00a99d"];
     var omegaGrayScaleGradient = [
       "#DDDDDD",
       "#AAAAAA",
@@ -298,14 +300,14 @@ class BSREL extends React.Component{
     this.setEvents();
   };
 
-  componentDidUpdate(prevProps, prevState) {
-    $("body").scrollspy({
-      target: ".bs-docs-sidebar",
-      offset: 50
-    });
-    $('[data-toggle="popover"]').popover();
-    $('.dropdown-toggle').dropdown();
-  };
+  //componentDidUpdate(prevProps, prevState) {
+  // $("body").scrollspy({
+  //   target: ".bs-docs-sidebar",
+  //   offset: 50
+  // });
+  // $('[data-toggle="popover"]').popover();
+  // $('.dropdown-toggle').dropdown();
+  //};
 
   processData = (data) => {
     var test_results = _.mapObject(data['branch attributes']['0'], (val, key) => {
@@ -434,7 +436,7 @@ class BSREL extends React.Component{
           hyphy_vision={self.props.hyphy_vision}
         />
 
-        <div id="hyphy-tree-summary">
+        <div id="hyphy-tree-summary" className="row">
           <TreeSummary
             model={self.state.full_model}
             test_results={self.state.test_results}
@@ -442,18 +444,18 @@ class BSREL extends React.Component{
           />
         </div>
 
-        <div id="tree-tab">
+        <div id="tree-tab" className="row">
           <Tree
             json={self.state.json}
             settings={self.state.settings}
             models={models}
-            color_gradient={self.omegaColorGradient}
-            grayscale_gradient={self.omegaGrayscaleGradient}
+            color_gradient={["#000000", "#888888", "#DFDFDF", "#77CCC6", "#00a99d"]}
+            grayscale_gradient={["#DDDDDD", "#AAAAAA", "#888888", "#444444", "#000000"]}
             method='absrel'
           />
         </div>
 
-        <div id="table-tab">
+        <div id="table-tab" className="row">
           <BranchTable
             tree={self.state.tree}
             test_results={self.state.test_results}
@@ -461,7 +463,7 @@ class BSREL extends React.Component{
           />
         </div>
 
-        <div id="hyphy-model-fits">
+        <div id="hyphy-model-fits" className="row">
           <DatamonkeyModelTable fits={self.state.fits} />
           <p className="description">
             This table reports a statistical summary of the models fit
@@ -478,8 +480,24 @@ class BSREL extends React.Component{
   }
 };
 
-// Will need to make a call to this
-// omega distributions
+function BSREL(props) {
+  return (
+    <ResultsPage
+      data={props.data} 
+      hyphy_vision={props.hyphy_vision}
+      scrollSpyInfo={[
+        { label: "summary", href: "summary-tab" },
+        { label: "tree", href: "hyphy-tree-summary" },
+        { label: "table", href: "table-tab" },
+        { label: "model fits", href: "hyphy-model-fits" }
+      ]}
+      methodName='adaptive Branch Site REL'
+    >
+      {BSRELContents}
+    </ResultsPage>
+  );
+}
+
 function render_absrel(url, element) {
   ReactDOM.render(<BSREL url={url} />, document.getElementById(element));
 }
@@ -491,4 +509,3 @@ function render_hv_absrel(url, element) {
 module.exports = render_absrel;
 module.exports.hv = render_hv_absrel;
 module.exports.BSREL = BSREL;
-

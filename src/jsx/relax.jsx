@@ -3,6 +3,7 @@ import { OmegaPlotGrid } from "./components/omega_plots.jsx";
 import { Header } from "./components/header.jsx";
 import {DatamonkeyTable} from "./components/tables.jsx"
 import { MainResult } from "./components/mainresult.jsx";
+import { ResultsPage } from "./components/results_page.jsx";
 
 var React = require("react"),
   _ = require("underscore");
@@ -128,7 +129,7 @@ class RELAXModelTable extends React.Component {
   }
 }
 
-class RELAX extends React.Component{
+class RELAXContents extends React.Component{
 
   constructor(props){
     super(props);
@@ -192,7 +193,6 @@ class RELAX extends React.Component{
   }
 
   processData = (data) => {
-    //TODO: the json that gets set to state may not be exactly what gets put in / output by Datamonkey because this function may be modifying the data object before asigning it to state.json
     var k = data["test results"]["relaxation or intensification parameter"],
       p = data["test results"]["p-value"],
       significant = p <= this.props.alpha_level;
@@ -361,16 +361,16 @@ class RELAX extends React.Component{
           citation_number="PMID 123456789"
         />
 
-        <div id="fits-tab" > 
+        <div id="fits-tab" className="row"> 
           <RELAXModelTable fits={self.state.fits} />
         </div>
 
-        <div id="omega-tab"> 
+        <div id="omega-tab" className="row"> 
           <Header title="Omega plots" popover="<p>Shows the different omega rate distributions under the null and alternative models.</p>"/>
           <OmegaPlotGrid json={self.state.json} />
         </div>
 
-        <div id="tree-tab" >
+        <div id="tree-tab" className="row">
           <Tree
             json={self.state.json}
             settings={self.state.settings}
@@ -382,7 +382,7 @@ class RELAX extends React.Component{
           />
         </div>
 
-        <div id="branch-attribute-table" >
+        <div id="branch-attribute-table" className="row">
           <Header title="Branch attributes"></Header>
             <DatamonkeyTable
               headerData={self.state.branchAttributeHeaders}
@@ -398,7 +398,7 @@ class RELAX extends React.Component{
   };
 }
 
-RELAX.defaultProps = {
+RELAXContents.defaultProps = {
   edgeColorizer: function(element, data, omega_color, partition) {
     var omega_format = d3.format(".3r");
 
@@ -429,4 +429,31 @@ RELAX.defaultProps = {
   alpha_level: 0.05
 };
 
+function RELAX(props) {
+  return (
+    <ResultsPage 
+      data={props.data}
+      hyphy_vision={props.hyphy_vision}
+      scrollSpyInfo={[
+        { label: "summary", href: "summary-tab" },
+        { label: "fits", href: "fits-tab" },
+        { label: "tree", href: "tree-tab" }
+      ]}
+      methodName="RELAX(ed selection test)"
+    >
+      {RELAXContents}
+    </ResultsPage>
+  );
+}
+
+function render_relax(url, element) {
+  ReactDOM.render(<RELAX url={url} />, document.getElementById(element));
+}
+
+function render_hv_relax(url, element) {
+  ReactDOM.render(<RELAX url={url} hyphy_vision />, document.getElementById(element));
+}
+
+module.exports = render_relax;
+module.exports.hv = render_hv_relax;
 module.exports.RELAX = RELAX;

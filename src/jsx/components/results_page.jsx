@@ -6,14 +6,12 @@ import { MethodHeader } from "./methodheader.jsx";
 var React = require("react");
 
 /**
- * ResultsPage is a WIP attempt to create a reusable component to do the following:
+ * ResultsPage is a reusable component to do the following in a standrdized way across methods/pages:
  *    1. Render the elements that will appear on every vision page:
  *      a. ScrollSpy
  *      b. MethodHeader
  *      c. ErrorMessage (this isn't implemented yet)
  *    2. Handle getting the data from a file/url and setting the data to state
- *    3. Serve as the container for the state that multiple subcomponents will share (note: This currently isn't implemented; the state that multiple graphs/tables share is stored in the method component) 
- *    TODO: The navBar offset is not quite as big as it should be. The offset is set in app.jsx but may be relying on some div tags that had been removed because they were duplicative.
  */
 class ResultsPage extends React.Component {
 
@@ -62,38 +60,20 @@ class ResultsPage extends React.Component {
   };
 
   render() {
-    const methodInfo = {
-      'aBSREL' : {
-        'scrollSpyInfo' : [
-          { label: "summary", href: "summary-tab" },
-          { label: "tree", href: "hyphy-tree-summary" },
-          { label: "table", href: "table-tab" },
-          { label: "model fits", href: "hyphy-model-fits" }
-        ],
-        'methodName' : "adaptive Branch Site REL"
-      },
-      'RELAX' : {
-        'scrollSpyInfo': [
-          { label: "summary", href: "summary-tab" },
-          { label: "fits", href: "fits-tab" },
-          { label: "tree", href: "tree-tab" }
-        ],
-        'methodName' : "RELAX(ed selection test)"
-      }
-    };
+    var self = this;
 
     if(!this.state.json) return <div></div>;
     return(
       <div>
         {this.props.hyphy_vision ? <NavBar onFileChange={this.onFileChange} /> : ''}
         <div className="container">
-          <ScrollSpy info={methodInfo[this.props.method].scrollSpyInfo} />
+          <ScrollSpy info={self.props.scrollSpyInfo} />
           <div className="col-md-12 col-lg-10">
             <div className="results">
               <ErrorMessage />
               <div id="summary-tab">
                 <MethodHeader
-                  methodName={methodInfo[this.props.method].methodName}
+                  methodName={self.props.methodName}
                   input_data={this.state.json.input}
                   json={this.state.json}
                   hyphy_vision={this.props.hyphy_vision}

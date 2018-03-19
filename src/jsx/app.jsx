@@ -12,6 +12,8 @@ import { SLAC } from './slac.jsx';
 import { FUBAR } from './fubar.jsx';
 import { GARD } from './gard.jsx';
 import { ResultsPage } from "./components/results_page.jsx"
+// Testing out putting the nav bar in the main component
+import { NavBar } from "./components/navbar.jsx";
 
 const path = require('path');
 
@@ -38,19 +40,12 @@ function HyPhyVision(props) {
   return (
     <BrowserRouter>
       <div>
+        <NavBar/>
         { is_electron ? <Redirect to="/" /> : null }
         <Route exact path="/" component={()=><Home />} />  
-        <Route path="/aBSREL" component={()=>
-          <ResultsPage data={base_url+'/methods/absrel/data/ABSREL.json'} method='aBSREL' hyphy_vision >
-            {BSREL}
-          </ResultsPage>
-          } />
+        <Route path="/aBSREL" component={()=><BSREL data={base_url+'/methods/absrel/data/ABSREL.json'} hyphy_vision />} /> 
         <Route path="/BUSTED" component={()=><BUSTED url={base_url+'/methods/busted/data/BUSTED.json'} hyphy_vision />} />
-        <Route path="/RELAX" component={()=>
-          <ResultsPage data={base_url+'/methods/relax/data/RELAX.json'} method='RELAX' hyphy_vision > 
-            {RELAX}
-          </ResultsPage>
-          } />
+        <Route path="/RELAX" component={()=><RELAX data={base_url+'/methods/relax/data/RELAX.json'} hyphy_vision />} /> 
         <Route path="/FEL" component={()=><FEL url={base_url+'/methods/fel/data/FEL.json'} hyphy_vision />} />
         <Route path="/MEME" component={()=><MEME url={base_url+'/methods/meme/data/MEME.json'} hyphy_vision />} />
         <Route path="/SLAC" component={()=><SLAC url={base_url+'/methods/slac/data/SLAC.json'} hyphy_vision />} />
