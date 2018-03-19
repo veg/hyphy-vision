@@ -446,12 +446,12 @@ function RELAX(props) {
   );
 }
 
-function render_relax(url, element) {
-  ReactDOM.render(<RELAX url={url} />, document.getElementById(element));
+function render_relax(data, element) {
+  ReactDOM.render(<RELAX data={data} />, document.getElementById(element));
 }
 
-function render_hv_relax(url, element) {
-  ReactDOM.render(<RELAX url={url} hyphy_vision />, document.getElementById(element));
+function render_hv_relax(data, element) {
+  ReactDOM.render(<RELAX data={data} hyphy_vision />, document.getElementById(element));
 }
 
 module.exports = render_relax;

@@ -498,12 +498,12 @@ function BSREL(props) {
   );
 }
 
-function render_absrel(url, element) {
-  ReactDOM.render(<BSREL url={url} />, document.getElementById(element));
+function render_absrel(data, element) {
+  ReactDOM.render(<BSREL data={data} />, document.getElementById(element));
 }
 
-function render_hv_absrel(url, element) {
-  ReactDOM.render(<BSREL url={url} hyphy_vision={true} />, document.getElementById(element));
+function render_hv_absrel(data, element) {
+  ReactDOM.render(<BSREL data={data} hyphy_vision={true} />, document.getElementById(element));
 }
 
 module.exports = render_absrel;
