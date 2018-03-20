@@ -43,14 +43,14 @@ function HyPhyVision(props) {
         <NavBar/>
         { is_electron ? <Redirect to="/" /> : null }
         <Route exact path="/" component={()=><Home />} />  
-        <Route path="/aBSREL" component={()=><BSREL data={base_url+'/methods/absrel/data/ABSREL.json'} hyphy_vision />} /> 
-        <Route path="/BUSTED" component={()=><BUSTED url={base_url+'/methods/busted/data/BUSTED.json'} hyphy_vision />} />
-        <Route path="/RELAX" component={()=><RELAX data={base_url+'/methods/relax/data/RELAX.json'} hyphy_vision />} /> 
-        <Route path="/FEL" component={()=><FEL url={base_url+'/methods/fel/data/FEL.json'} hyphy_vision />} />
-        <Route path="/MEME" component={()=><MEME url={base_url+'/methods/meme/data/MEME.json'} hyphy_vision />} />
-        <Route path="/SLAC" component={()=><SLAC url={base_url+'/methods/slac/data/SLAC.json'} hyphy_vision />} />
-        <Route path="/FUBAR" component={()=><FUBAR url={base_url+'/methods/fubar/data/FUBAR.json'} hyphy_vision />} />
-        <Route path="/GARD" component={()=><GARD url={base_url+'/methods/gard/data/GARD.json'} hyphy_vision />} />
+        <Route path="/absrel" component={()=><BSREL data={base_url+'/methods/absrel/data/ABSREL.json'} hyphy_vision />} /> 
+        <Route path="/busted" component={()=><BUSTED url={base_url+'/methods/busted/data/BUSTED.json'} hyphy_vision />} />
+        <Route path="/relax" component={()=><RELAX data={base_url+'/methods/relax/data/RELAX.json'} hyphy_vision />} /> 
+        <Route path="/fel" component={()=><FEL url={base_url+'/methods/fel/data/FEL.json'} hyphy_vision />} />
+        <Route path="/meme" component={()=><MEME url={base_url+'/methods/meme/data/MEME.json'} hyphy_vision />} />
+        <Route path="/slac" component={()=><SLAC url={base_url+'/methods/slac/data/SLAC.json'} hyphy_vision />} />
+        <Route path="/fubar" component={()=><FUBAR url={base_url+'/methods/fubar/data/FUBAR.json'} hyphy_vision />} />
+        <Route path="/gard" component={()=><GARD url={base_url+'/methods/gard/data/GARD.json'} hyphy_vision />} />
       </div>
     </BrowserRouter>
   );
