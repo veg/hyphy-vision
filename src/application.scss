@@ -1,49 +1,49 @@
-@import "~bootstrap/less/bootstrap";
+@import "~bootstrap/scss/bootstrap";
 @import url('https://fonts.googleapis.com/css?family=Montserrat:100,100i,200,200i,300,300i,400,400i,500,500i,600,600i,700,700i,800,800i,900,900i|Noto+Sans:400,400i,700,700i');
 @import url('https://fonts.googleapis.com/css?family=Noto+Sans:400,400i,700,700i');
 
 /* Hyphy Colors */
-@hyphy-green: #00a99d;
+$hyphy-green: #00a99d;
 
 /* Bootstrap Variables */
 
-@alert-info-bg: #eaf4f2;
+$alert-info-bg: #eaf4f2;
 
-@body-bg : #fff;
-@body-color: #555;
-@table-condensed-cell-padding: 10px;
-@table-bg-hover: #bfbfbf;
+$body-bg : #fff;
+$body-color: #555;
+$table-condensed-cell-padding: 10px;
+$table-bg-hover: #bfbfbf;
 
-@btn-border-radius-base: none;
-@btn-font-weight: 500;
-@btn-primary-color: #fff;
-@btn-primary-bg: @hyphy-green;
+$btn-border-radius-base: none;
+$btn-font-weight: 500;
+$btn-primary-color: #fff;
+$btn-primary-bg: $hyphy-green;
 
-@dropdown-border: @hyphy-green;
-@dropdown-link-hover-color: #038c7f;
-@dropdown-link-color: #444;
+$dropdown-border: $hyphy-green;
+$dropdown-link-hover-color: #038c7f;
+$dropdown-link-color: #444;
 
-@badge-color: #038c7f;
-@badge-bg: #fff;
+$badge-color: #038c7f;
+$badge-bg: #fff;
 
-@border-radius-base: 0px;
-@nav-link-padding: 10px 25px;
-@nav-pills-border-radius: @border-radius-base;
+$border-radius-base: 0px;
+$nav-link-padding: 10px 25px;
+$nav-pills-border-radius: $border-radius-base;
 
-@navbar-default-bg: #fff;
-@navbar-height: 50px;
-@navbar-default-border: @hyphy-green;
+$navbar-default-bg: #fff;
+$navbar-height: 50px;
+$navbar-default-border: $hyphy-green;
 
-@tooltip-bg: #333;
-@tooltip-max-width: 200px;
+$tooltip-bg: #333;
+$tooltip-max-width: 200px;
 
-@popover-max-width: 400px;
-@popover-title-bg: #fff;
-@popover-arrow-color: #fff;
-@popover-border-color: @hyphy-green;
-@popover-fallback-border-color: @hyphy-green;
+$popover-max-width: 400px;
+$popover-title-bg: #fff;
+$popover-arrow-color: #fff;
+$popover-border-color: $hyphy-green;
+$popover-fallback-border-color: $hyphy-green;
 
-@input-border: @hyphy-green;
+$input-border: $hyphy-green;
 
 /*----------------------------------------------------------------------------------------------------------------*/
 
@@ -53,7 +53,7 @@ html {
 
 body {
   margin-top: 0;
-  padding-top: 0 !important;
+  padding-top: 0;
   line-height: 1.5;
 }
 
@@ -63,7 +63,7 @@ a {
 
 a:focus,
 a:hover {
-  color: @hyphy-green;
+  color: $hyphy-green;
 }
 
 p.description {
@@ -127,12 +127,12 @@ small {
 
 
 .bs-docs-sidebar .nav {
-  min-width: 150px !mportant;
+  min-width: 150px;
 }
 
 .bs-docs-sidebar .nav > li > a {
-  padding-right: 0 !important;
-  min-width: 175px !important
+  padding-right: 0;
+  min-width: 175px;
 }
 
 .btn {
@@ -155,26 +155,25 @@ small {
 
 
 .btn-primary {
-  border: none !important;
+  border: none;
 }
 
 .btn-primary:focus,
 .btn-primary.focus {
   color: #fff;
   background-color: #049b8c;
-  border-color: #;
 }
 
 .btn-primary:hover {
   color: #fff;
-  background-color: #048276 !important;
+  background-color: #048276;
   -webkit-transition: ease-in-out 125ms;
 }
 
 .btn-primary:active,
 .btn-primary.active,
 .open > .dropdown-toggle.btn-primary {
-  background-color: @hyphy-green !important;
+  background-color: $hyphy-green;
 }
 
 .btn-primary:active,
@@ -214,7 +213,7 @@ small {
   text-align: left;
   background-color: #fff;
   border: 1px solid #ccc;
-  border: 3px solid @hyphy-green;
+  border: 3px solid $hyphy-green;
   border-radius: 0px;
   -webkit-box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175);
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175);
@@ -254,11 +253,11 @@ small {
 
 #results,
 #summary-tab {
-  margin-top: 0 !important;
+  margin-top: 0;
 }
 
 .summary-method-name {
-  font-size: 19px !important;
+  font-size: 19px;
   font-weight: 400;
 }
 
@@ -270,17 +269,17 @@ small {
 }
 
 .nav-stacked {
-  margin: 0 !important;
-  padding-top: 0 !important;
+  margin: 0;
+  padding-top: 0;
 }
 
 .nav-stacked > li + li {
-  margin: 0 !important;
+  margin: 0;
 }
 
 .navbar {
   border: none;
-  border-bottom: 2px solid @navbar-default-border;
+  border-bottom: 2px solid $navbar-default-border;
   margin: 0;
 }
 
@@ -289,15 +288,15 @@ small {
 }
 
 .nav-button {
-  padding: 0px 34px !important;
+  padding: 0px 34px;
 }
 
 .nav-button:active,
 .nav-button:focus,
 .nav-button:hover {
-  background-color: #fff !important;
-  border: 1px solid #028e80 !important;
-  color: #049b8c !important;
+  background-color: #fff;
+  border: 1px solid #028e80;
+  color: #049b8c;
 }
 
 
@@ -312,8 +311,8 @@ small {
 
 /* TABLES */
 table {
-  margin-top: 0 !important;
-  margin-bottom: 20px !important;
+  margin-top: 0;
+  margin-bottom: 20px;
 }
 
 .site-table {
@@ -336,12 +335,12 @@ table {
 .table > caption + thead > tr:first-child > td,
 .table > colgroup + thead > tr:first-child > td,
 .table > thead:first-child > tr:first-child > td {
-  color: @hyphy-green;
+  color: $hyphy-green;
 }
 
 table.dm-table > thead > tr > th,
 table.dm-table > thead > th {
-  text-align: center !important;
+  text-align: center;
 }
 
 .table > thead > tr > th, .table > tbody > tr > th,
@@ -398,11 +397,11 @@ th, td {
 
 .panel-heading {
   padding: 20px 15px;
-  background-color: #eaf4f2 !important;
+  background-color: #eaf4f2;
 }
 
 .panel-heading > .btn-group > .btn {
-  height: 28px !important;
+  height: 28px;
 }
 
 .clear-padding {
@@ -414,7 +413,7 @@ th, td {
   font-size: 13.5px;
   letter-spacing: 0.25px;
   color: #444;
-  border: 3px solid @hyphy-green;
+  border: 3px solid $hyphy-green;
   border-radius: 0;
   -webkit-box-shadow: 0 6px 12px rgba(0, 0, 0, .45);
           box-shadow: 0 6px 12px rgba(0, 0, 0, .45);
@@ -455,7 +454,7 @@ th, td {
   left: 50%;
   margin-left: -11px;
   border-top-width: 3px;
-  border-bottom-color: @hyphy-green;
+  border-bottom-color: $hyphy-green;
 }
 
 .popover.bottom > .arrow:after {
@@ -470,15 +469,15 @@ th, td {
   font-family: "Noto Sans", sans-serif;
   font-size: 15px;
   margin: 10px 0 5px 0;
-  color: @hyphy-green;
+  color: $hyphy-green;
 }
 
 #input-info {
-  padding: 5px 20px 5px 23px !important;
+  padding: 5px 20px 5px 23px;
 }
 
 .divider {
-  padding: 0px 12px !important;
+  padding: 0px 12px;
 }
 
 .blue-badge, .white-badge, .red-badge {
@@ -505,8 +504,8 @@ th, td {
 
 svg g > text {
   font-family: "Noto Sans" sans-serif;
-  font-size: 13px !important;
-  font-weight: 600 !important;
+  font-size: 13px;
+  font-weight: 600;
 }
 
 .form-control {
@@ -522,7 +521,7 @@ svg g > text {
 
 
 .hyphy-busted-site-table {
-  margin-top: 0px !important;
+  margin-top: 0px;
 }
 
 .main-result {
@@ -539,31 +538,25 @@ svg g > text {
   justify-content: center;
 }
 
-
-
 /*resizes and centers
 w distribution graph in BUSTED*/
 #prop-chart {
-  width: 75% !important;
+  width: 75%;
 }
-
-
-
-
 
 .dm-table-header {
   margin-top: 30px;
   margin-bottom: 0;
-  padding: 12px 10px 13px 5px !important;
+  padding: 12px 10px 13px 5px;
 }
 
 /* SLAC SLIDER */
 input[type=range] {
-  width: 100% !important;
+  width: 100%;
 }
 
 .list-group-item-heading {
-  margin-top: 55px !important;
+  margin-top: 55px;
 }
 
 .nav-stacked::before {
@@ -577,22 +570,22 @@ input[type=range] {
 #results::before {
   content: "";
   display: block;
-  height: 0px !important;
+  height: 0px;
   width: 100%;
 }
 
 #results,
 #summary-tab {
-  margin-top: 0 !important;
+  margin-top: 0;
 }
 
 .table-responsive {
-  border: none !important;
+  border: none;
   overflow-x: visible;
 }
 
 table table {
-  margin-bottom: 0 !important;
+  margin-bottom: 0;
 }
 
 
@@ -639,6 +632,6 @@ tr.highlight {
 }
 
 tr.highlight:hover {
-  background-color: #FFFFFF!important;
+  background-color: #FFFFFF;
   color: #00a99d;
 }

@@ -89,10 +89,10 @@ config = {
         options: {}
       },
       {
-        test: /\.less?$/,
+        test: /\.scss?$/,
         use: ExtractTextPlugin.extract({
           fallback: "style-loader",
-          use: ["css-loader", "less-loader"]
+          use: ["css-loader", "scss-loader"]
         })
       }
     ]
@@ -123,7 +123,7 @@ config = {
       "phylotree.css": __dirname + "/node_modules/phylotree/phylotree.css"
     },
     modules: ["src", "node_modules"],
-    extensions: [".json", ".js", ".jsx", ".less"]
+    extensions: [".json", ".js", ".jsx", ".scss"]
   }
 };
 
