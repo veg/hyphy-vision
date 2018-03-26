@@ -24,11 +24,9 @@
   "dependencies": {
     "bootstrap": "4.x",
     "chi-squared": "^1.1.0",
-    "crossfilter": "1.x",
     "csvexport": "^1.0.2",
     "d3": "3.x",
     "d3-save-svg": "0.0.2",
-    "extract-text-webpack-plugin": "^2.0.0",
     "file-saver": "^1.3.3",
     "font-awesome": "4.x",
     "immutable": "3.8.1",

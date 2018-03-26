@@ -108,8 +108,6 @@ config = {
       $: "jquery",
       jQuery: "jquery",
       d3: "d3",
-      crossfilter: "crossfilter",
-      dc: "dc",
       datamonkey: "datamonkey",
       _: "underscore"
     }),
@@ -118,8 +116,6 @@ config = {
   ],
   resolve: {
     alias: {
-      dc: __dirname + "/node_modules/dc/dc.min.js",
-      "dc.css": __dirname + "/node_modules/dc/dc.min.css",
       "phylotree.css": __dirname + "/node_modules/phylotree/phylotree.css"
     },
     modules: ["src", "node_modules"],
