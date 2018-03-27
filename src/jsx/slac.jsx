@@ -507,7 +507,7 @@ var SLACSites = React.createClass({
                   {show_ci_menu()}
                 </ul>
                 <button
-                  className="btn btn-default btn-sm dropdown-toggle form-control"
+                  className="btn.btn-secondary btn-sm dropdown-toggle form-control"
                   type="button"
                   data-toggle="dropdown"
                   aria-haspopup="true"
@@ -534,7 +534,7 @@ var SLACSites = React.createClass({
                   })}
                 </ul>
                 <button
-                  className="btn btn-default btn-sm dropdown-toggle form-control"
+                  className="btn.btn-secondary btn-sm dropdown-toggle form-control"
                   type="button"
                   data-toggle="dropdown"
                   aria-haspopup="true"
@@ -563,7 +563,7 @@ var SLACSites = React.createClass({
                   })}
                 </ul>
                 <button
-                  className="btn btn-default btn-sm dropdown-toggle form-control"
+                  className="btn.btn-secondary btn-sm dropdown-toggle form-control"
                   type="button"
                   data-toggle="dropdown"
                   aria-haspopup="true"
@@ -615,7 +615,7 @@ var SLACSites = React.createClass({
                   })}
                 </ul>
                 <button
-                  className="btn btn-default btn-sm dropdown-toggle form-control"
+                  className="btn.btn-secondary btn-sm dropdown-toggle form-control"
                   type="button"
                   data-toggle="dropdown"
                   aria-haspopup="true"
@@ -628,7 +628,7 @@ var SLACSites = React.createClass({
                <div className="input-group">
                 <button
                   className={
-                    "btn btn-default " +
+                    "btn.btn-secondary " +
                     (self.dm_checkFilterValidity() ? "" : "disabled")
                   }
                   onClick={self.dm_handleAddCondition}
@@ -1044,7 +1044,7 @@ var SLACGraphs = React.createClass({
                   )}
                 </ul>
                 <button
-                  className="btn btn-default btn-sm dropdown-toggle form-control"
+                  className="btn.btn-secondary btn-sm dropdown-toggle form-control"
                   type="button"
                   data-toggle="dropdown"
                   aria-haspopup="true"
@@ -1073,7 +1073,7 @@ var SLACGraphs = React.createClass({
                   })}
                 </ul>
                 <button
-                  className="btn btn-default btn-sm dropdown-toggle form-control"
+                  className="btn.btn-secondary btn-sm dropdown-toggle form-control"
                   type="button"
                   data-toggle="dropdown"
                   aria-haspopup="true"
@@ -1101,7 +1101,7 @@ var SLACGraphs = React.createClass({
                   })}
                 </ul>
                 <button
-                  className="btn btn-default btn-sm dropdown-toggle form-control"
+                  className="btn.btn-secondary btn-sm dropdown-toggle form-control"
                   type="button"
                   data-toggle="dropdown"
                   aria-haspopup="true"
@@ -1117,7 +1117,7 @@ var SLACGraphs = React.createClass({
                 <button
                   id="export-chart-png"
                   type="button"
-                  className="btn btn-default btn-sm pull-right btn-export"
+                  className="btn.btn-secondary btn-sm pull-right btn-export"
                   onClick={self.savePNG}
                 >
                   <span className="glyphicon glyphicon-floppy-save" /> Export to PNG
@@ -1125,7 +1125,7 @@ var SLACGraphs = React.createClass({
                 <button
                   id="export-chart-png"
                   type="button"
-                  className="btn btn-default btn-sm pull-right btn-export"
+                  className="btn.btn-secondary btn-sm pull-right btn-export"
                   onClick={self.saveSVG}
                 >
                   <span className="glyphicon glyphicon-floppy-save" /> Export to SVG

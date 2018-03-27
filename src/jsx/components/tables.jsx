@@ -298,7 +298,7 @@ const DatamonkeyTableRow = React.createClass({
 var DatamonkeyTable = React.createClass({
   getDefaultProps: function() {
     return {
-      classes: "dm-table table table-condensed table-hover",
+      classes: "dm-table table table-smm table-hover",
       rowHash: null
     };
   },
@@ -439,7 +439,7 @@ var DatamonkeyTable = React.createClass({
         button = <button
           id="export-csv"
           type="button"
-          className="btn btn-default btn-sm pull-right"
+          className="btn.btn-secondary btn-sm pull-right"
           onClick={exportCSV}
         >
           <span className="glyphicon glyphicon-floppy-save" /> Export Table to CSV
@@ -458,14 +458,14 @@ var DatamonkeyTable = React.createClass({
 
           <div className="col-md-3">
             <div
-              className="btn-group btn-group-justified"
+              className="btn-group d-flex"
               role="group"
               aria-label="..."
             >
               <div className="btn-group" role="group">
                 <button
                   type="button"
-                  className="btn btn-default"
+                  className="btn.btn-secondary"
                   onClick={self.regress}
                   data-toggle="tooltip"
                   title={"Move backwards " + this.props.paginate + " rows."}
@@ -479,7 +479,7 @@ var DatamonkeyTable = React.createClass({
               <div className="btn-group" role="group">
                 <button
                   type="button"
-                  className="btn btn-default"
+                  className="btn.btn-secondary"
                   onClick={self.decrement}
                   data-toggle="tooltip"
                   title="Move backwards one row."
@@ -493,7 +493,7 @@ var DatamonkeyTable = React.createClass({
               <div className="btn-group" role="group">
                 <button
                   type="button"
-                  className="btn btn-default"
+                  className="btn.btn-secondary"
                   onClick={self.increment}
                   data-toggle="tooltip"
                   title="Move forwards one row."
@@ -507,7 +507,7 @@ var DatamonkeyTable = React.createClass({
               <div className="btn-group" role="group">
                 <button
                   type="button"
-                  className="btn btn-default"
+                  className="btn.btn-secondary"
                   onClick={self.advance}
                   data-toggle="tooltip"
                   title={"Move forwards " + this.props.paginate + " rows."}
@@ -663,7 +663,7 @@ var DatamonkeyRateDistributionTable = React.createClass({
     return (
       <DatamonkeyTable
         bodyData={this.dm_createDistributionTable(this.props.distribution)}
-        classes={"table table-condensed"}
+        classes={"table table-smm"}
       />
     );
   }

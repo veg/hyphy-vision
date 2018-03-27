@@ -682,7 +682,7 @@ var Tree = React.createClass({
               <div className="input-group-btn">
                 <button
                   type="button"
-                  className="btn btn-default dropdown-toggle"
+                  className="btn.btn-secondary dropdown-toggle"
                   data-toggle="dropdown"
                 >
                   Options
@@ -693,7 +693,7 @@ var Tree = React.createClass({
                 </ul>
                 <button
                   type="button"
-                  className="btn btn-default btn-sm"
+                  className="btn.btn-secondary btn-sm"
                   data-direction="vertical"
                   data-amount="1"
                   title="Expand vertical spacing"
@@ -702,7 +702,7 @@ var Tree = React.createClass({
                 </button>
                 <button
                   type="button"
-                  className="btn btn-default btn-sm"
+                  className="btn.btn-secondary btn-sm"
                   data-direction="vertical"
                   data-amount="-1"
                   title="Compress vertical spacing"
@@ -711,7 +711,7 @@ var Tree = React.createClass({
                 </button>
                 <button
                   type="button"
-                  className="btn btn-default btn-sm"
+                  className="btn.btn-secondary btn-sm"
                   id="sort_ascending"
                   title="Sort deepest clades to the bototm"
                 >
@@ -719,7 +719,7 @@ var Tree = React.createClass({
                 </button>
                 <button
                   type="button"
-                  className="btn btn-default btn-sm"
+                  className="btn.btn-secondary btn-sm"
                   id="sort_descending"
                   title="Sort deepsest clades to the top"
                 >
@@ -729,7 +729,7 @@ var Tree = React.createClass({
               </div>
 
               <div className="input-group-btn" data-toggle="buttons">
-                <button className="btn btn-default active">
+                <button className="btn.btn-secondary active">
                   <input
                     type="radio"
                     name="options"
@@ -740,7 +740,7 @@ var Tree = React.createClass({
                     title="Layout left-to-right"
                   />Linear
                 </button>
-                <button className="btn btn-default">
+                <button className="btn.btn-secondary">
                   <input
                     type="radio"
                     name="options"
@@ -753,7 +753,7 @@ var Tree = React.createClass({
                 </button>
               </div>
               <div className="input-group-btn" data-toggle="buttons">
-                <button className="btn btn-default active">
+                <button className="btn.btn-secondary active">
                   <input
                     type="radio"
                     className="phylotree-align-toggler"
@@ -765,7 +765,7 @@ var Tree = React.createClass({
                   />
                   <i className="fa fa-align-left" />
                 </button>
-                <button className="btn btn-default btn-sm">
+                <button className="btn.btn-secondary btn-sm">
                   <input
                     type="radio"
                     className="phylotree-align-toggler"
@@ -781,7 +781,7 @@ var Tree = React.createClass({
               <div className="input-group-btn">
                 <button
                   type="button"
-                  className="btn btn-default dropdown-toggle"
+                  className="btn.btn-secondary dropdown-toggle"
                   data-toggle="dropdown"
                 >
                   Export <span className="caret" />
@@ -818,7 +818,7 @@ var Tree = React.createClass({
 
                 <button
                   type="button"
-                  className="btn btn-default btn-sm dropdown-toggle"
+                  className="btn.btn-secondary btn-sm dropdown-toggle"
                   data-toggle="dropdown"
                   style={{ paddingLeft: "30px" }}
                 >

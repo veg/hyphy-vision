@@ -46,9 +46,9 @@ function datamonkey_editable(self, value_list, edit_group) {
     .append("input")
     .style("margin-right", "1em")), (button_ok = div
     .append("button")
-    .classed("btn btn-primary btn-xs", true)), (button_cancel = div
+    .classed("btn btn-primary btn-sm", true)), (button_cancel = div
     .append("button")
-    .classed("btn btn-primary btn-xs", true)), (current_value = $(self).text());
+    .classed("btn btn-primary btn-sm", true)), (current_value = $(self).text());
 
   button_ok.append("i").classed("glyphicon glyphicon-ok", true);
   button_cancel.append("i").classed("glyphicon glyphicon-remove", true);
