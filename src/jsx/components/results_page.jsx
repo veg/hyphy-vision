@@ -32,8 +32,13 @@ class ResultsPage extends React.Component {
     } else if (typeof(this.props.data) == "object") {
       self.setDataToState(self.props.data);
     };
+    this.enableBootstrapJavascript();
   };
 
+  componentDidUpdate(prevProps, prevState) {
+    this.enableBootstrapJavascript();
+  }
+ 
   onFileChange = (e) => {
     var self = this;
     var files = e.target.files; // FileList object
@@ -58,6 +63,19 @@ class ResultsPage extends React.Component {
         json: data
       });
   };
+
+  enableBootstrapJavascript() {
+    console.log('enable');
+    $("body").scrollspy({
+      target: ".bs-docs-sidebar",
+      offset: 50
+    });
+    $('[data-toggle="popover"]').popover();
+    $(function () {
+      $('[data-toggle="tooltip"]').tooltip()
+    });
+    $('.dropdown-toggle').dropdown();
+  }
 
   render() {
     var self = this;

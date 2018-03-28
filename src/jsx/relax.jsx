@@ -63,20 +63,6 @@ class RELAXModelTable extends React.Component {
       return test_row;
     });
     return (<div>
-      <h4 className="dm-table-header">
-        Model fits
-        <span
-          className="glyphicon glyphicon-info-sign"
-          style={{ verticalAlign: "middle", float: "right", minHeight:"30px", minWidth: "30px"}}
-          aria-hidden="true"
-          data-toggle="popover"
-          data-trigger="hover"
-          title="Actions"
-          data-html="true"
-          data-content="<ul><li>Hover over a column header for a description of its content.</li></ul>"
-          data-placement="bottom"
-        />
-      </h4>
       <table
         className="dm-table table table-hover table-condensed list-group-item-text"
         style={{ marginTop: "0.5em" }}
@@ -179,18 +165,6 @@ class RELAXContents extends React.Component{
   componentWillReceiveProps(nextProps) {
     this.processData(nextProps.json);
   };
-
-  componentDidUpdate(prevProps, prevState) {
-    $("body").scrollspy({
-      target: ".bs-docs-sidebar",
-      offset: 50
-    });
-    $('[data-toggle="popover"]').popover();
-    $(function () {
-      $('[data-toggle="tooltip"]').tooltip()
-    });
-    $('.dropdown-toggle').dropdown();
-  }
 
   processData = (data) => {
     var k = data["test results"]["relaxation or intensification parameter"],
@@ -362,6 +336,7 @@ class RELAXContents extends React.Component{
         />
 
         <div id="fits-tab" className="row"> 
+          <Header title="Model fits" popover="<p>Hover over a column header for a description of its content.</p>"/>
           <RELAXModelTable fits={self.state.fits} />
         </div>
 

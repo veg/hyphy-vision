@@ -300,15 +300,6 @@ class BSRELContents extends React.Component{
     this.setEvents();
   };
 
-  //componentDidUpdate(prevProps, prevState) {
-  // $("body").scrollspy({
-  //   target: ".bs-docs-sidebar",
-  //   offset: 50
-  // });
-  // $('[data-toggle="popover"]').popover();
-  // $('.dropdown-toggle').dropdown();
-  //};
-
   processData = (data) => {
     var test_results = _.mapObject(data['branch attributes']['0'], (val, key) => {
       var tested = val.LRT != null;
