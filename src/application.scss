@@ -30,6 +30,7 @@ $border-radius-base: 0px;
 $nav-link-padding: 10px 25px;
 $nav-pills-border-radius: $border-radius-base;
 
+// navbr-default is no-longer used on bootstrap 4...
 $navbar-default-bg: #fff;
 $navbar-height: 50px;
 $navbar-default-border: $hyphy-green;
@@ -156,6 +157,7 @@ small {
 
 .btn-primary {
   border: none;
+  background-color: $hyphy-green;
 }
 
 .btn-primary:focus,
