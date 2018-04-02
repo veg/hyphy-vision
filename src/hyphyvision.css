@@ -831,7 +831,7 @@ input[type=range]:focus::-ms-fill-upper {
     background: #ccc;
 }
 
-.modal .modal-dialog { width: 800px; }
+.modal .modal-dialog { width: 850px; }
 
 .fa-bar-chart:hover {
     color: #00a99d;
@@ -862,4 +862,6 @@ input[type=range]:focus::-ms-fill-upper {
 .hyphy-export-dropdown {
   float: left;
 }
+
+
 

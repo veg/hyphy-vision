@@ -77,7 +77,8 @@ config = {
       "phylotree.css": __dirname + "/node_modules/phylotree/phylotree.css"
     },
     modules: ["src", "node_modules"],
-    extensions: [".json", ".js", ".jsx", ".less"]
+    extensions: [".json", ".js", ".jsx", ".less"],
+    symlinks: false
   }
 };
 
