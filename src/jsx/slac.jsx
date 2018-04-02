@@ -12,10 +12,8 @@ import {
   DatamonkeyModelTable,
   DatamonkeyTimersTable
 } from "./components/tables.jsx";
-import { NavBar } from "./components/navbar.jsx";
-import { ScrollSpy } from "./components/scrollspy.jsx";
 import { DatamonkeyScatterplot, DatamonkeySeries } from "./components/graphs.jsx";
-import { InputInfo } from "./components/input_info.jsx";
+import { ResultsPage } from "./components/results_page.jsx";
 import PropTypes from 'prop-types';
 import { saveSvgAsPng } from "save-svg-as-png";
 
@@ -440,7 +438,6 @@ var SLACSites = React.createClass({
     var filterState = new Object(null);
     _.extend(filterState, this.state.filters);
     delete filterState[key];
-    //console.log ('dm_handleRemoveCondition', key, this.state.filters,filterState);
 
     this.setState({ filters: filterState });
   },
@@ -816,23 +813,6 @@ var SLACBanner = React.createClass({
 
   render: function() {
     return (<div className="row">
-      <div className="clearance" id="slac-summary"></div>
-      <div className="col-md-12">
-        <h3 className="list-group-item-heading">
-          <span id="summary-method-name">
-          Single-Likelihood Ancestor Counting</span>
-          <br />
-          <span className="results-summary">results summary</span>
-        </h3>
-      </div>
-
-      <div className="col-md-12">
-        <InputInfo
-          input_data={this.props.input_data}
-          json={this.props.analysis_results}
-          hyphy_vision={this.props.hyphy_vision}
-        />
-      </div>
 
       <div className="col-md-12">
         <div className="main-result">
@@ -1164,28 +1144,28 @@ var SLACGraphs = React.createClass({
   }
 });
 
-var SLAC = React.createClass({
-  float_format: d3.format(".2f"),
+class SLACContents extends React.Component {
 
-  dm_loadFromServer: function() {
-    /* 20160721 SLKP: prefixing all custom (i.e. not defined by REACT) with dm_
-     to make it easier to recognize scoping immediately */
+  constructor(props) {
+    super(props);
+    const float_format = d3.format(".2f");
+    this.state = {
+      analysis_results: null,
+      error_message: null,
+      pValue: 0.1,
+      input_data: null
+    }
+  }
+  
+  componentWillMount = () => {
+    this.dm_initializeFromJSON(this.props.json);
+  }
 
-    var self = this;
+  componentWillReceiveProps(nextProps) {
+    this.dm_initializeFromJSON(nextProps.json);
+  };
 
-    d3.json(self.props.url, function(request_error, data) {
-      if (!data) {
-        var error_message_text = request_error.status == 404
-          ? self.props.url + " could not be loaded"
-          : request_error.statusText;
-        self.setState({ error_message: error_message_text });
-      } else {
-        self.dm_initializeFromJSON(data);
-      }
-    });
-  },
-
-  dm_initializeFromJSON: function(data) {
+  dm_initializeFromJSON = (data) => {
     if(data["fits"]["Nucleotide GTR"]){
       data["fits"]["Nucleotide GTR"]["Rate Distributions"] = {};      
     }
@@ -1211,9 +1191,9 @@ var SLAC = React.createClass({
       analysis_results: data,
       input_data: data.input
     });
-  },
+  }
 
-  formatBranchAnnotations: function(json) {
+  formatBranchAnnotations = (json) => {
     // attach is_foreground to branch annotations
     var branch_annotations = d3.range(json.trees.length).map(i=>{
       return _.mapObject(json['tested'][i], (val, key)=>{
@@ -1221,64 +1201,14 @@ var SLAC = React.createClass({
       });
     });
     return branch_annotations;
-  },
+  }
 
-  getDefaultProps: function() {
-    /* default properties for the component */
-
-    return {
-      url: "#"
-    };
-  },
-
-  getInitialState: function() {
-    return {
-      analysis_results: null,
-      error_message: null,
-      pValue: 0.1,
-      input_data: null
-    };
-  },
-
-  componentWillMount: function() {
-    this.dm_loadFromServer();
-  },
-
-  onFileChange: function(e) {
-    var self = this,
-      files = e.target.files; // FileList object
-
-    if (files.length == 1) {
-      var f = files[0];
-      var reader = new FileReader();
-
-      reader.onload = (function(theFile) {
-        return function(e) {
-          var data = JSON.parse(this.result);
-          self.dm_initializeFromJSON(data);
-        };
-      })(f);
-
-      reader.readAsText(f);
-    }
-    e.preventDefault();
-  },
-
-  dm_adjustPvalue: function(event) {
+  dm_adjustPvalue = (event) => {
     this.setState({ pValue: parseFloat(event.target.value) });
-  },
+  }
 
-  componentDidUpdate(prevProps, prevState) {
-    $("body").scrollspy({
-      target: ".bs-docs-sidebar",
-      offset: 50
-    });
-    $('[data-toggle="popover"]').popover();
-    $('.dropdown-toggle').dropdown();
-  },
-
-  render: function() {
-    var self = this;
+  render () {
+    const self = this;
 
     if (self.state.error_message) {
       return (
@@ -1302,14 +1232,6 @@ var SLAC = React.createClass({
     }
 
     if (self.state.analysis_results) {
-      var scrollspy_info = [
-        { label: "summary", href: "slac-summary" },
-        { label: "information", href: "datamonkey-slac-tree-summary" },
-        { label: "table", href: "slac-table" },
-        { label: "graph", href: "slac-graph" },
-        { label: "tree", href: "tree-tab" }
-      ];
-
       var trees = self.state.analysis_results ? {
         newick: self.state.analysis_results.input.trees,
         tested: self.state.analysis_results.tested
@@ -1353,10 +1275,8 @@ var SLAC = React.createClass({
 
       return (
         <div>
-          {this.props.hyphy_vision ? <NavBar onFileChange={this.onFileChange} /> : ''}
           <div className="container">
             <div className="row">
-              <ScrollSpy info={scrollspy_info} />
               <div className="col-md-12 col-lg-10">
               <div>
                 <SLACBanner
@@ -1506,16 +1426,35 @@ var SLAC = React.createClass({
     }
     return null;
   }
-});
+};
+
+function SLAC(props) {
+  return (
+    <ResultsPage
+      data={props.data} 
+      hyphy_vision={props.hyphy_vision}
+      scrollSpyInfo={[
+        { label: "summary", href: "slac-summary" },
+        { label: "information", href: "datamonkey-slac-tree-summary" },
+        { label: "table", href: "slac-table" },
+        { label: "graph", href: "slac-graph" },
+        { label: "tree", href: "tree-tab" }
+      ]}
+      methodName='Single-Likelihood Ancestor Counting'
+    >
+      {SLACContents}
+    </ResultsPage>
+  );
+}
 
 // Will need to make a call to this
 // omega distributions
-function render_slac(url, element) {
-  ReactDOM.render(<SLAC url={url} />, document.getElementById(element));
+function render_slac(data, element) {
+  ReactDOM.render(<SLAC data={data} />, document.getElementById(element));
 }
 
-function render_hv_slac(url, element) {
-  ReactDOM.render(<SLAC url={url} hyphy_vision />, document.getElementById(element));
+function render_hv_slac(data, element) {
+  ReactDOM.render(<SLAC data={data} hyphy_vision />, document.getElementById(element));
 }
 
 module.exports = render_slac;

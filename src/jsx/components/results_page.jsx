@@ -65,7 +65,6 @@ class ResultsPage extends React.Component {
   };
 
   enableBootstrapJavascript() {
-    console.log('enable');
     $("body").scrollspy({
       target: ".bs-docs-sidebar",
       offset: 50
