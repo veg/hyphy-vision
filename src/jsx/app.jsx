@@ -44,7 +44,7 @@ function HyPhyVision(props) {
         { is_electron ? <Redirect to="/" /> : null }
         <Route exact path="/" component={()=><Home />} />  
         <Route path="/absrel" component={()=><BSREL data={base_url+'/methods/absrel/data/ABSREL.json'} hyphy_vision />} /> 
-        <Route path="/busted" component={()=><BUSTED url={base_url+'/methods/busted/data/BUSTED.json'} hyphy_vision />} />
+        <Route path="/busted" component={()=><BUSTED data={base_url+'/methods/busted/data/BUSTED.json'} hyphy_vision />} />
         <Route path="/relax" component={()=><RELAX data={base_url+'/methods/relax/data/RELAX.json'} hyphy_vision />} /> 
         <Route path="/fel" component={()=><FEL url={base_url+'/methods/fel/data/FEL.json'} hyphy_vision />} />
         <Route path="/meme" component={()=><MEME url={base_url+'/methods/meme/data/MEME.json'} hyphy_vision />} />
