@@ -46,7 +46,7 @@ function HyPhyVision(props) {
         <Route path="/absrel" component={()=><BSREL data={base_url+'/methods/absrel/data/ABSREL.json'} hyphy_vision />} /> 
         <Route path="/busted" component={()=><BUSTED data={base_url+'/methods/busted/data/BUSTED.json'} hyphy_vision />} />
         <Route path="/relax" component={()=><RELAX data={base_url+'/methods/relax/data/RELAX.json'} hyphy_vision />} /> 
-        <Route path="/fel" component={()=><FEL url={base_url+'/methods/fel/data/FEL.json'} hyphy_vision />} />
+        <Route path="/fel" component={()=><FEL data={base_url+'/methods/fel/data/FEL.json'} hyphy_vision />} />
         <Route path="/meme" component={()=><MEME url={base_url+'/methods/meme/data/MEME.json'} hyphy_vision />} />
         <Route path="/slac" component={()=><SLAC data={base_url+'/methods/slac/data/SLAC.json'} hyphy_vision />} />
         <Route path="/fubar" component={()=><FUBAR url={base_url+'/methods/fubar/data/FUBAR.json'} hyphy_vision />} />
