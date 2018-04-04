@@ -280,7 +280,7 @@ class MEME extends React.Component {
         <div className="container">
           <div className="row">
             <ScrollSpy info={scrollspy_info} />
-            <div className="col-sm-10" id="results">
+            <div className="col-md-12 col-lg-10">
               <MEMESummary
                 json={self.state.data}
                 updatePValue={self.updatePValue}
@@ -342,4 +342,5 @@ function render_hv_meme(url, element) {
 
 module.exports = render_meme;
 module.exports.hv = render_hv_meme;
+module.exports.MEME = MEME;
 

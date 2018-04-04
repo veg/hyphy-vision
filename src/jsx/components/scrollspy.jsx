@@ -1,4 +1,21 @@
 var React = require("react");
+import Scrollchor from "react-scrollchor";
+import { HashLink as Link } from 'react-router-hash-link';
+
+/* 
+React-scrollchor doesn't work correctly on Windows Electron and 
+react-router-hash-link doesn't allow for offsets to account for headers.
+React-router-hash-link is therefore used for Windows-Electron and 
+react-scrollchor is used for every other platform.
+*/
+const configFile = require('../../../config.json');
+function scrollElement(href, item, configFile) {
+  if (configFile["env"] == "windows electron") {
+    return <Link to={href}>{item.label}</Link> 
+  }else{
+    return <Scrollchor animate={{duration: 20}} to={href}>{item.label}</Scrollchor>
+  }
+}; 
 
 var ScrollSpy = React.createClass({
   render: function() {
@@ -7,12 +24,12 @@ var ScrollSpy = React.createClass({
         href = "#" + item.href;
       return (
         <li className={is_active} key={item.label}>
-          <a href={href}>{item.label}</a>
+          {scrollElement(href, item, configFile)}          
         </li>
       );
     });
     return (
-      <nav className="col-sm-2 bs-docs-sidebar hidden-xs hidden-sm">
+      <nav className="col-sm-2 bs-docs-sidebar hidden-xs hidden-sm hidden-md">
         <ul className="nav nav-pills nav-stacked fixed">
           {list_items}
         </ul>

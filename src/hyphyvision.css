@@ -735,10 +735,6 @@ li.active > a:hover {
   vertical-align: sub;
 }
 
-#results {
-  margin-top: 40px;
-}
-
 .brush .extent {
   stroke: #fff;
   fill-opacity: .125;
@@ -835,7 +831,7 @@ input[type=range]:focus::-ms-fill-upper {
     background: #ccc;
 }
 
-.modal .modal-dialog { width: 800px; }
+.modal .modal-dialog { width: 850px; }
 
 .fa-bar-chart:hover {
     color: #00a99d;
@@ -851,7 +847,7 @@ input[type=range]:focus::-ms-fill-upper {
   background-color: #333;
 }
 
-#tooltip_container {
+#tree_tooltip {
   color: #fff;
   position: absolute;
   padding: 20px;
@@ -866,4 +862,6 @@ input[type=range]:focus::-ms-fill-upper {
 .hyphy-export-dropdown {
   float: left;
 }
+
+
 
