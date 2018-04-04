@@ -98,10 +98,11 @@
     "webpack-eslint-plugin": "^1.2.0"
   },
   "scripts": {
-    "lint": "eslint dist/hyphyvision.js",
+    "lint": "eslint --ext .js,.jsx --ignore-pattern public,static,dist ./src/",
     "jest": "node ./node_modules/jest-cli/bin/jest.js",
     "start": "node_modules/.bin/webpack-dev-server --open",
-    "electron": "webpack && node_modules/.bin/electron electron.js"
+    "electron": "webpack && node_modules/.bin/electron electron.js",
+    "format": "prettier 'src/**/*.{js,jsx}' --write" 
   },
   "license": "MIT",
   "files": [

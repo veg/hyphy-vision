@@ -4,7 +4,6 @@ var React = require("react");
 var _ = require("underscore");
 var d3_save_svg = require("d3-save-svg");
 
-
 var OmegaPlot = React.createClass({
   getDefaultProps: function() {
     return {
@@ -97,7 +96,8 @@ var OmegaPlot = React.createClass({
       .select("#" + this.svg_id)
       .attr("width", dimensions.width)
       .attr("height", dimensions.height);
-    this.svg.append("rect")
+    this.svg
+      .append("rect")
       .attr("width", "100%")
       .attr("height", "100%")
       .attr("fill", "white");
@@ -419,13 +419,22 @@ var OmegaPlot = React.createClass({
             <p>
               <small>
                 Test branches are shown in{" "}
-                <span style={{color: '#00a99d', 'fontWeight':'bold'}}>green</span> and reference branches
-                are shown in <span style={{color: 'black', 'fontWeight':'bold'}}>black</span>
+                <span style={{ color: "#00a99d", fontWeight: "bold" }}>
+                  green
+                </span>{" "}
+                and reference branches are shown in{" "}
+                <span style={{ color: "black", fontWeight: "bold" }}>
+                  black
+                </span>
               </small>
             </p>
             <div className="btn-group">
               <button
-                onClick={()=>{d3_save_svg.save(d3.select('#'+self.svg_id).node(), {filename: "relax-chart"});}}
+                onClick={() => {
+                  d3_save_svg.save(d3.select("#" + self.svg_id).node(), {
+                    filename: "relax-chart"
+                  });
+                }}
                 type="button"
                 className="btn btn-default btn-sm"
               >
@@ -434,7 +443,12 @@ var OmegaPlot = React.createClass({
               <button
                 type="button"
                 className="btn btn-default btn-sm"
-                onClick={()=>{saveSvgAsPng(document.getElementById(self.svg_id), "relax-chart.png");}}
+                onClick={() => {
+                  saveSvgAsPng(
+                    document.getElementById(self.svg_id),
+                    "relax-chart.png"
+                  );
+                }}
               >
                 <span className="glyphicon glyphicon-floppy-save" /> PNG
               </button>
@@ -482,7 +496,7 @@ var OmegaPlotGrid = React.createClass({
     }
 
     _.each(omega_distributions, function(item, key) {
-      item.key = key.slice(0,8).toLowerCase().replace(/ /g, "-");
+      item.key = key.slice(0, 8).toLowerCase().replace(/ /g, "-");
       item.label = key;
     });
 
@@ -510,7 +524,12 @@ var OmegaPlotGrid = React.createClass({
       };
 
       return (
-        <OmegaPlot name={model_name} omegas={omegas} settings={settings} key={omegas.key}/>
+        <OmegaPlot
+          name={model_name}
+          omegas={omegas}
+          settings={settings}
+          key={omegas.key}
+        />
       );
     });
 

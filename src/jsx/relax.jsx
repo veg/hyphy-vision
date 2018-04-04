@@ -5,135 +5,217 @@ import { ErrorMessage } from "./components/error_message.jsx";
 import { Tree } from "./components/tree.jsx";
 import { OmegaPlotGrid } from "./components/omega_plots.jsx";
 import { Header } from "./components/header.jsx";
-import {DatamonkeyTable} from "./components/tables.jsx"
+import { DatamonkeyTable } from "./components/tables.jsx";
 
 var React = require("react"),
   ReactDOM = require("react-dom"),
   _ = require("underscore");
 
 class RELAXModelTable extends React.Component {
-  constructor(props){
+  constructor(props) {
     super(props);
 
     this.state = {
-      model: "MG94xREV with separate rates for branch sets",
-    }
+      model: "MG94xREV with separate rates for branch sets"
+    };
   }
   render() {
-    if(!this.props.fits) return <div></div>;
+    if (!this.props.fits) return <div />;
     var self = this;
-    function omegaFormatter(omegaDict){
-      if (!omegaDict) return '';
-      return omegaDict.omega.toFixed(2) + ' (' + (100*omegaDict.proportion).toFixed(2) + '%)';
+    function omegaFormatter(omegaDict) {
+      if (!omegaDict) return "";
+      return (
+        omegaDict.omega.toFixed(2) +
+        " (" +
+        (100 * omegaDict.proportion).toFixed(2) +
+        "%)"
+      );
     }
-    function makeActive(model){
-      return function(){
-        this.setState({active: model});
+    function makeActive(model) {
+      return function() {
+        this.setState({ active: model });
+      };
+    }
+    function makeInactive() {
+      this.setState({ active: null });
+    }
+    var rows = _.map(
+      _.omit(this.props.fits, [
+        "Nucleotide GTR",
+        "MG94xREV with separate rates for branch sets"
+      ]),
+      (val, key) => {
+        var distributions = val["Rate Distributions"],
+          onMouseEnter = makeActive(key).bind(self),
+          onMouseLeave = makeInactive.bind(self),
+          className = key == self.state.active ? "active" : "",
+          branch_set = distributions["Shared"] ? "Shared" : "Test",
+          test_row = (
+            <tr
+              onMouseEnter={onMouseEnter}
+              onMouseLeave={onMouseLeave}
+              className={className}
+            >
+              <td>
+                {key}
+              </td>
+              <td>
+                {val["Log Likelihood"]
+                  ? val["Log Likelihood"].toFixed(1)
+                  : null}
+              </td>
+              <td>
+                {val["estimated parameters"]}
+              </td>
+              <td>
+                {val["AIC-c"].toFixed(1)}
+              </td>
+              <td>
+                {branch_set}
+              </td>
+              <td>
+                {omegaFormatter(distributions[branch_set]["0"])}
+              </td>
+              <td>
+                {omegaFormatter(distributions[branch_set]["1"])}
+              </td>
+              <td>
+                {omegaFormatter(distributions[branch_set]["2"])}
+              </td>
+            </tr>
+          );
+        if (distributions["Reference"]) {
+          var background_row = (
+            <tr
+              onMouseEnter={onMouseEnter}
+              onMouseLeave={onMouseLeave}
+              className={className}
+            >
+              <td />
+              <td />
+              <td />
+              <td />
+              <td>Reference</td>
+              <td>
+                {omegaFormatter(distributions["Reference"]["0"])}
+              </td>
+              <td>
+                {omegaFormatter(distributions["Reference"]["1"])}
+              </td>
+              <td>
+                {omegaFormatter(distributions["Reference"]["2"])}
+              </td>
+            </tr>
+          );
+          return [test_row, background_row];
+        }
+        return test_row;
       }
-    }
-    function makeInactive(){
-      this.setState({active: null});
-    }
-    var rows = _.map(_.omit(this.props.fits, ['Nucleotide GTR', 'MG94xREV with separate rates for branch sets']), (val, key) => {
-      var distributions = val['Rate Distributions'],
-        onMouseEnter = makeActive(key).bind(self),
-        onMouseLeave = makeInactive.bind(self),
-        className = key == self.state.active ? 'active' : '',
-        branch_set = distributions['Shared'] ? 'Shared' : 'Test',
-        test_row = (<tr onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave} className={className}>
-        <td>{key}</td>
-        <td>{val['Log Likelihood'] ? val['Log Likelihood'].toFixed(1) : null}</td>
-        <td>{val['estimated parameters']}</td>
-        <td>{val['AIC-c'].toFixed(1)}</td>
-        <td>{branch_set}</td>
-        <td>{omegaFormatter(distributions[branch_set]["0"])}</td>
-        <td>{omegaFormatter(distributions[branch_set]["1"])}</td>
-        <td>{omegaFormatter(distributions[branch_set]["2"])}</td>
-      </tr>);
-      if(distributions['Reference']){
-        var background_row = (<tr onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave} className={className}>
-          <td></td>
-          <td></td>
-          <td></td>
-          <td></td>
-          <td>Reference</td>
-          <td>{omegaFormatter(distributions["Reference"]["0"])}</td>
-          <td>{omegaFormatter(distributions["Reference"]["1"])}</td>
-          <td>{omegaFormatter(distributions["Reference"]["2"])}</td>
-        </tr>)
-        return [test_row, background_row];
-      }
-      return test_row;
-    });
-    return (<div>
-      <h4 className="dm-table-header">
-        Model fits
-        <span
-          className="glyphicon glyphicon-info-sign"
-          style={{ verticalAlign: "middle", float: "right", minHeight:"30px", minWidth: "30px"}}
-          aria-hidden="true"
-          data-toggle="popover"
-          data-trigger="hover"
-          title="Actions"
-          data-html="true"
-          data-content="<ul><li>Hover over a column header for a description of its content.</li></ul>"
-          data-placement="bottom"
-        />
-      </h4>
-      <table
-        className="dm-table table table-hover table-condensed list-group-item-text"
-        style={{ marginTop: "0.5em" }}
-      >
-        <thead id="summary-model-header1">
-          <tr>
-            <th>Model</th>
-            <th>
-              <span data-toggle="tooltip" title="" data-original-title="Log likelihood of model fit">
-                <em>log</em> L
-              </span>
-            </th>
-            <th>
-              <span data-toggle="tooltip" title="" data-original-title="Number of parameters">
-                #. params
-              </span>
-            </th>
-            <th>
-              <span data-toggle="tooltip" title="" data-original-title="Small-sample correct Akaike information criterion">
-                AIC<sub>c</sub>
-              </span>
-            </th>
-            <th>
-              <span data-toggle="tooltip" title="" data-original-title="Indicates which branch set each parameter belongs to">
-                Branch set
-              </span>
-            </th>
-            <th>
-              <span data-toggle="tooltip" title="" data-original-title="First omega rate class">
-                &omega;<sub>1</sub>
-              </span>
-            </th>
-            <th>
-              <span data-toggle="tooltip" title="" data-original-title="Second omega rate class">
-                &omega;<sub>2</sub>
-              </span>
-            </th>
-            <th>
-              <span data-toggle="tooltip" title="" data-original-title="Third omega rate class">
-                &omega;<sub>3</sub>
-              </span>
-            </th>
-          </tr>
-        </thead>
-        <tbody id="summary-model-table">
-          {_.flatten(rows)}
-        </tbody>
-      </table>
-    </div>);
+    );
+    return (
+      <div>
+        <h4 className="dm-table-header">
+          Model fits
+          <span
+            className="glyphicon glyphicon-info-sign"
+            style={{
+              verticalAlign: "middle",
+              float: "right",
+              minHeight: "30px",
+              minWidth: "30px"
+            }}
+            aria-hidden="true"
+            data-toggle="popover"
+            data-trigger="hover"
+            title="Actions"
+            data-html="true"
+            data-content="<ul><li>Hover over a column header for a description of its content.</li></ul>"
+            data-placement="bottom"
+          />
+        </h4>
+        <table
+          className="dm-table table table-hover table-condensed list-group-item-text"
+          style={{ marginTop: "0.5em" }}
+        >
+          <thead id="summary-model-header1">
+            <tr>
+              <th>Model</th>
+              <th>
+                <span
+                  data-toggle="tooltip"
+                  title=""
+                  data-original-title="Log likelihood of model fit"
+                >
+                  <em>log</em> L
+                </span>
+              </th>
+              <th>
+                <span
+                  data-toggle="tooltip"
+                  title=""
+                  data-original-title="Number of parameters"
+                >
+                  #. params
+                </span>
+              </th>
+              <th>
+                <span
+                  data-toggle="tooltip"
+                  title=""
+                  data-original-title="Small-sample correct Akaike information criterion"
+                >
+                  AIC<sub>c</sub>
+                </span>
+              </th>
+              <th>
+                <span
+                  data-toggle="tooltip"
+                  title=""
+                  data-original-title="Indicates which branch set each parameter belongs to"
+                >
+                  Branch set
+                </span>
+              </th>
+              <th>
+                <span
+                  data-toggle="tooltip"
+                  title=""
+                  data-original-title="First omega rate class"
+                >
+                  &omega;<sub>1</sub>
+                </span>
+              </th>
+              <th>
+                <span
+                  data-toggle="tooltip"
+                  title=""
+                  data-original-title="Second omega rate class"
+                >
+                  &omega;<sub>2</sub>
+                </span>
+              </th>
+              <th>
+                <span
+                  data-toggle="tooltip"
+                  title=""
+                  data-original-title="Third omega rate class"
+                >
+                  &omega;<sub>3</sub>
+                </span>
+              </th>
+            </tr>
+          </thead>
+          <tbody id="summary-model-table">
+            {_.flatten(rows)}
+          </tbody>
+        </table>
+      </div>
+    );
   }
 }
 
-class RELAX extends React.Component{
-  constructor(props){
+class RELAX extends React.Component {
+  constructor(props) {
     super(props);
     this.onFileChange = this.onFileChange.bind(this);
     var tree_settings = {
@@ -172,7 +254,6 @@ class RELAX extends React.Component{
       relaxation_K: "unknown",
       fits: null
     };
-
   }
 
   onFileChange(e) {
@@ -199,76 +280,91 @@ class RELAX extends React.Component{
       p = data["test results"]["p-value"],
       significant = p <= this.props.alpha_level;
 
-    delete data['fits']['MG94xREV with separate rates for branch sets'];
+    delete data["fits"]["MG94xREV with separate rates for branch sets"];
 
     data["trees"] = {
       branchLengths: _.mapObject(data.fits, (model_val, model_key) => {
-        return _.mapObject(data['branch attributes'][0], (branch_val, branch_key) => {
-          return branch_val[model_key];
-        });
+        return _.mapObject(
+          data["branch attributes"][0],
+          (branch_val, branch_key) => {
+            return branch_val[model_key];
+          }
+        );
       })
-    }
+    };
 
-    _.keys(data.fits).forEach(model=>{
-      data["fits"][model]["branch-annotations"] = this.formatBranchAnnotations(data, model);
-      data["fits"][model]["annotation-tag"] = model == "MG94xREV with separate rates for branch sets" ? "ω" : 'k';
+    _.keys(data.fits).forEach(model => {
+      data["fits"][model]["branch-annotations"] = this.formatBranchAnnotations(
+        data,
+        model
+      );
+      data["fits"][model]["annotation-tag"] =
+        model == "MG94xREV with separate rates for branch sets" ? "ω" : "k";
     });
 
-    
     // Data munge for the branch attribute table.
-        
+
     // Get branch information from JSON sources.
     var branchAttributes = data["branch attributes"][0];
     var branchTestedStatuses = data["tested"][0];
     var branchLengthsGTR = data["trees"]["branchLengths"]["Nucleotide GTR"];
     var branchAttributesCombined = {};
-    for (var key in branchAttributes){
+    for (var key in branchAttributes) {
       branchAttributesCombined[key] = {
-        "Branch name": key, 
-        "Branch partition": branchTestedStatuses[key], 
+        "Branch name": key,
+        "Branch partition": branchTestedStatuses[key],
         "Branch length": branchLengthsGTR[key]
       };
     }
     // Add "k" if it exists (i.e. the analysis was run as "all" vs. "minimal").
-    if( "k (general descriptive)" in branchAttributes[_.keys(branchAttributes)[0]]) {
-      for (var key in branchAttributesCombined){
-        branchAttributesCombined[key]["k"] = branchAttributes[key]["k (general descriptive)"]
-      };
+    if (
+      "k (general descriptive)" in branchAttributes[_.keys(branchAttributes)[0]]
+    ) {
+      for (var key in branchAttributesCombined) {
+        branchAttributesCombined[key]["k"] =
+          branchAttributes[key]["k (general descriptive)"];
+      }
     }
     // Add formatting for the numeric values.
     var branch_attribute_format = d3.format(".3r");
-    for (var key in branchAttributesCombined) {      
+    for (var key in branchAttributesCombined) {
       branchAttributesCombined[key]["Branch length"] = {
-        "value": branchAttributesCombined[key]["Branch length"], 
-        "format": branch_attribute_format
+        value: branchAttributesCombined[key]["Branch length"],
+        format: branch_attribute_format
       };
-      if( "k (general descriptive)" in branchAttributes[_.keys(branchAttributes)[0]]) {
+      if (
+        "k (general descriptive)" in
+        branchAttributes[_.keys(branchAttributes)[0]]
+      ) {
         branchAttributesCombined[key]["k"] = {
-          "value": branchAttributesCombined[key]["k"], 
-          "format": branch_attribute_format
+          value: branchAttributesCombined[key]["k"],
+          format: branch_attribute_format
         };
       }
     }
     // Create the two arrays (headers and rows).
-    var branchAttributeHeaders = _.keys(branchAttributesCombined[_.keys(branchAttributesCombined)[0]]);
+    var branchAttributeHeaders = _.keys(
+      branchAttributesCombined[_.keys(branchAttributesCombined)[0]]
+    );
     var branchAttributeRows = [];
     for (var key in branchAttributesCombined) {
       branchAttributeRows.push(_.values(branchAttributesCombined[key]));
     }
     // Add "abbr" and "sortable" to headers.
     var headerDescriptions = {
-      "Branch": "", 
-      "k": "Branch specific relaxation parameter", 
-      "Branch length": "Nucleotide GTR Branch Length", 
+      Branch: "",
+      k: "Branch specific relaxation parameter",
+      "Branch length": "Nucleotide GTR Branch Length",
       "Branch partition": "Reference, Test or Not Tested"
     };
     for (var i = 0; i < branchAttributeHeaders.length; i++) {
       branchAttributeHeaders[i] = {
-        "abbr": headerDescriptions[branchAttributeHeaders[i]], 
-        "sortable": true, "value": branchAttributeHeaders[i]
-      };      
+        abbr: headerDescriptions[branchAttributeHeaders[i]],
+        sortable: true,
+        value: branchAttributeHeaders[i]
+      };
     }
-            
+
     this.setState({
       json: data,
       direction: k > 1 ? "intensification" : "relaxation",
@@ -279,13 +375,13 @@ class RELAX extends React.Component{
       fits: data["fits"],
       significant: significant,
       branchAttributeHeaders: branchAttributeHeaders,
-      branchAttributeRows: branchAttributeRows      
+      branchAttributeRows: branchAttributeRows
     });
   }
 
-  componentDidMount(){
+  componentDidMount() {
     var self = this;
-    d3.json(this.props.url, function(data){
+    d3.json(this.props.url, function(data) {
       self.processData(data);
     });
   }
@@ -301,26 +397,34 @@ class RELAX extends React.Component{
       offset: 50
     });
     $('[data-toggle="popover"]').popover();
-    $(function () {
-      $('[data-toggle="tooltip"]').tooltip()
+    $(function() {
+      $('[data-toggle="tooltip"]').tooltip();
     });
-    $('.dropdown-toggle').dropdown();
+    $(".dropdown-toggle").dropdown();
   }
 
   formatBranchAnnotations(json, model) {
-    if(model == 'MG94xREV with separate rates for branch sets') {
-      var initial_branch_annotations = _.mapObject(json.fits[model]['Rate Distributions'], (val, key) => {
-        return _.values(val).map(d=>[d.omega, d.proportion]);
+    if (model == "MG94xREV with separate rates for branch sets") {
+      var initial_branch_annotations = _.mapObject(
+        json.fits[model]["Rate Distributions"],
+        (val, key) => {
+          return _.values(val).map(d => [d.omega, d.proportion]);
+        }
+      );
+    } else if (model == "General descriptive") {
+      var initial_branch_annotations = _.mapObject(
+        json["branch attributes"][0],
+        val => val["k (general descriptive)"]
+      );
+    } else if (model == "RELAX alternative") {
+      var initial_branch_annotations = _.mapObject(json["tested"][0], val => {
+        return val == "Reference"
+          ? 1
+          : json["test results"]["relaxation or intensification parameter"];
       });
-    } else if(model == 'General descriptive') {
-      var initial_branch_annotations = _.mapObject(json['branch attributes'][0], val=>val['k (general descriptive)']);
-    } else if(model == 'RELAX alternative') {
-      var initial_branch_annotations = _.mapObject(json['tested'][0], val => {
-        return val == "Reference" ? 1 : json["test results"]["relaxation or intensification parameter"];
-      });
-    } else if(model == 'RELAX null') {
-      var initial_branch_annotations = _.mapObject(json.tested[0], val=>1);
-    } else if(model == 'RELAX partitioned descriptive') {
+    } else if (model == "RELAX null") {
+      var initial_branch_annotations = _.mapObject(json.tested[0], val => 1);
+    } else if (model == "RELAX partitioned descriptive") {
       return null;
     } else {
       return null;
@@ -337,69 +441,66 @@ class RELAX extends React.Component{
     return branch_annotations;
   }
 
-  getSummary(){
-    if(!this.state.json) return <div></div>;
+  getSummary() {
+    if (!this.state.json) return <div />;
     return (
       <div className="row">
-      <div className="clearance" id="summary-tab"></div>
-      <div className="col-md-12">
-        <h3 className="list-group-item-heading">
-          <span id="summary-method-name">
-            RELAX(ed selection test)
-          </span>
-          <br />
-          <span className="results-summary">results summary</span>
-        </h3>
-      </div>
-      <div className="col-md-12">
-        <InputInfo input_data={this.state.json.input} json={this.state.json} hyphy_vision={this.props.hyphy_vision}/>
-      </div>
-      <div className="col-md-12">
-        <div className="main-result">
-          <p>
-            Test for selection{" "}
-            <strong id="summary-direction">
-              {this.state.direction}
-            </strong>{" "}
-
-            (K ={" "}
-            <strong id="summary-K">{this.state.summary_k}</strong>) was{" "}
-            <strong id="summary-evidence" className={this.state.significant ? 'hyphy-highlight' : ''}>
-              {this.state.evidence}
-            </strong>{" "}
-
-            (p = <strong id="summary-pvalue">
-              {this.state.p}
-            </strong>,{" "}
-            LR ={" "}
-            <strong id="summary-LRT">{this.state.lrt}</strong>).
-          </p>
-          <hr />
-          <p>
-            <small>
-              See{" "}
-              <a href="http://hyphy.org/methods/selection-methods/#relax">
-                here
-              </a>{" "}
-              for more information about this method.
-              <br />Please cite{" "}
-              <a
-                href="http://www.ncbi.nlm.nih.gov/pubmed/25540451"
-                id="summary-pmid"
-                target="_blank"
+        <div className="clearance" id="summary-tab" />
+        <div className="col-md-12">
+          <h3 className="list-group-item-heading">
+            <span id="summary-method-name">RELAX(ed selection test)</span>
+            <br />
+            <span className="results-summary">results summary</span>
+          </h3>
+        </div>
+        <div className="col-md-12">
+          <InputInfo
+            input_data={this.state.json.input}
+            json={this.state.json}
+            hyphy_vision={this.props.hyphy_vision}
+          />
+        </div>
+        <div className="col-md-12">
+          <div className="main-result">
+            <p>
+              Test for selection{" "}
+              <strong id="summary-direction">{this.state.direction}</strong> (K
+              = <strong id="summary-K">{this.state.summary_k}</strong>) was{" "}
+              <strong
+                id="summary-evidence"
+                className={this.state.significant ? "hyphy-highlight" : ""}
               >
-                PMID 123456789
-              </a>{" "}
-              if you use this result in a publication, presentation, or other
-              scientific work.
-            </small>
-          </p>
+                {this.state.evidence}
+              </strong>{" "}
+              (p = <strong id="summary-pvalue">{this.state.p}</strong>, LR ={" "}
+              <strong id="summary-LRT">{this.state.lrt}</strong>).
+            </p>
+            <hr />
+            <p>
+              <small>
+                See{" "}
+                <a href="http://hyphy.org/methods/selection-methods/#relax">
+                  here
+                </a>{" "}
+                for more information about this method.
+                <br />Please cite{" "}
+                <a
+                  href="http://www.ncbi.nlm.nih.gov/pubmed/25540451"
+                  id="summary-pmid"
+                  target="_blank"
+                >
+                  PMID 123456789
+                </a>{" "}
+                if you use this result in a publication, presentation, or other
+                scientific work.
+              </small>
+            </p>
+          </div>
         </div>
       </div>
-
-    </div>);
+    );
   }
-  render(){
+  render() {
     var self = this,
       scrollspy_info = [
         { label: "summary", href: "summary-tab" },
@@ -408,52 +509,72 @@ class RELAX extends React.Component{
       ];
 
     var models = {},
-      partition = {'Reference': {}, 'Test': {}, 'Unclassified': {}};
+      partition = { Reference: {}, Test: {}, Unclassified: {} };
     if (!_.isNull(self.state.json)) {
-      models = self.state.json.fits,
-      _.each(self.state.json.tested[0], (val, key) => {
-        partition[val][key] = 1;
-      });
-      if(_.size(partition['Unclassified']) == 0){
-        delete partition['Unclassified'];
+      (models = self.state.json.fits), _.each(
+        self.state.json.tested[0],
+        (val, key) => {
+          partition[val][key] = 1;
+        }
+      );
+      if (_.size(partition["Unclassified"]) == 0) {
+        delete partition["Unclassified"];
       }
     }
-    return (<div>
-      {self.props.hyphy_vision ? <NavBar onFileChange={this.onFileChange} /> : ''}
-      <div className="container">
-        <div className="row">
-          <ScrollSpy info={scrollspy_info} />
-          <div className="col-md-12 col-lg-10">
-            <ErrorMessage />
-            {self.getSummary()}
+    return (
+      <div>
+        {self.props.hyphy_vision
+          ? <NavBar onFileChange={this.onFileChange} />
+          : ""}
+        <div className="container">
+          <div className="row">
+            <ScrollSpy info={scrollspy_info} />
+            <div className="col-md-12 col-lg-10">
+              <ErrorMessage />
+              {self.getSummary()}
 
-            <div id="fits-tab" className="row">
-              <div className="col-md-12">
-                <RELAXModelTable fits={self.state.fits} />
+              <div id="fits-tab" className="row">
+                <div className="col-md-12">
+                  <RELAXModelTable fits={self.state.fits} />
+                </div>
               </div>
-            </div>
 
-            <div id="omega-tab" className="row">
-              <div className="col-md-12">
-                <Header title="Omega plots" popover="<p>Shows the different omega rate distributions under the null and alternative models.</p>"/>
-                <OmegaPlotGrid json={self.state.json} />
+              <div id="omega-tab" className="row">
+                <div className="col-md-12">
+                  <Header
+                    title="Omega plots"
+                    popover="<p>Shows the different omega rate distributions under the null and alternative models.</p>"
+                  />
+                  <OmegaPlotGrid json={self.state.json} />
+                </div>
               </div>
-            </div>
 
-            <div id="tree-tab" className="row">
-              <Tree
-                json={self.state.json}
-                settings={self.state.settings}
-                models={models}
-                partition={partition}
-                color_gradient={["#000000", "#888888", "#DFDFDF", "#77CCC6", "#00a99d"]}
-                grayscale_gradient={["#DDDDDD", "#AAAAAA", "#888888", "#444444", "#000000"]}
-                method='relax'
-              />
-            </div>
+              <div id="tree-tab" className="row">
+                <Tree
+                  json={self.state.json}
+                  settings={self.state.settings}
+                  models={models}
+                  partition={partition}
+                  color_gradient={[
+                    "#000000",
+                    "#888888",
+                    "#DFDFDF",
+                    "#77CCC6",
+                    "#00a99d"
+                  ]}
+                  grayscale_gradient={[
+                    "#DDDDDD",
+                    "#AAAAAA",
+                    "#888888",
+                    "#444444",
+                    "#000000"
+                  ]}
+                  method="relax"
+                />
+              </div>
 
-            <div id="branch-attribute-table" className="col-md-12">
-              <Header title="Branch attributes"></Header>
+              <div id="branch-attribute-table" className="col-md-12">
+                <Header title="Branch attributes" />
                 <DatamonkeyTable
                   headerData={self.state.branchAttributeHeaders}
                   bodyData={self.state.branchAttributeRows}
@@ -462,11 +583,11 @@ class RELAX extends React.Component{
                   export_csv
                 />
               </div>
-
             </div>
           </div>
         </div>
-    </div>);
+      </div>
+    );
   }
 }
 
@@ -501,8 +622,6 @@ RELAX.defaultProps = {
   alpha_level: 0.05
 };
 
-
-
 // Will need to make a call to this
 // omega distributions
 function render_relax(url, element) {
@@ -510,7 +629,10 @@ function render_relax(url, element) {
 }
 
 function render_hv_relax(url, element) {
-  ReactDOM.render(<RELAX url={url} hyphy_vision />, document.getElementById(element));
+  ReactDOM.render(
+    <RELAX url={url} hyphy_vision />,
+    document.getElementById(element)
+  );
 }
 
 module.exports = render_relax;

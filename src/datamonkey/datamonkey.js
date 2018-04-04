@@ -18,7 +18,6 @@ datamonkey.errorModal = function(msg) {
 };
 
 function b64toBlob(b64, onsuccess, onerror) {
-
   var img = new Image();
 
   img.onerror = onerror;
@@ -37,7 +36,6 @@ function b64toBlob(b64, onsuccess, onerror) {
   };
 
   img.src = b64;
-
 }
 
 datamonkey.export_csv_button = function(data) {
@@ -203,9 +201,8 @@ $(document).ready(function() {
   $("#collapse_nav_bar").on("click", function(e) {
     $("#datamonkey-header").collapse("toggle");
     $(this).find("i").toggleClass("fa-times-circle fa-eye");
-    var new_padding = $("body").css("padding-top") == initial_padding
-      ? "5px"
-      : initial_padding;
+    var new_padding =
+      $("body").css("padding-top") == initial_padding ? "5px" : initial_padding;
     d3.select("body").transition().style("padding-top", new_padding);
   });
 });

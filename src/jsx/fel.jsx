@@ -11,10 +11,8 @@ import { ScrollSpy } from "./components/scrollspy.jsx";
 import { MethodHeader } from "./components/methodheader.jsx";
 import { MainResult } from "./components/mainresult.jsx";
 
-
 var FEL = React.createClass({
   definePlotData: function(x_label, y_label) {
-
     var x = _.map(this.state.mle_results, function(d) {
       return d[x_label];
     });
@@ -44,7 +42,6 @@ var FEL = React.createClass({
   },
 
   updatePvalThreshold: function(e) {
-
     // Get number of positively and negatively selected sites by p-value threshold
     var pvalue_threshold = parseFloat(e.target.value);
 
@@ -76,7 +73,7 @@ var FEL = React.createClass({
       }
       return _.map(_.values(d), function(g) {
         return { value: g, classes: classes };
-      }).slice(0,8);
+      }).slice(0, 8);
     });
 
     this.setState({
@@ -109,15 +106,15 @@ var FEL = React.createClass({
 
   formatBranchAnnotations: function(json) {
     // attach is_foreground to branch annotations
-    var branch_annotations = d3.range(json.trees.length).map(i=>{
-      return _.mapObject(json['tested'][i], (val, key)=>{
-        return {is_foreground: val == 'test'};
+    var branch_annotations = d3.range(json.trees.length).map(i => {
+      return _.mapObject(json["tested"][i], (val, key) => {
+        return { is_foreground: val == "test" };
       });
     });
     return branch_annotations;
   },
 
-  processData: function(data){
+  processData: function(data) {
     var mle = data["MLE"];
 
     // These variables are to be used for DatamonkeyTable
@@ -136,16 +133,19 @@ var FEL = React.createClass({
       });
     });
 
-
     // add a partition entry to both headers and content
     mle_headers = [
-      { value: "Partition", sortable: true, abbr: "Partition that site belongs to" }
+      {
+        value: "Partition",
+        sortable: true,
+        abbr: "Partition that site belongs to"
+      }
     ].concat(mle_headers);
 
-    var partition_column = d3.range(mle_content.length).map(d=>0);
-    _.each(data['data partitions'], (val, key)=>{
-      val.coverage[0].forEach(d=>{
-        partition_column[d] = +key+1;
+    var partition_column = d3.range(mle_content.length).map(d => 0);
+    _.each(data["data partitions"], (val, key) => {
+      val.coverage[0].forEach(d => {
+        partition_column[d] = +key + 1;
       });
     });
 
@@ -203,25 +203,31 @@ var FEL = React.createClass({
       }).slice(0, 8);
     });
 
-    data['trees'] = _.map(data['input']['trees'], (val, key) => {
+    data["trees"] = _.map(data["input"]["trees"], (val, key) => {
       var branchLengths = {
-        'Global MG94xREV': _.mapObject(data['branch attributes'][key], val1 => val1['Global MG94xREV']),
-        'Nucleotide GTR': _.mapObject(data['branch attributes'][key], val1 => val1['Nucleotide GTR'])
+        "Global MG94xREV": _.mapObject(
+          data["branch attributes"][key],
+          val1 => val1["Global MG94xREV"]
+        ),
+        "Nucleotide GTR": _.mapObject(
+          data["branch attributes"][key],
+          val1 => val1["Nucleotide GTR"]
+        )
       };
-      return {newickString: val, branchLengths: branchLengths};
+      return { newickString: val, branchLengths: branchLengths };
     });
 
     data["fits"]["Global MG94xREV"][
       "branch-annotations"
     ] = this.formatBranchAnnotations(data);
-    if(data["fits"]["Nucleotide GTR"]) {
+    if (data["fits"]["Nucleotide GTR"]) {
       data["fits"]["Nucleotide GTR"][
         "branch-annotations"
       ] = this.formatBranchAnnotations(data);
     }
 
-    if(data["fits"]["Nucleotide GTR"]){
-      data["fits"]["Nucleotide GTR"]["Rate Distributions"] = {};      
+    if (data["fits"]["Nucleotide GTR"]) {
+      data["fits"]["Nucleotide GTR"]["Rate Distributions"] = {};
     }
 
     this.setState({
@@ -234,12 +240,11 @@ var FEL = React.createClass({
       fits: data.fits,
       data: data
     });
-
   },
 
   loadFromServer: function() {
     var self = this;
-    d3.json(this.props.url, (data) => {
+    d3.json(this.props.url, data => {
       self.processData(data);
     });
   },
@@ -265,69 +270,70 @@ var FEL = React.createClass({
 
   getSummaryForClipboard() {
     var no_selected =
-          this.state.mle_content.length -
-          this.state.positively_selected.length -
-          this.state.negatively_selected.length;
-    var summary_text = "FEL found evidence of pervasive positive/diversifying selection at " +
+      this.state.mle_content.length -
+      this.state.positively_selected.length -
+      this.state.negatively_selected.length;
+    var summary_text =
+      "FEL found evidence of pervasive positive/diversifying selection at " +
       this.state.positively_selected.length +
       " sites in your alignment. In addition, FEL found evidence with p-value " +
       this.state.pvalue_threshold +
       " of pervasive negative/purifying selection at " +
       this.state.negatively_selected.length +
-      " sites in your alignment. FEL did not find evidence for either positive or negative selection in the remaining " + 
+      " sites in your alignment. FEL did not find evidence for either positive or negative selection in the remaining " +
       no_selected +
       " sites in your alignment.";
-   return summary_text;
+    return summary_text;
   },
 
   getSummaryForRendering() {
     return (
+      <p>
         <p>
-          <p>
-            FEL <strong className="hyphy-highlight">
-              {" "}found evidence
-            </strong>{" "}
-            of
-          </p>
-          <p>
-            <i className="fa fa-plus-circle" aria-hidden="true">
-              {" "}
-            </i>{" "}
-            pervasive positive/diversifying selection at
-            <span className="hyphy-highlight">
-              {" "}{this.state.positively_selected.length}{" "}
-            </span>
-            sites
-          </p>
-          <p>
-            <i className="fa fa-minus-circle" aria-hidden="true">
-              {" "}
-            </i>{" "}
-            pervasive negative/purifying selection at
-            <span className="hyphy-highlight">
-              {" "}{this.state.negatively_selected.length}{" "}
-            </span>
-            sites
-          </p>
-          <p>
-            with p-value threshold of
-            <input
-              style={{display: "inline-block", marginLeft: "5px", width: "100px"}}
-              className="form-control"
-              type="number"
-              defaultValue="0.1"
-              step="0.01"
-              min="0"
-              max="1"
-              onChange={this.updatePvalThreshold}
-            />.
-          </p>
+          FEL <strong className="hyphy-highlight"> found evidence</strong> of
         </p>
+        <p>
+          <i className="fa fa-plus-circle" aria-hidden="true">
+            {" "}
+          </i>{" "}
+          pervasive positive/diversifying selection at
+          <span className="hyphy-highlight">
+            {" "}{this.state.positively_selected.length}{" "}
+          </span>
+          sites
+        </p>
+        <p>
+          <i className="fa fa-minus-circle" aria-hidden="true">
+            {" "}
+          </i>{" "}
+          pervasive negative/purifying selection at
+          <span className="hyphy-highlight">
+            {" "}{this.state.negatively_selected.length}{" "}
+          </span>
+          sites
+        </p>
+        <p>
+          with p-value threshold of
+          <input
+            style={{
+              display: "inline-block",
+              marginLeft: "5px",
+              width: "100px"
+            }}
+            className="form-control"
+            type="number"
+            defaultValue="0.1"
+            step="0.01"
+            min="0"
+            max="1"
+            onChange={this.updatePvalThreshold}
+          />.
+        </p>
+      </p>
     );
-  },     
+  },
 
   getSummary() {
-
     return (
       <div>
         <div className="main-result">
@@ -361,7 +367,11 @@ var FEL = React.createClass({
             <p>
               with p-value threshold of
               <input
-                style={{display: "inline-block", marginLeft: "5px", width: "100px"}}
+                style={{
+                  display: "inline-block",
+                  marginLeft: "5px",
+                  width: "100px"
+                }}
                 className="form-control"
                 type="number"
                 defaultValue="0.1"
@@ -401,11 +411,10 @@ var FEL = React.createClass({
       offset: 50
     });
     $('[data-toggle="popover"]').popover();
-    $('.dropdown-toggle').dropdown();
+    $(".dropdown-toggle").dropdown();
   },
 
   render: function() {
-
     var scrollspy_info = [
       { label: "summary", href: "summary-tab" },
       { label: "table", href: "table-tab" },
@@ -420,10 +429,16 @@ var FEL = React.createClass({
     );
 
     var x_options = "Site";
-    var y_options = ['alpha', 'beta', 'alpha=beta', 'LRT', 'p-value', 'Total branch length']; 
+    var y_options = [
+      "alpha",
+      "beta",
+      "alpha=beta",
+      "LRT",
+      "p-value",
+      "Total branch length"
+    ];
 
     var edgeColorizer = function(element, data, foreground_color) {
-
       var is_foreground = data.target.annotations.is_foreground,
         color_fill = foreground_color(0);
 
@@ -435,23 +450,23 @@ var FEL = React.createClass({
     };
 
     var tree_settings = {
-          omegaPlot: {},
-          "tree-options": {
-            /* value arrays have the following meaning
+      omegaPlot: {},
+      "tree-options": {
+        /* value arrays have the following meaning
                     [0] - the value of the attribute
                     [1] - does the change in attribute value trigger tree re-layout?
                 */
-            "hyphy-tree-model": ["Unconstrained model", true],
-            "hyphy-tree-highlight": ["RELAX.test", false],
-            "hyphy-tree-branch-lengths": [false, true],
-            "hyphy-tree-hide-legend": [true, false],
-            "hyphy-tree-fill-color": [true, false]
-          },
-          "hyphy-tree-legend-type": "discrete",
-          "suppress-tree-render": false,
-          "chart-append-html": true,
-          edgeColorizer: edgeColorizer
-        };
+        "hyphy-tree-model": ["Unconstrained model", true],
+        "hyphy-tree-highlight": ["RELAX.test", false],
+        "hyphy-tree-branch-lengths": [false, true],
+        "hyphy-tree-hide-legend": [true, false],
+        "hyphy-tree-fill-color": [true, false]
+      },
+      "hyphy-tree-legend-type": "discrete",
+      "suppress-tree-render": false,
+      "chart-append-html": true,
+      edgeColorizer: edgeColorizer
+    };
 
     var models = {};
     if (this.state.data) {
@@ -460,7 +475,9 @@ var FEL = React.createClass({
 
     return (
       <div>
-        {this.props.hyphy_vision ? <NavBar onFileChange={this.onFileChange} /> : ''}
+        {this.props.hyphy_vision
+          ? <NavBar onFileChange={this.onFileChange} />
+          : ""}
         <div className="container">
           <div className="row">
             <ScrollSpy info={scrollspy_info} />
@@ -483,24 +500,27 @@ var FEL = React.createClass({
                 <strong>Error!</strong> <span id="datamonkey-fel-error-text" />
               </div>
 
-              <div id="summary-tab"></div>
+              <div id="summary-tab" />
               <div id="results">
-               <MethodHeader
-                    methodName="Fixed Effects Likelihood"
-                    input_data={this.state.input}
-                    json={this.state.data}
-                    hyphy_vision={this.props.hyphy_vision}
-                  />
+                <MethodHeader
+                  methodName="Fixed Effects Likelihood"
+                  input_data={this.state.input}
+                  json={this.state.data}
+                  hyphy_vision={this.props.hyphy_vision}
+                />
                 <MainResult
                   summary_for_clipboard={this.getSummaryForClipboard()}
-                  summary_for_rendering={this.getSummaryForRendering()}                    
+                  summary_for_rendering={this.getSummaryForRendering()}
                   method_ref="http://hyphy.org/methods/selection-methods/#fel"
                   citation_ref="//www.ncbi.nlm.nih.gov/pubmed/15703242"
                   citation_number="PMID 15703242"
                 />
                 <div id="table-tab" className="row hyphy-row">
                   <div id="hyphy-mle-fits" className="col-md-12">
-                    <Header title='FEL Table' popover='<p>Hover over a column header for a description of its content.</p>' />
+                    <Header
+                      title="FEL Table"
+                      popover="<p>Hover over a column header for a description of its content.</p>"
+                    />
                     <div className="col-md-6 alert positive-selection-row">
                       Positively selected sites with evidence are highlighted in
                       green.
@@ -547,27 +567,25 @@ var FEL = React.createClass({
                       models={models}
                       json={this.state.data}
                       settings={tree_settings}
-                      method={'fel'}
+                      method={"fel"}
                       color_gradient={["#00a99d", "#000000"]}
-                      grayscale_gradient={["#444444","#000000"]}
+                      grayscale_gradient={["#444444", "#000000"]}
                       multitree
                     />
                   </div>
                 </div>
 
-              <div className="row">
-                <div className="col-md-12" id="fits-tab">
-                  <DatamonkeyModelTable fits={this.state.fits} />
-                  <p className="description">
-                    This table reports a statistical summary of the models fit
-                    to the data. Here, <strong>MG94</strong> refers to the
-                    MG94xREV baseline model that infers a single &omega; rate
-                    category per branch.
-                  </p>
+                <div className="row">
+                  <div className="col-md-12" id="fits-tab">
+                    <DatamonkeyModelTable fits={this.state.fits} />
+                    <p className="description">
+                      This table reports a statistical summary of the models fit
+                      to the data. Here, <strong>MG94</strong> refers to the
+                      MG94xREV baseline model that infers a single &omega; rate
+                      category per branch.
+                    </p>
+                  </div>
                 </div>
-              </div>
-
-
               </div>
             </div>
           </div>
@@ -575,7 +593,6 @@ var FEL = React.createClass({
       </div>
     );
   }
-
 });
 
 // Will need to make a call to this
@@ -585,10 +602,12 @@ function render_fel(url, element) {
 }
 
 function render_hv_fel(url, element) {
-  ReactDOM.render(<FEL url={url} hyphy_vision />, document.getElementById(element));
+  ReactDOM.render(
+    <FEL url={url} hyphy_vision />,
+    document.getElementById(element)
+  );
 }
 
 module.exports = render_fel;
 module.exports.hv = render_hv_fel;
 module.exports.FEL = FEL;
-
