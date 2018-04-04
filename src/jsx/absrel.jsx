@@ -300,6 +300,10 @@ class BSRELContents extends React.Component{
     this.setEvents();
   };
 
+  componentWillReceiveProps(nextProps) {
+    this.processData(nextProps.json);
+  }
+
   processData = (data) => {
     var test_results = _.mapObject(data['branch attributes']['0'], (val, key) => {
       var tested = val.LRT != null;
@@ -385,25 +389,6 @@ class BSRELContents extends React.Component{
       };
     });
     return branch_annotations;
-  };
-
-  onFileChange(e) {
-    var self = this;
-    var files = e.target.files; // FileList object
-
-    if (files.length == 1) {
-      var f = files[0];
-      var reader = new FileReader();
-
-      reader.onload = (function(theFile) {
-        return function(e) {
-          var data = JSON.parse(this.result);
-          self.processData(data);
-        };
-      })(f);
-      reader.readAsText(f);
-    }
-    e.preventDefault();
   };
 
   render() {

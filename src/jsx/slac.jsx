@@ -1157,7 +1157,7 @@ class SLACContents extends React.Component {
     }
   }
   
-  componentWillMount = () => {
+  componentDidMount = () => {
     this.dm_initializeFromJSON(this.props.json);
   }
 
