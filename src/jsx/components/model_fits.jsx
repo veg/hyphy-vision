@@ -16,11 +16,11 @@ var ModelFits = React.createClass({
       seconds = parseFloat(seconds);
 
     var split_array = [
-      Math.floor(seconds / (24 * 3600)),
-      Math.floor(seconds / 3600) % 24,
-      Math.floor(seconds / 60) % 60,
-      seconds % 60
-    ],
+        Math.floor(seconds / (24 * 3600)),
+        Math.floor(seconds / 3600) % 24,
+        Math.floor(seconds / 60) % 60,
+        seconds % 60
+      ],
       quals = ["d.", "hrs.", "min.", "sec."];
 
     split_array.forEach(function(d, i) {
@@ -246,7 +246,12 @@ var ModelFits = React.createClass({
           Model fits
           <span
             className="glyphicon glyphicon-info-sign"
-            style={{ verticalAlign: "middle", float: "right", minHeight:"30px", minWidth: "30px"}}
+            style={{
+              verticalAlign: "middle",
+              float: "right",
+              minHeight: "30px",
+              minWidth: "30px"
+            }}
             aria-hidden="true"
             data-toggle="popover"
             data-trigger="hover"

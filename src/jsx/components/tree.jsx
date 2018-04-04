@@ -80,10 +80,10 @@ var Tree = React.createClass({
       .clamp(true);
 
     var omega_scale = d3.scale
-      .pow()
-      .exponent(self.props.scaling_exponent)
-      .domain(d3.extent(omega_color.domain()))
-      .range([0, 1]),
+        .pow()
+        .exponent(self.props.scaling_exponent)
+        .domain(d3.extent(omega_color.domain()))
+        .range([0, 1]),
       axis_scale = d3.scale
         .pow()
         .exponent(self.props.scaling_exponent)
@@ -104,7 +104,7 @@ var Tree = React.createClass({
       slac: "Global MG94xREV",
       fubar: "Nucleotide GTR"
     };
-    var show_legend = ['meme', 'fubar', 'gard'].indexOf(self.props.method) < 0;
+    var show_legend = ["meme", "fubar", "gard"].indexOf(self.props.method) < 0;
 
     return {
       json: this.props.json,
@@ -115,7 +115,7 @@ var Tree = React.createClass({
       show_legend: show_legend,
       axis_scale: axis_scale,
       selected_model: this.selected_models[this.props.method],
-      partition: 'None',
+      partition: "None",
       current: 0
     };
   },
@@ -146,19 +146,30 @@ var Tree = React.createClass({
     }
 
     var branch_lengths;
-    if(self.props.method == 'absrel' || self.props.method == 'relax'){
-      branch_lengths = self.props.json.trees.branchLengths[self.state.selected_model];
-    } else if(['busted', 'meme', 'fel', 'slac', 'fubar'].indexOf(self.props.method) > -1){
-      branch_lengths = self.props.json.trees[self.state.current].branchLengths[self.state.selected_model];
-    } 
+    if (self.props.method == "absrel" || self.props.method == "relax") {
+      branch_lengths =
+        self.props.json.trees.branchLengths[self.state.selected_model];
+    } else if (
+      ["busted", "meme", "fel", "slac", "fubar"].indexOf(self.props.method) > -1
+    ) {
+      branch_lengths =
+        self.props.json.trees[self.state.current].branchLengths[
+          self.state.selected_model
+        ];
+    }
     return branch_lengths;
   },
 
   assignBranchAnnotations: function() {
-    if (this.props.models[this.state.selected_model] && this.props.models[this.state.selected_model]['branch-annotations']) {
-      var attributes = this.props.multitree ? 
-        this.props.models[this.state.selected_model]["branch-annotations"][this.state.current] :
-        this.props.models[this.state.selected_model]["branch-annotations"];
+    if (
+      this.props.models[this.state.selected_model] &&
+      this.props.models[this.state.selected_model]["branch-annotations"]
+    ) {
+      var attributes = this.props.multitree
+        ? this.props.models[this.state.selected_model]["branch-annotations"][
+            this.state.current
+          ]
+        : this.props.models[this.state.selected_model]["branch-annotations"];
       this.tree.assign_attributes(attributes);
     }
   },
@@ -335,7 +346,6 @@ var Tree = React.createClass({
     $(".tree-tab-btn").on("click", function(e) {
       self.tree.placenodes().update();
     });
-
   },
 
   setTreeHandlers: function() {
@@ -343,9 +353,10 @@ var Tree = React.createClass({
     var tree_object = self.tree;
 
     $("[data-direction]").on("click", function(e) {
-      var which_function = $(this).data("direction") == "vertical"
-        ? tree_object.spacing_x
-        : tree_object.spacing_y;
+      var which_function =
+        $(this).data("direction") == "vertical"
+          ? tree_object.spacing_x
+          : tree_object.spacing_y;
       which_function(which_function() + +$(this).data("amount")).update();
     });
 
@@ -361,7 +372,7 @@ var Tree = React.createClass({
       if ($(this).is(":checked")) {
         tree_object.align_tips($(this).data("align") == "right");
         tree_object.placenodes().update();
-        d3.selectAll('.branch-tracer').style('opacity', 1);
+        d3.selectAll(".branch-tracer").style("opacity", 1);
       }
     });
 
@@ -397,27 +408,36 @@ var Tree = React.createClass({
       menu = [];
 
     // Enable display of multiple trees
-    if(self.props.multitree && self.props.json){
-      menu = menu.concat(<li className="dropdown-header">Partitions</li>)
-      var partition_list = _.range(self.props.json.trees.length).map((d,i)=>(<li style={{backgroundColor: d==self.state.current ? 'lightGrey' : 'white'}}>
-        <a
-          href="javascript:;"
-          onClick={()=>this.setState({current: i})}
+    if (self.props.multitree && self.props.json) {
+      menu = menu.concat(<li className="dropdown-header">Partitions</li>);
+      var partition_list = _.range(self.props.json.trees.length).map((d, i) =>
+        <li
+          style={{
+            backgroundColor: d == self.state.current ? "lightGrey" : "white"
+          }}
         >
-          {i+1}
-        </a>
-      </li>));
+          <a href="javascript:;" onClick={() => this.setState({ current: i })}>
+            {i + 1}
+          </a>
+        </li>
+      );
       menu = menu.concat(partition_list);
-    } 
+    }
 
     // Multiple models
     if (_.keys(self.props.models).length > 0) {
-      if(self.props.multitree && self.props.json){
-        menu = menu.concat(<li role="separator" className="divider"></li>);
+      if (self.props.multitree && self.props.json) {
+        menu = menu.concat(<li role="separator" className="divider" />);
       }
-      menu = menu.concat(<li className="dropdown-header">Models</li>)
+      menu = menu.concat(<li className="dropdown-header">Models</li>);
 
-      var model_list = _.map(this.props.models, (d, model_type) => (<li style={{backgroundColor: model_type==self.state.selected_model ? 'lightGrey' : 'white'}}>
+      var model_list = _.map(this.props.models, (d, model_type) =>
+        <li
+          style={{
+            backgroundColor:
+              model_type == self.state.selected_model ? "lightGrey" : "white"
+          }}
+        >
           <a
             href="javascript:;"
             data-type={model_type}
@@ -425,26 +445,45 @@ var Tree = React.createClass({
           >
             {model_type}
           </a>
-        </li>));
+        </li>
+      );
       menu = menu.concat(model_list);
     }
 
     // Branch partitions
-    if(!_.isEmpty(this.props.partition)){
+    if (!_.isEmpty(this.props.partition)) {
       var partitionList = [
-        <li role="separator" className="divider"></li>,
+        <li role="separator" className="divider" />,
         <li className="dropdown-header">Branch partition</li>,
-        (<li style={{backgroundColor: self.state.partition == 'None' ? 'lightGrey' : 'white'}}>
-          <a href="javascript:;" onClick={ ()=>this.setState({partition: 'None'}) }>None</a>
-        </li>)
-      ].concat(_.keys(this.props.partition).map(key=>(<li style={{backgroundColor: self.state.partition == key ? 'lightGrey' : 'white'}}>
-        <a
-          href="javascript:;"
-          onClick={ ()=>this.setState({partition: key}) }
+        <li
+          style={{
+            backgroundColor:
+              self.state.partition == "None" ? "lightGrey" : "white"
+          }}
         >
-        {key}
-        </a>
-      </li>))
+          <a
+            href="javascript:;"
+            onClick={() => this.setState({ partition: "None" })}
+          >
+            None
+          </a>
+        </li>
+      ].concat(
+        _.keys(this.props.partition).map(key =>
+          <li
+            style={{
+              backgroundColor:
+                self.state.partition == key ? "lightGrey" : "white"
+            }}
+          >
+            <a
+              href="javascript:;"
+              onClick={() => this.setState({ partition: key })}
+            >
+              {key}
+            </a>
+          </li>
+        )
       );
       menu = menu.concat(partitionList);
     }
@@ -452,7 +491,7 @@ var Tree = React.createClass({
     return menu;
   },
 
-  settingsMenu: function(){
+  settingsMenu: function() {
     var dropdownListStyle = {
       paddingLeft: "20px",
       paddingRight: "20px",
@@ -460,28 +499,30 @@ var Tree = React.createClass({
       paddingBottom: "10px"
     };
 
-    return (<ul className="dropdown-menu">
-      <li style={dropdownListStyle}>
-        <input
-          type="checkbox"
-          id="hyphy-tree-hide-legend"
-          className="hyphy-tree-trigger"
-          defaultChecked={false}
-          onChange={this.toggleLegend}
-        />{" "}
-        Hide Legend
-      </li>
-      <li style={dropdownListStyle}>
-        <input
-          type="checkbox"
-          id="hyphy-tree-fill-color"
-          className="hyphy-tree-trigger"
-          defaultChecked={!this.props.fill_color}
-          onChange={this.changeColorScale}
-        />{" "}
-        GrayScale
-      </li>
-    </ul>);
+    return (
+      <ul className="dropdown-menu">
+        <li style={dropdownListStyle}>
+          <input
+            type="checkbox"
+            id="hyphy-tree-hide-legend"
+            className="hyphy-tree-trigger"
+            defaultChecked={false}
+            onChange={this.toggleLegend}
+          />{" "}
+          Hide Legend
+        </li>
+        <li style={dropdownListStyle}>
+          <input
+            type="checkbox"
+            id="hyphy-tree-fill-color"
+            className="hyphy-tree-trigger"
+            defaultChecked={!this.props.fill_color}
+            onChange={this.changeColorScale}
+          />{" "}
+          GrayScale
+        </li>
+      </ul>
+    );
   },
 
   initialize: function() {
@@ -539,7 +580,6 @@ var Tree = React.createClass({
       .attr("height", height)
       .attr("id", "dm-phylotree");
 
-
     this.tree.branch_name(null);
     this.tree.node_span("equal");
     this.tree.options(
@@ -555,12 +595,17 @@ var Tree = React.createClass({
 
     this.assignBranchAnnotations();
 
-    if(self.props.method=='absrel' || self.props.method=='relax'){
+    if (self.props.method == "absrel" || self.props.method == "relax") {
       var tree_string = self.props.json.input.trees[0];
-    } else if (['busted', 'meme', 'fel', 'slac', 'gard', 'fubar'].indexOf(self.props.method) > -1){
-      var tree_string = self.props.json.trees[self.state.current]['newickString']
+    } else if (
+      ["busted", "meme", "fel", "slac", "gard", "fubar"].indexOf(
+        self.props.method
+      ) > -1
+    ) {
+      var tree_string =
+        self.props.json.trees[self.state.current]["newickString"];
     }
-    self.tree(tree_string).svg(self.svg); 
+    self.tree(tree_string).svg(self.svg);
 
     self.branch_lengths = this.getBranchLengths();
     self.tree.font_size(18);
@@ -575,7 +620,8 @@ var Tree = React.createClass({
     });
 
     this.assignBranchAnnotations();
-    d3.select("#dm-phylotree")
+    d3
+      .select("#dm-phylotree")
       .append("rect")
       .attr("width", "100%")
       .attr("height", "100%")
@@ -616,11 +662,11 @@ var Tree = React.createClass({
     this.tree.layout();
     this.tree.placenodes().update();
     this.tree.layout();
-
   },
 
   shouldComponentUpdate: function(nextProps, nextState) {
-    const props_changed = JSON.stringify(nextProps) != JSON.stringify(this.props),
+    const props_changed =
+        JSON.stringify(nextProps) != JSON.stringify(this.props),
       state_changed = JSON.stringify(nextState) != JSON.stringify(this.state);
     return props_changed || state_changed;
   },
@@ -644,19 +690,27 @@ var Tree = React.createClass({
   },
 
   exportNewick: function() {
-    download(this.tree.get_newick(function() {}), 'tree.new');
+    download(this.tree.get_newick(function() {}), "tree.new");
   },
 
   render: function() {
     var popovers = {
-      absrel: '<li>Hover over a branch to see its inferred rates and significance for selection.</li>',
-      busted: '<li>Shows different branch partitions.</li><li>Toggle site partition/model in the options menu.</li>',
-      relax: '<li>Use the options menu to toggle the different branch partitions.</li>',
-      fel: '<li>Use the options menu to toggle the different site partitions.</li>',
-      meme: '<li>Use the options menu to toggle the different site partitions.</li>',
-      slac: '<li>Use the options menu to toggle the different site partitions.</li>',
-      fubar: '<li>Use the options menu to toggle the different site partitions.</li>',
-      gard: '<li>Use the options menu to toggle the different site partitions.</li>'
+      absrel:
+        "<li>Hover over a branch to see its inferred rates and significance for selection.</li>",
+      busted:
+        "<li>Shows different branch partitions.</li><li>Toggle site partition/model in the options menu.</li>",
+      relax:
+        "<li>Use the options menu to toggle the different branch partitions.</li>",
+      fel:
+        "<li>Use the options menu to toggle the different site partitions.</li>",
+      meme:
+        "<li>Use the options menu to toggle the different site partitions.</li>",
+      slac:
+        "<li>Use the options menu to toggle the different site partitions.</li>",
+      fubar:
+        "<li>Use the options menu to toggle the different site partitions.</li>",
+      gard:
+        "<li>Use the options menu to toggle the different site partitions.</li>"
     };
     return (
       <div>
@@ -664,7 +718,12 @@ var Tree = React.createClass({
           Fitted tree
           <span
             className="glyphicon glyphicon-info-sign"
-            style={{ verticalAlign: "middle", float: "right", minHeight:"30px", minWidth: "30px"}}
+            style={{
+              verticalAlign: "middle",
+              float: "right",
+              minHeight: "30px",
+              minWidth: "30px"
+            }}
             aria-hidden="true"
             data-toggle="popover"
             data-trigger="hover"
@@ -673,11 +732,9 @@ var Tree = React.createClass({
             data-content={"<ul>" + popovers[this.props.method] + "<ul>"}
             data-placement="bottom"
           />
-
         </h4>
         <div className="row">
           <div className="col-md-12">
-
             <div className="">
               <div className="input-group-btn">
                 <button
@@ -725,7 +782,6 @@ var Tree = React.createClass({
                 >
                   <i className="fa fa-sort-amount-desc" />
                 </button>
-
               </div>
 
               <div className="input-group-btn" data-toggle="buttons">
@@ -789,7 +845,11 @@ var Tree = React.createClass({
                 <ul className="dropdown-menu">
                   <li id="export-phylo-png">
                     <a
-                      onClick={()=>saveSvgAsPng(document.getElementById("dm-phylotree"), "tree.png")}
+                      onClick={() =>
+                        saveSvgAsPng(
+                          document.getElementById("dm-phylotree"),
+                          "tree.png"
+                        )}
                       href="javascript:;"
                     >
                       <i className="fa fa-image" /> PNG
@@ -797,17 +857,17 @@ var Tree = React.createClass({
                   </li>
                   <li id="export-phylo-png">
                     <a
-                      onClick={()=>d3_save_svg.save(d3.select("#dm-phylotree").node(), {filename: "tree"})}
+                      onClick={() =>
+                        d3_save_svg.save(d3.select("#dm-phylotree").node(), {
+                          filename: "tree"
+                        })}
                       href="javascript:;"
                     >
                       <i className="fa fa-image" /> SVG
                     </a>
                   </li>
                   <li id="export-phylo-nwk">
-                    <a
-                      onClick={this.exportNewick}
-                      href="javascript:;"
-                    >
+                    <a onClick={this.exportNewick} href="javascript:;">
                       <i className="fa fa-file-o" /> Newick File
                     </a>
                   </li>
@@ -815,7 +875,6 @@ var Tree = React.createClass({
               </div>
 
               <div className="input-group-btn">
-
                 <button
                   type="button"
                   className="btn btn-default btn-sm dropdown-toggle"
@@ -827,14 +886,11 @@ var Tree = React.createClass({
                 </button>
 
                 {this.settingsMenu()}
-
               </div>
-
             </div>
           </div>
         </div>
-        
-        
+
         <div className="row">
           <div className="col-md-12">
             <div className="row">

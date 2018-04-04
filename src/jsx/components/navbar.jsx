@@ -1,8 +1,7 @@
 var React = require("react");
-import { Link } from 'react-router-dom';
+import { Link } from "react-router-dom";
 
 const hyphy_logo = require("../../../images/hyphy-logo.svg");
-
 
 var Hamburger = React.createClass({
   render: function() {
@@ -59,7 +58,7 @@ var Methods = React.createClass({
           <li>
             <Link to="../gard">GARD</Link>
           </li>
-          <li role="separator" className="divider"></li>
+          <li role="separator" className="divider" />
           <li>
             <Link to="/">Home</Link>
           </li>
@@ -73,22 +72,25 @@ var NavBar = React.createClass({
   render: function() {
     var self = this,
       input_style = {
-      position: "absolute",
-      top: 0,
-      right: 0,
-      minWidth: "100%",
-      minHeight: "100%",
-      fontSize: "100px",
-      textAlign: "right",
-      filter: "alpha(opacity=0)",
-      opacity: 0,
-      outline: "none",
-      background: "white",
-      cursor: "inherit",
-      display: "block"
-    };
+        position: "absolute",
+        top: 0,
+        right: 0,
+        minWidth: "100%",
+        minHeight: "100%",
+        fontSize: "100px",
+        textAlign: "right",
+        filter: "alpha(opacity=0)",
+        opacity: 0,
+        outline: "none",
+        background: "white",
+        cursor: "inherit",
+        display: "block"
+      };
     return (
-      <nav className="navbar navbar-default navbar-fixed-top main-nav" role="navigation">
+      <nav
+        className="navbar navbar-default navbar-fixed-top main-nav"
+        role="navigation"
+      >
         <div className="container">
           <div className="row">
             <div className="col-sm-12">
@@ -106,12 +108,14 @@ var NavBar = React.createClass({
                     role="button"
                     style={{ position: "relative", overflow: "hidden" }}
                   >
-                    { this.props.onFileChange ? (<input 
-                      type="file"
-                      style={input_style}
-                      id="dm-file"
-                      onChange={self.props.onFileChange}
-                    />) : null }
+                    {this.props.onFileChange
+                      ? <input
+                          type="file"
+                          style={input_style}
+                          id="dm-file"
+                          onChange={self.props.onFileChange}
+                        />
+                      : null}
                     Load
                   </a>
                   <a

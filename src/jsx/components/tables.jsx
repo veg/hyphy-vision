@@ -3,9 +3,9 @@ var React = require("react"),
   d3 = require("d3"),
   datamonkey = require("../../datamonkey/datamonkey.js");
 
-require('csvexport');
+require("csvexport");
 
-import PropTypes from 'prop-types';
+import PropTypes from "prop-types";
 
 const DatamonkeyTableRow = React.createClass({
   /**
@@ -115,27 +115,25 @@ const DatamonkeyTableRow = React.createClass({
   },
 
   shouldComponentUpdate: function(nextProps) {
-
     var self = this;
-    
+
     if (this.state.header !== nextProps.header) {
       return true;
     }
-    
-    if (this.state.header) {      
-      if(this.props.rowData !== nextProps.rowData) {
+
+    if (this.state.header) {
+      if (this.props.rowData !== nextProps.rowData) {
         return true;
       }
     }
-    
+
     if (this.props.sortOn != nextProps.sortOn) {
       return true;
     }
 
     var result = _.some(this.props.rowData, function(value, index) {
-
       // check for format and other field equality
-      if(!_.isMatch(value, nextProps.rowData[index])) {
+      if (!_.isMatch(value, nextProps.rowData[index])) {
         return true;
       }
 
@@ -325,7 +323,8 @@ var DatamonkeyTable = React.createClass({
     this.setState({
       rowOrder: _.range(0, nextProps.bodyData.length),
       headerData: nextProps.headerData,
-      current: nextProps.bodyData.length < this.state.current ? 0 : this.state.current
+      current:
+        nextProps.bodyData.length < this.state.current ? 0 : this.state.current
     });
   },
 
@@ -406,8 +405,7 @@ var DatamonkeyTable = React.createClass({
     });
   },
 
-  componentDidMount: function() {
-  },
+  componentDidMount: function() {},
 
   componentDidUpdate: function() {
     $('[data-toggle="tooltip"]').tooltip();
@@ -425,30 +423,32 @@ var DatamonkeyTable = React.createClass({
       );
 
     if (this.props.paginate) {
-      if(this.props.export_csv){
-        var exportCSV = function(){
-          function extract(d){
-            return _.isObject(d) ? d.value : d
+      if (this.props.export_csv) {
+        var exportCSV = function() {
+          function extract(d) {
+            return _.isObject(d) ? d.value : d;
           }
           var headers = _.map(self.props.headerData, extract),
-            munged = _.map(self.props.bodyData, row=>_.map(row, extract))
-              .map(row=>_.object(headers, row)),
+            munged = _.map(self.props.bodyData, row =>
+              _.map(row, extract)
+            ).map(row => _.object(headers, row)),
             exporter = Export.create();
           exporter.downloadCsv(munged);
         };
-        button = <button
-          id="export-csv"
-          type="button"
-          className="btn btn-default btn-sm pull-right"
-          onClick={exportCSV}
-        >
-          <span className="glyphicon glyphicon-floppy-save" /> Export Table to CSV
-        </button>
-
+        button = (
+          <button
+            id="export-csv"
+            type="button"
+            className="btn btn-default btn-sm pull-right"
+            onClick={exportCSV}
+          >
+            <span className="glyphicon glyphicon-floppy-save" /> Export Table to
+            CSV
+          </button>
+        );
       }
       paginatorControls = (
-      <div>
-
+        <div>
           <div className="col-md-12">
             <p>
               Showing entries {this.state.current + 1} through {upperLimit} out
@@ -520,14 +520,13 @@ var DatamonkeyTable = React.createClass({
               </div>
             </div>
           </div>
-          
-          <div className="col-md-6"></div>
-          
+
+          <div className="col-md-6" />
+
           <div className="col-md-3">
             {button}
           </div>
-        
-      </div>
+        </div>
       );
     } else {
       paginatorControls = "";
@@ -1043,7 +1042,12 @@ var DatamonkeyModelTable = React.createClass({
           Model fits
           <span
             className="glyphicon glyphicon-info-sign"
-            style={{ verticalAlign: "middle", float: "right", minHeight:"30px", minWidth: "30px"}}
+            style={{
+              verticalAlign: "middle",
+              float: "right",
+              minHeight: "30px",
+              minWidth: "30px"
+            }}
             aria-hidden="true"
             data-toggle="popover"
             data-trigger="hover"
