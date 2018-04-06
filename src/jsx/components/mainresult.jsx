@@ -31,6 +31,7 @@ class MainResult extends Component{
 
   render() {
     return (
+        <div className="col-12">
           <div className="main-result">            
             <p>
               <CopyToClipboard text={this.props.summary_for_clipboard} onCopy={this.onCopy}>
@@ -61,6 +62,7 @@ class MainResult extends Component{
               </small>
             </p>
           </div>
+        </div>
     )
   }
 }

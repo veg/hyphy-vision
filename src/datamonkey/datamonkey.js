@@ -49,7 +49,7 @@ datamonkey.export_csv_button = function(data) {
       "data:text/csv;charset=utf-8," + encodeURIComponent(data)
     );
     pom.setAttribute("download", "export.csv");
-    pom.className = "btn btn-default btn-sm";
+    pom.className = "btn btn-secondary btn-sm";
     pom.innerHTML =
       '<span class="glyphicon glyphicon-floppy-save"></span> Download CSV';
     $("body").append(pom);

@@ -353,7 +353,7 @@ class PRIME extends React.Component {
                   <DatamonkeyTable
                     headerData={this.state.table_property_headers}
                     bodyData={order_table_rows}
-                    classes={"table table-condensed table-striped"}
+                    classes={"table table-smm table-striped"}
                     paginate={20}
                     export_csv
                   />

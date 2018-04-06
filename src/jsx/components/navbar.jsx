@@ -9,7 +9,7 @@ var Hamburger = React.createClass({
     return (
       <button
         type="button"
-        className="navbar-toggle"
+        className="navbar-toggler"
         data-toggle="collapse"
         data-target="#navbar-collapse-1"
       >
@@ -88,44 +88,48 @@ var NavBar = React.createClass({
       display: "block"
     };
     return (
-      <nav className="navbar navbar-default navbar-fixed-top main-nav" role="navigation">
+    
+
+      <nav className="navbar navbar-expand-lg navbar-light bg-light fixed-top main-nav" role="navigation">
         <div className="container">
           <div className="row">
-            <div className="col-sm-12">
-              <Link to="/">
-                <img id="hyphy-logo" src={hyphy_logo} />
-              </Link>
-              <div className="navbar-header">
-                <Hamburger />
-              </div>
 
-              <div className="collapse navbar-collapse" id="navbar-collapse-1">
-                <ul className="nav navbar-nav">
+              <a className="navbr-brand" href ="/">
+                <img id="hyphy-logo" src={hyphy_logo} />
+              </a>
+
+            
+            
+                
+
+              <div className="collapse navbar-collapse" id="navbarSupportedContent">
+                <Methods />
+                
+                
+                
+            
+                
+                
+                
+                
+                <ul className="navbar-nav">
                   <a
                     className="nav-button"
                     role="button"
-                    style={{ position: "relative", overflow: "hidden" }}
+                    style={{ position: "relative", overflow: "hidden", left: "100px" }}
                   >
                     { this.props.onFileChange ? (<input 
                       type="file"
-                      style={input_style}
                       id="dm-file"
                       onChange={self.props.onFileChange}
                     />) : null }
                     Load
                   </a>
-                  <a
-                    href="#"
-                    className="nav-button"
-                    role="button"
-                    style={{ display: "none" }}
-                  >
-                    Export
-                  </a>
                 </ul>
-                <Methods />
+                
               </div>
-            </div>
+              
+
           </div>
         </div>
       </nav>

@@ -663,7 +663,7 @@ var Tree = React.createClass({
         <h4 className="dm-table-header">
           Fitted tree
           <span
-            className="glyphicon glyphicon-info-sign"
+            className="fas fa-info-circle"
             style={{ verticalAlign: "middle", float: "right", minHeight:"30px", minWidth: "30px"}}
             aria-hidden="true"
             data-toggle="popover"
@@ -673,165 +673,162 @@ var Tree = React.createClass({
             data-content={"<ul>" + popovers[this.props.method] + "<ul>"}
             data-placement="bottom"
           />
-
         </h4>
+
         <div className="row">
-          <div className="col-md-12">
+        <div className="col-12">
+          <div className="input-group-btn">
+            <button
+              type="button"
+              className="btn btn-secondary dropdown-toggle"
+              data-toggle="dropdown"
+            >
+              Options
+              <span className="caret" />
+            </button>
+            <ul className="dropdown-menu" id="hyphy-tree-model-list">
+              {this.getMainList()}
+            </ul>
 
-            <div className="">
-              <div className="input-group-btn">
-                <button
-                  type="button"
-                  className="btn btn-default dropdown-toggle"
-                  data-toggle="dropdown"
-                >
-                  Options
-                  <span className="caret" />
-                </button>
-                <ul className="dropdown-menu" id="hyphy-tree-model-list">
-                  {this.getMainList()}
-                </ul>
-                <button
-                  type="button"
-                  className="btn btn-default btn-sm"
-                  data-direction="vertical"
-                  data-amount="1"
-                  title="Expand vertical spacing"
-                >
-                  <i className="fa fa-arrows-v" />
-                </button>
-                <button
-                  type="button"
-                  className="btn btn-default btn-sm"
-                  data-direction="vertical"
-                  data-amount="-1"
-                  title="Compress vertical spacing"
-                >
-                  <i className="fa  fa-compress fa-rotate-135" />
-                </button>
-                <button
-                  type="button"
-                  className="btn btn-default btn-sm"
-                  id="sort_ascending"
-                  title="Sort deepest clades to the bototm"
-                >
-                  <i className="fa fa-sort-amount-asc" />
-                </button>
-                <button
-                  type="button"
-                  className="btn btn-default btn-sm"
-                  id="sort_descending"
-                  title="Sort deepsest clades to the top"
-                >
-                  <i className="fa fa-sort-amount-desc" />
-                </button>
-
-              </div>
-
-              <div className="input-group-btn" data-toggle="buttons">
-                <button className="btn btn-default active">
-                  <input
-                    type="radio"
-                    name="options"
-                    className="phylotree-layout-mode"
-                    data-mode="linear"
-                    autoComplete="off"
-                    checked=""
-                    title="Layout left-to-right"
-                  />Linear
-                </button>
-                <button className="btn btn-default">
-                  <input
-                    type="radio"
-                    name="options"
-                    className="phylotree-layout-mode"
-                    data-mode="radial"
-                    autoComplete="off"
-                    title="Layout radially"
-                  />{" "}
-                  Radial
-                </button>
-              </div>
-              <div className="input-group-btn" data-toggle="buttons">
-                <button className="btn btn-default active">
-                  <input
-                    type="radio"
-                    className="phylotree-align-toggler"
-                    data-align="left"
-                    name="options-align"
-                    autoComplete="off"
-                    checked=""
-                    title="Align tips labels to branches"
-                  />
-                  <i className="fa fa-align-left" />
-                </button>
-                <button className="btn btn-default btn-sm">
-                  <input
-                    type="radio"
-                    className="phylotree-align-toggler"
-                    data-align="right"
-                    name="options-align"
-                    autoComplete="off"
-                    title="Align tips labels to the edge of the plot"
-                  />
-                  <i className="fa fa-align-right" />
-                </button>
-              </div>
-
-              <div className="input-group-btn">
-                <button
-                  type="button"
-                  className="btn btn-default dropdown-toggle"
-                  data-toggle="dropdown"
-                >
-                  Export <span className="caret" />
-                </button>
-                <ul className="dropdown-menu">
-                  <li id="export-phylo-png">
-                    <a
-                      onClick={()=>saveSvgAsPng(document.getElementById("dm-phylotree"), "tree.png")}
-                      href="javascript:;"
-                    >
-                      <i className="fa fa-image" /> PNG
-                    </a>
-                  </li>
-                  <li id="export-phylo-png">
-                    <a
-                      onClick={()=>d3_save_svg.save(d3.select("#dm-phylotree").node(), {filename: "tree"})}
-                      href="javascript:;"
-                    >
-                      <i className="fa fa-image" /> SVG
-                    </a>
-                  </li>
-                  <li id="export-phylo-nwk">
-                    <a
-                      onClick={this.exportNewick}
-                      href="javascript:;"
-                    >
-                      <i className="fa fa-file-o" /> Newick File
-                    </a>
-                  </li>
-                </ul>
-              </div>
-
-              <div className="input-group-btn">
-
-                <button
-                  type="button"
-                  className="btn btn-default btn-sm dropdown-toggle"
-                  data-toggle="dropdown"
-                  style={{ paddingLeft: "30px" }}
-                >
-                  <span className="glyphicon glyphicon-cog" />{" "}
-                  <span className="caret" />
-                </button>
-
-                {this.settingsMenu()}
-
-              </div>
-
-            </div>
+            <button
+              type="button"
+              className="btn btn-secondary btn-sm"
+              data-direction="vertical"
+              data-amount="1"
+              title="Expand vertical spacing"
+            >
+              <i className="fa fa-arrows-v" />
+            </button>
+            <button
+              type="button"
+              className="btn btn-secondary btn-sm"
+              data-direction="vertical"
+              data-amount="-1"
+              title="Compress vertical spacing"
+            >
+              <i className="fa  fa-compress fa-rotate-135" />
+            </button>
+            <button
+              type="button"
+              className="btn btn-secondary btn-sm"
+              id="sort_ascending"
+              title="Sort deepest clades to the bototm"
+            >
+              <i className="fa fa-sort-amount-asc" />
+            </button>
+            <button
+              type="button"
+              className="btn btn-secondary btn-sm"
+              id="sort_descending"
+              title="Sort deepsest clades to the top"
+            >
+              <i className="fa fa-sort-amount-desc" />
+            </button>
           </div>
+          
+          <div className="btn-group-toggle" data-toggle="buttons">
+            <button className="btn btn-secondary active">
+              <input
+                type="radio"
+                name="options"
+                className="phylotree-layout-mode"
+                data-mode="linear"
+                autoComplete="off"
+                checked=""
+                title="Layout left-to-right"
+              />Linear
+            </button>
+            <button className="btn btn-secondary">
+              <input
+                type="radio"
+                name="options"
+                className="phylotree-layout-mode"
+                data-mode="radial"
+                autoComplete="off"
+                title="Layout radially"
+              />{" "}
+              Radial
+            </button>
+          </div>
+
+          <div className="btn-group-toggle" data-toggle="buttons">
+            <button className="btn btn-secondary active">
+              <input
+                type="radio"
+                className="phylotree-align-toggler"
+                data-align="left"
+                name="options-align"
+                autoComplete="off"
+                checked=""
+                title="Align tips labels to branches"
+              />
+              <i className="fa fa-align-left" />
+            </button>
+            <button className="btn btn-secondary btn-sm">
+              <input
+                type="radio"
+                className="phylotree-align-toggler"
+                data-align="right"
+                name="options-align"
+                autoComplete="off"
+                title="Align tips labels to the edge of the plot"
+              />
+              <i className="fa fa-align-right" />
+            </button>
+          </div>
+
+          <div className="input-group-btn">
+            <button
+              type="button"
+              className="btn btn-secondary dropdown-toggle"
+              data-toggle="dropdown"
+            >
+              Export <span className="caret" />
+            </button>
+            <ul className="dropdown-menu">
+              <li id="export-phylo-png">
+                <a
+                  onClick={()=>saveSvgAsPng(document.getElementById("dm-phylotree"), "tree.png")}
+                  href="javascript:;"
+                >
+                  <i className="fa fa-image" /> PNG
+                </a>
+              </li>
+              <li id="export-phylo-png">
+                <a
+                  onClick={()=>d3_save_svg.save(d3.select("#dm-phylotree").node(), {filename: "tree"})}
+                  href="javascript:;"
+                >
+                  <i className="fa fa-image" /> SVG
+                </a>
+              </li>
+              <li id="export-phylo-nwk">
+                <a
+                  onClick={this.exportNewick}
+                  href="javascript:;"
+                >
+                  <i className="fa fa-file-o" /> Newick File
+                </a>
+              </li>
+            </ul>
+          </div>
+
+          <div className="input-group-btn">
+
+            <button
+              type="button"
+              className="btn btn-secondary btn-sm dropdown-toggle"
+              data-toggle="dropdown"
+              style={{ paddingLeft: "30px" }}
+            >
+              <i className="fas fa-cog" />{" "}
+              <span className="caret" />
+            </button>
+
+            {this.settingsMenu()}
+
+          </div>
+        </div>
         </div>
         
         

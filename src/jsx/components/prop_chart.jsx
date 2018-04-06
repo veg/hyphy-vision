@@ -348,11 +348,11 @@ var PropChart = React.createClass({
     this.save_png_id = "export-" + this.svg_id + "-png";
 
     return (
-      <div className="panel panel-default" id={this.state.model_name}>
-        <div className="panel-heading">
+      <div className="card" id={this.state.model_name}>
+        <div className="card-header">
           <div className="row">
             <div className="col-md-8 v-align">
-              <h1 className="panel-title">
+              <h1 className="card-title">
                 <strong>
                   {this.state.model_name}
                 </strong>
@@ -363,14 +363,14 @@ var PropChart = React.createClass({
                 <button
                   id={this.save_svg_id}
                   type="button"
-                  className="btn btn-default btn-sm"
+                  className="btn.btn-secondary btn-sm"
                 >
                   <span className="glyphicon glyphicon-floppy-save" /> SVG
                 </button>
                 <button
                   id={this.save_png_id}
                   type="button"
-                  className="btn btn-default btn-sm"
+                  className="btn.btn-secondary btn-sm"
                   onClick={()=>saveSvgAsPng(document.getElementById(this.svg_id), "datamonkey-chart.png", {scale: 2})}
                 >
                   <span className="glyphicon glyphicon-floppy-save" /> PNG
@@ -380,7 +380,7 @@ var PropChart = React.createClass({
           </div>
         </div>
         <div className="row">
-          <div className="panel-body col-md-12" style={{ textAlign: "center" }}>
+          <div className="card-body col-md-12" style={{ textAlign: "center" }}>
             <svg id={this.svg_id} />
           </div>
         </div>
