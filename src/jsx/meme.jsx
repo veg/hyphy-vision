@@ -4,11 +4,9 @@ var React = require("react"),
   _ = require("underscore");
 
 import { Tree } from "./components/tree.jsx";
-import { InputInfo } from "./components/input_info.jsx";
 import { DatamonkeyTable, DatamonkeyModelTable } from "./components/tables.jsx";
 import { DatamonkeySiteGraph } from "./components/graphs.jsx";
-import { NavBar } from "./components/navbar.jsx";
-import { ScrollSpy } from "./components/scrollspy.jsx";
+import { ResultsPage } from "./components/results_page.jsx";
 
 
 function MEMESummary(props) {
@@ -20,18 +18,7 @@ function MEMESummary(props) {
 
   return (
     <div className="row" id="summary-tab">
-      <div className="clearance" id="summary-div"></div>
       <div className="col-md-12">
-        <h3 className="list-group-item-heading">
-          <span id="summary-method-name">
-            Mixed Effects Model of Evolution
-          </span>
-          <br />
-          <span className="results-summary">results summary</span>
-        </h3>
-      </div>
-      <div className="col-md-12">
-        <InputInfo input_data={props.json ? props.json.input : null} json={props.json} hyphy_vision={props.hyphy_vision}/>
       </div>
       <div className="col-md-12">
         <div className="main-result">
@@ -148,11 +135,9 @@ function MEMETable(props) {
   </div>);
 }
 
-class MEME extends React.Component {
+class MEMEContents extends React.Component {
   constructor(props) {
     super(props);
-    this.updatePValue = this.updatePValue.bind(this); 
-    this.onFileChange = this.onFileChange.bind(this); 
     this.state = {
       input_data: null,
       data: null,
@@ -162,6 +147,14 @@ class MEME extends React.Component {
       partitions: null,
       pValue: .1
     };
+  }
+
+  componentDidMount() {
+    this.processData(this.props.json); 
+  }
+
+  componentWillReceiveProps(nextProps) {
+    this.processData(nextProps.json);
   }
 
   processData(data){
@@ -187,70 +180,22 @@ class MEME extends React.Component {
     });
   }
 
-  loadFromServer() {
-    var self = this;
-    d3.json(this.props.url, function(data) {
-      self.processData(data);
-    });
-  }
-
-  onFileChange(e) {
-    var self = this;
-    var files = e.target.files; // FileList object
-
-    if (files.length == 1) {
-      var f = files[0];
-      var reader = new FileReader();
-
-      reader.onload = (function(theFile) {
-        return function(e) {
-          var data = JSON.parse(this.result);
-          self.processData(data);
-        };
-      })(f);
-      reader.readAsText(f);
-    }
-    e.preventDefault();
-  }
-
-  componentWillMount() {
-    this.loadFromServer();
-  }
-
-  componentDidUpdate(prevProps, prevState) {
-    $("body").scrollspy({
-      target: ".bs-docs-sidebar",
-      offset: 50
-    });
-    $('[data-toggle="popover"]').popover();
-    $('.dropdown-toggle').dropdown();
-  }
-
-  updatePValue(e) {
+  updatePValue = (e) => {
     this.setState({pValue: e.target.value});
   }
 
   render() {
-    var self = this,
-      site_graph,
-      scrollspy_info = [
-        { label: "summary", href: "summary-tab" },
-        { label: "table", href: "table-tab" },
-        { label: "plot", href: "plot-tab" },
-        { label: "tree", href: "tree-tab" },
-        { label: "fits", href: "fit-tab" }
-      ];
-    
+    var self = this;
+    var site_graph;
+    var models = {};
     if(this.state.data){
       var columns = _.pluck(self.state.header, 0);
       columns[0] = '&alpha;';
-      site_graph = <DatamonkeySiteGraph 
+      site_graph = <DatamonkeySiteGraph
         columns={columns}
         rows={_.flatten(_.values(self.state.bodyData), true)}
       />;
     }
-
-    var models = {};
     if (!_.isNull(self.state.data)) {
       models = self.state.data.fits;
     }
@@ -276,10 +221,8 @@ class MEME extends React.Component {
 
     return (
       <div>
-        {this.props.hyphy_vision ? <NavBar onFileChange={this.onFileChange} /> : ''}
         <div className="container">
           <div className="row">
-            <ScrollSpy info={scrollspy_info} />
             <div className="col-md-12 col-lg-10">
               <MEMESummary
                 json={self.state.data}
@@ -332,12 +275,31 @@ class MEME extends React.Component {
   }
 }
 
-function render_meme(url, element) {
-  ReactDOM.render(<MEME url={url} />, document.getElementById(element));
+function MEME(props) {
+  return (
+    <ResultsPage
+      data={props.data} 
+      hyphy_vision={props.hyphy_vision}
+      scrollSpyInfo={[
+        { label: "summary", href: "summary-tab" },
+        { label: "table", href: "table-tab" },
+        { label: "plot", href: "plot-tab" },
+        { label: "tree", href: "tree-tab" },
+        { label: "fits", href: "fit-tab" }
+      ]}
+      methodName="Mixed Effects Model of Evolution"
+    >
+      {MEMEContents}
+    </ResultsPage>
+  );
 }
 
-function render_hv_meme(url, element) {
-  ReactDOM.render(<MEME url={url} hyphy_vision />, document.getElementById(element));
+function render_meme(data, element) {
+  ReactDOM.render(<MEME data={data} />, document.getElementById(element));
+}
+
+function render_hv_meme(data, element) {
+  ReactDOM.render(<MEME data={data} hyphy_vision />, document.getElementById(element));
 }
 
 module.exports = render_meme;

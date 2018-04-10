@@ -6,94 +6,15 @@ import { Tree } from "./components/tree.jsx";
 import { Header } from "./components/header.jsx";
 import { DatamonkeyTable, DatamonkeyModelTable } from "./components/tables.jsx";
 import { DatamonkeySeries, DatamonkeyGraphMenu } from "./components/graphs.jsx";
-import { NavBar } from "./components/navbar.jsx";
-import { ScrollSpy } from "./components/scrollspy.jsx";
-import { MethodHeader } from "./components/methodheader.jsx";
 import { MainResult } from "./components/mainresult.jsx";
+import { ResultsPage } from "./components/results_page.jsx";
 
 
-var FEL = React.createClass({
-  definePlotData: function(x_label, y_label) {
+class FELContents extends React.Component {
 
-    var x = _.map(this.state.mle_results, function(d) {
-      return d[x_label];
-    });
-
-    var y = _.map(this.state.mle_results, function(d) {
-      return d[y_label];
-    });
-
-    return { x: x, y: [y] };
-  },
-
-  float_format: d3.format(".3f"),
-
-  formatHeadersForTable: function(mle) {
-    return _.map(mle, function(d) {
-      return _.object(["value", "abbr"], d);
-    });
-  },
-
-  updateAxisSelection: function(e) {
-    var state_to_update = {},
-      dimension = e.target.dataset.dimension,
-      axis = e.target.dataset.axis;
-
-    state_to_update[axis] = dimension;
-    this.setState(state_to_update);
-  },
-
-  updatePvalThreshold: function(e) {
-
-    // Get number of positively and negatively selected sites by p-value threshold
-    var pvalue_threshold = parseFloat(e.target.value);
-
-    // Get number of positively and negatively selected sites by p-value threshold
-    var mle_results = _.map(this.state.mle_results, function(d) {
-      d["is_positive"] =
-        parseFloat(d["beta"]) / parseFloat(d["alpha"]) > 1 &&
-        parseFloat(d["p-value"]) <= pvalue_threshold;
-      d["is_negative"] =
-        parseFloat(d["beta"]) / parseFloat(d["alpha"]) < 1 &&
-        parseFloat(d["p-value"]) <= pvalue_threshold;
-      return d;
-    });
-
-    var positively_selected = _.filter(this.state.mle_results, function(d) {
-      return d["is_positive"];
-    });
-    var negatively_selected = _.filter(this.state.mle_results, function(d) {
-      return d["is_negative"];
-    });
-
-    // highlight mle_content with whether they are significant or not
-    var mle_content = _.map(this.state.mle_results, function(d, key) {
-      var classes = "";
-      if (mle_results[key].is_positive) {
-        classes = "positive-selection-row";
-      } else if (mle_results[key].is_negative) {
-        classes = "negative-selection-row";
-      }
-      return _.map(_.values(d), function(g) {
-        return { value: g, classes: classes };
-      }).slice(0,8);
-    });
-
-    this.setState({
-      positively_selected: positively_selected,
-      negatively_selected: negatively_selected,
-      pvalue_threshold: pvalue_threshold,
-      mle_results: mle_results,
-      mle_content: mle_content
-    });
-  },
-
-  getDefaultProps: function() {
-    return {};
-  },
-
-  getInitialState: function() {
-    return {
+  constructor(props) {
+    super(props)
+    this.state = {
       mle_headers: [],
       mle_content: [],
       xaxis: "Site",
@@ -105,19 +26,18 @@ var FEL = React.createClass({
       input: null,
       fits: {}
     };
-  },
+  }
 
-  formatBranchAnnotations: function(json) {
-    // attach is_foreground to branch annotations
-    var branch_annotations = d3.range(json.trees.length).map(i=>{
-      return _.mapObject(json['tested'][i], (val, key)=>{
-        return {is_foreground: val == 'test'};
-      });
-    });
-    return branch_annotations;
-  },
+  componentDidMount() {
+    this.processData(this.props.json);
+  }
 
-  processData: function(data){
+  componentWillReceiveProps(nextProps) {
+    this.processData(nextProps.json);
+  }
+
+  processData(data){
+    const float_format = d3.format(".3f");
     var mle = data["MLE"];
 
     // These variables are to be used for DatamonkeyTable
@@ -132,10 +52,9 @@ var FEL = React.createClass({
     // format content
     mle_content = _.map(mle_content, d => {
       return _.map(d, g => {
-        return this.float_format(g);
+        return float_format(g);
       });
     });
-
 
     // add a partition entry to both headers and content
     mle_headers = [
@@ -235,33 +154,89 @@ var FEL = React.createClass({
       data: data
     });
 
-  },
+  }
 
-  loadFromServer: function() {
-    var self = this;
-    d3.json(this.props.url, (data) => {
-      self.processData(data);
+  definePlotData(x_label, y_label) {
+
+    var x = _.map(this.state.mle_results, function(d) {
+      return d[x_label];
     });
-  },
 
-  onFileChange(e) {
-    var self = this;
-    var files = e.target.files; // FileList object
+    var y = _.map(this.state.mle_results, function(d) {
+      return d[y_label];
+    });
 
-    if (files.length == 1) {
-      var f = files[0];
-      var reader = new FileReader();
+    return { x: x, y: [y] };
+  }
 
-      reader.onload = (function(theFile) {
-        return function(e) {
-          var data = JSON.parse(this.result);
-          self.processData(data);
-        };
-      })(f);
-      reader.readAsText(f);
-    }
-    e.preventDefault();
-  },
+  formatHeadersForTable(mle) {
+    return _.map(mle, function(d) {
+      return _.object(["value", "abbr"], d);
+    });
+  }
+
+  updateAxisSelection(e) {
+    var state_to_update = {},
+      dimension = e.target.dataset.dimension,
+      axis = e.target.dataset.axis;
+
+    state_to_update[axis] = dimension;
+    this.setState(state_to_update);
+  }
+
+  updatePvalThreshold = (e) => {
+    // Get number of positively and negatively selected sites by p-value threshold
+    var pvalue_threshold = parseFloat(e.target.value);
+
+    // Get number of positively and negatively selected sites by p-value threshold
+    var mle_results = _.map(this.state.mle_results, function(d) {
+      d["is_positive"] =
+        parseFloat(d["beta"]) / parseFloat(d["alpha"]) > 1 &&
+        parseFloat(d["p-value"]) <= pvalue_threshold;
+      d["is_negative"] =
+        parseFloat(d["beta"]) / parseFloat(d["alpha"]) < 1 &&
+        parseFloat(d["p-value"]) <= pvalue_threshold;
+      return d;
+    });
+
+    var positively_selected = _.filter(this.state.mle_results, function(d) {
+      return d["is_positive"];
+    });
+    var negatively_selected = _.filter(this.state.mle_results, function(d) {
+      return d["is_negative"];
+    });
+
+    // highlight mle_content with whether they are significant or not
+    var mle_content = _.map(this.state.mle_results, function(d, key) {
+      var classes = "";
+      if (mle_results[key].is_positive) {
+        classes = "positive-selection-row";
+      } else if (mle_results[key].is_negative) {
+        classes = "negative-selection-row";
+      }
+      return _.map(_.values(d), function(g) {
+        return { value: g, classes: classes };
+      }).slice(0,8);
+    });
+
+    this.setState({
+      positively_selected: positively_selected,
+      negatively_selected: negatively_selected,
+      pvalue_threshold: pvalue_threshold,
+      mle_results: mle_results,
+      mle_content: mle_content
+    });
+  }
+
+  formatBranchAnnotations(json) {
+    // attach is_foreground to branch annotations
+    var branch_annotations = d3.range(json.trees.length).map(i=>{
+      return _.mapObject(json['tested'][i], (val, key)=>{
+        return {is_foreground: val == 'test'};
+      });
+    });
+    return branch_annotations;
+  }
 
   getSummaryForClipboard() {
     var no_selected =
@@ -278,7 +253,7 @@ var FEL = React.createClass({
       no_selected +
       " sites in your alignment.";
    return summary_text;
-  },
+  }
 
   getSummaryForRendering() {
     return (
@@ -324,10 +299,9 @@ var FEL = React.createClass({
           </p>
         </p>
     );
-  },     
+  }     
 
   getSummary() {
-
     return (
       <div>
         <div className="main-result">
@@ -389,30 +363,9 @@ var FEL = React.createClass({
         </div>
       </div>
     );
-  },
+  }
 
-  componentWillMount: function() {
-    this.loadFromServer();
-  },
-
-  componentDidUpdate(prevProps) {
-    $("body").scrollspy({
-      target: ".bs-docs-sidebar",
-      offset: 50
-    });
-    $('[data-toggle="popover"]').popover();
-    $('.dropdown-toggle').dropdown();
-  },
-
-  render: function() {
-
-    var scrollspy_info = [
-      { label: "summary", href: "summary-tab" },
-      { label: "table", href: "table-tab" },
-      { label: "plot", href: "plot-tab" },
-      { label: "tree", href: "tree-tab" },
-      { label: "fits", href: "fits-tab" }
-    ];
+  render() {
 
     var { x: x, y: y } = this.definePlotData(
       this.state.xaxis,
@@ -460,10 +413,8 @@ var FEL = React.createClass({
 
     return (
       <div>
-        {this.props.hyphy_vision ? <NavBar onFileChange={this.onFileChange} /> : ''}
         <div className="container">
           <div className="row">
-            <ScrollSpy info={scrollspy_info} />
 
             <div className="col-md-12 col-lg-10">
               <div
@@ -485,12 +436,6 @@ var FEL = React.createClass({
 
               <div id="summary-tab"></div>
               <div id="results">
-               <MethodHeader
-                    methodName="Fixed Effects Likelihood"
-                    input_data={this.state.input}
-                    json={this.state.data}
-                    hyphy_vision={this.props.hyphy_vision}
-                  />
                 <MainResult
                   summary_for_clipboard={this.getSummaryForClipboard()}
                   summary_for_rendering={this.getSummaryForRendering()}                    
@@ -535,7 +480,7 @@ var FEL = React.createClass({
                     x_label={this.state.xaxis}
                     y_label={this.state.yaxis}
                     marginLeft={50}
-                    width={$("#results").width()}
+                    width={$("#results").width() == null ? 935 : $("#results").width() }
                     transitions={true}
                     doDots={true}
                   />
@@ -576,16 +521,33 @@ var FEL = React.createClass({
     );
   }
 
-});
+};
 
-// Will need to make a call to this
-// omega distributions
-function render_fel(url, element) {
-  ReactDOM.render(<FEL url={url} />, document.getElementById(element));
+function FEL(props) {
+  return (
+    <ResultsPage
+      data={props.data} 
+      hyphy_vision={props.hyphy_vision}
+      scrollSpyInfo={[
+        { label: "summary", href: "summary-tab" },
+        { label: "table", href: "table-tab" },
+        { label: "plot", href: "plot-tab" },
+        { label: "tree", href: "tree-tab" },
+        { label: "fits", href: "fits-tab" }
+      ]}
+      methodName="Fixed Effects Likelihood"
+    >
+      {FELContents}
+    </ResultsPage>
+  );
 }
 
-function render_hv_fel(url, element) {
-  ReactDOM.render(<FEL url={url} hyphy_vision />, document.getElementById(element));
+function render_fel(data, element) {
+  ReactDOM.render(<FEL data={data} />, document.getElementById(element));
+}
+
+function render_hv_fel(data, element) {
+  ReactDOM.render(<FEL data={data} hyphy_vision />, document.getElementById(element));
 }
 
 module.exports = render_fel;

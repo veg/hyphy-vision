@@ -4,13 +4,11 @@ var React = require('react'),
   _ = require("underscore");
 
 import { Tree } from "./components/tree.jsx";
-import { NavBar } from "./components/navbar.jsx";
-import { ScrollSpy } from "./components/scrollspy.jsx";
 import { ErrorMessage } from "./components/error_message.jsx";
 import { Header } from "./components/header.jsx";
 import { RateMatrix } from "./components/rate_matrix.jsx";
 import { DatamonkeySiteGraph } from "./components/graphs.jsx";
-import { InputInfo } from "./components/input_info.jsx";
+import { ResultsPage } from "./components/results_page.jsx";
 
 
 function binomial(n, k) {
@@ -46,18 +44,7 @@ function GARDResults(props){
     <span><strong className="hyphy-highlight">found evidence</strong> of {props.data.lastImprovedBPC} recombination breakpoint{props.data.lastImprovedBPC == 1 ? '' : 's'}</span> :
     <span><strong>found no evidence</strong> of recombination</span>;
   return (<div className="row" id="summary-tab">
-    <div className="clearance" id="summary-div"></div>
     <div className="col-md-12">
-      <h3 className="list-group-item-heading">
-        <span id="summary-method-name">
-          Genetic Algorithm for Recombination Detection
-        </span>
-        <br />
-        <span className="results-summary">results summary</span>
-      </h3>
-    </div>
-    <div className="col-md-12">
-      <InputInfo input_data={props.data.input} json={props.data} hyphy_vision={props.hyphy_vision} gard/>
     </div>
     <div className="col-md-12">
       <div className="main-result">
@@ -277,64 +264,28 @@ function GARDTopologyReport(props){
   </div>);
 }
 
-class GARD extends React.Component {
+class GARDContents extends React.Component {
   constructor(props){
     super(props);
     this.state = {data: null};
-    this.onFileChange = this.onFileChange.bind(this);
   }
+
   componentDidMount(){
-    var self = this;
-    d3.json(this.props.url, function(data){
-      data.trees = data.breakpointData.map(row => {
-        return {newickString: row.tree};
-      }); 
-      self.setState({
-        data: data
-      });
-    });
+    this.processData(this.props.json); 
   }
-  componentDidUpdate(prevProps, prevState) {
-    $("body").scrollspy({
-      target: ".bs-docs-sidebar",
-      offset: 50
-    });
-    $('[data-toggle="popover"]').popover();
-    $(function () {
-      $('[data-toggle="tooltip"]').tooltip()
-    })
-    $('.dropdown-toggle').dropdown();
+
+  componentWillReceiveProps(nextProps) {
+    this.processData(nextProps.json)
   }
-  onFileChange(e){
-    var self = this,
-      files = e.target.files; // FileList object
 
-    if (files.length == 1) {
-      var f = files[0],
-        reader = new FileReader();
-
-      reader.onload = (function(theFile) {
-        return function(e) {
-          var data = JSON.parse(this.result);
-          data.trees = data.breakpointData.map(row => {
-            return {newickString: row.tree};
-          }); 
-          self.setState({data: data});
-        };
-      })(f);
-      reader.readAsText(f);
-    }
-    e.preventDefault();
-
+  processData(data) {
+    data.trees = data.breakpointData.map(row => {
+      return {newickString: row.tree};
+    }); 
+    this.setState({ data: data });
   }
+
   render(){
-    var scrollspy_info = [
-      { label: "summary", href: "summary-tab" },
-      { label: "report", href: "report-tab" },
-      { label: "graph", href: "graph-tab" },
-      { label: "matrix", href: "matrix-tab" },
-      { label: "tree", href: "tree-tab" },
-    ];
     var tree_settings = {
       omegaPlot: {},
       "tree-options": {
@@ -355,10 +306,8 @@ class GARD extends React.Component {
     };
 
     return (<div>
-      {this.props.hyphy_vision ? <NavBar onFileChange={this.onFileChange} /> : ''}
       <div className="container">
         <div className="row">
-          <ScrollSpy info={scrollspy_info} />
           <div className="col-md-12 col-lg-10">
             <ErrorMessage />
             <GARDResults data={this.state.data} hyphy_vision={this.props.hyphy_vision}/>
@@ -384,6 +333,25 @@ class GARD extends React.Component {
       </div>
     </div>);
   }
+}
+
+function GARD(props) {
+  return (
+    <ResultsPage
+      data={props.data} 
+      hyphy_vision={props.hyphy_vision}
+      scrollSpyInfo={[
+        { label: "summary", href: "summary-tab" },
+        { label: "report", href: "report-tab" },
+        { label: "graph", href: "graph-tab" },
+        { label: "matrix", href: "matrix-tab" },
+        { label: "tree", href: "tree-tab" },
+      ]}
+      methodName="Genetic Algorithm for Recombination Detection"
+    >
+      {GARDContents}
+    </ResultsPage>
+  );
 }
 
 function render_gard(url, element) {

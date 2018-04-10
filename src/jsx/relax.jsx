@@ -1,14 +1,11 @@
-import { NavBar } from "./components/navbar.jsx";
-import { ScrollSpy } from "./components/scrollspy.jsx";
-import { InputInfo } from "./components/input_info.jsx";
-import { ErrorMessage } from "./components/error_message.jsx";
 import { Tree } from "./components/tree.jsx";
 import { OmegaPlotGrid } from "./components/omega_plots.jsx";
 import { Header } from "./components/header.jsx";
 import {DatamonkeyTable} from "./components/tables.jsx"
+import { MainResult } from "./components/mainresult.jsx";
+import { ResultsPage } from "./components/results_page.jsx";
 
 var React = require("react"),
-  ReactDOM = require("react-dom"),
   _ = require("underscore");
 
 class RELAXModelTable extends React.Component {
@@ -66,20 +63,6 @@ class RELAXModelTable extends React.Component {
       return test_row;
     });
     return (<div>
-      <h4 className="dm-table-header">
-        Model fits
-        <span
-          className="glyphicon glyphicon-info-sign"
-          style={{ verticalAlign: "middle", float: "right", minHeight:"30px", minWidth: "30px"}}
-          aria-hidden="true"
-          data-toggle="popover"
-          data-trigger="hover"
-          title="Actions"
-          data-html="true"
-          data-content="<ul><li>Hover over a column header for a description of its content.</li></ul>"
-          data-placement="bottom"
-        />
-      </h4>
       <table
         className="dm-table table table-hover table-condensed list-group-item-text"
         style={{ marginTop: "0.5em" }}
@@ -132,10 +115,10 @@ class RELAXModelTable extends React.Component {
   }
 }
 
-class RELAX extends React.Component{
+class RELAXContents extends React.Component{
+
   constructor(props){
     super(props);
-    this.onFileChange = this.onFileChange.bind(this);
     var tree_settings = {
       omegaPlot: {},
       "tree-options": {
@@ -173,28 +156,17 @@ class RELAX extends React.Component{
       fits: null
     };
 
-  }
+  };
+  
+  componentDidMount() {
+    this.processData(this.props.json);
+  };
 
-  onFileChange(e) {
-    var self = this;
-    var files = e.target.files; // FileList object
+  componentWillReceiveProps(nextProps) {
+    this.processData(nextProps.json);
+  };
 
-    if (files.length == 1) {
-      var f = files[0];
-      var reader = new FileReader();
-
-      reader.onload = (function(theFile) {
-        return function(e) {
-          var data = JSON.parse(this.result);
-          self.processData(data);
-        };
-      })(f);
-      reader.readAsText(f);
-    }
-    e.preventDefault();
-  }
-
-  processData(data) {
+  processData = (data) => {
     var k = data["test results"]["relaxation or intensification parameter"],
       p = data["test results"]["p-value"],
       significant = p <= this.props.alpha_level;
@@ -213,10 +185,8 @@ class RELAX extends React.Component{
       data["fits"][model]["branch-annotations"] = this.formatBranchAnnotations(data, model);
       data["fits"][model]["annotation-tag"] = model == "MG94xREV with separate rates for branch sets" ? "ω" : 'k';
     });
-
     
     // Data munge for the branch attribute table.
-        
     // Get branch information from JSON sources.
     var branchAttributes = data["branch attributes"][0];
     var branchTestedStatuses = data["tested"][0];
@@ -283,30 +253,6 @@ class RELAX extends React.Component{
     });
   }
 
-  componentDidMount(){
-    var self = this;
-    d3.json(this.props.url, function(data){
-      self.processData(data);
-    });
-  }
-
-  componentWillMount() {
-    //this.loadFromServer();
-    //this.setEvents();
-  }
-
-  componentDidUpdate(prevProps, prevState) {
-    $("body").scrollspy({
-      target: ".bs-docs-sidebar",
-      offset: 50
-    });
-    $('[data-toggle="popover"]').popover();
-    $(function () {
-      $('[data-toggle="tooltip"]').tooltip()
-    });
-    $('.dropdown-toggle').dropdown();
-  }
-
   formatBranchAnnotations(json, model) {
     if(model == 'MG94xREV with separate rates for branch sets') {
       var initial_branch_annotations = _.mapObject(json.fits[model]['Rate Distributions'], (val, key) => {
@@ -337,78 +283,37 @@ class RELAX extends React.Component{
     return branch_annotations;
   }
 
-  getSummary(){
-    if(!this.state.json) return <div></div>;
-    return (
-      <div className="row">
-      <div className="clearance" id="summary-tab"></div>
-      <div className="col-md-12">
-        <h3 className="list-group-item-heading">
-          <span id="summary-method-name">
-            RELAX(ed selection test)
-          </span>
-          <br />
-          <span className="results-summary">results summary</span>
-        </h3>
-      </div>
-      <div className="col-md-12">
-        <InputInfo input_data={this.state.json.input} json={this.state.json} hyphy_vision={this.props.hyphy_vision}/>
-      </div>
-      <div className="col-md-12">
-        <div className="main-result">
-          <p>
-            Test for selection{" "}
-            <strong id="summary-direction">
-              {this.state.direction}
-            </strong>{" "}
+  getSummaryForRendering = () => {
+    return(
+      <p>
+        Test for selection{" "}
+        <strong id="summary-direction">
+          {this.state.direction}
+        </strong>{" "}
+        (K ={" "}
+        <strong id="summary-K">{this.state.summary_k}</strong>) was{" "}
+        <strong id="summary-evidence" className={this.state.significant ? 'hyphy-highlight' : ''}>
+          {this.state.evidence}
+        </strong>{" "}
+        (p = <strong id="summary-pvalue">
+          {this.state.p}
+        </strong>,{" "}
+        LR ={" "}
+        <strong id="summary-LRT">{this.state.lrt}</strong>).
+      </p>
+    );
+  };
 
-            (K ={" "}
-            <strong id="summary-K">{this.state.summary_k}</strong>) was{" "}
-            <strong id="summary-evidence" className={this.state.significant ? 'hyphy-highlight' : ''}>
-              {this.state.evidence}
-            </strong>{" "}
+  getSummaryForClipboard() {
+    return(
+      "test text for clipboard"
+    );
+  };
 
-            (p = <strong id="summary-pvalue">
-              {this.state.p}
-            </strong>,{" "}
-            LR ={" "}
-            <strong id="summary-LRT">{this.state.lrt}</strong>).
-          </p>
-          <hr />
-          <p>
-            <small>
-              See{" "}
-              <a href="http://hyphy.org/methods/selection-methods/#relax">
-                here
-              </a>{" "}
-              for more information about this method.
-              <br />Please cite{" "}
-              <a
-                href="http://www.ncbi.nlm.nih.gov/pubmed/25540451"
-                id="summary-pmid"
-                target="_blank"
-              >
-                PMID 123456789
-              </a>{" "}
-              if you use this result in a publication, presentation, or other
-              scientific work.
-            </small>
-          </p>
-        </div>
-      </div>
-
-    </div>);
-  }
   render(){
-    var self = this,
-      scrollspy_info = [
-        { label: "summary", href: "summary-tab" },
-        { label: "fits", href: "fits-tab" },
-        { label: "tree", href: "tree-tab" }
-      ];
-
-    var models = {},
-      partition = {'Reference': {}, 'Test': {}, 'Unclassified': {}};
+    var self = this
+    var models = {}
+    var partition = {'Reference': {}, 'Test': {}, 'Unclassified': {}};
     if (!_.isNull(self.state.json)) {
       models = self.state.json.fits,
       _.each(self.state.json.tested[0], (val, key) => {
@@ -418,59 +323,57 @@ class RELAX extends React.Component{
         delete partition['Unclassified'];
       }
     }
-    return (<div>
-      {self.props.hyphy_vision ? <NavBar onFileChange={this.onFileChange} /> : ''}
-      <div className="container">
-        <div className="row">
-          <ScrollSpy info={scrollspy_info} />
-          <div className="col-md-12 col-lg-10">
-            <ErrorMessage />
-            {self.getSummary()}
 
-            <div id="fits-tab" className="row">
-              <div className="col-md-12">
-                <RELAXModelTable fits={self.state.fits} />
-              </div>
-            </div>
+    return( 
+      <div> 
 
-            <div id="omega-tab" className="row">
-              <div className="col-md-12">
-                <Header title="Omega plots" popover="<p>Shows the different omega rate distributions under the null and alternative models.</p>"/>
-                <OmegaPlotGrid json={self.state.json} />
-              </div>
-            </div>
+        <MainResult
+          summary_for_clipboard={this.getSummaryForClipboard()}
+          summary_for_rendering={this.getSummaryForRendering()}                    
+          method_ref="http://hyphy.org/methods/selection-methods/#relax"
+          citation_ref="hhttp://www.ncbi.nlm.nih.gov/pubmed/25540451"
+          citation_number="PMID 123456789"
+        />
 
-            <div id="tree-tab" className="row">
-              <Tree
-                json={self.state.json}
-                settings={self.state.settings}
-                models={models}
-                partition={partition}
-                color_gradient={["#000000", "#888888", "#DFDFDF", "#77CCC6", "#00a99d"]}
-                grayscale_gradient={["#DDDDDD", "#AAAAAA", "#888888", "#444444", "#000000"]}
-                method='relax'
-              />
-            </div>
-
-            <div id="branch-attribute-table" className="col-md-12">
-              <Header title="Branch attributes"></Header>
-                <DatamonkeyTable
-                  headerData={self.state.branchAttributeHeaders}
-                  bodyData={self.state.branchAttributeRows}
-                  initialSort={1}
-                  paginate={10}
-                  export_csv
-                />
-              </div>
-
-            </div>
-          </div>
+        <div id="fits-tab" className="row"> 
+          <Header title="Model fits" popover="<p>Hover over a column header for a description of its content.</p>"/>
+          <RELAXModelTable fits={self.state.fits} />
         </div>
-    </div>);
-  }
+
+        <div id="omega-tab" className="row"> 
+          <Header title="Omega plots" popover="<p>Shows the different omega rate distributions under the null and alternative models.</p>"/>
+          <OmegaPlotGrid json={self.state.json} />
+        </div>
+
+        <div id="tree-tab" className="row">
+          <Tree
+            json={self.state.json}
+            settings={self.state.settings}
+            models={models}
+            partition={partition}
+            color_gradient={["#000000", "#888888", "#DFDFDF", "#77CCC6", "#00a99d"]}
+            grayscale_gradient={["#DDDDDD", "#AAAAAA", "#888888", "#444444", "#000000"]}
+            method='relax'
+          />
+        </div>
+
+        <div id="branch-attribute-table" className="row">
+          <Header title="Branch attributes"></Header>
+            <DatamonkeyTable
+              headerData={self.state.branchAttributeHeaders}
+              bodyData={self.state.branchAttributeRows}
+              initialSort={1}
+              paginate={10}
+              export_csv
+            />
+        </div>
+
+      </div>
+    );
+  };
 }
 
-RELAX.defaultProps = {
+RELAXContents.defaultProps = {
   edgeColorizer: function(element, data, omega_color, partition) {
     var omega_format = d3.format(".3r");
 
@@ -501,16 +404,29 @@ RELAX.defaultProps = {
   alpha_level: 0.05
 };
 
-
-
-// Will need to make a call to this
-// omega distributions
-function render_relax(url, element) {
-  ReactDOM.render(<RELAX url={url} />, document.getElementById(element));
+function RELAX(props) {
+  return (
+    <ResultsPage 
+      data={props.data}
+      hyphy_vision={props.hyphy_vision}
+      scrollSpyInfo={[
+        { label: "summary", href: "summary-tab" },
+        { label: "fits", href: "fits-tab" },
+        { label: "tree", href: "tree-tab" }
+      ]}
+      methodName="RELAX(ed selection test)"
+    >
+      {RELAXContents}
+    </ResultsPage>
+  );
 }
 
-function render_hv_relax(url, element) {
-  ReactDOM.render(<RELAX url={url} hyphy_vision />, document.getElementById(element));
+function render_relax(data, element) {
+  ReactDOM.render(<RELAX data={data} />, document.getElementById(element));
+}
+
+function render_hv_relax(data, element) {
+  ReactDOM.render(<RELAX data={data} hyphy_vision />, document.getElementById(element));
 }
 
 module.exports = render_relax;

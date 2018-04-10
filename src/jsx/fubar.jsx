@@ -5,12 +5,10 @@ var React = require("react"),
   d3_save_svg = require("d3-save-svg");
 
 import { Tree } from "./components/tree.jsx";
-import { InputInfo } from "./components/input_info.jsx";
 import { DatamonkeyTable, DatamonkeyModelTable } from "./components/tables.jsx";
-import { NavBar } from "./components/navbar.jsx";
-import { ScrollSpy } from "./components/scrollspy.jsx";
 import { saveSvgAsPng } from "save-svg-as-png";
 import { Header } from "./components/header.jsx";
+import { ResultsPage } from "./components/results_page.jsx";
 
 
 function FUBARSummary(props) {
@@ -24,22 +22,7 @@ function FUBARSummary(props) {
       .reduce((a,b)=> a+b, 0);
   return (
     <div className="row" id="summary-tab">
-      <div className="clearance" id="summary-div"></div>
       <div className="col-md-12">
-        <h3 className="list-group-item-heading">
-          <span id="summary-method-name">
-            Fast Unconstrained Bayesian AppRoximation
-          </span>
-          <br />
-          <span className="results-summary">results summary</span>
-        </h3>
-      </div>
-      <div className="col-md-12">
-        <InputInfo
-          input_data={props.json ? props.json.input : null}
-          json={props.json}
-          hyphy_vision={props.hyphy_vision}
-        />
       </div>
       <div className="col-md-12">
         <div className="main-result">
@@ -397,12 +380,9 @@ function FUBARTable(props){
   </div>);
 }
 
-class FUBAR extends React.Component {
+class FUBARContents extends React.Component {
   constructor(props) {
     super(props);
-
-    this.updatePosteriorProbability= this.updatePosteriorProbability.bind(this); 
-    this.onFileChange = this.onFileChange.bind(this); 
 
     this.state = {
       input_data: null,
@@ -413,6 +393,14 @@ class FUBAR extends React.Component {
       partitions: null,
       posteriorProbability: .9
     };
+  }
+
+  componentDidMount() {
+    this.processData(this.props.json);
+  }
+
+  componentWillReceiveProps(nextProps) {
+    this.processData(nextProps.json)
   }
 
   processData(data){
@@ -438,59 +426,12 @@ class FUBAR extends React.Component {
     });
   }
 
-  loadFromServer() {
-    var self = this;
-    d3.json(this.props.url, function(data) {
-      self.processData(data);
-    });
-  }
-
-  onFileChange(e) {
-    var self = this;
-    var files = e.target.files; // FileList object
-
-    if (files.length == 1) {
-      var f = files[0];
-      var reader = new FileReader();
-
-      reader.onload = (function(theFile) {
-        return function(e) {
-          var data = JSON.parse(this.result);
-          self.processData(data);
-        };
-      })(f);
-      reader.readAsText(f);
-    }
-    e.preventDefault();
-  }
-
-  componentWillMount() {
-    this.loadFromServer();
-  }
-
-  componentDidUpdate(prevProps, prevState) {
-    $("body").scrollspy({
-      target: ".bs-docs-sidebar",
-      offset: 50
-    });
-    $('[data-toggle="popover"]').popover();
-    $('.dropdown-toggle').dropdown();
-  }
-
-  updatePosteriorProbability(e) {
+  updatePosteriorProbability = (e) => {
     this.setState({posteriorProbability: +e.target.value});
   }
 
   render() {
-    var self = this,
-      scrollspy_info = [
-        { label: "summary", href: "summary-tab" },
-        { label: "plot", href: "plot-tab" },
-        { label: "table", href: "table-tab" },
-        { label: "tree", href: "tree-tab" },
-        { label: "fits", href: "fit-tab" }
-      ];
-    
+    var self = this;
     var models = {};
     if (!_.isNull(self.state.data)) {
       models = self.state.data.fits;
@@ -516,10 +457,8 @@ class FUBAR extends React.Component {
     };
     return (
       <div>
-        {this.props.hyphy_vision ? <NavBar onFileChange={this.onFileChange} /> : ''}
         <div className="container">
           <div className="row">
-            <ScrollSpy info={scrollspy_info} />
             <div className="col-md-12 col-lg-10">
               <FUBARSummary
                 json={self.state.data}
@@ -572,12 +511,31 @@ class FUBAR extends React.Component {
   }
 }
 
-function render_fubar(url, element) {
-  ReactDOM.render(<FUBAR url={url} />, document.getElementById(element));
+function FUBAR(props) {
+  return (
+    <ResultsPage
+      data={props.data} 
+      hyphy_vision={props.hyphy_vision}
+      scrollSpyInfo={[
+        { label: "summary", href: "summary-tab" },
+        { label: "plot", href: "plot-tab" },
+        { label: "table", href: "table-tab" },
+        { label: "tree", href: "tree-tab" },
+        { label: "fits", href: "fit-tab" }
+      ]}
+      methodName="Fast Unconstrained Bayesian AppRoximation"
+    >
+      {FUBARContents}
+    </ResultsPage>
+  );
 }
 
-function render_hv_fubar(url, element) {
-  ReactDOM.render(<FUBAR url={url} hyphy_vision />, document.getElementById(element));
+function render_fubar(data, element) {
+  ReactDOM.render(<FUBAR data={data} />, document.getElementById(element));
+}
+
+function render_hv_fubar(data, element) {
+  ReactDOM.render(<FUBAR data={data} hyphy_vision />, document.getElementById(element));
 }
 
 module.exports = render_fubar;
