@@ -8,13 +8,11 @@ var React = require("react"),
 
 import { Tree } from "./components/tree.jsx";
 import { PropChart } from "./components/prop_chart.jsx";
-import { NavBar } from "./components/navbar.jsx";
-import { ScrollSpy } from "./components/scrollspy.jsx";
 import { DatamonkeyTable } from "./components/tables.jsx";
 import { saveSvgAsPng } from "save-svg-as-png";
 import { Header } from "./components/header.jsx";
-import { MethodHeader } from "./components/methodheader.jsx";
 import { MainResult } from "./components/mainresult.jsx";
+import { ResultsPage } from "./components/results_page.jsx"
 
 
 var BUSTEDSiteChartAndTable = React.createClass({
@@ -648,12 +646,78 @@ class BUSTEDModelTable extends React.Component {
   }
 }
 
-var BUSTED = React.createClass({
-  float_format: d3.format(".2f"),
-  p_value_format: d3.format(".4f"),
-  fit_format: d3.format(".2f"),
+class BUSTEDContents extends React.Component {
+  constructor(props) {
+    super(props);
+    const float_format = d3.format(".2f")
+    const p_value_format = d3.format(".4f")
+    const fit_format = d3.format(".2f")
+    const colorGradient = ["#00a99d", "#000000"]
+    const grayScaleGradient = [
+      "#444444",
+      "#000000"
+    ];
+    var edgeColorizer = function(element, data, foreground_color) {
+      var is_foreground = data.target.annotations.is_foreground,
+        color_fill = foreground_color(0);
+      element
+        .style("stroke", is_foreground ? color_fill : "black")
+        .style("stroke-linejoin", "round")
+        .style("stroke-linejoin", "round")
+        .style("stroke-linecap", "round");
+    };
+    var tree_settings = {
+      omegaPlot: {},
+      "tree-options": {
+        /* value arrays have the following meaning
+                [0] - the value of the attribute
+                [1] - does the change in attribute value trigger tree re-layout?
+            */
+        "hyphy-tree-model": ["Unconstrained model", true],
+        "hyphy-tree-highlight": ["RELAX.test", false],
+        "hyphy-tree-branch-lengths": [true, true],
+        "hyphy-tree-hide-legend": [true, false],
+        "hyphy-tree-fill-color": [true, false]
+      },
+      "hyphy-tree-legend-type": "discrete",
+      "suppress-tree-render": false,
+      "chart-append-html": true,
+      edgeColorizer: edgeColorizer
+    };
+    var distro_settings = {
+      dimensions: { width: 600, height: 400 },
+      margins: { left: 50, right: 15, bottom: 35, top: 15 },
+      legend: false,
+      domain: [0.00001, 10000],
+      do_log_plot: true,
+      k_p: null,
+      plot: null,
+      svg_id: "prop-chart"
+    };
+    const constrained_threshold = "Infinity";
+    const null_threshold = "-Infinity";
+    const model_name = "FG";
 
-  processData: function(data) {
+    this.state = {
+      p: null,
+      fits: null,
+      input_data: null,
+      json: null,
+      tree_settings: tree_settings,
+      colorGradient: ["#00a99d", "#000000"],
+      grayScaleGradient: ["#444444", "#000000"]
+    }
+  }
+  
+  componentDidMount = () => {
+    this.processData(this.props.json);
+  }
+
+  componentWillReceiveProps(nextProps) {
+    this.processData(nextProps.json);
+  }
+
+  processData(data) {
     data.fits = _.mapObject(data.fits, (val, key) => {
       val['log-likelihood'] = val['Log Likelihood'];
       val['parameters'] = val['estimated parameters'];
@@ -702,9 +766,9 @@ var BUSTED = React.createClass({
           };
         })
     });
-  },
+  }
 
-  getSummaryForClipboard: function() {
+  getSummaryForClipboard = () => {
     var self = this;
     var significant = this.state.p < 0.05; 
     var userMessageForClipboard;
@@ -719,9 +783,9 @@ var BUSTED = React.createClass({
         " > .05) of gene-wide episodic diversifying selection in the selected test branches of your phylogeny. Therefore, there is no evidence that any sites have experienced diversifying selection along the test branch(es)."
     }
     return (userMessageForClipboard);
-  },
+  }
 
-  getSummaryForRendering: function() {
+  getSummaryForRendering = () => {
     var significant = this.state.p < 0.05, 
       message;
     if (significant) {
@@ -748,104 +812,9 @@ var BUSTED = React.createClass({
       );
     }
     return (message);
-  },
+  }
 
-  loadFromServer: function() {
-    var self = this;
-
-    d3.json(this.props.url, function(data) {
-      self.processData(data);
-    });
-  },
-
-  onFileChange: function(e){
-    var self = this,
-      files = e.target.files; // FileList object
-
-    if (files.length == 1) {
-      var f = files[0],
-        reader = new FileReader();
-
-      reader.onload = (function(theFile) {
-        return function(e) {
-          var data = JSON.parse(this.result);
-          self.processData(data);
-        };
-      })(f);
-      reader.readAsText(f);
-    }
-    e.preventDefault();
-  },
-
-  colorGradient: ["#00a99d", "#000000"],
-  grayScaleGradient: [
-    "#444444",
-    "#000000"
-  ],
-
-  getDefaultProps: function() {
-
-    var edgeColorizer = function(element, data, foreground_color) {
-
-      var is_foreground = data.target.annotations.is_foreground,
-        color_fill = foreground_color(0);
-
-      element
-        .style("stroke", is_foreground ? color_fill : "black")
-        .style("stroke-linejoin", "round")
-        .style("stroke-linejoin", "round")
-        .style("stroke-linecap", "round");
-    };
-
-    var tree_settings = {
-      omegaPlot: {},
-      "tree-options": {
-        /* value arrays have the following meaning
-                [0] - the value of the attribute
-                [1] - does the change in attribute value trigger tree re-layout?
-            */
-        "hyphy-tree-model": ["Unconstrained model", true],
-        "hyphy-tree-highlight": ["RELAX.test", false],
-        "hyphy-tree-branch-lengths": [true, true],
-        "hyphy-tree-hide-legend": [true, false],
-        "hyphy-tree-fill-color": [true, false]
-      },
-      "hyphy-tree-legend-type": "discrete",
-      "suppress-tree-render": false,
-      "chart-append-html": true,
-      edgeColorizer: edgeColorizer
-    };
-
-    var distro_settings = {
-      dimensions: { width: 600, height: 400 },
-      margins: { left: 50, right: 15, bottom: 35, top: 15 },
-      legend: false,
-      domain: [0.00001, 10000],
-      do_log_plot: true,
-      k_p: null,
-      plot: null,
-      svg_id: "prop-chart"
-    };
-
-    return {
-      distro_settings: distro_settings,
-      tree_settings: tree_settings,
-      constrained_threshold: "Infinity",
-      null_threshold: "-Infinity",
-      model_name: "FG"
-    };
-  },
-
-  getInitialState: function() {
-    return {
-      p: null,
-      fits: null,
-      input_data: null,
-      json: null
-    };
-  },
-
-  formatBranchAnnotations: function(json) {
+  formatBranchAnnotations =  (json) => {
     // attach is_foreground to branch annotations
     var branch_annotations = d3.range(json.trees.length).map(i=>{
       return _.mapObject(json['tested'][i], (val, key)=>{
@@ -853,55 +822,23 @@ var BUSTED = React.createClass({
       });
     });
     return branch_annotations;
-  },
+  }
 
-  componentWillMount: function() {
-    this.loadFromServer();
-  },
-
-  componentDidUpdate(prevProps, prevState) {
-    $("body").scrollspy({
-      target: ".bs-docs-sidebar",
-      offset: 50
-    });
-    $('[data-toggle="popover"]').popover();
-    $(function () {
-      $('[data-toggle="tooltip"]').tooltip()
-    })
-    $('.dropdown-toggle').dropdown();
-  },
-
-  render: function() {
-
+  render () {
     var self = this;
-    var scrollspy_info = [
-      { label: "summary", href: "summary-div" },
-      { label: "model statistics", href: "hyphy-model-fits" },
-      { label: "tree", href: "phylogenetic-tree" }
-    ];
-
     var models = {};
     if (!_.isNull(self.state.json)) {
       models = _.pick(self.state.json.fits, ['Unconstrained model', 'Constrained model']);
     }
-
     return (
       <div>
-        {self.props.hyphy_vision ? <NavBar onFileChange={this.onFileChange} /> : ''}
         <div className="container">
           <div className="row">
-            <ScrollSpy info={scrollspy_info} />
 
             <div className="col-md-12 col-lg-10">
               <div>
                 <div id="summary-tab">
-                 <MethodHeader
-                    methodName="Branch-site Unrestricted Statistical Test for Episodic Diversification"
-                    input_data={self.state.input_data}
-                    json={self.state.json}
-                    hyphy_vision={self.props.hyphy_vision}
-                  />
-                  <MainResult
+                 <MainResult
                     summary_for_clipboard={this.getSummaryForClipboard()}
                     summary_for_rendering={this.getSummaryForRendering()} 
                     method_ref="http://hyphy.org/methods/selection-methods/#busted"
@@ -930,10 +867,10 @@ var BUSTED = React.createClass({
                 <div className="col-md-12" id="phylogenetic-tree">
                   <Tree
                     json={self.state.json}
-                    settings={self.props.tree_settings}
+                    settings={self.state.tree_settings}
                     models={models}
-                    color_gradient={self.colorGradient}
-                    grayscale_gradient={self.grayscaleGradient}
+                    color_gradient={self.state.colorGradient}
+                    grayscale_gradient={self.state.grayscaleGradient}
                     method={'busted'}
                     multitree
                   />
@@ -948,16 +885,31 @@ var BUSTED = React.createClass({
     );
   }
 
-});
-
-// Will need to make a call to this
-// omega distributions
-var render_busted = function(url, element) {
-  ReactDOM.render(<BUSTED url={url} />, document.getElementById(element));
 };
 
-var render_hv_busted = function(url, element) {
-  ReactDOM.render(<BUSTED url={url} hyphy_vision />, document.getElementById(element));
+function BUSTED(props) {
+  return (
+    <ResultsPage
+      data={props.data} 
+      hyphy_vision={props.hyphy_vision}
+      scrollSpyInfo={[
+      { label: "summary", href: "summary-div" },
+      { label: "model statistics", href: "hyphy-model-fits" },
+      { label: "tree", href: "phylogenetic-tree" }
+      ]}
+      methodName="Branch-site Unrestricted Statistical Test for Episodic Diversification"
+    >
+      {BUSTEDContents}
+    </ResultsPage>
+  );
+}
+
+var render_busted = function(data, element) {
+  ReactDOM.render(<BUSTED data={data} />, document.getElementById(element));
+};
+
+var render_hv_busted = function(data, element) {
+  ReactDOM.render(<BUSTED data={data} hyphy_vision />, document.getElementById(element));
 };
 
 module.exports = render_busted;
