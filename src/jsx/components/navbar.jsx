@@ -90,49 +90,36 @@ var NavBar = React.createClass({
     return (
     
 
-      <nav className="navbar navbar-expand-lg navbar-light bg-light fixed-top main-nav" role="navigation">
+      <nav className="navbar navbar-expand-lg navbar-light bg-light fixed-top" role="navigation">
         <div className="container">
           <div className="row">
-
-              <a className="navbr-brand" href ="/">
-                <img id="hyphy-logo" src={hyphy_logo} />
-              </a>
-
+        
+            <a className="navbr-brand" href ="/">
+              <img id="hyphy-logo" src={hyphy_logo} />
+            </a>
             
-            
-                
-
-              <div className="collapse navbar-collapse" id="navbarSupportedContent">
-                <Methods />
-                
-                
-                
-            
-                
-                
-                
-                
-                <ul className="navbar-nav">
-                  <a
-                    className="nav-button"
-                    role="button"
-                    style={{ position: "relative", overflow: "hidden", left: "100px" }}
-                  >
-                    { this.props.onFileChange ? (<input 
-                      type="file"
-                      id="dm-file"
-                      onChange={self.props.onFileChange}
-                    />) : null }
-                    Load
-                  </a>
-                </ul>
-                
-              </div>
-              
-
+            <div className="collapse navbar-collapse" id="navbarSupportedContent">
+              <Methods />
+              <ul className="navbar-nav">
+                <a
+                  className="nav-button"
+                  role="button"
+                  style={{ position: "relative", overflow: "hidden", width: "106px", textAlign: "center" }}
+                >
+                  { this.props.onFileChange ? (<input 
+                    type="file"
+                    id="dm-file"
+                    onChange={self.props.onFileChange}
+                  />) : null }
+                  Load
+                </a>
+              </ul>
+            </div>
+        
           </div>
         </div>
       </nav>
+      
     );
   }
 });
