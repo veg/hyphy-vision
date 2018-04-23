@@ -34,7 +34,7 @@ var FadeSummary = React.createClass({
     var self = this;
 
     return (
-      <dl className="dl-horizontal">
+      <dl className="row">
         <dt>Data summary</dt>
         <dd>
           {this.props.sequences} sequences with {this.props.partitions}{" "}

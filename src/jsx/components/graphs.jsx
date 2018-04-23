@@ -72,7 +72,7 @@ class GraphMenu extends React.Component {
             {DimensionOptions}
           </ul>
           <button
-            className="btn btn-default btn-sm dropdown-toggle form-control"
+            className="btn.btn-secondary btn-sm dropdown-toggle form-control"
             type="button"
             data-toggle="dropdown"
             aria-haspopup="true"
@@ -109,7 +109,7 @@ class GraphMenu extends React.Component {
           <button
             id="export-chart-png"
             type="button"
-            className="btn btn-default btn-sm pull-right btn-export"
+            className="btn.btn-secondary btn-sm pull-right btn-export"
             onClick={()=>saveSvgAsPng(document.getElementById("dm-chart"), "datamonkey-chart.png")}
           >
             <span className="glyphicon glyphicon-floppy-save" /> Export to PNG
@@ -117,7 +117,7 @@ class GraphMenu extends React.Component {
           <button
             id="export-chart-png"
             type="button"
-            className="btn btn-default btn-sm pull-right btn-export"
+            className="btn.btn-secondary btn-sm pull-right btn-export"
             onClick={()=>d3_save_svg.save(d3.select("#dm-chart").node(), {filename: "datamonkey-chart"})}
           >
             <span className="glyphicon glyphicon-floppy-save" /> Export to SVG
@@ -736,7 +736,8 @@ class MultiScatterPlot extends React.Component {
       <div style={{ marginTop: "20px" }}>
         <div
           id="hyphy-prime-toggle-buttons"
-          className="btn-group-justified col-lg-12"
+          className="btn-group d-flex col-lg-12"
+          role="group"
           data-toggle="buttons"
         >
           {self.getCheckBoxes()}
@@ -831,7 +832,7 @@ class SiteGraph extends React.Component {
         <button
           id="export-chart-svg"
           type="button"
-          className="btn btn-default btn-sm pull-right btn-export"
+          className="btn.btn-secondary btn-sm pull-right btn-export"
           onClick={self.saveSVG}
         >
           <span className="glyphicon glyphicon-floppy-save" /> Export Chart to SVG
@@ -839,7 +840,7 @@ class SiteGraph extends React.Component {
         <button
           id="export-chart-png"
           type="button"
-          className="btn btn-default btn-sm pull-right btn-export"
+          className="btn.btn-secondary btn-sm pull-right btn-export"
           onClick={self.savePNG}
         >
           <span className="glyphicon glyphicon-floppy-save" /> Export Chart to PNG

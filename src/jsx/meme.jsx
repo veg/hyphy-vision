@@ -128,7 +128,7 @@ function MEMETable(props) {
         headerData={headerData}
         bodyData={new_rows}
         paginate={20}
-        classes={"table table-condensed table-striped"}
+        classes={"table table-smm table-striped"}
         export_csv
       />
     </div>

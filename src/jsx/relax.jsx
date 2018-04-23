@@ -64,7 +64,7 @@ class RELAXModelTable extends React.Component {
     });
     return (<div>
       <table
-        className="dm-table table table-hover table-condensed list-group-item-text"
+        className="dm-table table table-hover table-smm list-group-item-text"
         style={{ marginTop: "0.5em" }}
       >
         <thead id="summary-model-header1">

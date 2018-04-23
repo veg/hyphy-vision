@@ -375,7 +375,7 @@ var BUSTEDSiteChartAndTable = React.createClass({
             <button
               id="export-chart-svg"
               type="button"
-              className="btn btn-default btn-sm pull-right btn-export"
+              className="btn.btn-secondary btn-sm pull-right btn-export"
               onClick={()=>{d3_save_svg.save(d3.select("#chart").node(), {filename: "busted"});}}
             >
               <span className="glyphicon glyphicon-floppy-save" /> Export Chart
@@ -384,7 +384,7 @@ var BUSTEDSiteChartAndTable = React.createClass({
             <button
               id="export-chart-png"
               type="button"
-              className="btn btn-default btn-sm pull-right btn-export"
+              className="btn.btn-secondary btn-sm pull-right btn-export"
               onClick={()=>{saveSvgAsPng(document.getElementById("chart"), "busted-chart.png");}}
             >
               <span className="glyphicon glyphicon-floppy-save" /> Export Chart
@@ -407,7 +407,7 @@ var BUSTEDSiteChartAndTable = React.createClass({
                 onFocus={this.handleCERFocus}
                 onBlur={this.handleCERBlur}
               />
-            {this.state.CERwarning ? <span className="help-block">Enter a floating point number.</span> : ''}
+            {this.state.CERwarning ? <span className=".form-text">Enter a floating point number.</span> : ''}
             </div>
           </div>
           
@@ -425,7 +425,7 @@ var BUSTEDSiteChartAndTable = React.createClass({
                 onFocus={this.handleONERFocus}
                 onBlur={this.handleONERBlur}
               />
-            {this.state.ONERwarning ? <span className="help-block">Enter a floating point number.</span> : ''}
+            {this.state.ONERwarning ? <span className=".form-text">Enter a floating point number.</span> : ''}
             </div>
           </div>
 
@@ -437,7 +437,7 @@ var BUSTEDSiteChartAndTable = React.createClass({
               bodyData={bodyData}
               paginate={Math.min(20, bodyData.length)}
               initialSort={0}
-              classes={"table table-condensed table-striped"}
+              classes={"table table-smm table-striped"}
               export_csv
             />
         </div>    
@@ -550,7 +550,7 @@ class BUSTEDModelTable extends React.Component {
         />
       </h4>
       <table
-        className="dm-table table table-hover table-condensed list-group-item-text"
+        className="dm-table table table-hover table-smm list-group-item-text"
         style={{ marginTop: "0.5em" }}
       >
         <thead id="summary-model-header1">
@@ -632,7 +632,7 @@ class BUSTEDModelTable extends React.Component {
             <div className="modal-footer">
               <button
                 type="button"
-                className="btn btn-default"
+                className="btn.btn-secondary"
                 data-dismiss="modal"
               >
                 Close

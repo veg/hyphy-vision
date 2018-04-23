@@ -1,5 +1,5 @@
 require("font-awesome/css/font-awesome.css");
-require('./application.less');
+require('./application.scss');
 require('./hyphyvision.css');
 require('./fade/FADE.css');
 require('bootstrap');

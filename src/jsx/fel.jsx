@@ -457,7 +457,7 @@ class FELContents extends React.Component {
                     <DatamonkeyTable
                       headerData={this.state.mle_headers}
                       bodyData={this.state.mle_content}
-                      classes={"table table-condensed table-striped"}
+                      classes={"table table-smm table-striped"}
                       paginate={20}
                       export_csv
                     />

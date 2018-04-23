@@ -122,7 +122,7 @@ function GARDRecombinationReport(props){
   return (<div className="row" id="report-tab">
     <div className="col-md-12">
       <Header title="Recombination report" popover='<p>Hover over a column for a description of its content.</p>'/>
-      <table className="table table-condensed tabled-striped">
+      <table className="table table-smm tabled-striped">
         <thead>
           <tr>
             <th>
@@ -226,7 +226,7 @@ function GARDTopologyReport(props){
   return (<div className="row">
     <div className="col-md-12">
       <Header title="Topological incongruence report" popover="<p>Hover over a column header for a description of its content.</p>"/>
-      <table className="table table-condensed tabled-striped">
+      <table className="table table-smm tabled-striped">
         <thead>
           <tr>
             <th>

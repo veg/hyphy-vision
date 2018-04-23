@@ -302,7 +302,7 @@ class FUBARViz extends React.Component {
         <button
           id="export-chart-svg"
           type="button"
-          className="btn btn-default btn-sm pull-right btn-export"
+          className="btn.btn-secondary btn-sm pull-right btn-export"
           onClick={()=>d3_save_svg.save(d3.select("#fubar-viz").node(), {filename: "datamonkey-chart"})}
         >
           <span className="glyphicon glyphicon-floppy-save" /> Export Chart to SVG
@@ -310,7 +310,7 @@ class FUBARViz extends React.Component {
         <button
           id="export-chart-png"
           type="button"
-          className="btn btn-default btn-sm pull-right btn-export"
+          className="btn.btn-secondary btn-sm pull-right btn-export"
           onClick={()=>saveSvgAsPng(document.getElementById("fubar-viz"), "datamonkey-chart.png")}
         >
           <span className="glyphicon glyphicon-floppy-save" /> Export Chart to PNG
@@ -373,7 +373,7 @@ function FUBARTable(props){
         headerData={headerData}
         bodyData={new_rows}
         paginate={20}
-        classes={"table table-condensed table-striped"}
+        classes={"table table-smm table-striped"}
         export_csv
       />
     </div>
