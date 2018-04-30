@@ -93,7 +93,7 @@ var NavBar = React.createClass({
       <nav className="navbar navbar-expand-lg navbar-light bg-light fixed-top" role="navigation">
         <div className="container">
         
-            <a className="navbr-brand" href ="/">
+            <a className="navbar-brand" href ="/">
               <img id="hyphy-logo" src={hyphy_logo} />
             </a>
             
