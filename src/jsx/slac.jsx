@@ -483,11 +483,10 @@ var SLACSites = React.createClass({
     var result = (
       <div className="table-responsive">
         <nav className="navbar">
-          <form className="navbar-form ">
-            <div className="form-group navbar-left">
+          <form className="form-inline justify-content-between w-100">
+            <div className="form-group">
 
               <div className="input-group">
-
                 <ul className="dropdown-menu">
                   <li key="variable">
                     <a
@@ -545,7 +544,7 @@ var SLACSites = React.createClass({
 
               </div>
             </div>
-            <div className="form-group navbar-right">
+            <div className="form-group">
               <div className="input-group">
                 <ul className="dropdown-menu">
                   {_.map(filterable, function(d, index) {
@@ -1020,8 +1019,8 @@ var SLACGraphs = React.createClass({
     return (
       <div className="table-responsive">
         <nav className="navbar" style={{borderBottom:"none"}}>
-          <form className="navbar-form ">
-            <div className="form-group navbar-left">
+          <form className="form-inline justify-content-between w-100">
+            <div className="form-group">
               <div className="input-group">
                 <span className="input-group-addon">X-axis:</span>
 
@@ -1112,7 +1111,7 @@ var SLACGraphs = React.createClass({
 
               </div>
             </div>
-            <div className="form-group navbar-right">
+            <div className="form-group">
               <div className="input-group">
                 <button
                   id="export-chart-png"

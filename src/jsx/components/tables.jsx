@@ -471,7 +471,7 @@ var DatamonkeyTable = React.createClass({
                   title={"Move backwards " + this.props.paginate + " rows."}
                 >
                   <span
-                    className="glyphicon glyphicon-backward"
+                    className="fas fa-angle-double-left"
                     aria-hidden="true"
                   />
                 </button>
@@ -485,7 +485,7 @@ var DatamonkeyTable = React.createClass({
                   title="Move backwards one row."
                 >
                   <span
-                    className="glyphicon glyphicon-chevron-left"
+                    className="fas fa-angle-left"
                     aria-hidden="true"
                   />
                 </button>
@@ -499,7 +499,7 @@ var DatamonkeyTable = React.createClass({
                   title="Move forwards one row."
                 >
                   <span
-                    className="glyphicon glyphicon-chevron-right"
+                    className="fas fa-angle-right"
                     aria-hidden="true"
                   />
                 </button>
@@ -513,7 +513,7 @@ var DatamonkeyTable = React.createClass({
                   title={"Move forwards " + this.props.paginate + " rows."}
                 >
                   <span
-                    className="glyphicon glyphicon-forward"
+                    className="fas fa-angle-double-right"
                     aria-hidden="true"
                   />
                 </button>
