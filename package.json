@@ -22,11 +22,14 @@
   "main": "dist/hyphyvision.js",
   "version": "1.1.7",
   "dependencies": {
+    "alignment.js": "^1.0.5",
     "bootstrap": "4.x",
     "chi-squared": "^1.1.0",
     "csvexport": "^1.0.2",
     "d3": "3.x",
     "d3-save-svg": "0.0.2",
+    "express": "^4.16.2",
+    "extract-text-webpack-plugin": "^2.0.0",
     "file-saver": "^1.3.3",
     "font-awesome": "4.x",
     "immutable": "3.8.1",
@@ -35,6 +38,7 @@
     "jquery-ui": "1.x",
     "jquery-ui-bundle": "^1.11.4",
     "jquery-ui-dist": "^1.12.1",
+    "json-loader": "^0.5.6",
     "lodash": "3.x",
     "lodash.clonedeep": "^4.5.0",
     "phylotree": "0.1.6",
@@ -46,7 +50,11 @@
     "react-copy-to-clipboard": "^5.0.0",
     "react-dom": "^15.4.1",
     "react-json-view": "^1.14.0",
+    "react-router-dom": "^4.2.2",
+    "react-router-hash-link": "^1.1.1",
+    "react-scrollchor": "^4.2.1",
     "save-svg-as-png": "^1.2.0",
+    "supervisor": "^0.12.0",
     "underscore": "^1.8.3"
   },
   "devDependencies": {
@@ -57,9 +65,12 @@
     "babel-preset-es2015": "^6.24.1",
     "babel-preset-react": "^6.24.1",
     "babel-preset-react-hmre": "^1.1.1",
+    "babel-preset-stage-1": "^6.24.1",
+    "base-href-webpack-plugin": "^1.0.2",
     "bootstrap-webpack": "0.0.x",
     "copy-webpack-plugin": "^4.1.1",
     "css-loader": "^0.25.0",
+    "electron": "^1.7.9",
     "enzyme": "^2.9.1",
     "eslint": "^4.0.0",
     "eslint-loader": "^1.8.0",
@@ -68,6 +79,7 @@
     "expose-loader": "^0.7.1",
     "extract-text-webpack-plugin": "^2.0.0",
     "file-loader": "^0.9.0",
+    "html-webpack-plugin": "^2.30.1",
     "font-awesome-webpack": "0.0.4",
     "imports-loader": "^0.6.5",
     "jest": "^19.0.2",
@@ -84,11 +96,14 @@
     "uglify-js": "^3.3.7",
     "url-loader": "^0.5.7",
     "webpack": "^2.0.0",
+    "webpack-dev-server": "^2.9.7",
     "webpack-eslint-plugin": "^1.2.0"
   },
   "scripts": {
     "lint": "eslint dist/hyphyvision.js",
-    "jest": "node ./node_modules/jest-cli/bin/jest.js"
+    "jest": "node ./node_modules/jest-cli/bin/jest.js",
+    "start": "node_modules/.bin/webpack-dev-server --open",
+    "electron": "webpack && node_modules/.bin/electron electron.js"
   },
   "license": "MIT",
   "files": [

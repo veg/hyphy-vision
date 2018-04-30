@@ -12,80 +12,10 @@ import { NavBar } from "./components/navbar.jsx";
 import { ScrollSpy } from "./components/scrollspy.jsx";
 import { DatamonkeyTable } from "./components/tables.jsx";
 import { saveSvgAsPng } from "save-svg-as-png";
-import { InputInfo } from "./components/input_info";
 import { Header } from "./components/header.jsx";
+import { MethodHeader } from "./components/methodheader.jsx";
+import { MainResult } from "./components/mainresult.jsx";
 
-
-function BUSTEDSummary(props) {
-  var significant = props.p < 0.05,
-    message;
-  if (significant) {
-    message = (<p>
-      BUSTED <strong className="hyphy-highlight">
-        found evidence
-      </strong>{" "}
-      (LRT, p-value = {props.p ? props.p.toFixed(3) : null} &le; .05) of gene-wide episodic diversifying selection
-      in the selected test branches of your phylogeny. Therefore, there is
-      evidence that at least one site on at least one test branch has
-      experienced diversifying selection.{" "}
-    </p>);
-  } else {
-    message = (
-      <p>
-        BUSTED <strong>
-          found no evidence
-        </strong>{" "}
-        (LRT, p-value = {props.p ? props.p.toFixed(3) : null} &ge; .05) of gene-wide episodic diversifying selection
-        in the selected test branches of your phylogeny. Therefore, there is no
-        evidence that any sites have experienced diversifying selection along
-        the test branch(es).{" "}
-      </p>
-    );
-  }
-  return (
-    <div className="row">
-    <div className="clearance" id="summary-div"></div>
-      <div className="col-md-12">
-        <h3 className="list-group-item-heading">
-          <span id="summary-method-name">
-            Branch-site Unrestricted Statistical Test for Episodic
-            Diversification
-          </span>
-          <br />
-          <span className="results-summary">results summary</span>
-        </h3>
-      </div>
-      <div className="col-md-12">
-        <InputInfo input_data={props.input_data} json={props.json} hyphy_vision={props.hyphy_vision}/>
-      </div>
-      <div className="col-md-12">
-        <div className="main-result">
-          {message}
-          <hr />
-          <p>
-            <small>
-              See{" "}
-              <a href="http://hyphy.org/methods/selection-methods/#busted">
-                here
-              </a>{" "}
-              for more information about the BUSTED method.
-              <br />Please cite{" "}
-              <a
-                href="http://www.ncbi.nlm.nih.gov/pubmed/25701167"
-                id="summary-pmid"
-                target="_blank"
-              >
-                PMID 25701167
-              </a>{" "}
-              if you use this result in a publication, presentation, or other
-              scientific work.
-            </small>
-          </p>
-        </div>
-      </div>
-    </div>
-  );
-}
 
 var BUSTEDSiteChartAndTable = React.createClass({
   getInitialState: function() {
@@ -447,7 +377,7 @@ var BUSTEDSiteChartAndTable = React.createClass({
             <button
               id="export-chart-svg"
               type="button"
-              className="btn btn-default btn-sm pull-right btn-export"
+              className="btn.btn-secondary btn-sm pull-right btn-export"
               onClick={()=>{d3_save_svg.save(d3.select("#chart").node(), {filename: "busted"});}}
             >
               <span className="glyphicon glyphicon-floppy-save" /> Export Chart
@@ -456,7 +386,7 @@ var BUSTEDSiteChartAndTable = React.createClass({
             <button
               id="export-chart-png"
               type="button"
-              className="btn btn-default btn-sm pull-right btn-export"
+              className="btn.btn-secondary btn-sm pull-right btn-export"
               onClick={()=>{saveSvgAsPng(document.getElementById("chart"), "busted-chart.png");}}
             >
               <span className="glyphicon glyphicon-floppy-save" /> Export Chart
@@ -479,7 +409,7 @@ var BUSTEDSiteChartAndTable = React.createClass({
                 onFocus={this.handleCERFocus}
                 onBlur={this.handleCERBlur}
               />
-            {this.state.CERwarning ? <span className="help-block">Enter a floating point number.</span> : ''}
+            {this.state.CERwarning ? <span className=".form-text">Enter a floating point number.</span> : ''}
             </div>
           </div>
           
@@ -497,7 +427,7 @@ var BUSTEDSiteChartAndTable = React.createClass({
                 onFocus={this.handleONERFocus}
                 onBlur={this.handleONERBlur}
               />
-            {this.state.ONERwarning ? <span className="help-block">Enter a floating point number.</span> : ''}
+            {this.state.ONERwarning ? <span className=".form-text">Enter a floating point number.</span> : ''}
             </div>
           </div>
 
@@ -509,7 +439,7 @@ var BUSTEDSiteChartAndTable = React.createClass({
               bodyData={bodyData}
               paginate={Math.min(20, bodyData.length)}
               initialSort={0}
-              classes={"table table-condensed table-striped"}
+              classes={"table table-smm table-striped"}
               export_csv
             />
         </div>    
@@ -622,7 +552,7 @@ class BUSTEDModelTable extends React.Component {
         />
       </h4>
       <table
-        className="dm-table table table-hover table-condensed list-group-item-text"
+        className="dm-table table table-hover table-smm list-group-item-text"
         style={{ marginTop: "0.5em" }}
       >
         <thead id="summary-model-header1">
@@ -704,7 +634,7 @@ class BUSTEDModelTable extends React.Component {
             <div className="modal-footer">
               <button
                 type="button"
-                className="btn btn-default"
+                className="btn.btn-secondary"
                 data-dismiss="modal"
               >
                 Close
@@ -772,6 +702,52 @@ var BUSTED = React.createClass({
           };
         })
     });
+  },
+
+  getSummaryForClipboard: function() {
+    var self = this;
+    var significant = this.state.p < 0.05; 
+    var userMessageForClipboard;
+    var formattedP = self.state.p ? self.state.p.toFixed(3).toString() : null;
+    if (significant) {
+      userMessageForClipboard = "BUSTED found evidence (LRT, p-value = " +
+        formattedP +
+        " < .05) of gene-wide episodic diversifying selection in the selected test branches of your phylogeny. Therefore, there is evidence that at least one site on at least one test branch has experienced diversifying selection."
+    } else {
+      userMessageForClipboard = "BUSTED found no evidence (LRT, p-value = " +
+        formattedP +
+        " > .05) of gene-wide episodic diversifying selection in the selected test branches of your phylogeny. Therefore, there is no evidence that any sites have experienced diversifying selection along the test branch(es)."
+    }
+    return (userMessageForClipboard);
+  },
+
+  getSummaryForRendering: function() {
+    var significant = this.state.p < 0.05, 
+      message;
+    if (significant) {
+      message = (<p>
+        BUSTED <strong className="hyphy-highlight">
+          found evidence
+        </strong>{" "}
+        (LRT, p-value = {this.state.p ? this.state.p.toFixed(3) : null} &le; .05) of gene-wide episodic diversifying selection
+        in the selected test branches of your phylogeny. Therefore, there is
+        evidence that at least one site on at least one test branch has
+        experienced diversifying selection.{" "}
+      </p>);
+    } else {
+      message = (
+        <p>
+          BUSTED <strong>
+            found no evidence
+          </strong>{" "}
+          (LRT, p-value = {this.state.p ? this.state.p.toFixed(3) : null} &ge; .05) of gene-wide episodic diversifying selection
+          in the selected test branches of your phylogeny. Therefore, there is no
+          evidence that any sites have experienced diversifying selection along
+          the test branch(es).{" "}
+        </p>
+      );
+    }
+    return (message);
   },
 
   loadFromServer: function() {
@@ -879,17 +855,6 @@ var BUSTED = React.createClass({
     return branch_annotations;
   },
 
-  initialize: function() {
-    var json = this.state.json;
-
-    if (!json) {
-      return;
-    }
-
-    // delete existing tree
-    d3.select("#tree_container").select("svg").remove();
-  },
-
   componentWillMount: function() {
     this.loadFromServer();
   },
@@ -909,7 +874,6 @@ var BUSTED = React.createClass({
   render: function() {
 
     var self = this;
-    self.initialize();
     var scrollspy_info = [
       { label: "summary", href: "summary-div" },
       { label: "model statistics", href: "hyphy-model-fits" },
@@ -928,14 +892,21 @@ var BUSTED = React.createClass({
           <div className="row">
             <ScrollSpy info={scrollspy_info} />
 
-            <div className="col-lg-10">
-              <div id="results">
+            <div className="col-md-12 col-lg-10">
+              <div>
                 <div id="summary-tab">
-                  <BUSTEDSummary
-                    p={this.state.p}
+                 <MethodHeader
+                    methodName="Branch-site Unrestricted Statistical Test for Episodic Diversification"
                     input_data={self.state.input_data}
-                    hyphy_vision={self.props.hyphy_vision}
                     json={self.state.json}
+                    hyphy_vision={self.props.hyphy_vision}
+                  />
+                  <MainResult
+                    summary_for_clipboard={this.getSummaryForClipboard()}
+                    summary_for_rendering={this.getSummaryForRendering()} 
+                    method_ref="http://hyphy.org/methods/selection-methods/#busted"
+                    citation_ref="http://www.ncbi.nlm.nih.gov/pubmed/25701167"
+                    citation_number="PMID 25701167"
                   />
                 </div>
               </div>
@@ -991,4 +962,5 @@ var render_hv_busted = function(url, element) {
 
 module.exports = render_busted;
 module.exports.hv = render_hv_busted;
+module.exports.BUSTED = BUSTED;
 

@@ -319,7 +319,7 @@ class FUBARViz extends React.Component {
         <button
           id="export-chart-svg"
           type="button"
-          className="btn btn-default btn-sm pull-right btn-export"
+          className="btn.btn-secondary btn-sm pull-right btn-export"
           onClick={()=>d3_save_svg.save(d3.select("#fubar-viz").node(), {filename: "datamonkey-chart"})}
         >
           <span className="glyphicon glyphicon-floppy-save" /> Export Chart to SVG
@@ -327,7 +327,7 @@ class FUBARViz extends React.Component {
         <button
           id="export-chart-png"
           type="button"
-          className="btn btn-default btn-sm pull-right btn-export"
+          className="btn.btn-secondary btn-sm pull-right btn-export"
           onClick={()=>saveSvgAsPng(document.getElementById("fubar-viz"), "datamonkey-chart.png")}
         >
           <span className="glyphicon glyphicon-floppy-save" /> Export Chart to PNG
@@ -390,7 +390,7 @@ function FUBARTable(props){
         headerData={headerData}
         bodyData={new_rows}
         paginate={20}
-        classes={"table table-condensed table-striped"}
+        classes={"table table-smm table-striped"}
         export_csv
       />
     </div>
@@ -520,7 +520,7 @@ class FUBAR extends React.Component {
         <div className="container">
           <div className="row">
             <ScrollSpy info={scrollspy_info} />
-            <div className="col-sm-10" id="results">
+            <div className="col-md-12 col-lg-10">
               <FUBARSummary
                 json={self.state.data}
                 updatePosteriorProbability={self.updatePosteriorProbability}
@@ -582,4 +582,5 @@ function render_hv_fubar(url, element) {
 
 module.exports = render_fubar;
 module.exports.hv = render_hv_fubar;
+module.exports.FUBAR = FUBAR;
 

@@ -135,7 +135,7 @@ function GARDRecombinationReport(props){
   return (<div className="row" id="report-tab">
     <div className="col-md-12">
       <Header title="Recombination report" popover='<p>Hover over a column for a description of its content.</p>'/>
-      <table className="table table-condensed tabled-striped">
+      <table className="table table-smm tabled-striped">
         <thead>
           <tr>
             <th>
@@ -239,7 +239,7 @@ function GARDTopologyReport(props){
   return (<div className="row">
     <div className="col-md-12">
       <Header title="Topological incongruence report" popover="<p>Hover over a column header for a description of its content.</p>"/>
-      <table className="table table-condensed tabled-striped">
+      <table className="table table-smm tabled-striped">
         <thead>
           <tr>
             <th>
@@ -359,7 +359,7 @@ class GARD extends React.Component {
       <div className="container">
         <div className="row">
           <ScrollSpy info={scrollspy_info} />
-          <div className="col-sm-10" id="results">
+          <div className="col-md-12 col-lg-10">
             <ErrorMessage />
             <GARDResults data={this.state.data} hyphy_vision={this.props.hyphy_vision}/>
             <GARDRecombinationReport data={this.state.data} />
@@ -396,4 +396,5 @@ function render_hv_gard(url, element) {
 
 module.exports = render_gard
 module.exports.hv = render_hv_gard
+module.exports.GARD = GARD;
 

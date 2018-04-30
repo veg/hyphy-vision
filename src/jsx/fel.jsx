@@ -4,12 +4,12 @@ var React = require("react"),
 
 import { Tree } from "./components/tree.jsx";
 import { Header } from "./components/header.jsx";
-import { InputInfo } from "./components/input_info.jsx";
 import { DatamonkeyTable, DatamonkeyModelTable } from "./components/tables.jsx";
 import { DatamonkeySeries, DatamonkeyGraphMenu } from "./components/graphs.jsx";
 import { NavBar } from "./components/navbar.jsx";
 import { ScrollSpy } from "./components/scrollspy.jsx";
-import CopyToClipboard from "react-copy-to-clipboard";
+import { MethodHeader } from "./components/methodheader.jsx";
+import { MainResult } from "./components/mainresult.jsx";
 
 
 var FEL = React.createClass({
@@ -263,24 +263,68 @@ var FEL = React.createClass({
     e.preventDefault();
   },
 
-  getClipboard() {
-    if (this.state.copy_transition) {
-      return <i>Copied!</i>;
-    } else {
-      return (
-        <a href="#">
-          <i className="fa fa-clipboard" aria-hidden="true" />
-        </a>
-      );
-    }
+  getSummaryForClipboard() {
+    var no_selected =
+          this.state.mle_content.length -
+          this.state.positively_selected.length -
+          this.state.negatively_selected.length;
+    var summary_text = "FEL found evidence of pervasive positive/diversifying selection at " +
+      this.state.positively_selected.length +
+      " sites in your alignment. In addition, FEL found evidence with p-value " +
+      this.state.pvalue_threshold +
+      " of pervasive negative/purifying selection at " +
+      this.state.negatively_selected.length +
+      " sites in your alignment. FEL did not find evidence for either positive or negative selection in the remaining " + 
+      no_selected +
+      " sites in your alignment.";
+   return summary_text;
   },
 
-  onCopy() {
-    this.setState({ copy_transition: true });
-    setTimeout(() => {
-      this.setState({ copy_transition: false });
-    }, 1000);
-  },
+  getSummaryForRendering() {
+    return (
+        <p>
+          <p>
+            FEL <strong className="hyphy-highlight">
+              {" "}found evidence
+            </strong>{" "}
+            of
+          </p>
+          <p>
+            <i className="fa fa-plus-circle" aria-hidden="true">
+              {" "}
+            </i>{" "}
+            pervasive positive/diversifying selection at
+            <span className="hyphy-highlight">
+              {" "}{this.state.positively_selected.length}{" "}
+            </span>
+            sites
+          </p>
+          <p>
+            <i className="fa fa-minus-circle" aria-hidden="true">
+              {" "}
+            </i>{" "}
+            pervasive negative/purifying selection at
+            <span className="hyphy-highlight">
+              {" "}{this.state.negatively_selected.length}{" "}
+            </span>
+            sites
+          </p>
+          <p>
+            with p-value threshold of
+            <input
+              style={{display: "inline-block", marginLeft: "5px", width: "100px"}}
+              className="form-control"
+              type="number"
+              defaultValue="0.1"
+              step="0.01"
+              min="0"
+              max="1"
+              onChange={this.updatePvalThreshold}
+            />.
+          </p>
+        </p>
+    );
+  },     
 
   getSummary() {
 
@@ -288,12 +332,6 @@ var FEL = React.createClass({
       <div>
         <div className="main-result">
           <p>
-            <CopyToClipboard text={this.getSummaryText()} onCopy={this.onCopy}>
-              <span id="copy-it" className="pull-right">
-                {this.getClipboard()}
-              </span>
-            </CopyToClipboard>
-
             <p>
               FEL <strong className="hyphy-highlight">
                 {" "}found evidence
@@ -353,25 +391,6 @@ var FEL = React.createClass({
     );
   },
 
-  getSummaryText() {
-
-    var no_selected =
-      this.state.mle_content.length -
-      this.state.positively_selected.length -
-      this.state.negatively_selected.length;
-
-    var summary_text = `FEL found evidence of pervasive positive/diversifying selection \
-at ${this.state.positively_selected.length} sites/at any sites in your \
-alignment. In addition, FEL found evidence with p-value ${this.state
-      .pvalue_threshold} of pervasive negative/purifying \
-selection at ${this.state.negatively_selected
-      .length} sites/at any sites in your \
-alignment. FEL did not find evidence for either positive or negative selection \
-in the remaining ${no_selected} sites in your alignment.`;
-
-    return summary_text;
-  },
-
   componentWillMount: function() {
     this.loadFromServer();
   },
@@ -402,7 +421,6 @@ in the remaining ${no_selected} sites in your alignment.`;
 
     var x_options = "Site";
     var y_options = ['alpha', 'beta', 'alpha=beta', 'LRT', 'p-value', 'Total branch length']; 
-    var Summary = this.getSummary();
 
     var edgeColorizer = function(element, data, foreground_color) {
 
@@ -447,7 +465,7 @@ in the remaining ${no_selected} sites in your alignment.`;
           <div className="row">
             <ScrollSpy info={scrollspy_info} />
 
-            <div className="col-sm-10">
+            <div className="col-md-12 col-lg-10">
               <div
                 id="datamonkey-fel-error"
                 className="alert alert-danger alert-dismissible"
@@ -465,18 +483,21 @@ in the remaining ${no_selected} sites in your alignment.`;
                 <strong>Error!</strong> <span id="datamonkey-fel-error-text" />
               </div>
 
-              <div className="clearance" id="summary-tab"></div>
+              <div id="summary-tab"></div>
               <div id="results">
-                <h3 className="list-group-item-heading">
-                  <span id="summary-method-name">
-                    Fixed Effects Likelihood
-                  </span>
-                  <br />
-                  <span className="results-summary">results summary</span>
-                </h3>
-                <InputInfo input_data={this.state.input} json={this.state.data} hyphy_vision={this.props.hyphy_vision}/>
-                {Summary}
-
+               <MethodHeader
+                    methodName="Fixed Effects Likelihood"
+                    input_data={this.state.input}
+                    json={this.state.data}
+                    hyphy_vision={this.props.hyphy_vision}
+                  />
+                <MainResult
+                  summary_for_clipboard={this.getSummaryForClipboard()}
+                  summary_for_rendering={this.getSummaryForRendering()}                    
+                  method_ref="http://hyphy.org/methods/selection-methods/#fel"
+                  citation_ref="//www.ncbi.nlm.nih.gov/pubmed/15703242"
+                  citation_number="PMID 15703242"
+                />
                 <div id="table-tab" className="row hyphy-row">
                   <div id="hyphy-mle-fits" className="col-md-12">
                     <Header title='FEL Table' popover='<p>Hover over a column header for a description of its content.</p>' />
@@ -491,7 +512,7 @@ in the remaining ${no_selected} sites in your alignment.`;
                     <DatamonkeyTable
                       headerData={this.state.mle_headers}
                       bodyData={this.state.mle_content}
-                      classes={"table table-condensed table-striped"}
+                      classes={"table table-smm table-striped"}
                       paginate={20}
                       export_csv
                     />
@@ -569,4 +590,5 @@ function render_hv_fel(url, element) {
 
 module.exports = render_fel;
 module.exports.hv = render_hv_fel;
+module.exports.FEL = FEL;
 

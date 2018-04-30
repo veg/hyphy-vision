@@ -234,7 +234,7 @@ var BranchTable = React.createClass({
               data-placement="bottom"
             />
           </h4>
-          <table className="table table-hover table-condensed dm-table">
+          <table className="table table-hover table-smm dm-table">
             <thead id="table-branch-header">
               <tr>
                 <th>
@@ -324,7 +324,7 @@ var BranchTable = React.createClass({
               <div className="modal-footer">
                 <button
                   type="button"
-                  className="btn btn-default"
+                  className="btn.btn-secondary"
                   data-dismiss="modal"
                 >
                   Close

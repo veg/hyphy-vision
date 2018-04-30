@@ -641,54 +641,54 @@ var Tree = React.createClass({
               <div className="cold-md-12">
                   <div className="input-group input-group-sm">
                       <div className="input-group-btn">
-                            <button type="button" className="btn btn-default dropdown-toggle" data-toggle="dropdown">Export<span className="caret"></span></button>
+                            <button type="button" className="btn.btn-secondary dropdown-toggle" data-toggle="dropdown">Export<span className="caret"></span></button>
                             <ul className="dropdown-menu">
                               <li id="export-phylo-png"><a href="#"><i className="fa fa-image"></i> Image</a></li>
                               <li id="export-phylo-nwk"><a href="#"><i className="fa fa-file-o"></i> Newick File</a></li>
                             </ul>
-                          <button type="button" className="btn btn-default btn-sm" data-direction="vertical" data-amount="1" title="Expand vertical spacing">
+                          <button type="button" className="btn.btn-secondary btn-sm" data-direction="vertical" data-amount="1" title="Expand vertical spacing">
                               <i className="fa fa-arrows-v"></i>
                           </button>
-                          <button type="button" className="btn btn-default btn-sm" data-direction="vertical" data-amount="-1" title="Compress vertical spacing">
+                          <button type="button" className="btn.btn-secondary btn-sm" data-direction="vertical" data-amount="-1" title="Compress vertical spacing">
                               <i className="fa  fa-compress fa-rotate-135"></i>
                           </button>
-                          <button type="button" className="btn btn-default btn-sm" data-direction="horizontal" data-amount="1" title="Expand horizonal spacing">
+                          <button type="button" className="btn.btn-secondary btn-sm" data-direction="horizontal" data-amount="1" title="Expand horizonal spacing">
                               <i className="fa fa-arrows-h"></i>
                           </button>
-                          <button type="button" className="btn btn-default btn-sm" data-direction="horizontal" data-amount="-1" title="Compress horizonal spacing">
+                          <button type="button" className="btn.btn-secondary btn-sm" data-direction="horizontal" data-amount="-1" title="Compress horizonal spacing">
                               <i className="fa  fa-compress fa-rotate-45"></i>
                           </button>
-                          <button type="button" className="btn btn-default btn-sm" id="sort_ascending" title="Sort deepest clades to the bototm">
+                          <button type="button" className="btn.btn-secondary btn-sm" id="sort_ascending" title="Sort deepest clades to the bototm">
                               <i className="fa fa-sort-amount-asc"></i>
                           </button>
-                          <button type="button" className="btn btn-default btn-sm" id="sort_descending" title="Sort deepsest clades to the top">
+                          <button type="button" className="btn.btn-secondary btn-sm" id="sort_descending" title="Sort deepsest clades to the top">
                               <i className="fa fa-sort-amount-desc"></i>
                           </button>
-                          <button type="button" className="btn btn-default btn-sm" id="sort_original" title="Restore original order">
+                          <button type="button" className="btn.btn-secondary btn-sm" id="sort_original" title="Restore original order">
                               <i className="fa fa-sort"></i>
                           </button>
                       </div>
                       <div className="input-group-btn" data-toggle="buttons">
-                          <label className="btn btn-default active btn-sm">
+                          <label className="btn.btn-secondary active btn-sm">
                               <input type="radio" name="options" className="phylotree-layout-mode" data-mode="linear" autoComplete="off" checked="" title="Layout left-to-right"></input>Linear
                           </label>
-                          <label className="btn btn-default  btn-sm">
+                          <label className="btn.btn-secondary  btn-sm">
                               <input type="radio" name="options" className="phylotree-layout-mode" data-mode="radial" autoComplete="off" title="Layout radially"></input> Radial
                           </label>
                       </div>
                       <div className="input-group-btn" data-toggle="buttons">
-                        <label className="btn btn-default active btn-sm">
+                        <label className="btn.btn-secondary active btn-sm">
                           <input type="radio" className="phylotree-align-toggler" data-align="left" name="options-align" autoComplete="off" checked="" title="Align tips labels to branches"></input> 
                               <i className="fa fa-align-left"></i>
                         </label>
-                        <label className="btn btn-default btn-sm">
+                        <label className="btn.btn-secondary btn-sm">
                          <input type="radio" className="phylotree-align-toggler" data-align="right" name="options-align" autoComplete="off" title="Align tips labels to the edge of the plot"></input> 
                               <i className="fa fa-align-right"></i>
                         </label>
                       </div>
       
                       <div className="input-group-btn">
-                          <button type="button" className="btn btn-default dropdown-toggle" data-toggle="dropdown">Model
+                          <button type="button" className="btn.btn-secondary dropdown-toggle" data-toggle="dropdown">Model
                               <span className="caret"></span></button>
                           <ul className="dropdown-menu" id="hyphy-tree-model-list">
                           </ul>
@@ -698,7 +698,7 @@ var Tree = React.createClass({
 
 
                       <div id="hyphy-tree-highlight-div" className="input-group-btn">
-                          <button type="button" className="btn btn-default dropdown-toggle" data-toggle="dropdown">Highlight branch set
+                          <button type="button" className="btn.btn-secondary dropdown-toggle" data-toggle="dropdown">Highlight branch set
                               <span className="caret"></span></button>
                           <ul className="dropdown-menu" id="hyphy-tree-highlight-branches">
                           </ul>
