@@ -359,7 +359,7 @@ var BUSTEDSiteChartAndTable = React.createClass({
             <h4 className="dm-table-header">
               Model Test Statistics Per Site
               <span
-                className="glyphicon glyphicon-info-sign"
+                className="fas fa-info-circle"
                 style={{ verticalAlign: "middle", float: "right", minHeight:"30px", minWidth: "30px" }}
                 aria-hidden="true"
                 data-toggle="popover"
@@ -378,7 +378,7 @@ var BUSTEDSiteChartAndTable = React.createClass({
               className="btn.btn-secondary btn-sm pull-right btn-export"
               onClick={()=>{d3_save_svg.save(d3.select("#chart").node(), {filename: "busted"});}}
             >
-              <span className="glyphicon glyphicon-floppy-save" /> Export Chart
+              <span className="far fa-save" /> Export Chart
               to SVG
             </button>
             <button
@@ -387,7 +387,7 @@ var BUSTEDSiteChartAndTable = React.createClass({
               className="btn.btn-secondary btn-sm pull-right btn-export"
               onClick={()=>{saveSvgAsPng(document.getElementById("chart"), "busted-chart.png");}}
             >
-              <span className="glyphicon glyphicon-floppy-save" /> Export Chart
+              <span className="far fa-save" /> Export Chart
               to PNG
             </button>
           </div>
@@ -538,7 +538,7 @@ class BUSTEDModelTable extends React.Component {
       <h4 className="dm-table-header">
         Model fits
         <span
-          className="glyphicon glyphicon-info-sign"
+          className="fas fa-info-circle"
           style={{ verticalAlign: "middle", float: "right", minHeight:"30px", minWidth: "30px"}}
           aria-hidden="true"
           data-toggle="popover"

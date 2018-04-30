@@ -1100,7 +1100,7 @@ var SLACGraphs = React.createClass({
                   className="btn.btn-secondary btn-sm pull-right btn-export"
                   onClick={self.savePNG}
                 >
-                  <span className="glyphicon glyphicon-floppy-save" /> Export to PNG
+                  <span className="far fa-save" /> Export to PNG
                 </button>
                 <button
                   id="export-chart-png"
@@ -1108,7 +1108,7 @@ var SLACGraphs = React.createClass({
                   className="btn.btn-secondary btn-sm pull-right btn-export"
                   onClick={self.saveSVG}
                 >
-                  <span className="glyphicon glyphicon-floppy-save" /> Export to SVG
+                  <span className="far fa-save" /> Export to SVG
                 </button>
 
               </div>

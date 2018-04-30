@@ -280,7 +280,7 @@ class FUBARViz extends React.Component {
     return(<div className="row" id='plot-tab'>
       <div className="col-md-12">
         <Header title="Posterior rate distribution" popover='Clear the input box to view the alignment wide distribution.' />
-        {self.state.input_error ? <div className="alert alert-danger"><span className="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>Enter a valid site (a number from 1 to {this.props.number_of_sites}).</div> : ''}
+        {self.state.input_error ? <div className="alert alert-danger"><span className="fas fa-exclamation" aria-hidden="true"></span>Enter a valid site (a number from 1 to {this.props.number_of_sites}).</div> : ''}
       </div>
       <div className="col-md-6">
         <div
@@ -305,7 +305,7 @@ class FUBARViz extends React.Component {
           className="btn.btn-secondary btn-sm pull-right btn-export"
           onClick={()=>d3_save_svg.save(d3.select("#fubar-viz").node(), {filename: "datamonkey-chart"})}
         >
-          <span className="glyphicon glyphicon-floppy-save" /> Export Chart to SVG
+          <span className="far fa-save" /> Export Chart to SVG
         </button>
         <button
           id="export-chart-png"
@@ -313,7 +313,7 @@ class FUBARViz extends React.Component {
           className="btn.btn-secondary btn-sm pull-right btn-export"
           onClick={()=>saveSvgAsPng(document.getElementById("fubar-viz"), "datamonkey-chart.png")}
         >
-          <span className="glyphicon glyphicon-floppy-save" /> Export Chart to PNG
+          <span className="far fa-save" /> Export Chart to PNG
         </button>
       </div>
       <div className="col-md-12">
