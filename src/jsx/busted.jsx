@@ -832,56 +832,46 @@ class BUSTEDContents extends React.Component {
     }
     return (
       <div>
-        <div className="container">
-          <div className="row">
+        <div>
+           <MainResult
+              summary_for_clipboard={this.getSummaryForClipboard()}
+              summary_for_rendering={this.getSummaryForRendering()} 
+              method_ref="http://hyphy.org/methods/selection-methods/#busted"
+              citation_ref="http://www.ncbi.nlm.nih.gov/pubmed/25701167"
+              citation_number="PMID 25701167"
+            />
+        </div>
 
-            <div className="col-md-12 col-lg-10">
-              <div>
-                <div id="summary-tab">
-                 <MainResult
-                    summary_for_clipboard={this.getSummaryForClipboard()}
-                    summary_for_rendering={this.getSummaryForRendering()} 
-                    method_ref="http://hyphy.org/methods/selection-methods/#busted"
-                    citation_ref="http://www.ncbi.nlm.nih.gov/pubmed/25701167"
-                    citation_number="PMID 25701167"
-                  />
-                </div>
-              </div>
+        <div className="row">
+          <div id="hyphy-model-fits" className="col-lg-12">
+            <BUSTEDModelTable fits={self.state.fits} />
+            <p className="description">
+              This table reports a statistical summary of the models fit
+              to the data. Here, <strong>Unconstrained model</strong>{" "}
+              refers to the BUSTED alternative model for selection, and{" "}
+              <strong>Constrained model</strong> refers to the BUSTED null
+              model for selection.
+            </p>
+          </div>
+        </div>
 
-              <div className="row">
-                <div id="hyphy-model-fits" className="col-lg-12">
-                  <BUSTEDModelTable fits={self.state.fits} />
-                  <p className="description">
-                    This table reports a statistical summary of the models fit
-                    to the data. Here, <strong>Unconstrained model</strong>{" "}
-                    refers to the BUSTED alternative model for selection, and{" "}
-                    <strong>Constrained model</strong> refers to the BUSTED null
-                    model for selection.
-                  </p>
-                </div>
-              </div>
+        <BUSTEDSiteChartAndTable data={this.state.evidence_ratio_data} />
 
-              <BUSTEDSiteChartAndTable data={this.state.evidence_ratio_data} />
-
-              <div className="row">
-                <div className="col-md-12" id="phylogenetic-tree">
-                  <Tree
-                    json={self.state.json}
-                    settings={self.state.tree_settings}
-                    models={models}
-                    color_gradient={self.state.colorGradient}
-                    grayscale_gradient={self.state.grayscaleGradient}
-                    method={'busted'}
-                    multitree
-                  />
-                </div>
-              </div>
-            </div>
-
-            <div className="col-lg-1" />
+        <div className="row">
+          <div className="col-md-12" id="phylogenetic-tree">
+            <Tree
+              json={self.state.json}
+              settings={self.state.tree_settings}
+              models={models}
+              color_gradient={self.state.colorGradient}
+              grayscale_gradient={self.state.grayscaleGradient}
+              method={'busted'}
+              multitree
+            />
           </div>
         </div>
       </div>
+
     );
   }
 

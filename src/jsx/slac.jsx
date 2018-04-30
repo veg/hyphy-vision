@@ -1275,153 +1275,143 @@ class SLACContents extends React.Component {
 
       return (
         <div>
-          <div className="container">
-            <div className="row">
-              <div className="col-md-12 col-lg-10">
-              <div>
-                <SLACBanner
-                  analysis_results={self.state.analysis_results}
+          <SLACBanner
+            analysis_results={self.state.analysis_results}
+            pValue={self.state.pValue}
+            pAdjuster={_.bind(self.dm_adjustPvalue, self)}
+            input_data={self.state.input_data}
+            hyphy_vision={self.props.hyphy_vision}
+          />
+
+          <div className="row hidden-print">
+            <div
+              id="datamonkey-slac-tree-summary"
+              className="col-md-12"
+            >
+              <h4 className="dm-table-header">
+                Partition information
+              </h4>
+               
+                <DatamonkeyPartitionTable
                   pValue={self.state.pValue}
-                  pAdjuster={_.bind(self.dm_adjustPvalue, self)}
-                  input_data={self.state.input_data}
-                  hyphy_vision={self.props.hyphy_vision}
+                  trees={trees}
+                  partitions={self.state.analysis_results['data partitions']}
+                  branchAttributes={
+                    self.state.analysis_results["branch attributes"]
+                  }
+                  siteResults={self.state.analysis_results.MLE}
+                  accessorPositive={function(json, partition) {
+                    if(!json["content"][partition]) return null;
+                    return _.map(
+                      json["content"][partition]["by-site"][DEFAULT_AMBIGUITY_HANDLING],
+                      function(v) {
+                        return v[8];
+                      }
+                    );
+                  }}
+                  accessorNegative={function(json, partition) {
+                    if(!json["content"][partition]) return null;
+                    return _.map(
+                      json["content"][partition]["by-site"][DEFAULT_AMBIGUITY_HANDLING],
+                      function(v) {
+                        return v[9];
+                      }
+                    );
+                  }}
                 />
-
-                <div className="row hidden-print">
-                  <div
-                    id="datamonkey-slac-tree-summary"
-                    className="col-md-12"
-                  >
-                    <h4 className="dm-table-header">
-                      Partition information
-                    </h4>
-                     
-                      <DatamonkeyPartitionTable
-                        pValue={self.state.pValue}
-                        trees={trees}
-                        partitions={self.state.analysis_results['data partitions']}
-                        branchAttributes={
-                          self.state.analysis_results["branch attributes"]
-                        }
-                        siteResults={self.state.analysis_results.MLE}
-                        accessorPositive={function(json, partition) {
-                          if(!json["content"][partition]) return null;
-                          return _.map(
-                            json["content"][partition]["by-site"][DEFAULT_AMBIGUITY_HANDLING],
-                            function(v) {
-                              return v[8];
-                            }
-                          );
-                        }}
-                        accessorNegative={function(json, partition) {
-                          if(!json["content"][partition]) return null;
-                          return _.map(
-                            json["content"][partition]["by-site"][DEFAULT_AMBIGUITY_HANDLING],
-                            function(v) {
-                              return v[9];
-                            }
-                          );
-                        }}
-                      />
-                     
-                  </div>
-                  <div
-                    id="datamonkey-slac-model-fits"
-                    className="col-md-8"
-                  >
-                     
-                      {
-                        <DatamonkeyModelTable
-                          fits={self.state.analysis_results.fits}
-                        />
-                      }
-                     
-                  </div>
-                  <div
-                    id="datamonkey-slac-timers"
-                    className="col-md-4"
-                  >
-                    <h4 className="dm-table-header">
-                      Execution time
-                    </h4>
-                     
-                      <DatamonkeyTimersTable
-                        timers={self.state.analysis_results.timers}
-                        totalTime={"Total time"}
-                      />
-                     
-                  </div>
-                </div>
-
-                <div className="row">
-                  <div className="col-md-12" id="slac-table">
-                    <Header title='SLAC Site Table' popover='<ul><li>Adjust display or handling of alignment ambiguities with the left navbar.</li><li>Apply filters to columns using the right navbar.</li></ul>' />
-                    <SLACSites
-                      headers={self.state.analysis_results.MLE.headers}
-                      mle={datamonkey.helpers.map(
-                        datamonkey.helpers.filter(
-                          self.state.analysis_results.MLE.content,
-                          function(value, key) {
-                            return _.has(value, "by-site");
-                          }
-                        ),
-                        function(value, key) {
-                          return value["by-site"];
-                        }
-                      )}
-                      sample25={self.state.analysis_results["sample-2.5"]}
-                      sampleMedian={
-                        self.state.analysis_results["sample-median"]
-                      }
-                      sample975={self.state.analysis_results["sample-97.5"]}
-                      partitionSites={self.state.analysis_results['data partitions']}
-                    />
-                  </div>
-                </div>
-
-                <div className="row">
-                  <div className="col-md-12" id="slac-graph">
-                    <Header title='SLAC Site Graph' popover='<p>Changing the x-axis to anything but "Site" results in a scatter plot.' />
-                    <SLACGraphs
-                      mle={datamonkey.helpers.map(
-                        datamonkey.helpers.filter(
-                          self.state.analysis_results.MLE.content,
-                          function(value, key) {
-                            return _.has(value, "by-site");
-                          }
-                        ),
-                        function(value, key) {
-                          return value["by-site"];
-                        }
-                      )}
-                      partitionSites={self.state.analysis_results['data partitions']}
-                      headers={self.state.analysis_results.MLE.headers}
-                    />
-                  </div>
-                </div>
-
-                <div className="row">
-                  <div id="tree-tab" className="col-md-12">
-                    <Tree
-                      models={models}
-                      json={this.state.analysis_results}
-                      settings={tree_settings}
-                      method={'slac'}
-                      color_gradient={["#00a99d", "#000000"]}
-                      grayscale_gradient={["#444444","#000000"]}
-                      multitree
-                    />
-                  </div>
-                </div>
-
-
-              </div>
-              </div>
-
-              <div className="col-md-1" />
+               
+            </div>
+            <div
+              id="datamonkey-slac-model-fits"
+              className="col-md-8"
+            >
+               
+                {
+                  <DatamonkeyModelTable
+                    fits={self.state.analysis_results.fits}
+                  />
+                }
+               
+            </div>
+            <div
+              id="datamonkey-slac-timers"
+              className="col-md-4"
+            >
+              <h4 className="dm-table-header">
+                Execution time
+              </h4>
+               
+                <DatamonkeyTimersTable
+                  timers={self.state.analysis_results.timers}
+                  totalTime={"Total time"}
+                />
+               
             </div>
           </div>
+
+          <div className="row">
+            <div className="col-md-12" id="slac-table">
+              <Header title='SLAC Site Table' popover='<ul><li>Adjust display or handling of alignment ambiguities with the left navbar.</li><li>Apply filters to columns using the right navbar.</li></ul>' />
+              <SLACSites
+                headers={self.state.analysis_results.MLE.headers}
+                mle={datamonkey.helpers.map(
+                  datamonkey.helpers.filter(
+                    self.state.analysis_results.MLE.content,
+                    function(value, key) {
+                      return _.has(value, "by-site");
+                    }
+                  ),
+                  function(value, key) {
+                    return value["by-site"];
+                  }
+                )}
+                sample25={self.state.analysis_results["sample-2.5"]}
+                sampleMedian={
+                  self.state.analysis_results["sample-median"]
+                }
+                sample975={self.state.analysis_results["sample-97.5"]}
+                partitionSites={self.state.analysis_results['data partitions']}
+              />
+            </div>
+          </div>
+
+          <div className="row">
+            <div className="col-md-12" id="slac-graph">
+              <Header title='SLAC Site Graph' popover='<p>Changing the x-axis to anything but "Site" results in a scatter plot.' />
+              <SLACGraphs
+                mle={datamonkey.helpers.map(
+                  datamonkey.helpers.filter(
+                    self.state.analysis_results.MLE.content,
+                    function(value, key) {
+                      return _.has(value, "by-site");
+                    }
+                  ),
+                  function(value, key) {
+                    return value["by-site"];
+                  }
+                )}
+                partitionSites={self.state.analysis_results['data partitions']}
+                headers={self.state.analysis_results.MLE.headers}
+              />
+            </div>
+          </div>
+
+          <div className="row">
+            <div id="tree-tab" className="col-md-12">
+              <Tree
+                models={models}
+                json={this.state.analysis_results}
+                settings={tree_settings}
+                method={'slac'}
+                color_gradient={["#00a99d", "#000000"]}
+                grayscale_gradient={["#444444","#000000"]}
+                multitree
+              />
+            </div>
+          </div>
+
         </div>
+
       );
     }
     return null;

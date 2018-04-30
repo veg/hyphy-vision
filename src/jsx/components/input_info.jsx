@@ -31,9 +31,11 @@ class InputInfo extends React.Component {
   }
   componentDidMount(){
     const self = this;
-    d3.json(window.location.href+"/fasta", (err, data) => {
-      self.setState({fasta: data.fasta});
-    });
+    if (!this.props.hyphy_vision) {
+      d3.json(window.location.href+"/fasta", (err, data) => {
+        self.setState({fasta: data.fasta});
+      });
+    }
   }
   render(){
     if (!this.props.input_data) return <div />;
@@ -62,7 +64,7 @@ class InputInfo extends React.Component {
         </div>
         
         <div className="col-md-4" style={{height:0}}>
-          <div className="dropdown hyphy-export-dropdown pull-right">
+          <div className="dropdown ml-auto">
             <button
               id="dropdown-menu-button"
               className="btn btn-secondary dropdown-toggle"

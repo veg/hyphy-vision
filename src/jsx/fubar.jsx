@@ -21,7 +21,7 @@ function FUBARSummary(props) {
       .map(row => row[3] > props.posteriorProbability ? 1 : 0)
       .reduce((a,b)=> a+b, 0);
   return (
-    <div className="row" id="summary-tab">
+    <div className="row" >
       <div className="col-md-12">
       </div>
       <div className="col-md-12">
@@ -457,55 +457,49 @@ class FUBARContents extends React.Component {
     };
     return (
       <div>
-        <div className="container">
-          <div className="row">
-            <div className="col-md-12 col-lg-10">
-              <FUBARSummary
-                json={self.state.data}
-                updatePosteriorProbability={self.updatePosteriorProbability}
-                posteriorProbability={self.state.posteriorProbability}
-                hyphy_vision={self.props.hyphy_vision}
-              />
+        <FUBARSummary
+          json={self.state.data}
+          updatePosteriorProbability={self.updatePosteriorProbability}
+          posteriorProbability={self.state.posteriorProbability}
+          hyphy_vision={self.props.hyphy_vision}
+        />
 
-              <FUBARViz
-                data={self.state.data ? self.state.data.grid : null}
-                partitions={self.state.data ? self.state.data['data partitions'] : null}
-                posterior={self.state.data ? self.state.data.posterior : null}
-                number_of_sites={self.state.data ? self.state.data.input['number of sites'] : null}
-              />
+        <FUBARViz
+          data={self.state.data ? self.state.data.grid : null}
+          partitions={self.state.data ? self.state.data['data partitions'] : null}
+          posterior={self.state.data ? self.state.data.posterior : null}
+          number_of_sites={self.state.data ? self.state.data.input['number of sites'] : null}
+        />
 
-              <FUBARTable
-                posteriorProbability={self.state.posteriorProbability} 
-                data={self.state.data}
-              />
+        <FUBARTable
+          posteriorProbability={self.state.posteriorProbability} 
+          data={self.state.data}
+        />
 
-              <div className="row">
-                <div id="tree-tab" className="col-md-12">
-                  <Tree
-                    models={models}
-                    json={self.state.data}
-                    settings={tree_settings}
-                    method={'fubar'}
-                    multitree
-                  />
-                </div>
-              </div>
-
-              <div className="row">
-                <div className="col-md-12" id="fit-tab">
-                  <DatamonkeyModelTable fits={self.state.fits} />
-                  <p className="description">
-                    This table reports a statistical summary of the models fit
-                    to the data. Here, <strong>MG94</strong> refers to the
-                    MG94xREV baseline model that infers a single &omega; rate
-                    category per branch.
-                  </p>
-                </div>
-              </div>
-
-            </div>
+        <div className="row">
+          <div id="tree-tab" className="col-md-12">
+            <Tree
+              models={models}
+              json={self.state.data}
+              settings={tree_settings}
+              method={'fubar'}
+              multitree
+            />
           </div>
         </div>
+
+        <div className="row">
+          <div className="col-md-12" id="fit-tab">
+            <DatamonkeyModelTable fits={self.state.fits} />
+            <p className="description">
+              This table reports a statistical summary of the models fit
+              to the data. Here, <strong>MG94</strong> refers to the
+              MG94xREV baseline model that infers a single &omega; rate
+              category per branch.
+            </p>
+          </div>
+        </div>
+
       </div>
     );
   }

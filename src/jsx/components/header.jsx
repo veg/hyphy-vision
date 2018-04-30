@@ -4,7 +4,7 @@ function Header(props) {
   var popover;
   if(props.popover){
     popover = (<span
-      className="glyphicon glyphicon-info-sign"
+      className="fas fa-info-circle"  
       style={{ verticalAlign: "middle", float: "right", minHeight:"30px", minWidth: "30px"}}
       aria-hidden="true"
       data-toggle="popover"

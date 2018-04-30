@@ -420,7 +420,7 @@ class BSRELContents extends React.Component{
           />
         </div>
 
-        <div id="tree-tab" className="row">
+        <div id="tree-tab">
           <Tree
             json={self.state.json}
             settings={self.state.settings}
@@ -431,7 +431,7 @@ class BSRELContents extends React.Component{
           />
         </div>
 
-        <div id="table-tab" className="row">
+        <div id="table-tab">
           <BranchTable
             tree={self.state.tree}
             test_results={self.state.test_results}
@@ -439,7 +439,7 @@ class BSRELContents extends React.Component{
           />
         </div>
 
-        <div id="hyphy-model-fits" className="row">
+        <div id="hyphy-model-fits">
           <DatamonkeyModelTable fits={self.state.fits} />
           <p className="description">
             This table reports a statistical summary of the models fit

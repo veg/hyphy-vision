@@ -413,109 +413,98 @@ class FELContents extends React.Component {
 
     return (
       <div>
-        <div className="container">
-          <div className="row">
 
-            <div className="col-md-12 col-lg-10">
-              <div
-                id="datamonkey-fel-error"
-                className="alert alert-danger alert-dismissible"
-                role="alert"
-                style={{ display: "none" }}
-              >
-                <button
-                  type="button"
-                  className="close"
-                  id="datamonkey-fel-error-hide"
-                >
-                  <span aria-hidden="true">&times;</span>
-                  <span className="sr-only">Close</span>
-                </button>
-                <strong>Error!</strong> <span id="datamonkey-fel-error-text" />
+        <div
+          id="datamonkey-fel-error"
+          className="alert alert-danger alert-dismissible"
+          role="alert"
+          style={{ display: "none" }}
+        >
+          <button
+            type="button"
+            className="close"
+            id="datamonkey-fel-error-hide"
+          >
+            <span aria-hidden="true">&times;</span>
+            <span className="sr-only">Close</span>
+          </button>
+          <strong>Error!</strong> <span id="datamonkey-fel-error-text" />
+        </div>
+
+        <div id="results">
+          <MainResult
+            summary_for_clipboard={this.getSummaryForClipboard()}
+            summary_for_rendering={this.getSummaryForRendering()}                    
+            method_ref="http://hyphy.org/methods/selection-methods/#fel"
+            citation_ref="//www.ncbi.nlm.nih.gov/pubmed/15703242"
+            citation_number="PMID 15703242"
+          />
+          <div id="table-tab" className="row hyphy-row">
+            <div id="hyphy-mle-fits" className="col-md-12">
+              <Header title='FEL Table' popover='<p>Hover over a column header for a description of its content.</p>' />
+              <div className="col-md-6 alert positive-selection-row">
+                Positively selected sites with evidence are highlighted in
+                green.
               </div>
-
-              <div id="summary-tab"></div>
-              <div id="results">
-                <MainResult
-                  summary_for_clipboard={this.getSummaryForClipboard()}
-                  summary_for_rendering={this.getSummaryForRendering()}                    
-                  method_ref="http://hyphy.org/methods/selection-methods/#fel"
-                  citation_ref="//www.ncbi.nlm.nih.gov/pubmed/15703242"
-                  citation_number="PMID 15703242"
-                />
-                <div id="table-tab" className="row hyphy-row">
-                  <div id="hyphy-mle-fits" className="col-md-12">
-                    <Header title='FEL Table' popover='<p>Hover over a column header for a description of its content.</p>' />
-                    <div className="col-md-6 alert positive-selection-row">
-                      Positively selected sites with evidence are highlighted in
-                      green.
-                    </div>
-                    <div className="col-md-6 alert negative-selection-row">
-                      Negatively selected sites with evidence are highlighted in
-                      black.
-                    </div>
-                    <DatamonkeyTable
-                      headerData={this.state.mle_headers}
-                      bodyData={this.state.mle_content}
-                      classes={"table table-smm table-striped"}
-                      paginate={20}
-                      export_csv
-                    />
-                  </div>
-                </div>
-
-                <div id="plot-tab" className="row hyphy-row">
-                  <h3 className="dm-table-header">FEL Site Plot</h3>
-
-                  <DatamonkeyGraphMenu
-                    x_options={x_options}
-                    y_options={y_options}
-                    axisSelectionEvent={this.updateAxisSelection}
-                    export_images
-                  />
-
-                  <DatamonkeySeries
-                    x={x}
-                    y={y}
-                    x_label={this.state.xaxis}
-                    y_label={this.state.yaxis}
-                    marginLeft={50}
-                    width={$("#results").width() == null ? 935 : $("#results").width() }
-                    transitions={true}
-                    doDots={true}
-                  />
-                </div>
-
-                <div className="row">
-                  <div id="tree-tab" className="col-md-12">
-                    <Tree
-                      models={models}
-                      json={this.state.data}
-                      settings={tree_settings}
-                      method={'fel'}
-                      color_gradient={["#00a99d", "#000000"]}
-                      grayscale_gradient={["#444444","#000000"]}
-                      multitree
-                    />
-                  </div>
-                </div>
-
-              <div className="row">
-                <div className="col-md-12" id="fits-tab">
-                  <DatamonkeyModelTable fits={this.state.fits} />
-                  <p className="description">
-                    This table reports a statistical summary of the models fit
-                    to the data. Here, <strong>MG94</strong> refers to the
-                    MG94xREV baseline model that infers a single &omega; rate
-                    category per branch.
-                  </p>
-                </div>
+              <div className="col-md-6 alert negative-selection-row">
+                Negatively selected sites with evidence are highlighted in
+                black.
               </div>
-
-
-              </div>
+              <DatamonkeyTable
+                headerData={this.state.mle_headers}
+                bodyData={this.state.mle_content}
+                classes={"table table-smm table-striped"}
+                paginate={20}
+                export_csv
+              />
             </div>
           </div>
+
+          <div id="plot-tab">
+            <h3 className="dm-table-header">FEL Site Plot</h3>
+
+            <DatamonkeyGraphMenu
+              x_options={x_options}
+              y_options={y_options}
+              axisSelectionEvent={this.updateAxisSelection}
+              export_images
+            />
+
+            <DatamonkeySeries
+              x={x}
+              y={y}
+              x_label={this.state.xaxis}
+              y_label={this.state.yaxis}
+              marginLeft={50}
+              width={$("#results").width() == null ? 935 : $("#results").width() }
+              transitions={true}
+              doDots={true}
+            />
+          </div>
+
+          <div id="tree-tab" className="col-md-12">
+            <Tree
+              models={models}
+              json={this.state.data}
+              settings={tree_settings}
+              method={'fel'}
+              color_gradient={["#00a99d", "#000000"]}
+              grayscale_gradient={["#444444","#000000"]}
+              multitree
+            />
+          </div>
+
+        <div className="col-md-12" id="fits-tab">
+          <DatamonkeyModelTable fits={this.state.fits} />
+          <p className="description">
+            This table reports a statistical summary of the models fit
+            to the data. Here, <strong>MG94</strong> refers to the
+            MG94xREV baseline model that infers a single &omega; rate
+            category per branch.
+          </p>
+        </div>
+
+
         </div>
       </div>
     );
