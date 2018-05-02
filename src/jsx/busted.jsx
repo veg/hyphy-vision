@@ -406,6 +406,7 @@ var BUSTEDSiteChartAndTable = React.createClass({
                 onChange={this.handleCERChange}
                 onFocus={this.handleCERFocus}
                 onBlur={this.handleCERBlur}
+                style={{marginLeft:"1rem"}}
               />
             {this.state.CERwarning ? <span className=".form-text">Enter a floating point number.</span> : ''}
             </div>
@@ -424,6 +425,7 @@ var BUSTEDSiteChartAndTable = React.createClass({
                 onChange={this.handleONERChange}
                 onFocus={this.handleONERFocus}
                 onBlur={this.handleONERBlur}
+                style={{marginLeft:"1rem"}}
               />
             {this.state.ONERwarning ? <span className=".form-text">Enter a floating point number.</span> : ''}
             </div>

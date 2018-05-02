@@ -175,7 +175,7 @@ class FELContents extends React.Component {
     });
   }
 
-  updateAxisSelection(e) {
+  updateAxisSelection = (e) => {
     var state_to_update = {},
       dimension = e.target.dataset.dimension,
       axis = e.target.dataset.axis;

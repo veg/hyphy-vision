@@ -365,7 +365,7 @@ var PropChart = React.createClass({
                   type="button"
                   className="btn.btn-secondary btn-sm"
                 >
-                  <span className="glyphicon glyphicon-floppy-save" /> SVG
+                  <span className="far fa-save" /> SVG
                 </button>
                 <button
                   id={this.save_png_id}
@@ -373,7 +373,7 @@ var PropChart = React.createClass({
                   className="btn.btn-secondary btn-sm"
                   onClick={()=>saveSvgAsPng(document.getElementById(this.svg_id), "datamonkey-chart.png", {scale: 2})}
                 >
-                  <span className="glyphicon glyphicon-floppy-save" /> PNG
+                  <span className="far fa-save" /> PNG
                 </button>
               </div>
             </div>
@@ -381,7 +381,7 @@ var PropChart = React.createClass({
         </div>
         <div className="row">
           <div className="card-body col-md-12" style={{ textAlign: "center" }}>
-            <svg id={this.svg_id} />
+            <svg id={this.svg_id} style={{width:"100%"}}/>
           </div>
         </div>
       </div>
