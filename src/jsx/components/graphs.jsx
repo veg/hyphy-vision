@@ -129,17 +129,15 @@ class GraphMenu extends React.Component {
     return (
       <nav className="navbar" style={navStyle}>
         <form className="navbar-form">
-          <div className="row">
 
-            <div className="form-group navbar-left col-6">
-              <div className="input-group">
-                {XAxisButton}
-                {YAxisButton}
-              </div>
+          <div className="form-group navbar-left col-6">
+            <div className="input-group">
+              {XAxisButton}
+              {YAxisButton}
             </div>
-
-            {export_buttons}
           </div>
+
+          {export_buttons}
         </form>
       </nav>
     );
