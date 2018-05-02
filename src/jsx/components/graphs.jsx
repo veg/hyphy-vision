@@ -130,7 +130,7 @@ class GraphMenu extends React.Component {
       <nav className="navbar" style={navStyle}>
         <form className="navbar-form">
 
-          <div className="form-group navbar-left col-6">
+          <div className="form-group navbar-left">
             <div className="input-group">
               {XAxisButton}
               {YAxisButton}
