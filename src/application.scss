@@ -2,11 +2,13 @@
 /******** Imports *********/
 /**************************/
 @import "~bootstrap/scss/bootstrap";
-@import url('https://fonts.googleapis.com/css?family=Montserrat:400,400i,500,500i,600,600i,700,700i,800,800i,900,900i|Noto+Sans:400,400i,700,700i');
-@import url('https://use.fontawesome.com/releases/v5.0.9/css/all.css');
+
+@import url("https://fonts.googleapis.com/css?family=Montserrat:400,400i,500,500i,600,600i,700,700i,800,800i,900,900i|Noto+Sans:400,400i,700,700i");
+
+@import url("https://use.fontawesome.com/releases/v5.0.9/css/all.css");
+
 /* End Imports */
 /*----------------------------------------------------------------------------------------------------------------*/
-
 
 /***************************************/
 /******* BS Variables/Components *******/
@@ -17,6 +19,7 @@ $hyphy-green: #00a99d;
 
 /* Alerts */
 $alert-info-bg: #eaf4f2;
+
 .alert-info {
   position: relative;
   font-family: "Montserrat", sans-serif;
@@ -54,6 +57,7 @@ $btn-border-radius-base: none;
 $btn-font-weight: 500;
 $btn-primary-color: #fff;
 $btn-primary-bg: $hyphy-green;
+
 .btn {
   border-radius: 0;
   padding: 0 24px;
@@ -95,11 +99,10 @@ $btn-primary-bg: $hyphy-green;
 
 .btn-primary:active,
 .btn-primary.active,
-
 .btn-secondary {
   color: #333;
   background-color: #fff;
-  border-color:#ccc;
+  border-color: #ccc;
 }
 
 .open > .dropdown-toggle.btn-primary {
@@ -107,7 +110,6 @@ $btn-primary-bg: $hyphy-green;
   background-color: #00766e;
   border-color: #11aa9b;
 }
-
 
 $dropdown-border: $hyphy-green;
 $dropdown-link-hover-color: #038c7f;
@@ -135,6 +137,7 @@ $popover-border-color: $hyphy-green;
 $popover-fallback-border-color: $hyphy-green;
 
 $input-border: $hyphy-green;
+
 /* End Bootstrap Variables */
 /*----------------------------------------------------------------------------------------------------------------*/
 
@@ -144,7 +147,6 @@ a:hover {
   -o-transition: ease-in-out 125ms;
   transition: ease-in-out 125ms;
 }
-
 
 /**************************/
 /******* Typography *******/
@@ -161,9 +163,9 @@ p {
 small {
   font-size: 80%;
 }
+
 /* End Typography */
 /*----------------------------------------------------------------------------------------------------------------*/
-
 
 /**************************/
 /****** Site Content ******/
@@ -194,7 +196,6 @@ html, body {
   width: 250px;
   height: 50px;
 }
-
 
 /* Dropdown */
 toolbar-dropdown::before {
@@ -255,64 +256,30 @@ toolbar-dropdown::before {
   margin-bottom: 0px;
 }
 
-
-
 #results,
 #summary-tab {
   margin-top: 0;
 }
-
 
 .summary-method-name {
   font-size: 19px;
   font-weight: 400;
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 /*----------------------------------------------------------------------------------------------------------------*/
-
-
-
-
-
 
 #slac-table .col-md-12 p {
   margin: 10px 23px;
 }
 
-
 .input-group-addon {
+  padding: 6px 12px;
   border: none;
+  text-align: center;
 }
-
 
 /* Sizing classes must be here rather than on individual form elements. */
-.input-group {
-  
-}
-
+.input-group {}
 
 /* TABLES */
 table {
@@ -356,8 +323,6 @@ table.dm-table > thead > th {
   vertical-align: middle;
 }
 
-
-
 .table > thead > tr > td.info,
 .table > tbody > tr > td.info,
 .table > tfoot > tr > td.info,
@@ -372,7 +337,6 @@ table.dm-table > thead > th {
 .table > tfoot > tr.info > th {
   background-color: #eaf4f2;
 }
-
 
 .table-condensed > tbody > tr > th {
   padding: 15px 9px;
@@ -390,6 +354,7 @@ th, td {
   border: none;
   margin-bottom: 40px;
 }
+
 .panel-title {
   font-family: "Montserrat", sans-serif;
 }
@@ -419,8 +384,8 @@ th, td {
   color: #444;
   border: 3px solid $hyphy-green;
   border-radius: 0;
-  -webkit-box-shadow: 0 6px 12px rgba(0, 0, 0, .45);
-          box-shadow: 0 6px 12px rgba(0, 0, 0, .45);
+  -webkit-box-shadow: 0 6px 12px rgba(0, 0, 0, 0.45);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.45);
 }
 
 .popover-title {
@@ -497,11 +462,13 @@ th, td {
 .blue-badge {
   background-color: #3d4699;
 }
+
 .white-badge {
   background-color: #fff;
   color: #333;
   border: 1px solid #ccc;
 }
+
 .red-badge {
   background-color: #cc4242;
 }
@@ -523,12 +490,9 @@ svg g > text {
   margin-bottom: 0;
 }
 
-
 .hyphy-busted-site-table {
   margin-top: 0px;
 }
-
-
 
 /*resizes and centers
 w distribution graph in BUSTED*/
@@ -551,9 +515,6 @@ input[type=range] {
   margin-top: 68px;
 }
 
-
-
-
 .table-responsive {
   order: none;
   overflow-x: visible;
@@ -566,7 +527,6 @@ table table {
 tr.highlight {
   background-color: #bfbfbf;
 }
-
 
 /* HYPHY VISION */
 
@@ -587,61 +547,61 @@ tr.highlight {
 }
 
 .hyphy-omega-line-reference {
-    stroke: #000;
-    stroke-width: 6px;
-    opacity: 1;
+  stroke: #000;
+  stroke-width: 6px;
+  opacity: 1;
 }
 
 /* aBSREL */
 .hyphy-omega-bar line, .hyphy-omega-bar path {
-    fill: none;
-    stroke: #000;
-    shape-rendering: crispEdges;
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
 }
 
 .hyphy-omega-line {
-    stroke: #000;
-    stroke-width: 6px;
+  stroke: #000;
+  stroke-width: 6px;
 }
 
 .hyphy-axis path, .hyphy-axis line {
-    fill: none;
-    stroke: #000;
-    shape-rendering: crispEdges;
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
 }
 
 .hyphy-axis-label {
-    font: 18px sans-serif;
+  font: 18px sans-serif;
 }
 
 .hyphy-axis text {
-    font: 12px sans-serif;
+  font: 12px sans-serif;
 }
 
 .hyphy-weight-label {
-    font: 14px sans-serif;
-    text-anchor: middle;
+  font: 14px sans-serif;
+  text-anchor: middle;
 }
 
 .hyphy-neutral-line {
-    stroke-dasharray: 2,10;
-    stroke: #000;
-    stroke-width: 1px;
+  stroke-dasharray: 2,10;
+  stroke: #000;
+  stroke-width: 1px;
 }
 
 .hyphy-displacement-line {
-    fill: none;
-    stroke: #000;
-    opacity: 0.7;
-    stroke-width: 1.5px;
+  fill: none;
+  stroke: #000;
+  opacity: 0.7;
+  stroke-width: 1.5px;
 }
 
 #hyphy-chart-image {
-  display : none;
+  display: none;
 }
 
 #hyphy-chart-canvas {
-  display : none;
+  display: none;
 }
 
 /* BUSTED */
@@ -657,7 +617,7 @@ tr.highlight {
 }
 
 .hyphy-busted-site-table {
- margin-top: 20px;
+  margin-top: 20px;
 }
 
 .hyphy-busted-btn-export {
@@ -669,7 +629,7 @@ tr.highlight {
 }
 
 .hyphy-blue {
- color: #1f77b4
+  color: #1f77b4;
 }
 
 .hyphy-red {
@@ -688,45 +648,43 @@ tr.highlight {
   padding-bottom: 5px;
 }
 
-
-
-.fixed{
-    position: fixed;
+.fixed {
+  position: fixed;
 }
 
 .nav-pills a {
-    color: #00a99d;
+  color: #00a99d;
 }
 
 .nav-pills a:hover {
-    color: #7EC6B3;
+  color: #7EC6B3;
 }
 
 .nav-pills > li.active > a {
-    color: #fff;
-    background-color: #00a99d;
+  color: #fff;
+  background-color: #00a99d;
 }
 
 .nav-pills > li.active > a:hover {
-    background-color: #7EC6B3;
+  background-color: #7EC6B3;
 }
 
 #summary-method-name {
-    color: #00a99d;
-    font-family: "Montserrat";
+  color: #00a99d;
+  font-family: "Montserrat";
 }
 
 .dm-table-header {
-    background-color: #00a99d;
-    font-family: "Noto Sans";
-    background: linear-gradient(to right,#03AA9D,#7EC6B3);
-    font-family: "Noto Sans";
-    color: #FFF;
-    text-align: center;
-    padding: 12px 5px 13px 5px;
-    font-family: "Noto Sans", sans-serif;
-    font-size: 15px;
-    font-weight: 600;
+  background-color: #00a99d;
+  font-family: "Noto Sans";
+  background: linear-gradient(to right, #03AA9D, #7EC6B3);
+  font-family: "Noto Sans";
+  color: #FFF;
+  text-align: center;
+  padding: 12px 5px 13px 5px;
+  font-family: "Noto Sans", sans-serif;
+  font-size: 15px;
+  font-weight: 600;
 }
 
 .popover {
@@ -735,40 +693,40 @@ tr.highlight {
 
 table.dm-table > thead > tr > th,
 table.dm-table > thead > th {
-    font-family: "Noto Sans", sans-serif;
-    color: #00a99d;
+  font-family: "Noto Sans", sans-serif;
+  color: #00a99d;
 }
 
 .hyphy-highlight {
-    color: #00a99d;
+  color: #00a99d;
 }
 
 div.main-result a {
-     color: #00a99d;
+  color: #00a99d;
 }
 
 #summary-pmid {
-    color: #00a99d;
+  color: #00a99d;
 }
 
 #input-info {
-    padding: 0px 20px 0px 23px;
-    font-family: "Montserrat", sans-serif;
-    font-weight: 500;
+  padding: 0px 20px 0px 23px;
+  font-family: "Montserrat", sans-serif;
+  font-weight: 500;
 }
 
 div#input-info span {
-    font-family: "Montserrat";
-    font-weight: 700;
+  font-family: "Montserrat";
+  font-weight: 700;
 }
 
 div#input-info p {
-    font-family: "Montserrat";
-    font-weight: 600;
-    font-size: 14px;
+  font-family: "Montserrat";
+  font-weight: 600;
+  font-size: 14px;
 }
 
-.main-result{
+.main-result {
   background-color: #fff;
   border-style: solid;
   border-width: 3px;
@@ -802,9 +760,9 @@ p.description {
 }
 
 .v-align {
-    float: none;
-    display: inline-block;
-    vertical-align: middle;
+  float: none;
+  display: inline-block;
+  vertical-align: middle;
 }
 
 .popover {
@@ -813,15 +771,14 @@ p.description {
 
 /* Bootstrap-docs scroll spy */
 /* sidebar */
-.bs-docs-sidebar {
-}
+.bs-docs-sidebar {}
 
 .bs-docs-sidebar .nav {
-  min-width:175px;
+  min-width: 175px;
 }
 
 /* scrollspy sidebar links */
-.bs-docs-sidebar .nav>li>a {
+.bs-docs-sidebar .nav > li > a {
   display: block;
   font-family: "Montserrat", sans-serif;
   font-size: 15px;
@@ -833,16 +790,16 @@ p.description {
 }
 
 /* scrollspy sidebar active & hover */
-.bs-docs-sidebar .nav>.active>a,
-.bs-docs-sidebar .nav>li>a:hover,
-.bs-docs-sidebar .nav>li>a:focus {
+.bs-docs-sidebar .nav > .active > a,
+.bs-docs-sidebar .nav > li > a:hover,
+.bs-docs-sidebar .nav > li > a:focus {
   color: #00a99d;
   text-decoration: none;
   background-color: transparent;
   border-right-color: #00a99d;
 }
 
-.bs-docs-sidebar .nav>li>a:hover {
+.bs-docs-sidebar .nav > li > a:hover {
   font-family: "Montserrat", sans-serif;
   font-size: 15px;
   color: #00a99d;
@@ -851,19 +808,19 @@ p.description {
   border-right-color: #aaa;
 }
 
-
 /* all active links */
-.bs-docs-sidebar .nav>.active>a,
-.bs-docs-sidebar .nav>.active:hover>a,
-.bs-docs-sidebar .nav>.active:focus>a {
+.bs-docs-sidebar .nav > .active > a,
+.bs-docs-sidebar .nav > .active:hover > a,
+.bs-docs-sidebar .nav > .active:focus > a {
   font-family: "Montserrat", sans-serif;
   font-size: 15px;
   font-weight: 500;
 }
+
 /* nested active links */
-.bs-docs-sidebar .nav .nav>.active>a,
-.bs-docs-sidebar .nav .nav>.active:hover>a,
-.bs-docs-sidebar .nav .nav>.active:focus>a {
+.bs-docs-sidebar .nav .nav > .active > a,
+.bs-docs-sidebar .nav .nav > .active:hover > a,
+.bs-docs-sidebar .nav .nav > .active:focus > a {
   font-weight: 500;
 }
 
@@ -871,26 +828,24 @@ p.description {
 .bs-docs-sidebar .nav ul.nav {
   /*display: none;       */
 }
+
 /* show active nested list */
-.bs-docs-sidebar .nav>.active>ul.nav {
+.bs-docs-sidebar .nav > .active > ul.nav {
   display: block;
 }
+
 .bs-docs-section {
-  margin-bottom:60px;
+  margin-bottom: 60px;
 }
+
 .bs-docs-example {
-  margin-top : 20px;
-  margin-bottom : 20px;
+  margin-top: 20px;
+  margin-bottom: 20px;
 }
 
 .hyphy-row {
   margin-top: 20px;
 }
-
-
-
-
-
 
 .axis path,
 .axis line {
@@ -906,60 +861,79 @@ g {
 .dot1 {
   stroke: #000;
 }
+
 .dot2 {
   stroke: #000;
 }
+
 .dot3 {
   stroke: #000;
 }
+
 .dot4 {
   stroke: #000;
 }
+
 .dot5 {
   stroke: #000;
 }
+
 .dot6 {
   stroke: #000;
 }
+
 .dot7 {
   stroke: #000;
 }
+
 .dot8 {
   stroke: #000;
 }
+
 .dot9 {
   stroke: #000;
 }
+
 .dot10 {
   stroke: #000;
 }
+
 .dot11 {
   stroke: #000;
 }
+
 .dot12 {
   stroke: #000;
 }
+
 .dot13 {
   stroke: #000;
 }
+
 .dot14 {
   stroke: #000;
 }
+
 .dot15 {
   stroke: #000;
 }
+
 .dot16 {
   stroke: #000;
 }
+
 .dot17 {
   stroke: #000;
 }
+
 .dot18 {
   stroke: #000;
 }
+
 .dot19 {
   stroke: #000;
 }
+
 .dot20 {
   stroke: #000;
 }
@@ -1005,21 +979,246 @@ circle.property5 {
 }
 
 .grid .tick {
-    stroke: lightgrey;
-    opacity: 0.7;
+  stroke: lightgrey;
+  opacity: 0.7;
 }
+
 .grid path {
-      stroke-width: 0;
+  stroke-width: 0;
 }
 
 .exch_rate {
   fill: #fff;
   stroke: #ccc;
 }
-div.dc-chart{float:left}.dc-chart rect.bar{stroke:none;cursor:pointer}.dc-chart rect.bar:hover{fill-opacity:.5}.dc-chart rect.stack1{stroke:none;fill:red}.dc-chart rect.stack2{stroke:none;fill:green}.dc-chart rect.deselected{stroke:none;fill:#ccc}.dc-chart .pie-slice{fill:#fff;font-size:12px;cursor:pointer}.dc-chart .pie-slice :hover{fill-opacity:.8}.dc-chart .selected path{stroke-width:3;stroke:#ccc;fill-opacity:1}.dc-chart .deselected path{stroke:none;fill-opacity:.5;fill:#ccc}.axis line,.dc-chart .axis path{fill:none;stroke:#000;shape-rendering:crispEdges}.dc-chart .axis text{font:10px sans-serif}.dc-chart .grid-line,.dc-chart .grid-line line{fill:none;stroke:#ccc;opacity:.5;shape-rendering:crispEdges}.dc-chart .brush rect.background{z-index:-999}.dc-chart .brush rect.extent{fill:#4682b4;fill-opacity:.125}.dc-chart .brush .resize path{fill:#eee;stroke:#666}.dc-chart path.line{fill:none;stroke-width:1.5px}.dc-chart circle.dot{stroke:none}.dc-chart g.dc-tooltip path{fill:none;stroke:grey;stroke-opacity:.8}.dc-chart path.area{fill-opacity:.3;stroke:none}.dc-chart .node{font-size:.7em;cursor:pointer}.dc-chart .node :hover{fill-opacity:.8}.dc-chart .selected circle{stroke-width:3;stroke:#ccc;fill-opacity:1}.dc-chart .deselected circle{stroke:none;fill-opacity:.5;fill:#ccc}.dc-chart .bubble{stroke:none;fill-opacity:.6}.dc-data-count{float:right;margin-top:15px;margin-right:15px}.dc-data-count .filter-count,.dc-data-count .total-count{color:#3182bd;font-weight:700}.dc-chart g.state{cursor:pointer}.dc-chart g.state :hover{fill-opacity:.8}.dc-chart g.state path{stroke:#fff}.dc-chart g.deselected path{fill:grey}.dc-chart g.deselected text{display:none}.dc-chart g.county path{stroke:#fff;fill:none}.dc-chart g.debug rect{fill:#00f;fill-opacity:.2}.dc-chart g.row rect{fill-opacity:.8;cursor:pointer}.dc-chart g.row rect:hover{fill-opacity:.6}.dc-chart g.row text{fill:#fff;font-size:12px;cursor:pointer}.dc-chart .highlight,.dc-chart path.highlight{fill-opacity:1;stroke-opacity:1}.dc-legend{font-size:11px}.dc-legend-item{cursor:pointer}.dc-chart g.axis text{-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;-o-user-select:none;user-select:none;pointer-events:none}.dc-chart path.highlight{stroke-width:3}.dc-chart .fadeout{fill-opacity:.2;stroke-opacity:.2}.dc-chart path.dc-symbol{fill-opacity:.5;stroke-opacity:.5}.dc-hard .number-display{float:none}.tree-selection-brush .extent {
-    fill-opacity: .05;
-    stroke: #fff;
-    shape-rendering: crispEdges;
+
+div.dc-chart {
+  float: left;
+}
+
+.dc-chart rect.bar {
+  stroke: none;
+  cursor: pointer;
+}
+
+.dc-chart rect.bar:hover {
+  fill-opacity: .5;
+}
+
+.dc-chart rect.stack1 {
+  stroke: none;
+  fill: red;
+}
+
+.dc-chart rect.stack2 {
+  stroke: none;
+  fill: green;
+}
+
+.dc-chart rect.deselected {
+  stroke: none;
+  fill: #ccc;
+}
+
+.dc-chart .pie-slice {
+  fill: #fff;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.dc-chart .pie-slice :hover {
+  fill-opacity: .8;
+}
+
+.dc-chart .selected path {
+  stroke-width: 3;
+  stroke: #ccc;
+  fill-opacity: 1;
+}
+
+.dc-chart .deselected path {
+  stroke: none;
+  fill-opacity: .5;
+  fill: #ccc;
+}
+
+.axis line, .dc-chart .axis path {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
+
+.dc-chart .axis text {
+  font: 10px sans-serif;
+}
+
+.dc-chart .grid-line, .dc-chart .grid-line line {
+  fill: none;
+  stroke: #ccc;
+  opacity: .5;
+  shape-rendering: crispEdges;
+}
+
+.dc-chart .brush rect.background {
+  z-index: -999;
+}
+
+.dc-chart .brush rect.extent {
+  fill: #4682b4;
+  fill-opacity: .125;
+}
+
+.dc-chart .brush .resize path {
+  fill: #eee;
+  stroke: #666;
+}
+
+.dc-chart path.line {
+  fill: none;
+  stroke-width: 1.5px;
+}
+
+.dc-chart circle.dot {
+  stroke: none;
+}
+
+.dc-chart g.dc-tooltip path {
+  fill: none;
+  stroke: grey;
+  stroke-opacity: .8;
+}
+
+.dc-chart path.area {
+  fill-opacity: .3;
+  stroke: none;
+}
+
+.dc-chart .node {
+  font-size: .7em;
+  cursor: pointer;
+}
+
+.dc-chart .node :hover {
+  fill-opacity: .8;
+}
+
+.dc-chart .selected circle {
+  stroke-width: 3;
+  stroke: #ccc;
+  fill-opacity: 1;
+}
+
+.dc-chart .deselected circle {
+  stroke: none;
+  fill-opacity: .5;
+  fill: #ccc;
+}
+
+.dc-chart .bubble {
+  stroke: none;
+  fill-opacity: .6;
+}
+
+.dc-data-count {
+  float: right;
+  margin-top: 15px;
+  margin-right: 15px;
+}
+
+.dc-data-count .filter-count, .dc-data-count .total-count {
+  color: #3182bd;
+  font-weight: 700;
+}
+
+.dc-chart g.state {
+  cursor: pointer;
+}
+
+.dc-chart g.state :hover {
+  fill-opacity: .8;
+}
+
+.dc-chart g.state path {
+  stroke: #fff;
+}
+
+.dc-chart g.deselected path {
+  fill: grey;
+}
+
+.dc-chart g.deselected text {
+  display: none;
+}
+
+.dc-chart g.county path {
+  stroke: #fff;
+  fill: none;
+}
+
+.dc-chart g.debug rect {
+  fill: #00f;
+  fill-opacity: .2;
+}
+
+.dc-chart g.row rect {
+  fill-opacity: .8;
+  cursor: pointer;
+}
+
+.dc-chart g.row rect:hover {
+  fill-opacity: .6;
+}
+
+.dc-chart g.row text {
+  fill: #fff;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.dc-chart .highlight, .dc-chart path.highlight {
+  fill-opacity: 1;
+  stroke-opacity: 1;
+}
+
+.dc-legend {
+  font-size: 11px;
+}
+
+.dc-legend-item {
+  cursor: pointer;
+}
+
+.dc-chart g.axis text {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  -o-user-select: none;
+  user-select: none;
+  pointer-events: none;
+}
+
+.dc-chart path.highlight {
+  stroke-width: 3;
+}
+
+.dc-chart .fadeout {
+  fill-opacity: .2;
+  stroke-opacity: .2;
+}
+
+.dc-chart path.dc-symbol {
+  fill-opacity: .5;
+  stroke-opacity: .5;
+}
+
+.dc-hard .number-display {
+  float: none;
+}
+
+.tree-selection-brush .extent {
+  fill-opacity: .05;
+  stroke: #fff;
+  shape-rendering: crispEdges;
 }
 
 .tree-scale-bar text {
@@ -1034,92 +1233,87 @@ div.dc-chart{float:left}.dc-chart rect.bar{stroke:none;cursor:pointer}.dc-chart 
 }
 
 .node circle, .node ellipse, .node rect {
-fill: steelblue;
-stroke: black;
-stroke-width: 0.5px;
+  fill: steelblue;
+  stroke: black;
+  stroke-width: 0.5px;
 }
 
-.internal-node circle, .internal-node ellipse, .internal-node rect{
-fill: #CCC;
-stroke: black;
-stroke-width: 0.5px;
+.internal-node circle, .internal-node ellipse, .internal-node rect {
+  fill: #CCC;
+  stroke: black;
+  stroke-width: 0.5px;
 }
 
 .node {
-font: 10px sans-serif;
+  font: 10px sans-serif;
 }
 
 .node-selected {
-fill: #f00  ;     
+  fill: #f00;
 }
 
-.node-collapsed circle, .node-collapsed ellipse, .node-collapsed rect{
-fill: black  ;     
+.node-collapsed circle, .node-collapsed ellipse, .node-collapsed rect {
+  fill: black;
 }
 
 .node-tagged {
-fill: #00f; 
+  fill: #00f;
 }
 
 .branch {
-fill: none;
-stroke: #999;
-stroke-width: 2px;
+  fill: none;
+  stroke: #999;
+  stroke-width: 2px;
 }
 
-
 .clade {
-fill: #1f77b4;
-stroke: #444;
-stroke-width: 2px;
-opacity: 0.5;
+  fill: #1f77b4;
+  stroke: #444;
+  stroke-width: 2px;
+  opacity: 0.5;
 }
 
 .branch-selected {
-stroke: #f00  ; 
-stroke-width: 3px;
+  stroke: #f00;
+  stroke-width: 3px;
 }
 
 .branch-tagged {
-stroke: #00f;
-stroke-dasharray: 10,5;
-stroke-width: 2px;
+  stroke: #00f;
+  stroke-dasharray: 10,5;
+  stroke-width: 2px;
 }
 
 .branch-tracer {
-stroke: #bbb;
-stroke-dasharray: 3,4;
-stroke-width: 1px;
+  stroke: #bbb;
+  stroke-dasharray: 3,4;
+  stroke-width: 1px;
 }
 
-
 .branch-multiple {
-stroke-dasharray: 5, 5, 1, 5;
-stroke-width: 3px;
+  stroke-dasharray: 5, 5, 1, 5;
+  stroke-width: 3px;
 }
 
 .branch:hover {
-stroke-width: 10px;
+  stroke-width: 10px;
 }
 
 .internal-node circle:hover, .internal-node ellipse:hover, .internal-node rect:hover {
-fill: black;
-stroke: #CCC;
+  fill: black;
+  stroke: #CCC;
 }
 
 .tree-widget {
   text-align: center;
 }
 
-
-
-
-
 .summary-method-name {
   font-family: "Montserrat", sans-serif;
   font-size: 21px;
   color: #00a99d;
 }
+
 .results-summary {
   font-family: "Montserrat", sans-serif;
   font-size: 48px;
@@ -1127,15 +1321,17 @@ stroke: #CCC;
   font-weight: 600;
   line-height: 1;
 }
+
 .nav-stacked {
   padding-top: 45px;
 }
+
 a:hover {
-  transition: ease-in-out 175ms; 
+  transition: ease-in-out 175ms;
 }
 
 li.active > a:hover {
-  border-right: 3px solid #00a99d  ;
+  border-right: 3px solid #00a99d;
 }
 
 #tree-tab {
@@ -1195,117 +1391,133 @@ li.active > a:hover {
 }
 
 input[type=range] {
-    /*removes default webkit styles*/
-    -webkit-appearance: none;
+  /*removes default webkit styles*/
+  -webkit-appearance: none;
 
-    /*fix for FF unable to apply focus style bug */
-    border: 1px solid white;
+  /*fix for FF unable to apply focus style bug */
+  border: 1px solid white;
 
-    /*required for proper track sizing in FF*/
-    width: 300px;
+  /*required for proper track sizing in FF*/
+  width: 300px;
 }
+
 input[type=range]::-webkit-slider-runnable-track {
-    width: 300px;
-    height: 5px;
-    background: #ddd;
-    border: none;
-    border-radius: 3px;
+  width: 300px;
+  height: 5px;
+  background: #ddd;
+  border: none;
+  border-radius: 3px;
 }
+
 input[type=range]::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    border: none;
-    height: 16px;
-    width: 16px;
-    border-radius: 50%;
-    background: #00a99d;
-    margin-top: -4px;
+  -webkit-appearance: none;
+  border: none;
+  height: 16px;
+  width: 16px;
+  border-radius: 50%;
+  background: #00a99d;
+  margin-top: -4px;
 }
+
 input[type=range]:focus {
-    outline: none;
+  outline: none;
 }
+
 input[type=range]:focus::-webkit-slider-runnable-track {
-    background: #ccc;
+  background: #ccc;
 }
 
 input[type=range]::-moz-range-track {
-    width: 300px;
-    height: 5px;
-    background: #ddd;
-    border: none;
-    border-radius: 3px;
+  width: 300px;
+  height: 5px;
+  background: #ddd;
+  border: none;
+  border-radius: 3px;
 }
+
 input[type=range]::-moz-range-thumb {
-    border: none;
-    height: 16px;
-    width: 16px;
-    border-radius: 50%;
-    background: #00a99d;
+  border: none;
+  height: 16px;
+  width: 16px;
+  border-radius: 50%;
+  background: #00a99d;
 }
 
 /*hide the outline behind the border*/
-input[type=range]:-moz-focusring{
-    outline: 1px solid white;
-    outline-offset: -1px;
+input[type=range]:-moz-focusring {
+  outline: 1px solid white;
+  outline-offset: -1px;
 }
 
 input[type=range]::-ms-track {
-    width: 300px;
-    height: 5px;
+  width: 300px;
+  height: 5px;
 
-    /*remove bg colour from the track, we'll use ms-fill-lower and ms-fill-upper instead */
-    background: transparent;
+  /*remove bg colour from the track, we'll use ms-fill-lower and ms-fill-upper instead */
+  background: transparent;
 
-    /*leave room for the larger thumb to overflow with a transparent border */
-    border-color: transparent;
-    border-width: 6px 0;
+  /*leave room for the larger thumb to overflow with a transparent border */
+  border-color: transparent;
+  border-width: 6px 0;
 
-    /*remove default tick marks*/
-    color: transparent;
+  /*remove default tick marks*/
+  color: transparent;
 }
+
 input[type=range]::-ms-fill-lower {
-    background: #777;
-    border-radius: 10px;
-}
-input[type=range]::-ms-fill-upper {
-    background: #ddd;
-    border-radius: 10px;
-}
-input[type=range]::-ms-thumb {
-    border: none;
-    height: 16px;
-    width: 16px;
-    border-radius: 50%;
-    background: #00a99d;
-}
-input[type=range]:focus::-ms-fill-lower {
-    background: #888;
-}
-input[type=range]:focus::-ms-fill-upper {
-    background: #ccc;
+  background: #777;
+  border-radius: 10px;
 }
 
-.modal .modal-dialog { width: 850px; }
+input[type=range]::-ms-fill-upper {
+  background: #ddd;
+  border-radius: 10px;
+}
+
+input[type=range]::-ms-thumb {
+  border: none;
+  height: 16px;
+  width: 16px;
+  border-radius: 50%;
+  background: #00a99d;
+}
+
+input[type=range]:focus::-ms-fill-lower {
+  background: #888;
+}
+
+input[type=range]:focus::-ms-fill-upper {
+  background: #ccc;
+}
+
+.modal .modal-dialog {
+  width: 850px;
+}
 
 .fa-bar-chart:hover {
-    color: #00a99d;
+  color: #00a99d;
 }
 
 .positive-selection-row {
   color: white;
   background-color: #00A99D;
+  text-align: center;
 }
 
 .negative-selection-row {
   color: white;
   background-color: #333;
+  text-align: center;
 }
 
 #tree_tooltip {
   color: #fff;
   position: absolute;
   padding: 20px;
-  max-width: 200px; /* need i.e. rule */
-  background-color: rgba(0,0,0,.85);
+  max-width: 200px;
+
+  /* need i.e. rule */
+  background-color: rgba(0, 0, 0, 0.85);
   -webkit-border-radius: 12px;
   -moz-border-radius: 12px;
   border-radius: 12px;
@@ -1315,30 +1527,6 @@ input[type=range]:focus::-ms-fill-upper {
 .hyphy-export-dropdown {
   float: left;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 /*Media Query*/
 /*
@@ -1479,24 +1667,16 @@ input[type=range]:focus::-ms-fill-upper {
 }
 */
 
-
-
-
-
 input[type="file"] {
-    display: none;
+  display: none;
 }
-
-
 
 .custom-file-upload {
-    border: 1px solid #ccc;
-    display: inline-block;
-    padding: 6px 12px;
-    cursor: pointer;
+  border: 1px solid #ccc;
+  display: inline-block;
+  padding: 6px 12px;
+  cursor: pointer;
 }
-
-
 
 .input-group-btn, .btn-group-toggle {
   display: inline-block;

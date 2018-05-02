@@ -361,13 +361,15 @@ function FUBARTable(props){
   return (<div className="row">
     <div id="table-tab" className="col-md-12">
       <Header title="FUBAR Site Table" popover='<p>Hover over a column header for a description of its content.</p>'/>
-      <div className="col-md-6 alert positive-selection-row">
-        Positively selected sites with evidence are highlighted in
-        green.
-      </div>
-      <div className="col-md-6 alert negative-selection-row">
-        Negatively selected sites with evidence are highlighted in
-        black.
+      <div className="row no-gutters">
+        <div className="col-md-6 alert positive-selection-row">
+          Positively selected sites with evidence are highlighted in
+          green.
+        </div>
+        <div className="col-md-6 alert negative-selection-row">
+          Negatively selected sites with evidence are highlighted in
+          black.
+        </div>
       </div>
       <DatamonkeyTable
         headerData={headerData}

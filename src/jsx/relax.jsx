@@ -382,7 +382,7 @@ RELAXContents.defaultProps = {
         "stroke",
         omega_color(data.target.annotations.length) || null
       );
-      $(element[0][0]).tooltip("destroy");
+      $(element[0][0]).tooltip("dispose");
       $(element[0][0]).tooltip({
         title: omega_format(data.target.annotations.length),
         html: true,
@@ -392,7 +392,7 @@ RELAXContents.defaultProps = {
       });
     } else {
       element.style("stroke", null);
-      $(element[0][0]).tooltip("destroy");
+      $(element[0][0]).tooltip("dispose");
     }
 
     var is_in_partition = partition.indexOf(data.target.name) > -1;

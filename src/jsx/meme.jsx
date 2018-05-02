@@ -110,7 +110,7 @@ function MEMETable(props) {
       <h4 className="dm-table-header">
         MEME Table 
         <span
-          className="glyphicon glyphicon-info-sign"
+          className="fas fa-info-circle"
           style={{ verticalAlign: "middle", float: "right", minHeight:"30px", minWidth: "30px"}}
           aria-hidden="true"
           data-toggle="popover"

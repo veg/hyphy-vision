@@ -396,7 +396,7 @@ var BUSTEDSiteChartAndTable = React.createClass({
           <div className="col-lg-6 clear-padding justify-content">
             <div className={"form-group" + (this.state.CERwarning ? " has-error" : "")}>
               <label for="er-constrained-threshold">
-                Constrained Test Statistic
+                Constrained Test Statistic TEST
               </label>
               <input
                 type="text"
