@@ -2,7 +2,6 @@ var React = require("react"),
   _ = require("underscore");
 var pd = require('pretty-data').pd;
 import { saveAs } from "file-saver";
-import { Modal, Button, Glyphicon } from 'react-bootstrap';
 import ReactJson from 'react-json-view';
 import Alignment from 'alignment.js';
 
@@ -22,6 +21,7 @@ class InputInfo extends React.Component {
   }
   open(content) {
     this.setState({ showModal: content });
+    $("#myModal").modal("show");
   }
   saveTheJSON() {
     var blob = new Blob([pd.json(this.props.json)], {
@@ -94,38 +94,46 @@ class InputInfo extends React.Component {
             </ul>
           </div>
         </div>
-
-        <Modal show={Boolean(this.state.showModal)} onHide={()=>this.close()} dialogClassName="my-modal">
-          <Modal.Header>
-            <div style={{display:'flex', alignItems: 'center', justifyContent: 'space-between'}}>
-              <strong style={{fontSize: 24}}>
-                {this.state.showModal == 'json' ? 'JSON viewer' : 'Alignment viewer'}
-              </strong>
-              <div className="pull-right">
-                {this.state.showModal == 'json' ? (<Button>
-                  <Glyphicon glyph="share-alt" />
-                  <a href="http://hyphy.org/resources/json-fields.pdf" target="_blank">Description of JSON fields</a>
-                </Button>) : null}
+      
+        <div
+          className="modal fade"
+          id="myModal"
+          tabIndex="-1"
+          role="dialog"
+          aria-labelledby="myModalLabel"
+        >
+          <div className="modal-dialog" role="document">
+            <div className="modal-content" style={{width:"50rem"}}>
+              <div className="modal-header">
+                <h4 className="modal-title" id="myModalLabel">
+                  {this.state.showModal == 'json' ? 'JSON viewer' : 'Alignment viewer'}
+                </h4>
+                <button
+                  type="button"
+                  className="close"
+                  data-dismiss="modal"
+                  aria-label="Close"
+                >
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div className="modal-body" id="modal-body">
+                {this.state.showModal == 'json' ? <ReactJson src={this.props.json} collapsed={1} displayDataTypes={false} enableClipboard={false} /> : null }
+                {this.state.showModal == 'msa' ? <Alignment fasta={fasta} width={800} height={500} /> : null }
+              </div>
+              <div className="modal-footer">
+                <button
+                  type="button"
+                  className="btn.btn-secondary"
+                  data-dismiss="modal"
+                >
+                  Close
+                </button>
               </div>
             </div>
-          </Modal.Header>
-          <Modal.Body>
-            {this.state.showModal == 'json' ? <ReactJson src={this.props.json} collapsed={1} displayDataTypes={false} enableClipboard={false} /> : null }
-            {this.state.showModal == 'msa' ? <Alignment fasta={fasta} width={800} height={500} /> : null }
-          </Modal.Body>
-          <Modal.Footer>
-            <button
-              id="dropdown-menu-button"
-              className="btn btn-secondary dropdown-toggle"
-              data-toggle="dropdown"
-              type="button"
-              style={{height:30}}
-              onClick={()=>this.close()}
-            >
-              Close
-            </button>
-          </Modal.Footer>
-        </Modal>
+          </div>
+        </div>
+
       </div>
     );
   }
