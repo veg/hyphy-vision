@@ -769,15 +769,18 @@ p.description {
   max-width: 100%;
 }
 
-/* Bootstrap-docs scroll spy */
-/* sidebar */
-.bs-docs-sidebar {}
+// ---------- ScrollSpy ----------
 
+// main sidebar styling
 .bs-docs-sidebar .nav {
   min-width: 175px;
 }
 
-/* scrollspy sidebar links */
+.nav-tabs {
+  border-bottom: none;
+}
+
+// scrollspy links (all)
 .bs-docs-sidebar .nav > li > a {
   display: block;
   font-family: "Montserrat", sans-serif;
@@ -787,47 +790,27 @@ p.description {
   letter-spacing: 0.75px;
   border-right: 3px solid #ccc;
   padding: 10px 0px 10px 34px;
+  border-radius: 0;
 }
 
-/* scrollspy sidebar active & hover */
-.bs-docs-sidebar .nav > .active > a,
-.bs-docs-sidebar .nav > li > a:hover,
-.bs-docs-sidebar .nav > li > a:focus {
-  color: #00a99d;
-  text-decoration: none;
-  background-color: transparent;
-  border-right-color: #00a99d;
+// scrollspy links (active & hover)
+.nav-pills .nav-link.active, .nav-pills .show > .nav-link,
+.nav-link:hover {
+  color: $hyphy-green;
+  border-color: $hyphy-green;
+  background-color: white;
+  border-top: none;
+  border-bottom: none;
+  border-left: none;
 }
 
+// override the right border and text color when hovered
 .bs-docs-sidebar .nav > li > a:hover {
-  font-family: "Montserrat", sans-serif;
-  font-size: 15px;
   color: #00a99d;
-  text-decoration: none;
-  background-color: transparent;
   border-right-color: #aaa;
 }
 
-/* all active links */
-.bs-docs-sidebar .nav > .active > a,
-.bs-docs-sidebar .nav > .active:hover > a,
-.bs-docs-sidebar .nav > .active:focus > a {
-  font-family: "Montserrat", sans-serif;
-  font-size: 15px;
-  font-weight: 500;
-}
-
-/* nested active links */
-.bs-docs-sidebar .nav .nav > .active > a,
-.bs-docs-sidebar .nav .nav > .active:hover > a,
-.bs-docs-sidebar .nav .nav > .active:focus > a {
-  font-weight: 500;
-}
-
-/* hide inactive nested list */
-.bs-docs-sidebar .nav ul.nav {
-  /*display: none;       */
-}
+// --------- End of ScrollSpy Styling ---------
 
 /* show active nested list */
 .bs-docs-sidebar .nav > .active > ul.nav {

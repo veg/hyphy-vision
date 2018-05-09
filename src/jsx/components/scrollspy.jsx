@@ -13,8 +13,8 @@ const configFile = require('../../../config.json');
 
 function ScrollSpy(props) {
   var list_items = props.info.map(function(item, index) {
-    var is_active = index == 0 ? "active" : "",
-      href = "#" + item.href;
+    var is_active = index == 0 ? "active" : "";
+    var href = "#" + item.href;
     return (
       <li className="nav-item" key={item.label}>
         {configFile["env"] == "windows electron" ?
