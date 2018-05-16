@@ -15,6 +15,7 @@ function Header(props) {
       data-placement="bottom"
     />);
   }
+  $('[data-toggle="popover"]').popover();
   return (<h4 className="dm-table-header">
     {props.title}
     {popover} 

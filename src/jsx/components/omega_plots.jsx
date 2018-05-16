@@ -411,7 +411,7 @@ var OmegaPlot = React.createClass({
     this.svg_id = key + "-svg";
     return (
       <div>
-        <div className="card" id={key}>
+        <div className="card" id={key} style={{textAlign: "center"}}>
           <div className="card-header">
             <h3 className="card-title">
               &omega; distributions under the <strong>{label}</strong> model

@@ -484,7 +484,7 @@ class FELContents extends React.Component {
             />
           </div>
 
-          <div id="tree-tab" className="col-md-12">
+          <div id="tree-tab" >
             <Tree
               models={models}
               json={this.state.data}

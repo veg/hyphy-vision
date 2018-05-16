@@ -442,7 +442,7 @@ var DatamonkeyTable = React.createClass({
           className="btn.btn-secondary btn-sm pull-right"
           onClick={exportCSV}
         >
-          <span className="glyphicon glyphicon-floppy-save" /> Export Table to CSV
+          <span className="far fa-save" /> Export Table to CSV
         </button>
 
       }
@@ -1038,7 +1038,7 @@ var DatamonkeyModelTable = React.createClass({
         <h4 className="dm-table-header">
           Model fits
           <span
-            className="glyphicon glyphicon-info-sign"
+            className="fas fa-info-circle"
             style={{ verticalAlign: "middle", float: "right", minHeight:"30px", minWidth: "30px"}}
             aria-hidden="true"
             data-toggle="popover"

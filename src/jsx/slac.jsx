@@ -810,6 +810,10 @@ var SLACBanner = React.createClass({
     );
   },
 
+  componentDidMount() {
+    $('[data-toggle="popover"]').popover()
+  },
+
   render: function() {
     return (<div className="row">
 

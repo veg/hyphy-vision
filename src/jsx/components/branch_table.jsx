@@ -121,7 +121,7 @@ var BranchTable = React.createClass({
           current_model_name: label,
           current_omegas: self.state.annotations[label]["omegas"]
         });
-        $("#myModal").modal("show");
+        $("#branchTableModal").modal("show");
       });
     }
   },
@@ -293,7 +293,7 @@ var BranchTable = React.createClass({
 
         <div
           className="modal fade"
-          id="myModal"
+          id="branchTableModal"
           tabIndex="-1"
           role="dialog"
           aria-labelledby="myModalLabel"
