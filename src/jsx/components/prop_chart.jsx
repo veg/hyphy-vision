@@ -351,14 +351,12 @@ var PropChart = React.createClass({
       <div className="card" id={this.state.model_name}>
         <div className="card-header">
           <div className="row">
-            <div className="col-md-8 v-align">
+            <div className="col v-align">
               <h1 className="card-title">
-                <strong>
+                <strong style={{fontSize:"1.5rem"}} >
                   {this.state.model_name}
                 </strong>
               </h1>
-            </div>
-            <div className="col-md-4 v-align">
               <div className="btn-group pull-right">
                 <button
                   id={this.save_svg_id}

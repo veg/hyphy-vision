@@ -577,6 +577,9 @@ class BUSTEDModelTable extends React.Component {
         <div className="modal-dialog" role="document">
           <div className="modal-content">
             <div className="modal-header">
+              <h4 className="modal-title" id="myModalLabel">
+                BUSTED Site Proportion Chart
+              </h4>
               <button
                 type="button"
                 className="close"
@@ -585,9 +588,6 @@ class BUSTEDModelTable extends React.Component {
               >
                 <span aria-hidden="true">&times;</span>
               </button>
-              <h4 className="modal-title" id="myModalLabel">
-                BUSTED Site Proportion Chart
-              </h4>
             </div>
             <div className="modal-body" id="modal-body">
               <h4 className="dm-table-header">&omega; distribution</h4>

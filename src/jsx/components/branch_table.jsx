@@ -301,7 +301,7 @@ var BranchTable = React.createClass({
           <div className="modal-dialog" role="document">
             <div className="modal-content">
               <div className="modal-header">
-                                <h4 className="modal-title" id="myModalLabel">
+                <h4 className="modal-title" id="myModalLabel">
                   aBSREL Site Proportion Chart
                 </h4>
                 <button
