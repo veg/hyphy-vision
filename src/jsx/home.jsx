@@ -50,7 +50,7 @@ function MethodBanner(props){
 function Home(props){
   return (<div>
     <NavBar />
-    <div className="container" style={{marginTop: "75px"}}>
+    <div className="container">
       <MethodBanner
         method='aBSREL'
         text='adaptive Branch-Site Random Effects Likelihood'

@@ -314,14 +314,6 @@ var BUSTEDSiteChartAndTable = React.createClass({
     "Optimized Null Statistic"
   ],
   render: function() {
-    if(_.isEmpty(this.props.data)){
-      return (<div className="row" style={{marginBottom:"20px"}}>
-        <div className="col-md-12">     
-          <Header title='Model Test Statistics Per Site' popover='No information to display.' />
-          <p className="description">No data to display.</p>
-        </div>
-      </div>);
-    }
     var self = this,
       float_format = d3.format(".2f"),
       bodyData = _.filter(this.props.data, function(element, index) {
@@ -354,22 +346,9 @@ var BUSTEDSiteChartAndTable = React.createClass({
       <div>
          
         <div className="row hyphy-busted-site-table" style={{marginBottom:"20px"}}>
-        
-          <div className="col-md-12">     
-            <h4 className="dm-table-header">
-              Model Test Statistics Per Site
-              <span
-                className="glyphicon glyphicon-info-sign"
-                style={{ verticalAlign: "middle", float: "right", minHeight:"30px", minWidth: "30px" }}
-                aria-hidden="true"
-                data-toggle="popover"
-                data-trigger="hover"
-                title="Actions"
-                data-html="true"
-                data-content='<ul><li>Click the figure and drag to filter by given sites. The resulting "brush" can be resized, dragged, or cleared by clicking unselected sites.</li><li>Filter out rows below a given statistic value by typing in the input boxes below.</li></ul>'
-                data-placement="bottom"
-              />
-            </h4>
+
+          <div className="col-md-12"> 
+            <Header title='Model Test Statistics Per Site' popover={'<ul><li>Click the figure and drag to filter by given sites. The resulting "brush" can be resized, dragged, or cleared by clicking unselected sites.</li><li>Filter out rows below a given statistic value by typing in the input boxes below.</li></ul>'} />
           </div>
           <div className="col-lg-12">
             <button
@@ -378,7 +357,7 @@ var BUSTEDSiteChartAndTable = React.createClass({
               className="btn.btn-secondary btn-sm pull-right btn-export"
               onClick={()=>{d3_save_svg.save(d3.select("#chart").node(), {filename: "busted"});}}
             >
-              <span className="glyphicon glyphicon-floppy-save" /> Export Chart
+              <span className="far fa-save" /> Export Chart
               to SVG
             </button>
             <button
@@ -387,7 +366,7 @@ var BUSTEDSiteChartAndTable = React.createClass({
               className="btn.btn-secondary btn-sm pull-right btn-export"
               onClick={()=>{saveSvgAsPng(document.getElementById("chart"), "busted-chart.png");}}
             >
-              <span className="glyphicon glyphicon-floppy-save" /> Export Chart
+              <span className="far fa-save" /> Export Chart
               to PNG
             </button>
           </div>
@@ -406,6 +385,7 @@ var BUSTEDSiteChartAndTable = React.createClass({
                 onChange={this.handleCERChange}
                 onFocus={this.handleCERFocus}
                 onBlur={this.handleCERBlur}
+                style={{marginLeft:"1rem"}}
               />
             {this.state.CERwarning ? <span className=".form-text">Enter a floating point number.</span> : ''}
             </div>
@@ -424,6 +404,7 @@ var BUSTEDSiteChartAndTable = React.createClass({
                 onChange={this.handleONERChange}
                 onFocus={this.handleONERFocus}
                 onBlur={this.handleONERBlur}
+                style={{marginLeft:"1rem"}}
               />
             {this.state.ONERwarning ? <span className=".form-text">Enter a floating point number.</span> : ''}
             </div>
@@ -489,7 +470,7 @@ class BUSTEDModelTable extends React.Component {
     function modalShower(model, branch){
       return function(){
         this.setState({model: model, branch:branch});
-        $("#myModal").modal("show");
+        $("#modelFitsModal").modal("show");
       }
     }
     function makeActive(model){
@@ -535,20 +516,7 @@ class BUSTEDModelTable extends React.Component {
       return test_row;
     });
     return (<div>
-      <h4 className="dm-table-header">
-        Model fits
-        <span
-          className="glyphicon glyphicon-info-sign"
-          style={{ verticalAlign: "middle", float: "right", minHeight:"30px", minWidth: "30px"}}
-          aria-hidden="true"
-          data-toggle="popover"
-          data-trigger="hover"
-          title="Actions"
-          data-html="true"
-          data-content="<ul><li>Hover over a column header for a description of its content.</li><li>Click a row to view the corresponding rate distribution.</li></ul>"
-          data-placement="bottom"
-        />
-      </h4>
+      <Header title='Model fits' popover={'<ul><li>Hover over a column header for a description of its content.</li><li>Click a row to view the corresponding rate distribution.</li></ul>'} />
       <table
         className="dm-table table table-hover table-smm list-group-item-text"
         style={{ marginTop: "0.5em" }}
@@ -601,7 +569,7 @@ class BUSTEDModelTable extends React.Component {
 
       <div
         className="modal fade"
-        id="myModal"
+        id="modelFitsModal"
         tabIndex="-1"
         role="dialog"
         aria-labelledby="myModalLabel"
@@ -609,6 +577,9 @@ class BUSTEDModelTable extends React.Component {
         <div className="modal-dialog" role="document">
           <div className="modal-content">
             <div className="modal-header">
+              <h4 className="modal-title" id="myModalLabel">
+                BUSTED Site Proportion Chart
+              </h4>
               <button
                 type="button"
                 className="close"
@@ -617,9 +588,6 @@ class BUSTEDModelTable extends React.Component {
               >
                 <span aria-hidden="true">&times;</span>
               </button>
-              <h4 className="modal-title" id="myModalLabel">
-                BUSTED Site Proportion Chart
-              </h4>
             </div>
             <div className="modal-body" id="modal-body">
               <h4 className="dm-table-header">&omega; distribution</h4>
@@ -832,56 +800,46 @@ class BUSTEDContents extends React.Component {
     }
     return (
       <div>
-        <div className="container">
-          <div className="row">
+        <div>
+           <MainResult
+              summary_for_clipboard={this.getSummaryForClipboard()}
+              summary_for_rendering={this.getSummaryForRendering()} 
+              method_ref="http://hyphy.org/methods/selection-methods/#busted"
+              citation_ref="http://www.ncbi.nlm.nih.gov/pubmed/25701167"
+              citation_number="PMID 25701167"
+            />
+        </div>
 
-            <div className="col-md-12 col-lg-10">
-              <div>
-                <div id="summary-tab">
-                 <MainResult
-                    summary_for_clipboard={this.getSummaryForClipboard()}
-                    summary_for_rendering={this.getSummaryForRendering()} 
-                    method_ref="http://hyphy.org/methods/selection-methods/#busted"
-                    citation_ref="http://www.ncbi.nlm.nih.gov/pubmed/25701167"
-                    citation_number="PMID 25701167"
-                  />
-                </div>
-              </div>
+        <div className="row">
+          <div id="hyphy-model-fits" className="col-lg-12">
+            <BUSTEDModelTable fits={self.state.fits} />
+            <p className="description">
+              This table reports a statistical summary of the models fit
+              to the data. Here, <strong>Unconstrained model</strong>{" "}
+              refers to the BUSTED alternative model for selection, and{" "}
+              <strong>Constrained model</strong> refers to the BUSTED null
+              model for selection.
+            </p>
+          </div>
+        </div>
 
-              <div className="row">
-                <div id="hyphy-model-fits" className="col-lg-12">
-                  <BUSTEDModelTable fits={self.state.fits} />
-                  <p className="description">
-                    This table reports a statistical summary of the models fit
-                    to the data. Here, <strong>Unconstrained model</strong>{" "}
-                    refers to the BUSTED alternative model for selection, and{" "}
-                    <strong>Constrained model</strong> refers to the BUSTED null
-                    model for selection.
-                  </p>
-                </div>
-              </div>
+        <BUSTEDSiteChartAndTable data={this.state.evidence_ratio_data} />
 
-              <BUSTEDSiteChartAndTable data={this.state.evidence_ratio_data} />
-
-              <div className="row">
-                <div className="col-md-12" id="phylogenetic-tree">
-                  <Tree
-                    json={self.state.json}
-                    settings={self.state.tree_settings}
-                    models={models}
-                    color_gradient={self.state.colorGradient}
-                    grayscale_gradient={self.state.grayscaleGradient}
-                    method={'busted'}
-                    multitree
-                  />
-                </div>
-              </div>
-            </div>
-
-            <div className="col-lg-1" />
+        <div className="row">
+          <div className="col-md-12" id="phylogenetic-tree">
+            <Tree
+              json={self.state.json}
+              settings={self.state.tree_settings}
+              models={models}
+              color_gradient={self.state.colorGradient}
+              grayscale_gradient={self.state.grayscaleGradient}
+              method={'busted'}
+              multitree
+            />
           </div>
         </div>
       </div>
+
     );
   }
 

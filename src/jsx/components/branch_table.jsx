@@ -121,7 +121,7 @@ var BranchTable = React.createClass({
           current_model_name: label,
           current_omegas: self.state.annotations[label]["omegas"]
         });
-        $("#myModal").modal("show");
+        $("#branchTableModal").modal("show");
       });
     }
   },
@@ -293,7 +293,7 @@ var BranchTable = React.createClass({
 
         <div
           className="modal fade"
-          id="myModal"
+          id="branchTableModal"
           tabIndex="-1"
           role="dialog"
           aria-labelledby="myModalLabel"
@@ -301,6 +301,9 @@ var BranchTable = React.createClass({
           <div className="modal-dialog" role="document">
             <div className="modal-content">
               <div className="modal-header">
+                <h4 className="modal-title" id="myModalLabel">
+                  aBSREL Site Proportion Chart
+                </h4>
                 <button
                   type="button"
                   className="close"
@@ -309,9 +312,7 @@ var BranchTable = React.createClass({
                 >
                   <span aria-hidden="true">&times;</span>
                 </button>
-                <h4 className="modal-title" id="myModalLabel">
-                  aBSREL Site Proportion Chart
-                </h4>
+
               </div>
               <div className="modal-body" id="modal-body">
                 <h4 className="dm-table-header">&omega; distribution</h4>

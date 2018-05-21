@@ -92,31 +92,31 @@ var NavBar = React.createClass({
 
       <nav className="navbar navbar-expand-lg navbar-light bg-light fixed-top" role="navigation">
         <div className="container">
-          <div className="row">
         
-            <a className="navbr-brand" href ="/">
+            <a className="navbar-brand" href ="/">
               <img id="hyphy-logo" src={hyphy_logo} />
             </a>
             
             <div className="collapse navbar-collapse" id="navbarSupportedContent">
-              <Methods />
-              <ul className="navbar-nav">
-                <a
-                  className="nav-button"
-                  role="button"
-                  style={{ position: "relative", overflow: "hidden", width: "106px", textAlign: "center" }}
-                >
-                  { this.props.onFileChange ? (<input 
-                    type="file"
-                    id="dm-file"
-                    onChange={self.props.onFileChange}
-                  />) : null }
-                  Load
-                </a>
+              <ul className="navbar-nav ml-auto">
+                <Methods />
+                {this.props.onFileChange ? (
+                  <a
+                    className="nav-button"
+                    role="button"
+                    style={{ position: "relative", overflow: "hidden", width:"106px", textAlign: "center"}}
+                  >
+                    <input 
+                      type="file"
+                      style={input_style}
+                      id="dm-file"
+                      onChange={self.props.onFileChange}
+                    />
+                    Load
+                  </a> ) : null }
               </ul>
             </div>
         
-          </div>
         </div>
       </nav>
       

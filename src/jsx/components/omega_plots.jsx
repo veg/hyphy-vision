@@ -411,7 +411,7 @@ var OmegaPlot = React.createClass({
     this.svg_id = key + "-svg";
     return (
       <div>
-        <div className="card" id={key}>
+        <div className="card" id={key} style={{textAlign: "center"}}>
           <div className="card-header">
             <h3 className="card-title">
               &omega; distributions under the <strong>{label}</strong> model
@@ -429,14 +429,14 @@ var OmegaPlot = React.createClass({
                 type="button"
                 className="btn.btn-secondary btn-sm"
               >
-                <span className="glyphicon glyphicon-floppy-save" /> SVG
+                <span className="far fa-save" /> SVG
               </button>
               <button
                 type="button"
                 className="btn.btn-secondary btn-sm"
                 onClick={()=>{saveSvgAsPng(document.getElementById(self.svg_id), "relax-chart.png");}}
               >
-                <span className="glyphicon glyphicon-floppy-save" /> PNG
+                <span className="far fa-save" /> PNG
               </button>
             </div>
           </div>

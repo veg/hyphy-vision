@@ -43,7 +43,7 @@ function GARDResults(props){
   var evidence_statement = props.data.improvements ?
     <span><strong className="hyphy-highlight">found evidence</strong> of {props.data.lastImprovedBPC} recombination breakpoint{props.data.lastImprovedBPC == 1 ? '' : 's'}</span> :
     <span><strong>found no evidence</strong> of recombination</span>;
-  return (<div className="row" id="summary-tab">
+  return (<div className="row" >
     <div className="col-md-12">
     </div>
     <div className="col-md-12">
@@ -305,33 +305,29 @@ class GARDContents extends React.Component {
       edgeColorizer: function(e,d){return 0} 
     };
 
-    return (<div>
-      <div className="container">
+    return (
+      <div>
+        <ErrorMessage />
+        <GARDResults data={this.state.data} hyphy_vision={this.props.hyphy_vision}/>
+        <GARDRecombinationReport data={this.state.data} />
+        <GARDTopologyReport data={this.state.data} />
+        <GARDSiteGraph data={this.state.data} />
+        <RateMatrix rate_matrix={this.state.data ? this.state.data.rateMatrix : undefined} />
+
         <div className="row">
-          <div className="col-md-12 col-lg-10">
-            <ErrorMessage />
-            <GARDResults data={this.state.data} hyphy_vision={this.props.hyphy_vision}/>
-            <GARDRecombinationReport data={this.state.data} />
-            <GARDTopologyReport data={this.state.data} />
-            <GARDSiteGraph data={this.state.data} />
-            <RateMatrix rate_matrix={this.state.data ? this.state.data.rateMatrix : undefined} />
-
-            <div className="row">
-              <div id="tree-tab" className="col-md-12">
-                <Tree
-                  models={{}}
-                  json={this.state.data}
-                  settings={tree_settings}
-                  method={'gard'}
-                  multitree
-                />
-              </div>
-            </div>
-
+          <div id="tree-tab" className="col-md-12">
+            <Tree
+              models={{}}
+              json={this.state.data}
+              settings={tree_settings}
+              method={'gard'}
+              multitree
+            />
           </div>
         </div>
+
       </div>
-    </div>);
+    );
   }
 }
 

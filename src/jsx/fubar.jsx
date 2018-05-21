@@ -21,7 +21,7 @@ function FUBARSummary(props) {
       .map(row => row[3] > props.posteriorProbability ? 1 : 0)
       .reduce((a,b)=> a+b, 0);
   return (
-    <div className="row" id="summary-tab">
+    <div className="row" >
       <div className="col-md-12">
       </div>
       <div className="col-md-12">
@@ -280,7 +280,7 @@ class FUBARViz extends React.Component {
     return(<div className="row" id='plot-tab'>
       <div className="col-md-12">
         <Header title="Posterior rate distribution" popover='Clear the input box to view the alignment wide distribution.' />
-        {self.state.input_error ? <div className="alert alert-danger"><span className="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>Enter a valid site (a number from 1 to {this.props.number_of_sites}).</div> : ''}
+        {self.state.input_error ? <div className="alert alert-danger"><span className="fas fa-exclamation" aria-hidden="true"></span>Enter a valid site (a number from 1 to {this.props.number_of_sites}).</div> : ''}
       </div>
       <div className="col-md-6">
         <div
@@ -305,7 +305,7 @@ class FUBARViz extends React.Component {
           className="btn.btn-secondary btn-sm pull-right btn-export"
           onClick={()=>d3_save_svg.save(d3.select("#fubar-viz").node(), {filename: "datamonkey-chart"})}
         >
-          <span className="glyphicon glyphicon-floppy-save" /> Export Chart to SVG
+          <span className="far fa-save" /> Export Chart to SVG
         </button>
         <button
           id="export-chart-png"
@@ -313,7 +313,7 @@ class FUBARViz extends React.Component {
           className="btn.btn-secondary btn-sm pull-right btn-export"
           onClick={()=>saveSvgAsPng(document.getElementById("fubar-viz"), "datamonkey-chart.png")}
         >
-          <span className="glyphicon glyphicon-floppy-save" /> Export Chart to PNG
+          <span className="far fa-save" /> Export Chart to PNG
         </button>
       </div>
       <div className="col-md-12">
@@ -361,13 +361,15 @@ function FUBARTable(props){
   return (<div className="row">
     <div id="table-tab" className="col-md-12">
       <Header title="FUBAR Site Table" popover='<p>Hover over a column header for a description of its content.</p>'/>
-      <div className="col-md-6 alert positive-selection-row">
-        Positively selected sites with evidence are highlighted in
-        green.
-      </div>
-      <div className="col-md-6 alert negative-selection-row">
-        Negatively selected sites with evidence are highlighted in
-        black.
+      <div className="row no-gutters">
+        <div className="col-md-6 alert positive-selection-row">
+          Positively selected sites with evidence are highlighted in
+          green.
+        </div>
+        <div className="col-md-6 alert negative-selection-row">
+          Negatively selected sites with evidence are highlighted in
+          black.
+        </div>
       </div>
       <DatamonkeyTable
         headerData={headerData}
@@ -457,55 +459,49 @@ class FUBARContents extends React.Component {
     };
     return (
       <div>
-        <div className="container">
-          <div className="row">
-            <div className="col-md-12 col-lg-10">
-              <FUBARSummary
-                json={self.state.data}
-                updatePosteriorProbability={self.updatePosteriorProbability}
-                posteriorProbability={self.state.posteriorProbability}
-                hyphy_vision={self.props.hyphy_vision}
-              />
+        <FUBARSummary
+          json={self.state.data}
+          updatePosteriorProbability={self.updatePosteriorProbability}
+          posteriorProbability={self.state.posteriorProbability}
+          hyphy_vision={self.props.hyphy_vision}
+        />
 
-              <FUBARViz
-                data={self.state.data ? self.state.data.grid : null}
-                partitions={self.state.data ? self.state.data['data partitions'] : null}
-                posterior={self.state.data ? self.state.data.posterior : null}
-                number_of_sites={self.state.data ? self.state.data.input['number of sites'] : null}
-              />
+        <FUBARViz
+          data={self.state.data ? self.state.data.grid : null}
+          partitions={self.state.data ? self.state.data['data partitions'] : null}
+          posterior={self.state.data ? self.state.data.posterior : null}
+          number_of_sites={self.state.data ? self.state.data.input['number of sites'] : null}
+        />
 
-              <FUBARTable
-                posteriorProbability={self.state.posteriorProbability} 
-                data={self.state.data}
-              />
+        <FUBARTable
+          posteriorProbability={self.state.posteriorProbability} 
+          data={self.state.data}
+        />
 
-              <div className="row">
-                <div id="tree-tab" className="col-md-12">
-                  <Tree
-                    models={models}
-                    json={self.state.data}
-                    settings={tree_settings}
-                    method={'fubar'}
-                    multitree
-                  />
-                </div>
-              </div>
-
-              <div className="row">
-                <div className="col-md-12" id="fit-tab">
-                  <DatamonkeyModelTable fits={self.state.fits} />
-                  <p className="description">
-                    This table reports a statistical summary of the models fit
-                    to the data. Here, <strong>MG94</strong> refers to the
-                    MG94xREV baseline model that infers a single &omega; rate
-                    category per branch.
-                  </p>
-                </div>
-              </div>
-
-            </div>
+        <div className="row">
+          <div id="tree-tab" className="col-md-12">
+            <Tree
+              models={models}
+              json={self.state.data}
+              settings={tree_settings}
+              method={'fubar'}
+              multitree
+            />
           </div>
         </div>
+
+        <div className="row">
+          <div className="col-md-12" id="fit-tab">
+            <DatamonkeyModelTable fits={self.state.fits} />
+            <p className="description">
+              This table reports a statistical summary of the models fit
+              to the data. Here, <strong>MG94</strong> refers to the
+              MG94xREV baseline model that infers a single &omega; rate
+              category per branch.
+            </p>
+          </div>
+        </div>
+
       </div>
     );
   }

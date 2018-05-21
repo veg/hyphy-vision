@@ -17,7 +17,7 @@ function MEMESummary(props) {
   }
 
   return (
-    <div className="row" id="summary-tab">
+    <div className="row" >
       <div className="col-md-12">
       </div>
       <div className="col-md-12">
@@ -110,7 +110,7 @@ function MEMETable(props) {
       <h4 className="dm-table-header">
         MEME Table 
         <span
-          className="glyphicon glyphicon-info-sign"
+          className="fas fa-info-circle"
           style={{ verticalAlign: "middle", float: "right", minHeight:"30px", minWidth: "30px"}}
           aria-hidden="true"
           data-toggle="popover"
@@ -221,55 +221,49 @@ class MEMEContents extends React.Component {
 
     return (
       <div>
-        <div className="container">
-          <div className="row">
-            <div className="col-md-12 col-lg-10">
-              <MEMESummary
-                json={self.state.data}
-                updatePValue={self.updatePValue}
-                pValue={self.state.pValue}
-                hyphy_vision={self.props.hyphy_vision}
-              />
-              <MEMETable
-                header={self.state.header}
-                body_data={self.state.bodyData}
-                partitions={self.state.partitions}
-                pValue={self.state.pValue}
-              />
-              <div id="plot-tab" className="row hyphy-row">
-                <div className="col-md-12">
-                  <h4 className="dm-table-header">MEME Site Plot</h4>
-                  {site_graph}
-                </div>
-              </div>
-
-            <div className="row">
-              <div id="tree-tab" className="col-md-12">
-                <Tree
-                  models={models}
-                  json={self.state.data}
-                  settings={tree_settings}
-                  method={'meme'}
-                  multitree
-                />
-              </div>
-            </div>
-
-              <div className="row">
-                <div className="col-md-12" id="fit-tab">
-                  <DatamonkeyModelTable fits={self.state.fits} />
-                  <p className="description">
-                    This table reports a statistical summary of the models fit
-                    to the data. Here, <strong>MG94</strong> refers to the
-                    MG94xREV baseline model that infers a single &omega; rate
-                    category per branch.
-                  </p>
-                </div>
-              </div>
-
-            </div>
+        <MEMESummary
+          json={self.state.data}
+          updatePValue={self.updatePValue}
+          pValue={self.state.pValue}
+          hyphy_vision={self.props.hyphy_vision}
+        />
+        <MEMETable
+          header={self.state.header}
+          body_data={self.state.bodyData}
+          partitions={self.state.partitions}
+          pValue={self.state.pValue}
+        />
+        <div id="plot-tab" className="row hyphy-row">
+          <div className="col-md-12">
+            <h4 className="dm-table-header">MEME Site Plot</h4>
+            {site_graph}
           </div>
         </div>
+
+      <div className="row">
+        <div id="tree-tab" className="col-md-12">
+          <Tree
+            models={models}
+            json={self.state.data}
+            settings={tree_settings}
+            method={'meme'}
+            multitree
+          />
+        </div>
+      </div>
+
+        <div className="row">
+          <div className="col-md-12" id="fit-tab">
+            <DatamonkeyModelTable fits={self.state.fits} />
+            <p className="description">
+              This table reports a statistical summary of the models fit
+              to the data. Here, <strong>MG94</strong> refers to the
+              MG94xREV baseline model that infers a single &omega; rate
+              category per branch.
+            </p>
+          </div>
+        </div>
+
       </div>
     );
   }

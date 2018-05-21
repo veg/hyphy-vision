@@ -84,20 +84,22 @@ class ResultsPage extends React.Component {
       <div>
         {this.props.hyphy_vision ? <NavBar onFileChange={this.onFileChange} /> : ''}
         <div className="container">
-          <ScrollSpy info={self.props.scrollSpyInfo} />
-          <div className="col-md-12 col-lg-10">
-            <div className="results">
-              <ErrorMessage />
-              <div id="summary-tab">
-                <MethodHeader
-                  methodName={self.props.methodName}
-                  input_data={this.state.json.input}
-                  json={this.state.json}
-                  hyphy_vision={this.props.hyphy_vision}
-                />
+          <div className="row">
+            <ScrollSpy info={self.props.scrollSpyInfo} />
+            <div className="col-lg-12 col-xl-10">
+              <div className="results">
+                <ErrorMessage />
+                <div id="summary-tab">
+                  <MethodHeader
+                    methodName={self.props.methodName}
+                    input_data={this.state.json.input}
+                    json={this.state.json}
+                    hyphy_vision={this.props.hyphy_vision}
+                  />
+                </div>
               </div>
+              {React.createElement(this.props.children, { json: this.state.json})}
             </div>
-            {React.createElement(this.props.children, { json: this.state.json})}
           </div>
         </div>
       </div>

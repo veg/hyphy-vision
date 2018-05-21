@@ -442,21 +442,20 @@ var DatamonkeyTable = React.createClass({
           className="btn.btn-secondary btn-sm pull-right"
           onClick={exportCSV}
         >
-          <span className="glyphicon glyphicon-floppy-save" /> Export Table to CSV
+          <span className="far fa-save" /> Export Table to CSV
         </button>
 
       }
       paginatorControls = (
-      <div>
+      <div className="container">
 
-          <div className="col-md-12">
+        <div className="row">
+          <div className="col-4">
             <p>
               Showing entries {this.state.current + 1} through {upperLimit} out
               of {this.state.rowOrder.length}.
             </p>
-          </div>
 
-          <div className="col-md-3">
             <div
               className="btn-group d-flex"
               role="group"
@@ -471,7 +470,7 @@ var DatamonkeyTable = React.createClass({
                   title={"Move backwards " + this.props.paginate + " rows."}
                 >
                   <span
-                    className="glyphicon glyphicon-backward"
+                    className="fas fa-angle-double-left"
                     aria-hidden="true"
                   />
                 </button>
@@ -485,7 +484,7 @@ var DatamonkeyTable = React.createClass({
                   title="Move backwards one row."
                 >
                   <span
-                    className="glyphicon glyphicon-chevron-left"
+                    className="fas fa-angle-left"
                     aria-hidden="true"
                   />
                 </button>
@@ -499,7 +498,7 @@ var DatamonkeyTable = React.createClass({
                   title="Move forwards one row."
                 >
                   <span
-                    className="glyphicon glyphicon-chevron-right"
+                    className="fas fa-angle-right"
                     aria-hidden="true"
                   />
                 </button>
@@ -513,20 +512,17 @@ var DatamonkeyTable = React.createClass({
                   title={"Move forwards " + this.props.paginate + " rows."}
                 >
                   <span
-                    className="glyphicon glyphicon-forward"
+                    className="fas fa-angle-double-right"
                     aria-hidden="true"
                   />
                 </button>
               </div>
             </div>
           </div>
-          
-          <div className="col-md-6"></div>
-          
-          <div className="col-md-3">
+          <div className="col-8 ml-auto align-bottom">
             {button}
           </div>
-        
+      </div>
       </div>
       );
     } else {
@@ -1042,7 +1038,7 @@ var DatamonkeyModelTable = React.createClass({
         <h4 className="dm-table-header">
           Model fits
           <span
-            className="glyphicon glyphicon-info-sign"
+            className="fas fa-info-circle"
             style={{ verticalAlign: "middle", float: "right", minHeight:"30px", minWidth: "30px"}}
             aria-hidden="true"
             data-toggle="popover"

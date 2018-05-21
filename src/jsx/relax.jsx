@@ -335,17 +335,17 @@ class RELAXContents extends React.Component{
           citation_number="PMID 123456789"
         />
 
-        <div id="fits-tab" className="row"> 
+        <div id="fits-tab"> 
           <Header title="Model fits" popover="<p>Hover over a column header for a description of its content.</p>"/>
           <RELAXModelTable fits={self.state.fits} />
         </div>
 
-        <div id="omega-tab" className="row"> 
+        <div id="omega-tab" > 
           <Header title="Omega plots" popover="<p>Shows the different omega rate distributions under the null and alternative models.</p>"/>
           <OmegaPlotGrid json={self.state.json} />
         </div>
 
-        <div id="tree-tab" className="row">
+        <div id="tree-tab" >
           <Tree
             json={self.state.json}
             settings={self.state.settings}
@@ -357,7 +357,7 @@ class RELAXContents extends React.Component{
           />
         </div>
 
-        <div id="branch-attribute-table" className="row">
+        <div id="branch-attribute-table" >
           <Header title="Branch attributes"></Header>
             <DatamonkeyTable
               headerData={self.state.branchAttributeHeaders}
@@ -382,7 +382,7 @@ RELAXContents.defaultProps = {
         "stroke",
         omega_color(data.target.annotations.length) || null
       );
-      $(element[0][0]).tooltip("destroy");
+      $(element[0][0]).tooltip("dispose");
       $(element[0][0]).tooltip({
         title: omega_format(data.target.annotations.length),
         html: true,
@@ -392,7 +392,7 @@ RELAXContents.defaultProps = {
       });
     } else {
       element.style("stroke", null);
-      $(element[0][0]).tooltip("destroy");
+      $(element[0][0]).tooltip("dispose");
     }
 
     var is_in_partition = partition.indexOf(data.target.name) > -1;

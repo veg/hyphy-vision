@@ -351,21 +351,19 @@ var PropChart = React.createClass({
       <div className="card" id={this.state.model_name}>
         <div className="card-header">
           <div className="row">
-            <div className="col-md-8 v-align">
+            <div className="col v-align">
               <h1 className="card-title">
-                <strong>
+                <strong style={{fontSize:"1.5rem"}} >
                   {this.state.model_name}
                 </strong>
               </h1>
-            </div>
-            <div className="col-md-4 v-align">
               <div className="btn-group pull-right">
                 <button
                   id={this.save_svg_id}
                   type="button"
                   className="btn.btn-secondary btn-sm"
                 >
-                  <span className="glyphicon glyphicon-floppy-save" /> SVG
+                  <span className="far fa-save" /> SVG
                 </button>
                 <button
                   id={this.save_png_id}
@@ -373,7 +371,7 @@ var PropChart = React.createClass({
                   className="btn.btn-secondary btn-sm"
                   onClick={()=>saveSvgAsPng(document.getElementById(this.svg_id), "datamonkey-chart.png", {scale: 2})}
                 >
-                  <span className="glyphicon glyphicon-floppy-save" /> PNG
+                  <span className="far fa-save" /> PNG
                 </button>
               </div>
             </div>
@@ -381,7 +379,7 @@ var PropChart = React.createClass({
         </div>
         <div className="row">
           <div className="card-body col-md-12" style={{ textAlign: "center" }}>
-            <svg id={this.svg_id} />
+            <svg id={this.svg_id} style={{width:"100%"}}/>
           </div>
         </div>
       </div>

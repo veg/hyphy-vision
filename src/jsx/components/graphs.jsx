@@ -104,23 +104,23 @@ class GraphMenu extends React.Component {
     var export_buttons;
 
     if(this.props.export_images){
-      export_buttons = (<div className="form-group navbar-right">
+      export_buttons = (<div className="navbar-right">
         <div className="input-group">
           <button
             id="export-chart-png"
             type="button"
-            className="btn.btn-secondary btn-sm pull-right btn-export"
+            className="btn.btn-secondary btn-sm btn-export"
             onClick={()=>saveSvgAsPng(document.getElementById("dm-chart"), "datamonkey-chart.png")}
           >
-            <span className="glyphicon glyphicon-floppy-save" /> Export to PNG
+            <span className="far fa-save" /> Export to PNG
           </button>
           <button
             id="export-chart-png"
             type="button"
-            className="btn.btn-secondary btn-sm pull-right btn-export"
+            className="btn.btn-secondary btn-sm btn-export"
             onClick={()=>d3_save_svg.save(d3.select("#dm-chart").node(), {filename: "datamonkey-chart"})}
           >
-            <span className="glyphicon glyphicon-floppy-save" /> Export to SVG
+            <span className="far fa-save" /> Export to SVG
           </button>
         </div>
       </div>);
@@ -129,16 +129,10 @@ class GraphMenu extends React.Component {
     return (
       <nav className="navbar" style={navStyle}>
         <form className="navbar-form">
-
-          <div className="form-group navbar-left">
-            <div className="input-group">
-              {XAxisButton}
-              {YAxisButton}
-            </div>
-          </div>
-
-          {export_buttons}
+          {XAxisButton}
+          {YAxisButton}
         </form>
+        {export_buttons}
       </nav>
     );
   }
@@ -832,18 +826,18 @@ class SiteGraph extends React.Component {
         <button
           id="export-chart-svg"
           type="button"
-          className="btn.btn-secondary btn-sm pull-right btn-export"
+          className="btn.btn-secondary btn-sm float-right btn-export"
           onClick={self.saveSVG}
         >
-          <span className="glyphicon glyphicon-floppy-save" /> Export Chart to SVG
+          <span className="far fa-save" /> Export Chart to SVG
         </button>
         <button
           id="export-chart-png"
           type="button"
-          className="btn.btn-secondary btn-sm pull-right btn-export"
+          className="btn.btn-secondary btn-sm float-right btn-export"
           onClick={self.savePNG}
         >
-          <span className="glyphicon glyphicon-floppy-save" /> Export Chart to PNG
+          <span className="far fa-save" /> Export Chart to PNG
         </button>
 
       </div>
