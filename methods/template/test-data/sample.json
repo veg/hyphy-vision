@@ -1,7 +1,0 @@
-{
-  "input_data": {
-      "filename": "sequences.fasta",
-      "sequences": 123,
-      "sites": 456
-    }
-}
