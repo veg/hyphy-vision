@@ -43,14 +43,14 @@ function HyPhyVision(props) {
         <NavBar/>
         { is_electron ? <Redirect to="/" /> : null }
         <Route exact path="/" component={()=><Home />} />  
-        <Route path="/absrel" component={()=><BSREL data={base_url+'/methods/absrel/data/ABSREL.json'} hyphy_vision />} /> 
-        <Route path="/busted" component={()=><BUSTED data={base_url+'/methods/busted/data/BUSTED.json'} hyphy_vision />} />
-        <Route path="/relax" component={()=><RELAX data={base_url+'/methods/relax/data/RELAX.json'} hyphy_vision />} /> 
-        <Route path="/fel" component={()=><FEL data={base_url+'/methods/fel/data/FEL.json'} hyphy_vision />} />
-        <Route path="/meme" component={()=><MEME data={base_url+'/methods/meme/data/MEME.json'} hyphy_vision />} />
-        <Route path="/slac" component={()=><SLAC data={base_url+'/methods/slac/data/SLAC.json'} hyphy_vision />} />
-        <Route path="/fubar" component={()=><FUBAR data={base_url+'/methods/fubar/data/FUBAR.json'} hyphy_vision />} />
-        <Route path="/gard" component={()=><GARD data={base_url+'/methods/gard/data/GARD.json'} hyphy_vision />} />
+        <Route path="/absrel" component={()=><BSREL data={base_url+'/data/json_files/absrel/hiv1_transmission.fna.ABSREL.json'} hyphy_vision />} /> 
+        <Route path="/busted" component={()=><BUSTED data={base_url+'/data/json_files/busted/ksr2.fna.BUSTED.json'} hyphy_vision />} />
+        <Route path="/relax" component={()=><RELAX data={base_url+'/data/json_files/relax/pb2.fna.RELAX.json'} hyphy_vision />} /> 
+        <Route path="/fel" component={()=><FEL data={base_url+'/data/json_files/fel/CD2.fna.FEL.json'} hyphy_vision />} />
+        <Route path="/meme" component={()=><MEME data={base_url+'/data/json_files/meme/h3_trunk.fna.MEME.json'} hyphy_vision />} />
+        <Route path="/slac" component={()=><SLAC data={base_url+'/data/json_files/slac/h3_trunk.fna.SLAC.json'} hyphy_vision />} />
+        <Route path="/fubar" component={()=><FUBAR data={base_url+'/data/json_files/fubar/h3_trunk.fna.FUBAR.json'} hyphy_vision />} />
+        <Route path="/gard" component={()=><GARD data={base_url+'/data/json_files/gard/GARD.json'} hyphy_vision />} />
       </div>
     </BrowserRouter>
   );
