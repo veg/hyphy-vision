@@ -18,7 +18,6 @@ datamonkey.errorModal = function(msg) {
 };
 
 function b64toBlob(b64, onsuccess, onerror) {
-
   var img = new Image();
 
   img.onerror = onerror;
@@ -37,7 +36,6 @@ function b64toBlob(b64, onsuccess, onerror) {
   };
 
   img.src = b64;
-
 }
 
 datamonkey.export_csv_button = function(data) {
@@ -168,27 +166,45 @@ datamonkey.save_image = function(type, container) {
 datamonkey.validate_date = function() {
   // Check that it is not empty
   if ($(this).val().length === 0) {
-    $(this).next(".help-block").remove();
-    $(this).parent().removeClass("has-success");
-    $(this).parent().addClass("has-error");
+    $(this)
+      .next(".help-block")
+      .remove();
+    $(this)
+      .parent()
+      .removeClass("has-success");
+    $(this)
+      .parent()
+      .addClass("has-error");
 
     jQuery("<span/>", {
       class: "help-block",
       text: "Field is empty"
     }).insertAfter($(this));
   } else if (isNaN(Date.parse($(this).val()))) {
-    $(this).next(".help-block").remove();
-    $(this).parent().removeClass("has-success");
-    $(this).parent().addClass("has-error");
+    $(this)
+      .next(".help-block")
+      .remove();
+    $(this)
+      .parent()
+      .removeClass("has-success");
+    $(this)
+      .parent()
+      .addClass("has-error");
 
     jQuery("<span/>", {
       class: "help-block",
       text: "Date format should be in the format YYYY-mm-dd"
     }).insertAfter($(this));
   } else {
-    $(this).parent().removeClass("has-error");
-    $(this).parent().addClass("has-success");
-    $(this).next(".help-block").remove();
+    $(this)
+      .parent()
+      .removeClass("has-error");
+    $(this)
+      .parent()
+      .addClass("has-success");
+    $(this)
+      .next(".help-block")
+      .remove();
   }
 };
 
@@ -202,10 +218,14 @@ $(document).ready(function() {
 
   $("#collapse_nav_bar").on("click", function(e) {
     $("#datamonkey-header").collapse("toggle");
-    $(this).find("i").toggleClass("fa-times-circle fa-eye");
-    var new_padding = $("body").css("padding-top") == initial_padding
-      ? "5px"
-      : initial_padding;
-    d3.select("body").transition().style("padding-top", new_padding);
+    $(this)
+      .find("i")
+      .toggleClass("fa-times-circle fa-eye");
+    var new_padding =
+      $("body").css("padding-top") == initial_padding ? "5px" : initial_padding;
+    d3
+      .select("body")
+      .transition()
+      .style("padding-top", new_padding);
   });
 });

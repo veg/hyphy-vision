@@ -111,7 +111,10 @@ function datamonkey_alignment_viewer(options) {
       .range([0, width]);
 
     // X Legend
-    self.xAxis = d3.svg.axis().scale(self.xScale).orient("top");
+    self.xAxis = d3.svg
+      .axis()
+      .scale(self.xScale)
+      .orient("top");
 
     var xAxisHeaderAttrs = {
       class: "xAxis header",

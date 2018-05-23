@@ -1,5 +1,5 @@
 import { ErrorMessage } from "./error_message.jsx";
-import { NavBar } from './navbar.jsx';
+import { NavBar } from "./navbar.jsx";
 import { ScrollSpy } from "./scrollspy.jsx";
 import { MethodHeader } from "./methodheader.jsx";
 
@@ -14,32 +14,31 @@ var React = require("react");
  *    2. Handle getting the data from a file/url and setting the data to state
  */
 class ResultsPage extends React.Component {
-
-  constructor(props){
+  constructor(props) {
     super(props);
     this.state = {
-      json: null,
-    }
-  };
+      json: null
+    };
+  }
 
-  componentDidMount(){
+  componentDidMount() {
     var self = this;
     // Decide if data is a URL or the results JSON
-    if(typeof(this.props.data) == "string") {
+    if (typeof this.props.data == "string") {
       d3.json(this.props.data, function(data) {
         self.setDataToState(data);
       });
-    } else if (typeof(this.props.data) == "object") {
+    } else if (typeof this.props.data == "object") {
       self.setDataToState(self.props.data);
-    };
+    }
     this.enableBootstrapJavascript();
-  };
+  }
 
   componentDidUpdate(prevProps, prevState) {
     this.enableBootstrapJavascript();
   }
- 
-  onFileChange = (e) => {
+
+  onFileChange = e => {
     var self = this;
     var files = e.target.files; // FileList object
 
@@ -59,10 +58,10 @@ class ResultsPage extends React.Component {
 
   setDataToState(data) {
     var self = this;
-      self.setState({
-        json: data
-      });
-  };
+    self.setState({
+      json: data
+    });
+  }
 
   enableBootstrapJavascript() {
     $("body").scrollspy({
@@ -70,19 +69,23 @@ class ResultsPage extends React.Component {
       offset: 50
     });
     $('[data-toggle="popover"]').popover();
-    $(function () {
-      $('[data-toggle="tooltip"]').tooltip()
+    $(function() {
+      $('[data-toggle="tooltip"]').tooltip();
     });
-    $('.dropdown-toggle').dropdown();
+    $(".dropdown-toggle").dropdown();
   }
 
   render() {
     var self = this;
 
-    if(!this.state.json) return <div></div>;
-    return(
+    if (!this.state.json) return <div />;
+    return (
       <div>
-        {this.props.hyphy_vision ? <NavBar onFileChange={this.onFileChange} /> : ''}
+        {this.props.hyphy_vision ? (
+          <NavBar onFileChange={this.onFileChange} />
+        ) : (
+          ""
+        )}
         <div className="container">
           <div className="row">
             <ScrollSpy info={self.props.scrollSpyInfo} />
@@ -98,13 +101,15 @@ class ResultsPage extends React.Component {
                   />
                 </div>
               </div>
-              {React.createElement(this.props.children, { json: this.state.json})}
+              {React.createElement(this.props.children, {
+                json: this.state.json
+              })}
             </div>
           </div>
         </div>
       </div>
     );
-  };
-};
+  }
+}
 
 module.exports.ResultsPage = ResultsPage;

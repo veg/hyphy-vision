@@ -1,26 +1,25 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import { BrowserRouter, Route, Redirect } from 'react-router-dom';
+import React from "react";
+import ReactDOM from "react-dom";
+import { BrowserRouter, Route, Redirect } from "react-router-dom";
 
-import { Home } from './home.jsx';
-import { BSREL } from './absrel.jsx';
-import { BUSTED } from './busted.jsx';
-import { RELAX } from './relax.jsx';
-import { FEL } from './fel.jsx';
-import { MEME } from './meme.jsx';
-import { SLAC } from './slac.jsx';
-import { FUBAR } from './fubar.jsx';
-import { GARD } from './gard.jsx';
-import { ResultsPage } from "./components/results_page.jsx"
+import { Home } from "./home.jsx";
+import { BSREL } from "./absrel.jsx";
+import { BUSTED } from "./busted.jsx";
+import { RELAX } from "./relax.jsx";
+import { FEL } from "./fel.jsx";
+import { MEME } from "./meme.jsx";
+import { SLAC } from "./slac.jsx";
+import { FUBAR } from "./fubar.jsx";
+import { GARD } from "./gard.jsx";
+import { ResultsPage } from "./components/results_page.jsx";
 // Testing out putting the nav bar in the main component
 import { NavBar } from "./components/navbar.jsx";
 
-const path = require('path');
-
+const path = require("path");
 
 const href = window.location.href;
-const is_electron = href.slice(0,4) == 'file';
-const base_url = is_electron ? path.dirname(path.dirname(href)) : '';
+const is_electron = href.slice(0, 4) == "file";
+const base_url = is_electron ? path.dirname(path.dirname(href)) : "";
 
 /**
  * HyPhyVision is the main component of the stand-alone HyPhy-Vision application (both web and electron).
@@ -29,7 +28,6 @@ const base_url = is_electron ? path.dirname(path.dirname(href)) : '';
  *    2. Routing between pages.
  */
 function HyPhyVision(props) {
-
   // Corrects navbar offset when clicking anchor hash
   var shiftWindow = function() {
     scrollBy(0, -40);
@@ -40,26 +38,93 @@ function HyPhyVision(props) {
   return (
     <BrowserRouter>
       <div>
-        <NavBar/>
-        { is_electron ? <Redirect to="/" /> : null }
-        <Route exact path="/" component={()=><Home />} />  
-        <Route path="/absrel" component={()=><BSREL data={base_url+'/data/json_files/absrel/hiv1_transmission.fna.ABSREL.json'} hyphy_vision />} /> 
-        <Route path="/busted" component={()=><BUSTED data={base_url+'/data/json_files/busted/ksr2.fna.BUSTED.json'} hyphy_vision />} />
-        <Route path="/relax" component={()=><RELAX data={base_url+'/data/json_files/relax/pb2.fna.RELAX.json'} hyphy_vision />} /> 
-        <Route path="/fel" component={()=><FEL data={base_url+'/data/json_files/fel/CD2.fna.FEL.json'} hyphy_vision />} />
-        <Route path="/meme" component={()=><MEME data={base_url+'/data/json_files/meme/h3_trunk.fna.MEME.json'} hyphy_vision />} />
-        <Route path="/slac" component={()=><SLAC data={base_url+'/data/json_files/slac/h3_trunk.fna.SLAC.json'} hyphy_vision />} />
-        <Route path="/fubar" component={()=><FUBAR data={base_url+'/data/json_files/fubar/h3_trunk.fna.FUBAR.json'} hyphy_vision />} />
-        <Route path="/gard" component={()=><GARD data={base_url+'/data/json_files/gard/GARD.json'} hyphy_vision />} />
+        <NavBar />
+        {is_electron ? <Redirect to="/" /> : null}
+        <Route exact path="/" component={() => <Home />} />
+        <Route
+          path="/absrel"
+          component={() => (
+            <BSREL
+              data={
+                base_url +
+                "/data/json_files/absrel/hiv1_transmission.fna.ABSREL.json"
+              }
+              hyphy_vision
+            />
+          )}
+        />
+        <Route
+          path="/busted"
+          component={() => (
+            <BUSTED
+              data={base_url + "/data/json_files/busted/ksr2.fna.BUSTED.json"}
+              hyphy_vision
+            />
+          )}
+        />
+        <Route
+          path="/relax"
+          component={() => (
+            <RELAX
+              data={base_url + "/data/json_files/relax/pb2.fna.RELAX.json"}
+              hyphy_vision
+            />
+          )}
+        />
+        <Route
+          path="/fel"
+          component={() => (
+            <FEL
+              data={base_url + "/data/json_files/fel/CD2.fna.FEL.json"}
+              hyphy_vision
+            />
+          )}
+        />
+        <Route
+          path="/meme"
+          component={() => (
+            <MEME
+              data={base_url + "/data/json_files/meme/h3_trunk.fna.MEME.json"}
+              hyphy_vision
+            />
+          )}
+        />
+        <Route
+          path="/slac"
+          component={() => (
+            <SLAC
+              data={base_url + "/data/json_files/slac/h3_trunk.fna.SLAC.json"}
+              hyphy_vision
+            />
+          )}
+        />
+        <Route
+          path="/fubar"
+          component={() => (
+            <FUBAR
+              data={base_url + "/data/json_files/fubar/h3_trunk.fna.FUBAR.json"}
+              hyphy_vision
+            />
+          )}
+        />
+        <Route
+          path="/gard"
+          component={() => (
+            <GARD
+              data={base_url + "/data/json_files/gard/GARD.json"}
+              hyphy_vision
+            />
+          )}
+        />
       </div>
     </BrowserRouter>
   );
 }
 
-function render_app(){
+function render_app() {
   ReactDOM.render(
     <HyPhyVision />,
-    document.body.appendChild(document.createElement('div'))
+    document.body.appendChild(document.createElement("div"))
   );
 }
 

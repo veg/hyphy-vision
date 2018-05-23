@@ -238,18 +238,35 @@ var datamonkey_fade = function(json) {
 
       var color = d3.scale.category10();
 
-      var xAxis = d3.svg.axis().scale(x).orient("bottom");
+      var xAxis = d3.svg
+        .axis()
+        .scale(x)
+        .orient("bottom");
 
-      var yAxis = d3.svg.axis().scale(y).orient("left");
+      var yAxis = d3.svg
+        .axis()
+        .scale(y)
+        .orient("left");
 
-      var yAxis2 = d3.svg.axis().scale(y).orient("right");
+      var yAxis2 = d3.svg
+        .axis()
+        .scale(y)
+        .orient("right");
 
       var make_x_axis = function() {
-        return d3.svg.axis().scale(x).orient("bottom").ticks(20);
+        return d3.svg
+          .axis()
+          .scale(x)
+          .orient("bottom")
+          .ticks(20);
       };
 
       var make_y_axis = function() {
-        return d3.svg.axis().scale(y).orient("left").ticks(20);
+        return d3.svg
+          .axis()
+          .scale(y)
+          .orient("left")
+          .ticks(20);
       };
 
       var svg = d3
@@ -277,13 +294,21 @@ var datamonkey_fade = function(json) {
       svg
         .append("g")
         .attr("class", "grid")
-        .call(make_y_axis().tickSize(-width, 0, 0).tickFormat(""));
+        .call(
+          make_y_axis()
+            .tickSize(-width, 0, 0)
+            .tickFormat("")
+        );
 
       svg
         .append("g")
         .attr("class", "grid")
         .attr("transform", "translate(0," + height + ")")
-        .call(make_x_axis().tickSize(-height, 0, 0).tickFormat(""));
+        .call(
+          make_x_axis()
+            .tickSize(-height, 0, 0)
+            .tickFormat("")
+        );
 
       svg
         .append("g")

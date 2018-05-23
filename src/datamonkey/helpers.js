@@ -122,13 +122,23 @@ function datamonkey_save_newick_tree(type) {
 function datamonkey_validate_email(email) {
   if ($(this).find("input[name='receive_mail']")[0].checked) {
     var regex = /^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/;
-    if (regex.test($(this).find("input[name='mail']").val())) {
+    if (
+      regex.test(
+        $(this)
+          .find("input[name='mail']")
+          .val()
+      )
+    ) {
       // Give them green. They like that.
       $(this).removeClass("has-error");
       $(this).addClass("has-success");
-      $(this).next(".help-block").remove();
+      $(this)
+        .next(".help-block")
+        .remove();
     } else {
-      $(this).next(".help-block").remove();
+      $(this)
+        .next(".help-block")
+        .remove();
       $(this).removeClass("has-error");
       $(this).removeClass("has-success");
       $(this).addClass("has-error");
@@ -140,7 +150,9 @@ function datamonkey_validate_email(email) {
   } else {
     $(this).removeClass("has-error");
     $(this).removeClass("has-success");
-    $(this).next(".help-block").remove();
+    $(this)
+      .next(".help-block")
+      .remove();
   }
 }
 
@@ -221,16 +233,25 @@ function datamonkey_export_handler(data, filename, mimeType) {
 function datamonkey_table_to_text(table_id, sep) {
   sep = sep || "\t";
   var header_row = [];
-  d3.select(table_id + " thead").selectAll("th").each(function() {
-    header_row.push(d3.select(this).text());
-  });
-  var data_rows = [];
-  d3.select(table_id + " tbody").selectAll("tr").each(function(d, i) {
-    data_rows.push([]);
-    d3.select(this).selectAll("td").each(function() {
-      data_rows[i].push(d3.select(this).text());
+  d3
+    .select(table_id + " thead")
+    .selectAll("th")
+    .each(function() {
+      header_row.push(d3.select(this).text());
     });
-  });
+  var data_rows = [];
+  d3
+    .select(table_id + " tbody")
+    .selectAll("tr")
+    .each(function(d, i) {
+      data_rows.push([]);
+      d3
+        .select(this)
+        .selectAll("td")
+        .each(function() {
+          data_rows[i].push(d3.select(this).text());
+        });
+    });
 
   return (
     header_row.join(sep) +
