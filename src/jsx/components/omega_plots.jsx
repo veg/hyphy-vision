@@ -4,7 +4,6 @@ var React = require("react");
 var _ = require("underscore");
 var d3_save_svg = require("d3-save-svg");
 
-
 var OmegaPlot = React.createClass({
   getDefaultProps: function() {
     return {
@@ -53,10 +52,9 @@ var OmegaPlot = React.createClass({
     }
 
     (this.plot_width =
-      dimensions["width"] -
-      margins["left"] -
-      margins["right"]), (this.plot_height =
-      dimensions["height"] - margins["top"] - margins["bottom"]);
+      dimensions["width"] - margins["left"] - margins["right"]),
+      (this.plot_height =
+        dimensions["height"] - margins["top"] - margins["bottom"]);
 
     var domain =
       this.state.settings["domain"] ||
@@ -79,8 +77,11 @@ var OmegaPlot = React.createClass({
     domain[0] *= 0.5;
 
     this.omega_scale = (this.do_log_plot
-      ? this.has_zeros ? d3.scale.pow().exponent(0.2) : d3.scale.log()
-      : d3.scale.linear())
+      ? this.has_zeros
+        ? d3.scale.pow().exponent(0.2)
+        : d3.scale.log()
+      : d3.scale.linear()
+    )
       .range([0, this.plot_width])
       .domain(domain)
       .nice();
@@ -97,7 +98,8 @@ var OmegaPlot = React.createClass({
       .select("#" + this.svg_id)
       .attr("width", dimensions.width)
       .attr("height", dimensions.height);
-    this.svg.append("rect")
+    this.svg
+      .append("rect")
       .attr("width", "100%")
       .attr("height", "100%")
       .attr("fill", "white");
@@ -129,9 +131,10 @@ var OmegaPlot = React.createClass({
     );
     (this.reference_omega_lines = this.plot.selectAll(
       ".hyphy-omega-line-reference"
-    )), (this.displacement_lines = this.plot.selectAll(
-      ".hyphy-displacement-line"
-    ));
+    )),
+      (this.displacement_lines = this.plot.selectAll(
+        ".hyphy-displacement-line"
+      ));
 
     this.createDisplacementLine();
     this.createNeutralLine();
@@ -287,7 +290,10 @@ var OmegaPlot = React.createClass({
 
     // ** Neutral Line (Blue) ** //
     var neutral_line = this.plot.selectAll(".hyphy-neutral-line").data([1]);
-    neutral_line.enter().append("line").attr("class", "hyphy-neutral-line");
+    neutral_line
+      .enter()
+      .append("line")
+      .attr("class", "hyphy-neutral-line");
     neutral_line.exit().remove();
     neutral_line
       .transition()
@@ -302,7 +308,10 @@ var OmegaPlot = React.createClass({
   },
   createXAxis: function() {
     // *** X-AXIS *** //
-    var xAxis = d3.svg.axis().scale(this.omega_scale).orient("bottom");
+    var xAxis = d3.svg
+      .axis()
+      .scale(this.omega_scale)
+      .orient("bottom");
 
     if (this.do_log_plot) {
       xAxis.ticks(10, this.has_zeros ? ".2r" : ".1r");
@@ -411,7 +420,7 @@ var OmegaPlot = React.createClass({
     this.svg_id = key + "-svg";
     return (
       <div>
-        <div className="card" id={key} style={{textAlign: "center"}}>
+        <div className="card" id={key} style={{ textAlign: "center" }}>
           <div className="card-header">
             <h3 className="card-title">
               &omega; distributions under the <strong>{label}</strong> model
@@ -419,13 +428,22 @@ var OmegaPlot = React.createClass({
             <p>
               <small>
                 Test branches are shown in{" "}
-                <span style={{color: '#00a99d', 'fontWeight':'bold'}}>green</span> and reference branches
-                are shown in <span style={{color: 'black', 'fontWeight':'bold'}}>black</span>
+                <span style={{ color: "#00a99d", fontWeight: "bold" }}>
+                  green
+                </span>{" "}
+                and reference branches are shown in{" "}
+                <span style={{ color: "black", fontWeight: "bold" }}>
+                  black
+                </span>
               </small>
             </p>
             <div className="btn-group">
               <button
-                onClick={()=>{d3_save_svg.save(d3.select('#'+self.svg_id).node(), {filename: "relax-chart"});}}
+                onClick={() => {
+                  d3_save_svg.save(d3.select("#" + self.svg_id).node(), {
+                    filename: "relax-chart"
+                  });
+                }}
                 type="button"
                 className="btn.btn-secondary btn-sm"
               >
@@ -434,7 +452,12 @@ var OmegaPlot = React.createClass({
               <button
                 type="button"
                 className="btn.btn-secondary btn-sm"
-                onClick={()=>{saveSvgAsPng(document.getElementById(self.svg_id), "relax-chart.png");}}
+                onClick={() => {
+                  saveSvgAsPng(
+                    document.getElementById(self.svg_id),
+                    "relax-chart.png"
+                  );
+                }}
               >
                 <span className="far fa-save" /> PNG
               </button>
@@ -482,7 +505,10 @@ var OmegaPlotGrid = React.createClass({
     }
 
     _.each(omega_distributions, function(item, key) {
-      item.key = key.slice(0,8).toLowerCase().replace(/ /g, "-");
+      item.key = key
+        .slice(0, 8)
+        .toLowerCase()
+        .replace(/ /g, "-");
       item.label = key;
     });
 
@@ -510,15 +536,16 @@ var OmegaPlotGrid = React.createClass({
       };
 
       return (
-        <OmegaPlot name={model_name} omegas={omegas} settings={settings} key={omegas.key}/>
+        <OmegaPlot
+          name={model_name}
+          omegas={omegas}
+          settings={settings}
+          key={omegas.key}
+        />
       );
     });
 
-    return (
-      <div>
-        {OmegaPlots}
-      </div>
-    );
+    return <div>{OmegaPlots}</div>;
   }
 });
 

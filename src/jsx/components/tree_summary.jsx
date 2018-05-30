@@ -18,10 +18,10 @@ var TreeSummary = React.createClass({
 
   getInitialState: function() {
     var table_row_data = this.getSummaryRows(
-      this.props.model,
-      this.props.test_results,
-      this.props.branch_attributes
-    ),
+        this.props.model,
+        this.props.test_results,
+        this.props.branch_attributes
+      ),
       table_columns = this.getTreeSummaryColumns(table_row_data);
 
     return {
@@ -49,10 +49,15 @@ var TreeSummary = React.createClass({
   },
 
   getBranchLengthProportion: function(branch_attributes) {
-    var rate_classes = _.groupBy(branch_attributes, (val, key) => val['Rate Distributions'].length),
-      lengths = _.mapObject(rate_classes, (val,key)=>d3.sum(_.pluck(val,'Full adaptive model'))),
+    var rate_classes = _.groupBy(
+        branch_attributes,
+        (val, key) => val["Rate Distributions"].length
+      ),
+      lengths = _.mapObject(rate_classes, (val, key) =>
+        d3.sum(_.pluck(val, "Full adaptive model"))
+      ),
       total_length = d3.sum(_.values(lengths)),
-      percentages = _.mapObject(lengths, length=>length/total_length),
+      percentages = _.mapObject(lengths, length => length / total_length),
       formatter = d3.format(".2p"),
       formatted_percentages = _.mapObject(percentages, formatter);
     return formatted_percentages;
@@ -156,10 +161,10 @@ var TreeSummary = React.createClass({
 
   componentWillReceiveProps: function(nextProps) {
     var table_row_data = this.getSummaryRows(
-      nextProps.model,
-      nextProps.test_results,
-      nextProps.branch_attributes
-    ),
+        nextProps.model,
+        nextProps.test_results,
+        nextProps.branch_attributes
+      ),
       table_columns = this.getTreeSummaryColumns(table_row_data);
 
     this.setState({
@@ -182,7 +187,12 @@ var TreeSummary = React.createClass({
             data-content="<ul><li>Hover over a column header for a description of its content.</li></ul>"
             data-placement="bottom"
             className="glyphicon glyphicon-info-sign"
-            style={{ verticalAlign: "middle", float: "right", minHeight: "30px", minWidth: "30px"}}
+            style={{
+              verticalAlign: "middle",
+              float: "right",
+              minHeight: "30px",
+              minWidth: "30px"
+            }}
           />
         </h4>
         <DatamonkeyTable

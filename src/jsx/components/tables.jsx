@@ -3,9 +3,9 @@ var React = require("react"),
   d3 = require("d3"),
   datamonkey = require("../../datamonkey/datamonkey.js");
 
-require('csvexport');
+require("csvexport");
 
-import PropTypes from 'prop-types';
+import PropTypes from "prop-types";
 
 const DatamonkeyTableRow = React.createClass({
   /**
@@ -115,27 +115,25 @@ const DatamonkeyTableRow = React.createClass({
   },
 
   shouldComponentUpdate: function(nextProps) {
-
     var self = this;
-    
+
     if (this.state.header !== nextProps.header) {
       return true;
     }
-    
-    if (this.state.header) {      
-      if(this.props.rowData !== nextProps.rowData) {
+
+    if (this.state.header) {
+      if (this.props.rowData !== nextProps.rowData) {
         return true;
       }
     }
-    
+
     if (this.props.sortOn != nextProps.sortOn) {
       return true;
     }
 
     var result = _.some(this.props.rowData, function(value, index) {
-
       // check for format and other field equality
-      if(!_.isMatch(value, nextProps.rowData[index])) {
+      if (!_.isMatch(value, nextProps.rowData[index])) {
         return true;
       }
 
@@ -208,22 +206,24 @@ const DatamonkeyTableRow = React.createClass({
             }
 
             if (_.has(cell, "abbr")) {
-              value = entity_regex.test(value)
-                ? <span
-                    data-toggle="tooltip"
-                    data-placement="top"
-                    data-html="true"
-                    title={cell.abbr}
-                    dangerouslySetInnerHTML={{ __html: value }}
-                  />
-                : <span
-                    data-toggle="tooltip"
-                    data-placement="top"
-                    data-html="true"
-                    title={cell.abbr}
-                  >
-                    {value}
-                  </span>;
+              value = entity_regex.test(value) ? (
+                <span
+                  data-toggle="tooltip"
+                  data-placement="top"
+                  data-html="true"
+                  title={cell.abbr}
+                  dangerouslySetInnerHTML={{ __html: value }}
+                />
+              ) : (
+                <span
+                  data-toggle="tooltip"
+                  data-placement="top"
+                  data-html="true"
+                  title={cell.abbr}
+                >
+                  {value}
+                </span>
+              );
             }
 
             var cellProps = { key: index };
@@ -325,7 +325,8 @@ var DatamonkeyTable = React.createClass({
     this.setState({
       rowOrder: _.range(0, nextProps.bodyData.length),
       headerData: nextProps.headerData,
-      current: nextProps.bodyData.length < this.state.current ? 0 : this.state.current
+      current:
+        nextProps.bodyData.length < this.state.current ? 0 : this.state.current
     });
   },
 
@@ -406,8 +407,7 @@ var DatamonkeyTable = React.createClass({
     });
   },
 
-  componentDidMount: function() {
-  },
+  componentDidMount: function() {},
 
   componentDidUpdate: function() {
     $('[data-toggle="tooltip"]').tooltip();
@@ -425,105 +425,94 @@ var DatamonkeyTable = React.createClass({
       );
 
     if (this.props.paginate) {
-      if(this.props.export_csv){
-        var exportCSV = function(){
-          function extract(d){
-            return _.isObject(d) ? d.value : d
+      if (this.props.export_csv) {
+        var exportCSV = function() {
+          function extract(d) {
+            return _.isObject(d) ? d.value : d;
           }
           var headers = _.map(self.props.headerData, extract),
-            munged = _.map(self.props.bodyData, row=>_.map(row, extract))
-              .map(row=>_.object(headers, row)),
+            munged = _.map(self.props.bodyData, row => _.map(row, extract)).map(
+              row => _.object(headers, row)
+            ),
             exporter = Export.create();
           exporter.downloadCsv(munged);
         };
-        button = <button
-          id="export-csv"
-          type="button"
-          className="btn.btn-secondary btn-sm pull-right"
-          onClick={exportCSV}
-        >
-          <span className="far fa-save" /> Export Table to CSV
-        </button>
-
+        button = (
+          <button
+            id="export-csv"
+            type="button"
+            className="btn.btn-secondary btn-sm pull-right"
+            onClick={exportCSV}
+          >
+            <span className="far fa-save" /> Export Table to CSV
+          </button>
+        );
       }
       paginatorControls = (
-      <div className="container">
+        <div className="container">
+          <div className="row">
+            <div className="col-4">
+              <p>
+                Showing entries {this.state.current + 1} through {upperLimit}{" "}
+                out of {this.state.rowOrder.length}.
+              </p>
 
-        <div className="row">
-          <div className="col-4">
-            <p>
-              Showing entries {this.state.current + 1} through {upperLimit} out
-              of {this.state.rowOrder.length}.
-            </p>
-
-            <div
-              className="btn-group d-flex"
-              role="group"
-              aria-label="..."
-            >
-              <div className="btn-group" role="group">
-                <button
-                  type="button"
-                  className="btn.btn-secondary"
-                  onClick={self.regress}
-                  data-toggle="tooltip"
-                  title={"Move backwards " + this.props.paginate + " rows."}
-                >
-                  <span
-                    className="fas fa-angle-double-left"
-                    aria-hidden="true"
-                  />
-                </button>
-              </div>
-              <div className="btn-group" role="group">
-                <button
-                  type="button"
-                  className="btn.btn-secondary"
-                  onClick={self.decrement}
-                  data-toggle="tooltip"
-                  title="Move backwards one row."
-                >
-                  <span
-                    className="fas fa-angle-left"
-                    aria-hidden="true"
-                  />
-                </button>
-              </div>
-              <div className="btn-group" role="group">
-                <button
-                  type="button"
-                  className="btn.btn-secondary"
-                  onClick={self.increment}
-                  data-toggle="tooltip"
-                  title="Move forwards one row."
-                >
-                  <span
-                    className="fas fa-angle-right"
-                    aria-hidden="true"
-                  />
-                </button>
-              </div>
-              <div className="btn-group" role="group">
-                <button
-                  type="button"
-                  className="btn.btn-secondary"
-                  onClick={self.advance}
-                  data-toggle="tooltip"
-                  title={"Move forwards " + this.props.paginate + " rows."}
-                >
-                  <span
-                    className="fas fa-angle-double-right"
-                    aria-hidden="true"
-                  />
-                </button>
+              <div className="btn-group d-flex" role="group" aria-label="...">
+                <div className="btn-group" role="group">
+                  <button
+                    type="button"
+                    className="btn.btn-secondary"
+                    onClick={self.regress}
+                    data-toggle="tooltip"
+                    title={"Move backwards " + this.props.paginate + " rows."}
+                  >
+                    <span
+                      className="fas fa-angle-double-left"
+                      aria-hidden="true"
+                    />
+                  </button>
+                </div>
+                <div className="btn-group" role="group">
+                  <button
+                    type="button"
+                    className="btn.btn-secondary"
+                    onClick={self.decrement}
+                    data-toggle="tooltip"
+                    title="Move backwards one row."
+                  >
+                    <span className="fas fa-angle-left" aria-hidden="true" />
+                  </button>
+                </div>
+                <div className="btn-group" role="group">
+                  <button
+                    type="button"
+                    className="btn.btn-secondary"
+                    onClick={self.increment}
+                    data-toggle="tooltip"
+                    title="Move forwards one row."
+                  >
+                    <span className="fas fa-angle-right" aria-hidden="true" />
+                  </button>
+                </div>
+                <div className="btn-group" role="group">
+                  <button
+                    type="button"
+                    className="btn.btn-secondary"
+                    onClick={self.advance}
+                    data-toggle="tooltip"
+                    title={"Move forwards " + this.props.paginate + " rows."}
+                  >
+                    <span
+                      className="fas fa-angle-double-right"
+                      aria-hidden="true"
+                    />
+                  </button>
+                </div>
               </div>
             </div>
+            <div className="col-8 ml-auto align-bottom">{button}</div>
           </div>
-          <div className="col-8 ml-auto align-bottom">
-            {button}
-          </div>
-      </div>
-      </div>
+        </div>
       );
     } else {
       paginatorControls = "";
@@ -598,9 +587,7 @@ var DatamonkeyTable = React.createClass({
       <div className="row">
         {paginatorControls}
         <div className="col-md-12">
-          <table className={this.props.classes}>
-            {children}
-          </table>
+          <table className={this.props.classes}>{children}</table>
         </div>
       </div>
     );
@@ -1039,7 +1026,12 @@ var DatamonkeyModelTable = React.createClass({
           Model fits
           <span
             className="fas fa-info-circle"
-            style={{ verticalAlign: "middle", float: "right", minHeight:"30px", minWidth: "30px"}}
+            style={{
+              verticalAlign: "middle",
+              float: "right",
+              minHeight: "30px",
+              minWidth: "30px"
+            }}
             aria-hidden="true"
             data-toggle="popover"
             data-trigger="hover"
@@ -1066,7 +1058,7 @@ var DatamonkeyTimersTable = React.createClass({
   },
 
   dm_formatSeconds: function(seconds) {
-    var fields = [~~(seconds / 3600), ~~(seconds % 3600 / 60), seconds % 60];
+    var fields = [~~(seconds / 3600), ~~((seconds % 3600) / 60), seconds % 60];
 
     return _.map(fields, function(d) {
       return d < 10 ? "0" + d : "" + d;

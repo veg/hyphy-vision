@@ -9,11 +9,9 @@ import { DatamonkeySeries, DatamonkeyGraphMenu } from "./components/graphs.jsx";
 import { MainResult } from "./components/mainresult.jsx";
 import { ResultsPage } from "./components/results_page.jsx";
 
-
 class FELContents extends React.Component {
-
   constructor(props) {
-    super(props)
+    super(props);
     this.state = {
       mle_headers: [],
       mle_content: [],
@@ -36,7 +34,7 @@ class FELContents extends React.Component {
     this.processData(nextProps.json);
   }
 
-  processData(data){
+  processData(data) {
     const float_format = d3.format(".3f");
     var mle = data["MLE"];
 
@@ -58,13 +56,17 @@ class FELContents extends React.Component {
 
     // add a partition entry to both headers and content
     mle_headers = [
-      { value: "Partition", sortable: true, abbr: "Partition that site belongs to" }
+      {
+        value: "Partition",
+        sortable: true,
+        abbr: "Partition that site belongs to"
+      }
     ].concat(mle_headers);
 
-    var partition_column = d3.range(mle_content.length).map(d=>0);
-    _.each(data['data partitions'], (val, key)=>{
-      val.coverage[0].forEach(d=>{
-        partition_column[d] = +key+1;
+    var partition_column = d3.range(mle_content.length).map(d => 0);
+    _.each(data["data partitions"], (val, key) => {
+      val.coverage[0].forEach(d => {
+        partition_column[d] = +key + 1;
       });
     });
 
@@ -122,25 +124,31 @@ class FELContents extends React.Component {
       }).slice(0, 8);
     });
 
-    data['trees'] = _.map(data['input']['trees'], (val, key) => {
+    data["trees"] = _.map(data["input"]["trees"], (val, key) => {
       var branchLengths = {
-        'Global MG94xREV': _.mapObject(data['branch attributes'][key], val1 => val1['Global MG94xREV']),
-        'Nucleotide GTR': _.mapObject(data['branch attributes'][key], val1 => val1['Nucleotide GTR'])
+        "Global MG94xREV": _.mapObject(
+          data["branch attributes"][key],
+          val1 => val1["Global MG94xREV"]
+        ),
+        "Nucleotide GTR": _.mapObject(
+          data["branch attributes"][key],
+          val1 => val1["Nucleotide GTR"]
+        )
       };
-      return {newickString: val, branchLengths: branchLengths};
+      return { newickString: val, branchLengths: branchLengths };
     });
 
     data["fits"]["Global MG94xREV"][
       "branch-annotations"
     ] = this.formatBranchAnnotations(data);
-    if(data["fits"]["Nucleotide GTR"]) {
+    if (data["fits"]["Nucleotide GTR"]) {
       data["fits"]["Nucleotide GTR"][
         "branch-annotations"
       ] = this.formatBranchAnnotations(data);
     }
 
-    if(data["fits"]["Nucleotide GTR"]){
-      data["fits"]["Nucleotide GTR"]["Rate Distributions"] = {};      
+    if (data["fits"]["Nucleotide GTR"]) {
+      data["fits"]["Nucleotide GTR"]["Rate Distributions"] = {};
     }
 
     this.setState({
@@ -153,11 +161,9 @@ class FELContents extends React.Component {
       fits: data.fits,
       data: data
     });
-
   }
 
   definePlotData(x_label, y_label) {
-
     var x = _.map(this.state.mle_results, function(d) {
       return d[x_label];
     });
@@ -175,16 +181,16 @@ class FELContents extends React.Component {
     });
   }
 
-  updateAxisSelection = (e) => {
+  updateAxisSelection = e => {
     var state_to_update = {},
       dimension = e.target.dataset.dimension,
       axis = e.target.dataset.axis;
 
     state_to_update[axis] = dimension;
     this.setState(state_to_update);
-  }
+  };
 
-  updatePvalThreshold = (e) => {
+  updatePvalThreshold = e => {
     // Get number of positively and negatively selected sites by p-value threshold
     var pvalue_threshold = parseFloat(e.target.value);
 
@@ -216,7 +222,7 @@ class FELContents extends React.Component {
       }
       return _.map(_.values(d), function(g) {
         return { value: g, classes: classes };
-      }).slice(0,8);
+      }).slice(0, 8);
     });
 
     this.setState({
@@ -226,13 +232,13 @@ class FELContents extends React.Component {
       mle_results: mle_results,
       mle_content: mle_content
     });
-  }
+  };
 
   formatBranchAnnotations(json) {
     // attach is_foreground to branch annotations
-    var branch_annotations = d3.range(json.trees.length).map(i=>{
-      return _.mapObject(json['tested'][i], (val, key)=>{
-        return {is_foreground: val == 'test'};
+    var branch_annotations = d3.range(json.trees.length).map(i => {
+      return _.mapObject(json["tested"][i], (val, key) => {
+        return { is_foreground: val == "test" };
       });
     });
     return branch_annotations;
@@ -240,66 +246,70 @@ class FELContents extends React.Component {
 
   getSummaryForClipboard() {
     var no_selected =
-          this.state.mle_content.length -
-          this.state.positively_selected.length -
-          this.state.negatively_selected.length;
-    var summary_text = "FEL found evidence of pervasive positive/diversifying selection at " +
+      this.state.mle_content.length -
+      this.state.positively_selected.length -
+      this.state.negatively_selected.length;
+    var summary_text =
+      "FEL found evidence of pervasive positive/diversifying selection at " +
       this.state.positively_selected.length +
       " sites in your alignment. In addition, FEL found evidence with p-value " +
       this.state.pvalue_threshold +
       " of pervasive negative/purifying selection at " +
       this.state.negatively_selected.length +
-      " sites in your alignment. FEL did not find evidence for either positive or negative selection in the remaining " + 
+      " sites in your alignment. FEL did not find evidence for either positive or negative selection in the remaining " +
       no_selected +
       " sites in your alignment.";
-   return summary_text;
+    return summary_text;
   }
 
   getSummaryForRendering() {
     return (
+      <p>
         <p>
-          <p>
-            FEL <strong className="hyphy-highlight">
-              {" "}found evidence
-            </strong>{" "}
-            of
-          </p>
-          <p>
-            <i className="fa fa-plus-circle" aria-hidden="true">
-              {" "}
-            </i>{" "}
-            pervasive positive/diversifying selection at
-            <span className="hyphy-highlight">
-              {" "}{this.state.positively_selected.length}{" "}
-            </span>
-            sites
-          </p>
-          <p>
-            <i className="fa fa-minus-circle" aria-hidden="true">
-              {" "}
-            </i>{" "}
-            pervasive negative/purifying selection at
-            <span className="hyphy-highlight">
-              {" "}{this.state.negatively_selected.length}{" "}
-            </span>
-            sites
-          </p>
-          <p>
-            with p-value threshold of
-            <input
-              style={{display: "inline-block", marginLeft: "5px", width: "100px"}}
-              className="form-control"
-              type="number"
-              defaultValue="0.1"
-              step="0.01"
-              min="0"
-              max="1"
-              onChange={this.updatePvalThreshold}
-            />.
-          </p>
+          FEL <strong className="hyphy-highlight"> found evidence</strong> of
         </p>
+        <p>
+          <i className="fa fa-plus-circle" aria-hidden="true">
+            {" "}
+          </i>{" "}
+          pervasive positive/diversifying selection at
+          <span className="hyphy-highlight">
+            {" "}
+            {this.state.positively_selected.length}{" "}
+          </span>
+          sites
+        </p>
+        <p>
+          <i className="fa fa-minus-circle" aria-hidden="true">
+            {" "}
+          </i>{" "}
+          pervasive negative/purifying selection at
+          <span className="hyphy-highlight">
+            {" "}
+            {this.state.negatively_selected.length}{" "}
+          </span>
+          sites
+        </p>
+        <p>
+          with p-value threshold of
+          <input
+            style={{
+              display: "inline-block",
+              marginLeft: "5px",
+              width: "100px"
+            }}
+            className="form-control"
+            type="number"
+            defaultValue="0.1"
+            step="0.01"
+            min="0"
+            max="1"
+            onChange={this.updatePvalThreshold}
+          />.
+        </p>
+      </p>
     );
-  }     
+  }
 
   getSummary() {
     return (
@@ -307,9 +317,7 @@ class FELContents extends React.Component {
         <div className="main-result">
           <p>
             <p>
-              FEL <strong className="hyphy-highlight">
-                {" "}found evidence
-              </strong>{" "}
+              FEL <strong className="hyphy-highlight"> found evidence</strong>{" "}
               of
             </p>
             <p>
@@ -318,7 +326,8 @@ class FELContents extends React.Component {
               </i>{" "}
               pervasive positive/diversifying selection at
               <span className="hyphy-highlight">
-                {" "}{this.state.positively_selected.length}{" "}
+                {" "}
+                {this.state.positively_selected.length}{" "}
               </span>
               sites
             </p>
@@ -328,14 +337,19 @@ class FELContents extends React.Component {
               </i>{" "}
               pervasive negative/purifying selection at
               <span className="hyphy-highlight">
-                {" "}{this.state.negatively_selected.length}{" "}
+                {" "}
+                {this.state.negatively_selected.length}{" "}
               </span>
               sites
             </p>
             <p>
               with p-value threshold of
               <input
-                style={{display: "inline-block", marginLeft: "5px", width: "100px"}}
+                style={{
+                  display: "inline-block",
+                  marginLeft: "5px",
+                  width: "100px"
+                }}
                 className="form-control"
                 type="number"
                 defaultValue="0.1"
@@ -349,9 +363,7 @@ class FELContents extends React.Component {
           <hr />
           <p>
             <small>
-              See <a href="//hyphy.org/methods/selection-methods/#fel">
-                here
-              </a>{" "}
+              See <a href="//hyphy.org/methods/selection-methods/#fel">here</a>{" "}
               for more information about the FEL method.
               <br />
               Please cite PMID{" "}
@@ -366,17 +378,22 @@ class FELContents extends React.Component {
   }
 
   render() {
-
     var { x: x, y: y } = this.definePlotData(
       this.state.xaxis,
       this.state.yaxis
     );
 
     var x_options = "Site";
-    var y_options = ['alpha', 'beta', 'alpha=beta', 'LRT', 'p-value', 'Total branch length']; 
+    var y_options = [
+      "alpha",
+      "beta",
+      "alpha=beta",
+      "LRT",
+      "p-value",
+      "Total branch length"
+    ];
 
     var edgeColorizer = function(element, data, foreground_color) {
-
       var is_foreground = data.target.annotations.is_foreground,
         color_fill = foreground_color(0);
 
@@ -388,23 +405,23 @@ class FELContents extends React.Component {
     };
 
     var tree_settings = {
-          omegaPlot: {},
-          "tree-options": {
-            /* value arrays have the following meaning
+      omegaPlot: {},
+      "tree-options": {
+        /* value arrays have the following meaning
                     [0] - the value of the attribute
                     [1] - does the change in attribute value trigger tree re-layout?
                 */
-            "hyphy-tree-model": ["Unconstrained model", true],
-            "hyphy-tree-highlight": ["RELAX.test", false],
-            "hyphy-tree-branch-lengths": [false, true],
-            "hyphy-tree-hide-legend": [true, false],
-            "hyphy-tree-fill-color": [true, false]
-          },
-          "hyphy-tree-legend-type": "discrete",
-          "suppress-tree-render": false,
-          "chart-append-html": true,
-          edgeColorizer: edgeColorizer
-        };
+        "hyphy-tree-model": ["Unconstrained model", true],
+        "hyphy-tree-highlight": ["RELAX.test", false],
+        "hyphy-tree-branch-lengths": [false, true],
+        "hyphy-tree-hide-legend": [true, false],
+        "hyphy-tree-fill-color": [true, false]
+      },
+      "hyphy-tree-legend-type": "discrete",
+      "suppress-tree-render": false,
+      "chart-append-html": true,
+      edgeColorizer: edgeColorizer
+    };
 
     var models = {};
     if (this.state.data) {
@@ -413,7 +430,6 @@ class FELContents extends React.Component {
 
     return (
       <div>
-
         <div
           id="datamonkey-fel-error"
           className="alert alert-danger alert-dismissible"
@@ -432,24 +448,28 @@ class FELContents extends React.Component {
         </div>
 
         <div id="results">
-
           <MainResult
             summary_for_clipboard={this.getSummaryForClipboard()}
-            summary_for_rendering={this.getSummaryForRendering()}                    
+            summary_for_rendering={this.getSummaryForRendering()}
             method_ref="http://hyphy.org/methods/selection-methods/#fel"
             citation_ref="//www.ncbi.nlm.nih.gov/pubmed/15703242"
             citation_number="PMID 15703242"
           />
-          
+
           <div id="table-tab" className="row hyphy-row">
             <div id="hyphy-mle-fits" className="col-md-12">
-              <Header title='FEL Table' popover='<p>Hover over a column header for a description of its content.</p>' />
+              <Header
+                title="FEL Table"
+                popover="<p>Hover over a column header for a description of its content.</p>"
+              />
               <div className="row no-gutters">
                 <div className="col-md-6 alert positive-selection-row">
-                  Positively selected sites with evidence are highlighted in green.
+                  Positively selected sites with evidence are highlighted in
+                  green.
                 </div>
                 <div className="col-md-6 alert negative-selection-row">
-                  Negatively selected sites with evidence are highlighted in black.
+                  Negatively selected sites with evidence are highlighted in
+                  black.
                 </div>
               </div>
               <DatamonkeyTable
@@ -478,46 +498,44 @@ class FELContents extends React.Component {
               x_label={this.state.xaxis}
               y_label={this.state.yaxis}
               marginLeft={50}
-              width={$("#results").width() == null ? 935 : $("#results").width() }
+              width={
+                $("#results").width() == null ? 935 : $("#results").width()
+              }
               transitions={true}
               doDots={true}
             />
           </div>
 
-          <div id="tree-tab" >
+          <div id="tree-tab">
             <Tree
               models={models}
               json={this.state.data}
               settings={tree_settings}
-              method={'fel'}
+              method={"fel"}
               color_gradient={["#00a99d", "#000000"]}
-              grayscale_gradient={["#444444","#000000"]}
+              grayscale_gradient={["#444444", "#000000"]}
               multitree
             />
           </div>
 
-        <div className="col-md-12" id="fits-tab">
-          <DatamonkeyModelTable fits={this.state.fits} />
-          <p className="description">
-            This table reports a statistical summary of the models fit
-            to the data. Here, <strong>MG94</strong> refers to the
-            MG94xREV baseline model that infers a single &omega; rate
-            category per branch.
-          </p>
-        </div>
-
-
+          <div className="col-md-12" id="fits-tab">
+            <DatamonkeyModelTable fits={this.state.fits} />
+            <p className="description">
+              This table reports a statistical summary of the models fit to the
+              data. Here, <strong>MG94</strong> refers to the MG94xREV baseline
+              model that infers a single &omega; rate category per branch.
+            </p>
+          </div>
         </div>
       </div>
     );
   }
-
-};
+}
 
 function FEL(props) {
   return (
     <ResultsPage
-      data={props.data} 
+      data={props.data}
       hyphy_vision={props.hyphy_vision}
       scrollSpyInfo={[
         { label: "summary", href: "summary-tab" },
@@ -538,10 +556,12 @@ function render_fel(data, element) {
 }
 
 function render_hv_fel(data, element) {
-  ReactDOM.render(<FEL data={data} hyphy_vision />, document.getElementById(element));
+  ReactDOM.render(
+    <FEL data={data} hyphy_vision />,
+    document.getElementById(element)
+  );
 }
 
 module.exports = render_fel;
 module.exports.hv = render_hv_fel;
 module.exports.FEL = FEL;
-

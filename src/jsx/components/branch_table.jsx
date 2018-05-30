@@ -14,7 +14,6 @@ var BranchTable = React.createClass({
         ? this.props.annotations[initial_model_name]["omegas"]
         : null;
 
-
     return {
       tree: this.props.tree,
       test_results: this.props.test_results,
@@ -75,7 +74,6 @@ var BranchTable = React.createClass({
   },
 
   getBranchRows: function(tree, test_results, annotations) {
-
     var table_row_data = [];
 
     for (var m in test_results) {
@@ -113,7 +111,7 @@ var BranchTable = React.createClass({
     var self = this;
 
     if (self.state.annotations) {
-      var chart_links =  d3.selectAll(".hyphy-omega-chart-btn");
+      var chart_links = d3.selectAll(".hyphy-omega-chart-btn");
 
       chart_links.on("click", function(d) {
         var label = this.id;
@@ -171,13 +169,16 @@ var BranchTable = React.createClass({
   },
 
   componentDidUpdate: function() {
-    d3.select('#table-branch-table').html('');
+    d3.select("#table-branch-table").html("");
     var branch_rows = d3
       .select("#table-branch-table")
       .selectAll("tr")
       .data(this.state.table_row_data);
 
-    branch_rows.enter().append("tr").attr('class', d=>d[3]<.05?'highlight':'');
+    branch_rows
+      .enter()
+      .append("tr")
+      .attr("class", d => (d[3] < 0.05 ? "highlight" : ""));
     branch_rows.exit().remove();
     branch_rows.style("font-weight", function(d) {
       return d[3] <= 0.05 ? "bold" : "normal";
@@ -187,7 +188,10 @@ var BranchTable = React.createClass({
       return d;
     });
 
-    branch_rows.enter().append("td").style("text-align", "center");
+    branch_rows
+      .enter()
+      .append("td")
+      .style("text-align", "center");
     branch_rows.html(function(d) {
       return d;
     });
@@ -224,7 +228,12 @@ var BranchTable = React.createClass({
             Detailed results
             <span
               className="glyphicon glyphicon-info-sign"
-              style={{ verticalAlign: "middle", float: "right", minHeight:"30px", minWidth: "30px"}}
+              style={{
+                verticalAlign: "middle",
+                float: "right",
+                minHeight: "30px",
+                minWidth: "30px"
+              }}
               aria-hidden="true"
               data-toggle="popover"
               data-trigger="hover"
@@ -283,8 +292,7 @@ var BranchTable = React.createClass({
                     ω distribution over sites
                   </span>
                 </th>
-                <th>
-                </th>
+                <th />
               </tr>
             </thead>
             <tbody id="table-branch-table" />
@@ -312,7 +320,6 @@ var BranchTable = React.createClass({
                 >
                   <span aria-hidden="true">&times;</span>
                 </button>
-
               </div>
               <div className="modal-body" id="modal-body">
                 <h4 className="dm-table-header">&omega; distribution</h4>

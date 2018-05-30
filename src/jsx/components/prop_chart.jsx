@@ -3,7 +3,6 @@ var datamonkey = require("../../datamonkey/datamonkey.js");
 
 import { saveSvgAsPng } from "save-svg-as-png";
 
-
 var PropChart = React.createClass({
   getDefaultProps: function() {
     return {
@@ -29,7 +28,7 @@ var PropChart = React.createClass({
   getInitialState: function() {
     return {
       model_name: this.props.name,
-      omegas: this.props.omegas,
+      omegas: this.props.omegas
     };
   },
 
@@ -70,10 +69,9 @@ var PropChart = React.createClass({
     }
 
     (this.plot_width =
-      dimensions["width"] -
-      margins["left"] -
-      margins["right"]), (this.plot_height =
-      dimensions["height"] - margins["top"] - margins["bottom"]);
+      dimensions["width"] - margins["left"] - margins["right"]),
+      (this.plot_height =
+        dimensions["height"] - margins["top"] - margins["bottom"]);
 
     var domain = this.props.settings["domain"];
 
@@ -100,9 +98,10 @@ var PropChart = React.createClass({
       )
       .attr("height", dimensions.height + margins["top"] + margins["bottom"]);
 
-    this.svg.append('rect')
-      .attr("width", dimensions['width'])
-      .attr("height", dimensions['height'])
+    this.svg
+      .append("rect")
+      .attr("width", dimensions["width"])
+      .attr("height", dimensions["height"])
       .attr("fill", "white");
 
     this.plot = this.svg.selectAll(".container");
@@ -133,9 +132,10 @@ var PropChart = React.createClass({
     );
     (this.reference_omega_lines = this.plot.selectAll(
       ".hyphy-omega-line-reference"
-    )), (this.displacement_lines = this.plot.selectAll(
-      ".hyphy-displacement-line"
-    ));
+    )),
+      (this.displacement_lines = this.plot.selectAll(
+        ".hyphy-displacement-line"
+      ));
 
     this.createNeutralLine();
     this.createXAxis();
@@ -196,7 +196,10 @@ var PropChart = React.createClass({
 
     // ** Neutral Line (Blue) ** //
     var neutral_line = this.plot.selectAll(".hyphy-neutral-line").data([1]);
-    neutral_line.enter().append("line").attr("class", "hyphy-neutral-line");
+    neutral_line
+      .enter()
+      .append("line")
+      .attr("class", "hyphy-neutral-line");
     neutral_line.exit().remove();
     neutral_line
       .transition()
@@ -229,7 +232,10 @@ var PropChart = React.createClass({
   },
   createXAxis: function() {
     // *** X-AXIS *** //
-    var xAxis = d3.svg.axis().scale(this.omega_scale).orient("bottom");
+    var xAxis = d3.svg
+      .axis()
+      .scale(this.omega_scale)
+      .orient("bottom");
 
     if (this.do_log_plot) {
       xAxis.ticks(10, this.has_zeros ? ".2r" : ".1r");
@@ -353,7 +359,7 @@ var PropChart = React.createClass({
           <div className="row">
             <div className="col v-align">
               <h1 className="card-title">
-                <strong style={{fontSize:"1.5rem"}} >
+                <strong style={{ fontSize: "1.5rem" }}>
                   {this.state.model_name}
                 </strong>
               </h1>
@@ -369,7 +375,13 @@ var PropChart = React.createClass({
                   id={this.save_png_id}
                   type="button"
                   className="btn.btn-secondary btn-sm"
-                  onClick={()=>saveSvgAsPng(document.getElementById(this.svg_id), "datamonkey-chart.png", {scale: 2})}
+                  onClick={() =>
+                    saveSvgAsPng(
+                      document.getElementById(this.svg_id),
+                      "datamonkey-chart.png",
+                      { scale: 2 }
+                    )
+                  }
                 >
                   <span className="far fa-save" /> PNG
                 </button>
@@ -379,7 +391,7 @@ var PropChart = React.createClass({
         </div>
         <div className="row">
           <div className="card-body col-md-12" style={{ textAlign: "center" }}>
-            <svg id={this.svg_id} style={{width:"100%"}}/>
+            <svg id={this.svg_id} style={{ width: "100%" }} />
           </div>
         </div>
       </div>
@@ -388,4 +400,3 @@ var PropChart = React.createClass({
 });
 
 module.exports.PropChart = PropChart;
-

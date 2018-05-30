@@ -65,25 +65,22 @@ class GraphMenu extends React.Component {
     } else {
       return (
         <div className="input-group">
-          <span className="input-group-addon">
-            {label}:{" "}
-          </span>
-          <ul className="dropdown-menu">
-            {DimensionOptions}
-          </ul>
+          <span className="input-group-addon">{label}: </span>
+          <ul className="dropdown-menu">{DimensionOptions}</ul>
           <button
             className="btn.btn-secondary btn-sm dropdown-toggle form-control"
             type="button"
             data-toggle="dropdown"
             aria-haspopup="true"
             aria-expanded="false"
-            dangerouslySetInnerHTML={{__html: selected+'<span class="caret" />'}}
+            dangerouslySetInnerHTML={{
+              __html: selected + '<span class="caret" />'
+            }}
           />
         </div>
       );
     }
   }
-
 
   render() {
     var self = this;
@@ -103,27 +100,38 @@ class GraphMenu extends React.Component {
     var navStyle = { borderBottom: "none" };
     var export_buttons;
 
-    if(this.props.export_images){
-      export_buttons = (<div className="navbar-right">
-        <div className="input-group">
-          <button
-            id="export-chart-png"
-            type="button"
-            className="btn.btn-secondary btn-sm btn-export"
-            onClick={()=>saveSvgAsPng(document.getElementById("dm-chart"), "datamonkey-chart.png")}
-          >
-            <span className="far fa-save" /> Export to PNG
-          </button>
-          <button
-            id="export-chart-png"
-            type="button"
-            className="btn.btn-secondary btn-sm btn-export"
-            onClick={()=>d3_save_svg.save(d3.select("#dm-chart").node(), {filename: "datamonkey-chart"})}
-          >
-            <span className="far fa-save" /> Export to SVG
-          </button>
+    if (this.props.export_images) {
+      export_buttons = (
+        <div className="navbar-right">
+          <div className="input-group">
+            <button
+              id="export-chart-png"
+              type="button"
+              className="btn.btn-secondary btn-sm btn-export"
+              onClick={() =>
+                saveSvgAsPng(
+                  document.getElementById("dm-chart"),
+                  "datamonkey-chart.png"
+                )
+              }
+            >
+              <span className="far fa-save" /> Export to PNG
+            </button>
+            <button
+              id="export-chart-png"
+              type="button"
+              className="btn.btn-secondary btn-sm btn-export"
+              onClick={() =>
+                d3_save_svg.save(d3.select("#dm-chart").node(), {
+                  filename: "datamonkey-chart"
+                })
+              }
+            >
+              <span className="far fa-save" /> Export to SVG
+            </button>
+          </div>
         </div>
-      </div>);
+      );
     }
 
     return (
@@ -221,29 +229,47 @@ class BaseGraph extends React.Component {
 
   renderAxis(scale, location, label, dom_element) {
     var self = this;
-    var xAxis = d3.svg.axis().scale(scale).orient(location); // e.g. bottom
+    var xAxis = d3.svg
+      .axis()
+      .scale(scale)
+      .orient(location); // e.g. bottom
     self.doTransition(d3.select(dom_element)).call(xAxis);
   }
 
   xAxisLabel() {
-    var transform_x = this.props.width/2;
-    var transform_y = this.props.height-(this.props.marginTop/3);
-    return(<text textAnchor="middle" transform={"translate("+transform_x+","+transform_y+")"}>{ this.props.x_label }</text>);
+    var transform_x = this.props.width / 2;
+    var transform_y = this.props.height - this.props.marginTop / 3;
+    return (
+      <text
+        textAnchor="middle"
+        transform={"translate(" + transform_x + "," + transform_y + ")"}
+      >
+        {this.props.x_label}
+      </text>
+    );
   }
 
   yAxisLabel() {
-    var transform_x = (this.props.marginLeft - 25)/2;
-    var transform_y = this.props.height/2;
-    if (this.props.y_label){
-      var y_label = this.props.y_label.indexOf('<sup>' !== -1) ?
-        '<tspan>' + this.props.y_label.replace('<sup>', '<tspan baseline-shift="super">').replace('</sup>','</tspan>') + '</tspan>' :
-        this.props.y_label;
+    var transform_x = (this.props.marginLeft - 25) / 2;
+    var transform_y = this.props.height / 2;
+    if (this.props.y_label) {
+      var y_label = this.props.y_label.indexOf("<sup>" !== -1)
+        ? "<tspan>" +
+          this.props.y_label
+            .replace("<sup>", '<tspan baseline-shift="super">')
+            .replace("</sup>", "</tspan>") +
+          "</tspan>"
+        : this.props.y_label;
     }
-    return(<text
-      textAnchor="middle"
-      transform={"translate("+transform_x+","+transform_y+")rotate(-90)"}
-      dangerouslySetInnerHTML={{ __html: y_label }}
-    />);
+    return (
+      <text
+        textAnchor="middle"
+        transform={
+          "translate(" + transform_x + "," + transform_y + ")rotate(-90)"
+        }
+        dangerouslySetInnerHTML={{ __html: y_label }}
+      />
+    );
   }
 
   //TODO : See if this can be removed
@@ -308,44 +334,42 @@ class BaseGraph extends React.Component {
             }
             ref={_.partial(self.renderGraph, x_scale, y_scale).bind(self)}
           />
-          {self.props.xAxis
-            ? <g
-                {...self.makeClasses("axis")}
-                transform={
-                  "translate(" +
-                  self.props.marginLeft +
-                  "," +
-                  (main.height +
-                    self.props.marginTop +
-                    self.props.marginXaxis) +
-                  ")"
-                }
-                ref={_.partial(
-                  self.renderAxis,
-                  x_scale,
-                  "bottom",
-                  self.props.xaxis
-                ).bind(self)}
-              />
-            : null}
-          {self.props.yAxis
-            ? <g
-                {...self.makeClasses("axis")}
-                transform={
-                  "translate(" +
-                  (self.props.marginLeft - self.props.marginYaxis) +
-                  "," +
-                  self.props.marginTop +
-                  ")"
-                }
-                ref={_.partial(
-                  self.renderAxis,
-                  y_scale,
-                  "left",
-                  self.props.yLabel
-                ).bind(self)}
-              />
-            : null}
+          {self.props.xAxis ? (
+            <g
+              {...self.makeClasses("axis")}
+              transform={
+                "translate(" +
+                self.props.marginLeft +
+                "," +
+                (main.height + self.props.marginTop + self.props.marginXaxis) +
+                ")"
+              }
+              ref={_.partial(
+                self.renderAxis,
+                x_scale,
+                "bottom",
+                self.props.xaxis
+              ).bind(self)}
+            />
+          ) : null}
+          {self.props.yAxis ? (
+            <g
+              {...self.makeClasses("axis")}
+              transform={
+                "translate(" +
+                (self.props.marginLeft - self.props.marginYaxis) +
+                "," +
+                self.props.marginTop +
+                ")"
+              }
+              ref={_.partial(
+                self.renderAxis,
+                y_scale,
+                "left",
+                self.props.yLabel
+              ).bind(self)}
+            />
+          ) : null}
           {xAxisLabel}
           {yAxisLabel}
         </svg>
@@ -379,30 +403,39 @@ BaseGraph.defaultProps = {
 };
 
 class LineChart extends BaseGraph {
-
   renderGraph(x_scale, y_scale, dom_element) {
-
     var main_graph = d3.select(dom_element);
 
     var y = this.props.y[0];
 
-    var line = d3.svg.line()
-        .x(d => { return x_scale(d[0]); })
-        .y(d => { return y_scale(d[1]); });
+    var line = d3.svg
+      .line()
+      .x(d => {
+        return x_scale(d[0]);
+      })
+      .y(d => {
+        return y_scale(d[1]);
+      });
 
-    var g = main_graph.append("g").attr("transform", "translate(" + this.props.marginLeft + "," + this.props.marginTop + ")");
+    var g = main_graph
+      .append("g")
+      .attr(
+        "transform",
+        "translate(" + this.props.marginLeft + "," + this.props.marginTop + ")"
+      );
 
-    g.append("path")
-        .datum(_.zip(this.props.x, y))
-        .attr("fill", "none")
-        .attr("stroke", "steelblue")
-        .attr("stroke-linejoin", "round")
-        .attr("stroke-linecap", "round")
-        .attr("stroke-width", 1.5)
-        .attr("d", d => { return line(d) } );
-
+    g
+      .append("path")
+      .datum(_.zip(this.props.x, y))
+      .attr("fill", "none")
+      .attr("stroke", "steelblue")
+      .attr("stroke-linejoin", "round")
+      .attr("stroke-linecap", "round")
+      .attr("stroke-width", 1.5)
+      .attr("d", d => {
+        return line(d);
+      });
   }
-
 }
 
 class ScatterPlot extends BaseGraph {
@@ -519,7 +552,6 @@ class Series extends BaseGraph {
 }
 
 class MultiScatterPlot extends React.Component {
-
   constructor(props) {
     super(props);
 
@@ -536,7 +568,6 @@ class MultiScatterPlot extends React.Component {
   }
 
   plotDataPoints(dom_element) {
-
     var self = this;
 
     // prepend property info with x information
@@ -552,19 +583,39 @@ class MultiScatterPlot extends React.Component {
     var x = d3.scale.linear().range([0, width]);
     var y = d3.scale.linear().range([height, 0]);
 
-    var xAxis = d3.svg.axis().scale(x).orient("bottom");
-    var yAxis = d3.svg.axis().scale(y).orient("left");
-    var yAxis2 = d3.svg.axis().scale(y).orient("right");
+    var xAxis = d3.svg
+      .axis()
+      .scale(x)
+      .orient("bottom");
+    var yAxis = d3.svg
+      .axis()
+      .scale(y)
+      .orient("left");
+    var yAxis2 = d3.svg
+      .axis()
+      .scale(y)
+      .orient("right");
 
     function make_x_axis() {
-      return d3.svg.axis().scale(x).orient("bottom").ticks(20);
+      return d3.svg
+        .axis()
+        .scale(x)
+        .orient("bottom")
+        .ticks(20);
     }
 
     function make_y_axis() {
-      return d3.svg.axis().scale(y).orient("left").ticks(20);
+      return d3.svg
+        .axis()
+        .scale(y)
+        .orient("left")
+        .ticks(20);
     }
 
-    d3.select(dom_element).selectAll("*").remove();
+    d3
+      .select(dom_element)
+      .selectAll("*")
+      .remove();
 
     var svg = d3
       .select(dom_element)
@@ -592,13 +643,21 @@ class MultiScatterPlot extends React.Component {
     svg
       .append("g")
       .attr("class", "grid")
-      .call(make_y_axis().tickSize(-width, 0, 0).tickFormat(""));
+      .call(
+        make_y_axis()
+          .tickSize(-width, 0, 0)
+          .tickFormat("")
+      );
 
     svg
       .append("g")
       .attr("class", "grid")
       .attr("transform", "translate(0," + height + ")")
-      .call(make_x_axis().tickSize(-height, 0, 0).tickFormat(""));
+      .call(
+        make_x_axis()
+          .tickSize(-height, 0, 0)
+          .tickFormat("")
+      );
 
     svg
       .append("g")
@@ -648,7 +707,6 @@ class MultiScatterPlot extends React.Component {
     //  });
 
     _.each(property_info, function(d, series) {
-
       // check if we should plot
       if (!_.values(self.state.to_plot)[series]) {
         return;
@@ -698,7 +756,6 @@ class MultiScatterPlot extends React.Component {
   }
 
   getCheckBox(label) {
-
     var self = this;
 
     return (
@@ -723,7 +780,6 @@ class MultiScatterPlot extends React.Component {
   }
 
   render() {
-
     var self = this;
 
     return (
@@ -789,7 +845,7 @@ MultiScatterPlot.defaultProps = {
 };
 
 class SiteGraph extends React.Component {
-  constructor(props){
+  constructor(props) {
     super(props);
     this.updateAxisSelection = this.updateAxisSelection.bind(this);
     this.state = { active_column: props.columns[0] };
@@ -802,58 +858,61 @@ class SiteGraph extends React.Component {
       active_column: dimension
     });
   }
-  savePNG(){
+  savePNG() {
     saveSvgAsPng(document.getElementById("dm-chart"), "datamonkey-chart.png");
   }
-  saveSVG(){
-    d3_save_svg.save(d3.select("#dm-chart").node(), {filename: "datamonkey-chart"});
+  saveSVG() {
+    d3_save_svg.save(d3.select("#dm-chart").node(), {
+      filename: "datamonkey-chart"
+    });
   }
-  render(){
+  render() {
     var self = this,
       index = this.props.columns.indexOf(this.state.active_column),
-      x = _.range(1, this.props.rows.length+1),
-      y = [this.props.rows.map(row=>row[index])];
+      x = _.range(1, this.props.rows.length + 1),
+      y = [this.props.rows.map(row => row[index])];
 
-    return (<div className="row">
-      <div className="col-md-6">
-        <GraphMenu
-          x_options={"Site"}
-          y_options={this.props.columns}
-          axisSelectionEvent={self.updateAxisSelection}
-        />
+    return (
+      <div className="row">
+        <div className="col-md-6">
+          <GraphMenu
+            x_options={"Site"}
+            y_options={this.props.columns}
+            axisSelectionEvent={self.updateAxisSelection}
+          />
+        </div>
+        <div className="col-md-6">
+          <button
+            id="export-chart-svg"
+            type="button"
+            className="btn.btn-secondary btn-sm float-right btn-export"
+            onClick={self.saveSVG}
+          >
+            <span className="far fa-save" /> Export Chart to SVG
+          </button>
+          <button
+            id="export-chart-png"
+            type="button"
+            className="btn.btn-secondary btn-sm float-right btn-export"
+            onClick={self.savePNG}
+          >
+            <span className="far fa-save" /> Export Chart to PNG
+          </button>
+        </div>
+        <div className="col-md-12">
+          <Series
+            x={x}
+            y={y}
+            x_label={"Site"}
+            y_label={self.state.active_column}
+            marginLeft={80}
+            width={900}
+            transitions={true}
+            doDots={true}
+          />
+        </div>
       </div>
-      <div className="col-md-6">
-        <button
-          id="export-chart-svg"
-          type="button"
-          className="btn.btn-secondary btn-sm float-right btn-export"
-          onClick={self.saveSVG}
-        >
-          <span className="far fa-save" /> Export Chart to SVG
-        </button>
-        <button
-          id="export-chart-png"
-          type="button"
-          className="btn.btn-secondary btn-sm float-right btn-export"
-          onClick={self.savePNG}
-        >
-          <span className="far fa-save" /> Export Chart to PNG
-        </button>
-
-      </div>
-      <div className="col-md-12">
-        <Series
-          x={x}
-          y={y}
-          x_label={"Site"}
-          y_label={self.state.active_column}
-          marginLeft={80}
-          width={900}
-          transitions={true}
-          doDots={true}
-        />
-      </div>
-    </div>);
+    );
   }
 }
 
@@ -863,4 +922,3 @@ module.exports.DatamonkeyMultiScatterplot = MultiScatterPlot;
 module.exports.DatamonkeyScatterplot = ScatterPlot;
 module.exports.DatamonkeySeries = Series;
 module.exports.DatamonkeySiteGraph = SiteGraph;
-

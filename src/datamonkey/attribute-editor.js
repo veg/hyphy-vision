@@ -2,11 +2,18 @@ require("jquery");
 require("datamonkey.js");
 
 function datamonkey_cancel(self) {
-  $(self).show().next().remove();
+  $(self)
+    .show()
+    .next()
+    .remove();
 }
 
 function datamonkey_change(value, self) {
-  $(self).text(value).show().next().remove();
+  $(self)
+    .text(value)
+    .show()
+    .next()
+    .remove();
 }
 
 function datamonkey_check_valid_value(value, value_list, previous) {
@@ -42,13 +49,12 @@ function datamonkey_editable(self, value_list, edit_group) {
     .select($(self).parent()[0])
     .append("div")
     .classed("input-group", true);
-  (text_field = div
-    .append("input")
-    .style("margin-right", "1em")), (button_ok = div
-    .append("button")
-    .classed("btn btn-primary btn-sm", true)), (button_cancel = div
-    .append("button")
-    .classed("btn btn-primary btn-sm", true)), (current_value = $(self).text());
+  (text_field = div.append("input").style("margin-right", "1em")),
+    (button_ok = div.append("button").classed("btn btn-primary btn-sm", true)),
+    (button_cancel = div
+      .append("button")
+      .classed("btn btn-primary btn-sm", true)),
+    (current_value = $(self).text());
 
   button_ok.append("i").classed("glyphicon glyphicon-ok", true);
   button_cancel.append("i").classed("glyphicon glyphicon-remove", true);

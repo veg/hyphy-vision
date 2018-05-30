@@ -1,6 +1,6 @@
 var React = require("react");
 import Scrollchor from "react-scrollchor";
-import { HashLink as Link } from 'react-router-hash-link';
+import { HashLink as Link } from "react-router-hash-link";
 
 /* 
 React-scrollchor doesn't work correctly on Windows Electron and 
@@ -9,7 +9,7 @@ React-router-hash-link is therefore used for Windows-Electron and
 react-scrollchor is used for every other platform.
 */
 
-const configFile = require('../../../config.json');
+const configFile = require("../../../config.json");
 
 function ScrollSpy(props) {
   var list_items = props.info.map(function(item, index) {
@@ -17,13 +17,19 @@ function ScrollSpy(props) {
     var href = "#" + item.href;
     return (
       <li className="nav-item" key={item.label}>
-        {configFile["env"] == "windows electron" ?
-          (<Link className={is_active + " nav-link"} to={href}>
+        {configFile["env"] == "windows electron" ? (
+          <Link className={is_active + " nav-link"} to={href}>
             {item.label}
-          </Link>) :
-          (<Scrollchor className={is_active + " nav-link"} animate={{duration: 20}} to={href}>
+          </Link>
+        ) : (
+          <Scrollchor
+            className={is_active + " nav-link"}
+            animate={{ duration: 20 }}
+            to={href}
+          >
             {item.label}
-          </Scrollchor>) }
+          </Scrollchor>
+        )}
       </li>
     );
   });
