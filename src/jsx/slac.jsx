@@ -12,21 +12,21 @@ import {
   DatamonkeyModelTable,
   DatamonkeyTimersTable
 } from "./components/tables.jsx";
-import { NavBar } from "./components/navbar.jsx";
-import { ScrollSpy } from "./components/scrollspy.jsx";
-import { DatamonkeyScatterplot, DatamonkeySeries } from "./components/graphs.jsx";
-import { InputInfo } from "./components/input_info.jsx";
-import PropTypes from 'prop-types';
+import {
+  DatamonkeyScatterplot,
+  DatamonkeySeries
+} from "./components/graphs.jsx";
+import { ResultsPage } from "./components/results_page.jsx";
+import PropTypes from "prop-types";
 import { saveSvgAsPng } from "save-svg-as-png";
 
 require("../datamonkey/helpers.js");
 
+const DEFAULT_AMBIGUITY_HANDLING = "RESOLVED";
 
 var SLACSites = React.createClass({
   propTypes: {
-    headers: PropTypes.arrayOf(
-      PropTypes.arrayOf(PropTypes.string)
-    ).isRequired,
+    headers: PropTypes.arrayOf(PropTypes.arrayOf(PropTypes.string)).isRequired,
     mle: PropTypes.object.isRequired,
     sample25: PropTypes.object,
     sampleMedian: PropTypes.object,
@@ -59,7 +59,7 @@ var SLACSites = React.createClass({
       sample25: null,
       sampleMedian: null,
       sample975: null,
-      initialAmbigHandling: "RESOLVED"
+      initialAmbigHandling: DEFAULT_AMBIGUITY_HANDLING
     };
   },
 
@@ -262,9 +262,9 @@ var SLACSites = React.createClass({
 
   dm_makeHeaderRow: function() {
     var headers = [
-      { value: "Partition", sortable: true },
-      { value: "Site", sortable: true }
-    ],
+        { value: "Partition", sortable: true },
+        { value: "Site", sortable: true }
+      ],
       doCI = this.state.showIntervals,
       filterable = [["Partition", -2], ["Site", -1]];
 
@@ -439,22 +439,18 @@ var SLACSites = React.createClass({
     var filterState = new Object(null);
     _.extend(filterState, this.state.filters);
     delete filterState[key];
-    //console.log ('dm_handleRemoveCondition', key, this.state.filters,filterState);
 
     this.setState({ filters: filterState });
   },
 
   render: function() {
-
     var self = this;
     var { rows } = this.dm_makeDataRows(this.dm_makeFilterFunction());
     var { headers, filterable } = this.dm_makeHeaderRow();
 
     var show_ci_menu = function() {
       if (self.state.hasCI) {
-        var ci_menu = [
-          <li key="ci_divider" className="divider" />,
-        ];
+        var ci_menu = [<li key="ci_divider" className="divider" />];
         if (!self.state.showIntervals) {
           ci_menu.push(
             <li key="coloring">
@@ -482,11 +478,9 @@ var SLACSites = React.createClass({
     var result = (
       <div className="table-responsive">
         <nav className="navbar">
-          <form className="navbar-form ">
-            <div className="form-group navbar-left">
-
+          <form className="form-inline justify-content-between w-100">
+            <div className="form-group">
               <div className="input-group">
-
                 <ul className="dropdown-menu">
                   <li key="variable">
                     <a
@@ -506,7 +500,7 @@ var SLACSites = React.createClass({
                   {show_ci_menu()}
                 </ul>
                 <button
-                  className="btn btn-default btn-sm dropdown-toggle form-control"
+                  className="btn.btn-secondary btn-sm dropdown-toggle form-control"
                   type="button"
                   data-toggle="dropdown"
                   aria-haspopup="true"
@@ -533,7 +527,7 @@ var SLACSites = React.createClass({
                   })}
                 </ul>
                 <button
-                  className="btn btn-default btn-sm dropdown-toggle form-control"
+                  className="btn.btn-secondary btn-sm dropdown-toggle form-control"
                   type="button"
                   data-toggle="dropdown"
                   aria-haspopup="true"
@@ -541,10 +535,9 @@ var SLACSites = React.createClass({
                 >
                   Ambiguities <span className="caret" />
                 </button>
-
               </div>
             </div>
-            <div className="form-group navbar-right">
+            <div className="form-group">
               <div className="input-group">
                 <ul className="dropdown-menu">
                   {_.map(filterable, function(d, index) {
@@ -562,7 +555,7 @@ var SLACSites = React.createClass({
                   })}
                 </ul>
                 <button
-                  className="btn btn-default btn-sm dropdown-toggle form-control"
+                  className="btn.btn-secondary btn-sm dropdown-toggle form-control"
                   type="button"
                   data-toggle="dropdown"
                   aria-haspopup="true"
@@ -576,7 +569,7 @@ var SLACSites = React.createClass({
                 <input
                   type="text"
                   className="form-control"
-                  style={{width: "75px"}}
+                  style={{ width: "75px" }}
                   placeholder="-∞"
                   defaultValue={"-" + String.fromCharCode(8734)}
                   onChange={self.dm_handleLB}
@@ -587,7 +580,7 @@ var SLACSites = React.createClass({
                 <input
                   type="text"
                   className="form-control"
-                  style={{width: "75px"}}
+                  style={{ width: "75px" }}
                   placeholder="∞"
                   defaultValue={String.fromCharCode(8734)}
                   onChange={self.dm_handleUB}
@@ -614,7 +607,7 @@ var SLACSites = React.createClass({
                   })}
                 </ul>
                 <button
-                  className="btn btn-default btn-sm dropdown-toggle form-control"
+                  className="btn.btn-secondary btn-sm dropdown-toggle form-control"
                   type="button"
                   data-toggle="dropdown"
                   aria-haspopup="true"
@@ -624,133 +617,118 @@ var SLACSites = React.createClass({
                 </button>
               </div>
 
-               <div className="input-group">
+              <div className="input-group">
                 <button
                   className={
-                    "btn btn-default " +
+                    "btn.btn-secondary " +
                     (self.dm_checkFilterValidity() ? "" : "disabled")
                   }
                   onClick={self.dm_handleAddCondition}
                 >
-                  {" "}Add filter{" "}
+                  {" "}
+                  Add filter{" "}
                 </button>
               </div>
-
-           </div>
-
+            </div>
           </form>
         </nav>
 
-        {self.state.hasCI
-          ? <div className="alert alert-info alert-dismissable">
-              <button
-                type="button"
-                className="close pull-right"
-                data-dismiss="alert"
-                aria-hidden="true"
-              >
-                {" "}&times;{" "}
-              </button>
-              <p>
-                <strong>Color legend:</strong> MLE is &nbsp;
-                <span
-                  className="blue-badge"
-                >
-                  is much less
-                </span>
-                &nbsp;
-                <span
-                  className="white-badge"
-                >
-                  is the same as
-                </span>
-                &nbsp;
-                <span
-                  className="red-badge"
-                >
-                  is much greater
-                </span>
-                &nbsp;
-                than the sampled median.
-              </p>
-              <p>
-                Default table shading is used to indicate the magnitude of
-                difference between the estimate
-                of a specific quantity using the MLE ancestral state
-                reconstruction, and the median
-                of the estimate using a sample from the distribution of ancestral
-                state reconstructions.
-              </p>
-              <small>
-                You can mouse over the cells to see
-                individual sampling intervals.
-              </small>
-            </div>
-          : null}
+        {self.state.hasCI ? (
+          <div className="alert alert-info alert-dismissable">
+            <button
+              type="button"
+              className="close pull-right"
+              data-dismiss="alert"
+              aria-hidden="true"
+            >
+              {" "}
+              &times;{" "}
+            </button>
+            <p>
+              <strong>Color legend:</strong> MLE is &nbsp;
+              <span className="blue-badge">is much less</span>
+              &nbsp;
+              <span className="white-badge">is the same as</span>
+              &nbsp;
+              <span className="red-badge">is much greater</span>
+              &nbsp; than the sampled median.
+            </p>
+            <p>
+              Default table shading is used to indicate the magnitude of
+              difference between the estimate of a specific quantity using the
+              MLE ancestral state reconstruction, and the median of the estimate
+              using a sample from the distribution of ancestral state
+              reconstructions.
+            </p>
+            <small>
+              You can mouse over the cells to see individual sampling intervals.
+            </small>
+          </div>
+        ) : null}
 
-        {_.keys(self.state.filters).length > 0
-          ? <div className="well well-sm">
-              {_.map(self.state.filters, function(value, key) {
-                if (key == "variable") {
-                  return (
-                    <div
-                      className="input-group"
-                      style={{ display: "inline" }}
-                      key={key}
-                    >
-                      <span className="badge badge-info">
-                        (AND) variable sites
-                        <i
-                          className="fa fa-times-circle"
-                          style={{ marginLeft: "0.25em" }}
-                          onClick={self.dm_toggleVariableFilter}
-                        />
-                      </span>
-                    </div>
-                  );
-                } else {
-                  var label =
-                    (value[3] == "AND" ? " (AND) " : " (OR) ") + value[0][0];
+        {_.keys(self.state.filters).length > 0 ? (
+          <div className="well well-sm">
+            {_.map(self.state.filters, function(value, key) {
+              if (key == "variable") {
+                return (
+                  <div
+                    className="input-group"
+                    style={{ display: "inline" }}
+                    key={key}
+                  >
+                    <span className="badge badge-info">
+                      (AND) variable sites
+                      <i
+                        className="fa fa-times-circle"
+                        style={{ marginLeft: "0.25em" }}
+                        onClick={self.dm_toggleVariableFilter}
+                      />
+                    </span>
+                  </div>
+                );
+              } else {
+                var label =
+                  (value[3] == "AND" ? " (AND) " : " (OR) ") + value[0][0];
 
-                  if (_.isFinite(value[1])) {
-                    if (_.isFinite(value[2])) {
-                      label +=
-                        String.fromCharCode(8712) +
-                        "[" +
-                        value[1] +
-                        "," +
-                        value[2] +
-                        "]";
-                    } else {
-                      label += String.fromCharCode(8805) + value[1];
-                    }
+                if (_.isFinite(value[1])) {
+                  if (_.isFinite(value[2])) {
+                    label +=
+                      String.fromCharCode(8712) +
+                      "[" +
+                      value[1] +
+                      "," +
+                      value[2] +
+                      "]";
                   } else {
-                    label += String.fromCharCode(8804) + value[2];
+                    label += String.fromCharCode(8805) + value[1];
                   }
-
-                  return (
-                    <div
-                      className="input-group"
-                      style={{ display: "inline" }}
-                      key={key}
-                    >
-                      <span className="badge badge-info">
-                        {label}
-                        <i
-                          className="fa fa-times-circle"
-                          style={{ marginLeft: "0.25em" }}
-                          onClick={_.bind(
-                            _.partial(self.dm_handleRemoveCondition, key),
-                            self
-                          )}
-                        />
-                      </span>
-                    </div>
-                  );
+                } else {
+                  label += String.fromCharCode(8804) + value[2];
                 }
-              })}
-            </div>
-          : null}
+
+                return (
+                  <div
+                    className="input-group"
+                    style={{ display: "inline" }}
+                    key={key}
+                  >
+                    <span className="badge badge-info">
+                      {label}
+                      <i
+                        className="fa fa-times-circle"
+                        style={{ marginLeft: "0.25em" }}
+                        onClick={_.bind(
+                          _.partial(self.dm_handleRemoveCondition, key),
+                          self
+                        )}
+                      />
+                    </span>
+                  </div>
+                );
+              }
+            })}
+          </div>
+        ) : null}
 
         <DatamonkeyTable
           headerData={headers}
@@ -776,16 +754,24 @@ var SLACBanner = React.createClass({
 
     result.all = datamonkey.helpers.countSitesFromPartitionsJSON(json);
 
-    result.positive = datamonkey.helpers.sum(json["MLE"]["content"], function(partition) {
-      return _.reduce(partition["by-site"]["RESOLVED"], function(sum, row) {
+    result.positive = datamonkey.helpers.sum(json["MLE"]["content"], function(
+      partition
+    ) {
+      return _.reduce(
+        partition["by-site"][DEFAULT_AMBIGUITY_HANDLING],
+        function(sum, row) {
           return sum + (row[8] <= cutoff ? 1 : 0);
         },
         0
       );
     });
 
-    result.negative = datamonkey.helpers.sum(json["MLE"]["content"], function(partition) {
-      return _.reduce(partition["by-site"]["RESOLVED"], function(sum, row) {
+    result.negative = datamonkey.helpers.sum(json["MLE"]["content"], function(
+      partition
+    ) {
+      return _.reduce(
+        partition["by-site"][DEFAULT_AMBIGUITY_HANDLING],
+        function(sum, row) {
           return sum + (row[9] <= cutoff ? 1 : 0);
         },
         0
@@ -813,90 +799,82 @@ var SLACBanner = React.createClass({
     );
   },
 
+  componentDidMount() {
+    $('[data-toggle="popover"]').popover();
+  },
+
   render: function() {
-    return (<div className="row">
-      <div className="clearance" id="slac-summary"></div>
-      <div className="col-md-12">
-        <h3 className="list-group-item-heading">
-          <span id="summary-method-name">
-          Single-Likelihood Ancestor Counting</span>
-          <br />
-          <span className="results-summary">results summary</span>
-        </h3>
-      </div>
-
-      <div className="col-md-12">
-        <InputInfo
-          input_data={this.props.input_data}
-          json={this.props.analysis_results}
-          hyphy_vision={this.props.hyphy_vision}
-        />
-      </div>
-
-      <div className="col-md-12">
-        <div className="main-result">
-          <p>
-            SLAC <strong className="hyphy-highlight">found evidence</strong> of pervasive
-          </p>
-          <p>
-            <i className="fa fa-plus-circle" aria-hidden="true">
-              {" "}
-            </i>{" "}
-            positive/diversifying selection at
-            <span className="hyphy-highlight">
-              {" "}{this.state.sites.positive}{" "}
-            </span>
-            sites
-          </p> 
-          <p>
-            <i className="fa fa-minus-circle" aria-hidden="true">
-              {" "}
-            </i>{" "}
-            negative/purifying selection at
-            <span className="hyphy-highlight">
-              {" "}{this.state.sites.negative}{" "}
-            </span>
-            sites
-          </p> 
-          <p>
-            with p-value threshold of
-            <input
-              style={{display: "inline-block", marginLeft: "5px", width: "100px"}}
-              className="form-control"
-              type="number"
-              defaultValue="0.1"
-              step="0.01"
-              min="0"
-              max="1"
-              onChange={this.props.pAdjuster}
-            />.
-          </p>          
-          <hr /> 
-          <p>
-            <small>
-              See{" "}
-              <a href="http://hyphy.org/methods/selection-methods/#slac">
-                here
-              </a>{" "}
-              for more information about the SLAC method.
-
-              <br />
-        
-              Please cite{" "}
-              <a
-                href="http://www.ncbi.nlm.nih.gov/pubmed/15703242"
-                target="_blank"
-              >
-                PMID 15703242
-              </a>{" "}
-              if you use this result in a publication, presentation, or other
-              scientific work.
-            </small> 
-          </p>
-          
+    return (
+      <div className="row">
+        <div className="col-md-12">
+          <div className="main-result">
+            <p>
+              SLAC <strong className="hyphy-highlight">found evidence</strong>{" "}
+              of pervasive
+            </p>
+            <p>
+              <i className="fa fa-plus-circle" aria-hidden="true">
+                {" "}
+              </i>{" "}
+              positive/diversifying selection at
+              <span className="hyphy-highlight">
+                {" "}
+                {this.state.sites.positive}{" "}
+              </span>
+              sites
+            </p>
+            <p>
+              <i className="fa fa-minus-circle" aria-hidden="true">
+                {" "}
+              </i>{" "}
+              negative/purifying selection at
+              <span className="hyphy-highlight">
+                {" "}
+                {this.state.sites.negative}{" "}
+              </span>
+              sites
+            </p>
+            <p>
+              with p-value threshold of
+              <input
+                style={{
+                  display: "inline-block",
+                  marginLeft: "5px",
+                  width: "100px"
+                }}
+                className="form-control"
+                type="number"
+                defaultValue="0.1"
+                step="0.01"
+                min="0"
+                max="1"
+                onChange={this.props.pAdjuster}
+              />.
+            </p>
+            <hr />
+            <p>
+              <small>
+                See{" "}
+                <a href="http://hyphy.org/methods/selection-methods/#slac">
+                  here
+                </a>{" "}
+                for more information about the SLAC method.
+                <br />
+                Please cite{" "}
+                <a
+                  href="http://www.ncbi.nlm.nih.gov/pubmed/15703242"
+                  target="_blank"
+                >
+                  PMID 15703242
+                </a>{" "}
+                if you use this result in a publication, presentation, or other
+                scientific work.
+              </small>
+            </p>
+          </div>
         </div>
       </div>
-    </div>);
+    );
   }
 });
 
@@ -914,7 +892,7 @@ var SLACGraphs = React.createClass({
     return {
       mle: null,
       partitionSites: null,
-      initialAmbigHandling: "RESOLVED"
+      initialAmbigHandling: DEFAULT_AMBIGUITY_HANDLING
     };
   },
 
@@ -936,8 +914,8 @@ var SLACGraphs = React.createClass({
     var y = [[]];
 
     var partitionCount = datamonkey.helpers.countPartitionsJSON(
-      this.props.partitionSites
-    ),
+        this.props.partitionSites
+      ),
       partitionIndex = 0,
       siteCount = 0,
       col_index = [],
@@ -1001,14 +979,15 @@ var SLACGraphs = React.createClass({
     return this.state.xLabel != "Site";
   },
 
-  savePNG(){
+  savePNG() {
     saveSvgAsPng(document.getElementById("dm-chart"), "datamonkey-chart.png");
   },
-  
-  saveSVG(){
-    d3_save_svg.save(d3.select("#dm-chart").node(), {filename: "datamonkey-chart"});
-  },
 
+  saveSVG() {
+    d3_save_svg.save(d3.select("#dm-chart").node(), {
+      filename: "datamonkey-chart"
+    });
+  },
 
   render: function() {
     var self = this;
@@ -1018,9 +997,9 @@ var SLACGraphs = React.createClass({
 
     return (
       <div className="table-responsive">
-        <nav className="navbar" style={{borderBottom:"none"}}>
-          <form className="navbar-form ">
-            <div className="form-group navbar-left">
+        <nav className="navbar" style={{ borderBottom: "none" }}>
+          <form className="form-inline justify-content-between w-100">
+            <div className="form-group">
               <div className="input-group">
                 <span className="input-group-addon">X-axis:</span>
 
@@ -1043,7 +1022,7 @@ var SLACGraphs = React.createClass({
                   )}
                 </ul>
                 <button
-                  className="btn btn-default btn-sm dropdown-toggle form-control"
+                  className="btn.btn-secondary btn-sm dropdown-toggle form-control"
                   type="button"
                   data-toggle="dropdown"
                   aria-haspopup="true"
@@ -1072,7 +1051,7 @@ var SLACGraphs = React.createClass({
                   })}
                 </ul>
                 <button
-                  className="btn btn-default btn-sm dropdown-toggle form-control"
+                  className="btn.btn-secondary btn-sm dropdown-toggle form-control"
                   type="button"
                   data-toggle="dropdown"
                   aria-haspopup="true"
@@ -1100,7 +1079,7 @@ var SLACGraphs = React.createClass({
                   })}
                 </ul>
                 <button
-                  className="btn btn-default btn-sm dropdown-toggle form-control"
+                  className="btn.btn-secondary btn-sm dropdown-toggle form-control"
                   type="button"
                   data-toggle="dropdown"
                   aria-haspopup="true"
@@ -1108,28 +1087,26 @@ var SLACGraphs = React.createClass({
                 >
                   {self.state.ambigHandling} <span className="caret" />
                 </button>
-
               </div>
             </div>
-            <div className="form-group navbar-right">
+            <div className="form-group">
               <div className="input-group">
                 <button
                   id="export-chart-png"
                   type="button"
-                  className="btn btn-default btn-sm pull-right btn-export"
+                  className="btn.btn-secondary btn-sm pull-right btn-export"
                   onClick={self.savePNG}
                 >
-                  <span className="glyphicon glyphicon-floppy-save" /> Export to PNG
+                  <span className="far fa-save" /> Export to PNG
                 </button>
                 <button
                   id="export-chart-png"
                   type="button"
-                  className="btn btn-default btn-sm pull-right btn-export"
+                  className="btn.btn-secondary btn-sm pull-right btn-export"
                   onClick={self.saveSVG}
                 >
-                  <span className="glyphicon glyphicon-floppy-save" /> Export to SVG
+                  <span className="far fa-save" /> Export to SVG
                 </button>
-
               </div>
             </div>
             {/*<div className="form-group navbar-right">
@@ -1139,68 +1116,75 @@ var SLACGraphs = React.createClass({
           </form>
         </nav>
         <center>
-          {self.dm_doScatter()
-            ? <DatamonkeyScatterplot
-                x={x}
-                y={y}
-                x_label={self.state.xLabel}
-                y_label={self.state.yLabel}
-                marginLeft={50}
-                transitions={true}
-              />
-            : <DatamonkeySeries
-                x={x}
-                y={y}
-                x_label={self.state.xLabel}
-                y_label={self.state.yLabel}
-                marginLeft={50}
-                transitions={true}
-                doDots={true}
-              />}
-          </center>
+          {self.dm_doScatter() ? (
+            <DatamonkeyScatterplot
+              x={x}
+              y={y}
+              x_label={self.state.xLabel}
+              y_label={self.state.yLabel}
+              marginLeft={50}
+              transitions={true}
+            />
+          ) : (
+            <DatamonkeySeries
+              x={x}
+              y={y}
+              x_label={self.state.xLabel}
+              y_label={self.state.yLabel}
+              marginLeft={50}
+              transitions={true}
+              doDots={true}
+            />
+          )}
+        </center>
       </div>
     );
   }
 });
 
-var SLAC = React.createClass({
-  float_format: d3.format(".2f"),
+class SLACContents extends React.Component {
+  constructor(props) {
+    super(props);
+    const float_format = d3.format(".2f");
+    this.state = {
+      analysis_results: null,
+      error_message: null,
+      pValue: 0.1,
+      input_data: null
+    };
+  }
 
-  dm_loadFromServer: function() {
-    /* 20160721 SLKP: prefixing all custom (i.e. not defined by REACT) with dm_
-     to make it easier to recognize scoping immediately */
+  componentDidMount = () => {
+    this.dm_initializeFromJSON(this.props.json);
+  };
 
-    var self = this;
+  componentWillReceiveProps(nextProps) {
+    this.dm_initializeFromJSON(nextProps.json);
+  }
 
-    d3.json(self.props.url, function(request_error, data) {
-      if (!data) {
-        var error_message_text = request_error.status == 404
-          ? self.props.url + " could not be loaded"
-          : request_error.statusText;
-        self.setState({ error_message: error_message_text });
-      } else {
-        self.dm_initializeFromJSON(data);
-      }
-    });
-  },
-
-  dm_initializeFromJSON: function(data) {
-    if(data["fits"]["Nucleotide GTR"]){
-      data["fits"]["Nucleotide GTR"]["Rate Distributions"] = {};      
+  dm_initializeFromJSON = data => {
+    if (data["fits"]["Nucleotide GTR"]) {
+      data["fits"]["Nucleotide GTR"]["Rate Distributions"] = {};
     }
 
-    data['trees'] = _.map(data['input']['trees'], (val, key) => {
+    data["trees"] = _.map(data["input"]["trees"], (val, key) => {
       var branchLengths = {
-        'Global MG94xREV': _.mapObject(data['branch attributes'][key], val1 => val1['Global MG94xREV']),
-        'Nucleotide GTR': _.mapObject(data['branch attributes'][key], val1 => val1['Nucleotide GTR'])
+        "Global MG94xREV": _.mapObject(
+          data["branch attributes"][key],
+          val1 => val1["Global MG94xREV"]
+        ),
+        "Nucleotide GTR": _.mapObject(
+          data["branch attributes"][key],
+          val1 => val1["Nucleotide GTR"]
+        )
       };
-      return {newickString: val, branchLengths: branchLengths};
+      return { newickString: val, branchLengths: branchLengths };
     });
 
     data["fits"]["Global MG94xREV"][
       "branch-annotations"
     ] = this.formatBranchAnnotations(data);
-    if(data["fits"]["Nucleotide GTR"]) {
+    if (data["fits"]["Nucleotide GTR"]) {
       data["fits"]["Nucleotide GTR"][
         "branch-annotations"
       ] = this.formatBranchAnnotations(data);
@@ -1210,74 +1194,24 @@ var SLAC = React.createClass({
       analysis_results: data,
       input_data: data.input
     });
-  },
+  };
 
-  formatBranchAnnotations: function(json) {
+  formatBranchAnnotations = json => {
     // attach is_foreground to branch annotations
-    var branch_annotations = d3.range(json.trees.length).map(i=>{
-      return _.mapObject(json['tested'][i], (val, key)=>{
-        return {is_foreground: val == 'test'};
+    var branch_annotations = d3.range(json.trees.length).map(i => {
+      return _.mapObject(json["tested"][i], (val, key) => {
+        return { is_foreground: val == "test" };
       });
     });
     return branch_annotations;
-  },
+  };
 
-  getDefaultProps: function() {
-    /* default properties for the component */
-
-    return {
-      url: "#"
-    };
-  },
-
-  getInitialState: function() {
-    return {
-      analysis_results: null,
-      error_message: null,
-      pValue: 0.1,
-      input_data: null
-    };
-  },
-
-  componentWillMount: function() {
-    this.dm_loadFromServer();
-  },
-
-  onFileChange: function(e) {
-    var self = this,
-      files = e.target.files; // FileList object
-
-    if (files.length == 1) {
-      var f = files[0];
-      var reader = new FileReader();
-
-      reader.onload = (function(theFile) {
-        return function(e) {
-          var data = JSON.parse(this.result);
-          self.dm_initializeFromJSON(data);
-        };
-      })(f);
-
-      reader.readAsText(f);
-    }
-    e.preventDefault();
-  },
-
-  dm_adjustPvalue: function(event) {
+  dm_adjustPvalue = event => {
     this.setState({ pValue: parseFloat(event.target.value) });
-  },
+  };
 
-  componentDidUpdate(prevProps, prevState) {
-    $("body").scrollspy({
-      target: ".bs-docs-sidebar",
-      offset: 50
-    });
-    $('[data-toggle="popover"]').popover();
-    $('.dropdown-toggle').dropdown();
-  },
-
-  render: function() {
-    var self = this;
+  render() {
+    const self = this;
 
     if (self.state.error_message) {
       return (
@@ -1301,21 +1235,14 @@ var SLAC = React.createClass({
     }
 
     if (self.state.analysis_results) {
-      var scrollspy_info = [
-        { label: "summary", href: "slac-summary" },
-        { label: "information", href: "datamonkey-slac-tree-summary" },
-        { label: "table", href: "slac-table" },
-        { label: "graph", href: "slac-graph" },
-        { label: "tree", href: "tree-tab" }
-      ];
-
-      var trees = self.state.analysis_results ? {
-        newick: self.state.analysis_results.input.trees,
-        tested: self.state.analysis_results.tested
-      } : null;
+      var trees = self.state.analysis_results
+        ? {
+            newick: self.state.analysis_results.input.trees,
+            tested: self.state.analysis_results.tested
+          }
+        : null;
 
       var edgeColorizer = function(element, data, foreground_color) {
-
         var is_foreground = data.target.annotations.is_foreground,
           color_fill = foreground_color(0);
 
@@ -1352,152 +1279,125 @@ var SLAC = React.createClass({
 
       return (
         <div>
-          {this.props.hyphy_vision ? <NavBar onFileChange={this.onFileChange} /> : ''}
-          <div className="container">
-            <div className="row">
-              <ScrollSpy info={scrollspy_info} />
-              <div className="col-md-10">
-              <div id="results">
-                <SLACBanner
-                  analysis_results={self.state.analysis_results}
-                  pValue={self.state.pValue}
-                  pAdjuster={_.bind(self.dm_adjustPvalue, self)}
-                  input_data={self.state.input_data}
-                  hyphy_vision={self.props.hyphy_vision}
-                />
+          <SLACBanner
+            analysis_results={self.state.analysis_results}
+            pValue={self.state.pValue}
+            pAdjuster={_.bind(self.dm_adjustPvalue, self)}
+            input_data={self.state.input_data}
+            hyphy_vision={self.props.hyphy_vision}
+          />
 
-                <div className="row hidden-print">
-                  <div
-                    id="datamonkey-slac-tree-summary"
-                    className="col-md-12"
-                  >
-                    <h4 className="dm-table-header">
-                      Partition information
-                    </h4>
-                     
-                      <DatamonkeyPartitionTable
-                        pValue={self.state.pValue}
-                        trees={trees}
-                        partitions={self.state.analysis_results['data partitions']}
-                        branchAttributes={
-                          self.state.analysis_results["branch attributes"]
-                        }
-                        siteResults={self.state.analysis_results.MLE}
-                        accessorPositive={function(json, partition) {
-                          if(!json["content"][partition]) return null;
-                          return _.map(
-                            json["content"][partition]["by-site"]["AVERAGED"],
-                            function(v) {
-                              return v[8];
-                            }
-                          );
-                        }}
-                        accessorNegative={function(json, partition) {
-                          if(!json["content"][partition]) return null;
-                          return _.map(
-                            json["content"][partition]["by-site"]["AVERAGED"],
-                            function(v) {
-                              return v[9];
-                            }
-                          );
-                        }}
-                      />
-                     
-                  </div>
-                  <div
-                    id="datamonkey-slac-model-fits"
-                    className="col-md-8"
-                  >
-                     
-                      {
-                        <DatamonkeyModelTable
-                          fits={self.state.analysis_results.fits}
-                        />
-                      }
-                     
-                  </div>
-                  <div
-                    id="datamonkey-slac-timers"
-                    className="col-md-4"
-                  >
-                    <h4 className="dm-table-header">
-                      Execution time
-                    </h4>
-                     
-                      <DatamonkeyTimersTable
-                        timers={self.state.analysis_results.timers}
-                        totalTime={"Total time"}
-                      />
-                     
-                  </div>
-                </div>
+          <div className="row hidden-print">
+            <div id="datamonkey-slac-tree-summary" className="col-md-12">
+              <h4 className="dm-table-header">Partition information</h4>
 
-                <div className="row">
-                  <div className="col-md-12" id="slac-table">
-                    <Header title='SLAC Site Table' popover='<ul><li>Adjust display or handling of alignment ambiguities with the left navbar.</li><li>Apply filters to columns using the right navbar.</li></ul>' />
-                    <SLACSites
-                      headers={self.state.analysis_results.MLE.headers}
-                      mle={datamonkey.helpers.map(
-                        datamonkey.helpers.filter(
-                          self.state.analysis_results.MLE.content,
-                          function(value, key) {
-                            return _.has(value, "by-site");
-                          }
-                        ),
-                        function(value, key) {
-                          return value["by-site"];
-                        }
-                      )}
-                      sample25={self.state.analysis_results["sample-2.5"]}
-                      sampleMedian={
-                        self.state.analysis_results["sample-median"]
-                      }
-                      sample975={self.state.analysis_results["sample-97.5"]}
-                      partitionSites={self.state.analysis_results['data partitions']}
-                    />
-                  </div>
-                </div>
+              <DatamonkeyPartitionTable
+                pValue={self.state.pValue}
+                trees={trees}
+                partitions={self.state.analysis_results["data partitions"]}
+                branchAttributes={
+                  self.state.analysis_results["branch attributes"]
+                }
+                siteResults={self.state.analysis_results.MLE}
+                accessorPositive={function(json, partition) {
+                  if (!json["content"][partition]) return null;
+                  return _.map(
+                    json["content"][partition]["by-site"][
+                      DEFAULT_AMBIGUITY_HANDLING
+                    ],
+                    function(v) {
+                      return v[8];
+                    }
+                  );
+                }}
+                accessorNegative={function(json, partition) {
+                  if (!json["content"][partition]) return null;
+                  return _.map(
+                    json["content"][partition]["by-site"][
+                      DEFAULT_AMBIGUITY_HANDLING
+                    ],
+                    function(v) {
+                      return v[9];
+                    }
+                  );
+                }}
+              />
+            </div>
+            <div id="datamonkey-slac-model-fits" className="col-md-8">
+              {<DatamonkeyModelTable fits={self.state.analysis_results.fits} />}
+            </div>
+            <div id="datamonkey-slac-timers" className="col-md-4">
+              <h4 className="dm-table-header">Execution time</h4>
 
-                <div className="row">
-                  <div className="col-md-12" id="slac-graph">
-                    <Header title='SLAC Site Graph' popover='<p>Changing the x-axis to anything but "Site" results in a scatter plot.' />
-                    <SLACGraphs
-                      mle={datamonkey.helpers.map(
-                        datamonkey.helpers.filter(
-                          self.state.analysis_results.MLE.content,
-                          function(value, key) {
-                            return _.has(value, "by-site");
-                          }
-                        ),
-                        function(value, key) {
-                          return value["by-site"];
-                        }
-                      )}
-                      partitionSites={self.state.analysis_results['data partitions']}
-                      headers={self.state.analysis_results.MLE.headers}
-                    />
-                  </div>
-                </div>
+              <DatamonkeyTimersTable
+                timers={self.state.analysis_results.timers}
+                totalTime={"Total time"}
+              />
+            </div>
+          </div>
 
-                <div className="row">
-                  <div id="tree-tab" className="col-md-12">
-                    <Tree
-                      models={models}
-                      json={this.state.analysis_results}
-                      settings={tree_settings}
-                      method={'slac'}
-                      color_gradient={["#00a99d", "#000000"]}
-                      grayscale_gradient={["#444444","#000000"]}
-                      multitree
-                    />
-                  </div>
-                </div>
+          <div className="row">
+            <div className="col-md-12" id="slac-table">
+              <Header
+                title="SLAC Site Table"
+                popover="<ul><li>Adjust display or handling of alignment ambiguities with the left navbar.</li><li>Apply filters to columns using the right navbar.</li></ul>"
+              />
+              <SLACSites
+                headers={self.state.analysis_results.MLE.headers}
+                mle={datamonkey.helpers.map(
+                  datamonkey.helpers.filter(
+                    self.state.analysis_results.MLE.content,
+                    function(value, key) {
+                      return _.has(value, "by-site");
+                    }
+                  ),
+                  function(value, key) {
+                    return value["by-site"];
+                  }
+                )}
+                sample25={self.state.analysis_results["sample-2.5"]}
+                sampleMedian={self.state.analysis_results["sample-median"]}
+                sample975={self.state.analysis_results["sample-97.5"]}
+                partitionSites={self.state.analysis_results["data partitions"]}
+              />
+            </div>
+          </div>
 
+          <div className="row">
+            <div className="col-md-12" id="slac-graph">
+              <Header
+                title="SLAC Site Graph"
+                popover="<p>Changing the x-axis to anything but &quot;Site&quot; results in a scatter plot."
+              />
+              <SLACGraphs
+                mle={datamonkey.helpers.map(
+                  datamonkey.helpers.filter(
+                    self.state.analysis_results.MLE.content,
+                    function(value, key) {
+                      return _.has(value, "by-site");
+                    }
+                  ),
+                  function(value, key) {
+                    return value["by-site"];
+                  }
+                )}
+                partitionSites={self.state.analysis_results["data partitions"]}
+                headers={self.state.analysis_results.MLE.headers}
+              />
+            </div>
+          </div>
 
-              </div>
-              </div>
-
-              <div className="col-md-1" />
+          <div className="row">
+            <div id="tree-tab" className="col-md-12">
+              <Tree
+                models={models}
+                json={this.state.analysis_results}
+                settings={tree_settings}
+                method={"slac"}
+                color_gradient={["#00a99d", "#000000"]}
+                grayscale_gradient={["#444444", "#000000"]}
+                multitree
+              />
             </div>
           </div>
         </div>
@@ -1505,18 +1405,40 @@ var SLAC = React.createClass({
     }
     return null;
   }
-});
+}
+
+function SLAC(props) {
+  return (
+    <ResultsPage
+      data={props.data}
+      hyphy_vision={props.hyphy_vision}
+      scrollSpyInfo={[
+        { label: "summary", href: "slac-summary" },
+        { label: "information", href: "datamonkey-slac-tree-summary" },
+        { label: "table", href: "slac-table" },
+        { label: "graph", href: "slac-graph" },
+        { label: "tree", href: "tree-tab" }
+      ]}
+      methodName="Single-Likelihood Ancestor Counting"
+    >
+      {SLACContents}
+    </ResultsPage>
+  );
+}
 
 // Will need to make a call to this
 // omega distributions
-function render_slac(url, element) {
-  ReactDOM.render(<SLAC url={url} />, document.getElementById(element));
+function render_slac(data, element) {
+  ReactDOM.render(<SLAC data={data} />, document.getElementById(element));
 }
 
-function render_hv_slac(url, element) {
-  ReactDOM.render(<SLAC url={url} hyphy_vision />, document.getElementById(element));
+function render_hv_slac(data, element) {
+  ReactDOM.render(
+    <SLAC data={data} hyphy_vision />,
+    document.getElementById(element)
+  );
 }
 
 module.exports = render_slac;
 module.exports.hv = render_hv_slac;
-
+module.exports.SLAC = SLAC;

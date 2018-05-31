@@ -1,20 +1,24 @@
 var path = require("path"),
   webpack = require("webpack"),
-  cloneDeep = require("lodash.clonedeep");
-
-var ExtractTextPlugin = require("extract-text-webpack-plugin");
+  cloneDeep = require("lodash.clonedeep"),
+  ExtractTextPlugin = require("extract-text-webpack-plugin"),
+  HtmlWebpackPlugin = require('html-webpack-plugin'),
+  { BaseHrefWebpackPlugin } = require('base-href-webpack-plugin');
 
 config = {
   devtool: "source-map",
   entry: {
-    hyphyvision: ["./src/entry.js"]
+    hyphyvision: ["./src/index.js"]
+  },
+  devServer: {
+    contentBase: '.',
+    historyApiFallback: true
   },
   output: {
     path: path.resolve(__dirname, "dist/"),
     filename: "[name].js",
     library : "hyphyVision"
   },
-  //externals: ['react', 'react-dom'],
   module: {
     rules: [
       {
@@ -23,7 +27,7 @@ config = {
           path.resolve(__dirname, "src"),
           path.resolve(__dirname, "node_modules/csvexport")
         ],
-        loaders: "babel-loader",
+        loaders: "babel-loader", 
         query: {
           presets: ["react"]
         }
@@ -77,11 +81,7 @@ config = {
         options: { limit: 10000, mimetype: "application/octet-stream" }
       },
       { test: /\.eot(\?v=\d+\.\d+\.\d+)?$/, loaders: "file-loader" },
-      {
-        test: /\.svg(\?v=\d+\.\d+\.\d+)?$/,
-        loaders: "url-loader",
-        options: { limit: 10000, mimetype: "image/svg+xml" }
-      },
+      { test: /\.(png|svg|jpg|gif)$/, use: ['file-loader'] },
       {
         test: /\.(js|jsx)?$/,
         exclude: /node_modules/,
@@ -89,15 +89,21 @@ config = {
         options: {}
       },
       {
-        test: /\.less?$/,
+        test: /\.scss?$/,
         use: ExtractTextPlugin.extract({
           fallback: "style-loader",
-          use: ["css-loader", "less-loader"]
+          use: ["css-loader", "sass-loader"]
         })
+      },
+      { 
+        test: /\.json$/,
+        loader: "json-loader"
       }
     ]
   },
   plugins: [
+    new BaseHrefWebpackPlugin({ baseHref: '.' }),
+    new HtmlWebpackPlugin({ title: 'HyPhy Vision'}),
     new webpack.LoaderOptionsPlugin({ debug: true }),
     //new webpack.optimize.CommonsChunkPlugin({
     //  name: "vendor",
@@ -108,22 +114,22 @@ config = {
       $: "jquery",
       jQuery: "jquery",
       d3: "d3",
-      crossfilter: "crossfilter",
-      dc: "dc",
       datamonkey: "datamonkey",
       _: "underscore"
     }),
     new webpack.IgnorePlugin(/jsdom$/),
+    new HtmlWebpackPlugin({
+      title: 'HyPhy Vision',
+      filename: path.resolve('dist', 'index.html')
+    }),
     new ExtractTextPlugin("[name].css")
   ],
   resolve: {
     alias: {
-      dc: __dirname + "/node_modules/dc/dc.min.js",
-      "dc.css": __dirname + "/node_modules/dc/dc.min.css",
       "phylotree.css": __dirname + "/node_modules/phylotree/phylotree.css"
     },
     modules: ["src", "node_modules"],
-    extensions: [".json", ".js", ".jsx", ".less"]
+    extensions: [".json", ".js", ".jsx", ".scss"]
   }
 };
 

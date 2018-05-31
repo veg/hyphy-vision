@@ -4,9 +4,7 @@ var React = require("react"),
   chi = require("chi-squared");
 
 import { DatamonkeyTable } from "./components/tables.jsx";
-import {
-  DatamonkeyMultiScatterplot
-} from "./components/graphs.jsx";
+import { DatamonkeyMultiScatterplot } from "./components/graphs.jsx";
 import { ScrollSpy } from "./components/scrollspy.jsx";
 
 class PRIME extends React.Component {
@@ -73,7 +71,6 @@ class PRIME extends React.Component {
       this.initial_pvalue_threshold
     );
 
-
     // format data into variables usable by components
     var all_mle_props = _.flatten(
       _.map(results, d => {
@@ -81,7 +78,8 @@ class PRIME extends React.Component {
           _.values(_.omit(d["Full model"]["MLES"], "_felScaler")),
           _.values(d["pvalues"])
         );
-      }), true
+      }),
+      true
     );
 
     var changing_properties = _.filter(all_mle_props, d => {
@@ -184,7 +182,6 @@ class PRIME extends React.Component {
   }
 
   updatePvalThreshold(e) {
-
     var pvalue_threshold = parseFloat(e.target.value);
 
     var table_property_values = this.formatValuesForTable(
@@ -202,12 +199,11 @@ class PRIME extends React.Component {
       return d[0] > 0 && d[1] < pvalue_threshold;
     });
 
-
     this.setState({
       table_property_headers: this.state.table_property_headers,
       pvalue_threshold: pvalue_threshold,
       table_property_values: table_property_values,
-      conserved_properties : conserved_properties,
+      conserved_properties: conserved_properties,
       changing_properties: changing_properties
     });
   }
@@ -220,18 +216,20 @@ class PRIME extends React.Component {
         <div className="main-result">
           <p>
             <p>
-              PRIME {" "}
+              PRIME{" "}
               <strong className="hyphy-highlight"> found evidence </strong> of{" "}
             </p>
             <p>
               <span className="hyphy-highlight">
-                {" "} {self.state.conserved_properties.length} {" "}
+                {" "}
+                {self.state.conserved_properties.length}{" "}
               </span>
               conserved properties found.{" "}
             </p>
             <p>
               <span className="hyphy-highlight">
-                {" "} {self.state.changing_properties.length} {" "}
+                {" "}
+                {self.state.changing_properties.length}{" "}
               </span>
               changing properties found.{" "}
             </p>
@@ -263,10 +261,8 @@ class PRIME extends React.Component {
           <hr />
           <p>
             <small>
-              See {" "}
-              <a href="//hyphy.org/methods/selection-methods/#prime">
-                here{" "}
-              </a>{" "}
+              See{" "}
+              <a href="//hyphy.org/methods/selection-methods/#prime">here </a>{" "}
               for more information about the PRIME method <br />
               Please cite PMID <a href=""> TBA </a> if you use this result in a
               publication, presentation, or other scientific work
@@ -306,13 +302,14 @@ class PRIME extends React.Component {
 
     var order_table_rows = _.unzip(this.state.table_property_values);
 
+    // SDS 2-23-18: Make sure CSS for NavBar buffer consistent with other pages!
     return (
       <div>
         <div className="container">
           <div className="row">
             <ScrollSpy info={scrollspy_info} />
             <div className="col-sm-10">
-              <div className="clearance" id="summary-div"></div>
+              <div className="clearance" id="summary-div" />
               <div id="results">
                 <h3 className="list-group-item-heading">
                   <span id="summary-method-name">
@@ -352,7 +349,7 @@ class PRIME extends React.Component {
                   <DatamonkeyTable
                     headerData={this.state.table_property_headers}
                     bodyData={order_table_rows}
-                    classes={"table table-condensed table-striped"}
+                    classes={"table table-smm table-striped"}
                     paginate={20}
                     export_csv
                   />

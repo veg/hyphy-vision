@@ -34,7 +34,7 @@ var FadeSummary = React.createClass({
     var self = this;
 
     return (
-      <dl className="dl-horizontal">
+      <dl className="row">
         <dt>Data summary</dt>
         <dd>
           {this.props.sequences} sequences with {this.props.partitions}{" "}
@@ -50,12 +50,10 @@ var FadeSummary = React.createClass({
         {this.props.msa.partition_info.map(function(partition, index) {
           return (
             <div>
-              <dt>
-                Partition {partition["partition"]}
-              </dt>
+              <dt>Partition {partition["partition"]}</dt>
               <dd>
-                {" "}{self.float_format(self.props.subs[index])} subs/ aminoacid
-                site
+                {" "}
+                {self.float_format(self.props.subs[index])} subs/ aminoacid site
               </dd>
               <dd>
                 {partition["endcodon"] - partition["startcodon"]} aminoacids
@@ -64,12 +62,8 @@ var FadeSummary = React.createClass({
           );
         })}
         <dt>Settings</dt>
-        <dd>
-          {this.props.model}
-        </dd>
-        <dd>
-          {this.props.grid_desc}
-        </dd>
+        <dd>{this.props.model}</dd>
+        <dd>{this.props.grid_desc}</dd>
         <dd>
           Directional model applied to{" "}
           {self.countBranchesTested(this.props.branches_tested)} branches

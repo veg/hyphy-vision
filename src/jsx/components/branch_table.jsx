@@ -14,7 +14,6 @@ var BranchTable = React.createClass({
         ? this.props.annotations[initial_model_name]["omegas"]
         : null;
 
-
     return {
       tree: this.props.tree,
       test_results: this.props.test_results,
@@ -75,7 +74,6 @@ var BranchTable = React.createClass({
   },
 
   getBranchRows: function(tree, test_results, annotations) {
-
     var table_row_data = [];
 
     for (var m in test_results) {
@@ -113,7 +111,7 @@ var BranchTable = React.createClass({
     var self = this;
 
     if (self.state.annotations) {
-      var chart_links =  d3.selectAll(".hyphy-omega-chart-btn");
+      var chart_links = d3.selectAll(".hyphy-omega-chart-btn");
 
       chart_links.on("click", function(d) {
         var label = this.id;
@@ -121,7 +119,7 @@ var BranchTable = React.createClass({
           current_model_name: label,
           current_omegas: self.state.annotations[label]["omegas"]
         });
-        $("#myModal").modal("show");
+        $("#branchTableModal").modal("show");
       });
     }
   },
@@ -171,13 +169,16 @@ var BranchTable = React.createClass({
   },
 
   componentDidUpdate: function() {
-    d3.select('#table-branch-table').html('');
+    d3.select("#table-branch-table").html("");
     var branch_rows = d3
       .select("#table-branch-table")
       .selectAll("tr")
       .data(this.state.table_row_data);
 
-    branch_rows.enter().append("tr").attr('class', d=>d[3]<.05?'highlight':'');
+    branch_rows
+      .enter()
+      .append("tr")
+      .attr("class", d => (d[3] < 0.05 ? "highlight" : ""));
     branch_rows.exit().remove();
     branch_rows.style("font-weight", function(d) {
       return d[3] <= 0.05 ? "bold" : "normal";
@@ -187,7 +188,10 @@ var BranchTable = React.createClass({
       return d;
     });
 
-    branch_rows.enter().append("td").style("text-align", "center");
+    branch_rows
+      .enter()
+      .append("td")
+      .style("text-align", "center");
     branch_rows.html(function(d) {
       return d;
     });
@@ -224,7 +228,12 @@ var BranchTable = React.createClass({
             Detailed results
             <span
               className="glyphicon glyphicon-info-sign"
-              style={{ verticalAlign: "middle", float: "right", minHeight:"30px", minWidth: "30px"}}
+              style={{
+                verticalAlign: "middle",
+                float: "right",
+                minHeight: "30px",
+                minWidth: "30px"
+              }}
               aria-hidden="true"
               data-toggle="popover"
               data-trigger="hover"
@@ -234,7 +243,7 @@ var BranchTable = React.createClass({
               data-placement="bottom"
             />
           </h4>
-          <table className="table table-hover table-condensed dm-table">
+          <table className="table table-hover table-smm dm-table">
             <thead id="table-branch-header">
               <tr>
                 <th>
@@ -283,8 +292,7 @@ var BranchTable = React.createClass({
                     ω distribution over sites
                   </span>
                 </th>
-                <th>
-                </th>
+                <th />
               </tr>
             </thead>
             <tbody id="table-branch-table" />
@@ -293,7 +301,7 @@ var BranchTable = React.createClass({
 
         <div
           className="modal fade"
-          id="myModal"
+          id="branchTableModal"
           tabIndex="-1"
           role="dialog"
           aria-labelledby="myModalLabel"
@@ -301,6 +309,9 @@ var BranchTable = React.createClass({
           <div className="modal-dialog" role="document">
             <div className="modal-content">
               <div className="modal-header">
+                <h4 className="modal-title" id="myModalLabel">
+                  aBSREL Site Proportion Chart
+                </h4>
                 <button
                   type="button"
                   className="close"
@@ -309,9 +320,6 @@ var BranchTable = React.createClass({
                 >
                   <span aria-hidden="true">&times;</span>
                 </button>
-                <h4 className="modal-title" id="myModalLabel">
-                  aBSREL Site Proportion Chart
-                </h4>
               </div>
               <div className="modal-body" id="modal-body">
                 <h4 className="dm-table-header">&omega; distribution</h4>
@@ -324,7 +332,7 @@ var BranchTable = React.createClass({
               <div className="modal-footer">
                 <button
                   type="button"
-                  className="btn btn-default"
+                  className="btn.btn-secondary"
                   data-dismiss="modal"
                 >
                   Close

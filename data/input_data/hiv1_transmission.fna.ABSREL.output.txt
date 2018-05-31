@@ -1,0 +1,46 @@
+
+Analysis Description
+--------------------
+aBSREL (Adaptive branch-site random effects likelihood) uses an adaptive
+random effects branch-site model framework to test whether each branch
+has evolved under positive selection, using a procedure which infers an
+optimal number of rate categories per branch.
+
+- __Requirements__: in-frame codon alignment and a phylogenetic tree
+
+- __Citation__: Less Is More: An Adaptive Branch-Site Random Effects Model for Efficient
+Detection of Episodic Diversifying Selection (2015). Mol Biol Evol 32
+(5): 1342-1353
+
+- __Written by__: Sergei L Kosakovsky Pond, Ben Murrell, Steven Weaver and Temple iGEM /
+UCSD viral evolution group
+
+- __Contact Information__: spond@temple.edu
+
+- __Analysis Version__: 2.0
+
+Error:
+Current batch file requires at least version :2.30 of HyPhy. Please download an updated version from http://www.hyphy.org and try again. in call to RequireVersion(
+
+Function call stack
+1 : RequireVersion(("2.30")
+-------
+2 : ExecuteAFile from file HYPHY_LIB_DIRECTORY+"TemplateBatchFiles"+DIRECTORY_SEPARATOR+"TemplateModels"+DIRECTORY_SEPARATOR+"chooseGeneticCode.def" using basepath /Users/ryanvelazquez/Documents/misc/hyphy/res/TemplateBatchFiles/libv3/tasks/.
+-------
+3 : code_info=alignments.LoadGeneticCode(None)
+-------
+4 : A return statement with:1
+-------
+5 : A return statement with:1
+-------
+6 : codon_data_info=alignments.PromptForGeneticCodeAndAlignment(prefix+".codon_data",prefix+".codon_filter")
+-------
+7 : load_file("absrel")
+-------
+8 : Call a nested list (via namespace):
+ 
+
+Step 0.LoadFunctionLibrary from file"modules/shared-load-file.bf" using basepath /Users/ryanvelazquez/Documents/misc/hyphy/res/TemplateBatchFiles/SelectionAnalyses/.
+
+Step 1.load_file("absrel")
+-------

@@ -62,7 +62,7 @@ config = {
     new ExtractTextPlugin("[name].css"),
 		new CopyWebpackPlugin([
 				// {output}/file.txt
-				{ from: 'src/hyphyvision.css' }
+				{ from: 'src/application.scss' }
 		], {
 				// By default, we only copy modified files during
 				// a watch or webpack-dev-server build. Setting this
@@ -77,7 +77,8 @@ config = {
       "phylotree.css": __dirname + "/node_modules/phylotree/phylotree.css"
     },
     modules: ["src", "node_modules"],
-    extensions: [".json", ".js", ".jsx", ".less"]
+    extensions: [".json", ".js", ".jsx", ".less"],
+    symlinks: false
   }
 };
 
