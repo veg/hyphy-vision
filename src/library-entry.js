@@ -1,5 +1,6 @@
 require("bootstrap");
 require("./datamonkey/datamonkey.js");
+require("./application.scss");
 
 // Create new hyphy-vision export
 export { default as absrel } from "./jsx/absrel.jsx";
