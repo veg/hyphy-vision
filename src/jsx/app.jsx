@@ -12,6 +12,7 @@ import { SLAC } from "./slac.jsx";
 import { FUBAR } from "./fubar.jsx";
 import { GARD } from "./gard.jsx";
 import { BGM } from "./bgm.jsx";
+import { FADE } from "./fade.jsx";
 import { NavBar } from "./components/navbar.jsx";
 
 const path = require("path");
@@ -291,6 +292,29 @@ class HyPhyVision extends React.Component {
                     base_url + "/data/json_files/bgm/Flu.fna.BGM.json"
                   }
                   fasta={fasta.Flu}
+                />
+              )}
+            />
+            <Route
+              path="/fade"
+              component={() => (
+                <FADE
+                  data={
+                    this.state.data ||
+                    base_url + "/data/json_files/fade/CD2_AA.fasta.FADE.json"
+                  }
+                />
+              )}
+            />
+            <Route
+              path="/fade-fasta"
+              component={() => (
+                <FADE
+                  data={
+                    this.state.data ||
+                    base_url + "/data/json_files/fade/CD2_AA.fasta.FADE.json"
+                  }
+                  fasta={fasta.CD2_AA}
                 />
               )}
             />
