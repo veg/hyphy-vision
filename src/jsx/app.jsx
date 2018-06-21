@@ -49,7 +49,7 @@ function HyPhyVision(props) {
                 base_url +
                 "/data/json_files/absrel/hiv1_transmission.fna.ABSREL.json"
               }
-              hyphy_vision
+              platform={"hyphyVision"}
             />
           )}
         />

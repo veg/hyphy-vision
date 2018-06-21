@@ -31,6 +31,9 @@ class ResultsPage extends React.Component {
     } else if (typeof this.props.data == "object") {
       self.setDataToState(self.props.data);
     }
+    if (this.props.getFastaCallBack) {
+      this.appendFataToJson();
+    }
     this.enableBootstrapJavascript();
   }
 
@@ -54,6 +57,9 @@ class ResultsPage extends React.Component {
       reader.readAsText(f);
     }
     e.preventDefault();
+    if (this.props.getFastaCallBack) {
+      this.appendFataToJson();
+    }
   };
 
   setDataToState(data) {
@@ -62,6 +68,13 @@ class ResultsPage extends React.Component {
       json: data
     });
   }
+
+  appendFastaToJson = () => {
+    fasta = this.props.getFastaCallBack();
+    json = this.state.json;
+    json.fasta = fasta;
+    this.setState({ json: json });
+  };
 
   enableBootstrapJavascript() {
     $("body").scrollspy({
@@ -76,12 +89,13 @@ class ResultsPage extends React.Component {
   }
 
   render() {
+    console.log(this.props.platform);
     var self = this;
 
     if (!this.state.json) return <div />;
     return (
       <div>
-        {this.props.hyphy_vision ? (
+        {this.props.platform == "hyphyVision" ? (
           <NavBar onFileChange={this.onFileChange} />
         ) : (
           ""
@@ -97,7 +111,7 @@ class ResultsPage extends React.Component {
                     methodName={self.props.methodName}
                     input_data={this.state.json.input}
                     json={this.state.json}
-                    hyphy_vision={this.props.hyphy_vision}
+                    platform={this.props.platform}
                   />
                 </div>
               </div>
@@ -111,5 +125,9 @@ class ResultsPage extends React.Component {
     );
   }
 }
+
+ResultsPage.defaultProps = {
+  getFastaCallBack: false
+};
 
 module.exports.ResultsPage = ResultsPage;

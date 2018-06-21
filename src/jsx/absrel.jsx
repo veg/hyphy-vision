@@ -493,7 +493,8 @@ function BSREL(props) {
   return (
     <ResultsPage
       data={props.data}
-      hyphy_vision={props.hyphy_vision}
+      platform={props.platform}
+      getFastaCallBack={props.getFastaCallBack}
       scrollSpyInfo={[
         { label: "summary", href: "summary-tab" },
         { label: "tree", href: "hyphy-tree-summary" },
@@ -507,17 +508,26 @@ function BSREL(props) {
   );
 }
 
-function render_absrel(data, element) {
-  ReactDOM.render(<BSREL data={data} />, document.getElementById(element));
+function render_absrel(data, getMSACallBack, platform, element) {
+  ReactDOM.render(
+    <BSREL
+      data={data}
+      getFastaCallBack={getFastaCallBack}
+      platform={platform}
+    />,
+    document.getElementById(element)
+  );
 }
 
+/*
 function render_hv_absrel(data, element) {
   ReactDOM.render(
     <BSREL data={data} hyphy_vision={true} />,
     document.getElementById(element)
   );
 }
+*/
 
 module.exports = render_absrel;
-module.exports.hv = render_hv_absrel;
+//module.exports.hv = render_hv_absrel;
 module.exports.BSREL = BSREL;

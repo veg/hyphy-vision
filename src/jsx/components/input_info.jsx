@@ -30,10 +30,8 @@ class InputInfo extends React.Component {
   }
   componentDidMount() {
     const self = this;
-    if (!this.props.hyphy_vision) {
-      d3.json(window.location.href + "/fasta", (err, data) => {
-        self.setState({ fasta: data.fasta });
-      });
+    if (this.props.json.fasta) {
+      self.setState({ fasta: this.state.json.fasta });
     }
   }
   render() {
@@ -77,7 +75,8 @@ class InputInfo extends React.Component {
               className="dropdown-menu"
               aria-labelledby="dropdown-menu-button"
             >
-              {on_datamonkey
+              {/* The options shown in the dropdown are highly platform dependent, hence the ternary sea below */}
+              {this.props.platform == "dataMonkey"
                 ? [
                     <li className="dropdown-item">
                       <a
@@ -92,7 +91,12 @@ class InputInfo extends React.Component {
                       <a href={window.location.href + "/log.txt/"}>
                         Analysis log
                       </a>
-                    </li>,
+                    </li>
+                  ]
+                : null}
+              {this.props.platform == "dataMonkey" ||
+              this.props.platform == "gui"
+                ? [
                     <li className="dropdown-item">
                       <a onClick={() => this.open("msa")}>View MSA</a>
                     </li>
@@ -105,9 +109,13 @@ class InputInfo extends React.Component {
                   </a>
                 </li>
               ) : null}
-              <li className="dropdown-item">
-                <a onClick={() => this.saveTheJSON()}>Save JSON</a>
-              </li>
+              {this.props.platform != "gui"
+                ? [
+                    <li className="dropdown-item">
+                      <a onClick={() => this.saveTheJSON()}>Save JSON</a>
+                    </li>
+                  ]
+                : null}
               <li className="dropdown-item">
                 <a onClick={() => this.open("json")}>View JSON</a>
               </li>

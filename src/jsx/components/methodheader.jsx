@@ -16,7 +16,7 @@ function MethodHeader(props) {
         <InputInfo
           input_data={props.input_data}
           json={props.json}
-          hyphy_vision={props.hyphy_vision}
+          platform={props.platform}
         />
       </div>
     </div>
