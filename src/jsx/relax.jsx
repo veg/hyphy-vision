@@ -495,7 +495,8 @@ RELAXContents.defaultProps = {
 function RELAX(props) {
   return (
     <ResultsPage
-      data={props.data}
+      fasta={props.fasta}
+      platform={props.platform}
       hyphy_vision={props.hyphy_vision}
       scrollSpyInfo={[
         { label: "summary", href: "summary-tab" },
@@ -509,17 +510,12 @@ function RELAX(props) {
   );
 }
 
-function render_relax(data, element) {
-  ReactDOM.render(<RELAX data={data} />, document.getElementById(element));
-}
-
-function render_hv_relax(data, element) {
+function render_relax(data, fasta, platform, element) {
   ReactDOM.render(
-    <RELAX data={data} hyphy_vision />,
+    <RELAX data={data} fasta={fasta} platform={platform} />,
     document.getElementById(element)
   );
 }
 
 module.exports = render_relax;
-module.exports.hv = render_hv_relax;
 module.exports.RELAX = RELAX;

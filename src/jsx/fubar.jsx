@@ -610,7 +610,8 @@ function FUBAR(props) {
   return (
     <ResultsPage
       data={props.data}
-      hyphy_vision={props.hyphy_vision}
+      fasta={props.fasta}
+      platform={props.platform}
       scrollSpyInfo={[
         { label: "summary", href: "summary-tab" },
         { label: "plot", href: "plot-tab" },
@@ -625,17 +626,12 @@ function FUBAR(props) {
   );
 }
 
-function render_fubar(data, element) {
-  ReactDOM.render(<FUBAR data={data} />, document.getElementById(element));
-}
-
-function render_hv_fubar(data, element) {
+function render_fubar(data, fasta, platform, element) {
   ReactDOM.render(
-    <FUBAR data={data} hyphy_vision />,
+    <FUBAR data={data} fasta={fasta} platform={platform} />,
     document.getElementById(element)
   );
 }
 
 module.exports = render_fubar;
-module.exports.hv = render_hv_fubar;
 module.exports.FUBAR = FUBAR;

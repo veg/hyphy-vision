@@ -466,7 +466,8 @@ function GARD(props) {
   return (
     <ResultsPage
       data={props.data}
-      hyphy_vision={props.hyphy_vision}
+      fasta={props.fasta}
+      platform={props.platform}
       scrollSpyInfo={[
         { label: "summary", href: "summary-tab" },
         { label: "report", href: "report-tab" },
@@ -481,17 +482,12 @@ function GARD(props) {
   );
 }
 
-function render_gard(url, element) {
-  ReactDOM.render(<GARD url={url} />, document.getElementById(element));
-}
-
-function render_hv_gard(url, element) {
+function render_gard(url, fasta, platform, element) {
   ReactDOM.render(
-    <GARD url={url} hyphy_vision />,
+    <GARD url={url} fasta={fasta} platform={platform} />,
     document.getElementById(element)
   );
 }
 
 module.exports = render_gard;
-module.exports.hv = render_hv_gard;
 module.exports.GARD = GARD;

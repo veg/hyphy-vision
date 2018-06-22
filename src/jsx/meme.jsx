@@ -300,7 +300,8 @@ function MEME(props) {
   return (
     <ResultsPage
       data={props.data}
-      hyphy_vision={props.hyphy_vision}
+      fasta={props.fasta}
+      platform={props.platform}
       scrollSpyInfo={[
         { label: "summary", href: "summary-tab" },
         { label: "table", href: "table-tab" },
@@ -315,17 +316,12 @@ function MEME(props) {
   );
 }
 
-function render_meme(data, element) {
-  ReactDOM.render(<MEME data={data} />, document.getElementById(element));
-}
-
-function render_hv_meme(data, element) {
+function render_meme(data, fasta, platform, element) {
   ReactDOM.render(
-    <MEME data={data} hyphy_vision />,
+    <MEME data={data} fasta={fasta} platform={platform} />,
     document.getElementById(element)
   );
 }
 
 module.exports = render_meme;
-module.exports.hv = render_hv_meme;
 module.exports.MEME = MEME;

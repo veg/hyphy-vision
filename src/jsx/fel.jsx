@@ -536,7 +536,8 @@ function FEL(props) {
   return (
     <ResultsPage
       data={props.data}
-      hyphy_vision={props.hyphy_vision}
+      fasta={props.fasta}
+      platform={props.platform}
       scrollSpyInfo={[
         { label: "summary", href: "summary-tab" },
         { label: "table", href: "table-tab" },
@@ -551,17 +552,12 @@ function FEL(props) {
   );
 }
 
-function render_fel(data, element) {
-  ReactDOM.render(<FEL data={data} />, document.getElementById(element));
-}
-
-function render_hv_fel(data, element) {
+function render_fel(data, fasta, platform, element) {
   ReactDOM.render(
-    <FEL data={data} hyphy_vision />,
+    <FEL data={data} fasta={fasta} platform={platfrom} />,
     document.getElementById(element)
   );
 }
 
 module.exports = render_fel;
-module.exports.hv = render_hv_fel;
 module.exports.FEL = FEL;

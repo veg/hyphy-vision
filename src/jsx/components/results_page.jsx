@@ -30,10 +30,16 @@ class ResultsPage extends React.Component {
   componentDidUpdate(prevProps, prevState) {
     var self = this;
     this.enableBootstrapJavascript();
-    if (self.props.data != prevState.json) {
-      console.log("call setDataToState with: ");
-      console.log(this.props.data);
-      this.setDataToState(this.props.data);
+    if (
+      this.props.platform != "hyphyVision" &&
+      self.props.data != prevState.json
+    ) {
+      this.setDataToState(self.props.data);
+    }
+    if (this.props.platform == "hyphyVision") {
+      if (this.state.json == null || this.state.json != prevState.json) {
+        this.setDataToState(self.props.data);
+      }
     }
   }
 
@@ -55,16 +61,16 @@ class ResultsPage extends React.Component {
     e.preventDefault();
   };
 
-  setDataToState = data => {
+  setDataToState = dataInput => {
     var self = this;
     // Decide if data is a URL or the results JSON
-    if (typeof this.props.data == "string") {
-      console.log("data is string");
-      d3.json(self.props.data, function(data) {
-        var json = data;
+    if (typeof dataInput == "string") {
+      var json;
+      d3.json(dataInput, function(data) {
+        json = data;
       });
-    } else if (typeof this.props.data == "object") {
-      var json = data;
+    } else if (typeof dataInput == "object") {
+      var json = dataInput;
     }
     self.setState({
       json: json

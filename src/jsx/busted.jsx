@@ -994,7 +994,8 @@ function BUSTED(props) {
   return (
     <ResultsPage
       data={props.data}
-      hyphy_vision={props.hyphy_vision}
+      fasta={props.fasta}
+      platform={props.platform}
       scrollSpyInfo={[
         { label: "summary", href: "summary-div" },
         { label: "model statistics", href: "hyphy-model-fits" },
@@ -1007,17 +1008,12 @@ function BUSTED(props) {
   );
 }
 
-var render_busted = function(data, element) {
-  ReactDOM.render(<BUSTED data={data} />, document.getElementById(element));
-};
-
-var render_hv_busted = function(data, element) {
+var render_busted = function(data, fasta, platform, element) {
   ReactDOM.render(
-    <BUSTED data={data} hyphy_vision />,
+    <BUSTED data={data} fasta={fasta} platform={platform} />,
     document.getElementById(element)
   );
 };
 
 module.exports = render_busted;
-module.exports.hv = render_hv_busted;
 module.exports.BUSTED = BUSTED;

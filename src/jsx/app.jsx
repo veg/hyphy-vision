@@ -58,7 +58,7 @@ function HyPhyVision(props) {
           component={() => (
             <BUSTED
               data={base_url + "/data/json_files/busted/ksr2.fna.BUSTED.json"}
-              hyphy_vision
+              platform={"hyphyVision"}
             />
           )}
         />
@@ -67,7 +67,7 @@ function HyPhyVision(props) {
           component={() => (
             <RELAX
               data={base_url + "/data/json_files/relax/pb2.fna.RELAX.json"}
-              hyphy_vision
+              platform={"hyphyVision"}
             />
           )}
         />
@@ -76,7 +76,7 @@ function HyPhyVision(props) {
           component={() => (
             <FEL
               data={base_url + "/data/json_files/fel/CD2.fna.FEL.json"}
-              hyphy_vision
+              platform={"hyphyVision"}
             />
           )}
         />
@@ -85,7 +85,7 @@ function HyPhyVision(props) {
           component={() => (
             <MEME
               data={base_url + "/data/json_files/meme/h3_trunk.fna.MEME.json"}
-              hyphy_vision
+              platform={"hyphyVision"}
             />
           )}
         />
@@ -94,7 +94,7 @@ function HyPhyVision(props) {
           component={() => (
             <SLAC
               data={base_url + "/data/json_files/slac/h3_trunk.fna.SLAC.json"}
-              hyphy_vision
+              platform={"hyphyVision"}
             />
           )}
         />
@@ -103,7 +103,7 @@ function HyPhyVision(props) {
           component={() => (
             <FUBAR
               data={base_url + "/data/json_files/fubar/h3_trunk.fna.FUBAR.json"}
-              hyphy_vision
+              platform={"hyphyVision"}
             />
           )}
         />
@@ -112,7 +112,7 @@ function HyPhyVision(props) {
           component={() => (
             <GARD
               data={base_url + "/data/json_files/gard/GARD.json"}
-              hyphy_vision
+              platform={"hyphyVision"}
             />
           )}
         />
