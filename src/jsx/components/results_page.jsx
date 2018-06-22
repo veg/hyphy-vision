@@ -23,22 +23,18 @@ class ResultsPage extends React.Component {
 
   componentDidMount() {
     var self = this;
-    // Decide if data is a URL or the results JSON
-    if (typeof this.props.data == "string") {
-      d3.json(this.props.data, function(data) {
-        self.setDataToState(data);
-      });
-    } else if (typeof this.props.data == "object") {
-      self.setDataToState(self.props.data);
-    }
-    if (this.props.getFastaCallBack) {
-      this.appendFataToJson();
-    }
     this.enableBootstrapJavascript();
+    this.setDataToState(this.props.data);
   }
 
   componentDidUpdate(prevProps, prevState) {
+    var self = this;
     this.enableBootstrapJavascript();
+    if (self.props.data != prevState.json) {
+      console.log("call setDataToState with: ");
+      console.log(this.props.data);
+      this.setDataToState(this.props.data);
+    }
   }
 
   onFileChange = e => {
@@ -57,23 +53,22 @@ class ResultsPage extends React.Component {
       reader.readAsText(f);
     }
     e.preventDefault();
-    if (this.props.getFastaCallBack) {
-      this.appendFataToJson();
-    }
   };
 
-  setDataToState(data) {
+  setDataToState = data => {
     var self = this;
+    // Decide if data is a URL or the results JSON
+    if (typeof this.props.data == "string") {
+      console.log("data is string");
+      d3.json(self.props.data, function(data) {
+        var json = data;
+      });
+    } else if (typeof this.props.data == "object") {
+      var json = data;
+    }
     self.setState({
-      json: data
+      json: json
     });
-  }
-
-  appendFastaToJson = () => {
-    fasta = this.props.getFastaCallBack();
-    json = this.state.json;
-    json.fasta = fasta;
-    this.setState({ json: json });
   };
 
   enableBootstrapJavascript() {
@@ -89,9 +84,7 @@ class ResultsPage extends React.Component {
   }
 
   render() {
-    console.log(this.props.platform);
     var self = this;
-
     if (!this.state.json) return <div />;
     return (
       <div>
@@ -108,9 +101,10 @@ class ResultsPage extends React.Component {
                 <ErrorMessage />
                 <div id="summary-tab">
                   <MethodHeader
-                    methodName={self.props.methodName}
+                    methodName={this.props.methodName}
                     input_data={this.state.json.input}
                     json={this.state.json}
+                    fasta={this.props.fasta}
                     platform={this.props.platform}
                   />
                 </div>
@@ -127,7 +121,7 @@ class ResultsPage extends React.Component {
 }
 
 ResultsPage.defaultProps = {
-  getFastaCallBack: false
+  fasta: false
 };
 
 module.exports.ResultsPage = ResultsPage;
