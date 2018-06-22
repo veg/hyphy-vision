@@ -495,9 +495,9 @@ RELAXContents.defaultProps = {
 function RELAX(props) {
   return (
     <ResultsPage
+      data={props.data}
       fasta={props.fasta}
       platform={props.platform}
-      hyphy_vision={props.hyphy_vision}
       scrollSpyInfo={[
         { label: "summary", href: "summary-tab" },
         { label: "fits", href: "fits-tab" },
