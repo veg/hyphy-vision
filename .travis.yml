@@ -5,7 +5,7 @@ sudo: false
 notifications:
   email:
     recipients:
-    - spond@temple.edu
+    - rdvelazquez@temple.edu
     - steven@stevenweaver.org
     - sshank@temple.edu
     on_success: always
