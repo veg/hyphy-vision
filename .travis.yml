@@ -1,18 +1,15 @@
 language: node_js
-
 node_js:
-  - "8"
-
+- '8'
 sudo: false
-
 notifications:
-    email:
-        recipients:
-            - spond@temple.edu
-            - steven@stevenweaver.org
-            - sshank@temple.edu
-        on_success: always
-        on_failure: always
+  email:
+    recipients:
+    - spond@temple.edu
+    - steven@stevenweaver.org
+    - sshank@temple.edu
+    on_success: always
+    on_failure: always
 
 branches:
   only:
@@ -22,8 +19,20 @@ branches:
 cache:
   yarn: true
   directories:
-    - ".eslintcache"
-    - "node_modules"
+  - ".eslintcache"
+  - node_modules
 
 script:
   - yarn run jest
+
+before_deploy: 
+  - yarn build:library
+
+deploy:
+  provider: npm
+  email: sweaver@temple.edu
+  api_key:
+    secure: pQ8c5EPWD7v5gZlCc4jCEZkjpPjPuSczAtkm+Pz3JJTqnWwnsGOWadDj05J1FwbXfqyZ0tll5g0O2166VnftVA4g6+wJ1kPfrd+9O3vsS0ysjmTdyJrNNiCdV01arEX+uS8s/G4sF8by1byUT5EiFx1KPOTwqlwMrxqAmcBoKqM=
+  on:
+    tags: true
+    repo: veg/hyphy-vision
