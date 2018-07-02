@@ -11,8 +11,6 @@ import { MEME } from "./meme.jsx";
 import { SLAC } from "./slac.jsx";
 import { FUBAR } from "./fubar.jsx";
 import { GARD } from "./gard.jsx";
-import { ResultsPage } from "./components/results_page.jsx";
-// Testing out putting the nav bar in the main component
 import { NavBar } from "./components/navbar.jsx";
 
 const path = require("path");
