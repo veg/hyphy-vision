@@ -536,8 +536,6 @@ function FEL(props) {
   return (
     <ResultsPage
       data={props.data}
-      fasta={props.fasta}
-      platform={props.platform}
       scrollSpyInfo={[
         { label: "summary", href: "summary-tab" },
         { label: "table", href: "table-tab" },
@@ -546,15 +544,23 @@ function FEL(props) {
         { label: "fits", href: "fits-tab" }
       ]}
       methodName="Fixed Effects Likelihood"
+      fasta={props.fasta}
+      originalFile={props.originalFile}
+      analysisLog={props.analysisLog}
     >
       {FELContents}
     </ResultsPage>
   );
 }
 
-function render_fel(data, fasta, platform, element) {
+function render_fel(data, fasta, element, originalFile, analysisLog) {
   ReactDOM.render(
-    <FEL data={data} fasta={fasta} platform={platfrom} />,
+    <FEL
+      data={data}
+      fasta={fasta}
+      originalFile={originalFile}
+      analysisLog={analysisLog}
+    />,
     document.getElementById(element)
   );
 }

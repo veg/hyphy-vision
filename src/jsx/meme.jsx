@@ -254,7 +254,6 @@ class MEMEContents extends React.Component {
           json={self.state.data}
           updatePValue={self.updatePValue}
           pValue={self.state.pValue}
-          hyphy_vision={self.props.hyphy_vision}
         />
         <MEMETable
           header={self.state.header}
@@ -300,8 +299,6 @@ function MEME(props) {
   return (
     <ResultsPage
       data={props.data}
-      fasta={props.fasta}
-      platform={props.platform}
       scrollSpyInfo={[
         { label: "summary", href: "summary-tab" },
         { label: "table", href: "table-tab" },
@@ -310,15 +307,23 @@ function MEME(props) {
         { label: "fits", href: "fit-tab" }
       ]}
       methodName="Mixed Effects Model of Evolution"
+      fasta={props.fasta}
+      originalFile={props.originalFile}
+      analysisLog={props.analysisLog}
     >
       {MEMEContents}
     </ResultsPage>
   );
 }
 
-function render_meme(data, fasta, platform, element) {
+function render_meme(data, fasta, element, originalFile, analysisLog) {
   ReactDOM.render(
-    <MEME data={data} fasta={fasta} platform={platform} />,
+    <MEME
+      data={data}
+      fasta={fasta}
+      originalFile={originalFile}
+      analysisLog={analysisLog}
+    />,
     document.getElementById(element)
   );
 }

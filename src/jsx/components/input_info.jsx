@@ -38,8 +38,7 @@ class InputInfo extends React.Component {
     var filename = is_full_path
       ? _.last(this.props.input_data["file name"].split("/"))
       : this.props.input_data["file name"];
-    var show_partition_button =
-      this.props.platform == "dataMonkey" && this.props.gard;
+    var show_partition_button = this.props.gard;
     return (
       <div className="row" id="input-info">
         <div className="col-md-8">
@@ -72,8 +71,7 @@ class InputInfo extends React.Component {
               className="dropdown-menu"
               aria-labelledby="dropdown-menu-button"
             >
-              {/* The options shown in the dropdown are highly platform dependent, hence the ternary sea below */}
-              {this.props.platform == "dataMonkey"
+              {this.props.originalFile
                 ? [
                     <li className="dropdown-item">
                       <a
@@ -83,7 +81,11 @@ class InputInfo extends React.Component {
                       >
                         Original file
                       </a>
-                    </li>,
+                    </li>
+                  ]
+                : null}
+              {this.props.analysisLog
+                ? [
                     <li className="dropdown-item">
                       <a href={window.location.href + "/log.txt/"}>
                         Analysis log
@@ -105,13 +107,9 @@ class InputInfo extends React.Component {
                   </a>
                 </li>
               ) : null}
-              {this.props.platform != "gui"
-                ? [
-                    <li className="dropdown-item">
-                      <a onClick={() => this.saveTheJSON()}>Save JSON</a>
-                    </li>
-                  ]
-                : null}
+              <li className="dropdown-item">
+                <a onClick={() => this.saveTheJSON()}>Save JSON</a>
+              </li>
               <li className="dropdown-item">
                 <a onClick={() => this.open("json")}>View JSON</a>
               </li>

@@ -17,7 +17,8 @@ function MethodHeader(props) {
           input_data={props.input_data}
           json={props.json}
           fasta={props.fasta}
-          platform={props.platform}
+          originalFile={props.originalFile}
+          analysisLog={props.analysisLog}
         />
       </div>
     </div>

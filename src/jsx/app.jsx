@@ -27,98 +27,157 @@ const base_url = is_electron ? path.dirname(path.dirname(href)) : "";
  *    1. Rendering the appliction (render_app is called from index.js).
  *    2. Routing between pages.
  */
-function HyPhyVision(props) {
-  // Corrects navbar offset when clicking anchor hash
-  var shiftWindow = function() {
-    scrollBy(0, -40);
-  };
-  if (location.hash) shiftWindow();
-  window.addEventListener("hashchange", shiftWindow);
+class HyPhyVision extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      data: false
+    };
+  }
 
-  return (
-    <BrowserRouter>
-      <div>
-        <NavBar />
-        {is_electron ? <Redirect to="/" /> : null}
-        <Route exact path="/" component={() => <Home />} />
-        <Route
-          path="/absrel"
-          component={() => (
-            <BSREL
-              data={
-                base_url +
-                "/data/json_files/absrel/hiv1_transmission.fna.ABSREL.json"
-              }
-              platform={"hyphyVision"}
-            />
-          )}
-        />
-        <Route
-          path="/busted"
-          component={() => (
-            <BUSTED
-              data={base_url + "/data/json_files/busted/ksr2.fna.BUSTED.json"}
-              platform={"hyphyVision"}
-            />
-          )}
-        />
-        <Route
-          path="/relax"
-          component={() => (
-            <RELAX
-              data={base_url + "/data/json_files/relax/pb2.fna.RELAX.json"}
-              platform={"hyphyVision"}
-            />
-          )}
-        />
-        <Route
-          path="/fel"
-          component={() => (
-            <FEL
-              data={base_url + "/data/json_files/fel/CD2.fna.FEL.json"}
-              platform={"hyphyVision"}
-            />
-          )}
-        />
-        <Route
-          path="/meme"
-          component={() => (
-            <MEME
-              data={base_url + "/data/json_files/meme/h3_trunk.fna.MEME.json"}
-              platform={"hyphyVision"}
-            />
-          )}
-        />
-        <Route
-          path="/slac"
-          component={() => (
-            <SLAC
-              data={base_url + "/data/json_files/slac/h3_trunk.fna.SLAC.json"}
-              platform={"hyphyVision"}
-            />
-          )}
-        />
-        <Route
-          path="/fubar"
-          component={() => (
-            <FUBAR
-              data={base_url + "/data/json_files/fubar/h3_trunk.fna.FUBAR.json"}
-              platform={"hyphyVision"}
-            />
-          )}
-        />
-        <Route
-          path="/gard"
-          component={() => (
-            <GARD
-              data={base_url + "/data/json_files/gard/GARD.json"}
-              platform={"hyphyVision"}
-            />
-          )}
-        />
-      </div>
-    </BrowserRouter>
-  );
+  componentDidMount() {
+    // Corrects navbar offset when clicking anchor hash
+    var shiftWindow = function() {
+      scrollBy(0, -40);
+    };
+    if (location.hash) shiftWindow();
+    window.addEventListener("hashchange", shiftWindow);
+  }
+
+  onFileChange = e => {
+    var self = this;
+    var files = e.target.files; // FileList object
+
+    if (files.length == 1) {
+      var f = files[0];
+      var reader = new FileReader();
+      reader.onload = (function(theFile) {
+        return function(e) {
+          var data = JSON.parse(this.result);
+          self.setDataToState(data);
+        };
+      })(f);
+      reader.readAsText(f);
+    }
+    e.preventDefault();
+  };
+
+  changeMethod = () => {
+    // Change state.data to false when the method is changed so that the default results file is loaded.
+    var self = this;
+    self.setState({ data: false });
+  };
+
+  setDataToState = data => {
+    var self = this;
+    self.setState({
+      data: data
+    });
+  };
+
+  render() {
+    return (
+      <BrowserRouter>
+        <div>
+          <NavBar
+            onFileChange={this.onFileChange}
+            changeMethod={this.changeMethod}
+          />
+          {is_electron ? <Redirect to="/" /> : null}
+          <Route exact path="/" component={() => <Home />} />
+          <Route
+            path="/absrel"
+            component={() => (
+              <BSREL
+                data={
+                  this.state.data ||
+                  base_url +
+                    "/data/json_files/absrel/hiv1_transmission.fna.ABSREL.json"
+                }
+              />
+            )}
+          />
+          <Route
+            path="/busted"
+            component={() => (
+              <BUSTED
+                data={
+                  this.state.data ||
+                  base_url + "/data/json_files/busted/ksr2.fna.BUSTED.json"
+                }
+              />
+            )}
+          />
+          <Route
+            path="/relax"
+            component={() => (
+              <RELAX
+                data={
+                  this.state.data ||
+                  base_url + "/data/json_files/relax/pb2.fna.RELAX.json"
+                }
+              />
+            )}
+          />
+          <Route
+            path="/fel"
+            component={() => (
+              <FEL
+                data={
+                  this.state.data ||
+                  base_url + "/data/json_files/fel/CD2.fna.FEL.json"
+                }
+              />
+            )}
+          />
+          <Route
+            path="/meme"
+            component={() => (
+              <MEME
+                data={
+                  this.state.data ||
+                  base_url + "/data/json_files/meme/h3_trunk.fna.MEME.json"
+                }
+              />
+            )}
+          />
+          <Route
+            path="/slac"
+            component={() => (
+              <SLAC
+                data={
+                  this.state.data ||
+                  base_url + "/data/json_files/slac/h3_trunk.fna.SLAC.json"
+                }
+              />
+            )}
+          />
+          <Route
+            path="/fubar"
+            component={() => (
+              <FUBAR
+                data={
+                  this.state.data ||
+                  base_url + "/data/json_files/fubar/h3_trunk.fna.FUBAR.json"
+                }
+              />
+            )}
+          />
+          <Route
+            path="/gard"
+            component={() => (
+              <GARD
+                data={
+                  this.state.data ||
+                  base_url + "/data/json_files/gard/GARD.json"
+                }
+              />
+            )}
+          />
+        </div>
+      </BrowserRouter>
+    );
+  }
 }
 
 function render_app() {

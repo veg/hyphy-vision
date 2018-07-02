@@ -496,23 +496,29 @@ function RELAX(props) {
   return (
     <ResultsPage
       data={props.data}
-      fasta={props.fasta}
-      platform={props.platform}
       scrollSpyInfo={[
         { label: "summary", href: "summary-tab" },
         { label: "fits", href: "fits-tab" },
         { label: "tree", href: "tree-tab" }
       ]}
       methodName="RELAX(ed selection test)"
+      fasta={props.fasta}
+      originalFile={props.originalFile}
+      analysisLog={props.analysisLog}
     >
       {RELAXContents}
     </ResultsPage>
   );
 }
 
-function render_relax(data, fasta, platform, element) {
+function render_relax(data, fasta, element, originalFile, analysisLog) {
   ReactDOM.render(
-    <RELAX data={data} fasta={fasta} platform={platform} />,
+    <RELAX
+      data={data}
+      fasta={fasta}
+      originalFile={originalFile}
+      analysisLog={analysisLog}
+    />,
     document.getElementById(element)
   );
 }

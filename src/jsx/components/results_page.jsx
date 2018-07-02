@@ -1,5 +1,4 @@
 import { ErrorMessage } from "./error_message.jsx";
-import { NavBar } from "./navbar.jsx";
 import { ScrollSpy } from "./scrollspy.jsx";
 import { MethodHeader } from "./methodheader.jsx";
 
@@ -26,50 +25,34 @@ class ResultsPage extends React.Component {
     // Decide if data is a URL or the results JSON
     if (typeof this.props.data == "string") {
       d3.json(this.props.data, function(data) {
-        self.setDataToState(data);
+        self.setState({ json: data });
       });
     } else if (typeof this.props.data == "object") {
-      self.setDataToState(self.props.data);
+      self.setState({ json: self.props.data });
     }
     this.enableBootstrapJavascript();
   }
 
   componentDidUpdate(prevProps, prevState) {
     var self = this;
-    if (
-      this.props.platform != "hyphyVision" &&
-      self.props.data != prevState.json
-    ) {
-      // Decide if data is a URL or the results JSON
-      if (typeof this.props.data == "string") {
-        d3.json(this.props.data, function(data) {
-          self.setDataToState(data);
-        });
-      } else if (typeof this.props.data == "object") {
-        self.setDataToState(self.props.data);
-      }
+    // Decide if data is a URL or the results JSON
+    var newData;
+    if (typeof this.props.data == "string") {
+      d3.json(this.props.data, function(data) {
+        //self.setState({ json: data });
+        newData = data;
+      });
+    } else if (typeof this.props.data == "object") {
+      //self.setState({ json: self.props.data })
+      newData = self.props.data;
+    }
+
+    if (newData != prevState.json) {
+      self.setState({ json: newData });
     }
 
     this.enableBootstrapJavascript();
   }
-
-  onFileChange = e => {
-    var self = this;
-    var files = e.target.files; // FileList object
-
-    if (files.length == 1) {
-      var f = files[0];
-      var reader = new FileReader();
-      reader.onload = (function(theFile) {
-        return function(e) {
-          var data = JSON.parse(this.result);
-          self.setDataToState(data);
-        };
-      })(f);
-      reader.readAsText(f);
-    }
-    e.preventDefault();
-  };
 
   setDataToState = data => {
     var self = this;
@@ -94,32 +77,26 @@ class ResultsPage extends React.Component {
     var self = this;
     if (!this.state.json) return <div />;
     return (
-      <div>
-        {this.props.platform == "hyphyVision" ? (
-          <NavBar onFileChange={this.onFileChange} />
-        ) : (
-          ""
-        )}
-        <div className="container">
-          <div className="row">
-            <ScrollSpy info={self.props.scrollSpyInfo} />
-            <div className="col-lg-12 col-xl-10">
-              <div className="results">
-                <ErrorMessage />
-                <div id="summary-tab">
-                  <MethodHeader
-                    methodName={this.props.methodName}
-                    input_data={this.state.json.input}
-                    json={this.state.json}
-                    fasta={this.props.fasta}
-                    platform={this.props.platform}
-                  />
-                </div>
+      <div className="container">
+        <div className="row">
+          <ScrollSpy info={self.props.scrollSpyInfo} />
+          <div className="col-lg-12 col-xl-10">
+            <div className="results">
+              <ErrorMessage />
+              <div id="summary-tab">
+                <MethodHeader
+                  methodName={this.props.methodName}
+                  input_data={this.state.json.input}
+                  json={this.state.json}
+                  fasta={this.props.fasta}
+                  originalFile={this.props.originalFile}
+                  analysisLog={this.props.analysisLog}
+                />
               </div>
-              {React.createElement(this.props.children, {
-                json: this.state.json
-              })}
             </div>
+            {React.createElement(this.props.children, {
+              json: this.state.json
+            })}
           </div>
         </div>
       </div>
@@ -128,7 +105,9 @@ class ResultsPage extends React.Component {
 }
 
 ResultsPage.defaultProps = {
-  fasta: false
+  fasta: false,
+  originalFile: false,
+  analysisLog: false
 };
 
 module.exports.ResultsPage = ResultsPage;

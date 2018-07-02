@@ -560,7 +560,6 @@ class FUBARContents extends React.Component {
           json={self.state.data}
           updatePosteriorProbability={self.updatePosteriorProbability}
           posteriorProbability={self.state.posteriorProbability}
-          hyphy_vision={self.props.hyphy_vision}
         />
 
         <FUBARViz
@@ -610,8 +609,6 @@ function FUBAR(props) {
   return (
     <ResultsPage
       data={props.data}
-      fasta={props.fasta}
-      platform={props.platform}
       scrollSpyInfo={[
         { label: "summary", href: "summary-tab" },
         { label: "plot", href: "plot-tab" },
@@ -620,15 +617,23 @@ function FUBAR(props) {
         { label: "fits", href: "fit-tab" }
       ]}
       methodName="Fast Unconstrained Bayesian AppRoximation"
+      fasta={props.fasta}
+      originalFile={props.originalFile}
+      analysisLog={props.analysisLog}
     >
       {FUBARContents}
     </ResultsPage>
   );
 }
 
-function render_fubar(data, fasta, platform, element) {
+function render_fubar(data, fasta, element, originalFile, analysisLog) {
   ReactDOM.render(
-    <FUBAR data={data} fasta={fasta} platform={platform} />,
+    <FUBAR
+      data={data}
+      fasta={fasta}
+      originalFile={originalFile}
+      analysisLog={analysisLog}
+    />,
     document.getElementById(element)
   );
 }
