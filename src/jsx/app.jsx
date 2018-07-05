@@ -82,96 +82,98 @@ class HyPhyVision extends React.Component {
             changeMethod={this.changeMethod}
           />
           {is_electron ? <Redirect to="/" /> : null}
-          <Route exact path="/" component={() => <Home />} />
-          <Route
-            path="/absrel"
-            component={() => (
-              <BSREL
-                data={
-                  this.state.data ||
-                  base_url +
-                    "/data/json_files/absrel/hiv1_transmission.fna.ABSREL.json"
-                }
-              />
-            )}
-          />
-          <Route
-            path="/busted"
-            component={() => (
-              <BUSTED
-                data={
-                  this.state.data ||
-                  base_url + "/data/json_files/busted/ksr2.fna.BUSTED.json"
-                }
-              />
-            )}
-          />
-          <Route
-            path="/relax"
-            component={() => (
-              <RELAX
-                data={
-                  this.state.data ||
-                  base_url + "/data/json_files/relax/pb2.fna.RELAX.json"
-                }
-              />
-            )}
-          />
-          <Route
-            path="/fel"
-            component={() => (
-              <FEL
-                data={
-                  this.state.data ||
-                  base_url + "/data/json_files/fel/CD2.fna.FEL.json"
-                }
-              />
-            )}
-          />
-          <Route
-            path="/meme"
-            component={() => (
-              <MEME
-                data={
-                  this.state.data ||
-                  base_url + "/data/json_files/meme/h3_trunk.fna.MEME.json"
-                }
-              />
-            )}
-          />
-          <Route
-            path="/slac"
-            component={() => (
-              <SLAC
-                data={
-                  this.state.data ||
-                  base_url + "/data/json_files/slac/h3_trunk.fna.SLAC.json"
-                }
-              />
-            )}
-          />
-          <Route
-            path="/fubar"
-            component={() => (
-              <FUBAR
-                data={
-                  this.state.data ||
-                  base_url + "/data/json_files/fubar/h3_trunk.fna.FUBAR.json"
-                }
-              />
-            )}
-          />
-          <Route
-            path="/gard"
-            component={() => (
-              <GARD
-                data={
-                  this.state.data ||
-                  base_url + "/data/json_files/gard/GARD.json"
-                }
-              />
-            )}
-          />
+          <div style={{ paddingTop: "70px" }}>
+            <Route exact path="/" component={() => <Home />} />
+            <Route
+              path="/absrel"
+              component={() => (
+                <BSREL
+                  data={
+                    this.state.data ||
+                    base_url +
+                      "/data/json_files/absrel/hiv1_transmission.fna.ABSREL.json"
+                  }
+                />
+              )}
+            />
+            <Route
+              path="/busted"
+              component={() => (
+                <BUSTED
+                  data={
+                    this.state.data ||
+                    base_url + "/data/json_files/busted/ksr2.fna.BUSTED.json"
+                  }
+                />
+              )}
+            />
+            <Route
+              path="/relax"
+              component={() => (
+                <RELAX
+                  data={
+                    this.state.data ||
+                    base_url + "/data/json_files/relax/pb2.fna.RELAX.json"
+                  }
+                />
+              )}
+            />
+            <Route
+              path="/fel"
+              component={() => (
+                <FEL
+                  data={
+                    this.state.data ||
+                    base_url + "/data/json_files/fel/CD2.fna.FEL.json"
+                  }
+                />
+              )}
+            />
+            <Route
+              path="/meme"
+              component={() => (
+                <MEME
+                  data={
+                    this.state.data ||
+                    base_url + "/data/json_files/meme/h3_trunk.fna.MEME.json"
+                  }
+                />
+              )}
+            />
+            <Route
+              path="/slac"
+              component={() => (
+                <SLAC
+                  data={
+                    this.state.data ||
+                    base_url + "/data/json_files/slac/h3_trunk.fna.SLAC.json"
+                  }
+                />
+              )}
+            />
+            <Route
+              path="/fubar"
+              component={() => (
+                <FUBAR
+                  data={
+                    this.state.data ||
+                    base_url + "/data/json_files/fubar/h3_trunk.fna.FUBAR.json"
+                  }
+                />
+              )}
+            />
+            <Route
+              path="/gard"
+              component={() => (
+                <GARD
+                  data={
+                    this.state.data ||
+                    base_url + "/data/json_files/gard/GARD.json"
+                  }
+                />
+              )}
+            />
+          </div>
         </div>
       </BrowserRouter>
     );

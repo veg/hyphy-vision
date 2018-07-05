@@ -22,7 +22,7 @@
   "main": "dist/hyphyvision.js",
   "version": "2.0.1",
   "dependencies": {
-    "alignment.js": "^1.0.5",
+    "alignment.js": "1.0.9",
     "bootstrap": "4.x",
     "chi-squared": "^1.1.0",
     "csvexport": "^1.0.2",
