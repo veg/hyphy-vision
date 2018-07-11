@@ -83,9 +83,9 @@ align-text@^0.1.1, align-text@^0.1.3:
     longest "^1.0.1"
     repeat-string "^1.5.2"
 
-alignment.js@1.0.9:
-  version "1.0.9"
-  resolved "https://registry.yarnpkg.com/alignment.js/-/alignment.js-1.0.9.tgz#93233785fb96a6d57fa22dd879beaffd8b108fdb"
+alignment.js@1.0.10:
+  version "1.0.10"
+  resolved "https://registry.yarnpkg.com/alignment.js/-/alignment.js-1.0.10.tgz#210adc78eea7e827f0c33a07f49b014477084240"
   dependencies:
     bootstrap "^4.1.1"
     d3 "^4.12.2"

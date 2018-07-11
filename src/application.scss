@@ -7,6 +7,8 @@
 
 @import url("https://use.fontawesome.com/releases/v5.0.9/css/all.css");
 
+@import "~alignment.js/lib/alignment.css";
+
 /* End Imports */
 /*----------------------------------------------------------------------------------------------------------------*/
 
@@ -28,7 +30,8 @@ $alert-info-bg: #eaf4f2;
   word-spacing: 1.5px;
 }
 
-.alert-dismissable, .alert-dismissible {
+.alert-dismissable,
+.alert-dismissible {
   padding: 20px 100px 20px 27px;
 }
 
@@ -45,7 +48,7 @@ $alert-info-bg: #eaf4f2;
 }
 
 .alert-dismissable .close:hover {
-  opacity: .85;
+  opacity: 0.85;
 }
 
 .alert > p + p {
@@ -80,7 +83,8 @@ $btn-primary-bg: $hyphy-green;
   background-color: $hyphy-green;
 }
 
-.btn-primary:focus, .btn-primary.focus {
+.btn-primary:focus,
+.btn-primary.focus {
   color: #fff;
   background-color: #049b8c;
 }
@@ -170,7 +174,8 @@ small {
 /**************************/
 /****** Site Content ******/
 /**************************/
-html, body {
+html,
+body {
   font-size: 14px;
   line-height: 1.5;
   margin: 0px 0px 50px 0px;
@@ -279,7 +284,8 @@ toolbar-dropdown::before {
 }
 
 /* Sizing classes must be here rather than on individual form elements. */
-.input-group {}
+.input-group {
+}
 
 /* TABLES */
 table {
@@ -314,9 +320,12 @@ table.dm-table > thead > th {
   text-align: center;
 }
 
-.table > thead > tr > th, .table > tbody > tr > th,
-.table > tfoot > tr > th, .table > thead > tr > td,
-.table > tbody > tr > td, .table > tfoot > tr > td,
+.table > thead > tr > th,
+.table > tbody > tr > th,
+.table > tfoot > tr > th,
+.table > thead > tr > td,
+.table > tbody > tr > td,
+.table > tfoot > tr > td,
 .table-condensed > tfoot > tr > td {
   font-family: "Noto Sans", sans-serif;
   text-align: center;
@@ -343,7 +352,8 @@ table.dm-table > thead > th {
   border-top: none;
 }
 
-th, td {
+th,
+td {
   font-weight: bold;
   text-align: center;
   padding: 15px 9px;
@@ -359,7 +369,8 @@ th, td {
   font-family: "Montserrat", sans-serif;
 }
 
-.panel-default > .panel-heading, .panel-body {
+.panel-default > .panel-heading,
+.panel-body {
   text-align: center;
   border: none;
 }
@@ -449,7 +460,9 @@ th, td {
   padding: 0px 12px;
 }
 
-.blue-badge, .white-badge, .red-badge {
+.blue-badge,
+.white-badge,
+.red-badge {
   border-radius: 12px;
   color: #fff;
   font-size: 11px;
@@ -507,7 +520,7 @@ w distribution graph in BUSTED*/
 }
 
 /* SLAC SLIDER */
-input[type=range] {
+input[type="range"] {
   width: 100%;
 }
 
@@ -553,7 +566,8 @@ tr.highlight {
 }
 
 /* aBSREL */
-.hyphy-omega-bar line, .hyphy-omega-bar path {
+.hyphy-omega-bar line,
+.hyphy-omega-bar path {
   fill: none;
   stroke: #000;
   shape-rendering: crispEdges;
@@ -564,7 +578,8 @@ tr.highlight {
   stroke-width: 6px;
 }
 
-.hyphy-axis path, .hyphy-axis line {
+.hyphy-axis path,
+.hyphy-axis line {
   fill: none;
   stroke: #000;
   shape-rendering: crispEdges;
@@ -584,7 +599,7 @@ tr.highlight {
 }
 
 .hyphy-neutral-line {
-  stroke-dasharray: 2,10;
+  stroke-dasharray: 2, 10;
   stroke: #000;
   stroke-width: 1px;
 }
@@ -657,7 +672,7 @@ tr.highlight {
 }
 
 .nav-pills a:hover {
-  color: #7EC6B3;
+  color: #7ec6b3;
 }
 
 .nav-pills > li.active > a {
@@ -666,7 +681,7 @@ tr.highlight {
 }
 
 .nav-pills > li.active > a:hover {
-  background-color: #7EC6B3;
+  background-color: #7ec6b3;
 }
 
 #summary-method-name {
@@ -677,9 +692,9 @@ tr.highlight {
 .dm-table-header {
   background-color: #00a99d;
   font-family: "Noto Sans";
-  background: linear-gradient(to right, #03AA9D, #7EC6B3);
+  background: linear-gradient(to right, #03aa9d, #7ec6b3);
   font-family: "Noto Sans";
-  color: #FFF;
+  color: #fff;
   text-align: center;
   padding: 12px 5px 13px 5px;
   font-family: "Noto Sans", sans-serif;
@@ -730,7 +745,7 @@ div#input-info p {
   background-color: #fff;
   border-style: solid;
   border-width: 3px;
-  border-color: #00A99D;
+  border-color: #00a99d;
   padding: 20px 20px 10px 20px;
 }
 
@@ -794,7 +809,8 @@ p.description {
 }
 
 // scrollspy links (active & hover)
-.nav-pills .nav-link.active, .nav-pills .show > .nav-link,
+.nav-pills .nav-link.active,
+.nav-pills .show > .nav-link,
 .nav-link:hover {
   color: $hyphy-green;
   border-color: $hyphy-green;
@@ -934,12 +950,12 @@ line.sep_line {
 
 circle.property2 {
   fill: #fff;
-  stroke: #FF0000;
+  stroke: #ff0000;
 }
 
 circle.property3 {
   fill: #fff;
-  stroke: #FF7400;
+  stroke: #ff7400;
 }
 
 circle.property4 {
@@ -949,7 +965,7 @@ circle.property4 {
 
 circle.property5 {
   fill: #fff;
-  stroke: #00CC00;
+  stroke: #00cc00;
 }
 
 .rule line {
@@ -985,7 +1001,7 @@ div.dc-chart {
 }
 
 .dc-chart rect.bar:hover {
-  fill-opacity: .5;
+  fill-opacity: 0.5;
 }
 
 .dc-chart rect.stack1 {
@@ -1010,7 +1026,7 @@ div.dc-chart {
 }
 
 .dc-chart .pie-slice :hover {
-  fill-opacity: .8;
+  fill-opacity: 0.8;
 }
 
 .dc-chart .selected path {
@@ -1021,11 +1037,12 @@ div.dc-chart {
 
 .dc-chart .deselected path {
   stroke: none;
-  fill-opacity: .5;
+  fill-opacity: 0.5;
   fill: #ccc;
 }
 
-.axis line, .dc-chart .axis path {
+.axis line,
+.dc-chart .axis path {
   fill: none;
   stroke: #000;
   shape-rendering: crispEdges;
@@ -1035,10 +1052,11 @@ div.dc-chart {
   font: 10px sans-serif;
 }
 
-.dc-chart .grid-line, .dc-chart .grid-line line {
+.dc-chart .grid-line,
+.dc-chart .grid-line line {
   fill: none;
   stroke: #ccc;
-  opacity: .5;
+  opacity: 0.5;
   shape-rendering: crispEdges;
 }
 
@@ -1048,7 +1066,7 @@ div.dc-chart {
 
 .dc-chart .brush rect.extent {
   fill: #4682b4;
-  fill-opacity: .125;
+  fill-opacity: 0.125;
 }
 
 .dc-chart .brush .resize path {
@@ -1068,21 +1086,21 @@ div.dc-chart {
 .dc-chart g.dc-tooltip path {
   fill: none;
   stroke: grey;
-  stroke-opacity: .8;
+  stroke-opacity: 0.8;
 }
 
 .dc-chart path.area {
-  fill-opacity: .3;
+  fill-opacity: 0.3;
   stroke: none;
 }
 
 .dc-chart .node {
-  font-size: .7em;
+  font-size: 0.7em;
   cursor: pointer;
 }
 
 .dc-chart .node :hover {
-  fill-opacity: .8;
+  fill-opacity: 0.8;
 }
 
 .dc-chart .selected circle {
@@ -1093,13 +1111,13 @@ div.dc-chart {
 
 .dc-chart .deselected circle {
   stroke: none;
-  fill-opacity: .5;
+  fill-opacity: 0.5;
   fill: #ccc;
 }
 
 .dc-chart .bubble {
   stroke: none;
-  fill-opacity: .6;
+  fill-opacity: 0.6;
 }
 
 .dc-data-count {
@@ -1108,7 +1126,8 @@ div.dc-chart {
   margin-right: 15px;
 }
 
-.dc-data-count .filter-count, .dc-data-count .total-count {
+.dc-data-count .filter-count,
+.dc-data-count .total-count {
   color: #3182bd;
   font-weight: 700;
 }
@@ -1118,7 +1137,7 @@ div.dc-chart {
 }
 
 .dc-chart g.state :hover {
-  fill-opacity: .8;
+  fill-opacity: 0.8;
 }
 
 .dc-chart g.state path {
@@ -1140,16 +1159,16 @@ div.dc-chart {
 
 .dc-chart g.debug rect {
   fill: #00f;
-  fill-opacity: .2;
+  fill-opacity: 0.2;
 }
 
 .dc-chart g.row rect {
-  fill-opacity: .8;
+  fill-opacity: 0.8;
   cursor: pointer;
 }
 
 .dc-chart g.row rect:hover {
-  fill-opacity: .6;
+  fill-opacity: 0.6;
 }
 
 .dc-chart g.row text {
@@ -1158,7 +1177,8 @@ div.dc-chart {
   cursor: pointer;
 }
 
-.dc-chart .highlight, .dc-chart path.highlight {
+.dc-chart .highlight,
+.dc-chart path.highlight {
   fill-opacity: 1;
   stroke-opacity: 1;
 }
@@ -1185,13 +1205,13 @@ div.dc-chart {
 }
 
 .dc-chart .fadeout {
-  fill-opacity: .2;
-  stroke-opacity: .2;
+  fill-opacity: 0.2;
+  stroke-opacity: 0.2;
 }
 
 .dc-chart path.dc-symbol {
-  fill-opacity: .5;
-  stroke-opacity: .5;
+  fill-opacity: 0.5;
+  stroke-opacity: 0.5;
 }
 
 .dc-hard .number-display {
@@ -1199,7 +1219,7 @@ div.dc-chart {
 }
 
 .tree-selection-brush .extent {
-  fill-opacity: .05;
+  fill-opacity: 0.05;
   stroke: #fff;
   shape-rendering: crispEdges;
 }
@@ -1215,14 +1235,18 @@ div.dc-chart {
   shape-rendering: crispEdges;
 }
 
-.node circle, .node ellipse, .node rect {
+.node circle,
+.node ellipse,
+.node rect {
   fill: steelblue;
   stroke: black;
   stroke-width: 0.5px;
 }
 
-.internal-node circle, .internal-node ellipse, .internal-node rect {
-  fill: #CCC;
+.internal-node circle,
+.internal-node ellipse,
+.internal-node rect {
+  fill: #ccc;
   stroke: black;
   stroke-width: 0.5px;
 }
@@ -1235,7 +1259,9 @@ div.dc-chart {
   fill: #f00;
 }
 
-.node-collapsed circle, .node-collapsed ellipse, .node-collapsed rect {
+.node-collapsed circle,
+.node-collapsed ellipse,
+.node-collapsed rect {
   fill: black;
 }
 
@@ -1263,13 +1289,13 @@ div.dc-chart {
 
 .branch-tagged {
   stroke: #00f;
-  stroke-dasharray: 10,5;
+  stroke-dasharray: 10, 5;
   stroke-width: 2px;
 }
 
 .branch-tracer {
   stroke: #bbb;
-  stroke-dasharray: 3,4;
+  stroke-dasharray: 3, 4;
   stroke-width: 1px;
 }
 
@@ -1282,9 +1308,11 @@ div.dc-chart {
   stroke-width: 10px;
 }
 
-.internal-node circle:hover, .internal-node ellipse:hover, .internal-node rect:hover {
+.internal-node circle:hover,
+.internal-node ellipse:hover,
+.internal-node rect:hover {
   fill: black;
-  stroke: #CCC;
+  stroke: #ccc;
 }
 
 .tree-widget {
@@ -1369,11 +1397,11 @@ li.active > a:hover {
 
 .brush .extent {
   stroke: #fff;
-  fill-opacity: .125;
+  fill-opacity: 0.125;
   shape-rendering: crispEdges;
 }
 
-input[type=range] {
+input[type="range"] {
   /*removes default webkit styles*/
   -webkit-appearance: none;
 
@@ -1384,7 +1412,7 @@ input[type=range] {
   width: 300px;
 }
 
-input[type=range]::-webkit-slider-runnable-track {
+input[type="range"]::-webkit-slider-runnable-track {
   width: 300px;
   height: 5px;
   background: #ddd;
@@ -1392,7 +1420,7 @@ input[type=range]::-webkit-slider-runnable-track {
   border-radius: 3px;
 }
 
-input[type=range]::-webkit-slider-thumb {
+input[type="range"]::-webkit-slider-thumb {
   -webkit-appearance: none;
   border: none;
   height: 16px;
@@ -1402,15 +1430,15 @@ input[type=range]::-webkit-slider-thumb {
   margin-top: -4px;
 }
 
-input[type=range]:focus {
+input[type="range"]:focus {
   outline: none;
 }
 
-input[type=range]:focus::-webkit-slider-runnable-track {
+input[type="range"]:focus::-webkit-slider-runnable-track {
   background: #ccc;
 }
 
-input[type=range]::-moz-range-track {
+input[type="range"]::-moz-range-track {
   width: 300px;
   height: 5px;
   background: #ddd;
@@ -1418,7 +1446,7 @@ input[type=range]::-moz-range-track {
   border-radius: 3px;
 }
 
-input[type=range]::-moz-range-thumb {
+input[type="range"]::-moz-range-thumb {
   border: none;
   height: 16px;
   width: 16px;
@@ -1427,12 +1455,12 @@ input[type=range]::-moz-range-thumb {
 }
 
 /*hide the outline behind the border*/
-input[type=range]:-moz-focusring {
+input[type="range"]:-moz-focusring {
   outline: 1px solid white;
   outline-offset: -1px;
 }
 
-input[type=range]::-ms-track {
+input[type="range"]::-ms-track {
   width: 300px;
   height: 5px;
 
@@ -1447,17 +1475,17 @@ input[type=range]::-ms-track {
   color: transparent;
 }
 
-input[type=range]::-ms-fill-lower {
+input[type="range"]::-ms-fill-lower {
   background: #777;
   border-radius: 10px;
 }
 
-input[type=range]::-ms-fill-upper {
+input[type="range"]::-ms-fill-upper {
   background: #ddd;
   border-radius: 10px;
 }
 
-input[type=range]::-ms-thumb {
+input[type="range"]::-ms-thumb {
   border: none;
   height: 16px;
   width: 16px;
@@ -1465,11 +1493,11 @@ input[type=range]::-ms-thumb {
   background: #00a99d;
 }
 
-input[type=range]:focus::-ms-fill-lower {
+input[type="range"]:focus::-ms-fill-lower {
   background: #888;
 }
 
-input[type=range]:focus::-ms-fill-upper {
+input[type="range"]:focus::-ms-fill-upper {
   background: #ccc;
 }
 
@@ -1484,7 +1512,7 @@ input[type=range]:focus::-ms-fill-upper {
 
 .positive-selection-row {
   color: white;
-  background-color: #00A99D;
+  background-color: #00a99d;
   text-align: center;
 }
 
@@ -1662,10 +1690,12 @@ input[type="file"] {
   cursor: pointer;
 }
 
-.input-group-btn, .btn-group-toggle {
+.input-group-btn,
+.btn-group-toggle {
   display: inline-block;
 }
 
-.btn-sm, .btn-group-sm > .btn {
+.btn-sm,
+.btn-group-sm > .btn {
   font-size: 1rem;
 }
