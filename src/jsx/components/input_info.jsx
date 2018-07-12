@@ -125,7 +125,10 @@ class InputInfo extends React.Component {
           aria-labelledby="myModalLabel"
         >
           <div className="modal-dialog" role="document">
-            <div className="modal-content" style={{ width: "50rem" }}>
+            <div
+              className="modal-content"
+              style={{ width: "850px", height: "550px" }}
+            >
               <div className="modal-header">
                 <h4 className="modal-title" id="myModalLabel">
                   {this.state.showModal == "json"
