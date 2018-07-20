@@ -435,10 +435,7 @@ class GARDContents extends React.Component {
     return (
       <div>
         <ErrorMessage />
-        <GARDResults
-          data={this.state.data}
-          hyphy_vision={this.props.hyphy_vision}
-        />
+        <GARDResults data={this.state.data} />
         <GARDRecombinationReport data={this.state.data} />
         <GARDTopologyReport data={this.state.data} />
         <GARDSiteGraph data={this.state.data} />
@@ -466,7 +463,6 @@ function GARD(props) {
   return (
     <ResultsPage
       data={props.data}
-      hyphy_vision={props.hyphy_vision}
       scrollSpyInfo={[
         { label: "summary", href: "summary-tab" },
         { label: "report", href: "report-tab" },
@@ -475,23 +471,26 @@ function GARD(props) {
         { label: "tree", href: "tree-tab" }
       ]}
       methodName="Genetic Algorithm for Recombination Detection"
+      fasta={props.fasta}
+      originalFile={props.originalFile}
+      analysisLog={props.analysisLog}
     >
       {GARDContents}
     </ResultsPage>
   );
 }
 
-function render_gard(url, element) {
-  ReactDOM.render(<GARD url={url} />, document.getElementById(element));
-}
-
-function render_hv_gard(url, element) {
+function render_gard(url, fasta, element, originalFile, analysisLog) {
   ReactDOM.render(
-    <GARD url={url} hyphy_vision />,
+    <GARD
+      url={url}
+      fasta={fasta}
+      originalFile={originalFile}
+      analysisLog={analysisLog}
+    />,
     document.getElementById(element)
   );
 }
 
 module.exports = render_gard;
-module.exports.hv = render_hv_gard;
 module.exports.GARD = GARD;

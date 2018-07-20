@@ -20,9 +20,9 @@
     "url": "git://github.com/veg/hyphy-vision.git"
   },
   "main": "dist/hyphyvision.js",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "dependencies": {
-    "alignment.js": "^1.0.5",
+    "alignment.js": "1.0.10",
     "bootstrap": "4.x",
     "chi-squared": "^1.1.0",
     "csvexport": "^1.0.2",
@@ -114,6 +114,7 @@
     "dist/hyphyvision.js",
     "dist/hyphyvision.css",
     "dist/hyphyvision.min.js",
-    "dist/hyphyvision-min.map"
+    "dist/hyphyvision-min.map",
+    "dist/application.scss"
   ]
 }

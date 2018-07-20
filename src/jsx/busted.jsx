@@ -994,30 +994,32 @@ function BUSTED(props) {
   return (
     <ResultsPage
       data={props.data}
-      hyphy_vision={props.hyphy_vision}
       scrollSpyInfo={[
         { label: "summary", href: "summary-div" },
         { label: "model statistics", href: "hyphy-model-fits" },
         { label: "tree", href: "phylogenetic-tree" }
       ]}
       methodName="Branch-site Unrestricted Statistical Test for Episodic Diversification"
+      fasta={props.fasta}
+      originalFile={props.originalFile}
+      analysisLog={props.analysisLog}
     >
       {BUSTEDContents}
     </ResultsPage>
   );
 }
 
-var render_busted = function(data, element) {
-  ReactDOM.render(<BUSTED data={data} />, document.getElementById(element));
-};
-
-var render_hv_busted = function(data, element) {
+var render_busted = function(data, fasta, element, originalFile, analysisLog) {
   ReactDOM.render(
-    <BUSTED data={data} hyphy_vision />,
+    <BUSTED
+      data={data}
+      fasta={fasta}
+      originalFile={originalFile}
+      analysisLog={analysisLog}
+    />,
     document.getElementById(element)
   );
 };
 
 module.exports = render_busted;
-module.exports.hv = render_hv_busted;
 module.exports.BUSTED = BUSTED;

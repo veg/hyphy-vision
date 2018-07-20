@@ -536,7 +536,6 @@ function FEL(props) {
   return (
     <ResultsPage
       data={props.data}
-      hyphy_vision={props.hyphy_vision}
       scrollSpyInfo={[
         { label: "summary", href: "summary-tab" },
         { label: "table", href: "table-tab" },
@@ -545,23 +544,26 @@ function FEL(props) {
         { label: "fits", href: "fits-tab" }
       ]}
       methodName="Fixed Effects Likelihood"
+      fasta={props.fasta}
+      originalFile={props.originalFile}
+      analysisLog={props.analysisLog}
     >
       {FELContents}
     </ResultsPage>
   );
 }
 
-function render_fel(data, element) {
-  ReactDOM.render(<FEL data={data} />, document.getElementById(element));
-}
-
-function render_hv_fel(data, element) {
+function render_fel(data, fasta, element, originalFile, analysisLog) {
   ReactDOM.render(
-    <FEL data={data} hyphy_vision />,
+    <FEL
+      data={data}
+      fasta={fasta}
+      originalFile={originalFile}
+      analysisLog={analysisLog}
+    />,
     document.getElementById(element)
   );
 }
 
 module.exports = render_fel;
-module.exports.hv = render_hv_fel;
 module.exports.FEL = FEL;
