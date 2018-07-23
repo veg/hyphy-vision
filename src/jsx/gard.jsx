@@ -480,10 +480,10 @@ function GARD(props) {
   );
 }
 
-function render_gard(url, fasta, element, originalFile, analysisLog) {
+function render_gard(data, element, fasta, originalFile, analysisLog) {
   ReactDOM.render(
     <GARD
-      url={url}
+      data={data}
       fasta={fasta}
       originalFile={originalFile}
       analysisLog={analysisLog}

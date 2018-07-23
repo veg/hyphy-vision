@@ -511,7 +511,7 @@ function RELAX(props) {
   );
 }
 
-function render_relax(data, fasta, element, originalFile, analysisLog) {
+function render_relax(data, element, fasta, originalFile, analysisLog) {
   ReactDOM.render(
     <RELAX
       data={data}

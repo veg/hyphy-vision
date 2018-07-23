@@ -508,7 +508,7 @@ function BSREL(props) {
   );
 }
 
-function render_absrel(data, fasta, element, originalFile, analysisLog) {
+function render_absrel(data, element, fasta, originalFile, analysisLog) {
   ReactDOM.render(
     <BSREL
       data={data}

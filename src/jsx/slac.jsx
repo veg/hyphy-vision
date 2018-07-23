@@ -1429,7 +1429,7 @@ function SLAC(props) {
 
 // Will need to make a call to this
 // omega distributions
-function render_slac(data, fasta, element, originalFile, analysisLog) {
+function render_slac(data, element, fasta, originalFile, analysisLog) {
   ReactDOM.render(
     <SLAC
       data={data}

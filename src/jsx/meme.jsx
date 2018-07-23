@@ -316,7 +316,7 @@ function MEME(props) {
   );
 }
 
-function render_meme(data, fasta, element, originalFile, analysisLog) {
+function render_meme(data, element, fasta, originalFile, analysisLog) {
   ReactDOM.render(
     <MEME
       data={data}
