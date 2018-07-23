@@ -19,6 +19,7 @@ const href = window.location.href;
 const is_electron = href.slice(0, 4) == "file";
 const base_url = is_electron ? path.dirname(path.dirname(href)) : "";
 
+const fasta = require("../../data/fasta.json");
 /**
  * HyPhyVision is the main component of the stand-alone HyPhy-Vision application (both web and electron).
  * This component is primarily responsible for:
@@ -97,6 +98,18 @@ class HyPhyVision extends React.Component {
               )}
             />
             <Route
+              path="/absrel-fasta"
+              component={() => (
+                <BSREL
+                  data={
+                    this.state.data ||
+                    base_url + "/data/json_files/absrel/CD2.fna.ABSREL.json"
+                  }
+                  fasta={fasta.CD2}
+                />
+              )}
+            />
+            <Route
               path="/busted"
               component={() => (
                 <BUSTED
@@ -104,6 +117,18 @@ class HyPhyVision extends React.Component {
                     this.state.data ||
                     base_url + "/data/json_files/busted/ksr2.fna.BUSTED.json"
                   }
+                />
+              )}
+            />
+            <Route
+              path="/busted-fasta"
+              component={() => (
+                <BUSTED
+                  data={
+                    this.state.data ||
+                    base_url + "/data/json_files/busted/CD2.fna.BUSTED.json"
+                  }
+                  fasta={fasta.CD2}
                 />
               )}
             />
@@ -119,6 +144,18 @@ class HyPhyVision extends React.Component {
               )}
             />
             <Route
+              path="/relax-fasta"
+              component={() => (
+                <RELAX
+                  data={
+                    this.state.data ||
+                    base_url + "/data/json_files/relax/CD2.fna.RELAX.json"
+                  }
+                  fasta={fasta.CD2}
+                />
+              )}
+            />
+            <Route
               path="/fel"
               component={() => (
                 <FEL
@@ -126,6 +163,18 @@ class HyPhyVision extends React.Component {
                     this.state.data ||
                     base_url + "/data/json_files/fel/CD2.fna.FEL.json"
                   }
+                />
+              )}
+            />
+            <Route
+              path="/fel-fasta"
+              component={() => (
+                <FEL
+                  data={
+                    this.state.data ||
+                    base_url + "/data/json_files/fel/CD2.fna.FEL.json"
+                  }
+                  fasta={fasta.CD2}
                 />
               )}
             />
@@ -141,6 +190,18 @@ class HyPhyVision extends React.Component {
               )}
             />
             <Route
+              path="/meme-fasta"
+              component={() => (
+                <MEME
+                  data={
+                    this.state.data ||
+                    base_url + "/data/json_files/meme/CD2.fna.MEME.json"
+                  }
+                  fasta={fasta.CD2}
+                />
+              )}
+            />
+            <Route
               path="/slac"
               component={() => (
                 <SLAC
@@ -148,6 +209,18 @@ class HyPhyVision extends React.Component {
                     this.state.data ||
                     base_url + "/data/json_files/slac/h3_trunk.fna.SLAC.json"
                   }
+                />
+              )}
+            />
+            <Route
+              path="/slac-fasta"
+              component={() => (
+                <SLAC
+                  data={
+                    this.state.data ||
+                    base_url + "/data/json_files/slac/CD2.fna.SLAC.json"
+                  }
+                  fasta={fasta.CD2}
                 />
               )}
             />
@@ -163,6 +236,18 @@ class HyPhyVision extends React.Component {
               )}
             />
             <Route
+              path="/fubar-fasta"
+              component={() => (
+                <FUBAR
+                  data={
+                    this.state.data ||
+                    base_url + "/data/json_files/fubar/CD2.fna.FUBAR.json"
+                  }
+                  fasta={fasta.CD2}
+                />
+              )}
+            />
+            <Route
               path="/gard"
               component={() => (
                 <GARD
@@ -170,6 +255,18 @@ class HyPhyVision extends React.Component {
                     this.state.data ||
                     base_url + "/data/json_files/gard/GARD.json"
                   }
+                />
+              )}
+            />
+            <Route
+              path="/gard-fasta"
+              component={() => (
+                <GARD
+                  data={
+                    this.state.data ||
+                    base_url + "/data/json_files/gard/CD2.fasta.GARD.json"
+                  }
+                  fasta={fasta.CD2}
                 />
               )}
             />
