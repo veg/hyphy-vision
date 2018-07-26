@@ -553,7 +553,7 @@ function FEL(props) {
   );
 }
 
-function render_fel(data, fasta, element, originalFile, analysisLog) {
+function render_fel(data, element, fasta, originalFile, analysisLog) {
   ReactDOM.render(
     <FEL
       data={data}

@@ -1009,7 +1009,7 @@ function BUSTED(props) {
   );
 }
 
-var render_busted = function(data, fasta, element, originalFile, analysisLog) {
+var render_busted = function(data, element, fasta, originalFile, analysisLog) {
   ReactDOM.render(
     <BUSTED
       data={data}

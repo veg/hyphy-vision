@@ -626,7 +626,7 @@ function FUBAR(props) {
   );
 }
 
-function render_fubar(data, fasta, element, originalFile, analysisLog) {
+function render_fubar(data, element, fasta, originalFile, analysisLog) {
   ReactDOM.render(
     <FUBAR
       data={data}
