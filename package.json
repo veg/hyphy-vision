@@ -20,7 +20,7 @@
     "url": "git://github.com/veg/hyphy-vision.git"
   },
   "main": "dist/hyphyvision.js",
-  "version": "2.0.1",
+  "version": "2.1.0",
   "dependencies": {
     "alignment.js": "1.0.10",
     "bootstrap": "4.x",
@@ -102,6 +102,8 @@
     "webpack-eslint-plugin": "^1.2.0"
   },
   "scripts": {
+    "build": "webpack",
+    "build:library": "webpack --config webpack.config.library.js",
     "lint": "eslint --ext .js,.jsx --ignore-pattern public,static,dist ./src/",
     "jest": "node ./node_modules/jest-cli/bin/jest.js",
     "start": "node_modules/.bin/webpack-dev-server --open",
