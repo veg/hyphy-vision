@@ -23,6 +23,7 @@ var Hamburger = React.createClass({
 
 var Methods = React.createClass({
   render: function() {
+    var self = this;
     return (
       <div className="dropdown toolbar-dropdown">
         <button
@@ -35,28 +36,44 @@ var Methods = React.createClass({
         </button>
         <ul className="dropdown-menu">
           <li>
-            <Link to="../absrel">aBSREL</Link>
+            <Link onClick={() => self.props.changeMethod()} to="../absrel">
+              aBSREL
+            </Link>
           </li>
           <li>
-            <Link to="../relax">RELAX</Link>
+            <Link onClick={() => self.props.changeMethod()} to="../relax">
+              RELAX
+            </Link>
           </li>
           <li>
-            <Link to="../busted">BUSTED</Link>
+            <Link onClick={() => self.props.changeMethod()} to="../busted">
+              BUSTED
+            </Link>
           </li>
           <li>
-            <Link to="../slac">SLAC</Link>
+            <Link onClick={() => self.props.changeMethod()} to="../slac">
+              SLAC
+            </Link>
           </li>
           <li>
-            <Link to="../fel">FEL</Link>
+            <Link onClick={() => self.props.changeMethod()} to="../fel">
+              FEL
+            </Link>
           </li>
           <li>
-            <Link to="../meme">MEME</Link>
+            <Link onClick={() => self.props.changeMethod()} to="../meme">
+              MEME
+            </Link>
           </li>
           <li>
-            <Link to="../fubar">FUBAR</Link>
+            <Link onClick={() => self.props.changeMethod()} to="../fubar">
+              FUBAR
+            </Link>
           </li>
           <li>
-            <Link to="../gard">GARD</Link>
+            <Link onClick={() => self.props.changeMethod()} to="../gard">
+              GARD
+            </Link>
           </li>
           <li role="separator" className="divider" />
           <li>
@@ -98,7 +115,7 @@ var NavBar = React.createClass({
 
           <div className="collapse navbar-collapse" id="navbarSupportedContent">
             <ul className="navbar-nav ml-auto">
-              <Methods />
+              <Methods changeMethod={self.props.changeMethod} />
               {this.props.onFileChange ? (
                 <a
                   className="nav-button"

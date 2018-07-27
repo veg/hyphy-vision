@@ -1284,7 +1284,6 @@ class SLACContents extends React.Component {
             pValue={self.state.pValue}
             pAdjuster={_.bind(self.dm_adjustPvalue, self)}
             input_data={self.state.input_data}
-            hyphy_vision={self.props.hyphy_vision}
           />
 
           <div className="row hidden-print">
@@ -1411,7 +1410,6 @@ function SLAC(props) {
   return (
     <ResultsPage
       data={props.data}
-      hyphy_vision={props.hyphy_vision}
       scrollSpyInfo={[
         { label: "summary", href: "slac-summary" },
         { label: "information", href: "datamonkey-slac-tree-summary" },
@@ -1420,6 +1418,9 @@ function SLAC(props) {
         { label: "tree", href: "tree-tab" }
       ]}
       methodName="Single-Likelihood Ancestor Counting"
+      fasta={props.fasta}
+      originalFile={props.originalFile}
+      analysisLog={props.analysisLog}
     >
       {SLACContents}
     </ResultsPage>
@@ -1428,17 +1429,17 @@ function SLAC(props) {
 
 // Will need to make a call to this
 // omega distributions
-function render_slac(data, element) {
-  ReactDOM.render(<SLAC data={data} />, document.getElementById(element));
-}
-
-function render_hv_slac(data, element) {
+function render_slac(data, element, fasta, originalFile, analysisLog) {
   ReactDOM.render(
-    <SLAC data={data} hyphy_vision />,
+    <SLAC
+      data={data}
+      fasta={fasta}
+      originalFile={originalFile}
+      analysisLog={analysisLog}
+    />,
     document.getElementById(element)
   );
 }
 
 module.exports = render_slac;
-module.exports.hv = render_hv_slac;
 module.exports.SLAC = SLAC;

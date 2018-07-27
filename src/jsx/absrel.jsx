@@ -430,7 +430,6 @@ class BSRELContents extends React.Component {
           pmid={self.state.pmid}
           input_data={self.state.input_data}
           json={self.state.json}
-          hyphy_vision={self.props.hyphy_vision}
         />
 
         <div id="hyphy-tree-summary" className="row">
@@ -493,7 +492,6 @@ function BSREL(props) {
   return (
     <ResultsPage
       data={props.data}
-      hyphy_vision={props.hyphy_vision}
       scrollSpyInfo={[
         { label: "summary", href: "summary-tab" },
         { label: "tree", href: "hyphy-tree-summary" },
@@ -501,23 +499,26 @@ function BSREL(props) {
         { label: "model fits", href: "hyphy-model-fits" }
       ]}
       methodName="adaptive Branch Site REL"
+      fasta={props.fasta}
+      originalFile={props.originalFile}
+      analysisLog={props.analysisLog}
     >
       {BSRELContents}
     </ResultsPage>
   );
 }
 
-function render_absrel(data, element) {
-  ReactDOM.render(<BSREL data={data} />, document.getElementById(element));
-}
-
-function render_hv_absrel(data, element) {
+function render_absrel(data, element, fasta, originalFile, analysisLog) {
   ReactDOM.render(
-    <BSREL data={data} hyphy_vision={true} />,
+    <BSREL
+      data={data}
+      fasta={fasta}
+      originalFile={originalFile}
+      analysisLog={analysisLog}
+    />,
     document.getElementById(element)
   );
 }
 
 module.exports = render_absrel;
-module.exports.hv = render_hv_absrel;
 module.exports.BSREL = BSREL;

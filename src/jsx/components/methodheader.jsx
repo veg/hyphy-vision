@@ -16,7 +16,9 @@ function MethodHeader(props) {
         <InputInfo
           input_data={props.input_data}
           json={props.json}
-          hyphy_vision={props.hyphy_vision}
+          fasta={props.fasta}
+          originalFile={props.originalFile}
+          analysisLog={props.analysisLog}
         />
       </div>
     </div>

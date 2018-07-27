@@ -1,9 +1,9 @@
 require("font-awesome/css/font-awesome.css");
-require("./application.scss");
 require("./hyphyvision.css");
 require("./fade/FADE.css");
 require("bootstrap");
 require("./datamonkey/datamonkey.js");
+require("./application.scss");
 
 import render_app from "./jsx/app.jsx";
 

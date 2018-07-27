@@ -12,39 +12,33 @@ class InputInfo extends React.Component {
     super(props);
     this.state = {
       showModal: false,
-      fasta: ""
+      fasta: false
     };
   }
+
   close() {
     this.setState({ showModal: false });
   }
+
   open(content) {
     this.setState({ showModal: content });
     $("#myModal").modal("show");
   }
+
   saveTheJSON() {
     var blob = new Blob([pd.json(this.props.json)], {
       type: "text/json:charset=utf-8;"
     });
     saveAs(blob, "result.json");
   }
-  componentDidMount() {
-    const self = this;
-    if (!this.props.hyphy_vision) {
-      d3.json(window.location.href + "/fasta", (err, data) => {
-        self.setState({ fasta: data.fasta });
-      });
-    }
-  }
+
   render() {
     if (!this.props.input_data) return <div />;
-    var is_full_path = this.props.input_data["file name"].indexOf("/") != -1,
-      filename = is_full_path
-        ? _.last(this.props.input_data["file name"].split("/"))
-        : this.props.input_data["file name"],
-      on_datamonkey = !this.props.hyphy_vision,
-      show_partition_button = on_datamonkey && this.props.gard,
-      fasta = this.state.fasta;
+    var is_full_path = this.props.input_data["file name"].indexOf("/") != -1;
+    var filename = is_full_path
+      ? _.last(this.props.input_data["file name"].split("/"))
+      : this.props.input_data["file name"];
+    var show_partition_button = this.props.gard;
     return (
       <div className="row" id="input-info">
         <div className="col-md-8">
@@ -77,7 +71,7 @@ class InputInfo extends React.Component {
               className="dropdown-menu"
               aria-labelledby="dropdown-menu-button"
             >
-              {on_datamonkey
+              {this.props.originalFile
                 ? [
                     <li className="dropdown-item">
                       <a
@@ -87,12 +81,20 @@ class InputInfo extends React.Component {
                       >
                         Original file
                       </a>
-                    </li>,
+                    </li>
+                  ]
+                : null}
+              {this.props.analysisLog
+                ? [
                     <li className="dropdown-item">
                       <a href={window.location.href + "/log.txt/"}>
                         Analysis log
                       </a>
-                    </li>,
+                    </li>
+                  ]
+                : null}
+              {this.props.fasta
+                ? [
                     <li className="dropdown-item">
                       <a onClick={() => this.open("msa")}>View MSA</a>
                     </li>
@@ -123,7 +125,10 @@ class InputInfo extends React.Component {
           aria-labelledby="myModalLabel"
         >
           <div className="modal-dialog" role="document">
-            <div className="modal-content" style={{ width: "50rem" }}>
+            <div
+              className="modal-content"
+              style={{ width: "850px", height: "550px" }}
+            >
               <div className="modal-header">
                 <h4 className="modal-title" id="myModalLabel">
                   {this.state.showModal == "json"
@@ -149,7 +154,11 @@ class InputInfo extends React.Component {
                   />
                 ) : null}
                 {this.state.showModal == "msa" ? (
-                  <Alignment fasta={fasta} width={800} height={500} />
+                  <Alignment
+                    fasta={this.props.fasta}
+                    width={800}
+                    height={500}
+                  />
                 ) : null}
               </div>
               <div className="modal-footer">
