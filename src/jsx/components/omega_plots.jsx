@@ -5,6 +5,28 @@ var _ = require("underscore");
 var d3_save_svg = require("d3-save-svg");
 
 var OmegaPlot = React.createClass({
+  componentDidMount: function() {
+    this.initialize();
+  },
+
+  componentWillReceiveProps: function(nextProps) {
+    this.setState({
+      omegas: nextProps.omegas
+    });
+  },
+
+  componentDidUpdate: function() {
+    d3.select("#" + this.svg_id).html("");
+    this.initialize();
+  },
+
+  getInitialState: function() {
+    return {
+      omegas: this.props.omegas,
+      settings: this.props.settings
+    };
+  },
+
   getDefaultProps: function() {
     return {
       svg_id: null,
@@ -143,6 +165,7 @@ var OmegaPlot = React.createClass({
     this.createXAxis();
     this.createYAxis();
   },
+
   makeSpring: function(x1, x2, y1, y2, step, displacement) {
     if (x1 == x2) {
       y1 = Math.min(y1, y2);
@@ -186,6 +209,7 @@ var OmegaPlot = React.createClass({
     var line = d3.svg.line().interpolate("monotone");
     return line(spring_data);
   },
+
   createDisplacementLine: function() {
     var self = this;
     var data_to_plot = this.state.omegas["Reference"];
@@ -220,6 +244,7 @@ var OmegaPlot = React.createClass({
         .attr("class", "hyphy-displacement-line");
     }
   },
+
   createReferenceLine: function() {
     var data_to_plot = this.state.omegas["Reference"];
     var secondary_data = this.state.omegas["Test"];
@@ -255,6 +280,7 @@ var OmegaPlot = React.createClass({
       this.displacement_lines.remove();
     }
   },
+
   createOmegaLine: function() {
     var data_to_plot = this.state.omegas["Reference"];
     var secondary_data = this.state.omegas["Test"];
@@ -285,6 +311,7 @@ var OmegaPlot = React.createClass({
       })
       .attr("class", "hyphy-omega-line");
   },
+
   createNeutralLine: function() {
     var self = this;
 
@@ -306,6 +333,7 @@ var OmegaPlot = React.createClass({
       .attr("y1", 0)
       .attr("y2", this.plot_height);
   },
+
   createXAxis: function() {
     // *** X-AXIS *** //
     var xAxis = d3.svg
@@ -314,7 +342,7 @@ var OmegaPlot = React.createClass({
       .orient("bottom");
 
     if (this.do_log_plot) {
-      xAxis.ticks(10, this.has_zeros ? ".2r" : ".1r");
+      xAxis.ticks(10, ".0e");
     }
 
     var x_axis = this.svg.selectAll(".x.axis");
@@ -337,7 +365,10 @@ var OmegaPlot = React.createClass({
           (this.plot_height + this.margins["top"]) +
           ")"
       )
-      .call(xAxis);
+      .call(xAxis)
+      .selectAll("text")
+      .style("text-anchor", "end")
+      .attr("transform", "rotate(-45)");
     x_label = x_label
       .attr(
         "transform",
@@ -353,6 +384,7 @@ var OmegaPlot = React.createClass({
       .style("text-anchor", "end")
       .attr("dy", "0.0em");
   },
+
   createYAxis: function() {
     // *** Y-AXIS *** //
     var yAxis = d3.svg
@@ -387,29 +419,6 @@ var OmegaPlot = React.createClass({
       })
       .style("text-anchor", "start")
       .attr("dy", "-1em");
-  },
-
-  getInitialState: function() {
-    return {
-      omegas: this.props.omegas,
-      settings: this.props.settings
-    };
-  },
-
-  componentWillReceiveProps: function(nextProps) {
-    this.setState({
-      omegas: nextProps.omegas
-    });
-  },
-
-  componentDidUpdate: function() {
-    d3.select("#" + this.svg_id).html("");
-
-    this.initialize();
-  },
-
-  componentDidMount: function() {
-    this.initialize();
   },
 
   render: function() {
