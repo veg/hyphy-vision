@@ -36,7 +36,8 @@ var OmegaPlot = React.createClass({
       legend_id: null,
       do_log_plot: true,
       k_p: null,
-      plot: null
+      plot: null,
+      legendBuffer: 100
     };
   },
 
@@ -118,7 +119,7 @@ var OmegaPlot = React.createClass({
     // maximum diameter is (height - text margin)
     this.svg = d3
       .select("#" + this.svg_id)
-      .attr("width", dimensions.width)
+      .attr("width", dimensions.width + this.props.settings.legendBuffer)
       .attr("height", dimensions.height);
     this.svg
       .append("rect")
@@ -429,7 +430,7 @@ var OmegaPlot = React.createClass({
     let labels = ["Test", "Reference"];
     let legendSquareSize = 20;
     let legendSpacing = 5;
-    let legendX = this.props.settings.dimensions.width - 100;
+    let legendX = this.props.settings.dimensions.width;
     let fontSizeOffset = 15;
 
     var legend = this.svg
@@ -574,7 +575,8 @@ var OmegaPlotGrid = React.createClass({
         legend_id: null,
         do_log_plot: true,
         k_p: null,
-        plot: null
+        plot: null,
+        legendBuffer: 100
       };
 
       return (
