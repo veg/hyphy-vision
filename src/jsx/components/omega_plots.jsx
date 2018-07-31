@@ -164,6 +164,7 @@ var OmegaPlot = React.createClass({
     this.createReferenceLine();
     this.createXAxis();
     this.createYAxis();
+    this.createLegend();
   },
 
   makeSpring: function(x1, x2, y1, y2, step, displacement) {
@@ -369,6 +370,7 @@ var OmegaPlot = React.createClass({
       .selectAll("text")
       .style("text-anchor", "end")
       .attr("transform", "rotate(-45)");
+
     x_label = x_label
       .attr(
         "transform",
@@ -421,6 +423,49 @@ var OmegaPlot = React.createClass({
       .attr("dy", "-1em");
   },
 
+  createLegend: function() {
+    let legendData = [20, 1000];
+    let legendColors = ["#00a99d", "black"];
+    let labels = ["Test", "Reference"];
+    let legendSquareSize = 20;
+    let legendSpacing = 5;
+    let legendX = this.props.settings.dimensions.width - 100;
+    let fontSizeOffset = 15;
+
+    var legend = this.svg
+      .selectAll(".legend")
+      .data(legendData)
+      .enter()
+      .append("g");
+
+    legend
+      .append("rect")
+      .attr("fill", function(d, i) {
+        return legendColors[i];
+      })
+      .attr("width", legendSquareSize)
+      .attr("height", legendSquareSize)
+      .attr("y", function(d, i) {
+        return legendSquareSize + i * (legendSquareSize + legendSpacing);
+      })
+      .attr("x", legendX);
+
+    legend
+      .append("text")
+      .attr("class", "label")
+      .attr("y", function(d, i) {
+        return (
+          legendSquareSize +
+          (i * (legendSquareSize + legendSpacing) + fontSizeOffset)
+        );
+      })
+      .attr("x", legendX + legendSquareSize + 5)
+      .attr("text-anchor", "start")
+      .text(function(d, i) {
+        return labels[i];
+      });
+  },
+
   render: function() {
     var self = this,
       key = this.props.omegas.key,
@@ -434,18 +479,6 @@ var OmegaPlot = React.createClass({
             <h3 className="card-title">
               &omega; distributions under the <strong>{label}</strong> model
             </h3>
-            <p>
-              <small>
-                Test branches are shown in{" "}
-                <span style={{ color: "#00a99d", fontWeight: "bold" }}>
-                  green
-                </span>{" "}
-                and reference branches are shown in{" "}
-                <span style={{ color: "black", fontWeight: "bold" }}>
-                  black
-                </span>
-              </small>
-            </p>
             <div className="btn-group">
               <button
                 onClick={() => {
