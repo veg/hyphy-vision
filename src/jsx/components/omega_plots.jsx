@@ -5,6 +5,28 @@ var _ = require("underscore");
 var d3_save_svg = require("d3-save-svg");
 
 var OmegaPlot = React.createClass({
+  componentDidMount: function() {
+    this.initialize();
+  },
+
+  componentWillReceiveProps: function(nextProps) {
+    this.setState({
+      omegas: nextProps.omegas
+    });
+  },
+
+  componentDidUpdate: function() {
+    d3.select("#" + this.svg_id).html("");
+    this.initialize();
+  },
+
+  getInitialState: function() {
+    return {
+      omegas: this.props.omegas,
+      settings: this.props.settings
+    };
+  },
+
   getDefaultProps: function() {
     return {
       svg_id: null,
@@ -14,7 +36,8 @@ var OmegaPlot = React.createClass({
       legend_id: null,
       do_log_plot: true,
       k_p: null,
-      plot: null
+      plot: null,
+      legendBuffer: 100
     };
   },
 
@@ -96,7 +119,7 @@ var OmegaPlot = React.createClass({
     // maximum diameter is (height - text margin)
     this.svg = d3
       .select("#" + this.svg_id)
-      .attr("width", dimensions.width)
+      .attr("width", dimensions.width + this.props.settings.legendBuffer)
       .attr("height", dimensions.height);
     this.svg
       .append("rect")
@@ -142,7 +165,9 @@ var OmegaPlot = React.createClass({
     this.createReferenceLine();
     this.createXAxis();
     this.createYAxis();
+    this.createLegend();
   },
+
   makeSpring: function(x1, x2, y1, y2, step, displacement) {
     if (x1 == x2) {
       y1 = Math.min(y1, y2);
@@ -186,6 +211,7 @@ var OmegaPlot = React.createClass({
     var line = d3.svg.line().interpolate("monotone");
     return line(spring_data);
   },
+
   createDisplacementLine: function() {
     var self = this;
     var data_to_plot = this.state.omegas["Reference"];
@@ -220,6 +246,7 @@ var OmegaPlot = React.createClass({
         .attr("class", "hyphy-displacement-line");
     }
   },
+
   createReferenceLine: function() {
     var data_to_plot = this.state.omegas["Reference"];
     var secondary_data = this.state.omegas["Test"];
@@ -255,6 +282,7 @@ var OmegaPlot = React.createClass({
       this.displacement_lines.remove();
     }
   },
+
   createOmegaLine: function() {
     var data_to_plot = this.state.omegas["Reference"];
     var secondary_data = this.state.omegas["Test"];
@@ -285,6 +313,7 @@ var OmegaPlot = React.createClass({
       })
       .attr("class", "hyphy-omega-line");
   },
+
   createNeutralLine: function() {
     var self = this;
 
@@ -306,6 +335,7 @@ var OmegaPlot = React.createClass({
       .attr("y1", 0)
       .attr("y2", this.plot_height);
   },
+
   createXAxis: function() {
     // *** X-AXIS *** //
     var xAxis = d3.svg
@@ -314,7 +344,7 @@ var OmegaPlot = React.createClass({
       .orient("bottom");
 
     if (this.do_log_plot) {
-      xAxis.ticks(10, this.has_zeros ? ".2r" : ".1r");
+      xAxis.ticks(10, ".0e");
     }
 
     var x_axis = this.svg.selectAll(".x.axis");
@@ -337,7 +367,11 @@ var OmegaPlot = React.createClass({
           (this.plot_height + this.margins["top"]) +
           ")"
       )
-      .call(xAxis);
+      .call(xAxis)
+      .selectAll("text")
+      .style("text-anchor", "end")
+      .attr("transform", "rotate(-45)");
+
     x_label = x_label
       .attr(
         "transform",
@@ -353,6 +387,7 @@ var OmegaPlot = React.createClass({
       .style("text-anchor", "end")
       .attr("dy", "0.0em");
   },
+
   createYAxis: function() {
     // *** Y-AXIS *** //
     var yAxis = d3.svg
@@ -389,27 +424,47 @@ var OmegaPlot = React.createClass({
       .attr("dy", "-1em");
   },
 
-  getInitialState: function() {
-    return {
-      omegas: this.props.omegas,
-      settings: this.props.settings
-    };
-  },
+  createLegend: function() {
+    let legendData = [20, 1000];
+    let legendColors = ["#00a99d", "black"];
+    let labels = ["Test", "Reference"];
+    let legendSquareSize = 20;
+    let legendSpacing = 5;
+    let legendX = this.props.settings.dimensions.width;
+    let fontSizeOffset = 15;
 
-  componentWillReceiveProps: function(nextProps) {
-    this.setState({
-      omegas: nextProps.omegas
-    });
-  },
+    var legend = this.svg
+      .selectAll(".legend")
+      .data(legendData)
+      .enter()
+      .append("g");
 
-  componentDidUpdate: function() {
-    d3.select("#" + this.svg_id).html("");
+    legend
+      .append("rect")
+      .attr("fill", function(d, i) {
+        return legendColors[i];
+      })
+      .attr("width", legendSquareSize)
+      .attr("height", legendSquareSize)
+      .attr("y", function(d, i) {
+        return legendSquareSize + i * (legendSquareSize + legendSpacing);
+      })
+      .attr("x", legendX);
 
-    this.initialize();
-  },
-
-  componentDidMount: function() {
-    this.initialize();
+    legend
+      .append("text")
+      .attr("class", "label")
+      .attr("y", function(d, i) {
+        return (
+          legendSquareSize +
+          (i * (legendSquareSize + legendSpacing) + fontSizeOffset)
+        );
+      })
+      .attr("x", legendX + legendSquareSize + 5)
+      .attr("text-anchor", "start")
+      .text(function(d, i) {
+        return labels[i];
+      });
   },
 
   render: function() {
@@ -425,18 +480,6 @@ var OmegaPlot = React.createClass({
             <h3 className="card-title">
               &omega; distributions under the <strong>{label}</strong> model
             </h3>
-            <p>
-              <small>
-                Test branches are shown in{" "}
-                <span style={{ color: "#00a99d", fontWeight: "bold" }}>
-                  green
-                </span>{" "}
-                and reference branches are shown in{" "}
-                <span style={{ color: "black", fontWeight: "bold" }}>
-                  black
-                </span>
-              </small>
-            </p>
             <div className="btn-group">
               <button
                 onClick={() => {
@@ -532,7 +575,8 @@ var OmegaPlotGrid = React.createClass({
         legend_id: null,
         do_log_plot: true,
         k_p: null,
-        plot: null
+        plot: null,
+        legendBuffer: 100
       };
 
       return (
