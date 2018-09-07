@@ -254,6 +254,15 @@ class BSRELContents extends React.Component {
             .html("");
         });
 
+        var treeTooltipElement = document.getElementById("tree_tooltip");
+
+        window.onmousemove = function(e) {
+          var x = e.clientX;
+          var y = e.clientY;
+          treeTooltipElement.style.top = y + 20 + "px";
+          treeTooltipElement.style.left = x + 20 + "px";
+        };
+
         createBranchGradient(data.target);
 
         if (data.target.grad) {

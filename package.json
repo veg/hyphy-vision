@@ -20,7 +20,7 @@
     "url": "git://github.com/veg/hyphy-vision.git"
   },
   "main": "dist/hyphyvision.js",
-  "version": "2.1.0",
+  "version": "2.1.1",
   "dependencies": {
     "alignment.js": "1.0.10",
     "bootstrap": "4.x",

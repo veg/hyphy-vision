@@ -284,8 +284,6 @@ toolbar-dropdown::before {
 }
 
 /* Sizing classes must be here rather than on individual form elements. */
-.input-group {
-}
 
 /* TABLES */
 table {
@@ -1401,106 +1399,6 @@ li.active > a:hover {
   shape-rendering: crispEdges;
 }
 
-input[type="range"] {
-  /*removes default webkit styles*/
-  -webkit-appearance: none;
-
-  /*fix for FF unable to apply focus style bug */
-  border: 1px solid white;
-
-  /*required for proper track sizing in FF*/
-  width: 300px;
-}
-
-input[type="range"]::-webkit-slider-runnable-track {
-  width: 300px;
-  height: 5px;
-  background: #ddd;
-  border: none;
-  border-radius: 3px;
-}
-
-input[type="range"]::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  border: none;
-  height: 16px;
-  width: 16px;
-  border-radius: 50%;
-  background: #00a99d;
-  margin-top: -4px;
-}
-
-input[type="range"]:focus {
-  outline: none;
-}
-
-input[type="range"]:focus::-webkit-slider-runnable-track {
-  background: #ccc;
-}
-
-input[type="range"]::-moz-range-track {
-  width: 300px;
-  height: 5px;
-  background: #ddd;
-  border: none;
-  border-radius: 3px;
-}
-
-input[type="range"]::-moz-range-thumb {
-  border: none;
-  height: 16px;
-  width: 16px;
-  border-radius: 50%;
-  background: #00a99d;
-}
-
-/*hide the outline behind the border*/
-input[type="range"]:-moz-focusring {
-  outline: 1px solid white;
-  outline-offset: -1px;
-}
-
-input[type="range"]::-ms-track {
-  width: 300px;
-  height: 5px;
-
-  /*remove bg colour from the track, we'll use ms-fill-lower and ms-fill-upper instead */
-  background: transparent;
-
-  /*leave room for the larger thumb to overflow with a transparent border */
-  border-color: transparent;
-  border-width: 6px 0;
-
-  /*remove default tick marks*/
-  color: transparent;
-}
-
-input[type="range"]::-ms-fill-lower {
-  background: #777;
-  border-radius: 10px;
-}
-
-input[type="range"]::-ms-fill-upper {
-  background: #ddd;
-  border-radius: 10px;
-}
-
-input[type="range"]::-ms-thumb {
-  border: none;
-  height: 16px;
-  width: 16px;
-  border-radius: 50%;
-  background: #00a99d;
-}
-
-input[type="range"]:focus::-ms-fill-lower {
-  background: #888;
-}
-
-input[type="range"]:focus::-ms-fill-upper {
-  background: #ccc;
-}
-
 .modal .modal-dialog {
   width: 850px;
   max-width: 850px;
@@ -1524,7 +1422,8 @@ input[type="range"]:focus::-ms-fill-upper {
 
 #tree_tooltip {
   color: #fff;
-  position: absolute;
+  display: block;
+  position: fixed;
   padding: 20px;
   max-width: 200px;
 
@@ -1678,10 +1577,6 @@ input[type="range"]:focus::-ms-fill-upper {
   } 
 }
 */
-
-input[type="file"] {
-  display: none;
-}
 
 .custom-file-upload {
   border: 1px solid #ccc;
