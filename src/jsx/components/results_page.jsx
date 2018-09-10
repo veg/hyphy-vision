@@ -38,15 +38,13 @@ class ResultsPage extends React.Component {
   componentDidUpdate(prevProps, prevState) {
     var self = this;
     // Decide if data is a URL or the results JSON
-    var newData;
+    var newData = this.state.json;
     if (typeof this.props.data == "string") {
       if (this.props.data != self.state.jsonPath) {
         d3.json(this.props.data, function(data) {
           //self.setState({ json: data });
           newData = data;
         });
-      } else {
-        newData = this.state.json;
       }
     } else if (typeof this.props.data == "object") {
       //self.setState({ json: self.props.data })
