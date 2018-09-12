@@ -624,7 +624,6 @@ class BUSTEDModelTable extends React.Component {
         />
         <table
           className="dm-table table table-hover table-smm list-group-item-text"
-          style={{ marginTop: "0.5em" }}
         >
           <thead id="summary-model-header1">
             <tr>
