@@ -751,7 +751,10 @@ var Tree = React.createClass({
         </h4>
 
         <div className="row">
-          <div className="col-12">
+          <div
+            className="col-12"
+            style={{ display: "flex", justifyContent: "space-between" }}
+          >
             <div className="input-group-btn">
               <button
                 type="button"
@@ -764,7 +767,9 @@ var Tree = React.createClass({
               <ul className="dropdown-menu" id="hyphy-tree-model-list">
                 {this.getMainList()}
               </ul>
+            </div>
 
+            <div className="input-group-btn">
               <button
                 type="button"
                 className="btn btn-secondary btn-sm"
@@ -783,6 +788,8 @@ var Tree = React.createClass({
               >
                 <i className="fa  fa-compress fa-rotate-135" />
               </button>
+            </div>
+            <div className="input-group-btn">
               <button
                 type="button"
                 className="btn btn-secondary btn-sm"
@@ -854,48 +861,6 @@ var Tree = React.createClass({
               </button>
             </div>
 
-            <div className="input-group-btn float-right">
-              <button
-                type="button"
-                className="btn btn-secondary dropdown-toggle"
-                data-toggle="dropdown"
-              >
-                Export <span className="caret" />
-              </button>
-              <ul className="dropdown-menu">
-                <li id="export-phylo-png">
-                  <a
-                    onClick={() =>
-                      saveSvgAsPng(
-                        document.getElementById("dm-phylotree"),
-                        "tree.png"
-                      )
-                    }
-                    href="javascript:;"
-                  >
-                    <i className="fa fa-image" /> PNG
-                  </a>
-                </li>
-                <li id="export-phylo-png">
-                  <a
-                    onClick={() =>
-                      d3_save_svg.save(d3.select("#dm-phylotree").node(), {
-                        filename: "tree"
-                      })
-                    }
-                    href="javascript:;"
-                  >
-                    <i className="fa fa-image" /> SVG
-                  </a>
-                </li>
-                <li id="export-phylo-nwk">
-                  <a onClick={this.exportNewick} href="javascript:;">
-                    <i className="fa fa-file-o" /> Newick File
-                  </a>
-                </li>
-              </ul>
-            </div>
-
             <div className="input-group-btn">
               <button
                 type="button"
@@ -907,6 +872,48 @@ var Tree = React.createClass({
               </button>
 
               {this.settingsMenu()}
+
+              <div className="input-group-btn float-right">
+                <button
+                  type="button"
+                  className="btn btn-secondary dropdown-toggle"
+                  data-toggle="dropdown"
+                >
+                  Export <span className="caret" />
+                </button>
+                <ul className="dropdown-menu">
+                  <li id="export-phylo-png">
+                    <a
+                      onClick={() =>
+                        saveSvgAsPng(
+                          document.getElementById("dm-phylotree"),
+                          "tree.png"
+                        )
+                      }
+                      href="javascript:;"
+                    >
+                      <i className="fa fa-image" /> PNG
+                    </a>
+                  </li>
+                  <li id="export-phylo-png">
+                    <a
+                      onClick={() =>
+                        d3_save_svg.save(d3.select("#dm-phylotree").node(), {
+                          filename: "tree"
+                        })
+                      }
+                      href="javascript:;"
+                    >
+                      <i className="fa fa-image" /> SVG
+                    </a>
+                  </li>
+                  <li id="export-phylo-nwk">
+                    <a onClick={this.exportNewick} href="javascript:;">
+                      <i className="fa fa-file-o" /> Newick File
+                    </a>
+                  </li>
+                </ul>
+              </div>
             </div>
           </div>
         </div>
