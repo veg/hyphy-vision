@@ -15,15 +15,13 @@ import { ResultsPage } from "./components/results_page.jsx";
 class BSRELSummary extends React.Component {
   constructor(props) {
     super(props);
-    var self = this;
 
     this.state = {
-      branches_with_evidence: this.getBranchesWithEvidence(
-        self.props.test_results
-      ),
-      test_branches: this.getTestBranches(self.props.test_results),
-      total_branches: this.getTotalBranches(self.props.test_results),
-      copy_transition: false
+      branches_with_evidence: this.getBranchesWithEvidence(props.test_results),
+      test_branches: this.getTestBranches(props.test_results),
+      total_branches: this.getTotalBranches(props.test_results),
+      copy_transition: false,
+      was_evidence: this.getBranchesWithEvidence(props.test_results) > 0
     };
   }
 
@@ -422,8 +420,6 @@ class BSRELContents extends React.Component {
 
   render() {
     var self = this;
-
-    if (_.isNull(self.state.json)) return <div />;
 
     var models = {};
     if (!_.isNull(self.state.json)) {
