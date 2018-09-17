@@ -146,12 +146,14 @@ class InputInfo extends React.Component {
               </div>
               <div className="modal-body" id="modal-body">
                 {this.state.showModal == "json" ? (
-                  <ReactJson
-                    src={this.props.json}
-                    collapsed={1}
-                    displayDataTypes={false}
-                    enableClipboard={false}
-                  />
+                  <div style={{ overflowY: "scroll", height: "400px" }}>
+                    <ReactJson
+                      src={this.props.json}
+                      collapsed={1}
+                      displayDataTypes={false}
+                      enableClipboard={false}
+                    />
+                  </div>
                 ) : null}
                 {this.state.showModal == "msa" ? (
                   <Alignment
