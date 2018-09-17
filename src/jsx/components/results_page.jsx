@@ -77,9 +77,26 @@ class ResultsPage extends React.Component {
     $(".dropdown-toggle").dropdown();
   }
 
+  renderSpinner() {
+    return (
+      <div>
+        <i
+          className="fa fa-spinner fa-spin"
+          style={{
+            position: "absolute",
+            fontSize: "200px",
+            color: "#00a99d",
+            right: "45%",
+            top: "50%"
+          }}
+        />
+      </div>
+    );
+  }
+
   render() {
     var self = this;
-    if (!this.state.json) return <div />;
+    if (!this.state.json) return self.renderSpinner();
     return (
       <div className="container">
         <div className="row">
