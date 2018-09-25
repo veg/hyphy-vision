@@ -12,6 +12,7 @@ export { default as relax } from "./jsx/relax.jsx";
 export { default as slac } from "./jsx/slac.jsx";
 export { default as fubar } from "./jsx/fubar.jsx";
 export { default as gard } from "./jsx/gard.jsx";
+export { default as bgm } from "./jsx/bgm.jsx";
 
 // Shared_component exports.
 export {
