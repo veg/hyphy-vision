@@ -197,7 +197,7 @@ class RateMatrix extends React.Component {
           <button
             id="export-chart-svg"
             type="button"
-            className="btn.btn-secondary btn-sm pull-right btn-export"
+            className="btn.btn-secondary btn-sm float-right btn-export"
             onClick={() => {
               d3_save_svg.save(d3.select("#dm-rate-matrix").node(), {
                 filename: "rate-matrix"
@@ -209,7 +209,7 @@ class RateMatrix extends React.Component {
           <button
             id="export-chart-png"
             type="button"
-            className="btn.btn-secondary btn-sm pull-right btn-export"
+            className="btn.btn-secondary btn-sm float-right btn-export"
             onClick={() => {
               saveSvgAsPng(
                 document.getElementById("dm-rate-matrix"),

@@ -37,7 +37,7 @@ class MainResult extends Component {
               text={this.props.summary_for_clipboard}
               onCopy={this.onCopy}
             >
-              <span id="copy-it" className="pull-right">
+              <span id="copy-it" className="float-right">
                 {this.getClipboard()}
               </span>
             </CopyToClipboard>

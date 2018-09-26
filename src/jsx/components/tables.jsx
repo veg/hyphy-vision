@@ -441,7 +441,7 @@ var DatamonkeyTable = React.createClass({
           <button
             id="export-csv"
             type="button"
-            className="btn.btn-secondary btn-sm pull-right"
+            className="btn.btn-secondary btn-sm float-right"
             onClick={exportCSV}
           >
             <span className="far fa-save" /> Export Table to CSV
