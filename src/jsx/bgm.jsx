@@ -3,6 +3,7 @@ import ReactDOM from "react-dom";
 
 import { ResultsPage } from "./components/results_page.jsx";
 import { Header } from "./components/header.jsx";
+import { Tree } from "./components/tree.jsx";
 
 function BGMSummary(props) {
   if (!props.json) return <div />;
@@ -46,6 +47,33 @@ class BGMContents extends React.Component {
     return (
       <div>
         <BGMSummary json={this.props.json} />
+        <div id="tree-tab">
+          <Tree
+            json={this.props.json}
+            tree_string={this.props.json.input.trees[0]}
+            models={this.props.json.fits}
+            method="bgm"
+            settings={{
+              omegaPlot: {},
+              "tree-options": {
+                /* value arrays have the following meaning
+                    [0] - the value of the attribute
+                    [1] - does the change in attribute value trigger tree re-layout?
+                */
+                "hyphy-tree-model": ["Full model", true],
+                "hyphy-tree-highlight": [null, false],
+                "hyphy-tree-branch-lengths": [true, true],
+                "hyphy-tree-hide-legend": [false, true],
+                "hyphy-tree-fill-color": [true, true]
+              },
+              "suppress-tree-render": false,
+              "chart-append-html": true,
+              edgeColorizer: function(e, d) {
+                return 0;
+              }
+            }}
+          />
+        </div>
       </div>
     );
   }
