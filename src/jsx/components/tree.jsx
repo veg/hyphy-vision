@@ -104,7 +104,8 @@ var Tree = React.createClass({
       slac: "Global MG94xREV",
       fubar: "Nucleotide GTR"
     };
-    var show_legend = ["meme", "fubar", "gard"].indexOf(self.props.method) < 0;
+    var show_legend =
+      ["meme", "fubar", "gard", "bgm"].indexOf(self.props.method) < 0;
 
     return {
       json: this.props.json,
@@ -611,15 +612,17 @@ var Tree = React.createClass({
 
     this.assignBranchAnnotations();
 
+    var tree_string;
     if (self.props.method == "absrel" || self.props.method == "relax") {
-      var tree_string = self.props.json.input.trees[0];
+      tree_string = self.props.json.input.trees[0];
     } else if (
       ["busted", "meme", "fel", "slac", "gard", "fubar"].indexOf(
         self.props.method
       ) > -1
     ) {
-      var tree_string =
-        self.props.json.trees[self.state.current]["newickString"];
+      tree_string = self.props.json.trees[self.state.current]["newickString"];
+    } else if (self.props.tree_string) {
+      tree_string = self.props.tree_string;
     }
     self.tree(tree_string).svg(self.svg);
 

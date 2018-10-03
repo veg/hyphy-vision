@@ -75,6 +75,12 @@ var Methods = React.createClass({
               GARD
             </Link>
           </li>
+          <li>
+            <Link onClick={() => self.props.changeMethod()} to="../bgm">
+              BGM
+            </Link>
+          </li>
+
           <li role="separator" className="divider" />
           <li>
             <Link to="/">Home</Link>
