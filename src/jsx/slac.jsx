@@ -637,7 +637,7 @@ var SLACSites = React.createClass({
           <div className="alert alert-info alert-dismissable">
             <button
               type="button"
-              className="close pull-right"
+              className="close float-right"
               data-dismiss="alert"
               aria-hidden="true"
             >
@@ -1094,7 +1094,7 @@ var SLACGraphs = React.createClass({
                 <button
                   id="export-chart-png"
                   type="button"
-                  className="btn.btn-secondary btn-sm pull-right btn-export"
+                  className="btn.btn-secondary btn-sm float-right btn-export"
                   onClick={self.savePNG}
                 >
                   <span className="far fa-save" /> Export to PNG
@@ -1102,7 +1102,7 @@ var SLACGraphs = React.createClass({
                 <button
                   id="export-chart-png"
                   type="button"
-                  className="btn.btn-secondary btn-sm pull-right btn-export"
+                  className="btn.btn-secondary btn-sm float-right btn-export"
                   onClick={self.saveSVG}
                 >
                   <span className="far fa-save" /> Export to SVG

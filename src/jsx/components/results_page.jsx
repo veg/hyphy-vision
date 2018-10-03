@@ -16,7 +16,8 @@ class ResultsPage extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      json: null
+      json: null,
+      jsonPath: null
     };
   }
 
@@ -24,6 +25,7 @@ class ResultsPage extends React.Component {
     var self = this;
     // Decide if data is a URL or the results JSON
     if (typeof this.props.data == "string") {
+      self.setState({ jsonPath: this.props.data }); // Set the json path for comparing on updates to see if it's new data.
       d3.json(this.props.data, function(data) {
         self.setState({ json: data });
       });
@@ -36,12 +38,14 @@ class ResultsPage extends React.Component {
   componentDidUpdate(prevProps, prevState) {
     var self = this;
     // Decide if data is a URL or the results JSON
-    var newData;
+    var newData = this.state.json;
     if (typeof this.props.data == "string") {
-      d3.json(this.props.data, function(data) {
-        //self.setState({ json: data });
-        newData = data;
-      });
+      if (this.props.data != self.state.jsonPath) {
+        d3.json(this.props.data, function(data) {
+          //self.setState({ json: data });
+          newData = data;
+        });
+      }
     } else if (typeof this.props.data == "object") {
       //self.setState({ json: self.props.data })
       newData = self.props.data;
@@ -73,9 +77,26 @@ class ResultsPage extends React.Component {
     $(".dropdown-toggle").dropdown();
   }
 
+  renderSpinner() {
+    return (
+      <div>
+        <i
+          className="fa fa-spinner fa-spin"
+          style={{
+            position: "absolute",
+            fontSize: "200px",
+            color: "#00a99d",
+            right: "45%",
+            top: "50%"
+          }}
+        />
+      </div>
+    );
+  }
+
   render() {
     var self = this;
-    if (!this.state.json) return <div />;
+    if (!this.state.json) return self.renderSpinner();
     return (
       <div className="container">
         <div className="row">

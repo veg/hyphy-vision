@@ -361,7 +361,7 @@ class FUBARViz extends React.Component {
           <button
             id="export-chart-svg"
             type="button"
-            className="btn.btn-secondary btn-sm pull-right btn-export"
+            className="btn.btn-secondary btn-sm float-right btn-export"
             onClick={() =>
               d3_save_svg.save(d3.select("#fubar-viz").node(), {
                 filename: "datamonkey-chart"
@@ -373,7 +373,7 @@ class FUBARViz extends React.Component {
           <button
             id="export-chart-png"
             type="button"
-            className="btn.btn-secondary btn-sm pull-right btn-export"
+            className="btn.btn-secondary btn-sm float-right btn-export"
             onClick={() =>
               saveSvgAsPng(
                 document.getElementById("fubar-viz"),

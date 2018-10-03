@@ -363,7 +363,7 @@ var PropChart = React.createClass({
                   {this.state.model_name}
                 </strong>
               </h1>
-              <div className="btn-group pull-right">
+              <div className="btn-group float-right">
                 <button
                   id={this.save_svg_id}
                   type="button"

@@ -1,12 +1,12 @@
+import React from "react";
+import ReactDOM from "react-dom";
 import { Tree } from "./components/tree.jsx";
 import { OmegaPlotGrid } from "./components/omega_plots.jsx";
 import { Header } from "./components/header.jsx";
 import { DatamonkeyTable } from "./components/tables.jsx";
 import { MainResult } from "./components/mainresult.jsx";
 import { ResultsPage } from "./components/results_page.jsx";
-
-var React = require("react"),
-  _ = require("underscore");
+var _ = require("underscore");
 
 class RELAXModelTable extends React.Component {
   constructor(props) {
@@ -93,7 +93,6 @@ class RELAXModelTable extends React.Component {
       <div>
         <table
           className="dm-table table table-hover table-smm list-group-item-text"
-          style={{ marginTop: "0.5em" }}
         >
           <thead id="summary-model-header1">
             <tr>
