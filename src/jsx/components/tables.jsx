@@ -4,6 +4,7 @@ var React = require("react"),
   datamonkey = require("../../datamonkey/datamonkey.js");
 
 require("csvexport");
+import CsvExport from "csvexport";
 
 import PropTypes from "prop-types";
 
@@ -433,8 +434,12 @@ var DatamonkeyTable = React.createClass({
           var headers = _.map(self.props.headerData, extract),
             munged = _.map(self.props.bodyData, row => _.map(row, extract)).map(
               row => _.object(headers, row)
-            ),
-            exporter = Export.create();
+            );
+          try {
+            var exporter = Export.create();
+          } catch (err) {
+            var exporter = CsvExport.create();
+          }
           exporter.downloadCsv(munged);
         };
         button = (
