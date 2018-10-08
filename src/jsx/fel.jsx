@@ -121,7 +121,7 @@ class FELContents extends React.Component {
       }
       return _.map(_.values(d), function(g) {
         return { value: g, classes: classes };
-      }).slice(0, 8);
+      }).slice(0, mle_content[0].length);
     });
 
     data["trees"] = _.map(data["input"]["trees"], (val, key) => {

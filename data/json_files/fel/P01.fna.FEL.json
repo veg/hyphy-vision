@@ -1,0 +1,2815 @@
+{
+  "analysis": {
+    "info":
+      "FEL-contrast (Fixed Effects Likelihood) investigates whether or not selective pressures differ between two or more sets of\n    branches at a site. Site-specific synonymous (alpha) and non-synonymous (beta, one per branch set) substitution rates are estimated\n    and then beta rates are tested for equality at each site. LRT is used to assess significance.",
+    "version": "0.2",
+    "citation":
+      "Kosakovsky Pond SL, Frost SDW, Grossman Z, Gravenor MB, Richman DD, Leigh Brown AJ (2006) Adaptation to Different Human Populations by HIV-1 Revealed by Codon-Based Analyses. PLoS Comput Biol 2(6): e62.",
+    "authors": "Sergei L Kosakovsky Pond",
+    "contact": "spond@temple.edu",
+    "requirements":
+      "in-frame codon alignment and a phylogenetic tree; only single partition data are supported",
+    "help": "http://www.hyphy.org/methods/other/fel-contrast/"
+  },
+  "input": {
+    "file name": "/home/brife/HIV_THAI/P1/P01.fna",
+    "number of sequences": 113,
+    "number of sites": 362,
+    "partition count": 1,
+    "trees": {
+      "0":
+        "(00P01Kr01:1e-10,(((((((((((((((((((00P01Kr02:1e-10,00P01Pr07:1e-10)Node20:1e-10,00P01Or24:1e-10)Node19:1e-10,00P01Pr16:1e-10)Node18:1e-10,00P01Kr07:1e-10)Node17:1e-10,00P01Kr12:1e-10)Node16:1e-10,00P01Pr01:1e-10)Node15:1e-10,00P01Pr10:1e-10)Node14:1e-10,00P01Or22:1e-10)Node13:1e-10,00P01Or09:1e-10)Node12:1e-10,00P01Or13:1e-10)Node11:1e-10,00P01Or03:1e-10)Node10:1e-10,(00P01Kr10:1e-10,00P01Kr16:1e-10)Node33:1e-10)Node9:1e-10,((((((((((00P01Kr03:1e-10,00P01Or04:1e-10)Node45:1e-10,(00P01Pr14:1e-10,00P01Pr19:1e-10)Node48:1e-10)Node44:1e-10,(((12P01Kr24:1e-10,12P01Pr12:1e-10)Node53:1e-10,12P01Pr22:1e-10)Node52:1e-10,(12P01Pr19:1e-10,12P01Pr25:1e-10)Node57:1e-10)Node51:1e-10)Node43:1e-10,00P01Or14:1e-10)Node42:1e-10,00P01Pr09:1e-10)Node41:1e-10,00P01Pr04:1e-10)Node40:1e-10,((((00P01Pr02:1e-10,((12P01Kr01:1e-10,12P01Kr18:1e-10)Node69:1e-10,12P01Kr12:1e-10)Node68:1e-10)Node66:1e-10,(12P01Or01:1e-10,12P01Pr14:1e-10)Node73:1e-10)Node65:1e-10,((((((12P01Or08:1e-10,12P01Pr04:1e-10)Node81:1e-10,(12P01Pr01:1e-10,12P01Pr17:1e-10)Node84:1e-10)Node80:1e-10,12P01Pr05:1e-10)Node79:1e-10,12P01Pr27:1e-10)Node78:1e-10,12P01Pr16:1e-10)Node77:1e-10,12P01Or14:1e-10)Node76:1e-10)Node64:1e-10,12P01Kr04:1e-10)Node63:1e-10)Node39:1e-10,12P01Or13:1e-10)Node38:1e-10,12P01Or04:1e-10)Node37:1e-10,12P01Pr21:1e-10)Node36:1e-10)Node8:1e-10,((((12P01Kr11:1e-10,12P01Kr14:1e-10)Node98:1e-10,12P01Pr23:1e-10)Node97:1e-10,(12P01Or17:1e-10,(12P01Or20:1e-10,(12P01Pr07:1e-10,12P01Pr26:1e-10)Node106:1e-10)Node104:1e-10)Node102:1e-10)Node96:1e-10,12P01Kr16:1e-10)Node95:1e-10)Node7:1e-10,((00P01Kr08:1e-10,00P01Or07:1e-10)Node111:1e-10,00P01Or02:1e-10)Node110:1e-10)Node6:1e-10,00P01Pr17:1e-10)Node5:1e-10,(((((((((((((00P01Kr05:1e-10,(00P01Or20:1e-10,00P01Pr06:1e-10)Node130:1e-10)Node128:1e-10,12P01Kr06:1e-10)Node127:1e-10,00P01Or05:1e-10)Node126:1e-10,((((00P01Kr06:1e-10,00P01Kr14:1e-10)Node138:1e-10,00P01Pr15:1e-10)Node137:1e-10,00P01Or08:1e-10)Node136:1e-10,(00P01Kr15:1e-10,00P01Pr05:1e-10)Node143:1e-10)Node135:1e-10)Node125:1e-10,(12P01Kr10:1e-10,12P01Kr19:1e-10)Node146:1e-10)Node124:1e-10,(12P01Kr07:1e-10,(((12P01Or05:1e-10,(12P01Pr03:1e-10,12P01Pr08:1e-10)Node155:1e-10)Node153:1e-10,12P01Pr15:1e-10)Node152:1e-10,12P01Or15:1e-10)Node151:1e-10)Node149:1e-10)Node123:1e-10,(12P01Pr06:1e-10,12P01Pr24:1e-10)Node160:1e-10)Node122:1e-10,00P01Or19:1e-10)Node121:1e-10,00P01Or21:1e-10)Node120:1e-10,12P01Or11:1e-10)Node119:1e-10,((((00P01Kr18:1e-10,((((00P01Or06:1e-10,12P01Or03:1e-10)Node174:1e-10,00P01Pr03:1e-10)Node173:1e-10,12P01Kr13:1e-10)Node172:1e-10,00P01Pr18:1e-10)Node171:1e-10)Node169:1e-10,(12P01Kr17:1e-10,(12P01Or06:1e-10,12P01Pr11:1e-10)Node182:1e-10)Node180:1e-10)Node168:1e-10,00P01Or01:1e-10)Node167:1e-10,00P01Or17:1e-10)Node166:1e-10)Node118:1e-10,12P01Or18:1e-10)Node117:1e-10,((00P01Or11:1e-10,00P01Or18:1e-10)Node189:1e-10,00P01Pr11:1e-10)Node188:1e-10)Node116:1e-10)Node4:1e-10,00P01Kr17:1e-10)Node3:1e-10,(((((00P01Pr12:1e-10,((12P01Or21:1e-10,12P01Or23:1e-10)Node201:1e-10,12P01Pr10:1e-10)Node200:1e-10)Node198:1e-10,(((12P01Kr05:1e-10,12P01Kr09:1e-10)Node207:1e-10,12P01Kr08:1e-10)Node206:1e-10,12P01Or19:1e-10)Node205:1e-10)Node197:1e-10,12P01Pr18:1e-10)Node196:1e-10,(((12P01Or09:1e-10,12P01Or12:1e-10)Node215:1e-10,12P01Pr20:1e-10)Node214:1e-10,12P01Pr02:1e-10)Node213:1e-10)Node195:1e-10,12P01Kr23:1e-10)Node194:1e-10)Node2:1e-10,(00P01Kr11:1e-10,12P01Or22:1e-10)Node221:1e-10)"
+    }
+  },
+  "fits": {
+    "Global MG94xREV": {
+      "Log Likelihood": -4838.592157063933,
+      "estimated parameters": 241,
+      "AIC-c": 10162.05279730709,
+      "Equilibrium frequencies": [
+        [0.0642260093865165],
+        [0.01645569022718724],
+        [0.02145249544055397],
+        [0.04517908954745079],
+        [0.03366878797854046],
+        [0.00862646069079955],
+        [0.01124590376231987],
+        [0.02368394364785112],
+        [0.03149425335711874],
+        [0.008069311516186161],
+        [0.01051957506002361],
+        [0.02215429085883838],
+        [0.04696477141705586],
+        [0.01203309589700239],
+        [0.01568697096884499],
+        [0.03303685895627476],
+        [0.02536738523621862],
+        [0.006499513784341909],
+        [0.008473104919904977],
+        [0.01784441194648484],
+        [0.01329818127027379],
+        [0.003407198324461831],
+        [0.004441801316836909],
+        [0.009354461349330902],
+        [0.01243930403380827],
+        [0.003187140782642546],
+        [0.00415492283605837],
+        [0.008750293474864008],
+        [0.0185497037796267],
+        [0.004752719063808202],
+        [0.006195892280357231],
+        [0.01304858788742341],
+        [0.04005720057180791],
+        [0.01026327013423885],
+        [0.01337973386228276],
+        [0.02817780318192776],
+        [0.02099892871982187],
+        [0.005380248117808778],
+        [0.007013971861578394],
+        [0.01477146860120099],
+        [0.01964269048685894],
+        [0.005032759048363477],
+        [0.006560966999734207],
+        [0.0138174375293659],
+        [0.02929151735304716],
+        [0.007504936714115959],
+        [0.009783826653179421],
+        [0.02060480011314312],
+        [0.01050692704488478],
+        [0.02884676311207644],
+        [0.02149745735950726],
+        [0.005507978813556569],
+        [0.007180488253800042],
+        [0.01512215316450259],
+        [0.005152240120742024],
+        [0.006716728752966444],
+        [0.01414547275570344],
+        [0.02998691760394433],
+        [0.007683108940943963],
+        [0.01001610125429863],
+        [0.0210939718755911]
+      ],
+      "Rate Distributions": {
+        "non-synonymous/synonymous rate ratio for *Monocytes*": [
+          [0.3200108316555533, 1]
+        ],
+        "non-synonymous/synonymous rate ratio for *Plasma*": [
+          [0.4089673796525677, 1]
+        ],
+        "non-synonymous/synonymous rate ratio for *T_cells*": [
+          [0.4694924675980867, 1]
+        ],
+        "non-synonymous/synonymous rate ratio for *background*": [
+          [0.8592992334646592, 1]
+        ]
+      },
+      "display order": 1
+    }
+  },
+  "timers": {
+    "Total time": {
+      "timer": 3904,
+      "order": 0
+    },
+    "Model fitting": {
+      "timer": 185,
+      "order": 1
+    },
+    "FEL analysis": {
+      "timer": 3405,
+      "order": 2
+    }
+  },
+  "tested": {
+    "0": {
+      "00P01Kr01": "background",
+      "00P01Kr02": "T_cells",
+      "00P01Pr07": "Plasma",
+      "Node20": "background",
+      "00P01Or24": "Monocytes",
+      "Node19": "background",
+      "00P01Pr16": "Plasma",
+      "Node18": "background",
+      "00P01Kr07": "T_cells",
+      "Node17": "background",
+      "00P01Kr12": "T_cells",
+      "Node16": "background",
+      "00P01Pr01": "Plasma",
+      "Node15": "background",
+      "00P01Pr10": "Plasma",
+      "Node14": "background",
+      "00P01Or22": "Monocytes",
+      "Node13": "background",
+      "00P01Or09": "Monocytes",
+      "Node12": "background",
+      "00P01Or13": "Monocytes",
+      "Node11": "background",
+      "00P01Or03": "Monocytes",
+      "Node10": "background",
+      "00P01Kr10": "T_cells",
+      "00P01Kr16": "T_cells",
+      "Node33": "T_cells",
+      "Node9": "background",
+      "00P01Kr03": "T_cells",
+      "00P01Or04": "Monocytes",
+      "Node45": "background",
+      "00P01Pr14": "Plasma",
+      "00P01Pr19": "Plasma",
+      "Node48": "Plasma",
+      "Node44": "background",
+      "12P01Kr24": "T_cells",
+      "12P01Pr12": "Plasma",
+      "Node53": "background",
+      "12P01Pr22": "Plasma",
+      "Node52": "background",
+      "12P01Pr19": "Plasma",
+      "12P01Pr25": "Plasma",
+      "Node57": "Plasma",
+      "Node51": "background",
+      "Node43": "background",
+      "00P01Or14": "Monocytes",
+      "Node42": "background",
+      "00P01Pr09": "Plasma",
+      "Node41": "background",
+      "00P01Pr04": "Plasma",
+      "Node40": "background",
+      "00P01Pr02": "Plasma",
+      "12P01Kr01": "T_cells",
+      "12P01Kr18": "T_cells",
+      "Node69": "T_cells",
+      "12P01Kr12": "T_cells",
+      "Node68": "T_cells",
+      "Node66": "background",
+      "12P01Or01": "Monocytes",
+      "12P01Pr14": "Plasma",
+      "Node73": "background",
+      "Node65": "background",
+      "12P01Or08": "Monocytes",
+      "12P01Pr04": "Plasma",
+      "Node81": "background",
+      "12P01Pr01": "Plasma",
+      "12P01Pr17": "Plasma",
+      "Node84": "Plasma",
+      "Node80": "background",
+      "12P01Pr05": "Plasma",
+      "Node79": "background",
+      "12P01Pr27": "Plasma",
+      "Node78": "background",
+      "12P01Pr16": "Plasma",
+      "Node77": "background",
+      "12P01Or14": "Monocytes",
+      "Node76": "background",
+      "Node64": "background",
+      "12P01Kr04": "T_cells",
+      "Node63": "background",
+      "Node39": "background",
+      "12P01Or13": "Monocytes",
+      "Node38": "background",
+      "12P01Or04": "Monocytes",
+      "Node37": "background",
+      "12P01Pr21": "Plasma",
+      "Node36": "background",
+      "Node8": "background",
+      "12P01Kr11": "T_cells",
+      "12P01Kr14": "T_cells",
+      "Node98": "T_cells",
+      "12P01Pr23": "Plasma",
+      "Node97": "background",
+      "12P01Or17": "Monocytes",
+      "12P01Or20": "Monocytes",
+      "12P01Pr07": "Plasma",
+      "12P01Pr26": "Plasma",
+      "Node106": "Plasma",
+      "Node104": "background",
+      "Node102": "background",
+      "Node96": "background",
+      "12P01Kr16": "T_cells",
+      "Node95": "background",
+      "Node7": "background",
+      "00P01Kr08": "T_cells",
+      "00P01Or07": "Monocytes",
+      "Node111": "background",
+      "00P01Or02": "Monocytes",
+      "Node110": "background",
+      "Node6": "background",
+      "00P01Pr17": "Plasma",
+      "Node5": "background",
+      "00P01Kr05": "T_cells",
+      "00P01Or20": "Monocytes",
+      "00P01Pr06": "Plasma",
+      "Node130": "background",
+      "Node128": "background",
+      "12P01Kr06": "T_cells",
+      "Node127": "background",
+      "00P01Or05": "Monocytes",
+      "Node126": "background",
+      "00P01Kr06": "T_cells",
+      "00P01Kr14": "T_cells",
+      "Node138": "T_cells",
+      "00P01Pr15": "Plasma",
+      "Node137": "background",
+      "00P01Or08": "Monocytes",
+      "Node136": "background",
+      "00P01Kr15": "T_cells",
+      "00P01Pr05": "Plasma",
+      "Node143": "background",
+      "Node135": "background",
+      "Node125": "background",
+      "12P01Kr10": "T_cells",
+      "12P01Kr19": "T_cells",
+      "Node146": "T_cells",
+      "Node124": "background",
+      "12P01Kr07": "T_cells",
+      "12P01Or05": "Monocytes",
+      "12P01Pr03": "Plasma",
+      "12P01Pr08": "Plasma",
+      "Node155": "Plasma",
+      "Node153": "background",
+      "12P01Pr15": "Plasma",
+      "Node152": "background",
+      "12P01Or15": "Monocytes",
+      "Node151": "background",
+      "Node149": "background",
+      "Node123": "background",
+      "12P01Pr06": "Plasma",
+      "12P01Pr24": "Plasma",
+      "Node160": "Plasma",
+      "Node122": "background",
+      "00P01Or19": "Monocytes",
+      "Node121": "background",
+      "00P01Or21": "Monocytes",
+      "Node120": "background",
+      "12P01Or11": "Monocytes",
+      "Node119": "background",
+      "00P01Kr18": "T_cells",
+      "00P01Or06": "Monocytes",
+      "12P01Or03": "Monocytes",
+      "Node174": "Monocytes",
+      "00P01Pr03": "Plasma",
+      "Node173": "background",
+      "12P01Kr13": "Plasma",
+      "Node172": "background",
+      "00P01Pr18": "Plasma",
+      "Node171": "background",
+      "Node169": "background",
+      "12P01Kr17": "T_cells",
+      "12P01Or06": "Monocytes",
+      "12P01Pr11": "Plasma",
+      "Node182": "background",
+      "Node180": "background",
+      "Node168": "background",
+      "00P01Or01": "Monocytes",
+      "Node167": "background",
+      "00P01Or17": "Monocytes",
+      "Node166": "background",
+      "Node118": "background",
+      "12P01Or18": "Monocytes",
+      "Node117": "background",
+      "00P01Or11": "Monocytes",
+      "00P01Or18": "Monocytes",
+      "Node189": "Monocytes",
+      "00P01Pr11": "Plasma",
+      "Node188": "background",
+      "Node116": "background",
+      "Node4": "background",
+      "00P01Kr17": "T_cells",
+      "Node3": "background",
+      "00P01Pr12": "Plasma",
+      "12P01Or21": "Monocytes",
+      "12P01Or23": "Monocytes",
+      "Node201": "Monocytes",
+      "12P01Pr10": "Plasma",
+      "Node200": "background",
+      "Node198": "background",
+      "12P01Kr05": "T_cells",
+      "12P01Kr09": "T_cells",
+      "Node207": "T_cells",
+      "12P01Kr08": "T_cells",
+      "Node206": "T_cells",
+      "12P01Or19": "Monocytes",
+      "Node205": "T_cells",
+      "Node197": "background",
+      "12P01Pr18": "Plasma",
+      "Node196": "background",
+      "12P01Or09": "Monocytes",
+      "12P01Or12": "Monocytes",
+      "Node215": "background",
+      "12P01Pr20": "Plasma",
+      "Node214": "background",
+      "12P01Pr02": "Plasma",
+      "Node213": "background",
+      "Node195": "background",
+      "12P01Kr23": "T_cells",
+      "Node194": "background",
+      "Node2": "background",
+      "00P01Kr11": "T_cells",
+      "12P01Or22": "Monocytes",
+      "Node221": "background"
+    }
+  },
+  "data partitions": {
+    "0": {
+      "name": "fel.filter.default",
+      "coverage": [
+        [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16,
+          17,
+          18,
+          19,
+          20,
+          21,
+          22,
+          23,
+          24,
+          25,
+          26,
+          27,
+          28,
+          29,
+          30,
+          31,
+          32,
+          33,
+          34,
+          35,
+          36,
+          37,
+          38,
+          39,
+          40,
+          41,
+          42,
+          43,
+          44,
+          45,
+          46,
+          47,
+          48,
+          49,
+          50,
+          51,
+          52,
+          53,
+          54,
+          55,
+          56,
+          57,
+          58,
+          59,
+          60,
+          61,
+          62,
+          63,
+          64,
+          65,
+          66,
+          67,
+          68,
+          69,
+          70,
+          71,
+          72,
+          73,
+          74,
+          75,
+          76,
+          77,
+          78,
+          79,
+          80,
+          81,
+          82,
+          83,
+          84,
+          85,
+          86,
+          87,
+          88,
+          89,
+          90,
+          91,
+          92,
+          93,
+          94,
+          95,
+          96,
+          97,
+          98,
+          99,
+          100,
+          101,
+          102,
+          103,
+          104,
+          105,
+          106,
+          107,
+          108,
+          109,
+          110,
+          111,
+          112,
+          113,
+          114,
+          115,
+          116,
+          117,
+          118,
+          119,
+          120,
+          121,
+          122,
+          123,
+          124,
+          125,
+          126,
+          127,
+          128,
+          129,
+          130,
+          131,
+          132,
+          133,
+          134,
+          135,
+          136,
+          137,
+          138,
+          139,
+          140,
+          141,
+          142,
+          143,
+          144,
+          145,
+          146,
+          147,
+          148,
+          149,
+          150,
+          151,
+          152,
+          153,
+          154,
+          155,
+          156,
+          157,
+          158,
+          159,
+          160,
+          161,
+          162,
+          163,
+          164,
+          165,
+          166,
+          167,
+          168,
+          169,
+          170,
+          171,
+          172,
+          173,
+          174,
+          175,
+          176,
+          177,
+          178,
+          179,
+          180,
+          181,
+          182,
+          183,
+          184,
+          185,
+          186,
+          187,
+          188,
+          189,
+          190,
+          191,
+          192,
+          193,
+          194,
+          195,
+          196,
+          197,
+          198,
+          199,
+          200,
+          201,
+          202,
+          203,
+          204,
+          205,
+          206,
+          207,
+          208,
+          209,
+          210,
+          211,
+          212,
+          213,
+          214,
+          215,
+          216,
+          217,
+          218,
+          219,
+          220,
+          221,
+          222,
+          223,
+          224,
+          225,
+          226,
+          227,
+          228,
+          229,
+          230,
+          231,
+          232,
+          233,
+          234,
+          235,
+          236,
+          237,
+          238,
+          239,
+          240,
+          241,
+          242,
+          243,
+          244,
+          245,
+          246,
+          247,
+          248,
+          249,
+          250,
+          251,
+          252,
+          253,
+          254,
+          255,
+          256,
+          257,
+          258,
+          259,
+          260,
+          261,
+          262,
+          263,
+          264,
+          265,
+          266,
+          267,
+          268,
+          269,
+          270,
+          271,
+          272,
+          273,
+          274,
+          275,
+          276,
+          277,
+          278,
+          279,
+          280,
+          281,
+          282,
+          283,
+          284,
+          285,
+          286,
+          287,
+          288,
+          289,
+          290,
+          291,
+          292,
+          293,
+          294,
+          295,
+          296,
+          297,
+          298,
+          299,
+          300,
+          301,
+          302,
+          303,
+          304,
+          305,
+          306,
+          307,
+          308,
+          309,
+          310,
+          311,
+          312,
+          313,
+          314,
+          315,
+          316,
+          317,
+          318,
+          319,
+          320,
+          321,
+          322,
+          323,
+          324,
+          325,
+          326,
+          327,
+          328,
+          329,
+          330,
+          331,
+          332,
+          333,
+          334,
+          335,
+          336,
+          337,
+          338,
+          339,
+          340,
+          341,
+          342,
+          343,
+          344,
+          345,
+          346,
+          347,
+          348,
+          349,
+          350,
+          351,
+          352,
+          353,
+          354,
+          355,
+          356,
+          357,
+          358,
+          359,
+          360,
+          361
+        ]
+      ]
+    }
+  },
+  "branch attributes": {
+    "0": {
+      "00P01Kr01": {
+        "original name": "00P01Kr01",
+        "Global MG94xREV": 0.006273701945018706
+      },
+      "00P01Kr02": {
+        "original name": "00P01Kr02",
+        "Global MG94xREV": 0.004391674678195441
+      },
+      "00P01Kr03": {
+        "original name": "00P01Kr03",
+        "Global MG94xREV": 0.004774862236905186
+      },
+      "00P01Kr05": {
+        "original name": "00P01Kr05",
+        "Global MG94xREV": 0.0009382034747491426
+      },
+      "00P01Kr06": {
+        "original name": "00P01Kr06",
+        "Global MG94xREV": 0
+      },
+      "00P01Kr07": {
+        "original name": "00P01Kr07",
+        "Global MG94xREV": 0.001902301650186831
+      },
+      "00P01Kr08": {
+        "original name": "00P01Kr08",
+        "Global MG94xREV": 0.00759917773804581
+      },
+      "00P01Kr10": {
+        "original name": "00P01Kr10",
+        "Global MG94xREV": 0.004696736206006001
+      },
+      "00P01Kr11": {
+        "original name": "00P01Kr11",
+        "Global MG94xREV": 0.002661689284283663
+      },
+      "00P01Kr12": {
+        "original name": "00P01Kr12",
+        "Global MG94xREV": 0.0009497981061802721
+      },
+      "00P01Kr14": {
+        "original name": "00P01Kr14",
+        "Global MG94xREV": 0
+      },
+      "00P01Kr15": {
+        "original name": "00P01Kr15",
+        "Global MG94xREV": 0.0009450862408821118
+      },
+      "00P01Kr16": {
+        "original name": "00P01Kr16",
+        "Global MG94xREV": 0.004761862454148461
+      },
+      "00P01Kr17": {
+        "original name": "00P01Kr17",
+        "Global MG94xREV": 0.0225154558713235
+      },
+      "00P01Kr18": {
+        "original name": "00P01Kr18",
+        "Global MG94xREV": 0
+      },
+      "00P01Or01": {
+        "original name": "00P01Or01",
+        "Global MG94xREV": 0.005769580148930586
+      },
+      "00P01Or02": {
+        "original name": "00P01Or02",
+        "Global MG94xREV": 0.00338966618533284
+      },
+      "00P01Or03": {
+        "original name": "00P01Or03",
+        "Global MG94xREV": 0.002884133516853609
+      },
+      "00P01Or04": {
+        "original name": "00P01Or04",
+        "Global MG94xREV": 0.004805208954669929
+      },
+      "00P01Or05": {
+        "original name": "00P01Or05",
+        "Global MG94xREV": 0
+      },
+      "00P01Or06": {
+        "original name": "00P01Or06",
+        "Global MG94xREV": 0
+      },
+      "00P01Or07": {
+        "original name": "00P01Or07",
+        "Global MG94xREV": 0.003967384197755035
+      },
+      "00P01Or08": {
+        "original name": "00P01Or08",
+        "Global MG94xREV": 0.0009503684152605418
+      },
+      "00P01Or09": {
+        "original name": "00P01Or09",
+        "Global MG94xREV": 0.0009588332630950771
+      },
+      "00P01Or11": {
+        "original name": "00P01Or11",
+        "Global MG94xREV": 0.001924980561227961
+      },
+      "00P01Or13": {
+        "original name": "00P01Or13",
+        "Global MG94xREV": 0.003851753904410669
+      },
+      "00P01Or14": {
+        "original name": "00P01Or14",
+        "Global MG94xREV": 0.0009592104409740894
+      },
+      "00P01Or17": {
+        "original name": "00P01Or17",
+        "Global MG94xREV": 0
+      },
+      "00P01Or18": {
+        "original name": "00P01Or18",
+        "Global MG94xREV": 0.0009621954819051269
+      },
+      "00P01Or19": {
+        "original name": "00P01Or19",
+        "Global MG94xREV": 0.001906719651450426
+      },
+      "00P01Or20": {
+        "original name": "00P01Or20",
+        "Global MG94xREV": 0
+      },
+      "00P01Or21": {
+        "original name": "00P01Or21",
+        "Global MG94xREV": 0.002871150205693441
+      },
+      "00P01Or22": {
+        "original name": "00P01Or22",
+        "Global MG94xREV": 0
+      },
+      "00P01Or24": {
+        "original name": "00P01Or24",
+        "Global MG94xREV": 0.003361823640096812
+      },
+      "00P01Pr01": {
+        "original name": "00P01Pr01",
+        "Global MG94xREV": 0.002924951104335405
+      },
+      "00P01Pr02": {
+        "original name": "00P01Pr02",
+        "Global MG94xREV": 0.00298445762848403
+      },
+      "00P01Pr03": {
+        "original name": "00P01Pr03",
+        "Global MG94xREV": 0
+      },
+      "00P01Pr04": {
+        "original name": "00P01Pr04",
+        "Global MG94xREV": 0.004033953816095209
+      },
+      "00P01Pr05": {
+        "original name": "00P01Pr05",
+        "Global MG94xREV": 0.001957776750350909
+      },
+      "00P01Pr06": {
+        "original name": "00P01Pr06",
+        "Global MG94xREV": 0.001981975418008074
+      },
+      "00P01Pr07": {
+        "original name": "00P01Pr07",
+        "Global MG94xREV": 0.00561490613280959
+      },
+      "00P01Pr09": {
+        "original name": "00P01Pr09",
+        "Global MG94xREV": 0.001985522585282348
+      },
+      "00P01Pr10": {
+        "original name": "00P01Pr10",
+        "Global MG94xREV": 0.00390696762820286
+      },
+      "00P01Pr11": {
+        "original name": "00P01Pr11",
+        "Global MG94xREV": 0.006939614242451921
+      },
+      "00P01Pr12": {
+        "original name": "00P01Pr12",
+        "Global MG94xREV": 0.002973027326942046
+      },
+      "00P01Pr14": {
+        "original name": "00P01Pr14",
+        "Global MG94xREV": 0.0009526722257936466
+      },
+      "00P01Pr15": {
+        "original name": "00P01Pr15",
+        "Global MG94xREV": 0
+      },
+      "00P01Pr16": {
+        "original name": "00P01Pr16",
+        "Global MG94xREV": 0.00286875868040201
+      },
+      "00P01Pr17": {
+        "original name": "00P01Pr17",
+        "Global MG94xREV": 0.006770835399236588
+      },
+      "00P01Pr18": {
+        "original name": "00P01Pr18",
+        "Global MG94xREV": 0.0009494645098876365
+      },
+      "00P01Pr19": {
+        "original name": "00P01Pr19",
+        "Global MG94xREV": 0
+      },
+      "12P01Kr01": {
+        "original name": "12P01Kr01",
+        "Global MG94xREV": 0
+      },
+      "12P01Kr04": {
+        "original name": "12P01Kr04",
+        "Global MG94xREV": 0.001900658471213056
+      },
+      "12P01Kr05": {
+        "original name": "12P01Kr05",
+        "Global MG94xREV": 0
+      },
+      "12P01Kr06": {
+        "original name": "12P01Kr06",
+        "Global MG94xREV": 0.00760469527699167
+      },
+      "12P01Kr07": {
+        "original name": "12P01Kr07",
+        "Global MG94xREV": 0
+      },
+      "12P01Kr08": {
+        "original name": "12P01Kr08",
+        "Global MG94xREV": 0
+      },
+      "12P01Kr09": {
+        "original name": "12P01Kr09",
+        "Global MG94xREV": 0
+      },
+      "12P01Kr10": {
+        "original name": "12P01Kr10",
+        "Global MG94xREV": 0
+      },
+      "12P01Kr11": {
+        "original name": "12P01Kr11",
+        "Global MG94xREV": 0
+      },
+      "12P01Kr12": {
+        "original name": "12P01Kr12",
+        "Global MG94xREV": 0
+      },
+      "12P01Kr13": {
+        "original name": "12P01Kr13",
+        "Global MG94xREV": 0.002853817890023917
+      },
+      "12P01Kr14": {
+        "original name": "12P01Kr14",
+        "Global MG94xREV": 0.003822879943240388
+      },
+      "12P01Kr16": {
+        "original name": "12P01Kr16",
+        "Global MG94xREV": 0
+      },
+      "12P01Kr17": {
+        "original name": "12P01Kr17",
+        "Global MG94xREV": 0.00379724212103557
+      },
+      "12P01Kr18": {
+        "original name": "12P01Kr18",
+        "Global MG94xREV": 0
+      },
+      "12P01Kr19": {
+        "original name": "12P01Kr19",
+        "Global MG94xREV": 0
+      },
+      "12P01Kr23": {
+        "original name": "12P01Kr23",
+        "Global MG94xREV": 0.002904190025057379
+      },
+      "12P01Kr24": {
+        "original name": "12P01Kr24",
+        "Global MG94xREV": 0.002856319080234599
+      },
+      "12P01Or01": {
+        "original name": "12P01Or01",
+        "Global MG94xREV": 0.003908824083908296
+      },
+      "12P01Or03": {
+        "original name": "12P01Or03",
+        "Global MG94xREV": 0.0009542796721890341
+      },
+      "12P01Or04": {
+        "original name": "12P01Or04",
+        "Global MG94xREV": 0
+      },
+      "12P01Or05": {
+        "original name": "12P01Or05",
+        "Global MG94xREV": 0.002869542258826843
+      },
+      "12P01Or06": {
+        "original name": "12P01Or06",
+        "Global MG94xREV": 0.0009542608112928677
+      },
+      "12P01Or08": {
+        "original name": "12P01Or08",
+        "Global MG94xREV": 0
+      },
+      "12P01Or09": {
+        "original name": "12P01Or09",
+        "Global MG94xREV": 0
+      },
+      "12P01Or11": {
+        "original name": "12P01Or11",
+        "Global MG94xREV": 0.002875962842588049
+      },
+      "12P01Or12": {
+        "original name": "12P01Or12",
+        "Global MG94xREV": 0
+      },
+      "12P01Or13": {
+        "original name": "12P01Or13",
+        "Global MG94xREV": 0.001917419524490525
+      },
+      "12P01Or14": {
+        "original name": "12P01Or14",
+        "Global MG94xREV": 0.002879768937586765
+      },
+      "12P01Or15": {
+        "original name": "12P01Or15",
+        "Global MG94xREV": 0
+      },
+      "12P01Or17": {
+        "original name": "12P01Or17",
+        "Global MG94xREV": 0.002888136640948081
+      },
+      "12P01Or18": {
+        "original name": "12P01Or18",
+        "Global MG94xREV": 0.002890516952710996
+      },
+      "12P01Or19": {
+        "original name": "12P01Or19",
+        "Global MG94xREV": 0.0009562080313438808
+      },
+      "12P01Or20": {
+        "original name": "12P01Or20",
+        "Global MG94xREV": 0.00096511045160613
+      },
+      "12P01Or21": {
+        "original name": "12P01Or21",
+        "Global MG94xREV": 0
+      },
+      "12P01Or22": {
+        "original name": "12P01Or22",
+        "Global MG94xREV": 0.01027984497017835
+      },
+      "12P01Or23": {
+        "original name": "12P01Or23",
+        "Global MG94xREV": 0
+      },
+      "12P01Pr01": {
+        "original name": "12P01Pr01",
+        "Global MG94xREV": 0
+      },
+      "12P01Pr02": {
+        "original name": "12P01Pr02",
+        "Global MG94xREV": 0.0008723891265281095
+      },
+      "12P01Pr03": {
+        "original name": "12P01Pr03",
+        "Global MG94xREV": 0.0009487927706050658
+      },
+      "12P01Pr04": {
+        "original name": "12P01Pr04",
+        "Global MG94xREV": 0
+      },
+      "12P01Pr05": {
+        "original name": "12P01Pr05",
+        "Global MG94xREV": 0.003831808914763818
+      },
+      "12P01Pr06": {
+        "original name": "12P01Pr06",
+        "Global MG94xREV": 0.003805288932706751
+      },
+      "12P01Pr07": {
+        "original name": "12P01Pr07",
+        "Global MG94xREV": 0.005781323188882299
+      },
+      "12P01Pr08": {
+        "original name": "12P01Pr08",
+        "Global MG94xREV": 0
+      },
+      "12P01Pr10": {
+        "original name": "12P01Pr10",
+        "Global MG94xREV": 0
+      },
+      "12P01Pr11": {
+        "original name": "12P01Pr11",
+        "Global MG94xREV": 0
+      },
+      "12P01Pr12": {
+        "original name": "12P01Pr12",
+        "Global MG94xREV": 0.001905902455535733
+      },
+      "12P01Pr14": {
+        "original name": "12P01Pr14",
+        "Global MG94xREV": 0.003874716758407867
+      },
+      "12P01Pr15": {
+        "original name": "12P01Pr15",
+        "Global MG94xREV": 0.002851203662062967
+      },
+      "12P01Pr16": {
+        "original name": "12P01Pr16",
+        "Global MG94xREV": 0.0003927948093581341
+      },
+      "12P01Pr17": {
+        "original name": "12P01Pr17",
+        "Global MG94xREV": 0.0009539112629996103
+      },
+      "12P01Pr18": {
+        "original name": "12P01Pr18",
+        "Global MG94xREV": 0.003771233108097016
+      },
+      "12P01Pr19": {
+        "original name": "12P01Pr19",
+        "Global MG94xREV": 0.001908770344628881
+      },
+      "12P01Pr20": {
+        "original name": "12P01Pr20",
+        "Global MG94xREV": 0.01833257287669721
+      },
+      "12P01Pr21": {
+        "original name": "12P01Pr21",
+        "Global MG94xREV": 0.001924677886786434
+      },
+      "12P01Pr22": {
+        "original name": "12P01Pr22",
+        "Global MG94xREV": 0
+      },
+      "12P01Pr23": {
+        "original name": "12P01Pr23",
+        "Global MG94xREV": 0
+      },
+      "12P01Pr24": {
+        "original name": "12P01Pr24",
+        "Global MG94xREV": 0.000950876060037139
+      },
+      "12P01Pr25": {
+        "original name": "12P01Pr25",
+        "Global MG94xREV": 0
+      },
+      "12P01Pr26": {
+        "original name": "12P01Pr26",
+        "Global MG94xREV": 0.001933540539487863
+      },
+      "12P01Pr27": {
+        "original name": "12P01Pr27",
+        "Global MG94xREV": 0.0009543174012088132
+      },
+      "Node10": {
+        "Global MG94xREV": 0.001884018064322577
+      },
+      "Node102": {
+        "Global MG94xREV": 0.002818265935143142
+      },
+      "Node104": {
+        "Global MG94xREV": 0
+      },
+      "Node106": {
+        "Global MG94xREV": 0.001905217140575164
+      },
+      "Node11": {
+        "Global MG94xREV": 0
+      },
+      "Node110": {
+        "Global MG94xREV": 0.004630756424160465
+      },
+      "Node111": {
+        "Global MG94xREV": 0.002398209960352257
+      },
+      "Node116": {
+        "Global MG94xREV": 0.009254078100607275
+      },
+      "Node117": {
+        "Global MG94xREV": 0.001001838468529795
+      },
+      "Node118": {
+        "Global MG94xREV": 0.0009196147920023972
+      },
+      "Node119": {
+        "Global MG94xREV": 0.0009379103616856321
+      },
+      "Node12": {
+        "Global MG94xREV": 0
+      },
+      "Node120": {
+        "Global MG94xREV": 0
+      },
+      "Node121": {
+        "Global MG94xREV": 0.002815549518412781
+      },
+      "Node122": {
+        "Global MG94xREV": 0.0009403606978626704
+      },
+      "Node123": {
+        "Global MG94xREV": 0
+      },
+      "Node124": {
+        "Global MG94xREV": 0.005673433349686068
+      },
+      "Node125": {
+        "Global MG94xREV": 0.002792907913105465
+      },
+      "Node126": {
+        "Global MG94xREV": 0.0009339383131903535
+      },
+      "Node127": {
+        "Global MG94xREV": 0
+      },
+      "Node128": {
+        "Global MG94xREV": 0.003762367236875414
+      },
+      "Node13": {
+        "Global MG94xREV": 0.0009413840303177419
+      },
+      "Node130": {
+        "Global MG94xREV": 0.002824725181569121
+      },
+      "Node135": {
+        "Global MG94xREV": 0.0009346819814324606
+      },
+      "Node136": {
+        "Global MG94xREV": 0
+      },
+      "Node137": {
+        "Global MG94xREV": 0.0009346897533736939
+      },
+      "Node138": {
+        "Global MG94xREV": 0.007629881068093434
+      },
+      "Node14": {
+        "Global MG94xREV": 0
+      },
+      "Node143": {
+        "Global MG94xREV": 0.000933648942874349
+      },
+      "Node146": {
+        "Global MG94xREV": 0.003826901792694428
+      },
+      "Node149": {
+        "Global MG94xREV": 0.002813988296612641
+      },
+      "Node15": {
+        "Global MG94xREV": 0
+      },
+      "Node151": {
+        "Global MG94xREV": 0.001875725240365401
+      },
+      "Node152": {
+        "Global MG94xREV": 0.001873116675638355
+      },
+      "Node153": {
+        "Global MG94xREV": 0
+      },
+      "Node155": {
+        "Global MG94xREV": 0.0009484796157427411
+      },
+      "Node16": {
+        "Global MG94xREV": 0
+      },
+      "Node160": {
+        "Global MG94xREV": 0.000952628202823965
+      },
+      "Node166": {
+        "Global MG94xREV": 0
+      },
+      "Node167": {
+        "Global MG94xREV": 0
+      },
+      "Node168": {
+        "Global MG94xREV": 0.001870881465496824
+      },
+      "Node169": {
+        "Global MG94xREV": 0
+      },
+      "Node17": {
+        "Global MG94xREV": 0
+      },
+      "Node171": {
+        "Global MG94xREV": 0.0009348865944095636
+      },
+      "Node172": {
+        "Global MG94xREV": 0
+      },
+      "Node173": {
+        "Global MG94xREV": 0
+      },
+      "Node174": {
+        "Global MG94xREV": 0
+      },
+      "Node18": {
+        "Global MG94xREV": 0.002827059079800786
+      },
+      "Node180": {
+        "Global MG94xREV": 0.00187116717639051
+      },
+      "Node182": {
+        "Global MG94xREV": 0
+      },
+      "Node188": {
+        "Global MG94xREV": 0.0009296764733744277
+      },
+      "Node189": {
+        "Global MG94xREV": 0.002927544505024528
+      },
+      "Node19": {
+        "Global MG94xREV": 0.001424513317797744
+      },
+      "Node194": {
+        "Global MG94xREV": 0.009478932541191904
+      },
+      "Node195": {
+        "Global MG94xREV": 0.0009360330850985473
+      },
+      "Node196": {
+        "Global MG94xREV": 0.0009204861701125677
+      },
+      "Node197": {
+        "Global MG94xREV": 0.001949802632776053
+      },
+      "Node198": {
+        "Global MG94xREV": 0.001881596174385316
+      },
+      "Node2": {
+        "Global MG94xREV": 0.005137023920233083
+      },
+      "Node20": {
+        "Global MG94xREV": 0.000852591445992009
+      },
+      "Node200": {
+        "Global MG94xREV": 0.00471923632258148
+      },
+      "Node201": {
+        "Global MG94xREV": 0
+      },
+      "Node205": {
+        "Global MG94xREV": 0.002854950773128028
+      },
+      "Node206": {
+        "Global MG94xREV": 0
+      },
+      "Node207": {
+        "Global MG94xREV": 0
+      },
+      "Node213": {
+        "Global MG94xREV": 0.00661518821548986
+      },
+      "Node214": {
+        "Global MG94xREV": 0.006656113858538561
+      },
+      "Node215": {
+        "Global MG94xREV": 0
+      },
+      "Node221": {
+        "Global MG94xREV": 0.001619587618223798
+      },
+      "Node3": {
+        "Global MG94xREV": 0.008855705667088225
+      },
+      "Node33": {
+        "Global MG94xREV": 0.001031746563351401
+      },
+      "Node36": {
+        "Global MG94xREV": 0.001886285207402931
+      },
+      "Node37": {
+        "Global MG94xREV": 0.0009344469063237243
+      },
+      "Node38": {
+        "Global MG94xREV": 0
+      },
+      "Node39": {
+        "Global MG94xREV": 0.001880831767120144
+      },
+      "Node4": {
+        "Global MG94xREV": 0.01040778814934147
+      },
+      "Node40": {
+        "Global MG94xREV": 0
+      },
+      "Node41": {
+        "Global MG94xREV": 0.0009418440349771716
+      },
+      "Node42": {
+        "Global MG94xREV": 0.001882615981706912
+      },
+      "Node43": {
+        "Global MG94xREV": 0.001184651924215803
+      },
+      "Node44": {
+        "Global MG94xREV": 0.001644756935413893
+      },
+      "Node45": {
+        "Global MG94xREV": 0.00283301154524075
+      },
+      "Node48": {
+        "Global MG94xREV": 0.0009495045608641752
+      },
+      "Node5": {
+        "Global MG94xREV": 0.003244491009453984
+      },
+      "Node51": {
+        "Global MG94xREV": 0.0009366923160270598
+      },
+      "Node52": {
+        "Global MG94xREV": 0.001184882536431053
+      },
+      "Node53": {
+        "Global MG94xREV": 0.001883541570120494
+      },
+      "Node57": {
+        "Global MG94xREV": 0.004547516875144362
+      },
+      "Node6": {
+        "Global MG94xREV": 0.002379152002059946
+      },
+      "Node63": {
+        "Global MG94xREV": 0.0009398641435215783
+      },
+      "Node64": {
+        "Global MG94xREV": 0
+      },
+      "Node65": {
+        "Global MG94xREV": 0
+      },
+      "Node66": {
+        "Global MG94xREV": 0.0009337273298384956
+      },
+      "Node68": {
+        "Global MG94xREV": 0.00190498121833516
+      },
+      "Node69": {
+        "Global MG94xREV": 7.262868657886154e-21
+      },
+      "Node7": {
+        "Global MG94xREV": 0.004164905061492921
+      },
+      "Node73": {
+        "Global MG94xREV": 0.001840752957161532
+      },
+      "Node76": {
+        "Global MG94xREV": 0.001881310373599699
+      },
+      "Node77": {
+        "Global MG94xREV": 0.002495990217618739
+      },
+      "Node78": {
+        "Global MG94xREV": 0.0008851115708078261
+      },
+      "Node79": {
+        "Global MG94xREV": 0
+      },
+      "Node8": {
+        "Global MG94xREV": 0.003777614863347873
+      },
+      "Node80": {
+        "Global MG94xREV": 0
+      },
+      "Node81": {
+        "Global MG94xREV": 0
+      },
+      "Node84": {
+        "Global MG94xREV": 0
+      },
+      "Node9": {
+        "Global MG94xREV": 0
+      },
+      "Node95": {
+        "Global MG94xREV": 0.003768361639144192
+      },
+      "Node96": {
+        "Global MG94xREV": 0.000938061795589775
+      },
+      "Node97": {
+        "Global MG94xREV": 0
+      },
+      "Node98": {
+        "Global MG94xREV": 0.0009498121647320392
+      }
+    },
+    "attributes": {
+      "original name": {
+        "attribute type": "node label",
+        "display order": -1
+      },
+      "Global MG94xREV": {
+        "attribute type": "branch length",
+        "display order": 1
+      }
+    }
+  },
+  "MLE": {
+    "headers": [
+      ["alpha", "Synonymous substitution rate at a site"],
+      [
+        "beta (background)",
+        "Non-synonymous substitution rate at a site for background branches"
+      ],
+      [
+        "beta (T_cells)",
+        "Non-synonymous substitution rate at a site for T_cells branches"
+      ],
+      [
+        "beta (Plasma)",
+        "Non-synonymous substitution rate at a site for Plasma branches"
+      ],
+      [
+        "beta (Monocytes)",
+        "Non-synonymous substitution rate at a site for Monocytes branches"
+      ],
+      [
+        "p-value (overall)",
+        "P-value for the test that non-synonymous rates differ between any of the selected groups: T_cells,Plasma,Monocytes"
+      ],
+      [
+        "P-value for T_cells vs Plasma",
+        "P-value for  the test that non-synonymous rates differ between T_cells and Plasma branches"
+      ],
+      [
+        "P-value for T_cells vs Monocytes",
+        "P-value for  the test that non-synonymous rates differ between T_cells and Monocytes branches"
+      ],
+      [
+        "P-value for Plasma vs Monocytes",
+        "P-value for  the test that non-synonymous rates differ between Plasma and Monocytes branches"
+      ],
+      [
+        "Total branch length",
+        "The total length of branches contributing to inference at this site, and used to scale beta-alpha"
+      ]
+    ],
+    "content": {
+      "0": [
+        [5.679583444000307, 0, 0, 0, 0, 1, 1, 1, 1, 0.9865271801675141],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [1.115732845347662, 0, 0, 0, 0, 1, 1, 1, 1, 1.180326741102541],
+        [
+          3.514907575247776,
+          2.581212864042646,
+          3.205652356357662,
+          3.66587207662471,
+          0,
+          0.8166988735448453,
+          0.9267614978479329,
+          0.7080177134173509,
+          0.8428151173314768,
+          3.145807732261506
+        ],
+        [
+          0,
+          0,
+          2.283398758321846,
+          0,
+          2.419429744048219,
+          0.9125832138229928,
+          0.5117064889652116,
+          0.9674511308646695,
+          0.7364512246616559,
+          3.716146146651582
+        ],
+        [
+          4.776364584421132e-15,
+          2.274023092167672,
+          2.771941545195517,
+          4.665599859950819,
+          0,
+          0.5720093282386927,
+          0.6670299015412291,
+          0.7037753220799753,
+          0.4600280185304864,
+          5.128907772166504
+        ],
+        [
+          2.043674065319507e-14,
+          8.489557973769347,
+          5.016614740444722,
+          9.438096003203222,
+          8.612387462242534,
+          1,
+          1,
+          1,
+          0.9071703378219479,
+          9.516148451756676
+        ],
+        [
+          3.618195274777467e-14,
+          0,
+          5.8128581101139,
+          7.848905610312529,
+          5.861695757370826,
+          0.373881418508256,
+          1,
+          0.9933917576219192,
+          1,
+          12.16527629768372
+        ],
+        [2.123123989913536e-15, 0, 0, 0, 0, 1, 1, 1, 1, 12.16527629768372],
+        [
+          1.925118154035214,
+          6.30212139755349,
+          2.664854836632296,
+          0,
+          0,
+          0.1661826567766052,
+          0.578531948574773,
+          0.461735923237788,
+          1,
+          13.76407641166977
+        ],
+        [1.826668751041097, 0, 0, 0, 0, 1, 1, 1, 1, 14.08136347855287],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [8.308071548425223, 0, 0, 0, 0, 1, 1, 1, 1, 15.52445142296119],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [
+          1.895329196311083,
+          0,
+          0,
+          2.219996825343397,
+          0,
+          0.8502015972487139,
+          1,
+          1,
+          0.5703029754375979,
+          16.2023033741858
+        ],
+        [5.137641879384549, 0, 0, 0, 0, 1, 1, 1, 1, 17.09469687556728],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [
+          0,
+          0,
+          2.750344236333481,
+          0,
+          0,
+          0.6848388042308607,
+          0.8094584991510883,
+          0.4950417913358962,
+          1,
+          17.43471287937849
+        ],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [11.81704312724728, 0, 0, 0, 0, 1, 1, 1, 1, 19.48729901517267],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [
+          2.345753654415162e-14,
+          10.49351017745541,
+          22.11310725315425,
+          10.45827814623445,
+          11.93143871027082,
+          0.8623998978881056,
+          1,
+          1,
+          0.8622413588021398,
+          26.84079316365381
+        ],
+        [1.049745590077188, 0, 0, 0, 0, 1, 1, 1, 1, 27.02313092963314],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [5.131560653016352, 0, 0, 0, 0, 1, 1, 1, 1, 27.91446813962282],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [
+          0,
+          0,
+          0,
+          0,
+          2.544080499195136,
+          0.6502004349744924,
+          1,
+          0.4652456781923953,
+          0.7771261486502747,
+          28.21735799113976
+        ],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [
+          4.149336373142489e-15,
+          0,
+          0,
+          0,
+          3.098992916503072,
+          0.6500788708488543,
+          1,
+          0.4647109940987439,
+          0.7756456922446398,
+          28.58631388881225
+        ],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [
+          2.971470084296582,
+          0,
+          2.570661253287962,
+          0,
+          0,
+          0.6676911742506481,
+          0.7904811393304643,
+          0.4844890016424914,
+          1,
+          29.42025201684909
+        ],
+        [2.056561489350188, 0, 0, 0, 0, 1, 1, 1, 1, 29.77747078596023],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [
+          1.020490126038556,
+          0,
+          2.433621151706257,
+          0,
+          0,
+          0.6693034365833338,
+          0.793195482683192,
+          0.4854434504518697,
+          1,
+          30.25558753415257
+        ],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [23.4686205160865, 0, 0, 0, 0, 1, 1, 1, 1, 34.33201888663382],
+        [
+          3.455634023825041e-14,
+          15.39624743938226,
+          3.08244636972577,
+          0,
+          6.57810244931892,
+          0.02841386532749057,
+          0.3629183957223019,
+          0.5310758686525403,
+          0.1625450696592144,
+          37.78040384253296
+        ],
+        [10.56039460085688, 0, 0, 0, 0, 1, 1, 1, 1, 39.61471377208336],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [1.021469845417964, 0, 0, 0, 0, 1, 1, 1, 1, 39.79214012318149],
+        [1.700640137068009, 0, 0, 0, 0, 1, 1, 1, 1, 40.08753638515093],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [8.025175499444068e-15, 0, 0, 0, 0, 1, 1, 1, 1, 40.08753638515093],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [
+          5.731975743375141e-14,
+          0,
+          1.806487233476416,
+          0,
+          0,
+          0.6457987440511456,
+          0.7647466610159492,
+          0.4700963965123732,
+          1,
+          40.31086645487393
+        ],
+        [
+          1.88161674806798,
+          2.088645444099882,
+          2.762415953028854,
+          4.057422463844794,
+          5.255312456126753,
+          1,
+          1,
+          1,
+          0.7995414977537603,
+          42.55194887912823
+        ],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 42.55194887912823],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [
+          1.454970705644727e-14,
+          7.059429234183657,
+          0,
+          2.178441392480722,
+          0,
+          0.2113059374245099,
+          0.8436007957570286,
+          1,
+          0.5719961917198029,
+          43.94137913550966
+        ],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [
+          1.016814398769823,
+          2.320682005575273,
+          0,
+          0,
+          0,
+          1,
+          1,
+          1,
+          1,
+          44.46228686448843
+        ],
+        [1.927824073117152, 0, 0, 0, 0, 1, 1, 1, 1, 44.79714431758567],
+        [6.506945718529972, 0, 0, 0, 0, 1, 1, 1, 1, 45.92738192646975],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [
+          0,
+          2.046237184001986,
+          0,
+          1.944427602284448,
+          0,
+          0.6128283652678956,
+          1,
+          1,
+          0.8580215786067182,
+          46.53631813567701
+        ],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [1.036147533238472, 0, 0, 0, 0, 1, 1, 1, 1, 46.71629395860169],
+        [
+          6.919562784350939,
+          8.389517510147957,
+          7.774349673630499,
+          2.179705668265188,
+          0,
+          0.1990333144202429,
+          0.5591029139018096,
+          0.2580939323246989,
+          0.290191203224247,
+          50.46627626441254
+        ],
+        [
+          2.042569116825203,
+          12.81847380703589,
+          0,
+          0,
+          2.9555394961188,
+          0.01827427288047412,
+          1,
+          0.5163106320959419,
+          0.5770042756970188,
+          53.07465501057597
+        ],
+        [
+          0,
+          4.641126967214747,
+          0,
+          0,
+          0,
+          0.6136234250621651,
+          1,
+          1,
+          1,
+          53.76319987432437
+        ],
+        [
+          4.661464964968085,
+          2.199031774274348,
+          0,
+          2.142135147523023,
+          0,
+          0.6040629420034973,
+          1,
+          1,
+          0.8389848348495571,
+          55.23553614611865
+        ],
+        [
+          1.147410628267315e-14,
+          10.1316308539833,
+          0,
+          7.402119503313861,
+          0,
+          0.05742293000472376,
+          0.1707469844183594,
+          1,
+          0.1281422309177824,
+          57.90110083520868
+        ],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [
+          4.531113003344149,
+          0,
+          3.357513001194124,
+          0,
+          0,
+          0.6541090702263159,
+          0.7760901837199148,
+          0.4607158426208471,
+          1,
+          59.10322030844905
+        ],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [1.185296022056426e-14, 0, 0, 0, 0, 1, 1, 1, 1, 59.10322030844905],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [1.70100433428881, 0, 0, 0, 0, 1, 1, 1, 1, 59.39867983042003],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [
+          3.404448585170137e-15,
+          2.148779009164967,
+          2.793868691578467,
+          2.062209097391413,
+          0,
+          0.9233436848387966,
+          0.8350091506054076,
+          0.9554742758361465,
+          0.8579036943464678,
+          60.38672261349355
+        ],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [9.653477822523666, 0, 0, 0, 0, 1, 1, 1, 1, 62.06350372763038],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [2.175497990275173, 0, 0, 0, 0, 1, 1, 1, 1, 62.4413814221774],
+        [
+          4.231841910180567e-15,
+          2.575934507826509,
+          3.038397549774791,
+          2.402687055023279,
+          3.17142825219973,
+          1,
+          1,
+          0.9761972609098781,
+          1,
+          63.95407619431555
+        ],
+        [
+          4.082521104497379e-15,
+          4.774815380004401,
+          5.799256551197151,
+          2.184864811121372,
+          5.894739210072896,
+          1,
+          1,
+          0.9873721642567904,
+          1,
+          66.42432741785827
+        ],
+        [1.071117901069507, 0, 0, 0, 0, 1, 1, 1, 1, 66.61037749230267],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [15.01934589048032, 0, 0, 0, 0, 1, 1, 1, 1, 69.21919433519071],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [6.877094665441011, 0, 0, 0, 0, 1, 1, 1, 1, 70.41372574316033],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [1.929913897592272, 0, 0, 0, 0, 1, 1, 1, 1, 70.7489461927109],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [4.183209350051534, 0, 0, 0, 0, 1, 1, 1, 1, 71.47555753046952],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [
+          0,
+          2.573954371203597,
+          0,
+          2.439510036652818,
+          0,
+          0.6143006486722034,
+          1,
+          1,
+          0.856423033825785,
+          72.24053449251559
+        ],
+        [
+          2.041300184192925,
+          3.846125318325979,
+          4.642604706635445,
+          0,
+          0,
+          0.4816606552551377,
+          0.8132387066823958,
+          0.7072886793082274,
+          1,
+          73.73965295383461
+        ],
+        [4.346950099086166, 0, 0, 0, 0, 1, 1, 1, 1, 74.49470558504665],
+        [5.151121556183907, 0, 0, 0, 0, 1, 1, 1, 1, 75.38944046721312],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [
+          8.275714238615036,
+          3.804472056566271,
+          2.31170042373902,
+          0,
+          0,
+          0.4650905660073201,
+          0.6175988859867623,
+          0.4900513928210104,
+          1,
+          77.67711699057877
+        ],
+        [2.089513363868955, 0, 0, 0, 0, 1, 1, 1, 1, 78.04005940477242],
+        [
+          5.516297511699511e-15,
+          7.192146349863901,
+          2.894866669921779,
+          0,
+          5.664171205040857,
+          0.2876359456334121,
+          0.3994602941591285,
+          0.5953064266401655,
+          0.3081257127128025,
+          80.13930692437512
+        ],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [5.08986526921362, 0, 0, 0, 0, 1, 1, 1, 1, 81.02340176706541],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [0.7861102936850072, 0, 0, 0, 0, 1, 1, 1, 1, 81.15994684629111],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [
+          7.851815516282498e-15,
+          7.392739437042615,
+          4.961569048275431,
+          2.212092006424045,
+          2.822134555005167,
+          1,
+          1,
+          1,
+          0.8652004901678805,
+          83.55348724119885
+        ],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [1.830970272192302, 0, 0, 0, 0, 1, 1, 1, 1, 83.87152146983662],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [1.027122638138221, 0, 0, 0, 0, 1, 1, 1, 1, 84.04992969464389],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [5.516245000887307, 0, 0, 0, 0, 1, 1, 1, 1, 85.00808546073044],
+        [
+          0,
+          0,
+          0,
+          3.233848986690052,
+          0,
+          0.8583284318730153,
+          1,
+          1,
+          0.5752310609960685,
+          85.51594434634454
+        ],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [1.05110229929178, 0, 0, 0, 0, 1, 1, 1, 1, 85.69851776878157],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [
+          1.755773226057078e-15,
+          1.907979117325743,
+          0,
+          1.801156795288737,
+          0,
+          0.6110471212103326,
+          1,
+          1,
+          0.8529546515902536,
+          86.26444246778409
+        ],
+        [3.143759344562913, 0, 0, 0, 0, 1, 1, 1, 1, 86.81050435276151],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [0, 2.657397665185194, 0, 0, 0, 1, 1, 1, 1, 87.20474857969729],
+        [
+          5.878845302841012e-15,
+          4.650461963142094,
+          2.767386496321665,
+          4.416467963673044,
+          0,
+          0.5781153852171832,
+          0.7035649762027225,
+          0.7592369931178969,
+          0.5614835116385062,
+          88.93038418344256
+        ],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [
+          1.922972038740624,
+          0,
+          0,
+          0,
+          2.366396920648961,
+          0.6456752957359404,
+          1,
+          0.4619962560431436,
+          0.7716234378762441,
+          89.54613428165602
+        ],
+        [
+          5.291336370969078e-15,
+          0,
+          3.034176647360334,
+          0,
+          0,
+          0.6701516181602126,
+          0.7912082506779297,
+          0.4845486508027019,
+          1,
+          89.92123955206685
+        ],
+        [0, 2.321343794698019, 0, 0, 0, 1, 1, 1, 1, 90.26562774875366],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [
+          6.556874358457357e-15,
+          0,
+          2.802021483719217,
+          0,
+          0,
+          0.6558141811260395,
+          0.7763794264445916,
+          0.4763002364029711,
+          0.9999999524423742,
+          90.61203244053776
+        ],
+        [1.583045251240899, 0, 0, 0, 0, 1, 1, 1, 1, 90.88700281172478],
+        [
+          7.591021345808283e-15,
+          5.692001708106524,
+          3.269191686008906,
+          0,
+          3.303974516471878,
+          0.4484860526348693,
+          0.6131267822954678,
+          0.9940888715553178,
+          0.7998254291309439,
+          92.52897230724561
+        ],
+        [2.192900000198538, 0, 0, 0, 0, 1, 1, 1, 1, 92.90987268047112],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [
+          1.07878990267249e-14,
+          14.03035409546455,
+          0,
+          5.850519761510977,
+          7.315319397639896,
+          0.07172489814416494,
+          0.2252440055829847,
+          0.255889568887067,
+          0.7899754584531397,
+          96.78110856975573
+        ],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [
+          0,
+          0,
+          2.648415884892834,
+          0,
+          0,
+          0.6700639473760925,
+          0.793067086662226,
+          0.4858658612253379,
+          1,
+          97.10852350702619
+        ],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [1.019102383399892, 0, 0, 0, 0, 1, 1, 1, 1, 97.2855386368346],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [
+          3.165061767958113,
+          0,
+          0,
+          2.444442929654658,
+          0,
+          0.8531610927488797,
+          1,
+          1,
+          0.5721740039365515,
+          98.2191875290446
+        ],
+        [0, 2.160635318962759, 0, 0, 0, 1, 1, 1, 1, 98.53973345718106],
+        [
+          1.233613735881443e-14,
+          2.379068110102462,
+          0,
+          2.233358759968844,
+          3.078700044500036,
+          0.8724221866659718,
+          0.8231468597090693,
+          0.8780369096411129,
+          0.8222758441153907,
+          99.60996255526801
+        ],
+        [0, 2.299954309384461, 0, 0, 0, 1, 1, 1, 1, 99.95117746659655],
+        [
+          0,
+          2.018328627552053,
+          0,
+          0,
+          2.560707788496174,
+          0.4674701313742744,
+          1,
+          0.6921752655612639,
+          0.7709288604899371,
+          100.5554806062789
+        ],
+        [
+          5.708651583674587,
+          2.752448139716055,
+          2.658298713539212,
+          0,
+          0,
+          0.9655857225624711,
+          0.7536644140028083,
+          0.5829925654295043,
+          1,
+          102.284039211449
+        ],
+        [
+          4.419627140834795e-14,
+          12.75899523564419,
+          2.187357548164716,
+          4.999411660098826,
+          2.203922120749624,
+          0.1955059789847753,
+          1,
+          0.9944397264548156,
+          0.9237592696365886,
+          105.4948674359189
+        ],
+        [
+          13.88172689362215,
+          4.046482452413304,
+          0,
+          0,
+          0,
+          0.2760524545799257,
+          1,
+          1,
+          1,
+          108.5064081917605
+        ],
+        [
+          4.424178611145798e-15,
+          2.030444019574275,
+          2.618398721693004,
+          0,
+          0,
+          0.4731450413793197,
+          0.7626469498468524,
+          0.7076398415942071,
+          1,
+          109.1313433101051
+        ],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [
+          7.651683945485505,
+          0,
+          3.148964963198264,
+          0,
+          0,
+          0.5739837169881985,
+          0.6811615164539395,
+          0.422967790763126,
+          1,
+          110.8497148026433
+        ],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [0, 2.975384117402656, 0, 0, 0, 1, 1, 1, 1, 111.2911346272221],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [
+          0,
+          4.168455857111712,
+          0,
+          0,
+          0,
+          0.279581022968447,
+          1,
+          1,
+          1,
+          111.9095553018667
+        ],
+        [
+          0,
+          0,
+          3.218413370894337,
+          0,
+          0,
+          0.5954326114379924,
+          0.7063432770667877,
+          0.4372382751632227,
+          1,
+          112.3074371519012
+        ],
+        [
+          7.526135881945593,
+          3.056286524114181,
+          0,
+          0,
+          0,
+          1,
+          1,
+          1,
+          1,
+          114.0681274214077
+        ],
+        [
+          1.517877187434035e-15,
+          8.446486134243438,
+          2.307604962763693,
+          0,
+          2.941836191754211,
+          0.3724621349708448,
+          0.6127902199016084,
+          0.8793586430583668,
+          0.5993146461457928,
+          115.9567518711818
+        ],
+        [
+          7.617007012063168e-16,
+          2.30533776517997,
+          0,
+          0,
+          0,
+          1,
+          1,
+          1,
+          1,
+          116.2987654572425
+        ],
+        [
+          0,
+          1.931125437028584,
+          2.537426936603734,
+          0,
+          0,
+          0.6728563692552124,
+          0.7337353694407343,
+          0.4486915031438246,
+          1,
+          116.8989556679331
+        ],
+        [
+          4.793657407919921,
+          7.169684443623557,
+          0,
+          2.309395049917342,
+          5.907025682552566,
+          0.224958798337199,
+          0.468561310499642,
+          0.2624260141886765,
+          0.4054965736503294,
+          119.8612240974643
+        ],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [
+          3.398015667660633e-14,
+          17.48691115875248,
+          0,
+          3.999260284349207,
+          2.738238854876357,
+          0.1315304445391425,
+          1,
+          0.9036242976139774,
+          0.7637818993759055,
+          123.4096026504222
+        ],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [
+          0,
+          1.884410441835424,
+          0,
+          1.839123257288124,
+          0,
+          0.6144477589679842,
+          1,
+          1,
+          0.8538612337801743,
+          123.9779931975144
+        ],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [4.419646150962227, 0, 0, 0, 0, 1, 1, 1, 1, 124.7456729222049],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [
+          8.00450340484131e-15,
+          0,
+          0,
+          2.353609258736987,
+          0,
+          0.8543817839493902,
+          1,
+          0.9999999524423742,
+          0.5727308777228142,
+          125.1152948124765
+        ],
+        [1.151823448690446, 0, 0, 0, 0, 1, 1, 1, 1, 125.3153632065921],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [
+          5.104151480610658e-15,
+          4.105625776255204,
+          0,
+          0,
+          0,
+          0.2891801740148949,
+          1,
+          1,
+          1,
+          125.9244625828175
+        ],
+        [
+          1.117359197318732e-14,
+          9.728707208288149,
+          0,
+          0,
+          0,
+          0.02135009269571775,
+          1,
+          1,
+          1,
+          127.3677868931625
+        ],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [
+          1.018252677331128,
+          4.592048914562107,
+          2.799373831690268,
+          4.419604217733889,
+          0,
+          0.5299528025904425,
+          0.7087658412663684,
+          0.7312101954306625,
+          0.5263141412651597,
+          129.2660710566941
+        ],
+        [
+          1.053039375514028e-14,
+          4.339523947833051,
+          11.60731711257957,
+          2.050600810254706,
+          0,
+          0.1059102215166211,
+          0.1671643441115529,
+          0.06459009699617813,
+          0.2844574020825072,
+          131.6668813427934
+        ],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [1.020222516554753, 0, 0, 0, 0, 1, 1, 1, 1, 131.8440910364839],
+        [1.928570605871197, 0, 0, 0, 0, 1, 1, 1, 1, 132.1790781601566],
+        [
+          5.77025291613142e-15,
+          0,
+          2.714164089409499,
+          0,
+          0,
+          0.6711430052079991,
+          0.7936860183371115,
+          0.4861240845885166,
+          1,
+          132.5146213315085
+        ],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [
+          4.262500156079578e-15,
+          6.947448144282884,
+          2.870883838972791,
+          4.492656056983905,
+          2.846202968745452,
+          1,
+          1,
+          0.9960901965766512,
+          1,
+          134.9446510346561
+        ],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [5.972927612655091, 0, 0, 0, 0, 1, 1, 1, 1, 135.9821312465688],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [9.922771345489126, 0, 0, 0, 0, 1, 1, 1, 1, 137.705687865013],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [5.142892356952497, 0, 0, 0, 0, 1, 1, 1, 1, 138.5989933591279],
+        [5.202259560898336, 0, 0, 0, 0, 1, 1, 1, 1, 139.5026107644737],
+        [
+          7.7206575860992e-15,
+          4.940300698261746,
+          0,
+          0,
+          2.982257008347629,
+          0.4025908539392908,
+          1,
+          0.4590661705911658,
+          0.5740153059240756,
+          140.590597926798
+        ],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [0.7864638930209537, 0, 0, 0, 0, 1, 1, 1, 1, 140.7272044252033],
+        [3.153364578085206, 0, 0, 0, 0, 1, 1, 1, 1, 141.2749347113997],
+        [
+          19.42336714109527,
+          0,
+          0,
+          0,
+          0,
+          0.9999999999999964,
+          1,
+          1,
+          1,
+          144.6487172790817
+        ],
+        [3.66717601360827, 0, 0, 0, 0, 1, 1, 1, 1, 145.2856951221847],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [26.54044951597803, 0, 0, 0, 0, 1, 1, 1, 1, 149.8956942672866],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [
+          0,
+          0,
+          2.831305456882787,
+          0,
+          0,
+          0.6692592218025678,
+          0.7922436153392054,
+          0.4853376332109045,
+          1,
+          150.2457192402701
+        ],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [
+          0,
+          0,
+          0,
+          3.342349249934227,
+          0,
+          0.8691684103444085,
+          1,
+          1,
+          0.581752209867034,
+          150.7706175185728
+        ],
+        [5.154114633457045, 0, 0, 0, 0, 1, 1, 1, 1, 151.6658722895852],
+        [5.128285051485453, 0, 0, 0, 0, 1, 1, 1, 1, 152.5566405370842],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [
+          0,
+          0,
+          0,
+          4.463126000895161,
+          0,
+          0.3246482349870607,
+          0.3809265063665137,
+          1,
+          0.2631492618374136,
+          153.2575508784448
+        ],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [
+          2.266513726740469,
+          2.010674350383564,
+          5.106380166401139,
+          1.921377556453479,
+          2.53980727288618,
+          1,
+          1,
+          1,
+          0.8452557190890242,
+          155.1849441245652
+        ],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [
+          2.91765417405654e-15,
+          7.79971098782683,
+          4.571052096066762,
+          11.73143701418224,
+          7.1203095147465,
+          1,
+          0.9559671967073942,
+          0.6343211531649913,
+          0.969299007670845,
+          159.5972727457021
+        ],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [
+          8.497788065404659e-15,
+          6.067994568762563,
+          0,
+          3.861810438619359,
+          0,
+          0.2043800199800465,
+          0.3749485820995559,
+          1,
+          0.2955422590816099,
+          161.1039806836832
+        ],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [
+          1.427022675146037e-14,
+          8.944202978957042,
+          5.665197845224363,
+          4.468070273741746,
+          5.800840288624893,
+          1,
+          1,
+          0.9817033345478571,
+          1,
+          164.5236036257992
+        ],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [
+          13.92543815938726,
+          0,
+          0,
+          0,
+          0,
+          0.9999999999999929,
+          1,
+          1,
+          1,
+          166.9424118668314
+        ],
+        [
+          2.205812807431449,
+          6.023030420529274,
+          0,
+          1.882790389278749,
+          0,
+          0.2335662122631956,
+          0.8431791073210259,
+          1,
+          0.580347291700205,
+          168.5147977021178
+        ],
+        [1.891684848881329, 0, 0, 0, 0, 1, 1, 1, 1, 168.8433778767261],
+        [
+          3.093696686234983e-14,
+          7.479508023321365,
+          3.20368952411676,
+          4.93327070847166,
+          0,
+          0.444524066437756,
+          0.7258585377236146,
+          0.4481721270977739,
+          0.4694803089818156,
+          171.1238228380551
+        ],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [
+          4.493333247549527e-15,
+          2.251873284629992,
+          2.732376999999475,
+          0,
+          0,
+          1,
+          1,
+          1,
+          1,
+          171.7956993539945
+        ],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [
+          0,
+          0,
+          2.655025016796344,
+          0,
+          0,
+          0.667897553183467,
+          0.7909706829370062,
+          0.4846908989840413,
+          1,
+          172.1239313564849
+        ],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [5.158236786217234, 0, 0, 0, 0, 1, 1, 1, 1, 173.0199021334825],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [1.927934534325933, 0, 0, 0, 0, 1, 1, 1, 1, 173.3547787733715],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [2.189746971215657, 0, 0, 0, 0, 1, 1, 1, 1, 173.7351314746027],
+        [0.8490657533408811, 0, 0, 0, 0, 1, 1, 1, 1, 173.8826117346744],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 173.8826117346744],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+        [8.702362440670072e-15, 0, 0, 0, 0, 1, 1, 1, 1, 173.8826117346744],
+        [10.4353347263394, 0, 0, 0, 0, 1, 1, 1, 1, 175.6951991265463],
+        [
+          4.756071961680289,
+          0,
+          2.020205563794406,
+          2.011085541253852,
+          0,
+          0.9144640620690607,
+          0.9979814874445101,
+          0.7308380784821356,
+          0.4883478240057724,
+          177.0868967540673
+        ]
+      ]
+    }
+  }
+}
