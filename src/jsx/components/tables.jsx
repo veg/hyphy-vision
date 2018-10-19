@@ -435,10 +435,11 @@ var DatamonkeyTable = React.createClass({
             munged = _.map(self.props.bodyData, row => _.map(row, extract)).map(
               row => _.object(headers, row)
             );
+          const csv_options = { filename: "datamonkey-table.csv" };
           try {
-            var exporter = Export.create();
+            var exporter = Export.create(csv_options);
           } catch (err) {
-            var exporter = CsvExport.create();
+            var exporter = CsvExport.create(csv_options);
           }
           exporter.downloadCsv(munged);
         };
