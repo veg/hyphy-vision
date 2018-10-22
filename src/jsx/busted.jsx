@@ -376,7 +376,7 @@ var BUSTEDSiteChartAndTable = React.createClass({
             <button
               id="export-chart-svg"
               type="button"
-              className="btn.btn-secondary btn-sm pull-right btn-export"
+              className="btn.btn-secondary btn-sm float-right btn-export"
               onClick={() => {
                 d3_save_svg.save(d3.select("#chart").node(), {
                   filename: "busted"
@@ -388,7 +388,7 @@ var BUSTEDSiteChartAndTable = React.createClass({
             <button
               id="export-chart-png"
               type="button"
-              className="btn.btn-secondary btn-sm pull-right btn-export"
+              className="btn.btn-secondary btn-sm float-right btn-export"
               onClick={() => {
                 saveSvgAsPng(
                   document.getElementById("chart"),
@@ -622,9 +622,7 @@ class BUSTEDModelTable extends React.Component {
             "<ul><li>Hover over a column header for a description of its content.</li><li>Click a row to view the corresponding rate distribution.</li></ul>"
           }
         />
-        <table
-          className="dm-table table table-hover table-smm list-group-item-text"
-        >
+        <table className="dm-table table table-hover table-smm list-group-item-text">
           <thead id="summary-model-header1">
             <tr>
               <th>Model</th>

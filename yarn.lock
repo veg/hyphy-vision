@@ -2,6 +2,10 @@
 # yarn lockfile v1
 
 
+"@fortawesome/fontawesome-free@^5.3.1":
+  version "5.4.1"
+  resolved "https://registry.yarnpkg.com/@fortawesome/fontawesome-free/-/fontawesome-free-5.4.1.tgz#6194786c1a705ab84253e06429834466670e3c3f"
+
 "@types/node@^7.0.18":
   version "7.0.52"
   resolved "https://registry.yarnpkg.com/@types/node/-/node-7.0.52.tgz#8990d3350375542b0c21a83cd0331e6a8fc86716"
@@ -2062,9 +2066,9 @@ cssom@0.3.x, "cssom@>= 0.3.2 < 0.4.0":
   dependencies:
     cssom "0.3.x"
 
-csvexport@^1.0.2:
-  version "1.0.5"
-  resolved "https://registry.yarnpkg.com/csvexport/-/csvexport-1.0.5.tgz#14897196f6b42d93b083b0c7ae1f77ee8bdb7cb2"
+csvexport@1.1.0:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/csvexport/-/csvexport-1.1.0.tgz#56ddd414dd5bf874aa1fbd3f87935c27302ea881"
 
 currently-unhandled@^0.4.1:
   version "0.4.1"

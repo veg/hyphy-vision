@@ -2,8 +2,8 @@ var path = require("path"),
   webpack = require("webpack"),
   cloneDeep = require("lodash.clonedeep"),
   ExtractTextPlugin = require("extract-text-webpack-plugin"),
-  HtmlWebpackPlugin = require('html-webpack-plugin'),
-  { BaseHrefWebpackPlugin } = require('base-href-webpack-plugin');
+  HtmlWebpackPlugin = require("html-webpack-plugin"),
+  { BaseHrefWebpackPlugin } = require("base-href-webpack-plugin");
 
 config = {
   devtool: "source-map",
@@ -11,23 +11,20 @@ config = {
     hyphyvision: ["./src/index.js"]
   },
   devServer: {
-    contentBase: '.',
+    contentBase: ".",
     historyApiFallback: true
   },
   output: {
     path: path.resolve(__dirname, "dist/"),
     filename: "[name].js",
-    library : "hyphyVision"
+    library: "hyphyVision"
   },
   module: {
     rules: [
       {
         test: /\.(js|jsx)?$/,
-        include:[
-          path.resolve(__dirname, "src"),
-          path.resolve(__dirname, "node_modules/csvexport")
-        ],
-        loaders: "babel-loader", 
+        include: [path.resolve(__dirname, "src")],
+        loaders: "babel-loader",
         query: {
           presets: ["react"]
         }
@@ -81,7 +78,7 @@ config = {
         options: { limit: 10000, mimetype: "application/octet-stream" }
       },
       { test: /\.eot(\?v=\d+\.\d+\.\d+)?$/, loaders: "file-loader" },
-      { test: /\.(png|svg|jpg|gif)$/, use: ['file-loader'] },
+      { test: /\.(png|svg|jpg|gif)$/, use: ["file-loader"] },
       {
         test: /\.(js|jsx)?$/,
         exclude: /node_modules/,
@@ -95,15 +92,15 @@ config = {
           use: ["css-loader", "sass-loader"]
         })
       },
-      { 
+      {
         test: /\.json$/,
         loader: "json-loader"
       }
     ]
   },
   plugins: [
-    new BaseHrefWebpackPlugin({ baseHref: '.' }),
-    new HtmlWebpackPlugin({ title: 'HyPhy Vision'}),
+    new BaseHrefWebpackPlugin({ baseHref: "." }),
+    new HtmlWebpackPlugin({ title: "HyPhy Vision" }),
     new webpack.LoaderOptionsPlugin({ debug: true }),
     //new webpack.optimize.CommonsChunkPlugin({
     //  name: "vendor",
@@ -119,8 +116,8 @@ config = {
     }),
     new webpack.IgnorePlugin(/jsdom$/),
     new HtmlWebpackPlugin({
-      title: 'HyPhy Vision',
-      filename: path.resolve('dist', 'index.html')
+      title: "HyPhy Vision",
+      filename: path.resolve("dist", "index.html")
     }),
     new ExtractTextPlugin("[name].css")
   ],

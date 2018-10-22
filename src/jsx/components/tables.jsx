@@ -2,8 +2,7 @@ var React = require("react"),
   _ = require("underscore"),
   d3 = require("d3"),
   datamonkey = require("../../datamonkey/datamonkey.js");
-
-require("csvexport");
+import CsvExport from "csvexport";
 
 import PropTypes from "prop-types";
 
@@ -433,15 +432,17 @@ var DatamonkeyTable = React.createClass({
           var headers = _.map(self.props.headerData, extract),
             munged = _.map(self.props.bodyData, row => _.map(row, extract)).map(
               row => _.object(headers, row)
-            ),
-            exporter = Export.create();
+            );
+          const exporter = CsvExport.create({
+            filename: "datamonkey-table.csv"
+          });
           exporter.downloadCsv(munged);
         };
         button = (
           <button
             id="export-csv"
             type="button"
-            className="btn.btn-secondary btn-sm pull-right"
+            className="btn.btn-secondary btn-sm float-right"
             onClick={exportCSV}
           >
             <span className="far fa-save" /> Export Table to CSV
