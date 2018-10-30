@@ -1,5 +1,6 @@
 import React from "react";
 import ReactDOM from "react-dom";
+var _ = require("underscore");
 
 import { ResultsPage } from "./components/results_page.jsx";
 import { Header } from "./components/header.jsx";
@@ -95,6 +96,19 @@ class BGMContents extends React.Component {
       newProbabilityThreshold || this.state.probabilityThreshold;
     var FilteredMLEData = [];
     const allSitePairs = this.props.json.MLE.content;
+
+    function selectivelyFormatNumber(num) {
+      if (num.toString().indexOf(".") > -1) {
+        if (num > 0.1) {
+          return d3.format(".2f")(num);
+        } else {
+          return d3.format(".3f")(num);
+        }
+      } else {
+        return num;
+      }
+    }
+
     for (var i = 0; i < allSitePairs.length; i++) {
       var sitePairData = allSitePairs[i];
       var maxProbability = Math.max(
@@ -103,7 +117,11 @@ class BGMContents extends React.Component {
         sitePairData[4]
       );
       if (maxProbability >= probabilityThreshold) {
-        FilteredMLEData.push(sitePairData);
+        var formattedSitePairData = _.map(
+          sitePairData,
+          selectivelyFormatNumber
+        );
+        FilteredMLEData.push(formattedSitePairData);
       }
     }
     return FilteredMLEData;
