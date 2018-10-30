@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 
 const hyphy_logo = require("../../../images/hyphy-logo.svg");
 
+// eslint-disable-next-line
 var Hamburger = React.createClass({
   render: function() {
     return (

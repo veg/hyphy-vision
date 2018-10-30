@@ -230,12 +230,5 @@ function render_bgm(data, element, fasta, originalFile, analysisLog) {
   );
 }
 
-function render_hv_fade(data, element) {
-  ReactDOM.render(
-    <FADE data={data} hyphy_vision />,
-    document.getElementById(element)
-  );
-}
-
 module.exports = render_bgm;
 module.exports.BGM = BGM;

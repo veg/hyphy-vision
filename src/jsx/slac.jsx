@@ -1145,7 +1145,6 @@ var SLACGraphs = React.createClass({
 class SLACContents extends React.Component {
   constructor(props) {
     super(props);
-    const float_format = d3.format(".2f");
     this.state = {
       analysis_results: null,
       error_message: null,
