@@ -10,7 +10,8 @@ const thumbs = {
   MEME: require("../../images/MEME-thumb.png"),
   SLAC: require("../../images/SLAC-thumb.png"),
   FUBAR: require("../../images/FUBAR-thumb.png"),
-  GARD: require("../../images/GARD-thumb.png")
+  GARD: require("../../images/GARD-thumb.png"),
+  BGM: require("../../images/MEME-thumb.png")
 };
 
 function MethodBanner(props) {
@@ -78,6 +79,10 @@ function Home(props) {
         <MethodBanner
           method="GARD"
           text="Genetic Algorithm Recombination Detection"
+        />
+        <MethodBanner
+          method="BGM"
+          text="SpiderMonkey - Baysian Graphical Models"
         />
       </div>
     </div>

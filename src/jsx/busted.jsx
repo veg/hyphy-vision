@@ -747,11 +747,6 @@ class BUSTEDModelTable extends React.Component {
 class BUSTEDContents extends React.Component {
   constructor(props) {
     super(props);
-    const float_format = d3.format(".2f");
-    const p_value_format = d3.format(".4f");
-    const fit_format = d3.format(".2f");
-    const colorGradient = ["#00a99d", "#000000"];
-    const grayScaleGradient = ["#444444", "#000000"];
     var edgeColorizer = function(element, data, foreground_color) {
       var is_foreground = data.target.annotations.is_foreground,
         color_fill = foreground_color(0);
@@ -779,19 +774,6 @@ class BUSTEDContents extends React.Component {
       "chart-append-html": true,
       edgeColorizer: edgeColorizer
     };
-    var distro_settings = {
-      dimensions: { width: 600, height: 400 },
-      margins: { left: 50, right: 15, bottom: 35, top: 15 },
-      legend: false,
-      domain: [0.00001, 10000],
-      do_log_plot: true,
-      k_p: null,
-      plot: null,
-      svg_id: "prop-chart"
-    };
-    const constrained_threshold = "Infinity";
-    const null_threshold = "-Infinity";
-    const model_name = "FG";
 
     this.state = {
       p: null,

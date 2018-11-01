@@ -62,17 +62,6 @@ class BranchSelection extends React.Component {
 
   createTree(nwk) {
     var self = this;
-    function style_element(element, data, stylingType) {
-      var reference_style = "red";
-      var test_style = "rgb(31, 119, 180)";
-      if (data["reference"]) {
-        element.style("stroke", reference_style, "important");
-      } else if (data["test"]) {
-        element.style("stroke", test_style, "important");
-      } else {
-        element.style("stroke", "");
-      }
-    }
 
     var default_tree_settings = function(tree) {
       tree.branch_length(null);
