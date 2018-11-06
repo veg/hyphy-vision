@@ -314,7 +314,7 @@ class HyPhyVision extends React.Component {
                     this.state.data ||
                     base_url + "/data/json_files/fade/CD2_AA.fasta.FADE.json"
                   }
-                  fasta={fasta.CD2_AA}
+                  fasta={fasta.CD2}
                 />
               )}
             />

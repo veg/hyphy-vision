@@ -4,7 +4,8 @@ import d3 from "d3";
 
 import { ResultsPage } from "./components/results_page.jsx";
 import { Header } from "./components/header.jsx";
-import { DatamonkeyTable } from "./components/tables.jsx";
+import { Tree } from "./components/tree.jsx";
+import { DatamonkeyTable, DatamonkeyModelTable } from "./components/tables.jsx";
 
 const amino_acids = [
   "A",
@@ -114,6 +115,49 @@ class FADETable extends React.Component {
   }
 }
 
+class FADETree extends React.Component {
+  constructor(props) {
+    super(props);
+  }
+
+  render() {
+    const { json } = this.props;
+    if (!json) return null;
+
+    return (
+      <div className="row">
+        <div id="tree-tab" className="col-md-12">
+          <Tree
+            json={this.props.json}
+            tree_string={this.props.json.input.trees[0]}
+            models={this.props.json.fits}
+            method="bgm"
+            settings={{
+              omegaPlot: {},
+              "tree-options": {
+                /* value arrays have the following meaning
+                    [0] - the value of the attribute
+                    [1] - does the change in attribute value trigger tree re-layout?
+                */
+                "hyphy-tree-model": ["Full model", true],
+                "hyphy-tree-highlight": [null, false],
+                "hyphy-tree-branch-lengths": [true, true],
+                "hyphy-tree-hide-legend": [false, true],
+                "hyphy-tree-fill-color": [true, true]
+              },
+              "suppress-tree-render": false,
+              "chart-append-html": true,
+              edgeColorizer: function(e, d) {
+                return 0;
+              }
+            }}
+          />
+        </div>
+      </div>
+    );
+  }
+}
+
 class FADEContents extends React.Component {
   constructor(props) {
     super(props);
@@ -123,6 +167,10 @@ class FADEContents extends React.Component {
       <div>
         <FADESummary json={this.props.json} />
         <FADETable json={this.props.json} />
+        <FADETree json={this.props.json} />
+        <div id="fits-tab">
+          <DatamonkeyModelTable fits={this.props.json.fits} />
+        </div>
       </div>
     );
   }
