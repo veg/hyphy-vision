@@ -81,6 +81,11 @@ var Methods = React.createClass({
               BGM
             </Link>
           </li>
+          <li>
+            <Link onClick={() => self.props.changeMethod()} to="../fade">
+              FADE
+            </Link>
+          </li>
 
           <li role="separator" className="divider" />
           <li>
