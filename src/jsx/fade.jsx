@@ -7,6 +7,7 @@ import { Header } from "./components/header.jsx";
 import { Tree } from "./components/tree.jsx";
 import { DatamonkeyTable, DatamonkeyModelTable } from "./components/tables.jsx";
 
+// TODO: Add "any amino acid".
 const amino_acids = [
   "A",
   "C",
@@ -39,7 +40,31 @@ function FADESummary(props) {
       <div className="col-md-12" />
       <div className="col-md-12">
         <div className="main-result">
-          <p>FADE analyzed your data.</p>
+          <p>
+            FADE found{" "}
+            <strong className="hyphy-highlight">{props.numberOfSites}</strong>{" "}
+            sites under selection bias towards{" "}
+            <strong className="hyphy-highlight">
+              {props.selectedAminoAcid}
+            </strong>{" "}
+            (Bayes Factor >=
+            <input
+              style={{
+                display: "inline-block",
+                marginLeft: "5px",
+                width: "100px"
+              }}
+              className="form-control"
+              type="number"
+              defaultValue={props.bayesFactorThreshold}
+              step="1"
+              min="0"
+              max="1000"
+              onChange={props.updateBayesFactorThreshold}
+            />{" "}
+            )
+          </p>
+
           <hr />
           <p>
             <small>
@@ -69,33 +94,41 @@ function FADESummary(props) {
 class FADETable extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { amino_acid: "A" };
+    this.state = { selectedAminoAcid: this.props.selectedAminoAcid };
   }
+
   render() {
-    const { json } = this.props;
-    if (!json) return null;
-    const headerData = json.MLE.headers.map(function(header) {
-        return { value: header[0], abbr: header[1], sortable: true };
-      }),
-      bodyData = json.MLE.content[this.state.amino_acid][0].map(function(row) {
-        return row.map(function(d) {
-          return { value: float_format(d), classes: "" };
-        });
-      });
+    if (!this.props.json) return null;
+    const title =
+      "Sites Under Selection Bias Towards " +
+      this.props.selectedAminoAcid +
+      " (BF >= " +
+      this.props.bayesFactorThreshold +
+      " )";
+    var headerData = this.props.json.MLE.headers.map(function(header) {
+      return { value: header[0], abbr: header[1], sortable: true };
+    });
+    // TODO: Add a column for the site number.
+    //headerData.unshift({value: 'site', abbr: 'site', sortable: true});
 
     return (
       <div className="row">
         <div id="table-tab" className="col-md-12">
           <Header
-            title="Amino acid maximum likelihood estimate"
+            title={title}
             popover="This will be more informative once this work is reviewed."
           />
           <div style={{ display: "flex", justifyContent: "space-around" }}>
             {amino_acids.map(aa => {
+              var style = null;
+              if (aa == this.props.selectedAminoAcid) {
+                style = { backgroundColor: "darkgray", color: "white" };
+              }
               return (
                 <button
                   className="hyphy-omega-chart-btn"
-                  onClick={() => this.setState({ amino_acid: aa })}
+                  style={style}
+                  onClick={() => this.props.updateSelectedAminoAcid(aa)}
                 >
                   {aa}
                 </button>
@@ -104,7 +137,7 @@ class FADETable extends React.Component {
           </div>
           <DatamonkeyTable
             headerData={headerData}
-            bodyData={bodyData}
+            bodyData={this.props.MLEBodyData}
             paginate={20}
             classes={"table table-smm table-striped"}
             export_csv
@@ -161,12 +194,74 @@ class FADETree extends React.Component {
 class FADEContents extends React.Component {
   constructor(props) {
     super(props);
+    this.state = {
+      bayesFactorThreshold: 2, // This is probably very low... the FADE write-up on hyphy.org lists a bayes factor of >= 100.
+      selectedAminoAcid: "A",
+      numberOfSites: 20,
+      MLEBodyData: null
+    };
   }
+
+  componentDidMount() {
+    this.getFilteredMLEBodyData();
+  }
+
+  updateBayesFactorThreshold = e => {
+    this.setState({
+      bayesFactorThreshold: e.target.value
+    });
+  };
+
+  updateSelectedAminoAcid = aa => {
+    this.setState({
+      selectedAminoAcid: aa
+    });
+  };
+
+  getFilteredMLEBodyData = () => {
+    var bayesFactorThreshold = this.state.bayesFactorThreshold;
+    // Get the data for the table filtered by selectedAminoAcid and only sites with bayes factors above the threshold.
+    var MLEDataForSelectedAminoAcid = this.props.json.MLE.content[
+      this.state.selectedAminoAcid
+    ][0];
+    var bodyData = MLEDataForSelectedAminoAcid.map(function(row, index) {
+      // TODO: Add a column for the site number (for some reason the two lines below add a new data point each time the table renders).
+      //var siteNumber = index+1
+      //row.unshift(siteNumber)
+      if (row[3] >= bayesFactorThreshold) {
+        return row.map(function(d, rowIndex) {
+          if (rowIndex != 0) {
+            return { value: float_format(d), classes: "" };
+          } else {
+            return { value: d, classes: "" };
+          }
+        });
+      }
+    });
+    bodyData = bodyData.filter(function(el) {
+      return el != undefined;
+    });
+    //this.setState({MLEBodyData: bodyData})
+    return bodyData;
+  };
+
   render() {
     return (
       <div>
-        <FADESummary json={this.props.json} />
-        <FADETable json={this.props.json} />
+        <FADESummary
+          json={this.props.json}
+          bayesFactorThreshold={this.state.bayesFactorThreshold}
+          selectedAminoAcid={this.state.selectedAminoAcid}
+          numberOfSites={this.state.numberOfSites}
+          updateBayesFactorThreshold={this.updateBayesFactorThreshold}
+        />
+        <FADETable
+          json={this.props.json}
+          MLEBodyData={this.getFilteredMLEBodyData()}
+          bayesFactorThreshold={this.state.bayesFactorThreshold}
+          selectedAminoAcid={this.state.selectedAminoAcid}
+          updateSelectedAminoAcid={this.updateSelectedAminoAcid}
+        />
         <FADETree json={this.props.json} />
         <div id="fits-tab">
           <DatamonkeyModelTable fits={this.props.json.fits} />
