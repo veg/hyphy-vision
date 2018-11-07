@@ -108,40 +108,41 @@ class FADETable extends React.Component {
     var headerData = this.props.json.MLE.headers.map(function(header) {
       return { value: header[0], abbr: header[1], sortable: true };
     });
-    // TODO: Add a column for the site number.
-    //headerData.unshift({value: 'site', abbr: 'site', sortable: true});
+    headerData.unshift({ value: "site", abbr: "site", sortable: true });
 
     return (
       <div className="row">
-        <div id="table-tab" className="col-md-12">
-          <Header
-            title={title}
-            popover="This will be more informative once this work is reviewed."
-          />
-          <div style={{ display: "flex", justifyContent: "space-around" }}>
-            {amino_acids.map(aa => {
-              var style = null;
-              if (aa == this.props.selectedAminoAcid) {
-                style = { backgroundColor: "darkgray", color: "white" };
-              }
-              return (
-                <button
-                  className="hyphy-omega-chart-btn"
-                  style={style}
-                  onClick={() => this.props.updateSelectedAminoAcid(aa)}
-                >
-                  {aa}
-                </button>
-              );
-            })}
+        <div className="col-md-12">
+          <div id="table-tab">
+            <Header
+              title={title}
+              popover="This will be more informative once this work is reviewed."
+            />
+            <div style={{ display: "flex", justifyContent: "space-around" }}>
+              {amino_acids.map(aa => {
+                var style = null;
+                if (aa == this.props.selectedAminoAcid) {
+                  style = { backgroundColor: "darkgray", color: "white" };
+                }
+                return (
+                  <button
+                    className="hyphy-omega-chart-btn"
+                    style={style}
+                    onClick={() => this.props.updateSelectedAminoAcid(aa)}
+                  >
+                    {aa}
+                  </button>
+                );
+              })}
+            </div>
+            <DatamonkeyTable
+              headerData={headerData}
+              bodyData={this.props.MLEBodyData}
+              paginate={20}
+              classes={"table table-smm table-striped"}
+              export_csv
+            />
           </div>
-          <DatamonkeyTable
-            headerData={headerData}
-            bodyData={this.props.MLEBodyData}
-            paginate={20}
-            classes={"table table-smm table-striped"}
-            export_csv
-          />
         </div>
       </div>
     );
@@ -225,11 +226,11 @@ class FADEContents extends React.Component {
       this.state.selectedAminoAcid
     ][0];
     var bodyData = MLEDataForSelectedAminoAcid.map(function(row, index) {
-      // TODO: Add a column for the site number (for some reason the two lines below add a new data point each time the table renders).
-      //var siteNumber = index+1
-      //row.unshift(siteNumber)
-      if (row[3] >= bayesFactorThreshold) {
-        return row.map(function(d, rowIndex) {
+      var siteNumber = index + 1;
+      var rowData = row.slice(); // Copied by value to prevent appending site number multiple times.
+      rowData.unshift(siteNumber);
+      if (rowData[4] >= bayesFactorThreshold) {
+        return rowData.map(function(d, rowIndex) {
           if (rowIndex != 0) {
             return { value: float_format(d), classes: "" };
           } else {
@@ -278,7 +279,9 @@ function FADE(props) {
       hyphy_vision={props.hyphy_vision}
       scrollSpyInfo={[
         { label: "summary", href: "summary-tab" },
-        { label: "table", href: "table-tab" }
+        { label: "table", href: "table-tab" },
+        { label: "tree", href: "tree-tab" },
+        { label: "model fits", href: "fits-tab" }
       ]}
       methodName="FUBAR Approach to Directional Evolution"
     >
