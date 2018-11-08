@@ -5,10 +5,14 @@ import d3 from "d3";
 import { ResultsPage } from "./components/results_page.jsx";
 import { Header } from "./components/header.jsx";
 import { Tree } from "./components/tree.jsx";
+import {
+  DatamonkeyScatterplot,
+  DatamonkeyGraphMenu
+} from "./components/graphs.jsx";
 import { DatamonkeyTable, DatamonkeyModelTable } from "./components/tables.jsx";
 
-// TODO: Add "any amino acid".
 const amino_acids = [
+  "Any",
   "A",
   "C",
   "D",
@@ -31,23 +35,43 @@ const amino_acids = [
   "Y"
 ];
 
-const float_format = d3.format(".2f");
-
 function FADESummary(props) {
   if (!props.json) return <div />;
+  var evidenceStatment =
+    props.numberOfSites != 0 ? (
+      <div>
+        FADE <strong className="hyphy-highlight"> found evidence </strong>
+        of selection bias toward
+        {props.selectedAminoAcid == "Any" ? (
+          <strong className="hyphy-highlight"> a particular amino acid</strong>
+        ) : null}
+        {props.selectedAminoAcid != "Any" ? " amino acid " : null}
+        {props.selectedAminoAcid != "Any" ? (
+          <strong className="hyphy-highlight">{props.selectedAminoAcid}</strong>
+        ) : null}
+        {" at "}
+        <strong className="hyphy-highlight">
+          {props.numberOfSites}
+        </strong> site{props.numberOfSites != 1 ? "s " : " "}
+      </div>
+    ) : (
+      <p>
+        FADE <strong> found no evidence </strong>
+        of selection bias toward amino acid{" "}
+        <strong className="hyphy-highlight">
+          {props.selectedAminoAcid}
+        </strong>{" "}
+      </p>
+    );
+
   return (
     <div className="row">
       <div className="col-md-12" />
       <div className="col-md-12">
         <div className="main-result">
           <p>
-            FADE found{" "}
-            <strong className="hyphy-highlight">{props.numberOfSites}</strong>{" "}
-            sites under selection bias towards{" "}
-            <strong className="hyphy-highlight">
-              {props.selectedAminoAcid}
-            </strong>{" "}
-            (Bayes Factor >=
+            {evidenceStatment}
+            with Bayes Factor >=
             <input
               style={{
                 display: "inline-block",
@@ -61,8 +85,7 @@ function FADESummary(props) {
               min="0"
               max="1000"
               onChange={props.updateBayesFactorThreshold}
-            />{" "}
-            )
+            />
           </p>
 
           <hr />
@@ -99,16 +122,8 @@ class FADETable extends React.Component {
 
   render() {
     if (!this.props.json) return null;
-    const title =
-      "Sites Under Selection Bias Towards " +
-      this.props.selectedAminoAcid +
-      " (BF >= " +
-      this.props.bayesFactorThreshold +
-      " )";
-    var headerData = this.props.json.MLE.headers.map(function(header) {
-      return { value: header[0], abbr: header[1], sortable: true };
-    });
-    headerData.unshift({ value: "site", abbr: "site", sortable: true });
+    const title = "FADE Site Table ";
+    " (BF >= " + this.props.bayesFactorThreshold + " )";
 
     return (
       <div className="row">
@@ -118,7 +133,14 @@ class FADETable extends React.Component {
               title={title}
               popover="This will be more informative once this work is reviewed."
             />
-            <div style={{ display: "flex", justifyContent: "space-around" }}>
+
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-around",
+                backgroundColor: "white"
+              }}
+            >
               {amino_acids.map(aa => {
                 var style = null;
                 if (aa == this.props.selectedAminoAcid) {
@@ -135,8 +157,9 @@ class FADETable extends React.Component {
                 );
               })}
             </div>
+
             <DatamonkeyTable
-              headerData={headerData}
+              headerData={this.props.MLEHeaderData}
               bodyData={this.props.MLEBodyData}
               paginate={20}
               classes={"table table-smm table-striped"}
@@ -196,15 +219,11 @@ class FADEContents extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      bayesFactorThreshold: 2, // This is probably very low... the FADE write-up on hyphy.org lists a bayes factor of >= 100.
-      selectedAminoAcid: "A",
-      numberOfSites: 20,
+      bayesFactorThreshold: 10,
+      selectedAminoAcid: "Any",
+      numberOfSites: null,
       MLEBodyData: null
     };
-  }
-
-  componentDidMount() {
-    this.getFilteredMLEBodyData();
   }
 
   updateBayesFactorThreshold = e => {
@@ -220,6 +239,46 @@ class FADEContents extends React.Component {
   };
 
   getFilteredMLEBodyData = () => {
+    if (this.state.selectedAminoAcid == "Any") {
+      return this.getFilteredMLEBodyDataForAnyAA();
+    } else {
+      return this.getFilteredMLEBodyDataForParticularAA();
+    }
+  };
+
+  getFilteredMLEBodyDataForAnyAA = () => {
+    var bayesFactorThreshold = this.state.bayesFactorThreshold;
+
+    // loop or map through each AA
+    var bodyData = [];
+    for (var aminoAcid in this.props.json.MLE.content) {
+      var MLEDataForSelectedAminoAcid = this.props.json.MLE.content[
+        aminoAcid
+      ][0];
+      var bodyDataForAA = MLEDataForSelectedAminoAcid.map(function(row, index) {
+        var siteNumber = index + 1;
+        var rowData = row.slice(); // Copied by value to prevent appending site number multiple times.
+        rowData.unshift(siteNumber);
+        rowData.unshift(aminoAcid);
+        if (rowData[5] >= bayesFactorThreshold) {
+          return rowData.map(function(d, rowIndex) {
+            if (rowIndex > 1) {
+              return { value: d3.format(".2f")(d), classes: "" };
+            } else {
+              return { value: d, classes: "" };
+            }
+          });
+        }
+      });
+      bodyDataForAA = bodyDataForAA.filter(function(el) {
+        return el != undefined;
+      });
+      bodyData = bodyData.concat(bodyDataForAA);
+    }
+    return bodyData;
+  };
+
+  getFilteredMLEBodyDataForParticularAA = () => {
     var bayesFactorThreshold = this.state.bayesFactorThreshold;
     // Get the data for the table filtered by selectedAminoAcid and only sites with bayes factors above the threshold.
     var MLEDataForSelectedAminoAcid = this.props.json.MLE.content[
@@ -232,7 +291,7 @@ class FADEContents extends React.Component {
       if (rowData[4] >= bayesFactorThreshold) {
         return rowData.map(function(d, rowIndex) {
           if (rowIndex != 0) {
-            return { value: float_format(d), classes: "" };
+            return { value: d3.format(".2f")(d), classes: "" };
           } else {
             return { value: d, classes: "" };
           }
@@ -242,23 +301,36 @@ class FADEContents extends React.Component {
     bodyData = bodyData.filter(function(el) {
       return el != undefined;
     });
-    //this.setState({MLEBodyData: bodyData})
     return bodyData;
   };
 
   render() {
+    var filteredMLEBodyData = this.getFilteredMLEBodyData();
+    var MLEHeaderData = this.props.json.MLE.headers.map(function(header) {
+      return { value: header[0], abbr: header[1], sortable: true };
+    });
+    MLEHeaderData.unshift({ value: "site", abbr: "site", sortable: true });
+    this.state.selectedAminoAcid == "Any"
+      ? MLEHeaderData.unshift({
+          value: "Amino Acid",
+          abbr: "AA",
+          sortable: true
+        })
+      : null;
+
     return (
       <div>
         <FADESummary
           json={this.props.json}
           bayesFactorThreshold={this.state.bayesFactorThreshold}
           selectedAminoAcid={this.state.selectedAminoAcid}
-          numberOfSites={this.state.numberOfSites}
+          numberOfSites={filteredMLEBodyData.length}
           updateBayesFactorThreshold={this.updateBayesFactorThreshold}
         />
         <FADETable
           json={this.props.json}
-          MLEBodyData={this.getFilteredMLEBodyData()}
+          MLEHeaderData={MLEHeaderData}
+          MLEBodyData={filteredMLEBodyData}
           bayesFactorThreshold={this.state.bayesFactorThreshold}
           selectedAminoAcid={this.state.selectedAminoAcid}
           updateSelectedAminoAcid={this.updateSelectedAminoAcid}
@@ -276,31 +348,33 @@ function FADE(props) {
   return (
     <ResultsPage
       data={props.data}
-      hyphy_vision={props.hyphy_vision}
       scrollSpyInfo={[
         { label: "summary", href: "summary-tab" },
         { label: "table", href: "table-tab" },
         { label: "tree", href: "tree-tab" },
         { label: "model fits", href: "fits-tab" }
       ]}
-      methodName="FUBAR Approach to Directional Evolution"
+      methodName="FADE (FUBAR Approach to Directional Evolution)"
+      fasta={props.fasta}
+      originalFile={props.originalFile}
+      analysisLog={props.analysisLog}
     >
       {FADEContents}
     </ResultsPage>
   );
 }
 
-function render_fade(data, element) {
-  ReactDOM.render(<FADE data={data} />, document.getElementById(element));
-}
-
-function render_hv_fade(data, element) {
+function render_fade(data, element, fasta, originalFile, analysisLog) {
   ReactDOM.render(
-    <FADE data={data} hyphy_vision />,
+    <FADE
+      data={data}
+      fasta={fasta}
+      originalFile={originalFile}
+      analysisLog={analysisLog}
+    />,
     document.getElementById(element)
   );
 }
 
 module.exports = render_fade;
-module.exports.hv = render_hv_fade;
 module.exports.FADE = FADE;
