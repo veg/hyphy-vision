@@ -374,7 +374,7 @@ class FADEContents extends React.Component {
     super(props);
     this.state = {
       bayesFactorThreshold: 100,
-      selectedAminoAcid: "A",
+      selectedAminoAcid: "Any",
       numberOfSites: null,
       MLEBodyData: null
     };
