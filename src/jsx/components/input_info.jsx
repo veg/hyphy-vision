@@ -5,8 +5,6 @@ import { saveAs } from "file-saver";
 import ReactJson from "react-json-view";
 import Alignment from "alignment.js";
 
-const d3 = require("d3");
-
 class InputInfo extends React.Component {
   constructor(props) {
     super(props);

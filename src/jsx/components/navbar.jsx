@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 
 const hyphy_logo = require("../../../images/hyphy-logo.svg");
 
+// eslint-disable-next-line
 var Hamburger = React.createClass({
   render: function() {
     return (
@@ -75,6 +76,17 @@ var Methods = React.createClass({
               GARD
             </Link>
           </li>
+          <li>
+            <Link onClick={() => self.props.changeMethod()} to="../bgm">
+              BGM
+            </Link>
+          </li>
+          <li>
+            <Link onClick={() => self.props.changeMethod()} to="../fade">
+              FADE
+            </Link>
+          </li>
+
           <li role="separator" className="divider" />
           <li>
             <Link to="/">Home</Link>

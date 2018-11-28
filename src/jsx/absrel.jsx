@@ -145,21 +145,6 @@ class BSRELSummary extends React.Component {
 class BSRELContents extends React.Component {
   constructor(props) {
     super(props);
-    var float_format = d3.format(".2f");
-    var omegaColorGradient = [
-      "#000000",
-      "#888888",
-      "#DFDFDF",
-      "#77CCC6",
-      "#00a99d"
-    ];
-    var omegaGrayScaleGradient = [
-      "#DDDDDD",
-      "#AAAAAA",
-      "#888888",
-      "#444444",
-      "#000000"
-    ];
     // The below code (here through the end of the constructor) was extracted from the "getInitialState" function from when the BSREL component was in the old createClass format
     var edgeColorizer = function(element, data, omega_color) {
       var svg = d3.select("#tree_container svg"),
