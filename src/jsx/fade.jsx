@@ -103,6 +103,7 @@ class AminoAcidSelector extends React.Component {
     return (
       <div
         className="row"
+        id="amino-acid-selector-parent-div"
         style={{ position: "sticky", top: "40", zIndex: "100" }}
       >
         <div className="col-md-12">
