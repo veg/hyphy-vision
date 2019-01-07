@@ -47,6 +47,14 @@ class FELContents extends React.Component {
       return (d["sortable"] = true);
     });
 
+    // Insert the omega (beta/alpha) into the content. The if statment is to make sure it doesn't get inserted twice.
+    if (mle_content[0].length == 6) {
+      var convMle = _.map(mle_content, function(d) {
+        var omega = d[1] / d[0];
+        d.splice(2, 0, omega);
+      });
+    }
+
     // format content
     mle_content = _.map(mle_content, d => {
       return _.map(d, g => {
@@ -78,6 +86,14 @@ class FELContents extends React.Component {
     mle_headers = [
       { value: "Site", sortable: true, abbr: "Site Position" }
     ].concat(mle_headers);
+
+    // Insert the omega (beta/alpha) into the headers.
+    const omegaHeader = {
+      value: "omega",
+      abbr: "Ratio of nonsynonymous to synonymous substitution rate",
+      sortable: true
+    };
+    mle_headers.splice(4, 0, omegaHeader);
 
     mle_content = _.map(mle_content, function(d, key) {
       var k = key + 1;
@@ -169,7 +185,17 @@ class FELContents extends React.Component {
     });
 
     var y = _.map(this.state.mle_results, function(d) {
-      return d[y_label];
+      // plotting NaN or Infinity is tricky... we will replace these with zero for the sake of plotting.
+      if (y_label == "omega") {
+        var omega = d[y_label];
+        if (omega >= 0 && omega < Infinity) {
+          return omega;
+        } else {
+          return 0;
+        }
+      } else {
+        return d[y_label];
+      }
     });
 
     return { x: x, y: [y] };
@@ -387,6 +413,7 @@ class FELContents extends React.Component {
     var y_options = [
       "alpha",
       "beta",
+      "omega",
       "alpha=beta",
       "LRT",
       "p-value",
