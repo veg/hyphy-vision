@@ -283,7 +283,7 @@ class FADESitesGraph extends React.Component {
                     $(".results").width() == null ? 935 : $(".results").width()
                   }
                   transitions={false}
-                  tracker={false}
+                  tracker={true}
                 />
               </div>
             )}

@@ -608,10 +608,6 @@ var DatamonkeyRateDistributionTable = React.createClass({
 
   */
 
-  propTypes: {
-    distribution: PropTypes.object.isRequired
-  },
-
   dm_formatterRate: d3.format(".3r"),
   dm_formatterProp: d3.format(".3p"),
 

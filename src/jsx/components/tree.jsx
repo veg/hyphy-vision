@@ -426,12 +426,17 @@ var Tree = React.createClass({
 
     // Enable display of multiple trees
     if (self.props.multitree && self.props.json) {
-      menu = menu.concat(<li className="dropdown-header">Partitions</li>);
+      menu = menu.concat(
+        <li className="dropdown-header" key="partitions">
+          Partitions
+        </li>
+      );
       var partition_list = _.range(self.props.json.trees.length).map((d, i) => (
         <li
           style={{
             backgroundColor: d == self.state.current ? "lightGrey" : "white"
           }}
+          key={i}
         >
           <a href="javascript:;" onClick={() => this.setState({ current: i })}>
             {i + 1}
@@ -444,9 +449,15 @@ var Tree = React.createClass({
     // Multiple models
     if (_.keys(self.props.models).length > 0) {
       if (self.props.multitree && self.props.json) {
-        menu = menu.concat(<li role="separator" className="divider" />);
+        menu = menu.concat(
+          <li role="separator" className="divider" key="divider" />
+        );
       }
-      menu = menu.concat(<li className="dropdown-header">Models</li>);
+      menu = menu.concat(
+        <li className="dropdown-header" key="dropdown-header">
+          Models
+        </li>
+      );
 
       var model_list = _.map(this.props.models, (d, model_type) => (
         <li
@@ -454,6 +465,7 @@ var Tree = React.createClass({
             backgroundColor:
               model_type == self.state.selected_model ? "lightGrey" : "white"
           }}
+          key={model_type}
         >
           <a
             href="javascript:;"
@@ -492,6 +504,7 @@ var Tree = React.createClass({
               backgroundColor:
                 self.state.partition == key ? "lightGrey" : "white"
             }}
+            key={key}
           >
             <a
               href="javascript:;"
