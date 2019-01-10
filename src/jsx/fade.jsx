@@ -322,7 +322,7 @@ class FADETable extends React.Component {
               headerData={this.props.MLEHeaderData}
               bodyData={this.props.MLEBodyData}
               paginate={20}
-              classes={"table table-smm table-striped"}
+              classes={"table table-smm table-striped fade-site-table"}
               export_csv
             />
           </div>
@@ -488,16 +488,39 @@ class FADEContents extends React.Component {
         ? (siteIndex = rowData[0]["value"])
         : (siteIndex = rowData[1]["value"]);
       const siteSpecificAnnotations = siteAnnotations[siteIndex - 1];
-      rowData.push({ value: siteSpecificAnnotations[0], classes: "" });
-      rowData.push({ value: siteSpecificAnnotations[1], classes: "" });
+      rowData.push({
+        value: siteSpecificAnnotations[0],
+        classes: "",
+        style: { overflowWrap: "break-word" }
+      });
+      rowData.push({
+        value: siteSpecificAnnotations[1],
+        classes: "",
+        style: { overflowWrap: "break-word" }
+      });
       MLEBodyDataWithSiteAnnotations.push(rowData);
     }
     return MLEBodyData;
   };
 
   getMLEHeaderData = selectedAminoAcid => {
+    function formatHeader(header) {
+      if (header == "Prob[bias>0]") {
+        return "prob [bias>0]";
+      } else if (header == "BayesFactor[bias>0]") {
+        return "bayes factor [bias>0]";
+      } else {
+        return header;
+      }
+    }
+
     var MLEHeaderData = this.props.json.MLE.headers.map(function(header) {
-      return { value: header[0], abbr: header[1], sortable: true };
+      return {
+        value: formatHeader(header[0]),
+        abbr: header[1],
+        sortable: true,
+        style: { overflowWrap: "break-word" }
+      };
     });
     MLEHeaderData.unshift({
       value: "site index",
@@ -514,12 +537,14 @@ class FADEContents extends React.Component {
     MLEHeaderData.push({
       value: "composition",
       abbr: "Amino acid composition of site",
-      sortable: false
+      sortable: false,
+      style: { width: "200px" }
     });
     MLEHeaderData.push({
       value: "substitutions",
       abbr: "Substitution history on selected branches",
-      sortable: false
+      sortable: false,
+      style: { width: "250px" }
     });
     return MLEHeaderData;
   };

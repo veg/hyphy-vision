@@ -296,6 +296,12 @@ table {
   margin: 10px 0px 0px 0px;
 }
 
+@media (min-width: 1200px) {
+  .fade-site-table {
+    table-layout: fixed;
+  }
+}
+
 .table > thead > tr > th {
   border-bottom: 2px solid #a1c6b3;
   text-align: center;
