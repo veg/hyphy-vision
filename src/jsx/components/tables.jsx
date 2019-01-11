@@ -246,29 +246,31 @@ const DatamonkeyTableRow = React.createClass({
 
             if (this.state.header && this.props.sorter) {
               if (_.has(cell, "sortable")) {
-                cellProps["onClick"] = _.partial(
-                  this.props.sorter,
-                  index,
-                  this.dm_compareTwoValues_level2
-                );
+                if (cell.sortable) {
+                  cellProps["onClick"] = _.partial(
+                    this.props.sorter,
+                    index,
+                    this.dm_compareTwoValues_level2
+                  );
 
-                var sortedness_state = "fa fa-sort";
-                if (this.props.sortOn && this.props.sortOn[0] == index) {
-                  sortedness_state = this.props.sortOn[1]
-                    ? "fa fa-sort-amount-asc"
-                    : "fa fa-sort-amount-desc";
+                  var sortedness_state = "fa fa-sort";
+                  if (this.props.sortOn && this.props.sortOn[0] == index) {
+                    sortedness_state = this.props.sortOn[1]
+                      ? "fa fa-sort-amount-asc"
+                      : "fa fa-sort-amount-desc";
+                  }
+
+                  value = (
+                    <div>
+                      {value}
+                      <i
+                        className={sortedness_state}
+                        aria-hidden="true"
+                        style={{ marginLeft: "0.5em" }}
+                      />
+                    </div>
+                  );
                 }
-
-                value = (
-                  <div>
-                    {value}
-                    <i
-                      className={sortedness_state}
-                      aria-hidden="true"
-                      style={{ marginLeft: "0.5em" }}
-                    />
-                  </div>
-                );
               }
             }
 

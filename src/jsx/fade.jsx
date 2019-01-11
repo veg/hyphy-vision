@@ -10,6 +10,8 @@ import {
   DatamonkeyScatterplot
 } from "./components/graphs.jsx";
 import { DatamonkeyTable, DatamonkeyModelTable } from "./components/tables.jsx";
+import { SubstitutionChordDiagram } from "./components/substitutionChordDiagram";
+const substitutionParser = require("./../helpers/substitutionParser");
 
 // prettier-ignore
 const amino_acids = ["Any", "A", "C", "D", "E", "F", "G", "H", "I", "K", "L", "M", "N", "P", "Q", "R", "S", "T", "V", "W", "Y"];
@@ -157,6 +159,50 @@ class AminoAcidSelector extends React.Component {
                 onChange={this.props.updateBayesFactorThreshold}
               />
             </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+}
+
+class FADESubstitutionChordDiagram extends React.Component {
+  constructor(props) {
+    super(props);
+  }
+
+  updateSiteInFocus = event => {
+    const value = event.target.value;
+    this.props.updateSiteInFocusState(value);
+  };
+
+  render() {
+    return (
+      <div className="row">
+        <div className="col-md-12">
+          <div id="substitution-chord-diagram-tab">
+            <Header
+              title={this.props.title}
+              popover="Infered substitutions from one amino acid to another at the selected site"
+            />
+            <div>
+              <label>Site Index :</label>
+              <input
+                id="site_index"
+                className="form-control"
+                type="number"
+                onChange={this.updateSiteInFocus}
+                defaultValue="1"
+                step="1"
+                min="1"
+                max={this.props.numberOfSites}
+              />
+            </div>
+            <SubstitutionChordDiagram
+              matrix={this.props.matrix}
+              width={this.props.width}
+              height={this.props.height}
+            />
           </div>
         </div>
       </div>
@@ -382,8 +428,9 @@ class FADEContents extends React.Component {
     this.state = {
       bayesFactorThreshold: 100,
       selectedAminoAcid: "Any",
-      numberOfSites: null,
-      MLEBodyData: null
+      numberOfSites: this.props.json["site annotations"]["site annotations"][0]
+        .length,
+      siteInFocus: 1
     };
   }
 
@@ -549,9 +596,28 @@ class FADEContents extends React.Component {
     return MLEHeaderData;
   };
 
+  getSubstitutionMatrix = siteInFocus => {
+    const siteAnnotationsData = this.props.json["site annotations"][
+      "site annotations"
+    ]["0"];
+    const siteSpecificSubstitutionString =
+      siteAnnotationsData[siteInFocus - 1][1];
+    const siteSubstitutionMatrix = substitutionParser(
+      siteSpecificSubstitutionString
+    );
+    return siteSubstitutionMatrix;
+  };
+
+  updateSiteInFocusState = newSiteInFocus => {
+    this.setState({ siteInFocus: newSiteInFocus });
+  };
+
   render() {
-    var filteredMLEBodyData = this.getFilteredMLEBodyData();
-    var MLEHeaderData = this.getMLEHeaderData(this.state.selectedAminoAcid);
+    const filteredMLEBodyData = this.getFilteredMLEBodyData();
+    const MLEHeaderData = this.getMLEHeaderData(this.state.selectedAminoAcid);
+    const substitutionMatrix = this.getSubstitutionMatrix(
+      this.state.siteInFocus
+    );
 
     return (
       <div>
@@ -566,6 +632,14 @@ class FADEContents extends React.Component {
           updateSelectedAminoAcid={this.updateSelectedAminoAcid}
           bayesFactorThreshold={this.state.bayesFactorThreshold}
           updateBayesFactorThreshold={this.updateBayesFactorThreshold}
+        />
+        <FADESubstitutionChordDiagram
+          matrix={substitutionMatrix}
+          updateSiteInFocusState={this.updateSiteInFocusState}
+          title={"Infered Amino Acid Substitutions"}
+          width={700}
+          height={500}
+          numberOfSites={this.state.numberOfSites}
         />
         <FADESitesGraph
           json={this.props.json}
