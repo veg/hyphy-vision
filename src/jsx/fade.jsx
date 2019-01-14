@@ -204,7 +204,7 @@ class FADESubstitutionChordDiagram extends React.Component {
           <div id="substitution-chord-diagram-tab">
             <Header
               title={this.props.title}
-              popover="Infered substitutions from one amino acid to another at the selected site"
+              popover="Inferred substitutions from one amino acid to another at the selected site"
             />
             <div style={{ paddingTop: "5px" }}>
               <label>Site Index :</label>
@@ -538,7 +538,7 @@ class FADEContents extends React.Component {
     const siteAnnotationsData = this.props.json["site annotations"][
       "site annotations"
     ]["0"];
-    bodyData = bodyData = this.appendSiteAnnotationsToMLEBodyData(
+    bodyData = this.appendSiteAnnotationsToMLEBodyData(
       bodyData,
       siteAnnotationsData
     );
@@ -691,7 +691,7 @@ class FADEContents extends React.Component {
         <FADESubstitutionChordDiagram
           matrix={substitutionMatrix}
           updateSiteInFocusState={this.updateSiteInFocusState}
-          title={"Infered Amino Acid Substitutions"}
+          title={"Inferred Amino Acid Substitutions"}
           width={700}
           height={500}
           numberOfSites={this.state.numberOfSites}
