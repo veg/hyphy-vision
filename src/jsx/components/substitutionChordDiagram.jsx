@@ -86,6 +86,18 @@ class SubstitutionChordDiagram extends Component {
         return "powderblue";
       }
     }
+    // Returns an event handler for fading a given chord group.
+    function fade(opacity, t) {
+      return function(g, i) {
+        svg
+          .selectAll(".chord path")
+          .filter(function(d) {
+            return d.source.index != i && d.target.index != i;
+          })
+          .transition()
+          .style("opacity", opacity);
+      };
+    }
 
     // Set up the svg.
     var container = d3.select("#chord-diagram-div");
@@ -132,7 +144,9 @@ class SubstitutionChordDiagram extends Component {
           .arc()
           .innerRadius(innerRadius)
           .outerRadius(outerRadius)
-      );
+      )
+      .on("mouseover", fade(0.1, true))
+      .on("mouseout", fade(1, false));
 
     // Add the text labels.
     const text_label = group
@@ -164,7 +178,7 @@ class SubstitutionChordDiagram extends Component {
       .attr("d", d3.svg.chord().radius(innerRadius))
       .style("fill", d => colorPaths(d))
       .style("stroke", "midnightblue")
-      .style("opacity", 1);
+      .style("opacity", 0.8);
   };
 
   render() {
