@@ -1,7 +1,7 @@
 function substitutionParser(substitutionString) {
   /* 
   Takes a string denoting the infered substitution history for a site:
-   ex: "A->C(1), C->A(2)Y(5)" meaning the site when from "A" to "C" once, from "C" to "A twice" and from "C to "Y five times.
+   ex: "A->C(1), C->A(2)Y(5)" meaning the site went from "A" to "C" once, from "C" to "A twice" and from "C to "Y five times.
   Returns a 20 by 20 matrix of the substitution history with rows being AA from and columns being AA to.
   */
   const AALetters = [

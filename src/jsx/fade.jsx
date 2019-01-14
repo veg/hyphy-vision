@@ -129,8 +129,21 @@ class AminoAcidSelector extends React.Component {
             >
               {amino_acids.map(aa => {
                 var style = null;
+                if (this.props.aminoAcidsAboveThreshold.includes(aa)) {
+                  style = { fontWeight: "bold", color: "#00a99d" };
+                }
                 if (aa == this.props.selectedAminoAcid) {
                   style = { backgroundColor: "darkgray", color: "white" };
+                }
+                if (
+                  aa == this.props.selectedAminoAcid &&
+                  this.props.aminoAcidsAboveThreshold.includes(aa)
+                ) {
+                  style = {
+                    backgroundColor: "darkgray",
+                    fontWeight: "bold",
+                    color: "#00a99d"
+                  };
                 }
                 return (
                   <button
@@ -169,11 +182,19 @@ class AminoAcidSelector extends React.Component {
 class FADESubstitutionChordDiagram extends React.Component {
   constructor(props) {
     super(props);
+    this.state = {
+      colorConnectionsBy: "powderblue"
+    };
   }
 
   updateSiteInFocus = event => {
     const value = event.target.value;
     this.props.updateSiteInFocusState(value);
+  };
+
+  updateColorOption = event => {
+    const value = event.target.value;
+    this.setState({ colorConnectionsBy: value });
   };
 
   render() {
@@ -185,7 +206,7 @@ class FADESubstitutionChordDiagram extends React.Component {
               title={this.props.title}
               popover="Infered substitutions from one amino acid to another at the selected site"
             />
-            <div>
+            <div style={{ paddingTop: "5px" }}>
               <label>Site Index :</label>
               <input
                 id="site_index"
@@ -197,11 +218,25 @@ class FADESubstitutionChordDiagram extends React.Component {
                 min="1"
                 max={this.props.numberOfSites}
               />
+              <div style={{ float: "right" }}>
+                <label>Color Connections :</label>
+                <select
+                  id="analysis-type"
+                  defaultValue="powderblue"
+                  onChange={this.updateColorOption}
+                >
+                  <option value="powderblue">All Blue</option>
+                  <option value="source">From</option>
+                  <option value="target">To</option>
+                </select>
+              </div>
             </div>
+
             <SubstitutionChordDiagram
               matrix={this.props.matrix}
               width={this.props.width}
               height={this.props.height}
+              colorConnectionsBy={this.state.colorConnectionsBy}
             />
           </div>
         </div>
@@ -446,6 +481,23 @@ class FADEContents extends React.Component {
     });
   };
 
+  getAminoAcidsAboveThreshold = bayesFactorThreshold => {
+    var aminoAcidsAboveThreshold = [];
+    for (var aminoAcid in this.props.json.MLE.content) {
+      var MLEDataForSelectedAminoAcid = this.props.json.MLE.content[
+        aminoAcid
+      ][0];
+      for (var row in MLEDataForSelectedAminoAcid) {
+        const bayesFactorForSiteAndAA = MLEDataForSelectedAminoAcid[row][3];
+        if (bayesFactorForSiteAndAA >= bayesFactorThreshold) {
+          aminoAcidsAboveThreshold.push(aminoAcid);
+          break;
+        }
+      }
+    }
+    return aminoAcidsAboveThreshold;
+  };
+
   getFilteredMLEBodyData = () => {
     if (this.state.selectedAminoAcid == "Any") {
       return this.getFilteredMLEBodyDataForAnyAA();
@@ -632,6 +684,9 @@ class FADEContents extends React.Component {
           updateSelectedAminoAcid={this.updateSelectedAminoAcid}
           bayesFactorThreshold={this.state.bayesFactorThreshold}
           updateBayesFactorThreshold={this.updateBayesFactorThreshold}
+          aminoAcidsAboveThreshold={this.getAminoAcidsAboveThreshold(
+            this.state.bayesFactorThreshold
+          )}
         />
         <FADESubstitutionChordDiagram
           matrix={substitutionMatrix}
@@ -669,8 +724,9 @@ function FADE(props) {
       data={props.data}
       scrollSpyInfo={[
         { label: "summary", href: "summary-tab" },
-        { label: "graph", href: "site-graph-tab" },
-        { label: "table", href: "table-tab" },
+        { label: "substitution graph", href: "substitution-chord-diagram-tab" },
+        { label: "site graph", href: "site-graph-tab" },
+        { label: "site table", href: "table-tab" },
         { label: "tree", href: "tree-tab" },
         { label: "model fits", href: "fits-tab" }
       ]}
