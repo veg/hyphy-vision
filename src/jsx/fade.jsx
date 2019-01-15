@@ -103,6 +103,72 @@ function FADESummary(props) {
   );
 }
 
+class FADESubstitutionChordDiagram extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      colorConnectionsBy: "powderblue"
+    };
+  }
+
+  updateSiteInFocus = event => {
+    const value = event.target.value;
+    this.props.updateSiteInFocusState(value);
+  };
+
+  updateColorOption = event => {
+    const value = event.target.value;
+    this.setState({ colorConnectionsBy: value });
+  };
+
+  render() {
+    return (
+      <div className="row">
+        <div className="col-md-12">
+          <div id="substitution-chord-diagram-tab">
+            <Header
+              title={this.props.title}
+              popover="Inferred substitutions from one amino acid to another at the selected site"
+            />
+            <div style={{ paddingTop: "5px" }}>
+              <label>Site Index :</label>
+              <input
+                id="site_index"
+                className="form-control"
+                type="number"
+                onChange={this.updateSiteInFocus}
+                defaultValue="1"
+                step="1"
+                min="1"
+                max={this.props.numberOfSites}
+              />
+              <div style={{ float: "right" }}>
+                <label>Color Connections :</label>
+                <select
+                  id="analysis-type"
+                  defaultValue="powderblue"
+                  onChange={this.updateColorOption}
+                >
+                  <option value="powderblue">All Blue</option>
+                  <option value="source">From</option>
+                  <option value="target">To</option>
+                </select>
+              </div>
+            </div>
+
+            <SubstitutionChordDiagram
+              matrix={this.props.matrix}
+              width={this.props.width}
+              height={this.props.height}
+              colorConnectionsBy={this.state.colorConnectionsBy}
+            />
+          </div>
+        </div>
+      </div>
+    );
+  }
+}
+
 class AminoAcidSelector extends React.Component {
   constructor(props) {
     super(props);
@@ -172,72 +238,6 @@ class AminoAcidSelector extends React.Component {
                 onChange={this.props.updateBayesFactorThreshold}
               />
             </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
-}
-
-class FADESubstitutionChordDiagram extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      colorConnectionsBy: "powderblue"
-    };
-  }
-
-  updateSiteInFocus = event => {
-    const value = event.target.value;
-    this.props.updateSiteInFocusState(value);
-  };
-
-  updateColorOption = event => {
-    const value = event.target.value;
-    this.setState({ colorConnectionsBy: value });
-  };
-
-  render() {
-    return (
-      <div className="row">
-        <div className="col-md-12">
-          <div id="substitution-chord-diagram-tab">
-            <Header
-              title={this.props.title}
-              popover="Inferred substitutions from one amino acid to another at the selected site"
-            />
-            <div style={{ paddingTop: "5px" }}>
-              <label>Site Index :</label>
-              <input
-                id="site_index"
-                className="form-control"
-                type="number"
-                onChange={this.updateSiteInFocus}
-                defaultValue="1"
-                step="1"
-                min="1"
-                max={this.props.numberOfSites}
-              />
-              <div style={{ float: "right" }}>
-                <label>Color Connections :</label>
-                <select
-                  id="analysis-type"
-                  defaultValue="powderblue"
-                  onChange={this.updateColorOption}
-                >
-                  <option value="powderblue">All Blue</option>
-                  <option value="source">From</option>
-                  <option value="target">To</option>
-                </select>
-              </div>
-            </div>
-
-            <SubstitutionChordDiagram
-              matrix={this.props.matrix}
-              width={this.props.width}
-              height={this.props.height}
-              colorConnectionsBy={this.state.colorConnectionsBy}
-            />
           </div>
         </div>
       </div>
@@ -679,6 +679,14 @@ class FADEContents extends React.Component {
           numberOfSites={filteredMLEBodyData.length}
           updateBayesFactorThreshold={this.updateBayesFactorThreshold}
         />
+        <FADESubstitutionChordDiagram
+          matrix={substitutionMatrix}
+          updateSiteInFocusState={this.updateSiteInFocusState}
+          title={"Inferred Amino Acid Substitutions"}
+          width={700}
+          height={500}
+          numberOfSites={this.state.numberOfSites}
+        />
         <AminoAcidSelector
           selectedAminoAcid={this.state.selectedAminoAcid}
           updateSelectedAminoAcid={this.updateSelectedAminoAcid}
@@ -687,14 +695,6 @@ class FADEContents extends React.Component {
           aminoAcidsAboveThreshold={this.getAminoAcidsAboveThreshold(
             this.state.bayesFactorThreshold
           )}
-        />
-        <FADESubstitutionChordDiagram
-          matrix={substitutionMatrix}
-          updateSiteInFocusState={this.updateSiteInFocusState}
-          title={"Inferred Amino Acid Substitutions"}
-          width={700}
-          height={500}
-          numberOfSites={this.state.numberOfSites}
         />
         <FADESitesGraph
           json={this.props.json}
