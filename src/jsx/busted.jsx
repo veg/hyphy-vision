@@ -82,7 +82,16 @@ var BUSTEDSiteChartAndTable = React.createClass({
         yAxisDelta * Math.floor(ymax / yAxisDelta) + 1,
         yAxisDelta
       ),
-      xAxisDelta = 5 * Math.floor(number_of_sites / 30 / 5),
+      maxNumberOfxAxisTicks = 20,
+      minSitesBetweenxAxisTicks = 10,
+      xAxisDelta = Math.max(
+        minSitesBetweenxAxisTicks,
+        minSitesBetweenxAxisTicks *
+          Math.floor(
+            number_of_sites /
+              (maxNumberOfxAxisTicks * minSitesBetweenxAxisTicks)
+          )
+      ),
       xAxis = d3.svg
         .axis()
         .scale(x)
