@@ -53,6 +53,7 @@ class SubstitutionChordDiagram extends Component {
     const innerRadius = Math.min(width, height - text_offset) * 0.41;
     const outerRadius = innerRadius * 1.1;
     const font_size = 12;
+    const standardOpacity = 0.8;
     const colors = [
       "#e6194B",
       "#3cb44b",
@@ -146,7 +147,7 @@ class SubstitutionChordDiagram extends Component {
           .outerRadius(outerRadius)
       )
       .on("mouseover", fade(0.1, true))
-      .on("mouseout", fade(1, false));
+      .on("mouseout", fade(standardOpacity, false));
 
     // Add the text labels.
     const text_label = group
@@ -178,7 +179,7 @@ class SubstitutionChordDiagram extends Component {
       .attr("d", d3.svg.chord().radius(innerRadius))
       .style("fill", d => colorPaths(d))
       .style("stroke", "midnightblue")
-      .style("opacity", 0.8);
+      .style("opacity", standardOpacity);
   };
 
   render() {
