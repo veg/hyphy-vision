@@ -123,7 +123,7 @@ class FADESubstitutionChordDiagram extends React.Component {
 
   render() {
     return (
-      <div className="row">
+      <div className="row" id="scroll-target-for-site-table-on-click">
         <div className="col-md-12">
           <div id="substitution-chord-diagram-tab">
             <Header
@@ -137,7 +137,7 @@ class FADESubstitutionChordDiagram extends React.Component {
                 className="form-control"
                 type="number"
                 onChange={this.updateSiteInFocus}
-                defaultValue="1"
+                value={this.props.siteInFocus}
                 step="1"
                 min="1"
                 max={this.props.numberOfSites}
@@ -402,6 +402,7 @@ class FADETable extends React.Component {
             <DatamonkeyTable
               headerData={this.props.MLEHeaderData}
               bodyData={this.props.MLEBodyData}
+              onClick={this.props.rowOnClick}
               paginate={20}
               classes={"table table-smm table-striped fade-site-table"}
               export_csv
@@ -664,6 +665,15 @@ class FADEContents extends React.Component {
     this.setState({ siteInFocus: newSiteInFocus });
   };
 
+  rowOnClick = rowData => {
+    const siteNumberIndex = rowData.length - 7;
+    const siteInFocus = rowData[siteNumberIndex]["value"];
+    this.updateSiteInFocusState(siteInFocus);
+    document
+      .getElementById("scroll-target-for-site-table-on-click")
+      .scrollIntoView();
+  };
+
   render() {
     const filteredMLEBodyData = this.getFilteredMLEBodyData();
     const MLEHeaderData = this.getMLEHeaderData(this.state.selectedAminoAcid);
@@ -686,6 +696,7 @@ class FADEContents extends React.Component {
           width={700}
           height={500}
           numberOfSites={this.state.numberOfSites}
+          siteInFocus={this.state.siteInFocus}
         />
         <AminoAcidSelector
           selectedAminoAcid={this.state.selectedAminoAcid}
@@ -705,6 +716,7 @@ class FADEContents extends React.Component {
         <FADETable
           MLEHeaderData={MLEHeaderData}
           MLEBodyData={filteredMLEBodyData}
+          rowOnClick={this.rowOnClick}
           bayesFactorThreshold={this.state.bayesFactorThreshold}
           selectedAminoAcid={this.state.selectedAminoAcid}
         />

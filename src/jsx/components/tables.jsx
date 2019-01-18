@@ -27,9 +27,11 @@ const DatamonkeyTableRow = React.createClass({
 
               3. array: directly render array elements in the cell (must be renderable to react.js; note that plain
               text elements will be wrapped in "span" which is not allowed to nest in <th/td>
-
-
+      
       *header* is a bool indicating whether the header is a header row (th cells) or a regular row (td cells)
+  
+      *onClick* an onClick event to apply to the entire row. Will be called with the rowData (see 1 above) as the argument.
+
   */
 
   /*propTypes: {
@@ -183,7 +185,7 @@ const DatamonkeyTableRow = React.createClass({
   render: function() {
     var entity_regex = /(&*;)|(<*>)/;
     return (
-      <tr>
+      <tr onClick={this.props.onClick}>
         {this.props.rowData.map(
           _.bind(function(cell, index) {
             var value = _.has(cell, "value") ? cell.value : cell;
@@ -286,17 +288,20 @@ const DatamonkeyTableRow = React.createClass({
   }
 });
 
-/**
- * A table composed of rows
- * @param *headerData* -- an array of cells (see DatamonkeyTableRow) to render as the header
- * @param *bodyData* -- an array of arrays of cells (rows) to render
- * @param *classes* -- CSS classes to apply to the table element
- * @example
- * header = ["Model","AIC","Parameters"]
- * rows = [[{"value":"MG94","style":{"fontVariant":"small-caps"}},{"value":0},46],
- *         [{"value":"Full model","style":{"fontVariant":"small-caps"}},{"value":6954.016129926898},60]]
- */
 var DatamonkeyTable = React.createClass({
+  /**
+   * A table composed of rows
+   * @param *headerData* -- an array of cells (see DatamonkeyTableRow) to render as the header
+   * @param *bodyData* -- an array of arrays of cells (rows) to render
+   * @param *classes* -- CSS classes to apply to the table element
+   * @param *onClick* -- onClick events to attach to the row
+   * @example
+   * header = ["Model","AIC","Parameters"]
+   * rows = [[{"value":"MG94","style":{"fontVariant":"small-caps"}},{"value":0},46],
+   *         [{"value":"Full model","style":{"fontVariant":"small-caps"}},{"value":6954.016129926898},60]]
+   * onClick = {functionDefinedInParentComponent}
+   *
+   */
   getDefaultProps: function() {
     return {
       classes: "dm-table table table-smm table-hover",
@@ -412,6 +417,13 @@ var DatamonkeyTable = React.createClass({
 
   componentDidUpdate: function() {
     $('[data-toggle="tooltip"]').tooltip();
+  },
+
+  rowOnClick: function(rowData) {
+    // Wraping the rowOnClick function as a method like this to avoid errors if no onClick property is present.
+    if (this.props.onClick) {
+      this.props.onClick(rowData);
+    }
   },
 
   render: function() {
@@ -534,6 +546,7 @@ var DatamonkeyTable = React.createClass({
                   key={index}
                   sorter={_.bind(self.dm_sortOnColumn, self)}
                   sortOn={self.state.sortOn}
+                  onClick={() => this.rowOnClick(componentData)}
                 />
               );
             })}
@@ -547,6 +560,7 @@ var DatamonkeyTable = React.createClass({
               header={true}
               sorter={_.bind(self.dm_sortOnColumn, self)}
               sortOn={self.state.sortOn}
+              onClick={() => this.rowOnClick(componentData)}
             />
           </thead>
         );
@@ -580,6 +594,7 @@ var DatamonkeyTable = React.createClass({
                     : row_index
                 }
                 header={false}
+                onClick={() => this.rowOnClick(componentData)}
               />
             );
           }, this)

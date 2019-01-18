@@ -52,7 +52,6 @@ class SubstitutionChordDiagram extends Component {
     const text_offset = 20;
     const innerRadius = Math.min(width, height - text_offset) * 0.41;
     const outerRadius = innerRadius * 1.1;
-    const font_size = 12;
     const standardOpacity = 0.8;
     const colors = [
       "#e6194B",
@@ -150,7 +149,7 @@ class SubstitutionChordDiagram extends Component {
       .on("mouseout", fade(standardOpacity, false));
 
     // Add the text labels.
-    const text_label = group
+    group
       .append("text")
       .each(d => {
         d.angle = (d.startAngle + d.endAngle) / 2;
