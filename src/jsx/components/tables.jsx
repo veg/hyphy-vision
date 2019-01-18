@@ -546,7 +546,6 @@ var DatamonkeyTable = React.createClass({
                   key={index}
                   sorter={_.bind(self.dm_sortOnColumn, self)}
                   sortOn={self.state.sortOn}
-                  onClick={() => this.rowOnClick(componentData)}
                 />
               );
             })}
@@ -560,7 +559,6 @@ var DatamonkeyTable = React.createClass({
               header={true}
               sorter={_.bind(self.dm_sortOnColumn, self)}
               sortOn={self.state.sortOn}
-              onClick={() => this.rowOnClick(componentData)}
             />
           </thead>
         );
