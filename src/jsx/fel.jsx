@@ -239,6 +239,8 @@ class FELContents extends React.Component {
     });
 
     // highlight mle_content with whether they are significant or not
+    const numberMLEResultsColumns =
+      Object.keys(this.state.mle_results[0]).length - 2;
     var mle_content = _.map(this.state.mle_results, function(d, key) {
       var classes = "";
       if (mle_results[key].is_positive) {
@@ -248,7 +250,7 @@ class FELContents extends React.Component {
       }
       return _.map(_.values(d), function(g) {
         return { value: g, classes: classes };
-      }).slice(0, 8);
+      }).slice(0, numberMLEResultsColumns);
     });
 
     this.setState({
