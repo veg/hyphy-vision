@@ -15,6 +15,9 @@ vendor
 # vim files
 .*.swp
 
+# vs code files
+launch.json
+
 # mac
 .DS_Store
 
