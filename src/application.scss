@@ -297,6 +297,10 @@ table {
   margin: 10px 0px 0px 0px;
 }
 
+.fade-site-table {
+  cursor: pointer;
+}
+
 @media (min-width: 1200px) {
   .fade-site-table {
     table-layout: fixed;

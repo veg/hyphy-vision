@@ -405,7 +405,9 @@ class FADETable extends React.Component {
               bodyData={this.props.MLEBodyData}
               onClick={this.props.rowOnClick}
               paginate={20}
-              classes={"table table-smm table-striped fade-site-table"}
+              classes={
+                "table table-smm table-striped table-hover fade-site-table"
+              }
               export_csv
             />
           </div>
