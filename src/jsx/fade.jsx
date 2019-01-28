@@ -10,6 +10,8 @@ import {
   DatamonkeyScatterplot
 } from "./components/graphs.jsx";
 import { DatamonkeyTable, DatamonkeyModelTable } from "./components/tables.jsx";
+import { SubstitutionChordDiagram } from "./components/substitutionChordDiagram";
+const substitutionParser = require("./../helpers/substitutionParser");
 
 // prettier-ignore
 const amino_acids = ["Any", "A", "C", "D", "E", "F", "G", "H", "I", "K", "L", "M", "N", "P", "Q", "R", "S", "T", "V", "W", "Y"];
@@ -19,19 +21,27 @@ function FADESummary(props) {
   var evidenceStatment =
     props.numberOfSites != 0 ? (
       <div>
-        FADE <strong className="hyphy-highlight"> found evidence </strong>
-        of selection bias toward
-        {props.selectedAminoAcid == "Any" ? (
-          <strong className="hyphy-highlight"> a particular amino acid</strong>
-        ) : null}
-        {props.selectedAminoAcid != "Any" ? " amino acid " : null}
-        {props.selectedAminoAcid != "Any" ? (
-          <strong className="hyphy-highlight">{props.selectedAminoAcid}</strong>
-        ) : null}
-        {" at "}
-        <strong className="hyphy-highlight">
-          {props.numberOfSites}
-        </strong> site{props.numberOfSites != 1 ? "s " : " "}
+        <p>
+          FADE <strong className="hyphy-highlight"> found evidence </strong>
+          of selection bias toward
+          {props.selectedAminoAcid == "Any" ? (
+            <strong className="hyphy-highlight">
+              {" "}
+              a particular amino acid
+            </strong>
+          ) : null}
+          {props.selectedAminoAcid != "Any" ? " amino acid " : null}
+          {props.selectedAminoAcid != "Any" ? (
+            <strong className="hyphy-highlight">
+              {props.selectedAminoAcid}
+            </strong>
+          ) : null}
+          {" at "}
+          <strong className="hyphy-highlight">
+            {props.numberOfSites}
+          </strong>{" "}
+          site{props.numberOfSites != 1 ? "s " : " "}
+        </p>
       </div>
     ) : (
       <p>
@@ -48,8 +58,8 @@ function FADESummary(props) {
       <div className="col-md-12" />
       <div className="col-md-12">
         <div className="main-result">
+          {evidenceStatment}
           <p>
-            {evidenceStatment}
             with Bayes Factor >=
             <input
               style={{
@@ -59,7 +69,6 @@ function FADESummary(props) {
               }}
               className="form-control"
               type="number"
-              defaultValue={props.bayesFactorThreshold}
               value={props.bayesFactorThreshold}
               step="1"
               min="0"
@@ -94,6 +103,72 @@ function FADESummary(props) {
   );
 }
 
+class FADESubstitutionChordDiagram extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      colorConnectionsBy: "powderblue"
+    };
+  }
+
+  updateSiteInFocus = event => {
+    const value = event.target.value;
+    this.props.updateSiteInFocusState(value);
+  };
+
+  updateColorOption = event => {
+    const value = event.target.value;
+    this.setState({ colorConnectionsBy: value });
+  };
+
+  render() {
+    return (
+      <div className="row" id="scroll-target-for-site-table-on-click">
+        <div className="col-md-12">
+          <div id="substitution-chord-diagram-tab">
+            <Header
+              title={this.props.title}
+              popover="Inferred substitutions from one amino acid to another at the selected site"
+            />
+            <div style={{ paddingTop: "5px" }}>
+              <label>Site Index :</label>
+              <input
+                id="site_index"
+                className="form-control"
+                type="number"
+                onChange={this.updateSiteInFocus}
+                value={this.props.siteInFocus}
+                step="1"
+                min="1"
+                max={this.props.numberOfSites}
+              />
+              <div style={{ float: "right" }}>
+                <label>Color Connections :</label>
+                <select
+                  id="analysis-type"
+                  defaultValue="powderblue"
+                  onChange={this.updateColorOption}
+                >
+                  <option value="powderblue">All Blue</option>
+                  <option value="source">From</option>
+                  <option value="target">To</option>
+                </select>
+              </div>
+            </div>
+
+            <SubstitutionChordDiagram
+              matrix={this.props.matrix}
+              width={this.props.width}
+              height={this.props.height}
+              colorConnectionsBy={this.state.colorConnectionsBy}
+            />
+          </div>
+        </div>
+      </div>
+    );
+  }
+}
+
 class AminoAcidSelector extends React.Component {
   constructor(props) {
     super(props);
@@ -103,8 +178,8 @@ class AminoAcidSelector extends React.Component {
     return (
       <div
         className="row"
+        style={{ position: "sticky", top: "40px", zIndex: "100" }}
         id="amino-acid-selector-parent-div"
-        style={{ position: "sticky", top: "40", zIndex: "100" }}
       >
         <div className="col-md-12">
           <div id="amino-acid-selector">
@@ -121,14 +196,28 @@ class AminoAcidSelector extends React.Component {
             >
               {amino_acids.map(aa => {
                 var style = null;
+                if (this.props.aminoAcidsAboveThreshold.includes(aa)) {
+                  style = { fontWeight: "bold", color: "#00a99d" };
+                }
                 if (aa == this.props.selectedAminoAcid) {
                   style = { backgroundColor: "darkgray", color: "white" };
+                }
+                if (
+                  aa == this.props.selectedAminoAcid &&
+                  this.props.aminoAcidsAboveThreshold.includes(aa)
+                ) {
+                  style = {
+                    backgroundColor: "darkgray",
+                    fontWeight: "bold",
+                    color: "#00a99d"
+                  };
                 }
                 return (
                   <button
                     className="hyphy-omega-chart-btn"
                     style={style}
                     onClick={() => this.props.updateSelectedAminoAcid(aa)}
+                    key={aa}
                   >
                     {aa}
                   </button>
@@ -143,7 +232,6 @@ class AminoAcidSelector extends React.Component {
                 }}
                 className="form-control"
                 type="number"
-                defaultValue={this.props.bayesFactorThreshold}
                 value={this.props.bayesFactorThreshold}
                 step="1"
                 min="0"
@@ -277,7 +365,7 @@ class FADESitesGraph extends React.Component {
                     $(".results").width() == null ? 935 : $(".results").width()
                   }
                   transitions={false}
-                  tracker={false}
+                  tracker={true}
                 />
               </div>
             )}
@@ -315,8 +403,11 @@ class FADETable extends React.Component {
             <DatamonkeyTable
               headerData={this.props.MLEHeaderData}
               bodyData={this.props.MLEBodyData}
+              onClick={this.props.rowOnClick}
               paginate={20}
-              classes={"table table-smm table-striped"}
+              classes={
+                "table table-smm table-striped table-hover fade-site-table"
+              }
               export_csv
             />
           </div>
@@ -376,8 +467,9 @@ class FADEContents extends React.Component {
     this.state = {
       bayesFactorThreshold: 100,
       selectedAminoAcid: "Any",
-      numberOfSites: null,
-      MLEBodyData: null
+      numberOfSites: this.props.json["site annotations"]["site annotations"][0]
+        .length,
+      siteInFocus: 1
     };
   }
 
@@ -391,6 +483,23 @@ class FADEContents extends React.Component {
     this.setState({
       selectedAminoAcid: aa
     });
+  };
+
+  getAminoAcidsAboveThreshold = bayesFactorThreshold => {
+    var aminoAcidsAboveThreshold = [];
+    for (var aminoAcid in this.props.json.MLE.content) {
+      var MLEDataForSelectedAminoAcid = this.props.json.MLE.content[
+        aminoAcid
+      ][0];
+      for (var row in MLEDataForSelectedAminoAcid) {
+        const bayesFactorForSiteAndAA = MLEDataForSelectedAminoAcid[row][3];
+        if (bayesFactorForSiteAndAA >= bayesFactorThreshold) {
+          aminoAcidsAboveThreshold.push(aminoAcid);
+          break;
+        }
+      }
+    }
+    return aminoAcidsAboveThreshold;
   };
 
   getFilteredMLEBodyData = () => {
@@ -430,6 +539,13 @@ class FADEContents extends React.Component {
       });
       bodyData = bodyData.concat(bodyDataForAA);
     }
+    const siteAnnotationsData = this.props.json["site annotations"][
+      "site annotations"
+    ]["0"];
+    bodyData = this.appendSiteAnnotationsToMLEBodyData(
+      bodyData,
+      siteAnnotationsData
+    );
     return bodyData;
   };
 
@@ -456,26 +572,117 @@ class FADEContents extends React.Component {
     bodyData = bodyData.filter(function(el) {
       return el != undefined;
     });
+    const siteAnnotationsData = this.props.json["site annotations"][
+      "site annotations"
+    ]["0"];
+    bodyData = bodyData = this.appendSiteAnnotationsToMLEBodyData(
+      bodyData,
+      siteAnnotationsData
+    );
     return bodyData;
   };
 
-  render() {
-    var filteredMLEBodyData = this.getFilteredMLEBodyData();
+  appendSiteAnnotationsToMLEBodyData = (MLEBodyData, siteAnnotations) => {
+    var MLEBodyDataWithSiteAnnotations = [];
+    for (let i = 0; i < MLEBodyData.length; i++) {
+      const rowData = MLEBodyData[i];
+      let siteIndex;
+      rowData.length == 5
+        ? (siteIndex = rowData[0]["value"])
+        : (siteIndex = rowData[1]["value"]);
+      const siteSpecificAnnotations = siteAnnotations[siteIndex - 1];
+      rowData.push({
+        value: siteSpecificAnnotations[0],
+        classes: "",
+        style: { overflowWrap: "break-word" }
+      });
+      rowData.push({
+        value: siteSpecificAnnotations[1],
+        classes: "",
+        style: { overflowWrap: "break-word" }
+      });
+      MLEBodyDataWithSiteAnnotations.push(rowData);
+    }
+    return MLEBodyData;
+  };
+
+  getMLEHeaderData = selectedAminoAcid => {
+    function formatHeader(header) {
+      if (header == "Prob[bias>0]") {
+        return "prob [bias>0]";
+      } else if (header == "BayesFactor[bias>0]") {
+        return "bayes factor [bias>0]";
+      } else {
+        return header;
+      }
+    }
+
     var MLEHeaderData = this.props.json.MLE.headers.map(function(header) {
-      return { value: header[0], abbr: header[1], sortable: true };
+      return {
+        value: formatHeader(header[0]),
+        abbr: header[1],
+        sortable: true,
+        style: { overflowWrap: "break-word" }
+      };
     });
     MLEHeaderData.unshift({
       value: "site index",
       abbr: "site",
       sortable: true
     });
-    this.state.selectedAminoAcid == "Any"
+    selectedAminoAcid == "Any"
       ? MLEHeaderData.unshift({
           value: "amino acid",
           abbr: "AA",
           sortable: true
         })
       : null;
+    MLEHeaderData.push({
+      value: "composition",
+      abbr: "Amino acid composition of site",
+      sortable: false,
+      style: { width: "200px" }
+    });
+    MLEHeaderData.push({
+      value: "substitutions",
+      abbr: "Substitution history on selected branches",
+      sortable: false,
+      style: { width: "250px" }
+    });
+    return MLEHeaderData;
+  };
+
+  getSubstitutionMatrix = siteInFocus => {
+    const siteAnnotationsData = this.props.json["site annotations"][
+      "site annotations"
+    ]["0"];
+    const siteSpecificSubstitutionString =
+      siteAnnotationsData[siteInFocus - 1][1];
+    const siteSubstitutionMatrix = substitutionParser(
+      siteSpecificSubstitutionString
+    );
+    return siteSubstitutionMatrix;
+  };
+
+  updateSiteInFocusState = newSiteInFocus => {
+    this.setState({ siteInFocus: newSiteInFocus });
+  };
+
+  rowOnClick = rowData => {
+    const siteNumberIndex = rowData.length - 7;
+    const siteInFocus = rowData[siteNumberIndex]["value"];
+    this.updateSiteInFocusState(siteInFocus);
+    document
+      .getElementById("scroll-target-for-site-table-on-click")
+      .scrollIntoView();
+  };
+
+  render() {
+    const filteredMLEBodyData = this.getFilteredMLEBodyData();
+    const MLEHeaderData = this.getMLEHeaderData(this.state.selectedAminoAcid);
+    const substitutionMatrix = this.getSubstitutionMatrix(
+      this.state.siteInFocus
+    );
 
     return (
       <div>
@@ -485,11 +692,23 @@ class FADEContents extends React.Component {
           numberOfSites={filteredMLEBodyData.length}
           updateBayesFactorThreshold={this.updateBayesFactorThreshold}
         />
+        <FADESubstitutionChordDiagram
+          matrix={substitutionMatrix}
+          updateSiteInFocusState={this.updateSiteInFocusState}
+          title={"Inferred Amino Acid Substitutions"}
+          width={700}
+          height={500}
+          numberOfSites={this.state.numberOfSites}
+          siteInFocus={this.state.siteInFocus}
+        />
         <AminoAcidSelector
           selectedAminoAcid={this.state.selectedAminoAcid}
           updateSelectedAminoAcid={this.updateSelectedAminoAcid}
           bayesFactorThreshold={this.state.bayesFactorThreshold}
           updateBayesFactorThreshold={this.updateBayesFactorThreshold}
+          aminoAcidsAboveThreshold={this.getAminoAcidsAboveThreshold(
+            this.state.bayesFactorThreshold
+          )}
         />
         <FADESitesGraph
           json={this.props.json}
@@ -500,6 +719,7 @@ class FADEContents extends React.Component {
         <FADETable
           MLEHeaderData={MLEHeaderData}
           MLEBodyData={filteredMLEBodyData}
+          rowOnClick={this.rowOnClick}
           bayesFactorThreshold={this.state.bayesFactorThreshold}
           selectedAminoAcid={this.state.selectedAminoAcid}
         />
@@ -519,8 +739,9 @@ function FADE(props) {
       data={props.data}
       scrollSpyInfo={[
         { label: "summary", href: "summary-tab" },
-        { label: "graph", href: "site-graph-tab" },
-        { label: "table", href: "table-tab" },
+        { label: "substitution graph", href: "substitution-chord-diagram-tab" },
+        { label: "site graph", href: "site-graph-tab" },
+        { label: "site table", href: "table-tab" },
         { label: "tree", href: "tree-tab" },
         { label: "model fits", href: "fits-tab" }
       ]}

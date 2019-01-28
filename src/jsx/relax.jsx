@@ -401,7 +401,7 @@ class RELAXContents extends React.Component {
           summary_for_clipboard={this.getSummaryForClipboard()}
           summary_for_rendering={this.getSummaryForRendering()}
           method_ref="http://hyphy.org/methods/selection-methods/#relax"
-          citation_ref="hhttp://www.ncbi.nlm.nih.gov/pubmed/25540451"
+          citation_ref="http://www.ncbi.nlm.nih.gov/pubmed/25540451"
           citation_number="PMID 123456789"
         />
 

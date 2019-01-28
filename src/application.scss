@@ -94,6 +94,7 @@ $btn-primary-bg: $hyphy-green;
   color: #fff;
   background-color: #048276;
   -webkit-transition: ease-in-out 125ms;
+  transition: 125ms;
 }
 
 .btn-primary:active,
@@ -294,6 +295,16 @@ table {
 
 .site-table {
   margin: 10px 0px 0px 0px;
+}
+
+.fade-site-table {
+  cursor: pointer;
+}
+
+@media (min-width: 1200px) {
+  .fade-site-table {
+    table-layout: fixed;
+  }
 }
 
 .table > thead > tr > th {
