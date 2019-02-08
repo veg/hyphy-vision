@@ -26,16 +26,18 @@ const methodDict = {
   fade: render_fade
 };
 
-function renderHyPhyVision(data, element, fasta, originalFile, analysisLog) {
-  const method = determineHyPhyMethod(data);
-  if (method != "unkownMethod" && method != "No json object was provided") {
-    const renderSpecificMethod = methodDict[method];
-    renderSpecificMethod(data, element, fasta, originalFile, analysisLog);
-    return null;
-  } else {
-    render_inputErrorPage(element);
-    return null;
-  }
+function renderHyPhyVision(url, element, fasta, originalFile, analysisLog) {
+  d3.json(url, (err, data) => {
+    const method = determineHyPhyMethod(data);
+    if (method != "unkownMethod" && method != "No json object was provided") {
+      const renderSpecificMethod = methodDict[method];
+      renderSpecificMethod(data, element, fasta, originalFile, analysisLog);
+      return null;
+    } else {
+      render_inputErrorPage(element);
+      return null;
+    }
+  });
 }
 
 module.exports = renderHyPhyVision;
