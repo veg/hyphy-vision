@@ -24,10 +24,10 @@ describe("determineHyPhyMethod", () => {
   });
 
   it("should return a message if the json is empty", () => {
-    expect(determineHyPhyMethod("")).toBe("No json object was proviced");
-    expect(determineHyPhyMethod()).toBe("No json object was proviced");
-    expect(determineHyPhyMethod(undefined)).toBe("No json object was proviced");
-    expect(determineHyPhyMethod(null)).toBe("No json object was proviced");
+    expect(determineHyPhyMethod("")).toBe("No json object was provided");
+    expect(determineHyPhyMethod()).toBe("No json object was provided");
+    expect(determineHyPhyMethod(undefined)).toBe("No json object was provided");
+    expect(determineHyPhyMethod(null)).toBe("No json object was provided");
   });
 
   it("should return 'unkownMethod' if the json isn't in the right format", () => {

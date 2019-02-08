@@ -2,7 +2,7 @@ function determineHyPhyMethod(json) {
   // Take a HyPhy JSON result and return a lowercase string of which HyPhy method produced the result.
 
   if (json == "" || json == undefined || json == null) {
-    return "No json object was proviced";
+    return "No json object was provided";
   }
 
   var method;
