@@ -16,7 +16,7 @@ export { default as bgm } from "./jsx/bgm.jsx";
 export { default as fade } from "./jsx/fade.jsx";
 
 // renderHyPhyVision is for use in Galaxy
-export { defualt as renderHyPhyVision } from "./renderHyPhyVision.js";
+export { default as renderHyPhyVision } from "./renderHyPhyVision.js";
 
 // Shared_component exports.
 export {
