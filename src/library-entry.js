@@ -15,6 +15,9 @@ export { default as gard } from "./jsx/gard.jsx";
 export { default as bgm } from "./jsx/bgm.jsx";
 export { default as fade } from "./jsx/fade.jsx";
 
+// renderHyPhyVision is for use in Galaxy
+export { default as renderHyPhyVision } from "./renderHyPhyVision.js";
+
 // Shared_component exports.
 export {
   default as render_branch_selection
