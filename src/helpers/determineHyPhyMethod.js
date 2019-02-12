@@ -28,6 +28,8 @@ function determineHyPhyMethod(json) {
       method = "relax";
     } else if (analysisString.includes("SLAC")) {
       method = "slac";
+    } else if (analysisString.includes("MEME")) {
+      method = "meme";
     } else {
       method = "unknownMethod";
     }

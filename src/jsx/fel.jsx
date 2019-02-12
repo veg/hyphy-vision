@@ -49,7 +49,7 @@ class FELContents extends React.Component {
 
     // Insert the omega (beta/alpha) into the content. The if statment is to make sure it doesn't get inserted twice.
     if (mle_content[0].length == 6) {
-      var convMle = _.map(mle_content, function(d) {
+      _.map(mle_content, function(d) {
         var omega = d[1] / d[0];
         d.splice(2, 0, omega);
       });
