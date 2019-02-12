@@ -21,6 +21,7 @@ describe("determineHyPhyMethod", () => {
     expect(determineHyPhyMethod(exampleGard)).toBe("gard");
     expect(determineHyPhyMethod(exampleRelax)).toBe("relax");
     expect(determineHyPhyMethod(exampleSlac)).toBe("slac");
+    expect(determineHyPhyMethod(exampleMeme)).toBe("meme");
   });
 
   it("should return a message if the json is empty", () => {
