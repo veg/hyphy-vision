@@ -105,7 +105,7 @@ var Tree = React.createClass({
       fubar: "Nucleotide GTR"
     };
     var show_legend =
-      ["meme", "fubar", "gard", "bgm"].indexOf(self.props.method) < 0;
+      ["meme", "fubar", "gard", "bgm", "fade"].indexOf(self.props.method) < 0;
 
     return {
       json: this.props.json,
@@ -157,7 +157,7 @@ var Tree = React.createClass({
         self.props.json.trees[self.state.current].branchLengths[
           self.state.selected_model
         ];
-    } else if (["bgm"].indexOf(self.props.method) > -1) {
+    } else if (["bgm", "fade"].indexOf(self.props.method) > -1) {
       branch_lengths = self.props.branch_lengths;
     }
     return branch_lengths;
