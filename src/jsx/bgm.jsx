@@ -85,9 +85,19 @@ class BGMContents extends React.Component {
       });
     }
 
+    var branchLengths = {};
+    const branchAttributesObject = data["branch attributes"]["0"];
+    for (key in branchAttributesObject) {
+      const branchLengthObject = branchAttributesObject[key];
+      const branchLength =
+        branchLengthObject[Object.keys(branchLengthObject)[0]];
+      branchLengths[key] = branchLength;
+    }
+
     this.setState({
       MLEHeaders: MLEHeaders,
-      MLEData: this.getSitePairsAtOrAboveProbabilityThreshold()
+      MLEData: this.getSitePairsAtOrAboveProbabilityThreshold(),
+      branchLengths: branchLengths
     });
   };
 
@@ -168,6 +178,7 @@ class BGMContents extends React.Component {
             tree_string={this.props.json.input.trees[0]}
             models={this.props.json.fits}
             method="bgm"
+            branch_lengths={this.state.branchLengths}
             settings={{
               omegaPlot: {},
               "tree-options": {
@@ -177,7 +188,6 @@ class BGMContents extends React.Component {
                 */
                 "hyphy-tree-model": ["Full model", true],
                 "hyphy-tree-highlight": [null, false],
-                "hyphy-tree-branch-lengths": [true, true],
                 "hyphy-tree-hide-legend": [false, true],
                 "hyphy-tree-fill-color": [true, true]
               },

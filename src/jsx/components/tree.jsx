@@ -157,6 +157,8 @@ var Tree = React.createClass({
         self.props.json.trees[self.state.current].branchLengths[
           self.state.selected_model
         ];
+    } else if (["bgm"].indexOf(self.props.method) > -1) {
+      branch_lengths = self.props.branch_lengths;
     }
     return branch_lengths;
   },
