@@ -536,7 +536,7 @@ var Tree = React.createClass({
             type="checkbox"
             id="hyphy-tree-hide-legend"
             className="hyphy-tree-trigger"
-            defaultChecked={false}
+            defaultChecked={!this.state.show_legend}
             onChange={this.toggleLegend}
           />{" "}
           Hide Legend
