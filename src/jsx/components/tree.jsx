@@ -639,6 +639,7 @@ var Tree = React.createClass({
     } else if (self.props.tree_string) {
       tree_string = self.props.tree_string;
     }
+
     self.tree(tree_string).svg(self.svg);
 
     self.branch_lengths = this.getBranchLengths();
@@ -690,6 +691,11 @@ var Tree = React.createClass({
     }
 
     this.tree.style_edges(this.edgeColorizer);
+
+    if (this.settings.nodeColorizer) {
+      this.nodeColorizer = this.settings.nodeColorizer;
+    }
+
     this.tree.style_nodes(this.nodeColorizer);
 
     this.tree.spacing_x(30, true);
