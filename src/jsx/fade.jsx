@@ -422,6 +422,19 @@ class FADETree extends React.Component {
     super(props);
   }
 
+  getBranchLengths = json => {
+    var branchLengths = {};
+    const branchAttributesObject = json["branch attributes"]["0"];
+    for (let key in branchAttributesObject) {
+      let branchLengthObject = branchAttributesObject[key];
+      delete branchLengthObject["original name"];
+      const branchLength =
+        branchLengthObject[Object.keys(branchLengthObject)[0]];
+      branchLengths[key] = branchLength;
+    }
+    return branchLengths;
+  };
+
   render() {
     const { json } = this.props;
     if (!json) return null;
@@ -433,7 +446,8 @@ class FADETree extends React.Component {
             json={this.props.json}
             tree_string={this.props.json.input.trees[0]}
             models={this.props.json.fits}
-            method="bgm"
+            method="fade"
+            branch_lengths={this.getBranchLengths(this.props.json)}
             settings={{
               omegaPlot: {},
               "tree-options": {
@@ -443,7 +457,6 @@ class FADETree extends React.Component {
                 */
                 "hyphy-tree-model": ["Full model", true],
                 "hyphy-tree-highlight": [null, false],
-                "hyphy-tree-branch-lengths": [true, true],
                 "hyphy-tree-hide-legend": [false, true],
                 "hyphy-tree-fill-color": [true, true]
               },
