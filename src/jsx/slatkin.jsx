@@ -5,11 +5,9 @@ var React = require("react"),
 import { default as default_tree_settings } from "../helpers/default_tree_settings";
 import { Tree } from "./components/tree.jsx";
 import { DatamonkeyTable } from "./components/tables.jsx";
-import { NavBar } from "./components/navbar.jsx";
-import { ScrollSpy } from "./components/scrollspy.jsx";
-import { InputInfo } from "./components/input_info.jsx";
-import { ErrorMessage } from "./components/error_message.jsx";
 import { Header } from "./components/header.jsx";
+import { MainResult } from "./components/mainresult.jsx";
+import { ResultsPage } from "./components/results_page.jsx";
 
 let part_scale = d3.scale.category10();
 
@@ -115,11 +113,7 @@ class SlatkinResults extends React.Component {
     return (
       <div className="row" id="summary-tab">
         <div className="col-md-12">
-          <h3 className="list-group-item-heading">
-            <span className="summary-method-name">Slatkin-Maddison 2019</span>
-            <br />
-            <span className="results-summary">results summary</span>
-          </h3>
+          <br />
         </div>
         <div className="col-md-12">
           <div className="main-result">
@@ -239,91 +233,24 @@ class SlatkinResults extends React.Component {
   }
 }
 
-class ReactConventions extends React.Component {
-  render() {
-    var popover = `<ul>
-      <li>
-        This is an example of a popover, which will describe the contents of the section that
-        correspond to this header.
-      </li>
-    </ul>`;
-
-    return (
-      <div className="row" id="react-tab">
-        <div className="col-md-12">
-          <Header title="React Conventions" popover={popover} />
-          <p className="description">
-            Components initially render with no data present, which must be
-            accounted for. An API call is made in the componentDidMount method
-            of the Results component. All data will be stored in the state of
-            this component, and relevant pieces will be passed down to child
-            components as props. The state can be changed upon loading a file.
-          </p>
-        </div>
-      </div>
-    );
-  }
-}
-
-class Slatkin extends React.Component {
+class SlatkinContents extends React.Component {
   constructor(props) {
     super(props);
     this.state = { data: null };
-    this.onFileChange = this.onFileChange.bind(this);
   }
 
   componentDidMount() {
     var self = this;
-
-    d3.json(this.props.url, function(data) {
-      self.setState({
-        data: data
-      });
-    });
   }
-  componentDidUpdate(prevProps, prevState) {
-    $("body").scrollspy({
-      target: ".bs-docs-sidebar",
-      offset: 50
-    });
-    $('[data-toggle="popover"]').popover();
-  }
-  onFileChange(e) {
-    var self = this,
-      files = e.target.files; // FileList object
 
-    if (files.length == 1) {
-      var f = files[0],
-        reader = new FileReader();
-
-      reader.onload = (function(theFile) {
-        return function(e) {
-          var data = JSON.parse(this.result);
-          self.setState({ data: data });
-        };
-      })(f);
-      reader.readAsText(f);
-    }
-    e.preventDefault();
-  }
   render() {
-    var self = this,
-      scrollspy_info = [
-        { label: "summary", href: "summary-tab" },
-        { label: "compartments", href: "compartments-tab" },
-        { label: "migrations", href: "migrations-tab" },
-        { label: "original", href: "original-tab" },
-        { label: "tree", href: "tree-tab" }
-      ];
+    var self = this;
     return (
       <div>
-        <NavBar onFileChange={this.onFileChange} />
         <div className="container">
           <div className="row">
-            <ScrollSpy info={scrollspy_info} />
             <div className="col-sm-10" id="results">
-              <ErrorMessage />
-              <SlatkinResults data={self.state.data} />
+              <SlatkinResults data={self.props.json} />
             </div>
           </div>
         </div>
@@ -332,8 +259,37 @@ class Slatkin extends React.Component {
   }
 }
 
-function render_slatkin(url, element) {
-  ReactDOM.render(<Slatkin url={url} />, document.getElementById(element));
+function Slatkin(props) {
+  return (
+    <ResultsPage
+      data={props.data}
+      scrollSpyInfo={[
+        { label: "summary", href: "summary-tab" },
+        { label: "compartments", href: "compartments-tab" },
+        { label: "migrations", href: "migrations-tab" },
+        { label: "original", href: "original-tab" },
+        { label: "tree", href: "tree-tab" }
+      ]}
+      methodName="Slatkin-Maddison 2019"
+      fasta={props.fasta}
+      originalFile={props.originalFile}
+      analysisLog={props.analysisLog}
+    >
+      {SlatkinContents}
+    </ResultsPage>
+  );
+}
+
+function render_slatkin(data, element, fasta, originalFile, analysisLog) {
+  ReactDOM.render(
+    <Slatkin
+      data={data}
+      fasta={fasta}
+      originalFile={originalFile}
+      analysisLog={analysisLog}
+    />,
+    document.getElementById(element)
+  );
 }
 
 module.exports = render_slatkin;

@@ -324,7 +324,7 @@ class HyPhyVision extends React.Component {
               path="/slatkin"
               component={() => (
                 <Slatkin
-                  url={
+                  data={
                     this.state.data ||
                     base_url +
                       "/data/json_files/slatkin/C012_Time1_collapse.tre.json"
