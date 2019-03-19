@@ -163,18 +163,21 @@ class SlatkinResults extends React.Component {
                   whether or not this number is lower than expected in a
                   panmictic or unstructured population using permutation tests.
                 </p>
-                See{" "}
-                <a href="http://hyphy.org/methods/selection-methods/#absrel">
-                  here
-                </a>{" "}
-                for more information about this method.
                 <br />Please cite{" "}
                 <a
-                  href="http://www.ncbi.nlm.nih.gov/pubmed/25697341"
+                  href="http://www.ncbi.nlm.nih.gov/pubmed/2599370"
                   id="summary-pmid"
                   target="_blank"
                 >
-                  PMID 123456789
+                  PMID 2599370
+                </a>
+                {" and "}
+                <a
+                  href="http://doi.org/10.1093/bioinformatics/bti079"
+                  id="summary-pmid"
+                  target="_blank"
+                >
+                  PMID 15509596
                 </a>{" "}
                 if you use this result in a publication, presentation, or other
                 scientific work.

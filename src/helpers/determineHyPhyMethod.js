@@ -35,6 +35,8 @@ function determineHyPhyMethod(json) {
     }
   } else if (json["breakpointData"] != undefined) {
     method = "gard";
+  } else if (json["compartments"] != undefined) {
+    method = "slatkin";
   } else {
     method = "unknownMethod";
   }
