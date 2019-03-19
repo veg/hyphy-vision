@@ -182,7 +182,7 @@ class SlatkinResults extends React.Component {
           <div id="compartments-tab">
             <Header title="Compartments" />
             <h2 className="mt-2 mb-2">
-              <i className="fas fa fa-boxes" /> Found{" "}
+              <i className="fas fa fa-boxes" /> Performed Test with{" "}
               <b>{this.props.data.compartments}</b> Compartments
             </h2>
             <p>{this.getPartitionCounts()}</p>
