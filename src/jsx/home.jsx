@@ -89,6 +89,7 @@ function Home(props) {
           method="FADE"
           text="FUBAR Approach to Directional Evolution"
         />
+        <MethodBanner method="Slatkin" text="Compartmentalization" />
       </div>
     </div>
   );
