@@ -112,6 +112,7 @@ class ResultsPage extends React.Component {
                   fasta={this.props.fasta}
                   originalFile={this.props.originalFile}
                   analysisLog={this.props.analysisLog}
+                  partitionedData={this.props.partitionedData}
                 />
               </div>
             </div>

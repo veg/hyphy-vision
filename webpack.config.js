@@ -15,7 +15,7 @@ config = {
     historyApiFallback: true
   },
   output: {
-    path: path.resolve(__dirname, "dist/"),
+    path: path.resolve(__dirname, "public/"),
     filename: "[name].js",
     library: "hyphyVision"
   },
@@ -117,7 +117,7 @@ config = {
     new webpack.IgnorePlugin(/jsdom$/),
     new HtmlWebpackPlugin({
       title: "HyPhy Vision",
-      filename: path.resolve("dist", "index.html")
+      filename: path.resolve("public", "index.html")
     }),
     new ExtractTextPlugin("[name].css")
   ],
