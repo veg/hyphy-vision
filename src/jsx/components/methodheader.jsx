@@ -19,6 +19,7 @@ function MethodHeader(props) {
           fasta={props.fasta}
           originalFile={props.originalFile}
           analysisLog={props.analysisLog}
+          partitionedData={props.partitionedData}
         />
       </div>
     </div>

@@ -474,19 +474,28 @@ function GARD(props) {
       fasta={props.fasta}
       originalFile={props.originalFile}
       analysisLog={props.analysisLog}
+      partitionedData={props.partitionedData}
     >
       {GARDContents}
     </ResultsPage>
   );
 }
 
-function render_gard(data, element, fasta, originalFile, analysisLog) {
+function render_gard(
+  data,
+  element,
+  fasta,
+  originalFile,
+  analysisLog,
+  partitionedData
+) {
   ReactDOM.render(
     <GARD
       data={data}
       fasta={fasta}
       originalFile={originalFile}
       analysisLog={analysisLog}
+      partitionedData={partitionedData}
     />,
     document.getElementById(element)
   );
