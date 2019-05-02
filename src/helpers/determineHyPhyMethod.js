@@ -30,6 +30,8 @@ function determineHyPhyMethod(json) {
       method = "slac";
     } else if (analysisString.includes("MEME")) {
       method = "meme";
+    } else if (analysisString.includes("GARD")) {
+      method = "gard";
     } else {
       method = "unknownMethod";
     }

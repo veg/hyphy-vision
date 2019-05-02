@@ -9,7 +9,6 @@ import { Header } from "./components/header.jsx";
 import { RateMatrix } from "./components/rate_matrix.jsx";
 import { DatamonkeySiteGraph } from "./components/graphs.jsx";
 import { ResultsPage } from "./components/results_page.jsx";
-import { GARD_PreviousJson } from "./gard_PreviousJson.jsx";
 
 function binomial(n, k) {
   if (typeof n !== "number" || typeof k !== "number") return false;
@@ -390,7 +389,7 @@ function GARDTopologyReport(props) {
   );
 }
 
-class GARDContents extends React.Component {
+class GARD_PreviousJson extends React.Component {
   constructor(props) {
     super(props);
     this.state = { data: null };
@@ -460,91 +459,4 @@ class GARDContents extends React.Component {
   }
 }
 
-class GARDVersionSelector extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = { version: "unknownVersion" };
-  }
-
-  componentDidMount() {
-    this.selectVersion(this.props.json);
-  }
-
-  componentWillReceiveProps(nextProps) {
-    this.selectVersion(nextProps.json);
-  }
-
-  selectVersion(json) {
-    if (json["analysis"] != undefined) {
-      var version;
-      const analysisString = json["analysis"]["info"];
-
-      if (analysisString.includes("GARD")) {
-        version = "new";
-      } else {
-        version = "unknownVersion";
-      }
-    } else if (json["breakpointData"] != undefined) {
-      version = "old";
-    } else {
-      version = "unknownVersion";
-    }
-    this.setState({ version: version });
-  }
-
-  render() {
-    return (
-      <div>
-        {this.state.version == "new" ? (
-          <GARDContents json={this.props.json} />
-        ) : (
-          <GARD_PreviousJson json={this.props.json} />
-        )}
-      </div>
-    );
-  }
-}
-
-function GARD(props) {
-  return (
-    <ResultsPage
-      data={props.data}
-      scrollSpyInfo={[
-        { label: "summary", href: "summary-tab" },
-        { label: "report", href: "report-tab" },
-        { label: "graph", href: "graph-tab" },
-        { label: "tree", href: "tree-tab" }
-      ]}
-      methodName="Genetic Algorithm for Recombination Detection"
-      fasta={props.fasta}
-      originalFile={props.originalFile}
-      analysisLog={props.analysisLog}
-      partitionedData={props.partitionedData}
-    >
-      {GARDVersionSelector}
-    </ResultsPage>
-  );
-}
-
-function render_gard(
-  data,
-  element,
-  fasta,
-  originalFile,
-  analysisLog,
-  partitionedData
-) {
-  ReactDOM.render(
-    <GARD
-      data={data}
-      fasta={fasta}
-      originalFile={originalFile}
-      analysisLog={analysisLog}
-      partitionedData={partitionedData}
-    />,
-    document.getElementById(element)
-  );
-}
-
-module.exports = render_gard;
-module.exports.GARD = GARD;
+module.exports.GARD_PreviousJson = GARD_PreviousJson;
