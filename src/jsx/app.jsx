@@ -13,6 +13,7 @@ import { FUBAR } from "./fubar.jsx";
 import { GARD } from "./gard.jsx";
 import { BGM } from "./bgm.jsx";
 import { FADE } from "./fade.jsx";
+import { Slatkin } from "./slatkin.jsx";
 import { NavBar } from "./components/navbar.jsx";
 
 const path = require("path");
@@ -316,6 +317,18 @@ class HyPhyVision extends React.Component {
                     base_url + "/data/json_files/fade/CD2_AA.fasta.FADE.json"
                   }
                   fasta={fasta.CD2}
+                />
+              )}
+            />
+            <Route
+              path="/slatkin"
+              component={() => (
+                <Slatkin
+                  data={
+                    this.state.data ||
+                    base_url +
+                      "/data/json_files/slatkin/C012_Time1_collapse.tre.json"
+                  }
                 />
               )}
             />

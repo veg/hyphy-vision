@@ -9,6 +9,7 @@ const exampleGard = require("./../data/json_files/gard/CD2.fasta.GARD.json");
 const exampleMeme = require("./../data/json_files/meme/CD2.fna.MEME.json");
 const exampleRelax = require("./../data/json_files/relax/CD2.fna.RELAX.json");
 const exampleSlac = require("./../data/json_files/slac/CD2.fna.SLAC.json");
+const exampleSlatkin = require("./../data/json_files/slatkin/C012_Time1_collapse.tre.json");
 
 describe("determineHyPhyMethod", () => {
   it("should work on the example json files", () => {
@@ -22,6 +23,7 @@ describe("determineHyPhyMethod", () => {
     expect(determineHyPhyMethod(exampleRelax)).toBe("relax");
     expect(determineHyPhyMethod(exampleSlac)).toBe("slac");
     expect(determineHyPhyMethod(exampleMeme)).toBe("meme");
+    expect(determineHyPhyMethod(exampleSlatkin)).toBe("slatkin");
   });
 
   it("should return a message if the json is empty", () => {

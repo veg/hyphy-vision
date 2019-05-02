@@ -9,6 +9,8 @@ import { default as render_fubar } from "./jsx/fubar.jsx";
 import { default as render_gard } from "./jsx/gard.jsx";
 import { default as render_bgm } from "./jsx/bgm.jsx";
 import { default as render_fade } from "./jsx/fade.jsx";
+import { default as render_slatkin } from "./jsx/slatkin.jsx";
+
 import { default as determineHyPhyMethod } from "./helpers/determineHyPhyMethod.js";
 import { default as render_inputErrorPage } from "./jsx/components/inputErrorPage.jsx";
 
@@ -23,7 +25,8 @@ const methodDict = {
   fubar: render_fubar,
   gard: render_gard,
   bgm: render_bgm,
-  fade: render_fade
+  fade: render_fade,
+  slatkin: render_slatkin
 };
 
 function renderHyPhyVision(url, element, fasta, originalFile, analysisLog) {
