@@ -36,7 +36,6 @@ class InputInfo extends React.Component {
     var filename = is_full_path
       ? _.last(this.props.input_data["file name"].split("/"))
       : this.props.input_data["file name"];
-    var show_partition_button = this.props.gard;
     return (
       <div className="row" id="input-info">
         <div className="col-md-8">
@@ -98,7 +97,7 @@ class InputInfo extends React.Component {
                     </li>
                   ]
                 : null}
-              {show_partition_button ? (
+              {this.props.partitionedData ? (
                 <li className="dropdown-item">
                   <a href={window.location.href + "/screened_data/"}>
                     Partitioned data

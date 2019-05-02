@@ -61,7 +61,7 @@ var Tree = React.createClass({
     this.setState({
       omega_color: omega_color,
       omega_scale: omega_scale,
-      fill_color: false
+      fill_color: fill_color
     });
   },
 
