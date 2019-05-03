@@ -6,10 +6,9 @@ var React = require("react"),
 import { Tree } from "./components/tree.jsx";
 import { ErrorMessage } from "./components/error_message.jsx";
 import { Header } from "./components/header.jsx";
-import { RateMatrix } from "./components/rate_matrix.jsx";
 import { DatamonkeySiteGraph } from "./components/graphs.jsx";
 import { ResultsPage } from "./components/results_page.jsx";
-import { GARD_PreviousJson } from "./gard_PreviousJson.jsx";
+import { GARD_HyPhy_2_3 } from "./gard_HyPhy_2_3.jsx";
 
 function binomial(n, k) {
   if (typeof n !== "number" || typeof k !== "number") return false;
@@ -33,31 +32,30 @@ function GARDResults(props) {
   timeString += hours > 0 ? hours + ":" : "";
   timeString += minutes + ":" + String(seconds).padStart(2, "0");
 
-  var number_of_fragments = props.data.improvements
-    ? props.data.improvements.length + 1
-    : 2;
+  var number_of_fragments = Object.keys(props.data.trees).length;
   var totalPossibleModels = _.range(number_of_fragments)
     .map(k => binomial(props.data.potentialBreakpoints, k + 1))
     .reduce((a, b) => a + b, 0);
-  var totalModelCount = props.data.models.length;
+  var totalModelCount = props.data.totalModelCount;
   var percentageExplored = (
     100 *
     totalModelCount /
     totalPossibleModels
   ).toFixed(2);
-  var evidence_statement = props.data.improvements ? (
-    <span>
-      <strong className="hyphy-highlight">found evidence</strong> of{" "}
-      {props.data.lastImprovedBPC} recombination breakpoint{props.data
-        .lastImprovedBPC == 1
-        ? ""
-        : "s"}
-    </span>
-  ) : (
-    <span>
-      <strong>found no evidence</strong> of recombination
-    </span>
-  );
+  var evidence_statement =
+    number_of_fragments > 1 ? (
+      <span>
+        <strong className="hyphy-highlight">found evidence</strong> of{" "}
+        {props.data.lastImprovedBPC} recombination breakpoint{props.data
+          .lastImprovedBPC == 1
+          ? ""
+          : "s"}
+      </span>
+    ) : (
+      <span>
+        <strong>found no evidence</strong> of recombination
+      </span>
+    );
   return (
     <div className="row">
       <div className="col-md-12" />
@@ -405,13 +403,21 @@ class GARDContents extends React.Component {
   }
 
   processData(data) {
-    data.trees = data.breakpointData.map(row => {
-      return { newickString: row.tree };
-    });
+    var trees = Object.values(data.trees);
+    trees.length == 1
+      ? (trees = [{ newickString: Object.values(trees)[0] }])
+      : null;
+    data.trees = trees;
     this.setState({ data: data });
   }
 
   render() {
+    /*
+        TODO: Components still to be ported:
+        <GARDTopologyReport data={this.state.data} />
+        <GARDRecombinationReport data={this.state.data} />
+        <GARDSiteGraph data={this.state.data} />
+        */
     var tree_settings = {
       omegaPlot: {},
       "tree-options": {
@@ -437,13 +443,6 @@ class GARDContents extends React.Component {
       <div>
         <ErrorMessage />
         <GARDResults data={this.state.data} />
-        <GARDRecombinationReport data={this.state.data} />
-        <GARDTopologyReport data={this.state.data} />
-        <GARDSiteGraph data={this.state.data} />
-        <RateMatrix
-          rate_matrix={this.state.data ? this.state.data.rateMatrix : undefined}
-        />
-
         <div className="row">
           <div id="tree-tab" className="col-md-12">
             <Tree
@@ -492,16 +491,23 @@ class GARDVersionSelector extends React.Component {
     this.setState({ version: version });
   }
 
+  renderCorrectVersion() {
+    if (this.state.version == "new") {
+      return <GARDContents json={this.props.json} />;
+    } else if (this.state.version == "old") {
+      return <GARD_HyPhy_2_3 json={this.props.json} />;
+    } else {
+      return (
+        <div>
+          the json is either still loading or is not recognized as a valid GARD
+          json output
+        </div>
+      );
+    }
+  }
+
   render() {
-    return (
-      <div>
-        {this.state.version == "new" ? (
-          <GARDContents json={this.props.json} />
-        ) : (
-          <GARD_PreviousJson json={this.props.json} />
-        )}
-      </div>
-    );
+    return <div>{this.renderCorrectVersion()}</div>;
   }
 }
 

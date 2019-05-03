@@ -389,7 +389,7 @@ function GARDTopologyReport(props) {
   );
 }
 
-class GARD_PreviousJson extends React.Component {
+class GARD_HyPhy_2_3 extends React.Component {
   constructor(props) {
     super(props);
     this.state = { data: null };
@@ -459,4 +459,4 @@ class GARD_PreviousJson extends React.Component {
   }
 }
 
-module.exports.GARD_PreviousJson = GARD_PreviousJson;
+module.exports.GARD_HyPhy_2_3 = GARD_HyPhy_2_3;
