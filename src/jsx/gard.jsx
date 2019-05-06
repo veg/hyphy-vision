@@ -6,7 +6,10 @@ var React = require("react"),
 import { Tree } from "./components/tree.jsx";
 import { ErrorMessage } from "./components/error_message.jsx";
 import { Header } from "./components/header.jsx";
-import { DatamonkeySiteGraph } from "./components/graphs.jsx";
+import {
+  DatamonkeySiteGraph,
+  DatamonkeyScatterplot
+} from "./components/graphs.jsx";
 import { ResultsPage } from "./components/results_page.jsx";
 import { GARD_HyPhy_2_3 } from "./gard_HyPhy_2_3.jsx";
 
@@ -119,6 +122,7 @@ function GARDRecombinationReport(props) {
       .linear()
       .domain([1, props.data.input["number of sites"]])
       .range([0, width]);
+
   var segments = [{ breakpoints: [] }]
     .concat(props.data.improvements)
     .map(function(d) {
@@ -154,6 +158,7 @@ function GARDRecombinationReport(props) {
         </svg>
       );
     });
+
   var rows = [{ breakpoints: [] }]
     .concat(props.data.improvements)
     .map((row, index) => (
@@ -172,6 +177,7 @@ function GARDRecombinationReport(props) {
         <td>{segments[index]}</td>
       </tr>
     ));
+
   return (
     <div className="row" id="report-tab">
       <div className="col-md-12">
@@ -227,39 +233,37 @@ function GARDRecombinationReport(props) {
   );
 }
 
-function GARDSiteGraph(props) {
-  if (!props.data) return <div />;
-  var number_of_sites = props.data.input["number of sites"],
-    bp_support = d3.range(number_of_sites).map(d => 0 * d),
-    tree_length = d3.range(number_of_sites).map(d => 0 * d),
-    normalizer = 0,
-    model,
-    modelScore,
-    fromSite;
-  for (var i = 0; i < props.data.models.length; i++) {
-    model = props.data.models[i];
-    modelScore = Math.exp(0.5 * (props.data.baselineScore - model.aicc));
-    if (modelScore > 0.00001) {
-      for (var j = 0; j < model.breakpoints.length; j++) {
-        fromSite = model.breakpoints[j][0];
-        if (j > 0) bp_support[fromSite] += modelScore;
-      }
-      normalizer += modelScore;
-    }
-  }
-  bp_support = bp_support.map(d => d / normalizer);
-  tree_length = tree_length.map(d => d / normalizer);
-  return (
-    <div className="row" id="graph-tab">
-      <div className="col-md-12">
-        <Header title="GARD Site Graph" />
-        <DatamonkeySiteGraph
-          columns={["Breakpoint support"]}
-          rows={_.zip(bp_support, tree_length)}
-        />
+function GARDScatterPlot(props) {
+  if (props.data == null) {
+    return null;
+  } else {
+    const siteIndices = Object.keys(props.data["siteBreakPointSupport"]).map(
+      x => Number(x)
+    );
+    const siteBreakPointSupport = Object.values(
+      props.data["siteBreakPointSupport"]
+    ).map(x => (x > 10e-20 ? x : 0));
+    return (
+      <div className="row" id="graph-tab">
+        <div className="col-md-12">
+          <Header
+            title="GARD Site Graph"
+            popover="<p>Normalized cumulative Akaike weight of each potential break point location.</p>"
+          />
+          <DatamonkeyScatterplot
+            x={siteIndices}
+            y={[siteBreakPointSupport]}
+            x_label={"site"}
+            y_label={"break point support"}
+            marginLeft={50}
+            width={935}
+            transitions={false}
+            tracker={true}
+          />
+        </div>
       </div>
-    </div>
-  );
+    );
+  }
 }
 
 function GARDTopologyReport(props) {
@@ -288,7 +292,9 @@ function GARDTopologyReport(props) {
     var sigCell = d3.range(sig).map(d => <i className="fa fa-circle" />);
     rows.push(
       <tr>
-        <td>{_.last(props.data.improvements).breakpoints[pcounter - 1] + 1}</td>
+        <td>
+          {_.last(props.data.improvements).breakpoints[0][pcounter - 1] + 1}
+        </td>
         <td>{Math.min(1, lhs * totalComparisons)}</td>
         <td>{Math.min(1, rhs * totalComparisons)}</td>
         <td>{sigCell}</td>
@@ -408,6 +414,21 @@ class GARDContents extends React.Component {
       ? (trees = [{ newickString: Object.values(trees)[0] }])
       : null;
     data.trees = trees;
+
+    const improvements = Object.values(data.improvements).map(
+      improvementObject => ({
+        breakpoints: improvementObject.breakpoints[0],
+        deltaAICc: improvementObject.deltaAICc
+      })
+    );
+    data.improvements = improvements;
+
+    const breakpointData = Object.values(data.breakpointData).map(bpObject => ({
+      tree: bpObject.tree,
+      bps: bpObject.bps[0]
+    }));
+    data.breakpointData = breakpointData;
+
     this.setState({ data: data });
   }
 
@@ -415,7 +436,6 @@ class GARDContents extends React.Component {
     /*
         TODO: Components still to be ported:
         <GARDTopologyReport data={this.state.data} />
-        <GARDRecombinationReport data={this.state.data} />
         <GARDSiteGraph data={this.state.data} />
         */
     var tree_settings = {
@@ -443,6 +463,8 @@ class GARDContents extends React.Component {
       <div>
         <ErrorMessage />
         <GARDResults data={this.state.data} />
+        <GARDRecombinationReport data={this.state.data} />
+        <GARDScatterPlot data={this.state.data} />
         <div className="row">
           <div id="tree-tab" className="col-md-12">
             <Tree
