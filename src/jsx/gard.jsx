@@ -254,7 +254,7 @@ function GARDScatterPlot(props) {
             x={siteIndices}
             y={[siteBreakPointSupport]}
             x_label={"site"}
-            y_label={"break point support"}
+            y_label={"relative break point support"}
             marginLeft={50}
             width={935}
             transitions={false}
@@ -264,134 +264,6 @@ function GARDScatterPlot(props) {
       </div>
     );
   }
-}
-
-function GARDTopologyReport(props) {
-  if (!props.data) return <div />;
-  if (!props.data.improvements) return <div />;
-  var readPCount = props.data.pairwiseP.length,
-    totalComparisons = (readPCount - 1) * 2,
-    threshP = 0.01 / totalComparisons,
-    bypvalue = [[0.01, 0], [0.05, 0], [0.1, 0]].map(row =>
-      row.map(entry => entry / totalComparisons)
-    ),
-    rows = [];
-  for (var pcounter = 1; pcounter < readPCount; pcounter++) {
-    var lhs = props.data.pairwiseP[pcounter][pcounter - 1],
-      rhs = props.data.pairwiseP[pcounter - 1][pcounter],
-      sig = 0;
-    for (var k = 0; k < bypvalue.length; k++) {
-      threshP = bypvalue[k][0];
-      if (lhs <= threshP && rhs <= threshP) {
-        if (sig == 0) {
-          sig = readPCount - k;
-        }
-        bypvalue[k][1] += 1;
-      }
-    }
-    var sigCell = d3.range(sig).map(d => <i className="fa fa-circle" />);
-    rows.push(
-      <tr>
-        <td>
-          {_.last(props.data.improvements).breakpoints[0][pcounter - 1] + 1}
-        </td>
-        <td>{Math.min(1, lhs * totalComparisons)}</td>
-        <td>{Math.min(1, rhs * totalComparisons)}</td>
-        <td>{sigCell}</td>
-      </tr>
-    );
-  }
-  var statements = _.range(3).map(k => (
-      <p className="description">
-        At p = {bypvalue[k][0] * totalComparisons}, there are {bypvalue[k][1]}{" "}
-        breakpoints with significant topological incongruence.
-      </p>
-    )),
-    currentAIC =
-      props.data.baselineScore -
-      _.pluck(props.data.improvements, "deltaAICc").reduce((t, n) => t + n),
-    w = Math.exp(0.5 * (currentAIC - props.data.singleTreeAICc)),
-    conclusion =
-      w > 0.01 ? (
-        <i>
-          some or all of the breakpoints may reflect rate variation instead of
-          topological incongruence
-        </i>
-      ) : (
-        <i>
-          at least of one of the breakpoints reflects a true topological
-          incongruence
-        </i>
-      );
-  return (
-    <div className="row">
-      <div className="col-md-12">
-        <Header
-          title="Topological incongruence report"
-          popover="<p>Hover over a column header for a description of its content.</p>"
-        />
-        <table className="table table-smm tabled-striped">
-          <thead>
-            <tr>
-              <th>
-                <span
-                  data-toggle="tooltip"
-                  title=""
-                  data-original-title="Location of breakpoints inferred by the algorithm"
-                >
-                  Breakpoints
-                </span>
-              </th>
-              <th>
-                <span
-                  data-toggle="tooltip"
-                  title=""
-                  data-original-title="P-value for left side"
-                >
-                  LHS p-value
-                </span>
-              </th>
-              <th>
-                <span
-                  data-toggle="tooltip"
-                  title=""
-                  data-original-title="P-value for right side"
-                >
-                  RHS p-value
-                </span>
-              </th>
-              <th>
-                <span
-                  data-toggle="tooltip"
-                  title=""
-                  data-original-title="Visual indicator of statistical significance"
-                >
-                  Significance
-                </span>
-              </th>
-            </tr>
-          </thead>
-          <tbody>{rows}</tbody>
-        </table>
-        <p className="description">
-          Comparing the AIC<sub>c</sub> score of the best fitting GARD model,
-          that allows for different topologies between segments ({currentAIC.toFixed(
-            1
-          )}), and that of the model that assumes the same tree for all the
-          partitions inferred by GARD the same tree, but allows different branch
-          lengths between partitions ({props.data.singleTreeAICc.toFixed(1)})
-          suggests that because the multiple tree model{" "}
-          {w > 0.01 ? "cannot" : "can"} be preferred over the single tree model
-          by an evidence ratio of 100 or greater, {conclusion}.
-        </p>
-        <p className="description">
-          Please consult the above Kishino Hasegawa topological incongruence
-          table for more details.
-        </p>
-        {statements}
-      </div>
-    </div>
-  );
 }
 
 class GARDContents extends React.Component {
@@ -415,29 +287,34 @@ class GARDContents extends React.Component {
       : null;
     data.trees = trees;
 
-    const improvements = Object.values(data.improvements).map(
-      improvementObject => ({
-        breakpoints: improvementObject.breakpoints[0],
-        deltaAICc: improvementObject.deltaAICc
-      })
-    );
-    data.improvements = improvements;
-
-    const breakpointData = Object.values(data.breakpointData).map(bpObject => ({
-      tree: bpObject.tree,
-      bps: bpObject.bps[0]
-    }));
+    var breakpointData;
+    if ("bps" in data.breakpointData) {
+      breakpointData = {
+        tree: data.breakpointData.tree,
+        bps: data.breakpointData.bps[0]
+      };
+    } else {
+      breakpointData = Object.values(data.breakpointData).map(bpObject => ({
+        tree: bpObject.tree,
+        bps: bpObject.bps[0]
+      }));
+    }
     data.breakpointData = breakpointData;
+
+    if (data.improvements != null) {
+      const improvements = Object.values(data.improvements).map(
+        improvementObject => ({
+          breakpoints: improvementObject.breakpoints[0],
+          deltaAICc: improvementObject.deltaAICc
+        })
+      );
+      data.improvements = improvements;
+    }
 
     this.setState({ data: data });
   }
 
   render() {
-    /*
-        TODO: Components still to be ported:
-        <GARDTopologyReport data={this.state.data} />
-        <GARDSiteGraph data={this.state.data} />
-        */
     var tree_settings = {
       omegaPlot: {},
       "tree-options": {
