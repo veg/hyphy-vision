@@ -256,7 +256,7 @@ class HyPhyVision extends React.Component {
                 <GARD
                   data={
                     this.state.data ||
-                    base_url + "/data/json_files/gard/GARD.json"
+                    base_url + "/data/json_files/gard/Flu.fna.GARD.json"
                   }
                 />
               )}
@@ -267,9 +267,9 @@ class HyPhyVision extends React.Component {
                 <GARD
                   data={
                     this.state.data ||
-                    base_url + "/data/json_files/gard/CD2.fasta.GARD.json"
+                    base_url + "/data/json_files/gard/Flu.fna.GARD.json"
                   }
-                  fasta={fasta.CD2}
+                  fasta={fasta.Flu}
                 />
               )}
             />
