@@ -6,10 +6,7 @@ var React = require("react"),
 import { Tree } from "./components/tree.jsx";
 import { ErrorMessage } from "./components/error_message.jsx";
 import { Header } from "./components/header.jsx";
-import {
-  DatamonkeySiteGraph,
-  DatamonkeyScatterplot
-} from "./components/graphs.jsx";
+import { DatamonkeyScatterplot } from "./components/graphs.jsx";
 import { ResultsPage } from "./components/results_page.jsx";
 import { GARD_HyPhy_2_3 } from "./gard_HyPhy_2_3.jsx";
 
@@ -233,6 +230,47 @@ function GARDRecombinationReport(props) {
   );
 }
 
+function GARDSimpleTopologyReport(props) {
+  if (!props.data) return <div />;
+  if (!props.data.improvements) return <div />;
+
+  var currentAIC =
+    props.data.baselineScore -
+    _.pluck(props.data.improvements, "deltaAICc").reduce((t, n) => t + n);
+  const w = Math.exp(0.5 * (currentAIC - props.data.singleTreeAICc));
+  var conclusion =
+    w > 0.01 ? (
+      <i>
+        some or all of the breakpoints may reflect rate variation instead of
+        topological incongruence
+      </i>
+    ) : (
+      <i>
+        at least of one of the breakpoints reflects a true topological
+        incongruence
+      </i>
+    );
+  return (
+    <div className="row">
+      <div className="col-md-12">
+        <Header title="Topological incongruence report" />
+
+        <p className="description">
+          Comparing the AIC<sub>c</sub> score of the best fitting GARD model,
+          that allows for different topologies between segments ({currentAIC.toFixed(
+            1
+          )}), and that of the model that assumes the same tree for all the
+          partitions inferred by GARD, but allows different branch lengths
+          between partitions ({props.data.singleTreeAICc.toFixed(1)}) suggests
+          that because the multiple tree model {w > 0.01 ? "cannot" : "can"} be
+          preferred over the single tree model by an evidence ratio of 100 or
+          greater, {conclusion}.
+        </p>
+      </div>
+    </div>
+  );
+}
+
 function GARDScatterPlot(props) {
   if (props.data == null) {
     return null;
@@ -304,7 +342,7 @@ class GARDContents extends React.Component {
     if (data.improvements != null) {
       const improvements = Object.values(data.improvements).map(
         improvementObject => ({
-          breakpoints: improvementObject.breakpoints[0],
+          breakpoints: improvementObject.breakpoints,
           deltaAICc: improvementObject.deltaAICc
         })
       );
@@ -341,6 +379,7 @@ class GARDContents extends React.Component {
         <ErrorMessage />
         <GARDResults data={this.state.data} />
         <GARDRecombinationReport data={this.state.data} />
+        <GARDSimpleTopologyReport data={this.state.data} />
         <GARDScatterPlot data={this.state.data} />
         <div className="row">
           <div id="tree-tab" className="col-md-12">

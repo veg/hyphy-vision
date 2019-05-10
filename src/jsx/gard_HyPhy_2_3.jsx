@@ -1,5 +1,4 @@
 var React = require("react"),
-  ReactDOM = require("react-dom"),
   d3 = require("d3"),
   _ = require("underscore");
 
@@ -8,7 +7,6 @@ import { ErrorMessage } from "./components/error_message.jsx";
 import { Header } from "./components/header.jsx";
 import { RateMatrix } from "./components/rate_matrix.jsx";
 import { DatamonkeySiteGraph } from "./components/graphs.jsx";
-import { ResultsPage } from "./components/results_page.jsx";
 
 function binomial(n, k) {
   if (typeof n !== "number" || typeof k !== "number") return false;
