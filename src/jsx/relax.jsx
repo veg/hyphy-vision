@@ -59,6 +59,7 @@ class RELAXModelTable extends React.Component {
                 onMouseEnter={onMouseEnter}
                 onMouseLeave={onMouseLeave}
                 className={className}
+                key={key + i}
               >
                 <td>{key}</td>
                 <td>
@@ -82,6 +83,7 @@ class RELAXModelTable extends React.Component {
                 onMouseEnter={onMouseEnter}
                 onMouseLeave={onMouseLeave}
                 className={className}
+                key={key + i}
               >
                 <td />
                 <td />
@@ -218,7 +220,7 @@ class RELAXContents extends React.Component {
       pmid_href: "#",
       relaxation_K: "unknown",
       fits: null,
-      groupInView: "GROUP1"
+      groupInView: null
     };
   }
 
@@ -231,12 +233,20 @@ class RELAXContents extends React.Component {
   }
 
   processData = data => {
+    var groupInView = "Test";
+    var referenceGroup = "Reference";
     if (
       isNaN(data["test results"]["relaxation or intensification parameter"])
     ) {
+      groupInView = Object.keys(
+        data["fits"]["RELAX alternative"]["Rate Distributions"]
+      )[1];
+      referenceGroup = Object.keys(
+        data["fits"]["RELAX null"]["Rate Distributions"]
+      )[0];
       var k =
         data["test results"]["relaxation or intensification parameter"][
-          this.state.groupInView
+          groupInView
         ];
     } else {
       var k = data["test results"]["relaxation or intensification parameter"];
@@ -339,7 +349,9 @@ class RELAXContents extends React.Component {
       fits: data["fits"],
       significant: significant,
       branchAttributeHeaders: branchAttributeHeaders,
-      branchAttributeRows: branchAttributeRows
+      branchAttributeRows: branchAttributeRows,
+      groupInView: groupInView,
+      referenceGroup: referenceGroup
     });
   };
 
@@ -395,19 +407,25 @@ class RELAXContents extends React.Component {
         </strong>{" "}
         (p = <strong id="summary-pvalue">{this.state.p}</strong>, LR ={" "}
         <strong id="summary-LRT">{this.state.lrt}</strong>).
+        {this.renderGroupSelector(this.state.json)}
       </p>
     );
   };
 
-  getSummaryForClipboard() {
-    return "test text for clipboard";
-  }
+  updateGroupInView = event => {
+    const groupInView = event.target.value;
+    const k = this.state.json["test results"][
+      "relaxation or intensification parameter"
+    ][groupInView];
 
-  updateGroupInView = groupToPutInView => {
-    this.setState({ groupInView: groupToPutInView });
+    this.setState({
+      groupInView: groupInView,
+      summary_k: k.toFixed(2),
+      direction: k > 1 ? "intensification" : "relaxation"
+    });
   };
 
-  renderGroupSelector = (data, groupInView) => {
+  renderGroupSelector = data => {
     if (data == null) {
       return null;
     }
@@ -415,33 +433,30 @@ class RELAXContents extends React.Component {
     if (
       isNaN(data["test results"]["relaxation or intensification parameter"])
     ) {
-      const groupsList = ["GROUP1", "GROUP2"];
+      const allGroups = Object.keys(
+        this.state.json["fits"]["RELAX alternative"]["Rate Distributions"]
+      );
+      const referenceGroup = Object.keys(
+        this.state.json["fits"]["RELAX null"]["Rate Distributions"]
+      );
+      const testGroups = allGroups.filter(item => item !== referenceGroup[0]);
       var listItems = [];
-      for (var i = 0; i < groupsList.length; i++) {
+      for (var i = 0; i < testGroups.length; i++) {
         listItems.push(
-          <li className="dropdown-item">
-            <a onClick={() => this.updateGroupInView(groupsList[i])}>
-              {groupsList[i]}
-            </a>
-          </li>
+          <option key={i} className="dropdown-item" value={testGroups[i]}>
+            {testGroups[i]}
+          </option>
         );
       }
 
       return (
         <div id="group-selector">
-          <div className="dropdown m;-auto">
-            <button
-              id="dropdown-menu-button"
-              className="btn btn-secondary dropdown-toggle"
-              data-toggle="dropdown"
-              type="button"
-              style={{ height: 30 }}
-            >
-              <i className="fa fa-layer-group" aria-hidden="true" />{" "}
-              {groupInView}
-              <ul>{listItems}</ul>
-            </button>
-          </div>
+          <p>
+            Comparing test branch partition:
+            <select onChange={this.updateGroupInView}>{listItems}</select>
+            against reference branch partition:
+            <strong> {referenceGroup}</strong>
+          </p>
         </div>
       );
     } else {
@@ -474,14 +489,11 @@ class RELAXContents extends React.Component {
     return (
       <div>
         <MainResult
-          summary_for_clipboard={this.getSummaryForClipboard()}
           summary_for_rendering={this.getSummaryForRendering()}
           method_ref="http://hyphy.org/methods/selection-methods/#relax"
           citation_ref="http://www.ncbi.nlm.nih.gov/pubmed/25540451"
           citation_number="PMID 123456789"
         />
-
-        {this.renderGroupSelector(this.state.json, this.state.groupInView)}
 
         <div id="fits-tab">
           <Header
@@ -496,7 +508,11 @@ class RELAXContents extends React.Component {
             title="Omega plots"
             popover="<p>Shows the different omega rate distributions under the null and alternative models.</p>"
           />
-          <OmegaPlotGrid json={self.state.json} />
+          <OmegaPlotGrid
+            json={self.state.json}
+            referenceGroup={self.state.referenceGroup}
+            testGroup={self.state.groupInView}
+          />
         </div>
 
         <div id="tree-tab">
