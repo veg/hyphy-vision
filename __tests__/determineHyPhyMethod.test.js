@@ -5,7 +5,8 @@ const exampleBusted = require("./../data/json_files/busted/CD2.fna.BUSTED.json")
 const exampleFade = require("./../data/json_files/fade/CD2_AA.fasta.FADE.json");
 const exampleFel = require("./../data/json_files/fel/CD2.fna.FEL.json");
 const exampleFubar = require("./../data/json_files/fubar/CD2.fna.FUBAR.json");
-const exampleGard = require("./../data/json_files/gard/CD2.fasta.GARD.json");
+const exampleGardOld = require("./../data/json_files/gard/CD2.fasta.GARD_old.json");
+const exampleGardNew = require("./../data/json_files/gard/Flu.fna.GARD.json");
 const exampleMeme = require("./../data/json_files/meme/CD2.fna.MEME.json");
 const exampleRelax = require("./../data/json_files/relax/CD2.fna.RELAX.json");
 const exampleSlac = require("./../data/json_files/slac/CD2.fna.SLAC.json");
@@ -19,7 +20,8 @@ describe("determineHyPhyMethod", () => {
     expect(determineHyPhyMethod(exampleFade)).toBe("fade");
     expect(determineHyPhyMethod(exampleFel)).toBe("fel");
     expect(determineHyPhyMethod(exampleFubar)).toBe("fubar");
-    expect(determineHyPhyMethod(exampleGard)).toBe("gard");
+    expect(determineHyPhyMethod(exampleGardOld)).toBe("gard");
+    expect(determineHyPhyMethod(exampleGardNew)).toBe("gard");
     expect(determineHyPhyMethod(exampleRelax)).toBe("relax");
     expect(determineHyPhyMethod(exampleSlac)).toBe("slac");
     expect(determineHyPhyMethod(exampleMeme)).toBe("meme");
