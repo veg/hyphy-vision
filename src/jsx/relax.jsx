@@ -45,55 +45,68 @@ class RELAXModelTable extends React.Component {
         var distributions = val["Rate Distributions"],
           onMouseEnter = makeActive(key).bind(self),
           onMouseLeave = makeInactive.bind(self),
-          className = key == self.state.active ? "active" : "",
-          branch_set = distributions["Shared"] ? "Shared" : "Test",
-          test_row = (
-            <tr
-              onMouseEnter={onMouseEnter}
-              onMouseLeave={onMouseLeave}
-              className={className}
-            >
-              <td>{key}</td>
-              <td>
-                {val["Log Likelihood"]
-                  ? val["Log Likelihood"].toFixed(1)
-                  : null}
-              </td>
-              <td>{val["estimated parameters"]}</td>
-              <td>{val["AIC-c"].toFixed(1)}</td>
-              <td>{branch_set}</td>
-              <td>{omegaFormatter(distributions[branch_set]["0"])}</td>
-              <td>{omegaFormatter(distributions[branch_set]["1"])}</td>
-              <td>{omegaFormatter(distributions[branch_set]["2"])}</td>
-            </tr>
-          );
-        if (distributions["Reference"]) {
-          var background_row = (
-            <tr
-              onMouseEnter={onMouseEnter}
-              onMouseLeave={onMouseLeave}
-              className={className}
-            >
-              <td />
-              <td />
-              <td />
-              <td />
-              <td>Reference</td>
-              <td>{omegaFormatter(distributions["Reference"]["0"])}</td>
-              <td>{omegaFormatter(distributions["Reference"]["1"])}</td>
-              <td>{omegaFormatter(distributions["Reference"]["2"])}</td>
-            </tr>
-          );
-          return [test_row, background_row];
+          className = key == self.state.active ? "active" : "";
+
+        const distributionTypes = Object.keys(distributions);
+
+        var rows = [];
+        for (var i = 0; i < distributionTypes.length; i++) {
+          const branch_set = distributionTypes[i];
+
+          if (i === 0) {
+            var first_row = (
+              <tr
+                onMouseEnter={onMouseEnter}
+                onMouseLeave={onMouseLeave}
+                className={className}
+                key={key + i}
+              >
+                <td>{key}</td>
+                <td>
+                  {val["Log Likelihood"]
+                    ? val["Log Likelihood"].toFixed(1)
+                    : null}
+                </td>
+                <td>{val["estimated parameters"]}</td>
+                <td>{val["AIC-c"].toFixed(1)}</td>
+                <td>{branch_set}</td>
+                <td>{omegaFormatter(distributions[branch_set]["0"])}</td>
+                <td>{omegaFormatter(distributions[branch_set]["1"])}</td>
+                <td>{omegaFormatter(distributions[branch_set]["2"])}</td>
+              </tr>
+            );
+
+            rows.push(first_row);
+          } else {
+            var other_row = (
+              <tr
+                onMouseEnter={onMouseEnter}
+                onMouseLeave={onMouseLeave}
+                className={className}
+                key={key + i}
+              >
+                <td />
+                <td />
+                <td />
+                <td />
+                <td>{branch_set}</td>
+                <td>{omegaFormatter(distributions[branch_set]["0"])}</td>
+                <td>{omegaFormatter(distributions[branch_set]["1"])}</td>
+                <td>{omegaFormatter(distributions[branch_set]["2"])}</td>
+              </tr>
+            );
+
+            rows.push(other_row);
+          }
         }
-        return test_row;
+
+        return rows;
       }
     );
+
     return (
       <div>
-        <table
-          className="dm-table table table-hover table-smm list-group-item-text"
-        >
+        <table className="dm-table table table-hover table-smm list-group-item-text">
           <thead id="summary-model-header1">
             <tr>
               <th>Model</th>
@@ -206,7 +219,8 @@ class RELAXContents extends React.Component {
       pmid_text: "PubMed ID : Unknown",
       pmid_href: "#",
       relaxation_K: "unknown",
-      fits: null
+      fits: null,
+      groupInView: null
     };
   }
 
@@ -219,8 +233,26 @@ class RELAXContents extends React.Component {
   }
 
   processData = data => {
-    var k = data["test results"]["relaxation or intensification parameter"],
-      p = data["test results"]["p-value"],
+    var groupInView = "Test";
+    var referenceGroup = "Reference";
+    if (
+      isNaN(data["test results"]["relaxation or intensification parameter"])
+    ) {
+      groupInView = Object.keys(
+        data["fits"]["RELAX alternative"]["Rate Distributions"]
+      )[1];
+      referenceGroup = Object.keys(
+        data["fits"]["RELAX null"]["Rate Distributions"]
+      )[0];
+      var k =
+        data["test results"]["relaxation or intensification parameter"][
+          groupInView
+        ];
+    } else {
+      var k = data["test results"]["relaxation or intensification parameter"];
+    }
+
+    var p = data["test results"]["p-value"],
       significant = p <= this.props.alpha_level;
 
     delete data["fits"]["MG94xREV with separate rates for branch sets"];
@@ -317,7 +349,9 @@ class RELAXContents extends React.Component {
       fits: data["fits"],
       significant: significant,
       branchAttributeHeaders: branchAttributeHeaders,
-      branchAttributeRows: branchAttributeRows
+      branchAttributeRows: branchAttributeRows,
+      groupInView: groupInView,
+      referenceGroup: referenceGroup
     });
   };
 
@@ -373,32 +407,88 @@ class RELAXContents extends React.Component {
         </strong>{" "}
         (p = <strong id="summary-pvalue">{this.state.p}</strong>, LR ={" "}
         <strong id="summary-LRT">{this.state.lrt}</strong>).
+        {this.renderGroupSelector(this.state.json)}
       </p>
     );
   };
 
-  getSummaryForClipboard() {
-    return "test text for clipboard";
-  }
+  updateGroupInView = event => {
+    const groupInView = event.target.value;
+    const k = this.state.json["test results"][
+      "relaxation or intensification parameter"
+    ][groupInView];
+
+    this.setState({
+      groupInView: groupInView,
+      summary_k: k.toFixed(2),
+      direction: k > 1 ? "intensification" : "relaxation"
+    });
+  };
+
+  renderGroupSelector = data => {
+    if (data == null) {
+      return null;
+    }
+
+    if (
+      isNaN(data["test results"]["relaxation or intensification parameter"])
+    ) {
+      const allGroups = Object.keys(
+        this.state.json["fits"]["RELAX alternative"]["Rate Distributions"]
+      );
+      const referenceGroup = Object.keys(
+        this.state.json["fits"]["RELAX null"]["Rate Distributions"]
+      );
+      const testGroups = allGroups.filter(item => item !== referenceGroup[0]);
+      var listItems = [];
+      for (var i = 0; i < testGroups.length; i++) {
+        listItems.push(
+          <option key={i} className="dropdown-item" value={testGroups[i]}>
+            {testGroups[i]}
+          </option>
+        );
+      }
+
+      return (
+        <div id="group-selector">
+          <p>
+            Comparing test branch partition:
+            <select onChange={this.updateGroupInView}>{listItems}</select>
+            against reference branch partition:
+            <strong> {referenceGroup}</strong>
+          </p>
+        </div>
+      );
+    } else {
+      return null;
+    }
+  };
 
   render() {
     var self = this;
     var models = {};
-    var partition = { Reference: {}, Test: {}, Unclassified: {} };
+
+    var partitions = {};
     if (!_.isNull(self.state.json)) {
-      (models = self.state.json.fits),
-        _.each(self.state.json.tested[0], (val, key) => {
-          partition[val][key] = 1;
-        });
-      if (_.size(partition["Unclassified"]) == 0) {
-        delete partition["Unclassified"];
+      const nodeNames = Object.keys(self.state.json.tested[0]);
+      for (var i = 0; i < nodeNames.length; i++) {
+        const nodeName = nodeNames[i];
+        const partition = self.state.json.tested[0][nodeName];
+        if (partition in partitions) {
+          partitions[partition][nodeName] = 1;
+        } else {
+          partitions[partition] = {};
+          partitions[partition][nodeName] = 1;
+        }
       }
     }
 
+    /*
+
+    */
     return (
       <div>
         <MainResult
-          summary_for_clipboard={this.getSummaryForClipboard()}
           summary_for_rendering={this.getSummaryForRendering()}
           method_ref="http://hyphy.org/methods/selection-methods/#relax"
           citation_ref="http://www.ncbi.nlm.nih.gov/pubmed/25540451"
@@ -418,7 +508,11 @@ class RELAXContents extends React.Component {
             title="Omega plots"
             popover="<p>Shows the different omega rate distributions under the null and alternative models.</p>"
           />
-          <OmegaPlotGrid json={self.state.json} />
+          <OmegaPlotGrid
+            json={self.state.json}
+            referenceGroup={self.state.referenceGroup}
+            testGroup={self.state.groupInView}
+          />
         </div>
 
         <div id="tree-tab">
@@ -426,7 +520,7 @@ class RELAXContents extends React.Component {
             json={self.state.json}
             settings={self.state.settings}
             models={models}
-            partition={partition}
+            partition={partitions}
             color_gradient={[
               "#000000",
               "#888888",

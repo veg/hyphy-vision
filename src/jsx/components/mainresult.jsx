@@ -32,16 +32,18 @@ class MainResult extends Component {
     return (
       <div className="col-12">
         <div className="main-result">
-          <p>
-            <CopyToClipboard
-              text={this.props.summary_for_clipboard}
-              onCopy={this.onCopy}
-            >
-              <span id="copy-it" className="float-right">
-                {this.getClipboard()}
-              </span>
-            </CopyToClipboard>
-          </p>
+          {this.props.summary_for_clipboard != null ? (
+            <p>
+              <CopyToClipboard
+                text={this.props.summary_for_clipboard}
+                onCopy={this.onCopy}
+              >
+                <span id="copy-it" className="float-right">
+                  {this.getClipboard()}
+                </span>
+              </CopyToClipboard>
+            </p>
+          ) : null}
           {this.props.summary_for_rendering}
           <hr />
           <p>

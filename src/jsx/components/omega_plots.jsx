@@ -42,12 +42,12 @@ var OmegaPlot = React.createClass({
   },
 
   initialize: function() {
-    if (!this.state.omegas || !this.state.omegas["Reference"]) {
+    if (!this.state.omegas || !this.state.omegas[this.props.referenceGroup]) {
       return;
     }
 
-    var data_to_plot = this.state.omegas["Reference"];
-    var secondary_data = this.state.omegas["Test"];
+    var data_to_plot = this.state.omegas[this.props.referenceGroup];
+    var secondary_data = this.state.omegas[this.props.testGroup];
 
     // Set props from settings
     this.svg_id = this.props.settings.svg_id;
@@ -214,8 +214,8 @@ var OmegaPlot = React.createClass({
 
   createDisplacementLine: function() {
     var self = this;
-    var data_to_plot = this.state.omegas["Reference"];
-    var secondary_data = this.state.omegas["Test"];
+    var data_to_plot = this.state.omegas[this.props.referenceGroup];
+    var secondary_data = this.state.omegas[this.props.testGroup];
 
     if (secondary_data) {
       var diffs = data_to_plot.map(function(d, i) {
@@ -248,8 +248,8 @@ var OmegaPlot = React.createClass({
   },
 
   createReferenceLine: function() {
-    var data_to_plot = this.state.omegas["Reference"];
-    var secondary_data = this.state.omegas["Test"];
+    var data_to_plot = this.state.omegas[this.props.referenceGroup];
+    var secondary_data = this.state.omegas[this.props.testGroup];
     var self = this;
 
     if (secondary_data) {
@@ -284,8 +284,8 @@ var OmegaPlot = React.createClass({
   },
 
   createOmegaLine: function() {
-    var data_to_plot = this.state.omegas["Reference"];
-    var secondary_data = this.state.omegas["Test"];
+    var data_to_plot = this.state.omegas[this.props.referenceGroup];
+    var secondary_data = this.state.omegas[this.props.testGroup];
     var self = this;
 
     // ** Omega Line (Red) ** //
@@ -427,7 +427,7 @@ var OmegaPlot = React.createClass({
   createLegend: function() {
     let legendData = [20, 1000];
     let legendColors = ["#00a99d", "black"];
-    let labels = ["Test", "Reference"];
+    let labels = [this.props.testGroup, this.props.referenceGroup];
     let legendSquareSize = 20;
     let legendSpacing = 5;
     let legendX = this.props.settings.dimensions.width;
@@ -517,16 +517,29 @@ var OmegaPlot = React.createClass({
 
 var OmegaPlotGrid = React.createClass({
   getInitialState: function() {
-    return { omega_distributions: this.getDistributions(this.props.json) };
+    const referenceGroup = this.props.referenceGroup || "Reference";
+    return {
+      omega_distributions: this.getDistributions(
+        this.props.json,
+        referenceGroup
+      )
+    };
   },
 
   componentWillReceiveProps: function(nextProps) {
+    const referenceGroup = nextProps.referenceGroup || "Reference";
+    const testGroup = nextProps.testGroup || "Test";
     this.setState({
-      omega_distributions: this.getDistributions(nextProps.json)
+      omega_distributions: this.getDistributions(
+        nextProps.json,
+        referenceGroup
+      ),
+      referenceGroup: referenceGroup,
+      testGroup: testGroup
     });
   },
 
-  getDistributions: function(json) {
+  getDistributions: function(json, referenceGroup) {
     var omega_distributions = {};
 
     if (!json) {
@@ -556,13 +569,15 @@ var OmegaPlotGrid = React.createClass({
     });
 
     var omega_distributions = _.filter(omega_distributions, function(item) {
-      return _.isObject(item["Reference"]);
+      return _.isObject(item[referenceGroup]);
     });
-
     return omega_distributions;
   },
 
   render: function() {
+    const referenceGroup = this.state.referenceGroup || "Reference";
+    const testGroup = this.state.testGroup || "Test";
+
     var OmegaPlots = _.map(this.state.omega_distributions, function(item, key) {
       var model_name = key;
       var omegas = item;
@@ -585,6 +600,8 @@ var OmegaPlotGrid = React.createClass({
           omegas={omegas}
           settings={settings}
           key={omegas.key}
+          referenceGroup={referenceGroup}
+          testGroup={testGroup}
         />
       );
     });
