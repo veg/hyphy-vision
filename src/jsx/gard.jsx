@@ -144,7 +144,7 @@ function GARDRecombinationReport(props) {
               fill={"white"}
               textAnchor={"middle"}
             >
-              {bp[i] + 1} - {bp[i + 1]}
+              {parseInt(bp[i]) + 1} - {bp[i + 1]}
             </text>
           </g>
         );
