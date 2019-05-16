@@ -1,14 +1,12 @@
 var React = require("react"),
-  ReactDOM = require("react-dom"),
   d3 = require("d3"),
   _ = require("underscore");
 
 import { Tree } from "./components/tree.jsx";
 import { ErrorMessage } from "./components/error_message.jsx";
 import { Header } from "./components/header.jsx";
-import { DatamonkeyScatterplot } from "./components/graphs.jsx";
-import { ResultsPage } from "./components/results_page.jsx";
-import { GARD_HyPhy_2_3 } from "./gard_HyPhy_2_3.jsx";
+import { RateMatrix } from "./components/rate_matrix.jsx";
+import { DatamonkeySiteGraph } from "./components/graphs.jsx";
 
 function binomial(n, k) {
   if (typeof n !== "number" || typeof k !== "number") return false;
@@ -32,30 +30,31 @@ function GARDResults(props) {
   timeString += hours > 0 ? hours + ":" : "";
   timeString += minutes + ":" + String(seconds).padStart(2, "0");
 
-  var number_of_fragments = Object.keys(props.data.trees).length;
+  var number_of_fragments = props.data.improvements
+    ? props.data.improvements.length + 1
+    : 2;
   var totalPossibleModels = _.range(number_of_fragments)
     .map(k => binomial(props.data.potentialBreakpoints, k + 1))
     .reduce((a, b) => a + b, 0);
-  var totalModelCount = props.data.totalModelCount;
+  var totalModelCount = props.data.models.length;
   var percentageExplored = (
     100 *
     totalModelCount /
     totalPossibleModels
   ).toFixed(2);
-  var evidence_statement =
-    number_of_fragments > 1 ? (
-      <span>
-        <strong className="hyphy-highlight">found evidence</strong> of{" "}
-        {props.data.lastImprovedBPC} recombination breakpoint{props.data
-          .lastImprovedBPC == 1
-          ? ""
-          : "s"}
-      </span>
-    ) : (
-      <span>
-        <strong>found no evidence</strong> of recombination
-      </span>
-    );
+  var evidence_statement = props.data.improvements ? (
+    <span>
+      <strong className="hyphy-highlight">found evidence</strong> of{" "}
+      {props.data.lastImprovedBPC} recombination breakpoint{props.data
+        .lastImprovedBPC == 1
+        ? ""
+        : "s"}
+    </span>
+  ) : (
+    <span>
+      <strong>found no evidence</strong> of recombination
+    </span>
+  );
   return (
     <div className="row">
       <div className="col-md-12" />
@@ -119,7 +118,6 @@ function GARDRecombinationReport(props) {
       .linear()
       .domain([1, props.data.input["number of sites"]])
       .range([0, width]);
-
   var segments = [{ breakpoints: [] }]
     .concat(props.data.improvements)
     .map(function(d) {
@@ -144,7 +142,7 @@ function GARDRecombinationReport(props) {
               fill={"white"}
               textAnchor={"middle"}
             >
-              {parseInt(bp[i]) + 1} - {bp[i + 1]}
+              {bp[i] + 1} - {bp[i + 1]}
             </text>
           </g>
         );
@@ -155,7 +153,6 @@ function GARDRecombinationReport(props) {
         </svg>
       );
     });
-
   var rows = [{ breakpoints: [] }]
     .concat(props.data.improvements)
     .map((row, index) => (
@@ -174,7 +171,6 @@ function GARDRecombinationReport(props) {
         <td>{segments[index]}</td>
       </tr>
     ));
-
   return (
     <div className="row" id="report-tab">
       <div className="col-md-12">
@@ -230,81 +226,168 @@ function GARDRecombinationReport(props) {
   );
 }
 
-function GARDSimpleTopologyReport(props) {
+function GARDSiteGraph(props) {
   if (!props.data) return <div />;
-  if (!props.data.improvements) return <div />;
-
-  var currentAIC =
-    props.data.baselineScore -
-    _.pluck(props.data.improvements, "deltaAICc").reduce((t, n) => t + n);
-  const w = Math.exp(0.5 * (currentAIC - props.data.singleTreeAICc));
-  var conclusion =
-    w > 0.01 ? (
-      <i>
-        some or all of the breakpoints may reflect rate variation instead of
-        topological incongruence
-      </i>
-    ) : (
-      <i>
-        at least of one of the breakpoints reflects a true topological
-        incongruence
-      </i>
-    );
+  var number_of_sites = props.data.input["number of sites"],
+    bp_support = d3.range(number_of_sites).map(d => 0 * d),
+    tree_length = d3.range(number_of_sites).map(d => 0 * d),
+    normalizer = 0,
+    model,
+    modelScore,
+    fromSite;
+  for (var i = 0; i < props.data.models.length; i++) {
+    model = props.data.models[i];
+    modelScore = Math.exp(0.5 * (props.data.baselineScore - model.aicc));
+    if (modelScore > 0.00001) {
+      for (var j = 0; j < model.breakpoints.length; j++) {
+        fromSite = model.breakpoints[j][0];
+        if (j > 0) bp_support[fromSite] += modelScore;
+      }
+      normalizer += modelScore;
+    }
+  }
+  bp_support = bp_support.map(d => d / normalizer);
+  tree_length = tree_length.map(d => d / normalizer);
   return (
-    <div className="row">
+    <div className="row" id="graph-tab">
       <div className="col-md-12">
-        <Header title="Topological incongruence report" />
-
-        <p className="description">
-          Comparing the AIC<sub>c</sub> score of the best fitting GARD model,
-          that allows for different topologies between segments ({currentAIC.toFixed(
-            1
-          )}), and that of the model that assumes the same tree for all the
-          partitions inferred by GARD, but allows different branch lengths
-          between partitions ({props.data.singleTreeAICc.toFixed(1)}) suggests
-          that because the multiple tree model {w > 0.01 ? "cannot" : "can"} be
-          preferred over the single tree model by an evidence ratio of 100 or
-          greater, {conclusion}.
-        </p>
+        <Header title="GARD Site Graph" />
+        <DatamonkeySiteGraph
+          columns={["Breakpoint support"]}
+          rows={_.zip(bp_support, tree_length)}
+        />
       </div>
     </div>
   );
 }
 
-function GARDScatterPlot(props) {
-  if (props.data == null) {
-    return null;
-  } else {
-    const siteIndices = Object.keys(props.data["siteBreakPointSupport"]).map(
-      x => Number(x)
-    );
-    const siteBreakPointSupport = Object.values(
-      props.data["siteBreakPointSupport"]
-    ).map(x => (x > 10e-20 ? x : 0));
-    return (
-      <div className="row" id="graph-tab">
-        <div className="col-md-12">
-          <Header
-            title="GARD Site Graph"
-            popover="<p>Normalized cumulative Akaike weight of each potential break point location.</p>"
-          />
-          <DatamonkeyScatterplot
-            x={siteIndices}
-            y={[siteBreakPointSupport]}
-            x_label={"site"}
-            y_label={"relative break point support"}
-            marginLeft={50}
-            width={935}
-            transitions={false}
-            tracker={true}
-          />
-        </div>
-      </div>
+function GARDTopologyReport(props) {
+  if (!props.data) return <div />;
+  if (!props.data.improvements) return <div />;
+  var readPCount = props.data.pairwiseP.length,
+    totalComparisons = (readPCount - 1) * 2,
+    threshP = 0.01 / totalComparisons,
+    bypvalue = [[0.01, 0], [0.05, 0], [0.1, 0]].map(row =>
+      row.map(entry => entry / totalComparisons)
+    ),
+    rows = [];
+  for (var pcounter = 1; pcounter < readPCount; pcounter++) {
+    var lhs = props.data.pairwiseP[pcounter][pcounter - 1],
+      rhs = props.data.pairwiseP[pcounter - 1][pcounter],
+      sig = 0;
+    for (var k = 0; k < bypvalue.length; k++) {
+      threshP = bypvalue[k][0];
+      if (lhs <= threshP && rhs <= threshP) {
+        if (sig == 0) {
+          sig = readPCount - k;
+        }
+        bypvalue[k][1] += 1;
+      }
+    }
+    var sigCell = d3.range(sig).map(d => <i className="fa fa-circle" />);
+    rows.push(
+      <tr>
+        <td>{_.last(props.data.improvements).breakpoints[pcounter - 1] + 1}</td>
+        <td>{Math.min(1, lhs * totalComparisons)}</td>
+        <td>{Math.min(1, rhs * totalComparisons)}</td>
+        <td>{sigCell}</td>
+      </tr>
     );
   }
+  var statements = _.range(3).map(k => (
+      <p className="description">
+        At p = {bypvalue[k][0] * totalComparisons}, there are {bypvalue[k][1]}{" "}
+        breakpoints with significant topological incongruence.
+      </p>
+    )),
+    currentAIC =
+      props.data.baselineScore -
+      _.pluck(props.data.improvements, "deltaAICc").reduce((t, n) => t + n),
+    w = Math.exp(0.5 * (currentAIC - props.data.singleTreeAICc)),
+    conclusion =
+      w > 0.01 ? (
+        <i>
+          some or all of the breakpoints may reflect rate variation instead of
+          topological incongruence
+        </i>
+      ) : (
+        <i>
+          at least of one of the breakpoints reflects a true topological
+          incongruence
+        </i>
+      );
+  return (
+    <div className="row">
+      <div className="col-md-12">
+        <Header
+          title="Topological incongruence report"
+          popover="<p>Hover over a column header for a description of its content.</p>"
+        />
+        <table className="table table-smm tabled-striped">
+          <thead>
+            <tr>
+              <th>
+                <span
+                  data-toggle="tooltip"
+                  title=""
+                  data-original-title="Location of breakpoints inferred by the algorithm"
+                >
+                  Breakpoints
+                </span>
+              </th>
+              <th>
+                <span
+                  data-toggle="tooltip"
+                  title=""
+                  data-original-title="P-value for left side"
+                >
+                  LHS p-value
+                </span>
+              </th>
+              <th>
+                <span
+                  data-toggle="tooltip"
+                  title=""
+                  data-original-title="P-value for right side"
+                >
+                  RHS p-value
+                </span>
+              </th>
+              <th>
+                <span
+                  data-toggle="tooltip"
+                  title=""
+                  data-original-title="Visual indicator of statistical significance"
+                >
+                  Significance
+                </span>
+              </th>
+            </tr>
+          </thead>
+          <tbody>{rows}</tbody>
+        </table>
+        <p className="description">
+          Comparing the AIC<sub>c</sub> score of the best fitting GARD model,
+          that allows for different topologies between segments ({currentAIC.toFixed(
+            1
+          )}), and that of the model that assumes the same tree for all the
+          partitions inferred by GARD the same tree, but allows different branch
+          lengths between partitions ({props.data.singleTreeAICc.toFixed(1)})
+          suggests that because the multiple tree model{" "}
+          {w > 0.01 ? "cannot" : "can"} be preferred over the single tree model
+          by an evidence ratio of 100 or greater, {conclusion}.
+        </p>
+        <p className="description">
+          Please consult the above Kishino Hasegawa topological incongruence
+          table for more details.
+        </p>
+        {statements}
+      </div>
+    </div>
+  );
 }
 
-class GARDContents extends React.Component {
+class GARD_HyPhy_2_3 extends React.Component {
   constructor(props) {
     super(props);
     this.state = { data: null };
@@ -319,36 +402,9 @@ class GARDContents extends React.Component {
   }
 
   processData(data) {
-    var trees = Object.values(data.trees);
-    trees.length == 1
-      ? (trees = [{ newickString: Object.values(trees)[0] }])
-      : null;
-    data.trees = trees;
-
-    var breakpointData;
-    if ("bps" in data.breakpointData) {
-      breakpointData = {
-        tree: data.breakpointData.tree,
-        bps: data.breakpointData.bps[0]
-      };
-    } else {
-      breakpointData = Object.values(data.breakpointData).map(bpObject => ({
-        tree: bpObject.tree,
-        bps: bpObject.bps[0]
-      }));
-    }
-    data.breakpointData = breakpointData;
-
-    if (data.improvements != null) {
-      const improvements = Object.values(data.improvements).map(
-        improvementObject => ({
-          breakpoints: improvementObject.breakpoints,
-          deltaAICc: improvementObject.deltaAICc
-        })
-      );
-      data.improvements = improvements;
-    }
-
+    data.trees = data.breakpointData.map(row => {
+      return { newickString: row.tree };
+    });
     this.setState({ data: data });
   }
 
@@ -379,8 +435,12 @@ class GARDContents extends React.Component {
         <ErrorMessage />
         <GARDResults data={this.state.data} />
         <GARDRecombinationReport data={this.state.data} />
-        <GARDSimpleTopologyReport data={this.state.data} />
-        <GARDScatterPlot data={this.state.data} />
+        <GARDTopologyReport data={this.state.data} />
+        <GARDSiteGraph data={this.state.data} />
+        <RateMatrix
+          rate_matrix={this.state.data ? this.state.data.rateMatrix : undefined}
+        />
+
         <div className="row">
           <div id="tree-tab" className="col-md-12">
             <Tree
@@ -397,98 +457,4 @@ class GARDContents extends React.Component {
   }
 }
 
-class GARDVersionSelector extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = { version: "unknownVersion" };
-  }
-
-  componentDidMount() {
-    this.selectVersion(this.props.json);
-  }
-
-  componentWillReceiveProps(nextProps) {
-    this.selectVersion(nextProps.json);
-  }
-
-  selectVersion(json) {
-    if (json["analysis"] != undefined) {
-      var version;
-      const analysisString = json["analysis"]["info"];
-
-      if (analysisString.includes("GARD")) {
-        version = "new";
-      } else {
-        version = "unknownVersion";
-      }
-    } else if (json["breakpointData"] != undefined) {
-      version = "old";
-    } else {
-      version = "unknownVersion";
-    }
-    this.setState({ version: version });
-  }
-
-  renderCorrectVersion() {
-    if (this.state.version == "new") {
-      return <GARDContents json={this.props.json} />;
-    } else if (this.state.version == "old") {
-      return <GARD_HyPhy_2_3 json={this.props.json} />;
-    } else {
-      return (
-        <div>
-          the json is either still loading or is not recognized as a valid GARD
-          json output
-        </div>
-      );
-    }
-  }
-
-  render() {
-    return <div>{this.renderCorrectVersion()}</div>;
-  }
-}
-
-function GARD(props) {
-  return (
-    <ResultsPage
-      data={props.data}
-      scrollSpyInfo={[
-        { label: "summary", href: "summary-tab" },
-        { label: "report", href: "report-tab" },
-        { label: "graph", href: "graph-tab" },
-        { label: "tree", href: "tree-tab" }
-      ]}
-      methodName="Genetic Algorithm for Recombination Detection"
-      fasta={props.fasta}
-      originalFile={props.originalFile}
-      analysisLog={props.analysisLog}
-      partitionedData={props.partitionedData}
-    >
-      {GARDVersionSelector}
-    </ResultsPage>
-  );
-}
-
-function render_gard(
-  data,
-  element,
-  fasta,
-  originalFile,
-  analysisLog,
-  partitionedData
-) {
-  ReactDOM.render(
-    <GARD
-      data={data}
-      fasta={fasta}
-      originalFile={originalFile}
-      analysisLog={analysisLog}
-      partitionedData={partitionedData}
-    />,
-    document.getElementById(element)
-  );
-}
-
-module.exports = render_gard;
-module.exports.GARD = GARD;
+module.exports.GARD_HyPhy_2_3 = GARD_HyPhy_2_3;

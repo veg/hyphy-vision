@@ -12,7 +12,8 @@ const thumbs = {
   FUBAR: require("../../images/FUBAR-thumb.png"),
   GARD: require("../../images/GARD-thumb.png"),
   BGM: require("../../images/BGM-thumb.png"),
-  FADE: require("../../images/FADE-thumb.png")
+  FADE: require("../../images/FADE-thumb.png"),
+  Slatkin: require("../../images/SM-thumb.png")
 };
 
 function MethodBanner(props) {
