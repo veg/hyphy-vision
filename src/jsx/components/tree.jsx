@@ -1,4 +1,5 @@
-var React = require("react");
+var React = require("react"),
+  createReactClass = require("create-react-class");
 var download = require("in-browser-download");
 var d3_save_svg = require("d3-save-svg");
 
@@ -7,7 +8,7 @@ import { saveSvgAsPng } from "save-svg-as-png";
 require("phylotree");
 require("phylotree.css");
 
-var Tree = React.createClass({
+var Tree = createReactClass({
   getDefaultProps: function() {
     return {
       color_gradient: ["#5e4fa2", "#3288bd", "#e6f598", "#f46d43", "#9e0142"],

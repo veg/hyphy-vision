@@ -1,10 +1,11 @@
 import { saveSvgAsPng } from "save-svg-as-png";
 
-var React = require("react");
+var React = require("react"),
+  createReactClass = require("create-react-class");
 var _ = require("underscore");
 var d3_save_svg = require("d3-save-svg");
 
-var OmegaPlot = React.createClass({
+var OmegaPlot = createReactClass({
   componentDidMount: function() {
     this.initialize();
   },
@@ -515,7 +516,7 @@ var OmegaPlot = React.createClass({
   }
 });
 
-var OmegaPlotGrid = React.createClass({
+var OmegaPlotGrid = createReactClass({
   getInitialState: function() {
     const referenceGroup = this.props.referenceGroup || "Reference";
     return {

@@ -41,3 +41,6 @@ web/docs/public
 jsx-compiled
 dist
 public
+
+tags*
+*yalc*
