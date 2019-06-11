@@ -573,7 +573,6 @@ class BUSTEDModelTable extends React.Component {
               </td>
               <td>{val["estimated parameters"]}</td>
               <td>{val["AIC-c"].toFixed(1)}</td>
-              <td>Test</td>
               {this.props.srv ? (
                 <td>
                   {CVSRV(
@@ -582,6 +581,7 @@ class BUSTEDModelTable extends React.Component {
                   )}
                 </td>
               ) : null}
+              <td>Test</td>
               <td>
                 {distributions["Test"]["0"].omega.toFixed(2)} (
                 {(100 * distributions["Test"]["0"].proportion).toFixed(2)}%)
@@ -613,6 +613,7 @@ class BUSTEDModelTable extends React.Component {
               <td />
               <td />
               <td />
+              {this.props.srv ? <td /> : null}
               <td>Background</td>
               <td>
                 {distributions["Background"]["0"].omega.toFixed(2)} (
@@ -678,15 +679,6 @@ class BUSTEDModelTable extends React.Component {
                   AIC<sub>c</sub>
                 </span>
               </th>
-              <th>
-                <span
-                  data-toggle="tooltip"
-                  title=""
-                  data-original-title="Indicates which branch set each parameter belongs to"
-                >
-                  Branch set
-                </span>
-              </th>
               {this.props.srv ? (
                 <th>
                   <span
@@ -698,6 +690,15 @@ class BUSTEDModelTable extends React.Component {
                   </span>
                 </th>
               ) : null}
+              <th>
+                <span
+                  data-toggle="tooltip"
+                  title=""
+                  data-original-title="Indicates which branch set each parameter belongs to"
+                >
+                  Branch set
+                </span>
+              </th>
               <th>
                 <span
                   data-toggle="tooltip"
