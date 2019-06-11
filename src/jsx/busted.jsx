@@ -139,8 +139,7 @@ var BUSTEDSiteChartAndTable = createReactClass({
       .append("g")
       .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-    g
-      .selectAll(".axis-line")
+    g.selectAll(".axis-line")
       .data(yAxisTicks)
       .enter()
       .append("line")
@@ -150,37 +149,31 @@ var BUSTEDSiteChartAndTable = createReactClass({
       .attr("y2", d => y(d))
       .style("stroke", "#eee")
       .style("stroke-width", 1);
-    g
-      .append("path")
+    g.append("path")
       .attr("class", "line")
       .attr("d", oner_line(self.props.data))
       .style("fill", "none")
       .style("stroke-width", 2)
       .style("stroke", "#000");
-    g
-      .append("path")
+    g.append("path")
       .attr("class", "line")
       .attr("d", cer_line(self.props.data))
       .style("fill", "none")
       .style("stroke-width", 2)
       .style("stroke", "#00a99d");
-    g
-      .append("g")
+    g.append("g")
       .attr("class", "x axis")
       .attr("transform", "translate(0," + height + ")")
       .call(xAxis);
-    g
-      .append("text")
+    g.append("text")
       .attr("x", width / 2)
       .attr("y", height + margin.bottom)
       .style("text-anchor", "middle")
       .text("Site index");
-    g
-      .append("g")
+    g.append("g")
       .attr("class", "y axis")
       .call(yAxis);
-    g
-      .append("text")
+    g.append("text")
       .attr("transform", "rotate(-90)")
       .attr("x", -height / 2)
       .attr("y", -margin.left)
@@ -248,8 +241,7 @@ var BUSTEDSiteChartAndTable = createReactClass({
       .x(x)
       .on("brushend", brushend);
 
-    g
-      .append("g")
+    g.append("g")
       .attr("class", "brush")
       .call(brush)
       .selectAll("rect")
@@ -420,7 +412,7 @@ var BUSTEDSiteChartAndTable = createReactClass({
                 "form-group" + (this.state.CERwarning ? " has-error" : "")
               }
             >
-              <label for="er-constrained-threshold">
+              <label htmlFor="er-constrained-threshold">
                 Constrained Test Statistic
               </label>
               <input
@@ -449,7 +441,7 @@ var BUSTEDSiteChartAndTable = createReactClass({
                 "form-group" + (this.state.ONERwarning ? " has-error" : "")
               }
             >
-              <label for="er-optimized-null-threshold">
+              <label htmlFor="er-optimized-null-threshold">
                 Optimized Null Test Statistic
               </label>
               <input
@@ -487,6 +479,19 @@ var BUSTEDSiteChartAndTable = createReactClass({
     );
   }
 });
+
+function CVSRV(distributions, n_sites) {
+  const distribution_values = _.values(distributions),
+    sum = (a, b) => a + b,
+    mu = distribution_values
+      .map(dist => dist.proportion * dist.rate)
+      .reduce(sum),
+    sigma_sum = distribution_values
+      .map(dist => dist.proportion * (dist.rate - mu) ** 2)
+      .reduce(sum),
+    sigma = Math.sqrt((n_sites * sigma_sum) / (n_sites - 1));
+  return (sigma / mu).toFixed(3);
+}
 
 class BUSTEDModelTable extends React.Component {
   constructor(props) {
@@ -558,6 +563,7 @@ class BUSTEDModelTable extends React.Component {
               onMouseEnter={onMouseEnter}
               onMouseLeave={onMouseLeave}
               className={className}
+              key={key}
             >
               <td>{key}</td>
               <td>
@@ -568,20 +574,25 @@ class BUSTEDModelTable extends React.Component {
               <td>{val["estimated parameters"]}</td>
               <td>{val["AIC-c"].toFixed(1)}</td>
               <td>Test</td>
+              {this.props.srv ? (
+                <td>
+                  {CVSRV(
+                    distributions["Synonymous site-to-site rates"],
+                    self.props.numberOfSites
+                  )}
+                </td>
+              ) : null}
               <td>
-                {distributions["Test"]["0"].omega.toFixed(2)} ({(
-                  100 * distributions["Test"]["0"].proportion
-                ).toFixed(2)}%)
+                {distributions["Test"]["0"].omega.toFixed(2)} (
+                {(100 * distributions["Test"]["0"].proportion).toFixed(2)}%)
               </td>
               <td>
-                {distributions["Test"]["1"].omega.toFixed(2)} ({(
-                  100 * distributions["Test"]["1"].proportion
-                ).toFixed(2)}%)
+                {distributions["Test"]["1"].omega.toFixed(2)} (
+                {(100 * distributions["Test"]["1"].proportion).toFixed(2)}%)
               </td>
               <td>
-                {distributions["Test"]["2"].omega.toFixed(2)} ({(
-                  100 * distributions["Test"]["2"].proportion
-                ).toFixed(2)}%)
+                {distributions["Test"]["2"].omega.toFixed(2)} (
+                {(100 * distributions["Test"]["2"].proportion).toFixed(2)}%)
               </td>
               <td>
                 <i className="fa fa-bar-chart" aria-hidden="true" />
@@ -596,6 +607,7 @@ class BUSTEDModelTable extends React.Component {
               onMouseEnter={onMouseEnter}
               onMouseLeave={onMouseLeave}
               className={className}
+              key={key + "-background"}
             >
               <td />
               <td />
@@ -603,19 +615,19 @@ class BUSTEDModelTable extends React.Component {
               <td />
               <td>Background</td>
               <td>
-                {distributions["Background"]["0"].omega.toFixed(2)} ({(
-                  100 * distributions["Background"]["0"].proportion
-                ).toFixed(2)}%)
+                {distributions["Background"]["0"].omega.toFixed(2)} (
+                {(100 * distributions["Background"]["0"].proportion).toFixed(2)}
+                %)
               </td>
               <td>
-                {distributions["Background"]["1"].omega.toFixed(2)} ({(
-                  100 * distributions["Background"]["1"].proportion
-                ).toFixed(2)}%)
+                {distributions["Background"]["1"].omega.toFixed(2)} (
+                {(100 * distributions["Background"]["1"].proportion).toFixed(2)}
+                %)
               </td>
               <td>
-                {distributions["Background"]["2"].omega.toFixed(2)} ({(
-                  100 * distributions["Background"]["2"].proportion
-                ).toFixed(2)}%)
+                {distributions["Background"]["2"].omega.toFixed(2)} (
+                {(100 * distributions["Background"]["2"].proportion).toFixed(2)}
+                %)
               </td>
               <td>
                 <i className="fa fa-bar-chart" aria-hidden="true" />
@@ -675,6 +687,17 @@ class BUSTEDModelTable extends React.Component {
                   Branch set
                 </span>
               </th>
+              {this.props.srv ? (
+                <th>
+                  <span
+                    data-toggle="tooltip"
+                    title=""
+                    data-original-title="Coefficient of variation of synonymous rates"
+                  >
+                    CV(SRV)
+                  </span>
+                </th>
+              ) : null}
               <th>
                 <span
                   data-toggle="tooltip"
@@ -1130,6 +1153,7 @@ class BUSTEDContents extends React.Component {
       fits: null,
       input_data: null,
       json: null,
+      numberOfSites: null,
       tree_settings: tree_settings,
       colorGradient: ["#00a99d", "#000000"],
       grayScaleGradient: ["#444444", "#000000"]
@@ -1182,10 +1206,17 @@ class BUSTEDContents extends React.Component {
       ] = this.formatBranchAnnotations(data);
     }
 
+    const srv = _.pluck(
+      _.pluck(_.values(data.fits), "Rate Distributions"),
+      "Synonymous site-to-site rates"
+    ).some(x => x);
+
     this.setState({
       p: data["test results"]["p-value"],
+      srv: srv,
       input_data: data["input"],
       fits: data["fits"],
+      numberOfSites: data.input["number of sites"],
       omegas: formatted_omegas,
       json: data,
       evidence_ratio_data: _.isEmpty(data["Evidence Ratios"])
@@ -1229,13 +1260,15 @@ class BUSTEDContents extends React.Component {
 
   getSummaryForRendering = () => {
     var significant = this.state.p < 0.05,
+      srv_suffix = this.state.srv ? "" : "out",
       message;
     if (significant) {
       message = (
         <p>
-          BUSTED <strong className="hyphy-highlight">found evidence</strong>{" "}
-          (LRT, p-value = {this.state.p ? this.state.p.toFixed(3) : null} &le;
-          .05) of gene-wide episodic diversifying selection in the selected test
+          BUSTED with{srv_suffix} synyonymous rate variation{" "}
+          <strong className="hyphy-highlight">found evidence</strong> (LRT,
+          p-value = {this.state.p ? this.state.p.toFixed(3) : null} &le; .05) of
+          gene-wide episodic diversifying selection in the selected test
           branches of your phylogeny. Therefore, there is evidence that at least
           one site on at least one test branch has experienced diversifying
           selection.{" "}
@@ -1244,7 +1277,8 @@ class BUSTEDContents extends React.Component {
     } else {
       message = (
         <p>
-          BUSTED <strong>found no evidence</strong> (LRT, p-value ={" "}
+          BUSTED with{srv_suffix} synyonymous rate variation{" "}
+          <strong>found no evidence</strong> (LRT, p-value ={" "}
           {this.state.p ? this.state.p.toFixed(3) : null} &ge; .05) of gene-wide
           episodic diversifying selection in the selected test branches of your
           phylogeny. Therefore, there is no evidence that any sites have
@@ -1291,7 +1325,11 @@ class BUSTEDContents extends React.Component {
 
         <div className="row">
           <div id="hyphy-model-fits" className="col-lg-12">
-            <BUSTEDModelTable fits={self.state.fits} />
+            <BUSTEDModelTable
+              fits={self.state.fits}
+              srv={self.state.srv}
+              numberOfSites={self.state.numberOfSites}
+            />
             <p className="description">
               This table reports a statistical summary of the models fit to the
               data. Here, <strong>Unconstrained model</strong> refers to the
@@ -1318,23 +1356,25 @@ class BUSTEDContents extends React.Component {
           </div>
         </div>
 
-        <div className="row">
-          <div className="col-md-12" id="phylo-alignment">
-            <Header
-              title="Phylogenetic alignment evidence ratio plot"
-              popover={
-                "<ul><li>Compare (possibility distant) sites with sequence and phylogentic information.</li><li>Add or remove sites with the corresponding buttons.</li></ul>"
-              }
-            />
-            <BUSTEDAlignmentTreeERWidget
-              newick={newick}
-              fasta={this.props.fasta}
-              evidence_ratios={
-                self.state.json ? self.state.json["Evidence Ratios"] : null
-              }
-            />
+        {self.props.fasta ? (
+          <div className="row">
+            <div className="col-md-12" id="phylo-alignment">
+              <Header
+                title="Phylogenetic alignment evidence ratio plot"
+                popover={
+                  "<ul><li>Compare (possibility distant) sites with sequence and phylogentic information.</li><li>Add or remove sites with the corresponding buttons.</li></ul>"
+                }
+              />
+              <BUSTEDAlignmentTreeERWidget
+                newick={newick}
+                fasta={this.props.fasta}
+                evidence_ratios={
+                  self.state.json ? self.state.json["Evidence Ratios"] : null
+                }
+              />
+            </div>
           </div>
-        </div>
+        ) : null}
       </div>
     );
   }
@@ -1347,9 +1387,10 @@ function BUSTED(props) {
       scrollSpyInfo={[
         { label: "summary", href: "summary-div" },
         { label: "model statistics", href: "hyphy-model-fits" },
-        { label: "tree", href: "phylogenetic-tree" },
-        { label: "phylo alignment", href: "phylo-alignment" }
-      ]}
+        { label: "tree", href: "phylogenetic-tree" }
+      ].concat(
+        props.fasta ? { label: "phylo alignment", href: "phylo-alignment" } : []
+      )}
       methodName="Branch-site Unrestricted Statistical Test for Episodic Diversification"
       fasta={props.fasta}
       originalFile={props.originalFile}

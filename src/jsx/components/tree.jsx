@@ -252,8 +252,7 @@ var Tree = createReactClass({
     }
 
     // clear existing linearGradients
-    d3
-      .selectAll(".legend-definitions")
+    d3.selectAll(".legend-definitions")
       .selectAll("linearGradient")
       .remove();
     d3.selectAll("#color-legend").remove();
@@ -656,8 +655,7 @@ var Tree = createReactClass({
     });
 
     this.assignBranchAnnotations();
-    d3
-      .select("#dm-phylotree")
+    d3.select("#dm-phylotree")
       .append("rect")
       .attr("width", "100%")
       .attr("height", "100%")
@@ -844,7 +842,8 @@ var Tree = createReactClass({
                     autoComplete="off"
                     checked=""
                     title="Layout left-to-right"
-                  />Linear
+                  />
+                  Linear
                 </button>
                 <button className="btn btn-secondary">
                   <input
@@ -868,7 +867,6 @@ var Tree = createReactClass({
                   data-align="left"
                   name="options-align"
                   autoComplete="off"
-                  checked=""
                   title="Align tips labels to branches"
                 />
                 <i className="fa fa-align-left" />
