@@ -7,6 +7,8 @@ import ReactDOM from "react-dom";
 import TestUtils from "react-dom/test-utils";
 import renderer from "react-test-renderer";
 import { DatamonkeyTable } from "../src/jsx/components/tables.jsx";
+import Enzyme from "enzyme";
+import Adapter from "enzyme-adapter-react-16";
 import { mount } from "enzyme";
 
 var _ = require("underscore");
@@ -14,6 +16,8 @@ var _ = require("underscore");
 import $ from "jquery";
 global.$ = global.jQuery = $;
 require("jquery-ui-bundle");
+
+Enzyme.configure({ adapter: new Adapter() });
 
 describe("DatamonkeyTable", () => {
   var mle_headers = [
@@ -78,7 +82,12 @@ describe("DatamonkeyTable", () => {
     var elem = table.find("th").at(1);
     elem.simulate("click");
     elem.simulate("click");
-    expect(table.find("td").at(1).text()).toBe("119.000");
+    expect(
+      table
+        .find("td")
+        .at(1)
+        .text()
+    ).toBe("119.000");
   });
 
   it("sort columns that are already sorted (tests bug fix)", () => {
@@ -94,6 +103,11 @@ describe("DatamonkeyTable", () => {
     var elem = table.find("th").at(0);
     elem.simulate("click");
     elem.simulate("click");
-    expect(table.find("td").at(0).text()).toBe("10");
+    expect(
+      table
+        .find("td")
+        .at(0)
+        .text()
+    ).toBe("10");
   });
 });
