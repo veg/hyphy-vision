@@ -1083,7 +1083,7 @@ class BUSTEDAlignmentTreeERWidget extends React.Component {
                   />
                 );
               })}
-              <g transform={`translate(0, ${bar_height})`}>
+              <g transform={`translate(0, ${bar_height + 5})`}>
                 <Phylotree
                   {...phylotree_props}
                   paddingTop={vertical_pad}
