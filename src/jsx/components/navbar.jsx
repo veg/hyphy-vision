@@ -1,10 +1,11 @@
-var React = require("react");
+var React = require("react"),
+  createReactClass = require("create-react-class");
 import { Link } from "react-router-dom";
 
 const hyphy_logo = require("../../../images/hyphy-logo.svg");
 
 // eslint-disable-next-line
-var Hamburger = React.createClass({
+var Hamburger = createReactClass({
   render: function() {
     return (
       <button
@@ -22,7 +23,7 @@ var Hamburger = React.createClass({
   }
 });
 
-var Methods = React.createClass({
+var Methods = createReactClass({
   render: function() {
     var self = this;
     return (
@@ -97,7 +98,7 @@ var Methods = React.createClass({
   }
 });
 
-var NavBar = React.createClass({
+var NavBar = createReactClass({
   render: function() {
     var self = this,
       input_style = {

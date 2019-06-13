@@ -1,8 +1,9 @@
-var React = require("react");
+var React = require("react"),
+  createReactClass = require("create-react-class");
 var datamonkey = require("../../datamonkey/datamonkey.js");
 require("phylotree");
 
-var Tree = React.createClass({
+var Tree = createReactClass({
   getInitialState: function() {
     return {
       json: this.props.json,

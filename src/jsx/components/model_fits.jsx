@@ -1,6 +1,7 @@
-var React = require("react");
+var React = require("react"),
+  createReactClass = require("create-react-class");
 
-var ModelFits = React.createClass({
+var ModelFits = createReactClass({
   getInitialState: function() {
     var table_row_data = this.getModelRows(this.props.json),
       table_columns = this.getModelColumns(table_row_data);

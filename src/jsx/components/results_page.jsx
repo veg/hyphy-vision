@@ -117,7 +117,8 @@ class ResultsPage extends React.Component {
               </div>
             </div>
             {React.createElement(this.props.children, {
-              json: this.state.json
+              json: this.state.json,
+              fasta: this.props.fasta
             })}
           </div>
         </div>

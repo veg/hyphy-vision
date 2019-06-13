@@ -1,7 +1,8 @@
-var React = require("react");
+var React = require("react"),
+  createReactClass = require("create-react-class");
 import { PropChart } from "./prop_chart.jsx";
 
-var BranchTable = React.createClass({
+var BranchTable = createReactClass({
   getInitialState: function() {
     // add the following
     var table_row_data = this.getBranchRows(
