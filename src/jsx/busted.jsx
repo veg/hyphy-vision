@@ -4,8 +4,10 @@ var React = require("react"),
   ReactDOM = require("react-dom"),
   d3 = require("d3"),
   d3_save_svg = require("d3-save-svg"),
-  _ = require("underscore");
+  _ = require("underscore"),
+  createReactClass = require("create-react-class");
 
+import Phylotree, { placenodes, phylotreev1 } from "react-phylotree";
 import { Tree } from "./components/tree.jsx";
 import { PropChart } from "./components/prop_chart.jsx";
 import { DatamonkeyTable } from "./components/tables.jsx";
@@ -13,8 +15,10 @@ import { saveSvgAsPng } from "save-svg-as-png";
 import { Header } from "./components/header.jsx";
 import { MainResult } from "./components/mainresult.jsx";
 import { ResultsPage } from "./components/results_page.jsx";
+import { BaseSVGAlignment, SitePlotAxis, fastaParser } from "alignment.js";
+import translate from "../helpers/translate";
 
-var BUSTEDSiteChartAndTable = React.createClass({
+var BUSTEDSiteChartAndTable = createReactClass({
   getInitialState: function() {
     return {
       lower_site_range: 0,
@@ -135,8 +139,7 @@ var BUSTEDSiteChartAndTable = React.createClass({
       .append("g")
       .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-    g
-      .selectAll(".axis-line")
+    g.selectAll(".axis-line")
       .data(yAxisTicks)
       .enter()
       .append("line")
@@ -146,37 +149,31 @@ var BUSTEDSiteChartAndTable = React.createClass({
       .attr("y2", d => y(d))
       .style("stroke", "#eee")
       .style("stroke-width", 1);
-    g
-      .append("path")
+    g.append("path")
       .attr("class", "line")
       .attr("d", oner_line(self.props.data))
       .style("fill", "none")
       .style("stroke-width", 2)
       .style("stroke", "#000");
-    g
-      .append("path")
+    g.append("path")
       .attr("class", "line")
       .attr("d", cer_line(self.props.data))
       .style("fill", "none")
       .style("stroke-width", 2)
       .style("stroke", "#00a99d");
-    g
-      .append("g")
+    g.append("g")
       .attr("class", "x axis")
       .attr("transform", "translate(0," + height + ")")
       .call(xAxis);
-    g
-      .append("text")
+    g.append("text")
       .attr("x", width / 2)
       .attr("y", height + margin.bottom)
       .style("text-anchor", "middle")
       .text("Site index");
-    g
-      .append("g")
+    g.append("g")
       .attr("class", "y axis")
       .call(yAxis);
-    g
-      .append("text")
+    g.append("text")
       .attr("transform", "rotate(-90)")
       .attr("x", -height / 2)
       .attr("y", -margin.left)
@@ -244,8 +241,7 @@ var BUSTEDSiteChartAndTable = React.createClass({
       .x(x)
       .on("brushend", brushend);
 
-    g
-      .append("g")
+    g.append("g")
       .attr("class", "brush")
       .call(brush)
       .selectAll("rect")
@@ -416,7 +412,7 @@ var BUSTEDSiteChartAndTable = React.createClass({
                 "form-group" + (this.state.CERwarning ? " has-error" : "")
               }
             >
-              <label for="er-constrained-threshold">
+              <label htmlFor="er-constrained-threshold">
                 Constrained Test Statistic
               </label>
               <input
@@ -445,7 +441,7 @@ var BUSTEDSiteChartAndTable = React.createClass({
                 "form-group" + (this.state.ONERwarning ? " has-error" : "")
               }
             >
-              <label for="er-optimized-null-threshold">
+              <label htmlFor="er-optimized-null-threshold">
                 Optimized Null Test Statistic
               </label>
               <input
@@ -483,6 +479,19 @@ var BUSTEDSiteChartAndTable = React.createClass({
     );
   }
 });
+
+function CVSRV(distributions, n_sites) {
+  const distribution_values = _.values(distributions),
+    sum = (a, b) => a + b,
+    mu = distribution_values
+      .map(dist => dist.proportion * dist.rate)
+      .reduce(sum),
+    sigma_sum = distribution_values
+      .map(dist => dist.proportion * (dist.rate - mu) ** 2)
+      .reduce(sum),
+    sigma = Math.sqrt((n_sites * sigma_sum) / (n_sites - 1));
+  return (sigma / mu).toFixed(3);
+}
 
 class BUSTEDModelTable extends React.Component {
   constructor(props) {
@@ -554,6 +563,7 @@ class BUSTEDModelTable extends React.Component {
               onMouseEnter={onMouseEnter}
               onMouseLeave={onMouseLeave}
               className={className}
+              key={key}
             >
               <td>{key}</td>
               <td>
@@ -563,21 +573,26 @@ class BUSTEDModelTable extends React.Component {
               </td>
               <td>{val["estimated parameters"]}</td>
               <td>{val["AIC-c"].toFixed(1)}</td>
+              {this.props.srv ? (
+                <td>
+                  {CVSRV(
+                    distributions["Synonymous site-to-site rates"],
+                    self.props.numberOfSites
+                  )}
+                </td>
+              ) : null}
               <td>Test</td>
               <td>
-                {distributions["Test"]["0"].omega.toFixed(2)} ({(
-                  100 * distributions["Test"]["0"].proportion
-                ).toFixed(2)}%)
+                {distributions["Test"]["0"].omega.toFixed(2)} (
+                {(100 * distributions["Test"]["0"].proportion).toFixed(2)}%)
               </td>
               <td>
-                {distributions["Test"]["1"].omega.toFixed(2)} ({(
-                  100 * distributions["Test"]["1"].proportion
-                ).toFixed(2)}%)
+                {distributions["Test"]["1"].omega.toFixed(2)} (
+                {(100 * distributions["Test"]["1"].proportion).toFixed(2)}%)
               </td>
               <td>
-                {distributions["Test"]["2"].omega.toFixed(2)} ({(
-                  100 * distributions["Test"]["2"].proportion
-                ).toFixed(2)}%)
+                {distributions["Test"]["2"].omega.toFixed(2)} (
+                {(100 * distributions["Test"]["2"].proportion).toFixed(2)}%)
               </td>
               <td>
                 <i className="fa fa-bar-chart" aria-hidden="true" />
@@ -592,26 +607,28 @@ class BUSTEDModelTable extends React.Component {
               onMouseEnter={onMouseEnter}
               onMouseLeave={onMouseLeave}
               className={className}
+              key={key + "-background"}
             >
               <td />
               <td />
               <td />
               <td />
+              {this.props.srv ? <td /> : null}
               <td>Background</td>
               <td>
-                {distributions["Background"]["0"].omega.toFixed(2)} ({(
-                  100 * distributions["Background"]["0"].proportion
-                ).toFixed(2)}%)
+                {distributions["Background"]["0"].omega.toFixed(2)} (
+                {(100 * distributions["Background"]["0"].proportion).toFixed(2)}
+                %)
               </td>
               <td>
-                {distributions["Background"]["1"].omega.toFixed(2)} ({(
-                  100 * distributions["Background"]["1"].proportion
-                ).toFixed(2)}%)
+                {distributions["Background"]["1"].omega.toFixed(2)} (
+                {(100 * distributions["Background"]["1"].proportion).toFixed(2)}
+                %)
               </td>
               <td>
-                {distributions["Background"]["2"].omega.toFixed(2)} ({(
-                  100 * distributions["Background"]["2"].proportion
-                ).toFixed(2)}%)
+                {distributions["Background"]["2"].omega.toFixed(2)} (
+                {(100 * distributions["Background"]["2"].proportion).toFixed(2)}
+                %)
               </td>
               <td>
                 <i className="fa fa-bar-chart" aria-hidden="true" />
@@ -662,6 +679,17 @@ class BUSTEDModelTable extends React.Component {
                   AIC<sub>c</sub>
                 </span>
               </th>
+              {this.props.srv ? (
+                <th>
+                  <span
+                    data-toggle="tooltip"
+                    title=""
+                    data-original-title="Coefficient of variation of synonymous rates"
+                  >
+                    CV(SRV)
+                  </span>
+                </th>
+              ) : null}
               <th>
                 <span
                   data-toggle="tooltip"
@@ -753,6 +781,343 @@ class BUSTEDModelTable extends React.Component {
   }
 }
 
+function CodonColumn(props) {
+  const codon_sequence_data = props.sequence_data.map(record => {
+    return {
+      header: record.header,
+      seq: record.seq.slice(3 * props.site, 3 * props.site + 3)
+    };
+  });
+  codon_sequence_data.number_of_sequences = codon_sequence_data.length;
+  codon_sequence_data.number_of_sites = 3;
+
+  const amino_acid_sequence_data = props.sequence_data.map(record => {
+    const codon = record.seq.slice(3 * props.site, 3 * props.site + 3),
+      amino_acid = translate(codon, 1);
+    return {
+      header: record.header,
+      seq: amino_acid
+    };
+  });
+  amino_acid_sequence_data.number_of_sequences =
+    amino_acid_sequence_data.length;
+  amino_acid_sequence_data.number_of_sites = 1;
+  return (
+    <g transform={`translate(${props.translateX}, ${props.translateY})`}>
+      <BaseSVGAlignment
+        sequence_data={codon_sequence_data}
+        site_size={props.site_size}
+      />
+      <BaseSVGAlignment
+        translateX={3 * props.site_size + props.site_padding}
+        sequence_data={amino_acid_sequence_data}
+        site_size={props.site_size}
+        amino_acid
+      />
+      <text
+        x={(4 * props.site_size + props.site_padding) / 2}
+        y={props.height + props.codon_label_height / 2}
+        alignmentBaseline="middle"
+        textAnchor="middle"
+        fontFamily="Courier"
+        fontSize={14}
+      >
+        Codon {props.site + 1}
+      </text>
+    </g>
+  );
+}
+
+CodonColumn.defaultProps = {
+  translateX: 0,
+  translateY: 0
+};
+
+class BUSTEDAlignmentTreeERWidget extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      tree: null,
+      sites: null,
+      max_site: null,
+      current_site: 1
+    };
+  }
+  initialize(newick, fasta) {
+    if (!newick || !fasta) return;
+    const tree = new phylotreev1(newick);
+    placenodes(tree);
+    tree.node_order = tree
+      .get_tips()
+      .sort((a, b) => a.data.abstract_y - b.data.abstract_y)
+      .map(node => node.name);
+    const node_to_ordered_index = _.object(
+      tree.node_order,
+      _.range(tree.node_order.length)
+    );
+    const sequence_data = fastaParser(fasta).sort((a, b) => {
+      const a_index = node_to_ordered_index[a.header],
+        b_index = node_to_ordered_index[b.header];
+      return a_index - b_index;
+    });
+    this.setState({
+      tree: tree,
+      sequence_data: sequence_data,
+      current_site: 1,
+      sites: [0]
+    });
+  }
+  componentDidMount() {
+    this.initialize(this.props.newick, this.props.fasta);
+  }
+  componentDidUpdate(prevProps) {
+    const new_fasta = prevProps.fasta != this.props.fasta,
+      new_newick = prevProps.newick != this.props.newick,
+      new_data = new_fasta || new_newick;
+    if (new_data) {
+      this.initialize(this.props.newick, this.props.fasta);
+    }
+  }
+  savePNG() {
+    saveSvgAsPng(
+      document.getElementById("busted-widget"),
+      "busted-evidence-ratios.png"
+    );
+  }
+  handleInputChange(e) {
+    const new_current_site = e.target.value ? +e.target.value : "",
+      new_sites = this.state.sites.map(i => i),
+      max_sites = this.props.evidence_ratios["constrained"][0].length;
+    if (new_current_site == "") {
+      this.setState({
+        current_site: ""
+      });
+    } else if (new_current_site > 0 && new_current_site <= max_sites) {
+      new_sites[new_sites.length - 1] = new_current_site - 1;
+      this.setState({
+        current_site: new_current_site,
+        sites: new_sites
+      });
+    }
+  }
+  addSite() {
+    const n_sites = this.state.sites.length;
+    if (n_sites < 5) {
+      const new_sites = this.state.sites.concat([0]);
+      this.setState(
+        {
+          current_site: 1,
+          sites: new_sites
+        },
+        () => {
+          this.numberInput.focus();
+        }
+      );
+    }
+  }
+  removeSite() {
+    const n_sites = this.state.sites.length;
+    if (n_sites > 1) {
+      const new_current_site = this.state.sites[n_sites - 2] + 1,
+        new_sites = this.state.sites.slice(0, n_sites - 1);
+      this.setState({
+        current_site: new_current_site,
+        sites: new_sites
+      });
+    }
+  }
+  render() {
+    if (!this.state.tree) return <div />;
+    const { site_size } = this.props,
+      phylotree_props = {
+        width: 200,
+        height: site_size * this.state.tree.get_tips().length,
+        tree: this.state.tree,
+        paddingTop: 5,
+        paddingBottom: 5,
+        paddingLeft: 5,
+        paddingRight: 5
+      },
+      site_padding = 5,
+      codon_label_height = 30,
+      vertical_pad = site_size / 2;
+    const { sites } = this.state,
+      n_sites = sites.length,
+      column_padding = 40,
+      codon_column_width = 4 * site_size + site_padding + column_padding,
+      ccw_nopad = 4 * site_size + site_padding,
+      bar_height = 200,
+      svg_props = {
+        width: phylotree_props.width + n_sites * codon_column_width,
+        height: phylotree_props.height + codon_label_height + bar_height
+      };
+    const log_scale = x => Math.log(1 + x),
+      constrained_data = sites.map(
+        site => this.props.evidence_ratios["constrained"][0][site]
+      ),
+      optimized_null_data = sites.map(
+        site => this.props.evidence_ratios["optimized null"][0][site]
+      ),
+      data = constrained_data.concat(optimized_null_data).map(log_scale),
+      bar_scale = d3.scale
+        .linear()
+        .domain([0, d3.max(data)])
+        .range([0, bar_height]),
+      bar_width = ccw_nopad / 3,
+      bar_padding = 2;
+    return (
+      <div>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-around",
+            alignItems: "center",
+            paddingBottom: 20
+          }}
+        >
+          <span>
+            Current site:
+            <input
+              type="number"
+              value={this.state.current_site}
+              onChange={e => this.handleInputChange(e)}
+              ref={input => {
+                this.numberInput = input;
+              }}
+              style={{ width: 50 }}
+            />
+          </span>
+          <button
+            onClick={() => this.addSite()}
+            type="button"
+            className="btn btn-secondary"
+            data-dismiss="modal"
+          >
+            Add site
+          </button>
+          <button
+            onClick={() => this.removeSite()}
+            type="button"
+            className="btn btn-secondary"
+            data-dismiss="modal"
+          >
+            Remove site
+          </button>
+          <button
+            onClick={() => this.savePNG()}
+            type="button"
+            className="btn btn-secondary"
+            data-dismiss="modal"
+          >
+            <span className="far fa-save" />
+            PNG
+          </button>
+        </div>
+
+        <div style={{ textAlign: "center" }}>
+          <svg
+            {...svg_props}
+            id="busted-widget"
+            style={{ fontFamily: "sans-serif" }}
+          >
+            <g transform="translate(0, 5)">
+              <rect
+                x={0}
+                y={0}
+                width={svg_props.width}
+                height={svg_props.height}
+                fill="white"
+              />
+              <g transform={`translate(${phylotree_props.width - 100}, 75)`}>
+                <rect x={5} y={10} width={20} height={20} fill="#00a99d" />
+                <text x={0} y={20} textAnchor="end" alignmentBaseline="middle">
+                  Constrained
+                </text>
+                <rect x={5} y={40} width={20} height={20} fill="black" />
+                <text x={0} y={50} textAnchor="end" alignmentBaseline="middle">
+                  Optimized Null
+                </text>
+              </g>
+              <SitePlotAxis
+                data={data}
+                axis_label="log(1+evidence ratio)"
+                height={bar_height}
+                label_width={75}
+                translateX={phylotree_props.width - 75}
+                padding={{ top: 0, right: 0, bottom: 0, left: 0 }}
+              />
+              {constrained_data.map((datum, i) => {
+                const current_bar_height = bar_scale(log_scale(datum));
+                return (
+                  <rect
+                    x={
+                      phylotree_props.width +
+                      i * codon_column_width +
+                      ccw_nopad / 2 -
+                      bar_width -
+                      bar_padding
+                    }
+                    y={bar_height - current_bar_height}
+                    key={"busted" + i}
+                    width={bar_width}
+                    height={current_bar_height}
+                    fill="#00a99d"
+                  />
+                );
+              })}
+              {optimized_null_data.map((datum, i) => {
+                const current_bar_height = bar_scale(log_scale(datum));
+                return (
+                  <rect
+                    x={
+                      phylotree_props.width +
+                      i * codon_column_width +
+                      ccw_nopad / 2 +
+                      bar_padding
+                    }
+                    y={bar_height - current_bar_height}
+                    key={"busted" + i}
+                    width={bar_width}
+                    height={current_bar_height}
+                    fill="black"
+                  />
+                );
+              })}
+              <g transform={`translate(0, ${bar_height + 5})`}>
+                <Phylotree
+                  {...phylotree_props}
+                  paddingTop={vertical_pad}
+                  paddingBottom={vertical_pad}
+                />
+                {sites.map((site, i) => {
+                  return (
+                    <CodonColumn
+                      site={site}
+                      translateX={
+                        phylotree_props.width + i * codon_column_width
+                      }
+                      site_size={site_size}
+                      site_padding={site_padding}
+                      codon_label_height={codon_label_height}
+                      key={i}
+                      height={phylotree_props.height}
+                      {...this.state}
+                    />
+                  );
+                })}
+              </g>
+            </g>
+          </svg>
+        </div>
+      </div>
+    );
+  }
+}
+
+BUSTEDAlignmentTreeERWidget.defaultProps = {
+  site_size: 20
+};
+
 class BUSTEDContents extends React.Component {
   constructor(props) {
     super(props);
@@ -789,6 +1154,7 @@ class BUSTEDContents extends React.Component {
       fits: null,
       input_data: null,
       json: null,
+      numberOfSites: null,
       tree_settings: tree_settings,
       colorGradient: ["#00a99d", "#000000"],
       grayScaleGradient: ["#444444", "#000000"]
@@ -841,10 +1207,17 @@ class BUSTEDContents extends React.Component {
       ] = this.formatBranchAnnotations(data);
     }
 
+    const srv = _.pluck(
+      _.pluck(_.values(data.fits), "Rate Distributions"),
+      "Synonymous site-to-site rates"
+    ).some(x => x);
+
     this.setState({
       p: data["test results"]["p-value"],
+      srv: srv,
       input_data: data["input"],
       fits: data["fits"],
+      numberOfSites: data.input["number of sites"],
       omegas: formatted_omegas,
       json: data,
       evidence_ratio_data: _.isEmpty(data["Evidence Ratios"])
@@ -888,13 +1261,15 @@ class BUSTEDContents extends React.Component {
 
   getSummaryForRendering = () => {
     var significant = this.state.p < 0.05,
+      srv_suffix = this.state.srv ? "" : "out",
       message;
     if (significant) {
       message = (
         <p>
-          BUSTED <strong className="hyphy-highlight">found evidence</strong>{" "}
-          (LRT, p-value = {this.state.p ? this.state.p.toFixed(3) : null} &le;
-          .05) of gene-wide episodic diversifying selection in the selected test
+          BUSTED with{srv_suffix} synyonymous rate variation{" "}
+          <strong className="hyphy-highlight">found evidence</strong> (LRT,
+          p-value = {this.state.p ? this.state.p.toFixed(3) : null} &le; .05) of
+          gene-wide episodic diversifying selection in the selected test
           branches of your phylogeny. Therefore, there is evidence that at least
           one site on at least one test branch has experienced diversifying
           selection.{" "}
@@ -903,7 +1278,8 @@ class BUSTEDContents extends React.Component {
     } else {
       message = (
         <p>
-          BUSTED <strong>found no evidence</strong> (LRT, p-value ={" "}
+          BUSTED with{srv_suffix} synyonymous rate variation{" "}
+          <strong>found no evidence</strong> (LRT, p-value ={" "}
           {this.state.p ? this.state.p.toFixed(3) : null} &ge; .05) of gene-wide
           episodic diversifying selection in the selected test branches of your
           phylogeny. Therefore, there is no evidence that any sites have
@@ -933,6 +1309,9 @@ class BUSTEDContents extends React.Component {
         "Constrained model"
       ]);
     }
+    const newick = this.state.json
+      ? this.state.json.trees[0].newickString
+      : null;
     return (
       <div>
         <div>
@@ -947,7 +1326,11 @@ class BUSTEDContents extends React.Component {
 
         <div className="row">
           <div id="hyphy-model-fits" className="col-lg-12">
-            <BUSTEDModelTable fits={self.state.fits} />
+            <BUSTEDModelTable
+              fits={self.state.fits}
+              srv={self.state.srv}
+              numberOfSites={self.state.numberOfSites}
+            />
             <p className="description">
               This table reports a statistical summary of the models fit to the
               data. Here, <strong>Unconstrained model</strong> refers to the
@@ -973,6 +1356,26 @@ class BUSTEDContents extends React.Component {
             />
           </div>
         </div>
+
+        {self.props.fasta ? (
+          <div className="row">
+            <div className="col-md-12" id="phylo-alignment">
+              <Header
+                title="Phylogenetic alignment evidence ratio plot"
+                popover={
+                  "<ul><li>Compare (possibility distant) sites with sequence and phylogentic information.</li><li>Add or remove sites with the corresponding buttons.</li></ul>"
+                }
+              />
+              <BUSTEDAlignmentTreeERWidget
+                newick={newick}
+                fasta={this.props.fasta}
+                evidence_ratios={
+                  self.state.json ? self.state.json["Evidence Ratios"] : null
+                }
+              />
+            </div>
+          </div>
+        ) : null}
       </div>
     );
   }
@@ -986,7 +1389,9 @@ function BUSTED(props) {
         { label: "summary", href: "summary-div" },
         { label: "model statistics", href: "hyphy-model-fits" },
         { label: "tree", href: "phylogenetic-tree" }
-      ]}
+      ].concat(
+        props.fasta ? { label: "phylo alignment", href: "phylo-alignment" } : []
+      )}
       methodName="Branch-site Unrestricted Statistical Test for Episodic Diversification"
       fasta={props.fasta}
       originalFile={props.originalFile}

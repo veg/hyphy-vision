@@ -1,9 +1,10 @@
-var React = require("react");
+var React = require("react"),
+  createReactClass = require("create-react-class");
 var datamonkey = require("../../datamonkey/datamonkey.js");
 
 import { saveSvgAsPng } from "save-svg-as-png";
 
-var PropChart = React.createClass({
+var PropChart = createReactClass({
   getDefaultProps: function() {
     return {
       svg_id: null,

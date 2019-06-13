@@ -136,6 +136,18 @@ class HyPhyVision extends React.Component {
               )}
             />
             <Route
+              path="/busted-srv"
+              component={() => (
+                <BUSTED
+                  data={
+                    this.state.data ||
+                    base_url +
+                      "/data/json_files/busted/CD2.fasta.BUSTED-SRV.json"
+                  }
+                />
+              )}
+            />
+            <Route
               path="/relax"
               component={() => (
                 <RELAX

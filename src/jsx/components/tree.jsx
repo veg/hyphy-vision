@@ -1,4 +1,5 @@
-var React = require("react");
+var React = require("react"),
+  createReactClass = require("create-react-class");
 var download = require("in-browser-download");
 var d3_save_svg = require("d3-save-svg");
 
@@ -7,7 +8,7 @@ import { saveSvgAsPng } from "save-svg-as-png";
 require("phylotree");
 require("phylotree.css");
 
-var Tree = React.createClass({
+var Tree = createReactClass({
   getDefaultProps: function() {
     return {
       color_gradient: ["#5e4fa2", "#3288bd", "#e6f598", "#f46d43", "#9e0142"],
@@ -251,8 +252,7 @@ var Tree = React.createClass({
     }
 
     // clear existing linearGradients
-    d3
-      .selectAll(".legend-definitions")
+    d3.selectAll(".legend-definitions")
       .selectAll("linearGradient")
       .remove();
     d3.selectAll("#color-legend").remove();
@@ -655,8 +655,7 @@ var Tree = React.createClass({
     });
 
     this.assignBranchAnnotations();
-    d3
-      .select("#dm-phylotree")
+    d3.select("#dm-phylotree")
       .append("rect")
       .attr("width", "100%")
       .attr("height", "100%")
@@ -843,7 +842,8 @@ var Tree = React.createClass({
                     autoComplete="off"
                     checked=""
                     title="Layout left-to-right"
-                  />Linear
+                  />
+                  Linear
                 </button>
                 <button className="btn btn-secondary">
                   <input
@@ -867,7 +867,6 @@ var Tree = React.createClass({
                   data-align="left"
                   name="options-align"
                   autoComplete="off"
-                  checked=""
                   title="Align tips labels to branches"
                 />
                 <i className="fa fa-align-left" />

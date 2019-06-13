@@ -6,7 +6,6 @@ import { default as default_tree_settings } from "../helpers/default_tree_settin
 import { Tree } from "./components/tree.jsx";
 import { DatamonkeyTable } from "./components/tables.jsx";
 import { Header } from "./components/header.jsx";
-import { MainResult } from "./components/mainresult.jsx";
 import { ResultsPage } from "./components/results_page.jsx";
 
 let part_scale = d3.scale.category10();
@@ -157,7 +156,8 @@ class SlatkinResults extends React.Component {
                   whether or not this number is lower than expected in a
                   panmictic or unstructured population using permutation tests.
                 </p>
-                <br />Please cite{" "}
+                <br />
+                Please cite{" "}
                 <a
                   href="http://www.ncbi.nlm.nih.gov/pubmed/2599370"
                   id="summary-pmid"
@@ -237,10 +237,6 @@ class SlatkinContents extends React.Component {
   constructor(props) {
     super(props);
     this.state = { data: null };
-  }
-
-  componentDidMount() {
-    var self = this;
   }
 
   render() {

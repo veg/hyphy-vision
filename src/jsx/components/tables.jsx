@@ -1,4 +1,5 @@
 var React = require("react"),
+  createReactClass = require("create-react-class"),
   _ = require("underscore"),
   d3 = require("d3"),
   datamonkey = require("../../datamonkey/datamonkey.js");
@@ -6,7 +7,7 @@ import CsvExport from "csvexport";
 
 import PropTypes from "prop-types";
 
-const DatamonkeyTableRow = React.createClass({
+const DatamonkeyTableRow = createReactClass({
   /**
       A single table row
 
@@ -288,7 +289,7 @@ const DatamonkeyTableRow = React.createClass({
   }
 });
 
-var DatamonkeyTable = React.createClass({
+var DatamonkeyTable = createReactClass({
   /**
    * A table composed of rows
    * @param *headerData* -- an array of cells (see DatamonkeyTableRow) to render as the header
@@ -610,7 +611,7 @@ var DatamonkeyTable = React.createClass({
   }
 });
 
-var DatamonkeyRateDistributionTable = React.createClass({
+var DatamonkeyRateDistributionTable = createReactClass({
   /** render a rate distribution table from JSON formatted like this
   {
        "non-synonymous/synonymous rate ratio for *background*":[ // name of distribution
@@ -664,7 +665,7 @@ var DatamonkeyRateDistributionTable = React.createClass({
   }
 });
 
-var DatamonkeyPartitionTable = React.createClass({
+var DatamonkeyPartitionTable = createReactClass({
   dm_formatterFloat: d3.format(".3r"),
   dm_formatterProp: d3.format(".3p"),
 
@@ -860,7 +861,7 @@ var DatamonkeyPartitionTable = React.createClass({
   }
 });
 
-var DatamonkeyModelTable = React.createClass({
+var DatamonkeyModelTable = createReactClass({
   // render a model fit table from a JSON object with entries like this
   //     "Global MG94xREV":{  model name
   //          "log likelihood":-5453.527975908821,
@@ -1062,7 +1063,7 @@ var DatamonkeyModelTable = React.createClass({
   }
 });
 
-var DatamonkeyTimersTable = React.createClass({
+var DatamonkeyTimersTable = createReactClass({
   dm_percentageFormatter: d3.format(".2%"),
 
   propTypes: {

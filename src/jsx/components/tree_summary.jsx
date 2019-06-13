@@ -1,4 +1,5 @@
 var React = require("react"),
+  createReactClass = require("create-react-class"),
   _ = require("underscore");
 
 import { DatamonkeyTable } from "./tables.jsx";
@@ -8,7 +9,7 @@ import { DatamonkeyTable } from "./tables.jsx";
  * @param model -- the model to obtain information from
  * @param test results -- the general test result information
  */
-var TreeSummary = React.createClass({
+var TreeSummary = createReactClass({
   getDefaultProps() {
     return {
       model: {},

@@ -1,4 +1,5 @@
 var React = require("react"),
+  createReactClass = require("create-react-class"),
   ReactDOM = require("react-dom"),
   _ = require("underscore"),
   d3_save_svg = require("d3-save-svg"),
@@ -24,7 +25,7 @@ require("../datamonkey/helpers.js");
 
 const DEFAULT_AMBIGUITY_HANDLING = "RESOLVED";
 
-var SLACSites = React.createClass({
+var SLACSites = createReactClass({
   propTypes: {
     headers: PropTypes.arrayOf(PropTypes.arrayOf(PropTypes.string)).isRequired,
     mle: PropTypes.object.isRequired,
@@ -744,7 +745,7 @@ var SLACSites = React.createClass({
   }
 });
 
-var SLACBanner = React.createClass({
+var SLACBanner = createReactClass({
   dm_countSites: function(json, cutoff) {
     var result = {
       all: 0,
@@ -878,7 +879,7 @@ var SLACBanner = React.createClass({
   }
 });
 
-var SLACGraphs = React.createClass({
+var SLACGraphs = createReactClass({
   getInitialState: function() {
     return {
       ambigHandling: this.props.initialAmbigHandling,

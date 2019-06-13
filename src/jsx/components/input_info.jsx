@@ -68,35 +68,27 @@ class InputInfo extends React.Component {
               className="dropdown-menu"
               aria-labelledby="dropdown-menu-button"
             >
-              {this.props.originalFile
-                ? [
-                    <li className="dropdown-item">
-                      <a
-                        href={
-                          window.location.href + "/original_file/original.fasta"
-                        }
-                      >
-                        Original file
-                      </a>
-                    </li>
-                  ]
-                : null}
-              {this.props.analysisLog
-                ? [
-                    <li className="dropdown-item">
-                      <a href={window.location.href + "/log.txt/"}>
-                        Analysis log
-                      </a>
-                    </li>
-                  ]
-                : null}
-              {this.props.fasta
-                ? [
-                    <li className="dropdown-item">
-                      <a onClick={() => this.open("msa")}>View MSA</a>
-                    </li>
-                  ]
-                : null}
+              {this.props.originalFile ? (
+                <li className="dropdown-item">
+                  <a
+                    href={
+                      window.location.href + "/original_file/original.fasta"
+                    }
+                  >
+                    Original file
+                  </a>
+                </li>
+              ) : null}
+              {this.props.analysisLog ? (
+                <li className="dropdown-item">
+                  <a href={window.location.href + "/log.txt/"}>Analysis log</a>
+                </li>
+              ) : null}
+              {this.props.fasta ? (
+                <li className="dropdown-item">
+                  <a onClick={() => this.open("msa")}>View MSA</a>
+                </li>
+              ) : null}
               {this.props.partitionedData ? (
                 <li className="dropdown-item">
                   <a href={window.location.href + "/screened_data/"}>
