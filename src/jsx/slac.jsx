@@ -21,7 +21,7 @@ import { ResultsPage } from "./components/results_page.jsx";
 import PropTypes from "prop-types";
 import { saveSvgAsPng } from "save-svg-as-png";
 import Phylotree, { placenodes, phylotreev1 } from "react-phylotree";
-import { SitePlotAxis, fastaParser } from "alignment.js";
+import { SitePlotAxis, fastaParser, colors } from "alignment.js";
 import CodonColumn from "./components/codon_column.jsx";
 
 require("../datamonkey/helpers.js");
@@ -88,7 +88,6 @@ var SLACSites = createReactClass({
     .domain([-1, -0.25, 1]),
 
   dm_log10times: _.before(10, function(v) {
-    //console.log(v);
     return 0;
   }),
 
@@ -1156,7 +1155,8 @@ class SLACAlignmentTreeCountWidget extends React.Component {
     this.state = {
       tree: null,
       max_site: null,
-      current_site: 1
+      current_site: 1,
+      select_value: "amino-acid"
     };
   }
   initialize(newick, fasta) {
@@ -1167,11 +1167,13 @@ class SLACAlignmentTreeCountWidget extends React.Component {
       tree.node_order,
       _.range(tree.node_order.length)
     );
-    const sequence_data = fastaParser(fasta).sort((a, b) => {
-      const a_index = node_to_ordered_index[a.header],
-        b_index = node_to_ordered_index[b.header];
-      return a_index - b_index;
-    });
+    const sequence_data = _.initial(
+      fastaParser(fasta).sort((a, b) => {
+        const a_index = node_to_ordered_index[a.header],
+          b_index = node_to_ordered_index[b.header];
+        return a_index - b_index;
+      })
+    );
     this.setState({
       tree: tree,
       sequence_data: sequence_data,
@@ -1213,7 +1215,7 @@ class SLACAlignmentTreeCountWidget extends React.Component {
   }
   render() {
     if (!this.state.tree) return <div />;
-    const { site_size } = this.props,
+    const { site_size, branchAttributes } = this.props,
       vertical_pad = site_size / 2,
       phylotree_props = {
         width: 700,
@@ -1249,6 +1251,32 @@ class SLACAlignmentTreeCountWidget extends React.Component {
         .range([0, bar_height]),
       bar_padding = 5,
       bar_width = (ccw_nopad - 4 * bar_padding) / 3;
+
+    const { select_value } = this.state;
+    const codons = {},
+      codon_colors = d3.scale.category10().range();
+    var codon_color_index = 0;
+    this.state.tree.traverse_and_compute(node => {
+      if (node.data.name != "root") {
+        if (select_value != "none") {
+          const character =
+            branchAttributes[node.data.name][select_value][0][
+              current_site_index
+            ];
+          node.data.annotation = character;
+          if (select_value == "codon") {
+            if (!codons[character]) {
+              codons[character] = codon_colors[codon_color_index++];
+            }
+          }
+        } else {
+          node.data.annotation = null;
+        }
+      }
+    });
+
+    const color_scale =
+      select_value != "codon" ? colors.amino_acid_colors : codons;
     return (
       <div>
         <div
@@ -1272,13 +1300,18 @@ class SLACAlignmentTreeCountWidget extends React.Component {
             />
           </span>
 
-          {/*<span>
-            Show <select>
-              <option>amino acid</option>
-              <option>codon</option>
-              <option>none</option>
-            </select> on tree
-          </span> */}
+          <span>
+            Show{" "}
+            <select
+              value={this.state.select_value}
+              onChange={e => this.setState({ select_value: e.target.value })}
+            >
+              <option value="amino-acid">amino acid</option>
+              <option value="codon">codon</option>
+              <option value="none">none</option>
+            </select>{" "}
+            on tree
+          </span>
 
           <button
             onClick={() => this.savePNG()}
@@ -1305,7 +1338,7 @@ class SLACAlignmentTreeCountWidget extends React.Component {
                 height={svg_props.height}
                 fill="white"
               />
-              <g transform={`translate(${phylotree_props.width - 100}, 75)`}>
+              <g transform={`translate(${phylotree_props.width - 100}, 50)`}>
                 <rect
                   x={5}
                   y={10}
@@ -1371,6 +1404,7 @@ class SLACAlignmentTreeCountWidget extends React.Component {
                   {...phylotree_props}
                   internalNodeLabels
                   skipPlacement
+                  highlightBranches={color_scale}
                 />
                 <CodonColumn
                   site={current_site_index}
@@ -1485,7 +1519,7 @@ class SLACContents extends React.Component {
       );
     }
 
-    const { analysis_results } = self.state;
+    const { analysis_results, tree } = self.state;
     if (analysis_results) {
       const branch_attributes = analysis_results["branch attributes"]["0"],
         fasta = _.keys(branch_attributes).map(key => {
@@ -1502,9 +1536,6 @@ class SLACContents extends React.Component {
           .map(ba => ba["nonsynonymous substitution count"][0])
           .reduce((a, b) => a.map((d, i) => d + b[i]), zeros),
         newick = analysis_results.trees[0].newickString;
-      //console.log(fasta, newick, syn_substitutions, nonsyn_substitutions);
-      //console.log(syn_substitutions.reduce((a,b)=>a+b, 0));
-      //console.log(nonsyn_substitutions.reduce((a,b)=>a+b, 0));
       var trees = analysis_results
         ? {
             newick: analysis_results.input.trees,
@@ -1679,6 +1710,7 @@ class SLACContents extends React.Component {
                 newick={newick}
                 syn_substitutions={syn_substitutions}
                 nonsyn_substitutions={nonsyn_substitutions}
+                branchAttributes={branch_attributes}
               />
             </div>
           </div>
