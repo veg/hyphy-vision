@@ -927,7 +927,11 @@ class BUSTEDAlignmentTreeERWidget extends React.Component {
     }
   }
   render() {
-    if (!this.state.tree) return <div />;
+    const has_tree = Boolean(this.state.tree),
+      has_evidence_ratios = !_.isEmpty(this.props.evidence_ratios),
+      has_fasta = Boolean(this.props.fasta),
+      has_data = has_tree && has_evidence_ratios & has_fasta;
+    if (!has_data) return <div />;
     const { site_size } = this.props,
       phylotree_props = {
         width: 200,
