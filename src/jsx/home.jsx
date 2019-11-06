@@ -7,6 +7,7 @@ const thumbs = {
   BUSTED: require("../../images/BUSTED-thumb.png"),
   RELAX: require("../../images/RELAX-thumb.png"),
   FEL: require("../../images/FEL-thumb.png"),
+  "FEL-Contrast": require("../../images/FEL-Contrast-thumb.png"),
   MEME: require("../../images/MEME-thumb.png"),
   SLAC: require("../../images/SLAC-thumb.png"),
   FUBAR: require("../../images/FUBAR-thumb.png"),
@@ -68,7 +69,13 @@ function Home(props) {
           method="RELAX"
           text="Hypothesis testing framework to detect relaxation of natural selection"
         />
+
         <MethodBanner method="FEL" text="Fixed Effects Likelihood" />
+        <MethodBanner
+          method="FEL-Contrast"
+          text="Determine if dN/dS is different between two sets of branches at discrete sites."
+        />
+
         <MethodBanner method="MEME" text="Mixed Effects Model of Evolution" />
         <MethodBanner
           method="SLAC"
