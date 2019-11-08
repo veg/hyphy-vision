@@ -23,7 +23,7 @@
   "version": "2.6.1",
   "dependencies": {
     "@fortawesome/fontawesome-free": "^5.3.1",
-    "alignment.js": "0.0.1",
+    "alignment.js": "0.1.1",
     "bootstrap": "4.x",
     "chi-squared": "^1.1.0",
     "create-react-class": "^15.6.3",
@@ -50,7 +50,7 @@
     "react-copy-to-clipboard": "^5.0.0",
     "react-dom": "16",
     "react-json-view": "^1.14.0",
-    "react-phylotree": "^0.0.1",
+    "react-phylotree": "0.1.0",
     "react-router-dom": "^4.2.2",
     "react-router-hash-link": "^1.1.1",
     "react-scrollchor": "^4.2.1",

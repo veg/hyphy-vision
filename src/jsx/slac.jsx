@@ -20,6 +20,9 @@ import {
 import { ResultsPage } from "./components/results_page.jsx";
 import PropTypes from "prop-types";
 import { saveSvgAsPng } from "save-svg-as-png";
+import Phylotree, { placenodes, phylotreev1 } from "react-phylotree";
+import { SitePlotAxis, fastaParser, colors } from "alignment.js";
+import CodonColumn from "./components/codon_column.jsx";
 
 require("../datamonkey/helpers.js");
 
@@ -85,7 +88,6 @@ var SLACSites = createReactClass({
     .domain([-1, -0.25, 1]),
 
   dm_log10times: _.before(10, function(v) {
-    //console.log(v);
     return 0;
   }),
 
@@ -466,7 +468,8 @@ var SLACSites = createReactClass({
                   checked={self.state.showCellColoring}
                   defaultChecked={self.state.showCellColoring}
                   onChange={self.dm_toggleCellColoring}
-                />&nbsp;Color cells based on MLE-median
+                />
+                &nbsp;Color cells based on MLE-median
               </a>
             </li>
           );
@@ -495,7 +498,8 @@ var SLACSites = createReactClass({
                         checked={"variable" in self.state.filters}
                         defaultChecked={"variable" in self.state.filters}
                         onChange={self.dm_toggleVariableFilter}
-                      />&nbsp;Variable sites only
+                      />
+                      &nbsp;Variable sites only
                     </a>
                   </li>
                   {show_ci_menu()}
@@ -507,7 +511,8 @@ var SLACSites = createReactClass({
                   aria-haspopup="true"
                   aria-expanded="false"
                 >
-                  Display<span className="caret" />
+                  Display
+                  <span className="caret" />
                 </button>
               </div>
 
@@ -850,7 +855,8 @@ var SLACBanner = createReactClass({
                 min="0"
                 max="1"
                 onChange={this.props.pAdjuster}
-              />.
+              />
+              .
             </p>
             <hr />
             <p>
@@ -1143,6 +1149,285 @@ var SLACGraphs = createReactClass({
   }
 });
 
+class SLACAlignmentTreeCountWidget extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      tree: null,
+      max_site: null,
+      current_site: 1,
+      select_value: "amino-acid"
+    };
+  }
+  initialize(newick, fasta) {
+    if (!newick || !fasta) return;
+    const tree = new phylotreev1(newick);
+    placenodes(tree, true);
+    const node_to_ordered_index = _.object(
+      tree.node_order,
+      _.range(tree.node_order.length)
+    );
+    const sequence_data = _.initial(
+      fastaParser(fasta).sort((a, b) => {
+        const a_index = node_to_ordered_index[a.header],
+          b_index = node_to_ordered_index[b.header];
+        return a_index - b_index;
+      })
+    );
+    this.setState({
+      tree: tree,
+      sequence_data: sequence_data,
+      current_site: 1,
+      current_site_index: 0
+    });
+  }
+  componentDidMount() {
+    this.initialize(this.props.newick, this.props.fasta);
+  }
+  componentDidUpdate(prevProps) {
+    const new_fasta = prevProps.fasta != this.props.fasta,
+      new_newick = prevProps.newick != this.props.newick,
+      new_data = new_fasta || new_newick;
+    if (new_data) {
+      this.initialize(this.props.newick, this.props.fasta);
+    }
+  }
+  savePNG() {
+    saveSvgAsPng(
+      document.getElementById("slac-widget"),
+      "slac-ancestral-phylo.png"
+    );
+  }
+  handleInputChange(e) {
+    const new_current_site = e.target.value ? +e.target.value : "",
+      max_sites = this.state.sequence_data[0].seq.length / 3;
+    if (new_current_site == "") {
+      this.setState({
+        current_site: "",
+        current_site_index: 0
+      });
+    } else if (new_current_site > 0 && new_current_site <= max_sites) {
+      this.setState({
+        current_site: new_current_site,
+        current_site_index: new_current_site - 1
+      });
+    }
+  }
+  render() {
+    if (!this.state.tree) return <div />;
+    const { site_size, branchAttributes } = this.props,
+      vertical_pad = site_size / 2,
+      phylotree_props = {
+        width: 700,
+        height: site_size * this.state.sequence_data.length,
+        tree: this.state.tree,
+        paddingTop: vertical_pad,
+        paddingBottom: vertical_pad,
+        paddingLeft: 5,
+        paddingRight: 5
+      },
+      site_padding = 5,
+      codon_label_height = 30;
+    const { current_site, current_site_index } = this.state,
+      syn_count = this.props.syn_substitutions[current_site_index],
+      nonsyn_count = this.props.nonsyn_substitutions[current_site_index],
+      total_count = syn_count + nonsyn_count,
+      column_padding = 40,
+      codon_column_width = 4 * site_size + site_padding + column_padding,
+      ccw_nopad = 4 * site_size + site_padding,
+      bar_height = 200,
+      svg_props = {
+        width: phylotree_props.width + codon_column_width,
+        height: phylotree_props.height + codon_label_height + bar_height
+      },
+      legend_colors = {
+        total: "black",
+        nonsyn: "#00a99d",
+        syn: "grey"
+      };
+    const bar_scale = d3.scale
+        .linear()
+        .domain([0, total_count])
+        .range([0, bar_height]),
+      bar_padding = 5,
+      bar_width = (ccw_nopad - 4 * bar_padding) / 3;
+
+    const { select_value } = this.state;
+    const codons = {},
+      codon_colors = d3.scale.category10().range();
+    var codon_color_index = 0;
+    this.state.tree.traverse_and_compute(node => {
+      if (node.data.name != "root") {
+        if (select_value != "none") {
+          const character =
+            branchAttributes[node.data.name][select_value][0][
+              current_site_index
+            ];
+          node.data.annotation = character;
+          if (select_value == "codon") {
+            if (!codons[character]) {
+              codons[character] = codon_colors[codon_color_index++];
+            }
+          }
+        } else {
+          node.data.annotation = null;
+        }
+      }
+    });
+
+    const color_scale =
+      select_value != "codon" ? colors.amino_acid_colors : codons;
+    return (
+      <div>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-around",
+            alignItems: "center",
+            paddingBottom: 20
+          }}
+        >
+          <span>
+            Current site:
+            <input
+              type="number"
+              value={this.state.current_site}
+              onChange={e => this.handleInputChange(e)}
+              ref={input => {
+                this.numberInput = input;
+              }}
+              style={{ width: 50 }}
+            />
+          </span>
+
+          <span>
+            Show{" "}
+            <select
+              value={this.state.select_value}
+              onChange={e => this.setState({ select_value: e.target.value })}
+            >
+              <option value="amino-acid">amino acid</option>
+              <option value="codon">codon</option>
+              <option value="none">none</option>
+            </select>{" "}
+            on tree
+          </span>
+
+          <button
+            onClick={() => this.savePNG()}
+            type="button"
+            className="btn btn-secondary"
+            data-dismiss="modal"
+          >
+            <span className="far fa-save" />
+            PNG
+          </button>
+        </div>
+
+        <div style={{ textAlign: "center" }}>
+          <svg
+            {...svg_props}
+            id="slac-widget"
+            style={{ fontFamily: "sans-serif" }}
+          >
+            <g transform="translate(0, 5)">
+              <rect
+                x={0}
+                y={0}
+                width={svg_props.width}
+                height={svg_props.height}
+                fill="white"
+              />
+              <g transform={`translate(${phylotree_props.width - 100}, 50)`}>
+                <rect
+                  x={5}
+                  y={10}
+                  width={20}
+                  height={20}
+                  fill={legend_colors.total}
+                />
+                <text x={0} y={20} textAnchor="end" alignmentBaseline="middle">
+                  Total
+                </text>
+                <rect
+                  x={5}
+                  y={40}
+                  width={20}
+                  height={20}
+                  fill={legend_colors.nonsyn}
+                />
+                <text x={0} y={50} textAnchor="end" alignmentBaseline="middle">
+                  Nonsynonymous
+                </text>
+                <rect
+                  x={5}
+                  y={70}
+                  width={20}
+                  height={20}
+                  fill={legend_colors.syn}
+                />
+                <text x={0} y={80} textAnchor="end" alignmentBaseline="middle">
+                  Synonymous
+                </text>
+              </g>
+              <SitePlotAxis
+                data={[syn_count, nonsyn_count, total_count]}
+                axis_label="Substitution counts"
+                height={bar_height}
+                label_width={75}
+                translateX={phylotree_props.width - 75}
+                padding={{ top: 0, right: 0, bottom: 0, left: 0 }}
+              />
+              <rect
+                x={phylotree_props.width + bar_padding}
+                y={bar_height - bar_scale(total_count)}
+                width={bar_width}
+                height={bar_scale(total_count)}
+                fill={legend_colors.total}
+              />
+              <rect
+                x={phylotree_props.width + 2 * bar_padding + bar_width}
+                y={bar_height - bar_scale(nonsyn_count)}
+                width={bar_width}
+                height={bar_scale(nonsyn_count)}
+                fill={legend_colors.nonsyn}
+              />
+              <rect
+                x={phylotree_props.width + 3 * bar_padding + 2 * bar_width}
+                y={bar_height - bar_scale(syn_count)}
+                width={bar_width}
+                height={bar_scale(syn_count)}
+                fill={legend_colors.syn}
+              />
+              <g transform={`translate(0, ${bar_height + 5})`}>
+                <Phylotree
+                  {...phylotree_props}
+                  internalNodeLabels
+                  skipPlacement
+                  highlightBranches={color_scale}
+                />
+                <CodonColumn
+                  site={current_site_index}
+                  translateX={phylotree_props.width}
+                  site_size={site_size}
+                  site_padding={site_padding}
+                  codon_label_height={codon_label_height}
+                  height={phylotree_props.height}
+                  {...this.state}
+                />
+              </g>
+            </g>
+          </svg>
+        </div>
+      </div>
+    );
+  }
+}
+
+SLACAlignmentTreeCountWidget.defaultProps = {
+  site_size: 20
+};
+
 class SLACContents extends React.Component {
   constructor(props) {
     super(props);
@@ -1234,11 +1519,27 @@ class SLACContents extends React.Component {
       );
     }
 
-    if (self.state.analysis_results) {
-      var trees = self.state.analysis_results
+    const { analysis_results, tree } = self.state;
+    if (analysis_results) {
+      const branch_attributes = analysis_results["branch attributes"]["0"],
+        fasta = _.keys(branch_attributes).map(key => {
+          return {
+            header: key,
+            seq: branch_attributes[key].codon[0].join("")
+          };
+        }),
+        zeros = d3.range(analysis_results.input["number of sites"]).map(n => 0),
+        syn_substitutions = _.values(branch_attributes)
+          .map(ba => ba["synonymous substitution count"][0])
+          .reduce((a, b) => a.map((d, i) => d + b[i]), zeros),
+        nonsyn_substitutions = _.values(branch_attributes)
+          .map(ba => ba["nonsynonymous substitution count"][0])
+          .reduce((a, b) => a.map((d, i) => d + b[i]), zeros),
+        newick = analysis_results.trees[0].newickString;
+      var trees = analysis_results
         ? {
-            newick: self.state.analysis_results.input.trees,
-            tested: self.state.analysis_results.tested
+            newick: analysis_results.input.trees,
+            tested: analysis_results.tested
           }
         : null;
 
@@ -1280,7 +1581,7 @@ class SLACContents extends React.Component {
       return (
         <div>
           <SLACBanner
-            analysis_results={self.state.analysis_results}
+            analysis_results={analysis_results}
             pValue={self.state.pValue}
             pAdjuster={_.bind(self.dm_adjustPvalue, self)}
             input_data={self.state.input_data}
@@ -1293,11 +1594,9 @@ class SLACContents extends React.Component {
               <DatamonkeyPartitionTable
                 pValue={self.state.pValue}
                 trees={trees}
-                partitions={self.state.analysis_results["data partitions"]}
-                branchAttributes={
-                  self.state.analysis_results["branch attributes"]
-                }
-                siteResults={self.state.analysis_results.MLE}
+                partitions={analysis_results["data partitions"]}
+                branchAttributes={analysis_results["branch attributes"]}
+                siteResults={analysis_results.MLE}
                 accessorPositive={function(json, partition) {
                   if (!json["content"][partition]) return null;
                   return _.map(
@@ -1323,13 +1622,13 @@ class SLACContents extends React.Component {
               />
             </div>
             <div id="datamonkey-slac-model-fits" className="col-md-8">
-              {<DatamonkeyModelTable fits={self.state.analysis_results.fits} />}
+              {<DatamonkeyModelTable fits={analysis_results.fits} />}
             </div>
             <div id="datamonkey-slac-timers" className="col-md-4">
               <h4 className="dm-table-header">Execution time</h4>
 
               <DatamonkeyTimersTable
-                timers={self.state.analysis_results.timers}
+                timers={analysis_results.timers}
                 totalTime={"Total time"}
               />
             </div>
@@ -1342,10 +1641,10 @@ class SLACContents extends React.Component {
                 popover="<ul><li>Adjust display or handling of alignment ambiguities with the left navbar.</li><li>Apply filters to columns using the right navbar.</li></ul>"
               />
               <SLACSites
-                headers={self.state.analysis_results.MLE.headers}
+                headers={analysis_results.MLE.headers}
                 mle={datamonkey.helpers.map(
                   datamonkey.helpers.filter(
-                    self.state.analysis_results.MLE.content,
+                    analysis_results.MLE.content,
                     function(value, key) {
                       return _.has(value, "by-site");
                     }
@@ -1354,10 +1653,10 @@ class SLACContents extends React.Component {
                     return value["by-site"];
                   }
                 )}
-                sample25={self.state.analysis_results["sample-2.5"]}
-                sampleMedian={self.state.analysis_results["sample-median"]}
-                sample975={self.state.analysis_results["sample-97.5"]}
-                partitionSites={self.state.analysis_results["data partitions"]}
+                sample25={analysis_results["sample-2.5"]}
+                sampleMedian={analysis_results["sample-median"]}
+                sample975={analysis_results["sample-97.5"]}
+                partitionSites={analysis_results["data partitions"]}
               />
             </div>
           </div>
@@ -1366,12 +1665,12 @@ class SLACContents extends React.Component {
             <div className="col-md-12" id="slac-graph">
               <Header
                 title="SLAC Site Graph"
-                popover="<p>Changing the x-axis to anything but &quot;Site&quot; results in a scatter plot."
+                popover='<p>Changing the x-axis to anything but "Site" results in a scatter plot.'
               />
               <SLACGraphs
                 mle={datamonkey.helpers.map(
                   datamonkey.helpers.filter(
-                    self.state.analysis_results.MLE.content,
+                    analysis_results.MLE.content,
                     function(value, key) {
                       return _.has(value, "by-site");
                     }
@@ -1380,8 +1679,8 @@ class SLACContents extends React.Component {
                     return value["by-site"];
                   }
                 )}
-                partitionSites={self.state.analysis_results["data partitions"]}
-                headers={self.state.analysis_results.MLE.headers}
+                partitionSites={analysis_results["data partitions"]}
+                headers={analysis_results.MLE.headers}
               />
             </div>
           </div>
@@ -1396,6 +1695,22 @@ class SLACContents extends React.Component {
                 color_gradient={["#00a99d", "#000000"]}
                 grayscale_gradient={["#444444", "#000000"]}
                 multitree
+              />
+            </div>
+          </div>
+
+          <div className="row">
+            <div id="phylo-alignment" className="col-md-12">
+              <Header
+                title="SLAC Phylogenetic Alignment"
+                popover="<ul><li>View individual codons and amino acids with corresponding phylogenetic information.</li><li>Select individual sites and view substitution counts across the phylogeny.</li></ul>"
+              />
+              <SLACAlignmentTreeCountWidget
+                fasta={fasta}
+                newick={newick}
+                syn_substitutions={syn_substitutions}
+                nonsyn_substitutions={nonsyn_substitutions}
+                branchAttributes={branch_attributes}
               />
             </div>
           </div>
@@ -1415,7 +1730,8 @@ function SLAC(props) {
         { label: "information", href: "datamonkey-slac-tree-summary" },
         { label: "table", href: "slac-table" },
         { label: "graph", href: "slac-graph" },
-        { label: "tree", href: "tree-tab" }
+        { label: "tree", href: "tree-tab" },
+        { label: "phylo alignment", href: "phylo-alignment" }
       ]}
       methodName="Single-Likelihood Ancestor Counting"
       fasta={props.fasta}
