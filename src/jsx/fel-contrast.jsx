@@ -12,6 +12,19 @@ import { ResultsPage } from "./components/results_page.jsx";
 class FELContrastContents extends React.Component {
   constructor(props) {
     super(props);
+
+    let tested_sets = [];
+
+    if (props.json.tested) {
+      tested_sets = props.json.tested[0];
+    }
+
+    let uniq_tested_sets = _.uniq(_.values(tested_sets));
+    let color_map = _.object(
+      uniq_tested_sets,
+      _.take(d3.scale.category10().range(), _.size(uniq_tested_sets))
+    );
+
     this.state = {
       mle_headers: [],
       mle_content: [],
@@ -23,6 +36,9 @@ class FELContrastContents extends React.Component {
       negatively_selected: [],
       pvals: {},
       input: null,
+      tested_sets: props.json.tested[0],
+      uniq_tested_sets: uniq_tested_sets,
+      color_map: color_map,
       fits: {}
     };
   }
@@ -468,6 +484,8 @@ class FELContrastContents extends React.Component {
   }
 
   render() {
+    var self = this;
+
     var { x: x, y: y } = this.definePlotData(
       this.state.xaxis,
       this.state.yaxis
@@ -480,15 +498,67 @@ class FELContrastContents extends React.Component {
       y_options = _.keys(this.state.mle_results[0]);
     }
 
-    var edgeColorizer = function(element, data, foreground_color) {
-      var is_foreground = data.target.annotations.is_foreground,
-        color_fill = foreground_color(0);
+    var edgeColorizer = (element, data) => {
+      // Color based on partition
+      let color =
+        self.state.color_map[self.state.tested_sets[data.target.name]];
 
       element
-        .style("stroke", is_foreground ? color_fill : "black")
+        .style("stroke", color)
         .style("stroke-linejoin", "round")
         .style("stroke-linejoin", "round")
         .style("stroke-linecap", "round");
+    };
+
+    var legendCreator = function() {
+      let svg = this.svg;
+
+      if (!this.state.omega_color || !this.state.omega_scale) {
+        return;
+      }
+
+      var margins = {
+        bottom: 30,
+        top: 15,
+        left: 0,
+        right: 0
+      };
+
+      d3.selectAll("#color-legend").remove();
+
+      var dc_legend = svg
+        .append("g")
+        .attr("id", "color-legend")
+        .attr("class", "dc-legend")
+        .attr(
+          "transform",
+          "translate(" + margins["left"] + "," + margins["top"] + ")"
+        );
+
+      let cnt = 0;
+
+      _.each(self.state.color_map, (v, k) => {
+        var color_fill = v;
+
+        var legend_item = dc_legend
+          .append("g")
+          .attr("class", "dc-legend-item")
+          .attr("transform", "translate(0," + cnt * 20 + ")");
+
+        legend_item
+          .append("rect")
+          .attr("width", "13")
+          .attr("height", "13")
+          .attr("fill", color_fill);
+
+        legend_item
+          .append("text")
+          .attr("x", "15")
+          .attr("y", "11")
+          .text(k);
+
+        cnt = cnt + 1;
+      });
     };
 
     var tree_settings = {
@@ -503,7 +573,7 @@ class FELContrastContents extends React.Component {
         "hyphy-tree-hide-legend": [true, false],
         "hyphy-tree-fill-color": [true, false]
       },
-      "hyphy-tree-legend-type": "discrete",
+      "hyphy-tree-legend-type": legendCreator,
       "suppress-tree-render": false,
       "chart-append-html": true,
       edgeColorizer: edgeColorizer
