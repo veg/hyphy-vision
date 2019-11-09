@@ -20,6 +20,10 @@ import {
 import { ResultsPage } from "./components/results_page.jsx";
 import PropTypes from "prop-types";
 import { saveSvgAsPng } from "save-svg-as-png";
+import Phylotree, { placenodes, phylotreev1 } from "react-phylotree";
+import { SitePlotAxis, fastaParser, colors } from "alignment.js";
+import CodonColumn from "./components/codon_column.jsx";
+import AlignmentTree from "./components/alignment_tree.jsx";
 
 require("../datamonkey/helpers.js");
 
@@ -85,7 +89,6 @@ var SLACSites = createReactClass({
     .domain([-1, -0.25, 1]),
 
   dm_log10times: _.before(10, function(v) {
-    //console.log(v);
     return 0;
   }),
 
@@ -466,7 +469,8 @@ var SLACSites = createReactClass({
                   checked={self.state.showCellColoring}
                   defaultChecked={self.state.showCellColoring}
                   onChange={self.dm_toggleCellColoring}
-                />&nbsp;Color cells based on MLE-median
+                />
+                &nbsp;Color cells based on MLE-median
               </a>
             </li>
           );
@@ -495,7 +499,8 @@ var SLACSites = createReactClass({
                         checked={"variable" in self.state.filters}
                         defaultChecked={"variable" in self.state.filters}
                         onChange={self.dm_toggleVariableFilter}
-                      />&nbsp;Variable sites only
+                      />
+                      &nbsp;Variable sites only
                     </a>
                   </li>
                   {show_ci_menu()}
@@ -507,7 +512,8 @@ var SLACSites = createReactClass({
                   aria-haspopup="true"
                   aria-expanded="false"
                 >
-                  Display<span className="caret" />
+                  Display
+                  <span className="caret" />
                 </button>
               </div>
 
@@ -850,7 +856,8 @@ var SLACBanner = createReactClass({
                 min="0"
                 max="1"
                 onChange={this.props.pAdjuster}
-              />.
+              />
+              .
             </p>
             <hr />
             <p>
@@ -1234,11 +1241,27 @@ class SLACContents extends React.Component {
       );
     }
 
-    if (self.state.analysis_results) {
-      var trees = self.state.analysis_results
+    const { analysis_results, tree } = self.state;
+    if (analysis_results) {
+      const branch_attributes = analysis_results["branch attributes"]["0"],
+        fasta = _.keys(branch_attributes).map(key => {
+          return {
+            header: key,
+            seq: branch_attributes[key].codon[0].join("")
+          };
+        }),
+        zeros = d3.range(analysis_results.input["number of sites"]).map(n => 0),
+        syn_substitutions = _.values(branch_attributes)
+          .map(ba => ba["synonymous substitution count"][0])
+          .reduce((a, b) => a.map((d, i) => d + b[i]), zeros),
+        nonsyn_substitutions = _.values(branch_attributes)
+          .map(ba => ba["nonsynonymous substitution count"][0])
+          .reduce((a, b) => a.map((d, i) => d + b[i]), zeros),
+        newick = analysis_results.trees[0].newickString;
+      var trees = analysis_results
         ? {
-            newick: self.state.analysis_results.input.trees,
-            tested: self.state.analysis_results.tested
+            newick: analysis_results.input.trees,
+            tested: analysis_results.tested
           }
         : null;
 
@@ -1280,7 +1303,7 @@ class SLACContents extends React.Component {
       return (
         <div>
           <SLACBanner
-            analysis_results={self.state.analysis_results}
+            analysis_results={analysis_results}
             pValue={self.state.pValue}
             pAdjuster={_.bind(self.dm_adjustPvalue, self)}
             input_data={self.state.input_data}
@@ -1293,11 +1316,9 @@ class SLACContents extends React.Component {
               <DatamonkeyPartitionTable
                 pValue={self.state.pValue}
                 trees={trees}
-                partitions={self.state.analysis_results["data partitions"]}
-                branchAttributes={
-                  self.state.analysis_results["branch attributes"]
-                }
-                siteResults={self.state.analysis_results.MLE}
+                partitions={analysis_results["data partitions"]}
+                branchAttributes={analysis_results["branch attributes"]}
+                siteResults={analysis_results.MLE}
                 accessorPositive={function(json, partition) {
                   if (!json["content"][partition]) return null;
                   return _.map(
@@ -1323,13 +1344,13 @@ class SLACContents extends React.Component {
               />
             </div>
             <div id="datamonkey-slac-model-fits" className="col-md-8">
-              {<DatamonkeyModelTable fits={self.state.analysis_results.fits} />}
+              {<DatamonkeyModelTable fits={analysis_results.fits} />}
             </div>
             <div id="datamonkey-slac-timers" className="col-md-4">
               <h4 className="dm-table-header">Execution time</h4>
 
               <DatamonkeyTimersTable
-                timers={self.state.analysis_results.timers}
+                timers={analysis_results.timers}
                 totalTime={"Total time"}
               />
             </div>
@@ -1342,10 +1363,10 @@ class SLACContents extends React.Component {
                 popover="<ul><li>Adjust display or handling of alignment ambiguities with the left navbar.</li><li>Apply filters to columns using the right navbar.</li></ul>"
               />
               <SLACSites
-                headers={self.state.analysis_results.MLE.headers}
+                headers={analysis_results.MLE.headers}
                 mle={datamonkey.helpers.map(
                   datamonkey.helpers.filter(
-                    self.state.analysis_results.MLE.content,
+                    analysis_results.MLE.content,
                     function(value, key) {
                       return _.has(value, "by-site");
                     }
@@ -1354,10 +1375,10 @@ class SLACContents extends React.Component {
                     return value["by-site"];
                   }
                 )}
-                sample25={self.state.analysis_results["sample-2.5"]}
-                sampleMedian={self.state.analysis_results["sample-median"]}
-                sample975={self.state.analysis_results["sample-97.5"]}
-                partitionSites={self.state.analysis_results["data partitions"]}
+                sample25={analysis_results["sample-2.5"]}
+                sampleMedian={analysis_results["sample-median"]}
+                sample975={analysis_results["sample-97.5"]}
+                partitionSites={analysis_results["data partitions"]}
               />
             </div>
           </div>
@@ -1366,12 +1387,12 @@ class SLACContents extends React.Component {
             <div className="col-md-12" id="slac-graph">
               <Header
                 title="SLAC Site Graph"
-                popover="<p>Changing the x-axis to anything but &quot;Site&quot; results in a scatter plot."
+                popover='<p>Changing the x-axis to anything but "Site" results in a scatter plot.'
               />
               <SLACGraphs
                 mle={datamonkey.helpers.map(
                   datamonkey.helpers.filter(
-                    self.state.analysis_results.MLE.content,
+                    analysis_results.MLE.content,
                     function(value, key) {
                       return _.has(value, "by-site");
                     }
@@ -1380,8 +1401,8 @@ class SLACContents extends React.Component {
                     return value["by-site"];
                   }
                 )}
-                partitionSites={self.state.analysis_results["data partitions"]}
-                headers={self.state.analysis_results.MLE.headers}
+                partitionSites={analysis_results["data partitions"]}
+                headers={analysis_results.MLE.headers}
               />
             </div>
           </div>
@@ -1396,6 +1417,22 @@ class SLACContents extends React.Component {
                 color_gradient={["#00a99d", "#000000"]}
                 grayscale_gradient={["#444444", "#000000"]}
                 multitree
+              />
+            </div>
+          </div>
+
+          <div className="row">
+            <div id="phylo-alignment" className="col-md-12">
+              <Header
+                title="SLAC Phylogenetic Alignment"
+                popover="<ul><li>View individual codons and amino acids with corresponding phylogenetic information.</li><li>Select individual sites and view substitution counts across the phylogeny.</li></ul>"
+              />
+              <AlignmentTree
+                fasta={fasta}
+                newick={newick}
+                syn_substitutions={syn_substitutions}
+                nonsyn_substitutions={nonsyn_substitutions}
+                branchAttributes={branch_attributes}
               />
             </div>
           </div>
@@ -1415,7 +1452,8 @@ function SLAC(props) {
         { label: "information", href: "datamonkey-slac-tree-summary" },
         { label: "table", href: "slac-table" },
         { label: "graph", href: "slac-graph" },
-        { label: "tree", href: "tree-tab" }
+        { label: "tree", href: "tree-tab" },
+        { label: "phylo alignment", href: "phylo-alignment" }
       ]}
       methodName="Single-Likelihood Ancestor Counting"
       fasta={props.fasta}

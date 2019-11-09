@@ -246,7 +246,7 @@ class HyPhyVision extends React.Component {
                 <SLAC
                   data={
                     this.state.data ||
-                    base_url + "/data/json_files/slac/h3_trunk.fna.SLAC.json"
+                    base_url + "/data/json_files/slac/N10_subtree.fna.SLAC.json"
                   }
                 />
               )}
