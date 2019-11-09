@@ -23,7 +23,7 @@ import { saveSvgAsPng } from "save-svg-as-png";
 import Phylotree, { placenodes, phylotreev1 } from "react-phylotree";
 import { SitePlotAxis, fastaParser, colors } from "alignment.js";
 import CodonColumn from "./components/codon_column.jsx";
-import AlignmentTree from "./components/alignment_tree.jsx";
+//import AlignmentTree from "./components/alignment_tree.jsx";
 
 require("../datamonkey/helpers.js");
 
