@@ -614,18 +614,6 @@ class FELContrastContents extends React.Component {
             citation_number="PMID 15703242"
           />
 
-          <div id="tree-tab">
-            <Tree
-              models={models}
-              json={this.state.data}
-              settings={tree_settings}
-              method={"fel"}
-              color_gradient={["#00a99d", "#000000"]}
-              grayscale_gradient={["#444444", "#000000"]}
-              multitree
-            />
-          </div>
-
           <div id="table-tab" className="row hyphy-row">
             <div id="hyphy-mle-fits" className="col-md-12">
               <Header
@@ -663,6 +651,18 @@ class FELContrastContents extends React.Component {
               }
               transitions={true}
               doDots={true}
+            />
+          </div>
+
+          <div id="tree-tab">
+            <Tree
+              models={models}
+              json={this.state.data}
+              settings={tree_settings}
+              method={"fel"}
+              color_gradient={["#00a99d", "#000000"]}
+              grayscale_gradient={["#444444", "#000000"]}
+              multitree
             />
           </div>
 

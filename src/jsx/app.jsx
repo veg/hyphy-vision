@@ -24,6 +24,7 @@ const is_electron = href.slice(0, 4) == "file";
 const base_url = is_electron ? path.dirname(path.dirname(href)) : "";
 
 const fasta = require("../../data/fasta.json");
+
 /**
  * HyPhyVision is the main component of the stand-alone HyPhy-Vision application (both web and electron).
  * This component is primarily responsible for:
@@ -247,6 +248,10 @@ class HyPhyVision extends React.Component {
                   data={
                     this.state.data ||
                     base_url + "/data/json_files/slac/N10_subtree.fna.SLAC.json"
+                  }
+                  fasta={
+                    this.state.data ||
+                    base_url + "/data/input_data/N10_subtree.fna"
                   }
                 />
               )}

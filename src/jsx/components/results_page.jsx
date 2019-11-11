@@ -1,6 +1,7 @@
 import { ErrorMessage } from "./error_message.jsx";
 import { ScrollSpy } from "./scrollspy.jsx";
 import { MethodHeader } from "./methodheader.jsx";
+import { fastaParser } from "alignment.js";
 
 var React = require("react");
 
@@ -17,12 +18,15 @@ class ResultsPage extends React.Component {
     super(props);
     this.state = {
       json: null,
-      jsonPath: null
+      jsonPath: null,
+      fastaPath: null,
+      fasta: null
     };
   }
 
   componentDidMount() {
     var self = this;
+
     // Decide if data is a URL or the results JSON
     if (typeof this.props.data == "string") {
       self.setState({ jsonPath: this.props.data }); // Set the json path for comparing on updates to see if it's new data.
@@ -32,6 +36,20 @@ class ResultsPage extends React.Component {
     } else if (typeof this.props.data == "object") {
       self.setState({ json: self.props.data });
     }
+
+    // Decide if data is a URL or the results JSON
+    if (typeof this.props.fasta == "string") {
+      self.setState({ fastaPath: this.props.fasta }); // Set the fasta path for comparing on updates to see if it's new data.
+      d3.text(this.props.fasta, function(data) {
+        let fasta_json = fastaParser(data);
+        let values = _.values(fasta_json);
+        values = _.filter(values, v => _.isObject(v) && _.values(v).length);
+        self.setState({ fasta: values });
+      });
+    } else if (typeof this.props.fasta == "object") {
+      self.setState({ fasta: self.props.fasta });
+    }
+
     this.enableBootstrapJavascript();
   }
 
@@ -54,6 +72,8 @@ class ResultsPage extends React.Component {
     if (newData != prevState.json) {
       self.setState({ json: newData });
     }
+
+    //TODO: Handle new FASTA as well
 
     this.enableBootstrapJavascript();
   }
@@ -109,7 +129,7 @@ class ResultsPage extends React.Component {
                   methodName={this.props.methodName}
                   input_data={this.state.json.input}
                   json={this.state.json}
-                  fasta={this.props.fasta}
+                  fasta={this.state.fasta}
                   originalFile={this.props.originalFile}
                   analysisLog={this.props.analysisLog}
                   partitionedData={this.props.partitionedData}
@@ -118,7 +138,7 @@ class ResultsPage extends React.Component {
             </div>
             {React.createElement(this.props.children, {
               json: this.state.json,
-              fasta: this.props.fasta
+              fasta: this.state.fasta
             })}
           </div>
         </div>
