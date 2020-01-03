@@ -28,7 +28,7 @@ const fasta = require("../../data/fasta.json");
 /**
  * HyPhyVision is the main component of the stand-alone HyPhy-Vision application (both web and electron).
  * This component is primarily responsible for:
- *    1. Rendering the appliction (render_app is called from index.js).
+ *    1. Rendering the application (render_app is called from index.js).
  *    2. Routing between pages.
  */
 class HyPhyVision extends React.Component {

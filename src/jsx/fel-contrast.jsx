@@ -11,6 +11,8 @@ import CodonColumn from "./components/codon_column.jsx";
 import { MainResult } from "./components/mainresult.jsx";
 import { ResultsPage } from "./components/results_page.jsx";
 
+import AlignmentTree from "./components/tree-alignment.jsx";
+
 class FELContrastContents extends React.Component {
   constructor(props) {
     super(props);
@@ -496,6 +498,8 @@ class FELContrastContents extends React.Component {
     var x_options = "Site";
     var y_options = ["alpha"];
 
+    let newick = this.props.json.input.trees[0];
+
     if (this.state.mle_results) {
       y_options = _.keys(this.state.mle_results[0]);
     }
@@ -663,6 +667,16 @@ class FELContrastContents extends React.Component {
               color_gradient={["#00a99d", "#000000"]}
               grayscale_gradient={["#444444", "#000000"]}
               multitree
+            />
+          </div>
+
+          <div id="tree-tab">
+            <AlignmentTree
+              fasta={this.state.fasta}
+              newick={newick}
+              syn_substitutions={syn_substitutions}
+              nonsyn_substitutions={nonsyn_substitutions}
+              branchAttributes={branch_attributes}
             />
           </div>
 

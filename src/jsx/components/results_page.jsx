@@ -1,3 +1,4 @@
+import { ErrorBoundary } from "./error_boundary.jsx";
 import { ErrorMessage } from "./error_message.jsx";
 import { ScrollSpy } from "./scrollspy.jsx";
 import { MethodHeader } from "./methodheader.jsx";
@@ -136,10 +137,12 @@ class ResultsPage extends React.Component {
                 />
               </div>
             </div>
-            {React.createElement(this.props.children, {
-              json: this.state.json,
-              fasta: this.state.fasta
-            })}
+            <ErrorBoundary>
+              {React.createElement(this.props.children, {
+                json: this.state.json,
+                fasta: this.state.fasta
+              })}
+            </ErrorBoundary>
           </div>
         </div>
       </div>
