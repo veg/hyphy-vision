@@ -196,29 +196,6 @@ class HyPhyVision extends React.Component {
               )}
             />
             <Route
-              path="/fel-contrast"
-              component={() => (
-                <FELContrast
-                  data={
-                    this.state.data ||
-                    base_url + "/data/json_files/fel-contrast/multi.json"
-                  }
-                />
-              )}
-            />
-            <Route
-              path="/fel-contrast-fasta"
-              component={() => (
-                <FELContrast
-                  data={
-                    this.state.data ||
-                    base_url + "/data/json_files/fel-contrast/multi.json"
-                  }
-                  fasta={fasta.CD2}
-                />
-              )}
-            />
-            <Route
               path="/meme"
               component={() => (
                 <MEME
