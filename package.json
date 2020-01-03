@@ -20,10 +20,10 @@
     "url": "git://github.com/veg/hyphy-vision.git"
   },
   "main": "dist/hyphyvision.js",
-  "version": "2.6.1",
+  "version": "2.6.2",
   "dependencies": {
     "@fortawesome/fontawesome-free": "^5.3.1",
-    "alignment.js": "0.0.1",
+    "alignment.js": "0.1.1",
     "bootstrap": "4.x",
     "chi-squared": "^1.1.0",
     "create-react-class": "^15.6.3",
@@ -50,13 +50,13 @@
     "react-copy-to-clipboard": "^5.0.0",
     "react-dom": "16",
     "react-json-view": "^1.14.0",
-    "react-phylotree": "^0.0.1",
+    "react-phylotree": "0.1.0",
     "react-router-dom": "^4.2.2",
     "react-router-hash-link": "^1.1.1",
     "react-scrollchor": "^4.2.1",
     "save-svg-as-png": "^1.2.0",
     "supervisor": "^0.12.0",
-    "underscore": "^1.8.3"
+    "underscore": "^1.9.1"
   },
   "devDependencies": {
     "babel-core": "^6.17.0",

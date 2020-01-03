@@ -603,7 +603,7 @@ var DatamonkeyTable = createReactClass({
     return (
       <div className="row">
         {paginatorControls}
-        <div className="col-md-12">
+        <div className="col-md-12 hyphy-vision-datamonkey-table">
           <table className={this.props.classes}>{children}</table>
         </div>
       </div>

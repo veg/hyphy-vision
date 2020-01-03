@@ -7,6 +7,7 @@ import { BSREL } from "./absrel.jsx";
 import { BUSTED } from "./busted.jsx";
 import { RELAX } from "./relax.jsx";
 import { FEL } from "./fel.jsx";
+import { FELContrast } from "./fel-contrast.jsx";
 import { MEME } from "./meme.jsx";
 import { SLAC } from "./slac.jsx";
 import { FUBAR } from "./fubar.jsx";
@@ -23,10 +24,11 @@ const is_electron = href.slice(0, 4) == "file";
 const base_url = is_electron ? path.dirname(path.dirname(href)) : "";
 
 const fasta = require("../../data/fasta.json");
+
 /**
  * HyPhyVision is the main component of the stand-alone HyPhy-Vision application (both web and electron).
  * This component is primarily responsible for:
- *    1. Rendering the appliction (render_app is called from index.js).
+ *    1. Rendering the application (render_app is called from index.js).
  *    2. Routing between pages.
  */
 class HyPhyVision extends React.Component {
@@ -222,7 +224,11 @@ class HyPhyVision extends React.Component {
                 <SLAC
                   data={
                     this.state.data ||
-                    base_url + "/data/json_files/slac/h3_trunk.fna.SLAC.json"
+                    base_url + "/data/json_files/slac/N10_subtree.fna.SLAC.json"
+                  }
+                  fasta={
+                    this.state.data ||
+                    base_url + "/data/input_data/N10_subtree.fna"
                   }
                 />
               )}

@@ -538,7 +538,7 @@ var Tree = createReactClass({
             type="checkbox"
             id="hyphy-tree-hide-legend"
             className="hyphy-tree-trigger"
-            defaultChecked={false}
+            defaultChecked={!this.state.show_legend}
             onChange={this.toggleLegend}
           />{" "}
           Hide Legend
@@ -664,6 +664,8 @@ var Tree = createReactClass({
     if (self.state.show_legend && _.keys(self.props.models).length > 0) {
       if (self.legend_type == "discrete") {
         self.renderDiscreteLegendColorScheme("tree_container");
+      } else if (_.isFunction(self.legend_type)) {
+        self.legend_type();
       } else {
         self.renderLegendColorScheme(
           "tree_container",
