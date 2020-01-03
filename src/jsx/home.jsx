@@ -71,10 +71,6 @@ function Home(props) {
         />
 
         <MethodBanner method="FEL" text="Fixed Effects Likelihood" />
-        <MethodBanner
-          method="FEL-Contrast"
-          text="Determine if dN/dS is different between two sets of branches at discrete sites."
-        />
 
         <MethodBanner method="MEME" text="Mixed Effects Model of Evolution" />
         <MethodBanner
