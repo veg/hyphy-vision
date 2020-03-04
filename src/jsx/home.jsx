@@ -7,7 +7,7 @@ const thumbs = {
   BUSTED: require("../../images/BUSTED-thumb.png"),
   RELAX: require("../../images/RELAX-thumb.png"),
   FEL: require("../../images/FEL-thumb.png"),
-  "FEL-Contrast": require("../../images/FEL-Contrast-thumb.png"),
+  "Contrast-FEL": require("../../images/Contrast-FEL-thumb.png"),
   MEME: require("../../images/MEME-thumb.png"),
   SLAC: require("../../images/SLAC-thumb.png"),
   FUBAR: require("../../images/FUBAR-thumb.png"),
@@ -71,9 +71,10 @@ function Home(props) {
         />
 
         <MethodBanner method="FEL" text="Fixed Effects Likelihood" />
+
         <MethodBanner
-          method="FEL-Contrast"
-          text="Determine if dN/dS is different between two sets of branches at discrete sites."
+          method="Contrast-FEL"
+          text="A test for differences in selective pressures at individual sites among clades and groups of branches"
         />
 
         <MethodBanner method="MEME" text="Mixed Effects Model of Evolution" />

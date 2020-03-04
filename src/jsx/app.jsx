@@ -7,7 +7,7 @@ import { BSREL } from "./absrel.jsx";
 import { BUSTED } from "./busted.jsx";
 import { RELAX } from "./relax.jsx";
 import { FEL } from "./fel.jsx";
-import { FELContrast } from "./fel-contrast.jsx";
+import { ContrastFEL } from "./contrast-fel.jsx";
 import { MEME } from "./meme.jsx";
 import { SLAC } from "./slac.jsx";
 import { FUBAR } from "./fubar.jsx";
@@ -190,6 +190,29 @@ class HyPhyVision extends React.Component {
                   data={
                     this.state.data ||
                     base_url + "/data/json_files/fel/CD2.fna.FEL.json"
+                  }
+                  fasta={fasta.CD2}
+                />
+              )}
+            />
+            <Route
+              path="/contrast-fel"
+              component={() => (
+                <ContrastFEL
+                  data={
+                    this.state.data ||
+                    base_url + "/data/json_files/contrast-fel/multi.json"
+                  }
+                />
+              )}
+            />
+            <Route
+              path="/contrast-fel-fasta"
+              component={() => (
+                <FEL
+                  data={
+                    this.state.data ||
+                    base_url + "/data/json_files/contrast-fel/CD2.fna.FEL.json"
                   }
                   fasta={fasta.CD2}
                 />
