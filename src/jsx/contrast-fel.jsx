@@ -13,7 +13,7 @@ import { ResultsPage } from "./components/results_page.jsx";
 
 import AlignmentTree from "./components/tree-alignment.jsx";
 
-class FELContrastContents extends React.Component {
+class ContrastFELContents extends React.Component {
   constructor(props) {
     super(props);
 
@@ -412,7 +412,7 @@ class FELContrastContents extends React.Component {
     return (
       <p>
         <p>
-          FELContrast{" "}
+          ContrastFEL{" "}
           <strong className="hyphy-highlight"> found evidence</strong> of
         </p>
         {this.getSummaryForSource()}
@@ -426,7 +426,7 @@ class FELContrastContents extends React.Component {
         <div className="main-result">
           <p>
             <p>
-              FELContrast{" "}
+              ContrastFEL{" "}
               <strong className="hyphy-highlight"> found evidence</strong> of
             </p>
             <p>
@@ -474,7 +474,7 @@ class FELContrastContents extends React.Component {
           <p>
             <small>
               See <a href="//hyphy.org/methods/selection-methods/#fel">here</a>{" "}
-              for more information about the FELContrast method.
+              for more information about the ContrastFEL method.
               <br />
               Please cite PMID{" "}
               <a href="//www.ncbi.nlm.nih.gov/pubmed/15703242">15703242</a> if
@@ -621,7 +621,7 @@ class FELContrastContents extends React.Component {
           <div id="table-tab" className="row hyphy-row">
             <div id="hyphy-mle-fits" className="col-md-12">
               <Header
-                title="FELContrast Table"
+                title="ContrastFEL Table"
                 popover="<p>Hover over a column header for a description of its content.</p>"
               />
               <DatamonkeyTable
@@ -670,16 +670,6 @@ class FELContrastContents extends React.Component {
             />
           </div>
 
-          <div id="tree-tab">
-            <AlignmentTree
-              fasta={this.state.fasta}
-              newick={newick}
-              syn_substitutions={syn_substitutions}
-              nonsyn_substitutions={nonsyn_substitutions}
-              branchAttributes={branch_attributes}
-            />
-          </div>
-
           <div className="col-md-12" id="fits-tab">
             <DatamonkeyModelTable fits={this.state.fits} />
             <p className="description">
@@ -694,7 +684,7 @@ class FELContrastContents extends React.Component {
   }
 }
 
-function FELContrast(props) {
+function ContrastFEL(props) {
   return (
     <ResultsPage
       data={props.data}
@@ -705,19 +695,19 @@ function FELContrast(props) {
         { label: "tree", href: "tree-tab" },
         { label: "fits", href: "fits-tab" }
       ]}
-      methodName="Fixed Effects Likelihood - Contrast"
+      methodName="Contrast-FEL"
       fasta={props.fasta}
       originalFile={props.originalFile}
       analysisLog={props.analysisLog}
     >
-      {FELContrastContents}
+      {ContrastFELContents}
     </ResultsPage>
   );
 }
 
-function render_fel_contrast(data, element, fasta, originalFile, analysisLog) {
+function render_contrast_fel(data, element, fasta, originalFile, analysisLog) {
   ReactDOM.render(
-    <FELContrast
+    <ContrastFEL
       data={data}
       fasta={fasta}
       originalFile={originalFile}
@@ -727,5 +717,5 @@ function render_fel_contrast(data, element, fasta, originalFile, analysisLog) {
   );
 }
 
-module.exports = render_fel_contrast;
-module.exports.FELContrast = FELContrast;
+module.exports = render_contrast_fel;
+module.exports.ContrastFEL = ContrastFEL;
