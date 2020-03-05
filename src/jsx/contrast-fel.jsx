@@ -340,13 +340,13 @@ class ContrastFELContents extends React.Component {
       this.state.positively_selected.length -
       this.state.negatively_selected.length;
     var summary_text =
-      "FEL-Contrast found evidence of pervasive positive/diversifying selection at " +
+      "Contrast-FEL found evidence of pervasive positive/diversifying selection at " +
       this.state.positively_selected.length +
-      " sites in your alignment. In addition, FEL-Contrast found evidence with p-value " +
+      " sites in your alignment. In addition, Contrast-FEL found evidence with p-value " +
       this.state.pvalue_threshold +
       " of pervasive negative/purifying selection at " +
       this.state.negatively_selected.length +
-      " sites in your alignment. FEL-Contrast did not find evidence for either positive or negative selection in the remaining " +
+      " sites in your alignment. Contrast-FEL did not find evidence for either positive or negative selection in the remaining " +
       no_selected +
       " sites in your alignment.";
     return summary_text;
@@ -635,7 +635,7 @@ class ContrastFELContents extends React.Component {
           </div>
 
           <div id="plot-tab">
-            <h3 className="dm-table-header">FEL-Contrast Site Plot</h3>
+            <h3 className="dm-table-header">Contrast-FEL Site Plot</h3>
 
             <DatamonkeyGraphMenu
               x_options={x_options}
