@@ -9,6 +9,7 @@ const thumbs = {
   FEL: require("../../images/FEL-thumb.png"),
   "Contrast-FEL": require("../../images/Contrast-FEL-thumb.png"),
   MEME: require("../../images/MEME-thumb.png"),
+  MULTIHIT: require("../../images/MEME-thumb.png"),
   SLAC: require("../../images/SLAC-thumb.png"),
   FUBAR: require("../../images/FUBAR-thumb.png"),
   GARD: require("../../images/GARD-thumb.png"),
@@ -78,6 +79,12 @@ function Home(props) {
         />
 
         <MethodBanner method="MEME" text="Mixed Effects Model of Evolution" />
+
+        <MethodBanner
+          method="MULTIHIT"
+          text="Accounting for multiple simultaneousnucleotide substitutions"
+        />
+
         <MethodBanner
           method="SLAC"
           text="Single-Likelihood Ancestor Counting"
