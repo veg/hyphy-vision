@@ -38,18 +38,15 @@ function GARDResults(props) {
     .reduce((a, b) => a + b, 0);
   var totalModelCount = props.data.totalModelCount;
   var percentageExplored = (
-    100 *
-    totalModelCount /
+    (100 * totalModelCount) /
     totalPossibleModels
   ).toFixed(2);
   var evidence_statement =
     number_of_fragments > 1 ? (
       <span>
         <strong className="hyphy-highlight">found evidence</strong> of{" "}
-        {props.data.lastImprovedBPC} recombination breakpoint{props.data
-          .lastImprovedBPC == 1
-          ? ""
-          : "s"}
+        {props.data.lastImprovedBPC} recombination breakpoint
+        {props.data.lastImprovedBPC == 1 ? "" : "s"}
       </span>
     ) : (
       <span>
@@ -79,7 +76,8 @@ function GARDResults(props) {
                 here
               </a>{" "}
               for more information about this method.
-              <br />Please cite{" "}
+              <br />
+              Please cite{" "}
               <a
                 href="http://www.ncbi.nlm.nih.gov/pubmed/16818476"
                 id="summary-pmid"
@@ -140,7 +138,7 @@ function GARDRecombinationReport(props) {
             />
             <text
               x={scale(bp_delta / 2)}
-              y={2 * height / 3}
+              y={(2 * height) / 3}
               fill={"white"}
               textAnchor={"middle"}
             >
@@ -257,14 +255,14 @@ function GARDSimpleTopologyReport(props) {
 
         <p className="description">
           Comparing the AIC<sub>c</sub> score of the best fitting GARD model,
-          that allows for different topologies between segments ({currentAIC.toFixed(
-            1
-          )}), and that of the model that assumes the same tree for all the
-          partitions inferred by GARD, but allows different branch lengths
-          between partitions ({props.data.singleTreeAICc.toFixed(1)}) suggests
-          that because the multiple tree model {w > 0.01 ? "cannot" : "can"} be
-          preferred over the single tree model by an evidence ratio of 100 or
-          greater, {conclusion}.
+          that allows for different topologies between segments (
+          {currentAIC.toFixed(1)}), and that of the model that assumes the same
+          tree for all the partitions inferred by GARD, but allows different
+          branch lengths between partitions (
+          {props.data.singleTreeAICc.toFixed(1)}) suggests that because the
+          multiple tree model {w > 0.01 ? "cannot" : "can"} be preferred over
+          the single tree model by an evidence ratio of 100 or greater,{" "}
+          {conclusion}.
         </p>
       </div>
     </div>
@@ -490,5 +488,4 @@ function render_gard(
   );
 }
 
-module.exports = render_gard;
-module.exports.GARD = GARD;
+export { GARD, render_gard };

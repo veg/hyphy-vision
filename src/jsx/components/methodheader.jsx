@@ -26,4 +26,4 @@ function MethodHeader(props) {
   );
 }
 
-module.exports.MethodHeader = MethodHeader;
+export { MethodHeader };

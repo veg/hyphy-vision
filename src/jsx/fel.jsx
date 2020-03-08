@@ -596,5 +596,4 @@ function render_fel(data, element, fasta, originalFile, analysisLog) {
   );
 }
 
-module.exports = render_fel;
-module.exports.FEL = FEL;
+export { FEL, render_fel };

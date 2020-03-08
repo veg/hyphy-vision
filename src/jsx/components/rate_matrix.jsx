@@ -127,16 +127,14 @@ class RateMatrix extends React.Component {
             "transform",
             "translate(" + matrix_scale(i) + "," + matrix_scale(j) + ")"
           );
-        g
-          .append("rect")
+        g.append("rect")
           .attr("x", 0)
           .attr("y", 0)
           .attr("width", matrix_scale(1))
           .attr("height", matrix_scale(1))
           .attr("fill", color);
         if (i != j) {
-          g
-            .append("text")
+          g.append("text")
             .attr(
               "transform",
               "translate(" + matrix_scale(0.5) + "," + matrix_scale(0.5) + ")"
@@ -230,4 +228,4 @@ class RateMatrix extends React.Component {
   }
 }
 
-module.exports.RateMatrix = RateMatrix;
+export { RateMatrix };

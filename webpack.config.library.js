@@ -1,100 +1,128 @@
-var path = require("path"),
+const path = require("path"),
   webpack = require("webpack"),
-  cloneDeep = require("lodash.clonedeep"),
-  CopyWebpackPlugin = require("copy-webpack-plugin");
+  HtmlWebpackPlugin = require("html-webpack-plugin");
 
-var ExtractTextPlugin = require("extract-text-webpack-plugin");
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const PreloadWebpackPlugin = require("preload-webpack-plugin");
 
-config = {
-  devtool: "source-map",
-  entry: {
-    hyphyvision: ["./src/library-entry.js"]
-  },
-  output: {
-    path: path.resolve(__dirname, "dist/"),
-    filename: "[name].js",
-    library: "hyphyVision",
-    libraryTarget: "umd"
-  },
-  externals: [/^[a-z\.\-0-9]+$/],
-  module: {
-    rules: [
-      {
-        test: /\.(js|jsx)?$/,
-        include: [
-          path.resolve(__dirname, "src"),
-          path.resolve(__dirname, "node_modules/csvexport")
-        ],
-        loaders: "babel-loader",
-        query: {
-          presets: ["react"]
-        }
-      },
-      {
-        test: /\.(woff|woff2)(\?v=\d+\.\d+\.\d+)?$/,
-        loader: "url-loader",
-        options: { limit: 10000, mimetype: "application/font-woff" }
-      },
-      {
-        test: /\.ttf(\?v=\d+\.\d+\.\d+)?$/,
-        loader: "url-loader",
-        options: { limit: 10000, mimetype: "application/octet-stream" }
-      },
-      { test: /\.eot(\?v=\d+\.\d+\.\d+)?$/, loaders: "file-loader" },
-      {
-        test: /\.svg(\?v=\d+\.\d+\.\d+)?$/,
-        loaders: "url-loader",
-        options: { limit: 10000, mimetype: "image/svg+xml" }
-      },
-      {
-        test: /\.(js|jsx)?$/,
-        exclude: /node_modules/,
-        loader: "eslint-loader",
-        options: {}
-      },
-      {
-        test: /\.scss?$/,
-        use: ExtractTextPlugin.extract({
-          fallback: "style-loader",
-          use: ["css-loader", "sass-loader"]
-        })
-      }
-    ]
-  },
-  plugins: [
-    new webpack.LoaderOptionsPlugin({ debug: true }),
-    new webpack.IgnorePlugin(/jsdom$/),
-    new ExtractTextPlugin("[name].css"),
-    new CopyWebpackPlugin(
-      [
-        // {output}/file.txt
-        { from: "src/application.scss" }
-      ],
-      {
-        // By default, we only copy modified files during
-        // a watch or webpack-dev-server build. Setting this
-        // to `true` copies all files.
-        copyUnmodified: true
-      }
-    )
-  ],
-  resolve: {
-    alias: {
-      dc: __dirname + "/node_modules/dc/dc.min.js",
-      "dc.css": __dirname + "/node_modules/dc/dc.min.css",
-      "phylotree.css": __dirname + "/node_modules/phylotree/phylotree.css"
+module.exports = env => {
+  config = {
+    devtool: "source-map",
+    entry: {
+      hyphyvision: ["./src/library-entry.js"]
     },
-    modules: ["src", "node_modules"],
-    extensions: [".json", ".js", ".jsx", ".less"],
-    symlinks: false
-  }
+    devServer: {
+      contentBase: ".",
+      historyApiFallback: true
+    },
+    output: {
+      path: path.resolve(__dirname, "public/"),
+      filename: "[name].js",
+      library: "hyphyVision",
+      libraryTarget: "umd"
+    },
+    module: {
+      rules: [
+        {
+          test: /\.(sass|scss|css)$/,
+          use: [
+            "style-loader",
+            "css-loader",
+            {
+              loader: "sass-loader",
+              options: { implementation: require("sass") }
+            }
+          ]
+        },
+        {
+          test: /\.(js|jsx)?$/,
+          include: [path.resolve(__dirname, "src")],
+          loaders: "babel-loader",
+          query: {
+            presets: ["@babel/preset-env"]
+          }
+        },
+        {
+          test: require.resolve("jquery"),
+          use: [
+            {
+              loader: "expose-loader",
+              query: "jQuery"
+            },
+            {
+              loader: "expose-loader",
+              query: "$"
+            }
+          ]
+        },
+        {
+          test: require.resolve("d3"),
+          use: [
+            {
+              loader: "expose-loader",
+              query: "d3"
+            }
+          ]
+        },
+        {
+          test: require.resolve("underscore"),
+          use: [
+            {
+              loader: "expose-loader",
+              query: "_"
+            }
+          ]
+        },
+        {
+          test: /\.woff(2)?(\?v=[0-9]\.[0-9]\.[0-9])?$/,
+          loader: "url-loader?limit=10000&mimetype=application/font-woff"
+        },
+        {
+          test: /\.(eot|woff|woff2|ttf|svg|png|jpg|gif)(\?\S*)?$/,
+          use: [
+            {
+              loader: "file-loader"
+            }
+          ]
+        },
+        {
+          test: /\.(js|jsx)?$/,
+          exclude: /node_modules/,
+          loader: "eslint-loader",
+          options: {}
+        }
+      ]
+    },
+    plugins: [
+      new PreloadWebpackPlugin(),
+      new HtmlWebpackPlugin({
+        title: "HyPhy Vision",
+        filename: path.resolve("public", "index.html")
+      }),
+      new MiniCssExtractPlugin({
+        // Options similar to the same options in webpackOptions.output
+        // both options are optional
+        filename: "[name].css",
+        chunkFilename: "[id].css"
+      }),
+      new webpack.LoaderOptionsPlugin({ debug: true }),
+      new webpack.ProvidePlugin({
+        $: "jquery",
+        jQuery: "jquery",
+        d3: "d3",
+        datamonkey: "datamonkey",
+        _: "underscore"
+      }),
+      new webpack.IgnorePlugin(/jsdom$/)
+    ],
+    resolve: {
+      alias: {
+        "phylotree.css": __dirname + "/node_modules/phylotree/phylotree.css"
+      },
+      modules: ["src", "node_modules"],
+      extensions: [".json", ".js", ".jsx", ".scss"]
+    }
+  };
+
+  return config;
 };
-
-if (process.env.NODE_ENV === "production") {
-  config.devtool = false;
-  config.debug = false;
-  config.plugins.push(new webpack.optimize.OccurrenceOrderPlugin());
-  config.plugins.push(new webpack.optimize.UglifyJsPlugin());
-}
-
-module.exports = [config];

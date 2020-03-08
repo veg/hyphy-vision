@@ -717,5 +717,4 @@ function render_contrast_fel(data, element, fasta, originalFile, analysisLog) {
   );
 }
 
-module.exports = render_contrast_fel;
-module.exports.ContrastFEL = ContrastFEL;
+export { ContrastFEL, render_contrast_fel };

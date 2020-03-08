@@ -226,6 +226,4 @@ function rerender_tree_summary(tree, element) {
   render_tree_summary(tree, element);
 }
 
-module.exports.TreeSummary = TreeSummary;
-module.exports.render_tree_summary = render_tree_summary;
-module.exports.rerender_tree_summary = rerender_tree_summary;
+export { TreeSummary, render_tree_summary, rerender_tree_summary };

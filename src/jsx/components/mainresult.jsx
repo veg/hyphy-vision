@@ -69,4 +69,4 @@ class MainResult extends Component {
   }
 }
 
-module.exports.MainResult = MainResult;
+export { MainResult };

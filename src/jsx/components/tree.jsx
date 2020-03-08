@@ -964,6 +964,4 @@ function rerender_tree(json, element, settings) {
   return render_tree(json, settings);
 }
 
-module.exports.Tree = Tree;
-module.exports.render_tree = render_tree;
-module.exports.rerender_tree = rerender_tree;
+export { Tree, render_tree, rerender_tree };

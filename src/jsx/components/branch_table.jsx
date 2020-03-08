@@ -371,6 +371,4 @@ function rerender_branch_table(tree, test_results, annotations, element) {
   render_branch_table(tree, test_results, annotations, element);
 }
 
-module.exports.BranchTable = BranchTable;
-module.exports.render_branch_table = render_branch_table;
-module.exports.rerender_branch_table = rerender_branch_table;
+export { BranchTable, render_branch_table, rerender_branch_table };
