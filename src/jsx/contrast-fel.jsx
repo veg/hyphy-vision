@@ -6,12 +6,8 @@ import { Tree } from "./components/tree.jsx";
 import { Header } from "./components/header.jsx";
 import { DatamonkeyTable, DatamonkeyModelTable } from "./components/tables.jsx";
 import { DatamonkeySeries, DatamonkeyGraphMenu } from "./components/graphs.jsx";
-import Phylotree, { placenodes, phylotreev1 } from "react-phylotree";
-import CodonColumn from "./components/codon_column.jsx";
 import { MainResult } from "./components/mainresult.jsx";
 import { ResultsPage } from "./components/results_page.jsx";
-
-import AlignmentTree from "./components/tree-alignment.jsx";
 
 class ContrastFELContents extends React.Component {
   constructor(props) {

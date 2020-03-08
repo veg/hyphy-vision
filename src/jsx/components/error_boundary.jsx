@@ -1,6 +1,6 @@
 var React = require("react");
 
-const bomb = require("../../../images/bomb.svg");
+import bomb from "../../../images/bomb.svg";
 
 class ErrorBoundary extends React.Component {
   constructor(props) {
