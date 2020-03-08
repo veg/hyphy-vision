@@ -23,15 +23,14 @@ module.exports = env => {
     module: {
       rules: [
         {
-          test: /\.css$/i,
+          test: /\.(sass|scss|css)$/,
           use: [
             "style-loader",
+            "css-loader",
             {
-              loader: MiniCssExtractPlugin.loader,
-              options: { publicPath: "/dist/", minimize: false }
-            },
-
-            "css-loader"
+              loader: "sass-loader",
+              options: { implementation: require("sass") }
+            }
           ]
         },
         {
@@ -90,11 +89,6 @@ module.exports = env => {
           exclude: /node_modules/,
           loader: "eslint-loader",
           options: {}
-        },
-        {
-          test: /\.scss$/i,
-          include: [path.resolve(__dirname, "src")],
-          use: ["style-loader", "css-loader", "sass-loader"]
         }
       ]
     },
