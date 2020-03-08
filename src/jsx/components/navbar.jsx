@@ -2,7 +2,7 @@ var React = require("react"),
   createReactClass = require("create-react-class");
 import { Link } from "react-router-dom";
 
-const hyphy_logo = require("../../../images/hyphy-logo.svg");
+import hyphy_logo from "../../../images/hyphy-logo.svg";
 
 // eslint-disable-next-line
 var Hamburger = createReactClass({
