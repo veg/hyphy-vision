@@ -20,4 +20,4 @@ function render_inputErrorPage(element) {
   ReactDOM.render(<InputErrorPage />, document.getElementById(element));
 }
 
-module.exports = render_inputErrorPage;
+export { render_inputErrorPage };

@@ -1366,5 +1366,4 @@ var render_busted = function(data, element, fasta, originalFile, analysisLog) {
   );
 };
 
-module.exports = render_busted;
-module.exports.BUSTED = BUSTED;
+export { render_busted, BUSTED };

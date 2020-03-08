@@ -383,4 +383,4 @@ function prime(prime_results, element) {
   );
 }
 
-module.exports = prime;
+export { prime };

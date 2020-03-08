@@ -288,5 +288,4 @@ function render_slatkin(data, element, fasta, originalFile, analysisLog) {
   );
 }
 
-module.exports = render_slatkin;
-module.exports.Slatkin = Slatkin;
+export { Slatkin, render_slatkin };

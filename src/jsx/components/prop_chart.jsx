@@ -400,4 +400,4 @@ var PropChart = createReactClass({
   }
 });
 
-module.exports.PropChart = PropChart;
+export { PropChart };

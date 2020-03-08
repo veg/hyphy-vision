@@ -611,5 +611,4 @@ var OmegaPlotGrid = createReactClass({
   }
 });
 
-module.exports.OmegaPlot = OmegaPlot;
-module.exports.OmegaPlotGrid = OmegaPlotGrid;
+export { OmegaPlot, OmegaPlotGrid };

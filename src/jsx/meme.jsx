@@ -47,7 +47,8 @@ function MEMESummary(props) {
               min="0"
               max="1"
               onChange={props.updatePValue}
-            />.
+            />
+            .
           </p>
           <hr />
           <p>
@@ -57,7 +58,8 @@ function MEMESummary(props) {
                 here
               </a>{" "}
               for more information about the MEME method.
-              <br />Please cite{" "}
+              <br />
+              Please cite{" "}
               <a
                 href="http://www.ncbi.nlm.nih.gov/pubmed/22807683"
                 id="summary-pmid"
@@ -328,5 +330,4 @@ function render_meme(data, element, fasta, originalFile, analysisLog) {
   );
 }
 
-module.exports = render_meme;
-module.exports.MEME = MEME;
+export { MEME, render_meme };

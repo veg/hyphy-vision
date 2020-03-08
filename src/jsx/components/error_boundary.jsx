@@ -35,4 +35,4 @@ class ErrorBoundary extends React.Component {
   }
 }
 
-module.exports.ErrorBoundary = ErrorBoundary;
+export { ErrorBoundary };

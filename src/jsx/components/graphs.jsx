@@ -6,8 +6,8 @@ var React = require("react"),
 
 import { saveSvgAsPng } from "save-svg-as-png";
 
-/* 
- * Creates a dropdown menu to be used with any 
+/*
+ * Creates a dropdown menu to be used with any
  * component that extends BaseGraph
  */
 class GraphMenu extends React.Component {
@@ -424,8 +424,7 @@ class LineChart extends BaseGraph {
         "translate(" + this.props.marginLeft + "," + this.props.marginTop + ")"
       );
 
-    g
-      .append("path")
+    g.append("path")
       .datum(_.zip(this.props.x, y))
       .attr("fill", "none")
       .attr("stroke", "steelblue")
@@ -612,8 +611,7 @@ class MultiScatterPlot extends React.Component {
         .ticks(20);
     }
 
-    d3
-      .select(dom_element)
+    d3.select(dom_element)
       .selectAll("*")
       .remove();
 
@@ -677,8 +675,7 @@ class MultiScatterPlot extends React.Component {
       .attr("transform", "translate(" + width + ",0)")
       .call(yAxis2.tickFormat(""));
 
-    y2
-      .append("text")
+    y2.append("text")
       .attr("class", "label")
       .attr("transform", "rotate(-90)")
       .attr("y", 10)
@@ -686,8 +683,7 @@ class MultiScatterPlot extends React.Component {
       .style("text-anchor", "end")
       .text("Property conserved");
 
-    y2
-      .append("text")
+    y2.append("text")
       .attr("class", "label")
       .attr("transform", "rotate(-90)")
       .attr("y", 10)
@@ -916,9 +912,18 @@ class SiteGraph extends React.Component {
   }
 }
 
-module.exports.DatamonkeyGraphMenu = GraphMenu;
-module.exports.DatamonkeyLine = LineChart;
-module.exports.DatamonkeyMultiScatterplot = MultiScatterPlot;
-module.exports.DatamonkeyScatterplot = ScatterPlot;
-module.exports.DatamonkeySeries = Series;
-module.exports.DatamonkeySiteGraph = SiteGraph;
+let DatamonkeyGraphMenu = GraphMenu,
+  DatamonkeyLine = LineChart,
+  DatamonkeyMultiScatterplot = MultiScatterPlot,
+  DatamonkeyScatterplot = ScatterPlot,
+  DatamonkeySeries = Series,
+  DatamonkeySiteGraph = SiteGraph;
+
+export {
+  DatamonkeyGraphMenu,
+  DatamonkeyLine,
+  DatamonkeyMultiScatterplot,
+  DatamonkeyScatterplot,
+  DatamonkeySeries,
+  DatamonkeySiteGraph
+};

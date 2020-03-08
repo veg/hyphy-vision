@@ -42,7 +42,8 @@ function BGMSummary(props) {
                 here
               </a>{" "}
               for more information about the BGM method.
-              <br />Please cite{" "}
+              <br />
+              Please cite{" "}
               <a
                 href="https://www.ncbi.nlm.nih.gov/pubmed/18562270"
                 id="summary-pmid"
@@ -240,5 +241,4 @@ function render_bgm(data, element, fasta, originalFile, analysisLog) {
   );
 }
 
-module.exports = render_bgm;
-module.exports.BGM = BGM;
+export { BGM, render_bgm };

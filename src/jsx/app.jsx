@@ -380,11 +380,9 @@ class HyPhyVision extends React.Component {
   }
 }
 
-function render_app() {
+export default function render_app() {
   ReactDOM.render(
     <HyPhyVision />,
     document.body.appendChild(document.createElement("div"))
   );
 }
-
-module.exports = render_app;

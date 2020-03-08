@@ -50,7 +50,8 @@ class MainResult extends Component {
             <small>
               See <a href={this.props.method_ref}>here</a> for more information
               about this method.
-              <br />Please cite{" "}
+              <br />
+              Please cite{" "}
               <a
                 href={this.props.citation_ref}
                 id="summary-pmid"
@@ -68,4 +69,4 @@ class MainResult extends Component {
   }
 }
 
-module.exports.MainResult = MainResult;
+export { MainResult };
