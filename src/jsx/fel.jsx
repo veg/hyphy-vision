@@ -333,7 +333,8 @@ class FELContents extends React.Component {
             min="0"
             max="1"
             onChange={this.updatePvalThreshold}
-          />.
+          />
+          .
         </p>
       </p>
     );
@@ -385,7 +386,8 @@ class FELContents extends React.Component {
                 min="0"
                 max="1"
                 onChange={this.updatePvalThreshold}
-              />.
+              />
+              .
             </p>
           </p>
           <hr />

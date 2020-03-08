@@ -3,8 +3,6 @@
 jest.unmock("../src/jsx/components/graphs.jsx");
 
 import React from "react";
-import ReactDOM from "react-dom";
-import TestUtils from "react-dom/test-utils";
 import renderer from "react-test-renderer";
 import {
   DatamonkeySeries,

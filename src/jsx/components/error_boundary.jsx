@@ -1,6 +1,4 @@
-var React = require("react"),
-  ReactDOM = require("react-dom"),
-  _ = require("underscore");
+var React = require("react");
 
 const bomb = require("../../../images/bomb.svg");
 
