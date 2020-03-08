@@ -626,5 +626,4 @@ function render_multihit(data, element, fasta, originalFile, analysisLog) {
   );
 }
 
-module.exports = render_multihit;
-module.exports.MultiHit = MultiHit;
+export { MultiHit, render_multihit };
