@@ -31,4 +31,4 @@ function Header(props) {
   );
 }
 
-module.exports.Header = Header;
+export { Header };

@@ -139,8 +139,7 @@ var Tree = createReactClass({
     var svg = self.svg;
 
     // clear existing linearGradients
-    d3
-      .selectAll(".legend-definitions")
+    d3.selectAll(".legend-definitions")
       .selectAll("linearGradient")
       .remove();
     d3.selectAll("#color-legend").remove();
@@ -649,8 +648,7 @@ var Tree = createReactClass({
         false
       );
 
-      d3
-        .select(".phylotree-definitions")
+      d3.select(".phylotree-definitions")
         .selectAll("linearGradient")
         .remove();
 
@@ -707,7 +705,8 @@ var Tree = createReactClass({
                   className="btn.btn-secondary dropdown-toggle"
                   data-toggle="dropdown"
                 >
-                  Export<span className="caret" />
+                  Export
+                  <span className="caret" />
                 </button>
                 <ul className="dropdown-menu">
                   <li id="export-phylo-png">
@@ -792,7 +791,8 @@ var Tree = createReactClass({
                     autoComplete="off"
                     checked=""
                     title="Layout left-to-right"
-                  />Linear
+                  />
+                  Linear
                 </label>
                 <label className="btn.btn-secondary  btn-sm">
                   <input
@@ -923,6 +923,4 @@ function rerender_tree(json, element, settings) {
   return render_tree(json, settings);
 }
 
-module.exports.Tree = Tree;
-module.exports.render_tree = render_tree;
-module.exports.rerender_tree = rerender_tree;
+export { Tree, render_tree, rerender_tree };

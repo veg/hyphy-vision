@@ -169,4 +169,4 @@ class InputInfo extends React.Component {
   }
 }
 
-module.exports.InputInfo = InputInfo;
+export { InputInfo };

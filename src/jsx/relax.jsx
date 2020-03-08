@@ -616,5 +616,4 @@ function render_relax(data, element, fasta, originalFile, analysisLog) {
   );
 }
 
-module.exports = render_relax;
-module.exports.RELAX = RELAX;
+export { RELAX, render_relax };

@@ -85,7 +85,8 @@ function FADESummary(props) {
                 here
               </a>{" "}
               for more information about the FADE method.
-              <br />Please cite{" "}
+              <br />
+              Please cite{" "}
               <a
                 href="https://academic.oup.com/bioinformatics/article/21/5/676/220389"
                 id="summary-pmid"
@@ -780,5 +781,4 @@ function render_fade(data, element, fasta, originalFile, analysisLog) {
   );
 }
 
-module.exports = render_fade;
-module.exports.FADE = FADE;
+export { FADE, render_fade };

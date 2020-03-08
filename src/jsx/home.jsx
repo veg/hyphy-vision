@@ -104,4 +104,4 @@ function Home(props) {
   );
 }
 
-module.exports.Home = Home;
+export { Home };

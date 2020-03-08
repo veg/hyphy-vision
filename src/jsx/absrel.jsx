@@ -512,5 +512,4 @@ function render_absrel(data, element, fasta, originalFile, analysisLog) {
   );
 }
 
-module.exports = render_absrel;
-module.exports.BSREL = BSREL;
+export { render_absrel, BSREL };

@@ -23,4 +23,4 @@ class ErrorMessage extends React.Component {
   }
 }
 
-module.exports.ErrorMessage = ErrorMessage;
+export { ErrorMessage };

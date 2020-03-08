@@ -157,4 +157,4 @@ var NavBar = createReactClass({
   }
 });
 
-module.exports.NavBar = NavBar;
+export { NavBar };

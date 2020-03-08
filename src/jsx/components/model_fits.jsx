@@ -287,6 +287,4 @@ function rerender_model_fits(json, element) {
   render_model_fits(json, element);
 }
 
-module.exports.ModelFits = ModelFits;
-module.exports.render_model_fits = render_model_fits;
-module.exports.rerender_model_fits = rerender_model_fits;
+export { ModelFits, render_model_fits, rerender_model_fits };

@@ -42,4 +42,4 @@ function ScrollSpy(props) {
   );
 }
 
-module.exports.ScrollSpy = ScrollSpy;
+export { ScrollSpy };

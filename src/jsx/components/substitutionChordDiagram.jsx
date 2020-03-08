@@ -158,7 +158,7 @@ class SubstitutionChordDiagram extends Component {
       .attr(
         "transform",
         d => `
-        rotate(${d.angle * 180 / Math.PI - 90})
+        rotate(${(d.angle * 180) / Math.PI - 90})
         translate(${innerRadius + 26})
         ${d.angle > Math.PI ? "rotate(180)" : ""}
       `
@@ -193,4 +193,4 @@ class SubstitutionChordDiagram extends Component {
   }
 }
 
-module.exports.SubstitutionChordDiagram = SubstitutionChordDiagram;
+export { SubstitutionChordDiagram };

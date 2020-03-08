@@ -1476,5 +1476,4 @@ function render_slac(data, element, fasta, originalFile, analysisLog) {
   );
 }
 
-module.exports = render_slac;
-module.exports.SLAC = SLAC;
+export { SLAC, render_slac };
