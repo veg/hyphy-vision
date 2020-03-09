@@ -156,22 +156,25 @@ class MultiHitContents extends React.Component {
   }
 
   definePlotData(x_label, y_label) {
-    var x = _.map(this.state.mle_results, function(d) {
-      return d[x_label];
-    });
+    let x = [];
+    let y = [];
 
-    var y = _.map(this.state.mle_results, function(d) {
-      // plotting NaN or Infinity is tricky... we will replace these with zero for the sake of plotting.
-      if (y_label == "omega") {
-        var omega = d[y_label];
-        if (omega >= 0 && omega < Infinity) {
-          return omega;
-        } else {
-          return 0;
-        }
-      } else {
-        return d[y_label];
-      }
+    if (!this.state.data) {
+      return { x: x, y: [y] };
+    }
+
+    // get which table
+    let chartType = this.state.whichTable;
+    let chartVals = this.state.data[chartType][y_label][0];
+
+    if (!this.state.data[chartType]) {
+      return { x: x, y: [y] };
+    }
+
+    x = _.range(1, chartVals.length);
+
+    y = _.map(chartVals, d => {
+      return this.floatFormat(d);
     });
 
     return { x: x, y: [y] };
@@ -415,6 +418,11 @@ class MultiHitContents extends React.Component {
 
   render() {
     let newick = this.props.json.input.trees[0];
+
+    var { x: x, y: y } = this.definePlotData(
+      this.state.xaxis,
+      this.state.yaxis
+    );
 
     if (this.state.mle_results) {
       y_options = _.keys(this.state.mle_results[0]);
