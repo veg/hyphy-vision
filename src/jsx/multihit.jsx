@@ -10,29 +10,6 @@ import { MainResult } from "./components/mainresult.jsx";
 import { ResultsPage } from "./components/results_page.jsx";
 import { SubstitutionChordDiagram } from "./components/substitutionChordDiagram";
 
-const codonList = [
-  "A",
-  "C",
-  "D",
-  "E",
-  "F",
-  "G",
-  "H",
-  "I",
-  "K",
-  "L",
-  "M",
-  "N",
-  "P",
-  "Q",
-  "R",
-  "S",
-  "T",
-  "V",
-  "W",
-  "Y"
-];
-
 class MultiHitContents extends React.Component {
   floatFormat = d3.format(".3f");
 
@@ -391,8 +368,6 @@ class MultiHitContents extends React.Component {
             this.state.testResults["Triple-hit-island vs double-hit"]
           )}
         </div>
-
-        <p className="alert alert-warning">This p-value is derived by</p>
       </div>
     );
   }
@@ -643,15 +618,6 @@ class MultiHitContents extends React.Component {
                 classes={"table table-smm table-striped"}
                 paginate={20}
                 export_csv
-              />
-
-              <SubstitutionChordDiagram
-                matrix={this.props.matrix}
-                width={
-                  $("#results").width() == null ? 935 : $("#results").width()
-                }
-                height={800}
-                colorConnectionsBy={this.state.colorConnectionsBy}
               />
             </div>
           </div>
