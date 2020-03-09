@@ -73,7 +73,7 @@
     "bootstrap-webpack": "0.0.x",
     "copy-webpack-plugin": "^5.1.1",
     "css-loader": "^3.4.2",
-    "electron": "^1.7.9",
+    "electron": "^2.0.18",
     "enzyme": "3",
     "enzyme-adapter-react-16": "^1.14.0",
     "eslint": "^6.8.0",
