@@ -1612,3 +1612,17 @@ li.active > a:hover {
 .hyphy-vision-datamonkey-table {
   overflow-x: scroll;
 }
+
+.btn-export-csv-round{
+  background-color: #00a99d;
+  color: rgb(255, 255, 255);
+  letter-spacing: 1px;
+  text-align: center;
+  line-height: 20px;
+  font-family: "Noto Sans", sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  border: 2px solid #00a99d;
+  border-radius: 40px;
+  transition: all 0.3s ease 0s;
+}
