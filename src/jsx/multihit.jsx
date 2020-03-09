@@ -3,12 +3,35 @@ var React = require("react"),
   _ = require("underscore"),
   d3 = require("d3");
 
-//import { Tree } from "./components/tree.jsx";
 import { Header } from "./components/header.jsx";
-import { DatamonkeyTable, DatamonkeyModelTable } from "./components/tables.jsx";
+import { DatamonkeyTable } from "./components/tables.jsx";
 import { DatamonkeySeries, DatamonkeyGraphMenu } from "./components/graphs.jsx";
 import { MainResult } from "./components/mainresult.jsx";
 import { ResultsPage } from "./components/results_page.jsx";
+import { SubstitutionChordDiagram } from "./components/substitutionChordDiagram";
+
+const codonList = [
+  "A",
+  "C",
+  "D",
+  "E",
+  "F",
+  "G",
+  "H",
+  "I",
+  "K",
+  "L",
+  "M",
+  "N",
+  "P",
+  "Q",
+  "R",
+  "S",
+  "T",
+  "V",
+  "W",
+  "Y"
+];
 
 class MultiHitContents extends React.Component {
   floatFormat = d3.format(".3f");
@@ -82,6 +105,8 @@ class MultiHitContents extends React.Component {
       testResults: [],
       xaxis: "Site",
       yaxis: "Three-hit",
+      xOptions: ["Site"],
+      yOptions: [],
       copy_transition: false,
       pvalThreshold: 0.1,
       positively_selected: [],
@@ -108,8 +133,17 @@ class MultiHitContents extends React.Component {
   toggleTableSelection(event) {
     let whichTable = event.target.children[0].dataset["name"];
 
+    let yOptions = _.keys(this.state.data[whichTable]);
+    let yaxis = this.state.yaxis;
+
+    if (yOptions.length) {
+      yaxis = yOptions[0];
+    }
+
     this.setState({
-      whichTable: whichTable
+      whichTable: whichTable,
+      yOptions: yOptions,
+      yaxis: yaxis
     });
   }
 
@@ -146,11 +180,20 @@ class MultiHitContents extends React.Component {
     // Prepare values for summary component
     const testResults = data["test results"];
 
+    let yOptions = _.keys(data[this.state.whichTable]);
+    let yaxis = this.state.yaxis;
+
+    if (yOptions.length) {
+      yaxis = yOptions[0];
+    }
+
     this.setState({
       siteTableContent: sigContent,
       testResults: testResults,
       input: data.input,
       fits: data.fits,
+      yOptions: yOptions,
+      yaxis: yaxis,
       data: data
     });
   }
@@ -287,9 +330,11 @@ class MultiHitContents extends React.Component {
 
     // card classes
     let cardClasses = "card bg-light mb-3";
+    let pBadgeClasses = "badge";
 
     if (item["p-value"] < this.state.pvalThreshold) {
       cardClasses = cardClasses + " border-primary";
+      pBadgeClasses = pBadgeClasses + " badge-primary";
     }
 
     return (
@@ -302,10 +347,12 @@ class MultiHitContents extends React.Component {
           <div className="card-body">
             <ul className="list-group">
               <li className="list-group-item">
-                LRT : {this.floatFormat(item["LRT"])}
+                <span className="badge badge-secondary">LRT</span>{" "}
+                {this.floatFormat(item["LRT"])}
               </li>
               <li className="list-group-item">
-                p-value : {this.floatFormat(item["p-value"])}
+                <span className={pBadgeClasses}>p-value</span>{" "}
+                {this.floatFormat(item["p-value"])}
               </li>
             </ul>
           </div>
@@ -319,6 +366,7 @@ class MultiHitContents extends React.Component {
 
     return (
       <div className="container">
+        <h3>Likelihood Test Results</h3>
         <div className="row">
           {this.getTestResultCard(
             '<i class="fas fa-dice-three"></i> Triple-hit vs single-hit',
@@ -423,10 +471,6 @@ class MultiHitContents extends React.Component {
       this.state.xaxis,
       this.state.yaxis
     );
-
-    if (this.state.mle_results) {
-      y_options = _.keys(this.state.mle_results[0]);
-    }
 
     const edgeColorizer = (element, data) => {
       // Color based on partition
@@ -539,6 +583,13 @@ class MultiHitContents extends React.Component {
                 popover="<p>Hover over a column header for a description of its content.</p>"
               />
 
+              <DatamonkeyGraphMenu
+                x_options={this.state.xOptions}
+                y_options={this.state.yOptions}
+                axisSelectionEvent={this.updateAxisSelection}
+                export_images
+              />
+
               <DatamonkeySeries
                 x={x}
                 y={y}
@@ -592,6 +643,15 @@ class MultiHitContents extends React.Component {
                 classes={"table table-smm table-striped"}
                 paginate={20}
                 export_csv
+              />
+
+              <SubstitutionChordDiagram
+                matrix={this.props.matrix}
+                width={
+                  $("#results").width() == null ? 935 : $("#results").width()
+                }
+                height={800}
+                colorConnectionsBy={this.state.colorConnectionsBy}
               />
             </div>
           </div>

@@ -47,9 +47,14 @@ class GraphMenu extends React.Component {
     );
   }
 
+  static getDerivedStateFromProps(nextProps, prevState) {
+    if (!_.contains(nextProps.y_options, prevState.yaxis)) {
+      return { yaxis: nextProps.y_options[0] };
+    } else return null;
+  }
+
   AxisButton(options, selected, axis, label) {
     var self = this;
-
     var DimensionOptions = [];
 
     DimensionOptions = _.map(
@@ -136,7 +141,7 @@ class GraphMenu extends React.Component {
 
     return (
       <nav className="navbar" style={navStyle}>
-        <form className="navbar-form">
+        <form className="navbar-form col-8">
           {XAxisButton}
           {YAxisButton}
         </form>
