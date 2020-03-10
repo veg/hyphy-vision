@@ -7889,9 +7889,9 @@ prepend-http@^1.0.0:
   version "1.0.4"
   resolved "https://registry.yarnpkg.com/prepend-http/-/prepend-http-1.0.4.tgz#d4f4562b0ce3696e41ac52d0e002e57a635dc6dc"
 
-prettier@1.18.1:
-  version "1.18.1"
-  resolved "https://registry.yarnpkg.com/prettier/-/prettier-1.18.1.tgz#2c79bdc97cbd457fc56e2f37c91cf076d69a8e07"
+prettier@1.19.1:
+  version "1.19.1"
+  resolved "https://registry.yarnpkg.com/prettier/-/prettier-1.19.1.tgz#f7d7f5ff8a9cd872a7be4ca142095956a60797cb"
 
 pretty-bytes@^1.0.2:
   version "1.0.4"
