@@ -8,10 +8,34 @@ import { DatamonkeyTable } from "./components/tables.jsx";
 import { DatamonkeySeries, DatamonkeyGraphMenu } from "./components/graphs.jsx";
 import { MainResult } from "./components/mainresult.jsx";
 import { ResultsPage } from "./components/results_page.jsx";
-import { SubstitutionChordDiagram } from "./components/substitutionChordDiagram";
+import Circos, { CHORDS } from "react-circos";
+
+import translationTable from "./fixtures/translation_table.json";
+import layout from "./fixtures/months.json";
+import heatmap from "./fixtures/heatmap.json";
+import example from "./fixtures/example.json";
+
+const size = 800;
 
 class MultiHitContents extends React.Component {
   floatFormat = d3.format(".3f");
+
+  prepareForCircos(subs) {
+    let counts = {};
+
+    // Merge all objects together
+    let transitions = _.values(subs);
+
+    _.each(transitions, source => {
+      _.each(source, (target, key) => {
+        if (!counts[key]) {
+          counts[key] = 0;
+        }
+        counts[key];
+        debugger;
+      });
+    });
+  }
 
   constructor(props) {
     super(props);
@@ -75,6 +99,40 @@ class MultiHitContents extends React.Component {
 
     this.toggleTableSelection = this.toggleTableSelection.bind(this);
 
+    let circosConfiguration = {
+      innerRadius: 250,
+      outerRadius: 300,
+      cornerRadius: 0,
+      gap: 0.04,
+      labels: {
+        display: true,
+        position: "center",
+        size: "14",
+        color: "black",
+        radialOffset: 60
+      },
+      ticks: {
+        display: false,
+        color: "grey",
+        spacing: 10000000,
+        labels: true,
+        labelSpacing: 10,
+        labelSuffix: "",
+        labelDenominator: 1,
+        labelDisplay0: true,
+        labelSize: 10,
+        labelColor: "#000",
+        labelFont: "default",
+        majorSpacing: 5,
+        size: Object
+      },
+      events: {},
+      opacity: 1,
+      onClick: null,
+      onMouseOver: null,
+      zIndex: 100
+    };
+
     this.state = {
       siteTableHeaders: siteTableHeaders,
       siteTableContent: siteTableContent,
@@ -93,6 +151,9 @@ class MultiHitContents extends React.Component {
       testedSets: props.json.tested[0],
       uniqTestedSets: uniqTestedSets,
       colorMap: colorMap,
+      circosLayout: example[0],
+      circosChordData: example[1],
+      circosConfiguration: circosConfiguration,
       fits: {}
     };
   }
@@ -159,6 +220,9 @@ class MultiHitContents extends React.Component {
 
     let yOptions = _.keys(data[this.state.whichTable]);
     let yaxis = this.state.yaxis;
+
+    let substitutionMatrix = data["Site substitutions"];
+    this.prepareForCircos(substitutionMatrix);
 
     if (yOptions.length) {
       yaxis = yOptions[0];
@@ -527,6 +591,9 @@ class MultiHitContents extends React.Component {
       edgeColorizer: edgeColorizer
     };
 
+    let chordData = this.state.circosChordData;
+    console.log(chordData);
+
     return (
       <div>
         <div
@@ -618,6 +685,25 @@ class MultiHitContents extends React.Component {
                 classes={"table table-smm table-striped"}
                 paginate={20}
                 export_csv
+              />
+
+              <Header
+                title="Circos Plot"
+                popover="<p>Hover over a column header for a description of its content.</p>"
+              />
+
+              <Circos
+                size={800}
+                layout={this.state.circosLayout}
+                config={this.state.circosConfiguration}
+                tracks={[
+                  {
+                    id: "flow",
+                    type: CHORDS,
+                    data: chordData,
+                    config: { color: "grey", opacity: 0.5 }
+                  }
+                ]}
               />
             </div>
           </div>
