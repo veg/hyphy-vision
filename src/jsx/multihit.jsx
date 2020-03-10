@@ -8,14 +8,13 @@ import { DatamonkeyTable } from "./components/tables.jsx";
 import { DatamonkeySeries, DatamonkeyGraphMenu } from "./components/graphs.jsx";
 import { MainResult } from "./components/mainresult.jsx";
 import { ResultsPage } from "./components/results_page.jsx";
-import Circos, { CHORDS } from "react-circos";
+import { Circos } from "./components/circos.jsx";
+import { CHORDS } from "./components/tracks.js";
 
 import translationTable from "./fixtures/translation_table.json";
 import layout from "./fixtures/months.json";
 import heatmap from "./fixtures/heatmap.json";
 import example from "./fixtures/example.json";
-
-const size = 800;
 
 class MultiHitContents extends React.Component {
   floatFormat = d3.format(".3f");
@@ -27,14 +26,90 @@ class MultiHitContents extends React.Component {
     let transitions = _.values(subs);
 
     _.each(transitions, source => {
-      _.each(source, (target, key) => {
-        if (!counts[key]) {
-          counts[key] = 0;
+      _.each(source, (targets, sourceKey) => {
+        if (!counts[sourceKey]) {
+          counts[sourceKey] = {};
         }
-        counts[key];
-        debugger;
+
+        _.each(targets, (target, targetKey) => {
+          if (!counts[sourceKey][targetKey]) {
+            counts[sourceKey][targetKey] = 0;
+          }
+
+          let c = _.keys(target).length;
+          counts[sourceKey][targetKey] += c;
+        });
       });
     });
+
+    let chordData = [];
+
+    _.each(counts, (targets, sourceKey) => {
+      _.each(targets, (target, targetKey) => {
+        chordData.push({
+          count: target,
+          source: {
+            id: "codon-" + sourceKey,
+            start: 0,
+            end: 10,
+            codon: sourceKey
+          },
+          target: {
+            id: "codon-" + targetKey,
+            start: 0,
+            end: 10,
+            codon: targetKey
+          }
+        });
+      });
+    });
+
+    // get unique sources and targets from counts
+    let codons = _.uniq(
+      _.flatten(_.map(chordData, d => [d.source.codon, d.target.codon]))
+    );
+    let chordLayout = _.map(codons, this.getCodonLayout);
+
+    console.log(chordLayout);
+
+    return { chordLayout: chordLayout, chordData: chordData };
+  }
+
+  getCodonLayout(codon) {
+    // Create layout from chord data
+    //{
+    //  "len": 756,
+    //  "color": "rgb(150, 61, 179)",
+    //  "label": "GCA",
+    //  "id": "codon-GCA",
+    //  "aa": "A"
+    //}
+
+    let idx = {};
+    let c = 0;
+
+    _.each(translationTable, (aa, i) => {
+      idx[aa] = c / 20;
+      c++;
+    });
+
+    let codonColors = d3.scale.category20();
+
+    let len = 500;
+    let color = codonColors(idx[translationTable[codon]]);
+    let label = codon;
+    let id = "codon-" + codon;
+    let aa = translationTable[codon];
+
+    let codonLayout = {
+      len: len,
+      color: color,
+      label: label,
+      id: id,
+      aa: aa
+    };
+
+    return codonLayout;
   }
 
   constructor(props) {
@@ -100,8 +175,8 @@ class MultiHitContents extends React.Component {
     this.toggleTableSelection = this.toggleTableSelection.bind(this);
 
     let circosConfiguration = {
-      innerRadius: 250,
-      outerRadius: 300,
+      innerRadius: 300,
+      outerRadius: 350,
       cornerRadius: 0,
       gap: 0.04,
       labels: {
@@ -151,8 +226,8 @@ class MultiHitContents extends React.Component {
       testedSets: props.json.tested[0],
       uniqTestedSets: uniqTestedSets,
       colorMap: colorMap,
-      circosLayout: example[0],
-      circosChordData: example[1],
+      circosLayout: [],
+      circosChordData: [],
       circosConfiguration: circosConfiguration,
       fits: {}
     };
@@ -222,13 +297,17 @@ class MultiHitContents extends React.Component {
     let yaxis = this.state.yaxis;
 
     let substitutionMatrix = data["Site substitutions"];
-    this.prepareForCircos(substitutionMatrix);
+    let { chordLayout, chordData } = this.prepareForCircos(substitutionMatrix);
 
     if (yOptions.length) {
       yaxis = yOptions[0];
     }
 
     this.setState({
+      circosLayout: chordLayout,
+      circosChordData: chordData,
+      //circosLayout : example[0],
+      //circosChordData : example[1],
       siteTableContent: sigContent,
       testResults: testResults,
       input: data.input,
@@ -592,7 +671,6 @@ class MultiHitContents extends React.Component {
     };
 
     let chordData = this.state.circosChordData;
-    console.log(chordData);
 
     return (
       <div>
@@ -692,19 +770,21 @@ class MultiHitContents extends React.Component {
                 popover="<p>Hover over a column header for a description of its content.</p>"
               />
 
-              <Circos
-                size={800}
-                layout={this.state.circosLayout}
-                config={this.state.circosConfiguration}
-                tracks={[
-                  {
-                    id: "flow",
-                    type: CHORDS,
-                    data: chordData,
-                    config: { color: "grey", opacity: 0.5 }
-                  }
-                ]}
-              />
+              <div id="plot-tab" className="offset-1">
+                <Circos
+                  size={800}
+                  layout={this.state.circosLayout}
+                  config={this.state.circosConfiguration}
+                  tracks={[
+                    {
+                      id: "flow",
+                      type: CHORDS,
+                      data: chordData,
+                      config: { color: "grey", opacity: 0.5 }
+                    }
+                  ]}
+                />
+              </div>
             </div>
           </div>
         </div>
@@ -721,8 +801,7 @@ function MultiHit(props) {
         { label: "summary", href: "summary-tab" },
         { label: "table", href: "table-tab" },
         { label: "plot", href: "plot-tab" },
-        { label: "tree", href: "tree-tab" },
-        { label: "fits", href: "fits-tab" }
+        { label: "tree", href: "tree-tab" }
       ]}
       methodName="Multi-Hit"
       fasta={props.fasta}
