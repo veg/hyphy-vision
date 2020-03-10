@@ -115,7 +115,7 @@ class SlatkinResults extends React.Component {
           <br />
         </div>
         <div className="col-md-12">
-          <div className="main-result">
+          <div className="main-result border border-primary border-left-0 border-right-0 mt-3">
             <h4 className="border-bottom mb-2">
               Full Panmixia Test (Standard)
             </h4>

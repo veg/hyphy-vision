@@ -56,7 +56,7 @@ function GARDResults(props) {
     <div className="row">
       <div className="col-md-12" />
       <div className="col-md-12">
-        <div className="main-result">
+        <div className="main-result border border-primary border-left-0 border-right-0 mt-3">
           <p>
             GARD {evidence_statement}. GARD examined {totalModelCount} models in{" "}
             {timeString} wallclock time, at a rate of{" "}
@@ -265,9 +265,11 @@ function GARDTopologyReport(props) {
   var readPCount = props.data.pairwiseP.length,
     totalComparisons = (readPCount - 1) * 2,
     threshP = 0.01 / totalComparisons,
-    bypvalue = [[0.01, 0], [0.05, 0], [0.1, 0]].map(row =>
-      row.map(entry => entry / totalComparisons)
-    ),
+    bypvalue = [
+      [0.01, 0],
+      [0.05, 0],
+      [0.1, 0]
+    ].map(row => row.map(entry => entry / totalComparisons)),
     rows = [];
   for (var pcounter = 1; pcounter < readPCount; pcounter++) {
     var lhs = props.data.pairwiseP[pcounter][pcounter - 1],

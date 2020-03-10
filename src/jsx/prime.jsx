@@ -213,7 +213,7 @@ class PRIME extends React.Component {
 
     return (
       <div>
-        <div className="main-result">
+        <div className="main-result border border-primary border-left-0 border-right-0 mt-3">
           <p>
             <p>
               PRIME{" "}
