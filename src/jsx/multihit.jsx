@@ -12,8 +12,6 @@ import { Circos } from "./components/circos.jsx";
 import { CHORDS } from "./components/tracks.js";
 
 import translationTable from "./fixtures/translation_table.json";
-import layout from "./fixtures/months.json";
-import heatmap from "./fixtures/heatmap.json";
 import example from "./fixtures/example.json";
 
 class MultiHitContents extends React.Component {
@@ -44,20 +42,23 @@ class MultiHitContents extends React.Component {
 
     let chordData = [];
 
+    // initialize countTally
+    let countTally = _.mapObject(translationTable, d => 0);
+
     _.each(counts, (targets, sourceKey) => {
       _.each(targets, (target, targetKey) => {
         chordData.push({
           count: target,
           source: {
             id: "codon-" + sourceKey,
-            start: 0,
-            end: 10,
+            start: countTally[sourceKey],
+            end: (countTally[sourceKey] += target),
             codon: sourceKey
           },
           target: {
             id: "codon-" + targetKey,
-            start: 0,
-            end: 10,
+            start: countTally[targetKey],
+            end: (countTally[targetKey] += target),
             codon: targetKey
           }
         });
@@ -68,14 +69,15 @@ class MultiHitContents extends React.Component {
     let codons = _.uniq(
       _.flatten(_.map(chordData, d => [d.source.codon, d.target.codon]))
     );
-    let chordLayout = _.map(codons, this.getCodonLayout);
 
-    console.log(chordLayout);
+    let chordLayout = _.map(codons, d => {
+      return this.getCodonLayout(d, countTally[d]);
+    });
 
     return { chordLayout: chordLayout, chordData: chordData };
   }
 
-  getCodonLayout(codon) {
+  getCodonLayout(codon, count) {
     // Create layout from chord data
     //{
     //  "len": 756,
@@ -95,7 +97,7 @@ class MultiHitContents extends React.Component {
 
     let codonColors = d3.scale.category20();
 
-    let len = 500;
+    let len = count;
     let color = codonColors(idx[translationTable[codon]]);
     let label = codon;
     let id = "codon-" + codon;
@@ -191,7 +193,7 @@ class MultiHitContents extends React.Component {
         color: "grey",
         spacing: 10000000,
         labels: true,
-        labelSpacing: 10,
+        labelSpacing: 20,
         labelSuffix: "",
         labelDenominator: 1,
         labelDisplay0: true,
