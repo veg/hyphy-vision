@@ -47,21 +47,23 @@ class MultiHitContents extends React.Component {
 
     _.each(counts, (targets, sourceKey) => {
       _.each(targets, (target, targetKey) => {
-        chordData.push({
-          count: target,
-          source: {
-            id: "codon-" + sourceKey,
-            start: countTally[sourceKey],
-            end: (countTally[sourceKey] += target),
-            codon: sourceKey
-          },
-          target: {
-            id: "codon-" + targetKey,
-            start: countTally[targetKey],
-            end: (countTally[targetKey] += target),
-            codon: targetKey
-          }
-        });
+        if (target > 3) {
+          chordData.push({
+            count: target,
+            source: {
+              id: "codon-" + sourceKey,
+              start: countTally[sourceKey],
+              end: (countTally[sourceKey] += target),
+              codon: sourceKey
+            },
+            target: {
+              id: "codon-" + targetKey,
+              start: countTally[targetKey],
+              end: (countTally[targetKey] += target),
+              codon: targetKey
+            }
+          });
+        }
       });
     });
 
@@ -77,6 +79,8 @@ class MultiHitContents extends React.Component {
     return { chordLayout: chordLayout, chordData: chordData };
   }
 
+  codonColors = d3.scale.category20();
+
   getCodonLayout(codon, count) {
     // Create layout from chord data
     //{
@@ -87,18 +91,18 @@ class MultiHitContents extends React.Component {
     //  "aa": "A"
     //}
 
-    let idx = {};
+    let translationTableIndex = {};
     let c = 0;
 
     _.each(translationTable, (aa, i) => {
-      idx[aa] = c / 20;
+      translationTableIndex[aa] = c / 20;
       c++;
     });
 
-    let codonColors = d3.scale.category20();
-
     let len = count;
-    let color = codonColors(idx[translationTable[codon]]);
+    let color = this.codonColors(
+      translationTableIndex[translationTable[codon]]
+    );
     let label = codon;
     let id = "codon-" + codon;
     let aa = translationTable[codon];
@@ -768,24 +772,38 @@ class MultiHitContents extends React.Component {
               />
 
               <Header
-                title="Circos Plot"
-                popover="<p>Hover over a column header for a description of its content.</p>"
+                title="Site Substitutions"
+                popover="<p>Site substitutions across the multiple sequence alignment</p>"
               />
 
-              <div id="plot-tab" className="offset-1">
-                <Circos
-                  size={800}
-                  layout={this.state.circosLayout}
-                  config={this.state.circosConfiguration}
-                  tracks={[
-                    {
-                      id: "flow",
-                      type: CHORDS,
-                      data: chordData,
-                      config: { color: "grey", opacity: 0.5 }
-                    }
-                  ]}
+              <div id="plot-tab">
+                <label for="min-transitions" className="mt-2">
+                  Minimum transitions
+                </label>
+                <input
+                  type="range"
+                  className="custom-range"
+                  style={{ display: "block" }}
+                  min="0"
+                  max="5"
+                  id="min-transitions"
                 />
+
+                <div className="offset-1">
+                  <Circos
+                    size={800}
+                    layout={this.state.circosLayout}
+                    config={this.state.circosConfiguration}
+                    tracks={[
+                      {
+                        id: "flow",
+                        type: CHORDS,
+                        data: chordData,
+                        config: { color: "grey", opacity: 0.5 }
+                      }
+                    ]}
+                  />
+                </div>
               </div>
             </div>
           </div>
