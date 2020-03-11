@@ -12,12 +12,11 @@ import { Circos } from "./components/circos.jsx";
 import { CHORDS } from "./components/tracks.js";
 
 import translationTable from "./fixtures/translation_table.json";
-import example from "./fixtures/example.json";
 
 class MultiHitContents extends React.Component {
   floatFormat = d3.format(".3f");
 
-  prepareForCircos(subs) {
+  prepareForCircos(subs, minTrans) {
     let counts = {};
 
     // Merge all objects together
@@ -41,13 +40,17 @@ class MultiHitContents extends React.Component {
     });
 
     let chordData = [];
+    let maxCount = 0;
 
     // initialize countTally
     let countTally = _.mapObject(translationTable, d => 0);
 
     _.each(counts, (targets, sourceKey) => {
       _.each(targets, (target, targetKey) => {
-        if (target > 3) {
+        if (target > maxCount) {
+          maxCount = target;
+        }
+        if (target > minTrans) {
           chordData.push({
             count: target,
             source: {
@@ -76,7 +79,11 @@ class MultiHitContents extends React.Component {
       return this.getCodonLayout(d, countTally[d]);
     });
 
-    return { chordLayout: chordLayout, chordData: chordData };
+    return {
+      chordLayout: chordLayout,
+      chordData: chordData,
+      maxCount: maxCount
+    };
   }
 
   codonColors = d3.scale.category20();
@@ -179,6 +186,7 @@ class MultiHitContents extends React.Component {
     let whichTable = "Evidence Ratios";
 
     this.toggleTableSelection = this.toggleTableSelection.bind(this);
+    this.updateMinimumTransitions = this.updateMinimumTransitions.bind(this);
 
     let circosConfiguration = {
       innerRadius: 300,
@@ -235,6 +243,8 @@ class MultiHitContents extends React.Component {
       circosLayout: [],
       circosChordData: [],
       circosConfiguration: circosConfiguration,
+      minimumTransitions: 3,
+      maxTransitionCount: 0,
       fits: {}
     };
   }
@@ -263,6 +273,20 @@ class MultiHitContents extends React.Component {
       whichTable: whichTable,
       yOptions: yOptions,
       yaxis: yaxis
+    });
+  }
+
+  updateMinimumTransitions(event) {
+    let substitutionMatrix = this.state.data["Site substitutions"];
+    let { chordLayout, chordData, maxCount } = this.prepareForCircos(
+      substitutionMatrix,
+      event.target.value
+    );
+
+    this.setState({
+      minimumTransitions: event.target.value,
+      circosLayout: chordLayout,
+      circosChordData: chordData
     });
   }
 
@@ -303,7 +327,10 @@ class MultiHitContents extends React.Component {
     let yaxis = this.state.yaxis;
 
     let substitutionMatrix = data["Site substitutions"];
-    let { chordLayout, chordData } = this.prepareForCircos(substitutionMatrix);
+    let { chordLayout, chordData, maxCount } = this.prepareForCircos(
+      substitutionMatrix,
+      this.state.minimumTransitions
+    );
 
     if (yOptions.length) {
       yaxis = yOptions[0];
@@ -312,6 +339,7 @@ class MultiHitContents extends React.Component {
     this.setState({
       circosLayout: chordLayout,
       circosChordData: chordData,
+      maxTransitionCount: maxCount,
       //circosLayout : example[0],
       //circosChordData : example[1],
       siteTableContent: sigContent,
@@ -777,17 +805,20 @@ class MultiHitContents extends React.Component {
               />
 
               <div id="plot-tab">
-                <label for="min-transitions" className="mt-2">
-                  Minimum transitions
-                </label>
-                <input
-                  type="range"
-                  className="custom-range"
-                  style={{ display: "block" }}
-                  min="0"
-                  max="5"
-                  id="min-transitions"
-                />
+                <div id="transition-menu">
+                  <label for="min-transitions" className="mt-2">
+                    Minimum transitions - {this.state.minimumTransitions}
+                  </label>
+                  <input
+                    type="range"
+                    className="custom-range"
+                    style={{ display: "block" }}
+                    min="0"
+                    max={this.state.maxTransitionCount}
+                    onChange={this.updateMinimumTransitions}
+                    id="min-transitions"
+                  />
+                </div>
 
                 <div className="offset-1">
                   <Circos
