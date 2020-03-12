@@ -620,6 +620,7 @@ class ContrastFELContents extends React.Component {
                 title="ContrastFEL Table"
                 popover="<p>Hover over a column header for a description of its content.</p>"
               />
+              <div style={{ height: 10 }}></div>
               <DatamonkeyTable
                 headerData={this.state.mle_headers}
                 bodyData={this.state.mle_content}

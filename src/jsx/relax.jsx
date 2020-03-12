@@ -541,6 +541,7 @@ class RELAXContents extends React.Component {
 
         <div id="branch-attribute-table">
           <Header title="Branch attributes" />
+          <div style={{ height: 10 }}></div>
           <DatamonkeyTable
             headerData={self.state.branchAttributeHeaders}
             bodyData={self.state.branchAttributeRows}

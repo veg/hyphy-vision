@@ -107,7 +107,7 @@ class GraphMenu extends React.Component {
             <button
               id="export-chart-png"
               type="button"
-              className="btn.btn-secondary btn-sm btn-export"
+              className="btn.btn-secondary btn-sm btn-export btn-export-chart-png"
               onClick={() =>
                 saveSvgAsPng(
                   document.getElementById("dm-chart"),
@@ -120,7 +120,7 @@ class GraphMenu extends React.Component {
             <button
               id="export-chart-png"
               type="button"
-              className="btn.btn-secondary btn-sm btn-export"
+              className="btn.btn-secondary btn-sm btn-export btn-export-chart-svg"
               onClick={() =>
                 d3_save_svg.save(d3.select("#dm-chart").node(), {
                   filename: "datamonkey-chart"
