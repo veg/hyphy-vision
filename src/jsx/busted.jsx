@@ -648,7 +648,7 @@ class BUSTEDModelTable extends React.Component {
             "<ul><li>Hover over a column header for a description of its content.</li><li>Click a row to view the corresponding rate distribution.</li></ul>"
           }
         />
-        <table className="dm-table table table-hover table-smm list-group-item-text">
+        <table className="dm-table table table-hover table-smm list-group-item-text table-striped">
           <thead id="summary-model-header1">
             <tr>
               <th>Model</th>

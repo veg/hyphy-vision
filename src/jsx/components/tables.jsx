@@ -305,7 +305,7 @@ var DatamonkeyTable = createReactClass({
    */
   getDefaultProps: function() {
     return {
-      classes: "dm-table table table-smm table-hover",
+      classes: "dm-table table table-smm table-hover table-striped",
       rowHash: null
     };
   },
