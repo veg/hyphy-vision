@@ -16,10 +16,30 @@ import translationTable from "./fixtures/translation_table.json";
 class MultiHitContents extends React.Component {
   floatFormat = d3.format(".3f");
 
-  prepareForCircos(subs, minTrans) {
+  prepareForCircos(subs, ers, maxERs, minTrans) {
     let counts = {};
 
     // Merge all objects together
+    let filterer = (key, d, i) => {
+      if (d <= maxERs[key]) {
+        return i + 1;
+      } else {
+        return -1;
+      }
+    };
+
+    let siteFilterer = key =>
+      _.filter(
+        _.map(ers[key][0], (d, i) => {
+          return filterer(key, d, i);
+        }),
+        d => d > -1
+      );
+
+    // Filter subs based on site evidence ratios
+    let sitesToKeep = _.intersection(..._.map(_.keys(ers), siteFilterer));
+
+    subs = _.pick(subs, sitesToKeep);
     let transitions = _.values(subs);
 
     _.each(transitions, source => {
@@ -70,6 +90,8 @@ class MultiHitContents extends React.Component {
       });
     });
 
+    console.log(chordData);
+
     // get unique sources and targets from counts
     let codons = _.uniq(
       _.flatten(_.map(chordData, d => [d.source.codon, d.target.codon]))
@@ -87,6 +109,27 @@ class MultiHitContents extends React.Component {
   }
 
   codonColors = d3.scale.category20();
+
+  toggleMinERSelector(event) {
+    let maxERs = this.state.maxERs;
+    let name = event.target.dataset.name;
+    maxERs[name] = parseFloat(event.target.value);
+
+    let substitutionMatrix = this.state.data["Site substitutions"];
+
+    let { chordLayout, chordData, maxCount } = this.prepareForCircos(
+      substitutionMatrix,
+      this.state.data["Evidence Ratios"],
+      maxERs,
+      this.state.minimumTransitions
+    );
+
+    this.setState({
+      maxERs: maxERs,
+      circosLayout: chordLayout,
+      circosChordData: chordData
+    });
+  }
 
   getCodonLayout(codon, count) {
     // Create layout from chord data
@@ -124,6 +167,23 @@ class MultiHitContents extends React.Component {
 
     return codonLayout;
   }
+
+  erMap = {
+    "Three-hit": {
+      icon: '<i class="fas fa-dice-three fa-3x"></i>',
+      abbrev: "3H"
+    },
+    "Three-hit islands vs 2-hit": {
+      icon:
+        '<i class="fas fa-dice-three fa-2x"></i> vs. <i class="fas fa-dice-two fa-2x"></i>',
+      abbrev: "3HSI"
+    },
+    "Three-hit vs three-hit islands": {
+      icon: '<i class="fas fa-compass fa-3x"></i>',
+      abbrev: "3H+"
+    },
+    "Two-hit": { icon: '<i class="fas fa-dice-two fa-3x"></i>', abbrev: "2H" }
+  };
 
   constructor(props) {
     super(props);
@@ -187,6 +247,8 @@ class MultiHitContents extends React.Component {
 
     this.toggleTableSelection = this.toggleTableSelection.bind(this);
     this.updateMinimumTransitions = this.updateMinimumTransitions.bind(this);
+    this.getMinERSelector = this.getMinERSelector.bind(this);
+    this.toggleMinERSelector = this.toggleMinERSelector.bind(this);
 
     let circosConfiguration = {
       innerRadius: 300,
@@ -245,6 +307,12 @@ class MultiHitContents extends React.Component {
       circosConfiguration: circosConfiguration,
       minimumTransitions: 3,
       maxTransitionCount: 0,
+      maxERs: {
+        "Three-hit": 5,
+        "Three-hit islands vs 2-hit": 5,
+        "Three-hit vs three-hit islands": 5,
+        "Two-hit": 5
+      },
       fits: {}
     };
   }
@@ -280,6 +348,8 @@ class MultiHitContents extends React.Component {
     let substitutionMatrix = this.state.data["Site substitutions"];
     let { chordLayout, chordData, maxCount } = this.prepareForCircos(
       substitutionMatrix,
+      this.state.data["Evidence Ratios"],
+      this.state.maxERs,
       event.target.value
     );
 
@@ -329,6 +399,8 @@ class MultiHitContents extends React.Component {
     let substitutionMatrix = data["Site substitutions"];
     let { chordLayout, chordData, maxCount } = this.prepareForCircos(
       substitutionMatrix,
+      data["Evidence Ratios"],
+      this.state.maxERs,
       this.state.minimumTransitions
     );
 
@@ -515,6 +587,29 @@ class MultiHitContents extends React.Component {
     );
   }
 
+  getMinERSelector(name) {
+    return (
+      <div className="input-group mr-2">
+        <div className="input-group-prepend">
+          <div className="input-group-text" id="btnGroupAddon">
+            {this.erMap[name].abbrev}
+          </div>
+        </div>
+        <input
+          type="number"
+          className="form-control"
+          data-name={name}
+          onChange={this.toggleMinERSelector}
+          placeholder="5"
+          defaultValue="5"
+          step=".1"
+          aria-label="Minimum ER"
+          aria-describedby="btnGroupAddon"
+        />
+      </div>
+    );
+  }
+
   getSummaryForRendering() {
     // {this.getSummaryForSource()}
 
@@ -617,94 +712,21 @@ class MultiHitContents extends React.Component {
   }
 
   render() {
-    let newick = this.props.json.input.trees[0];
-
     var { x: x, y: y } = this.definePlotData(
       this.state.xaxis,
       this.state.yaxis
     );
 
-    const edgeColorizer = (element, data) => {
-      // Color based on partition
-      let color = this.state.colorMap[this.state.testedSets[data.target.name]];
-
-      element
-        .style("stroke", color)
-        .style("stroke-linejoin", "round")
-        .style("stroke-linejoin", "round")
-        .style("stroke-linecap", "round");
-    };
-
-    var legendCreator = function() {
-      let svg = this.svg;
-
-      if (!this.state.omega_color || !this.state.omega_scale) {
-        return;
-      }
-
-      var margins = {
-        bottom: 30,
-        top: 15,
-        left: 0,
-        right: 0
-      };
-
-      d3.selectAll("#color-legend").remove();
-
-      var dc_legend = svg
-        .append("g")
-        .attr("id", "color-legend")
-        .attr("class", "dc-legend")
-        .attr(
-          "transform",
-          "translate(" + margins["left"] + "," + margins["top"] + ")"
-        );
-
-      let cnt = 0;
-
-      _.each(self.state.colorMap, (v, k) => {
-        var color_fill = v;
-
-        var legend_item = dc_legend
-          .append("g")
-          .attr("class", "dc-legend-item")
-          .attr("transform", "translate(0," + cnt * 20 + ")");
-
-        legend_item
-          .append("rect")
-          .attr("width", "13")
-          .attr("height", "13")
-          .attr("fill", color_fill);
-
-        legend_item
-          .append("text")
-          .attr("x", "15")
-          .attr("y", "11")
-          .text(k);
-
-        cnt = cnt + 1;
-      });
-    };
-
-    var tree_settings = {
-      "tree-options": {
-        /* value arrays have the following meaning
-                    [0] - the value of the attribute
-                    [1] - does the change in attribute value trigger tree re-layout?
-                */
-        "hyphy-tree-model": ["Unconstrained model", true],
-        "hyphy-tree-highlight": ["RELAX.test", false],
-        "hyphy-tree-branch-lengths": [false, true],
-        "hyphy-tree-hide-legend": [true, false],
-        "hyphy-tree-fill-color": [true, false]
-      },
-      "hyphy-tree-legend-type": legendCreator,
-      "suppress-tree-render": false,
-      "chart-append-html": true,
-      edgeColorizer: edgeColorizer
-    };
-
     let chordData = this.state.circosChordData;
+
+    let selectors = null;
+
+    if (this.state.data) {
+      selectors = _.map(
+        _.keys(this.state.data["Evidence Ratios"]),
+        this.getMinERSelector
+      );
+    }
 
     return (
       <div>
@@ -805,19 +827,51 @@ class MultiHitContents extends React.Component {
               />
 
               <div id="plot-tab">
-                <div id="transition-menu">
-                  <label for="min-transitions" className="mt-2">
-                    Minimum transitions - {this.state.minimumTransitions}
+                <div>
+                  <h6 className="mt-2">Maximum Evidence Ratio</h6>
+                  <div
+                    className="btn-toolbar mb-3 mt-3"
+                    role="toolbar"
+                    aria-label="Toolbar with button groups"
+                  >
+                    {selectors}
+                  </div>
+                </div>
+
+                <div
+                  className="btn-group-toggle mt-2 float-right"
+                  data-toggle="buttons"
+                >
+                  <label className="">Show</label>
+                  <label className="btn btn-secondary active">
+                    <input type="checkbox" /> Labels
                   </label>
-                  <input
-                    type="range"
-                    className="custom-range"
-                    style={{ display: "block" }}
-                    min="0"
-                    max={this.state.maxTransitionCount}
-                    onChange={this.updateMinimumTransitions}
-                    id="min-transitions"
-                  />
+                  <label className="btn btn-secondary active">
+                    <input type="checkbox" /> Legend
+                  </label>
+                </div>
+
+                <div id="circos-menu">
+                  <div id="transition-menu">
+                    <label for="min-transitions" className="mt-2">
+                      <h6>
+                        Minimum transitions{" "}
+                        <span class="badge badge-secondary">
+                          {this.state.minimumTransitions}
+                        </span>{" "}
+                      </h6>
+                    </label>
+                    <input
+                      type="range"
+                      className="custom-range"
+                      style={{ display: "block" }}
+                      defaultValue="3"
+                      min="0"
+                      max={this.state.maxTransitionCount}
+                      onChange={this.updateMinimumTransitions}
+                      id="min-transitions"
+                    />
+                  </div>
                 </div>
 
                 <div className="offset-1">
