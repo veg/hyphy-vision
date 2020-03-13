@@ -591,6 +591,10 @@ class MultiHitContents extends React.Component {
   toggleLabels(event) {
     let config = this.state.circosConfiguration;
     config.labels.display = !config.labels.display;
+
+    this.setState({
+      circosConfiguration: config
+    });
   }
 
   getMinERSelector(name) {
@@ -844,15 +848,16 @@ class MultiHitContents extends React.Component {
                   </div>
                 </div>
 
-                <div
-                  className="btn-group-toggle mt-2 float-right"
-                  data-toggle="buttons"
-                >
-                  <label className="">Show</label>
-                  <label className="btn btn-secondary active">
-                    <input type="checkbox" onClick={this.toggleLabels} /> Labels
+                <div className="mt-2 float-right">
+                  <label className="btn btn-light active">
+                    <input
+                      type="checkbox"
+                      defaultChecked={true}
+                      onClick={this.toggleLabels}
+                    />{" "}
+                    Labels
                   </label>
-                  <label className="btn btn-secondary active">
+                  <label className="btn btn-light active">
                     <input type="checkbox" /> Legend
                   </label>
                 </div>
