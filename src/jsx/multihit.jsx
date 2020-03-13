@@ -830,6 +830,14 @@ class MultiHitContents extends React.Component {
     );
 
     let chordData = this.state.circosChordData;
+    let chordDataTableHeaders = [
+      { value: "Source", abbr: "Source", sortable: true },
+      { value: "Target", abbr: "Target", sortable: true },
+      { value: "Count", abbr: "Count", sortable: true }
+    ];
+    let chordDataTableRows = _.map(this.state.circosChordData, d => {
+      return [d.source.codon, d.target.codon, d.count];
+    });
 
     let selectors = null;
 
@@ -940,7 +948,7 @@ class MultiHitContents extends React.Component {
 
               <div id="plot-tab">
                 <div>
-                  <h6 className="mt-2">Maximum Evidence Ratio</h6>
+                  <h6 className="mt-2">Evidence Ratio Thresholds</h6>
                   <div
                     className="btn-toolbar mb-3 mt-3"
                     role="toolbar"
@@ -968,7 +976,7 @@ class MultiHitContents extends React.Component {
                   <div id="transition-menu">
                     <label for="min-transitions" className="mt-2">
                       <h6>
-                        Minimum transitions{" "}
+                        Minimum nucleotide positions changed{" "}
                         <span class="badge badge-secondary">
                           {this.state.minimumTransitions}
                         </span>{" "}
@@ -1002,6 +1010,14 @@ class MultiHitContents extends React.Component {
                     ]}
                   />
                 </div>
+
+                <DatamonkeyTable
+                  headerData={chordDataTableHeaders}
+                  bodyData={chordDataTableRows}
+                  classes={"table table-smm table-striped"}
+                  paginate={20}
+                  export_csv
+                />
               </div>
             </div>
           </div>
