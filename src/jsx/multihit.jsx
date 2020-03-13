@@ -249,6 +249,7 @@ class MultiHitContents extends React.Component {
     this.updateMinimumTransitions = this.updateMinimumTransitions.bind(this);
     this.getMinERSelector = this.getMinERSelector.bind(this);
     this.toggleMinERSelector = this.toggleMinERSelector.bind(this);
+    this.toggleLabels = this.toggleLabels.bind(this);
 
     let circosConfiguration = {
       innerRadius: 300,
@@ -587,6 +588,11 @@ class MultiHitContents extends React.Component {
     );
   }
 
+  toggleLabels(event) {
+    let config = this.state.circosConfiguration;
+    config.labels.display = !config.labels.display;
+  }
+
   getMinERSelector(name) {
     return (
       <div className="input-group mr-2">
@@ -602,7 +608,7 @@ class MultiHitContents extends React.Component {
           onChange={this.toggleMinERSelector}
           placeholder="5"
           defaultValue="5"
-          step=".1"
+          step="1"
           aria-label="Minimum ER"
           aria-describedby="btnGroupAddon"
         />
@@ -844,7 +850,7 @@ class MultiHitContents extends React.Component {
                 >
                   <label className="">Show</label>
                   <label className="btn btn-secondary active">
-                    <input type="checkbox" /> Labels
+                    <input type="checkbox" onClick={this.toggleLabels} /> Labels
                   </label>
                   <label className="btn btn-secondary active">
                     <input type="checkbox" /> Legend
