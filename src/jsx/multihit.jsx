@@ -10,18 +10,232 @@ import { MainResult } from "./components/mainresult.jsx";
 import { ResultsPage } from "./components/results_page.jsx";
 import { Circos } from "./components/circos.jsx";
 import { CHORDS } from "./components/tracks.js";
+import { Range } from "react-range";
 
 import translationTable from "./fixtures/translation_table.json";
 
+class ERSliders extends React.Component {
+  constructor(props) {
+    super(props);
+    this.updateVals = this.updateVals.bind(this);
+  }
+
+  state = { values: this.props.values };
+
+  updateVals(values) {
+    this.props.update(this.props.name, values);
+    this.setState({ values });
+  }
+
+  render() {
+    return (
+      <Range
+        step={0.5}
+        min={0}
+        max={10}
+        values={this.state.values}
+        onChange={this.updateVals}
+        renderTrack={({ props, children }) => (
+          <div
+            {...props}
+            className="mt-2"
+            style={{
+              ...props.style,
+              height: "4px",
+              width: "100%",
+              backgroundColor: "#ccc"
+            }}
+          >
+            {children}
+          </div>
+        )}
+        renderThumb={({ props }) => (
+          <div
+            {...props}
+            style={{
+              ...props.style,
+              height: "8px",
+              width: "8px",
+              backgroundColor: "#999"
+            }}
+          />
+        )}
+      />
+    );
+  }
+}
+
 class MultiHitContents extends React.Component {
+  constructor(props) {
+    super(props);
+
+    let testedSets = [];
+
+    if (props.json.tested) {
+      testedSets = props.json.tested[0];
+    }
+
+    let uniqTestedSets = _.uniq(_.values(testedSets));
+
+    let colorMap = _.object(
+      uniqTestedSets,
+      _.take(d3.scale.category10().range(), _.size(uniqTestedSets))
+    );
+
+    // These variables are to be used for DatamonkeyTable
+    const erHeaders = [
+      ["Site", "Site Index"],
+      ['<i class="fas fa-dice-three fa-3x"></i>', "Three-hit"],
+      [
+        '<i class="fas fa-dice-three fa-2x"></i> vs. <i class="fas fa-dice-two fa-2x"></i>',
+        "Three-hit islands vs 2-hit"
+      ],
+      [
+        '<i class="fas fa-compass fa-3x"></i>',
+        "Three-hit vs three-hit islands"
+      ],
+      ['<i class="fas fa-dice-two fa-3x"></i>', "Two-hit"]
+    ];
+
+    const siteLogLHeaders = [
+      ["Site", "Site Index"],
+      [
+        '<i class="fas fa-dice-three fa-2x"></i> and <i class="fas fa-dice-two fa-2x"></i>',
+        "MG94 with double and triple instantaneous substitutions"
+      ],
+      [
+        '<i class="fas fa-compass fa-3x"></i>',
+        "MG94 with double and triple instantaneous substitutions [only synonymous islands]"
+      ],
+      [
+        '<i class="fas fa-dice-two fa-3x"></i>',
+        "MG94 with double instantaneous substitutions"
+      ],
+      ['<i class="fas fa-dice-one fa-3x"></i>', "Standard MG94"]
+    ];
+
+    let siteTableHeaders = {
+      "Evidence Ratios": this.formatHeadersForTable(erHeaders),
+      "Site Log Likelihood": this.formatHeadersForTable(siteLogLHeaders)
+    };
+
+    let siteTableContent = {
+      "Evidence Ratios": {},
+      "Site Log Likelihood": {}
+    };
+
+    let whichTable = "Evidence Ratios";
+
+    this.toggleTableSelection = this.toggleTableSelection.bind(this);
+    this.updateMinimumTransitions = this.updateMinimumTransitions.bind(this);
+    this.getMinERSelector = this.getMinERSelector.bind(this);
+    this.updateERThreshold = this.updateERThreshold.bind(this);
+    this.toggleLabels = this.toggleLabels.bind(this);
+    this.inputERSelector = this.inputERSelector.bind(this);
+
+    let circosConfiguration = {
+      innerRadius: 300,
+      outerRadius: 350,
+      cornerRadius: 0,
+      gap: 0.04,
+      labels: {
+        display: true,
+        position: "center",
+        size: "14",
+        color: "black",
+        radialOffset: 60
+      },
+      ticks: {
+        display: false,
+        color: "grey",
+        spacing: 10000000,
+        labels: true,
+        labelSpacing: 20,
+        labelSuffix: "",
+        labelDenominator: 1,
+        labelDisplay0: true,
+        labelSize: 10,
+        labelColor: "#000",
+        labelFont: "default",
+        majorSpacing: 5,
+        size: Object
+      },
+      events: {},
+      opacity: 1,
+      onClick: null,
+      onMouseOver: null,
+      zIndex: 100
+    };
+
+    this.state = {
+      siteTableHeaders: siteTableHeaders,
+      siteTableContent: siteTableContent,
+      whichTable: whichTable,
+      testResults: [],
+      xaxis: "Site",
+      yaxis: "Three-hit",
+      xOptions: ["Site"],
+      yOptions: [],
+      copy_transition: false,
+      pvalThreshold: 0.1,
+      positively_selected: [],
+      negatively_selected: [],
+      pvals: {},
+      input: null,
+      testedSets: props.json.tested[0],
+      uniqTestedSets: uniqTestedSets,
+      colorMap: colorMap,
+      circosLayout: [],
+      circosChordData: [],
+      circosConfiguration: circosConfiguration,
+      minimumTransitions: 3,
+      maxTransitionCount: 0,
+      ERThresholds: {
+        "Three-hit": [0, 5],
+        "Three-hit islands vs 2-hit": [0, 5],
+        "Three-hit vs three-hit islands": [0, 5],
+        "Two-hit": [0, 5]
+      },
+      minERs: {
+        "Three-hit": 0,
+        "Three-hit islands vs 2-hit": 0,
+        "Three-hit vs three-hit islands": 0,
+        "Two-hit": 0
+      },
+      maxERs: {
+        "Three-hit": 5,
+        "Three-hit islands vs 2-hit": 5,
+        "Three-hit vs three-hit islands": 5,
+        "Two-hit": 5
+      },
+      fits: {}
+    };
+  }
+
   floatFormat = d3.format(".3f");
 
-  prepareForCircos(subs, ers, maxERs, minTrans) {
+  inputERSelector(event) {
+    let ERThresholds = this.state.ERThresholds;
+    let name = event.target.dataset["name"];
+    let type = event.target.dataset["type"];
+    let value = event.target.value;
+
+    let i = 0;
+    if (type == "max") {
+      i = 1;
+    }
+
+    ERThresholds[name][i] = value;
+
+    this.updateERThreshold(name, ERThresholds[name]);
+  }
+
+  prepareForCircos(subs, ers, ERThresholds, minTrans) {
     let counts = {};
 
     // Merge all objects together
     let filterer = (key, d, i) => {
-      if (d <= maxERs[key]) {
+      if (d >= ERThresholds[key][0] && d <= ERThresholds[key][1]) {
         return i + 1;
       } else {
         return -1;
@@ -90,8 +304,6 @@ class MultiHitContents extends React.Component {
       });
     });
 
-    console.log(chordData);
-
     // get unique sources and targets from counts
     let codons = _.uniq(
       _.flatten(_.map(chordData, d => [d.source.codon, d.target.codon]))
@@ -110,22 +322,21 @@ class MultiHitContents extends React.Component {
 
   codonColors = d3.scale.category20();
 
-  toggleMinERSelector(event) {
-    let maxERs = this.state.maxERs;
-    let name = event.target.dataset.name;
-    maxERs[name] = parseFloat(event.target.value);
+  updateERThreshold(name, values) {
+    let ERThresholds = this.state.ERThresholds;
+    ERThresholds[name] = values;
 
     let substitutionMatrix = this.state.data["Site substitutions"];
 
     let { chordLayout, chordData, maxCount } = this.prepareForCircos(
       substitutionMatrix,
       this.state.data["Evidence Ratios"],
-      maxERs,
+      ERThresholds,
       this.state.minimumTransitions
     );
 
     this.setState({
-      maxERs: maxERs,
+      ERThresholds: ERThresholds,
       circosLayout: chordLayout,
       circosChordData: chordData
     });
@@ -185,139 +396,6 @@ class MultiHitContents extends React.Component {
     "Two-hit": { icon: '<i class="fas fa-dice-two fa-3x"></i>', abbrev: "2H" }
   };
 
-  constructor(props) {
-    super(props);
-
-    let testedSets = [];
-
-    if (props.json.tested) {
-      testedSets = props.json.tested[0];
-    }
-
-    let uniqTestedSets = _.uniq(_.values(testedSets));
-
-    let colorMap = _.object(
-      uniqTestedSets,
-      _.take(d3.scale.category10().range(), _.size(uniqTestedSets))
-    );
-
-    // These variables are to be used for DatamonkeyTable
-    const erHeaders = [
-      ["Site", "Site Index"],
-      ['<i class="fas fa-dice-three fa-3x"></i>', "Three-hit"],
-      [
-        '<i class="fas fa-dice-three fa-2x"></i> vs. <i class="fas fa-dice-two fa-2x"></i>',
-        "Three-hit islands vs 2-hit"
-      ],
-      [
-        '<i class="fas fa-compass fa-3x"></i>',
-        "Three-hit vs three-hit islands"
-      ],
-      ['<i class="fas fa-dice-two fa-3x"></i>', "Two-hit"]
-    ];
-
-    const siteLogLHeaders = [
-      ["Site", "Site Index"],
-      [
-        '<i class="fas fa-dice-three fa-2x"></i> and <i class="fas fa-dice-two fa-2x"></i>',
-        "MG94 with double and triple instantaneous substitutions"
-      ],
-      [
-        '<i class="fas fa-compass fa-3x"></i>',
-        "MG94 with double and triple instantaneous substitutions [only synonymous islands]"
-      ],
-      [
-        '<i class="fas fa-dice-two fa-3x"></i>',
-        "MG94 with double instantaneous substitutions"
-      ],
-      ['<i class="fas fa-dice-one fa-3x"></i>', "Standard MG94"]
-    ];
-
-    let siteTableHeaders = {
-      "Evidence Ratios": this.formatHeadersForTable(erHeaders),
-      "Site Log Likelihood": this.formatHeadersForTable(siteLogLHeaders)
-    };
-
-    let siteTableContent = {
-      "Evidence Ratios": {},
-      "Site Log Likelihood": {}
-    };
-
-    let whichTable = "Evidence Ratios";
-
-    this.toggleTableSelection = this.toggleTableSelection.bind(this);
-    this.updateMinimumTransitions = this.updateMinimumTransitions.bind(this);
-    this.getMinERSelector = this.getMinERSelector.bind(this);
-    this.toggleMinERSelector = this.toggleMinERSelector.bind(this);
-    this.toggleLabels = this.toggleLabels.bind(this);
-
-    let circosConfiguration = {
-      innerRadius: 300,
-      outerRadius: 350,
-      cornerRadius: 0,
-      gap: 0.04,
-      labels: {
-        display: true,
-        position: "center",
-        size: "14",
-        color: "black",
-        radialOffset: 60
-      },
-      ticks: {
-        display: false,
-        color: "grey",
-        spacing: 10000000,
-        labels: true,
-        labelSpacing: 20,
-        labelSuffix: "",
-        labelDenominator: 1,
-        labelDisplay0: true,
-        labelSize: 10,
-        labelColor: "#000",
-        labelFont: "default",
-        majorSpacing: 5,
-        size: Object
-      },
-      events: {},
-      opacity: 1,
-      onClick: null,
-      onMouseOver: null,
-      zIndex: 100
-    };
-
-    this.state = {
-      siteTableHeaders: siteTableHeaders,
-      siteTableContent: siteTableContent,
-      whichTable: whichTable,
-      testResults: [],
-      xaxis: "Site",
-      yaxis: "Three-hit",
-      xOptions: ["Site"],
-      yOptions: [],
-      copy_transition: false,
-      pvalThreshold: 0.1,
-      positively_selected: [],
-      negatively_selected: [],
-      pvals: {},
-      input: null,
-      testedSets: props.json.tested[0],
-      uniqTestedSets: uniqTestedSets,
-      colorMap: colorMap,
-      circosLayout: [],
-      circosChordData: [],
-      circosConfiguration: circosConfiguration,
-      minimumTransitions: 3,
-      maxTransitionCount: 0,
-      maxERs: {
-        "Three-hit": 5,
-        "Three-hit islands vs 2-hit": 5,
-        "Three-hit vs three-hit islands": 5,
-        "Two-hit": 5
-      },
-      fits: {}
-    };
-  }
-
   componentDidMount() {
     this.processData(this.props.json);
   }
@@ -350,7 +428,7 @@ class MultiHitContents extends React.Component {
     let { chordLayout, chordData, maxCount } = this.prepareForCircos(
       substitutionMatrix,
       this.state.data["Evidence Ratios"],
-      this.state.maxERs,
+      this.state.ERThresholds,
       event.target.value
     );
 
@@ -401,7 +479,7 @@ class MultiHitContents extends React.Component {
     let { chordLayout, chordData, maxCount } = this.prepareForCircos(
       substitutionMatrix,
       data["Evidence Ratios"],
-      this.state.maxERs,
+      this.state.ERThresholds,
       this.state.minimumTransitions
     );
 
@@ -599,23 +677,47 @@ class MultiHitContents extends React.Component {
 
   getMinERSelector(name) {
     return (
-      <div className="input-group mr-2">
-        <div className="input-group-prepend">
-          <div className="input-group-text" id="btnGroupAddon">
-            {this.erMap[name].abbrev}
+      <div className="col-3">
+        <div className="input-group mr-2 mt-2">
+          <div className="input-group-prepend">
+            <div className="input-group-text" id="btnGroupAddon">
+              {this.erMap[name].abbrev}
+            </div>
           </div>
+
+          <input
+            type="number"
+            className="form-control"
+            data-name={name}
+            data-type="min"
+            onChange={this.inputERSelector}
+            placeholder="Min"
+            defaultValue="0"
+            value={this.state.ERThresholds[name][0]}
+            step="1"
+            aria-label="Minimum ER"
+            aria-describedby="btnGroupAddon"
+          />
+
+          <input
+            type="number"
+            className="form-control"
+            data-name={name}
+            data-type="max"
+            onChange={this.inputERSelector}
+            placeholder="Max"
+            defaultValue="5"
+            value={this.state.ERThresholds[name][1]}
+            step="1"
+            aria-label="Minimum ER"
+            aria-describedby="btnGroupAddon"
+          />
+          <ERSliders
+            name={name}
+            update={this.updateERThreshold}
+            values={this.state.ERThresholds[name]}
+          />
         </div>
-        <input
-          type="number"
-          className="form-control"
-          data-name={name}
-          onChange={this.toggleMinERSelector}
-          placeholder="5"
-          defaultValue="5"
-          step="1"
-          aria-label="Minimum ER"
-          aria-describedby="btnGroupAddon"
-        />
       </div>
     );
   }
