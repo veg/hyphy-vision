@@ -270,7 +270,10 @@ var SLACSites = createReactClass({
         { value: "Site", sortable: true }
       ],
       doCI = this.state.showIntervals,
-      filterable = [["Partition", -2], ["Site", -1]];
+      filterable = [
+        ["Partition", -2],
+        ["Site", -1]
+      ];
 
     if (doCI) {
       var secondRow = ["", ""];
@@ -1102,7 +1105,7 @@ var SLACGraphs = createReactClass({
                 <button
                   id="export-chart-png"
                   type="button"
-                  className="btn.btn-secondary btn-sm float-right btn-export"
+                  className="btn.btn-secondary btn-sm float-right btn-export btn-export-chart-png"
                   onClick={self.savePNG}
                 >
                   <span className="far fa-save" /> Export to PNG
@@ -1110,7 +1113,7 @@ var SLACGraphs = createReactClass({
                 <button
                   id="export-chart-png"
                   type="button"
-                  className="btn.btn-secondary btn-sm float-right btn-export"
+                  className="btn.btn-secondary btn-sm float-right btn-export btn-export-chart-svg"
                   onClick={self.saveSVG}
                 >
                   <span className="far fa-save" /> Export to SVG

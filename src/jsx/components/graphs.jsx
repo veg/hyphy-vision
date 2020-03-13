@@ -881,7 +881,7 @@ class SiteGraph extends React.Component {
           <button
             id="export-chart-svg"
             type="button"
-            className="btn.btn-secondary btn-sm float-right btn-export"
+            className="btn.btn-secondary btn-sm float-right btn-export btn-export-chart-svgg"
             onClick={self.saveSVG}
           >
             <span className="far fa-save" /> Export Chart to SVG
@@ -889,7 +889,7 @@ class SiteGraph extends React.Component {
           <button
             id="export-chart-png"
             type="button"
-            className="btn.btn-secondary btn-sm float-right btn-export"
+            className="btn.btn-secondary btn-sm float-right btn-export btn-export-chart-png"
             onClick={self.savePNG}
           >
             <span className="far fa-save" /> Export Chart to PNG
