@@ -190,6 +190,7 @@ class MultiHitContents extends React.Component {
       circosConfiguration: circosConfiguration,
       minimumTransitions: 3,
       maxTransitionCount: 0,
+      showLegend: true,
       ERThresholds: {
         "Three-hit": [0, 5],
         "Three-hit islands vs 2-hit": [0, 5],
@@ -210,6 +211,54 @@ class MultiHitContents extends React.Component {
       },
       fits: {}
     };
+  }
+
+  buildLegend() {
+    var svg = d3.select("#transition-legend");
+
+    let translationTableIndex = {};
+    let c = 0;
+
+    _.each(translationTable, (aa, i) => {
+      translationTableIndex[aa] = c / 20;
+      c++;
+    });
+
+    let colors = _.map(_.keys(translationTable), codon => {
+      return {
+        text: translationTable[codon],
+        color: this.codonColors(translationTableIndex[translationTable[codon]])
+      };
+    });
+
+    colors = _.uniq(colors, d => d.text);
+
+    svg
+      .selectAll("circle")
+      .data(colors)
+      .enter()
+      .append("circle")
+      .attr("cx", 10)
+      .attr("r", 6)
+      .attr("cy", (d, i) => 130 + i * 15)
+      .style("fill", d => d.color);
+
+    svg
+      .selectAll("text")
+      .data(colors)
+      .enter()
+      .append("text")
+      .attr("x", 20)
+      .attr("y", (d, i) => 130 + i * 15)
+      .text(d => d.text)
+      .style("font-size", "15px")
+      .attr("alignment-baseline", "middle");
+
+    // Handmade legend
+    //svg.append("circle").attr("cx",10).attr("cy",130).attr("r", 6).style("fill", "#69b3a2")
+    //svg.append("circle").attr("cx",10).attr("cy",160).attr("r", 6).style("fill", "#404080")
+    //svg.append("text").attr("x", 20).attr("y", 130).text("variable A").style("font-size", "15px").attr("alignment-baseline","middle")
+    //svg.append("text").attr("x", 20).attr("y", 160).text("variable B").style("font-size", "15px").attr("alignment-baseline","middle")
   }
 
   floatFormat = d3.format(".3f");
@@ -313,6 +362,12 @@ class MultiHitContents extends React.Component {
       return this.getCodonLayout(d, countTally[d]);
     });
 
+    if (this.state.showLegend) {
+      this.buildLegend();
+    } else {
+      d3.select("#transition-legend").empty();
+    }
+
     return {
       chordLayout: chordLayout,
       chordData: chordData,
@@ -364,6 +419,7 @@ class MultiHitContents extends React.Component {
     let color = this.codonColors(
       translationTableIndex[translationTable[codon]]
     );
+
     let label = codon;
     let id = "codon-" + codon;
     let aa = translationTable[codon];
@@ -667,12 +723,17 @@ class MultiHitContents extends React.Component {
   }
 
   toggleLabels(event) {
-    let config = this.state.circosConfiguration;
-    config.labels.display = !config.labels.display;
+    if (event.target.dataset["name"] == "legend") {
+      this.setState({ showLegend: !this.state.showLegend });
+      return;
+    } else {
+      let config = this.state.circosConfiguration;
+      config.labels.display = !config.labels.display;
 
-    this.setState({
-      circosConfiguration: config
-    });
+      this.setState({
+        circosConfiguration: config
+      });
+    }
   }
 
   getMinERSelector(name) {
@@ -968,7 +1029,14 @@ class MultiHitContents extends React.Component {
                     Labels
                   </label>
                   <label className="btn btn-light active">
-                    <input type="checkbox" /> Legend
+                    <input
+                      data-checked={this.state.showLegend}
+                      data-name="legend"
+                      type="checkbox"
+                      defaultChecked={true}
+                      onClick={this.toggleLabels}
+                    />{" "}
+                    Legend
                   </label>
                 </div>
 
@@ -995,20 +1063,27 @@ class MultiHitContents extends React.Component {
                   </div>
                 </div>
 
-                <div className="offset-1">
-                  <Circos
-                    size={800}
-                    layout={this.state.circosLayout}
-                    config={this.state.circosConfiguration}
-                    tracks={[
-                      {
-                        id: "flow",
-                        type: CHORDS,
-                        data: chordData,
-                        config: { color: "grey", opacity: 0.5 }
-                      }
-                    ]}
-                  />
+                <div className="row">
+                  <svg
+                    id="transition-legend"
+                    hidden={!this.state.showLegend}
+                    className="col-2"
+                  ></svg>
+                  <div className="col-10">
+                    <Circos
+                      size={800}
+                      layout={this.state.circosLayout}
+                      config={this.state.circosConfiguration}
+                      tracks={[
+                        {
+                          id: "flow",
+                          type: CHORDS,
+                          data: chordData,
+                          config: { color: "grey", opacity: 0.5 }
+                        }
+                      ]}
+                    />
+                  </div>
                 </div>
 
                 <DatamonkeyTable
