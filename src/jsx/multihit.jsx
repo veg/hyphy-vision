@@ -18,22 +18,66 @@ class ERSliders extends React.Component {
   constructor(props) {
     super(props);
     this.updateVals = this.updateVals.bind(this);
+    this.scaleValues = this.scaleValues.bind(this);
+    this.scaleValue = this.scaleValue.bind(this);
+    this.logPositions = this.logPositions.bind(this);
+    this.logPosition = this.logPosition.bind(this);
+
+    let minv = Math.log(parseFloat(this.props.range[0]));
+    let maxv = Math.log(parseFloat(this.props.range[1]));
+    let logPosRange = this.logPositions(this.props.range, minv, maxv);
+
+    this.state = {
+      minv: minv,
+      maxv: maxv,
+      values: this.props.values,
+      logPosRange: logPosRange,
+      logPositions: this.logPositions(this.props.values, minv, maxv)
+    };
   }
 
-  state = { values: this.props.values };
-
   updateVals(values) {
-    this.props.update(this.props.name, values);
-    this.setState({ values });
+    // scale the values first
+    let scaledValues = this.scaleValues(
+      values,
+      this.state.minv,
+      this.state.maxv
+    );
+    this.props.update(this.props.name, scaledValues);
+    this.setState({ values: values, logPositions: values });
+  }
+
+  scaleValues(vals, minv, maxv) {
+    return _.map(vals, v => this.scaleValue(v, minv, maxv));
+  }
+
+  scaleValue(position, minv, maxv) {
+    let scale = (maxv - minv) / (this.props.maxp - this.props.minp);
+    return Math.exp(minv + scale * (position - this.props.minp));
+  }
+
+  logPositions(vals, minv, maxv) {
+    let logp = _.map(vals, v => this.logPosition(v, minv, maxv));
+
+    if (logp[0] < 0) {
+      logp[0] = 0;
+    }
+
+    return logp;
+  }
+
+  logPosition(value, minv, maxv) {
+    let scale = (maxv - minv) / (this.props.maxp - this.props.minp);
+    return (Math.log(value) - minv) / scale + this.props.minp;
   }
 
   render() {
     return (
       <Range
-        step={0.5}
-        min={0}
-        max={10}
-        values={this.state.values}
+        step={1}
+        min={this.state.logPosRange[0]}
+        max={this.state.logPosRange[1]}
+        values={this.state.logPositions}
         onChange={this.updateVals}
         renderTrack={({ props, children }) => (
           <div
@@ -64,6 +108,11 @@ class ERSliders extends React.Component {
     );
   }
 }
+
+ERSliders.defaultProps = {
+  minp: 0,
+  maxp: 100
+};
 
 class MultiHitContents extends React.Component {
   constructor(props) {
@@ -191,6 +240,12 @@ class MultiHitContents extends React.Component {
       minimumTransitions: 3,
       maxTransitionCount: 0,
       showLegend: true,
+      erRanges: {
+        "Three-hit": [0, 10],
+        "Three-hit islands vs 2-hit": [0, 10],
+        "Three-hit vs three-hit islands": [0, 10],
+        "Two-hit": [0, 10]
+      },
       ERThresholds: {
         "Three-hit": [0, 5],
         "Three-hit islands vs 2-hit": [0, 5],
@@ -269,13 +324,14 @@ class MultiHitContents extends React.Component {
     let type = event.target.dataset["type"];
     let value = event.target.value;
 
+    // scale value
+
     let i = 0;
     if (type == "max") {
       i = 1;
     }
 
     ERThresholds[name][i] = value;
-
     this.updateERThreshold(name, ERThresholds[name]);
   }
 
@@ -495,11 +551,21 @@ class MultiHitContents extends React.Component {
     });
   }
 
+  getERRange(vals) {
+    return [_.min(vals), _.max(vals)];
+  }
+
   processData(data) {
     const floatFormat = d3.format(".3f");
 
     // Prepare values for siteTable
     let erValues = _.map(_.values(data["Evidence Ratios"]), d => d[0]);
+
+    // get range of erValues
+    let erRanges = _.object(
+      _.keys(data["Evidence Ratios"]),
+      _.map(erValues, this.getERRange)
+    );
 
     erValues = _.map(erValues, d => {
       return _.map(d, g => {
@@ -547,6 +613,8 @@ class MultiHitContents extends React.Component {
       circosLayout: chordLayout,
       circosChordData: chordData,
       maxTransitionCount: maxCount,
+      erRanges: erRanges,
+      erThresholds: erRanges,
       //circosLayout : example[0],
       //circosChordData : example[1],
       siteTableContent: sigContent,
@@ -775,6 +843,7 @@ class MultiHitContents extends React.Component {
           />
           <ERSliders
             name={name}
+            range={this.state.erRanges[name]}
             update={this.updateERThreshold}
             values={this.state.ERThresholds[name]}
           />
@@ -1045,7 +1114,7 @@ class MultiHitContents extends React.Component {
                     <label for="min-transitions" className="mt-2">
                       <h6>
                         Minimum nucleotide positions changed{" "}
-                        <span class="badge badge-secondary">
+                        <span className="badge badge-secondary">
                           {this.state.minimumTransitions}
                         </span>{" "}
                       </h6>
