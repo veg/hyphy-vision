@@ -1115,7 +1115,7 @@ class MultiHitContents extends React.Component {
                     </p>
                     <hr />
                     <p className="mb-0">
-                      Use the <b>Minimum transition count</b> slider to specify
+                      Use the <b># of nucleotide changes</b> slider to specify
                       the minimum number of substitutions to display.
                     </p>
                   </div>
@@ -1154,7 +1154,7 @@ class MultiHitContents extends React.Component {
                   <div id="transition-menu">
                     <label for="min-transitions" className="mt-2">
                       <h6>
-                        Minimum transition count{" "}
+                        # of nucleotide changes{" "}
                         <span className="badge badge-secondary">
                           {this.state.minimumTransitions}
                         </span>{" "}
