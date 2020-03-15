@@ -11,8 +11,16 @@ import { ResultsPage } from "./components/results_page.jsx";
 import { Circos } from "./components/circos.jsx";
 import { CHORDS } from "./components/tracks.js";
 import { Range } from "react-range";
-
 import translationTable from "./fixtures/translation_table.json";
+import { ImageToolbar } from "./components/exportImage.jsx";
+
+var translationTableIndex = {};
+let c = 0;
+
+_.each(translationTable, (aa, i) => {
+  translationTableIndex[aa] = c / 20;
+  c++;
+});
 
 class ERSliders extends React.Component {
   constructor(props) {
@@ -963,10 +971,18 @@ class MultiHitContents extends React.Component {
     let chordDataTableHeaders = [
       { value: "Source", abbr: "Source", sortable: true },
       { value: "Target", abbr: "Target", sortable: true },
+      { value: "Source Amino Acid", abbr: "Source Amino Acid", sortable: true },
+      { value: "Target Amino Acid", abbr: "Target Amino Acid", sortable: true },
       { value: "Count", abbr: "Count", sortable: true }
     ];
     let chordDataTableRows = _.map(this.state.circosChordData, d => {
-      return [d.source.codon, d.target.codon, d.count];
+      return [
+        d.source.codon,
+        d.target.codon,
+        translationTable[d.source.codon],
+        translationTable[d.target.codon],
+        d.count
+      ];
     });
 
     let selectors = null;
@@ -1148,11 +1164,40 @@ class MultiHitContents extends React.Component {
                           id: "flow",
                           type: CHORDS,
                           data: chordData,
-                          config: { color: "grey", opacity: 0.5 }
+                          config: {
+                            color: d => {
+                              return this.codonColors(
+                                translationTableIndex[
+                                  translationTable[d.source.codon]
+                                ]
+                              );
+                            },
+                            opacity: 0.2,
+                            tooltipContent: function(d) {
+                              return (
+                                "<h5>" +
+                                d.source.codon +
+                                " ➤ " +
+                                d.target.codon +
+                                ": " +
+                                d.count +
+                                "</h5><i>(CTRL+C to copy to clipboard)</i>"
+                              );
+                            },
+                            events: {
+                              "mouseover.demo": function(d, i, nodes, event) {
+                                d3.select(nodes[i]).attr("opacity", 0.5);
+                              },
+                              "mouseout.demo": function(d, i, nodes, event) {
+                                d3.select(nodes[i]).attr("opacity", 0.2);
+                              }
+                            }
+                          }
                         }
                       ]}
                     />
                   </div>
+                  <ImageToolbar svgID={"circos-plot"} name={"circos"} />
                 </div>
 
                 <DatamonkeyTable

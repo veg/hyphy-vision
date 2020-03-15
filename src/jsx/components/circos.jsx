@@ -7,7 +7,7 @@ class Circos extends React.Component {
   renderCircos() {
     $(this.ref).empty();
 
-    const { size, layout, config, tracks } = this.props;
+    const { id, size, layout, config, tracks } = this.props;
     const circos = new CircosJS({
       container: this.ref,
       width: size,
@@ -32,6 +32,8 @@ class Circos extends React.Component {
   render() {
     return (
       <div
+        className="circos-plot"
+        id="circos-plot"
         ref={ref => {
           this.ref = ref;
         }}
