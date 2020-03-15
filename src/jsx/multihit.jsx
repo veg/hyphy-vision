@@ -1129,7 +1129,7 @@ class MultiHitContents extends React.Component {
                   <div id="transition-menu">
                     <label for="min-transitions" className="mt-2">
                       <h6>
-                        Minimum nucleotide positions changed{" "}
+                        Minimum transition count{" "}
                         <span className="badge badge-secondary">
                           {this.state.minimumTransitions}
                         </span>{" "}
