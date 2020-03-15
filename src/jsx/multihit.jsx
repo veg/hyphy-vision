@@ -397,7 +397,13 @@ class MultiHitContents extends React.Component {
         if (target > maxCount) {
           maxCount = target;
         }
-        if (target > minTrans) {
+        if (
+          _.reduce(
+            _.zip(sourceKey, targetKey),
+            (sum, d) => sum + (d[0] != d[1]),
+            0
+          ) >= minTrans
+        ) {
           chordData.push({
             count: target,
             source: {
@@ -575,6 +581,8 @@ class MultiHitContents extends React.Component {
       _.map(erValues, this.getERRange)
     );
 
+    let ERThresholds = erRanges;
+
     erValues = _.map(erValues, d => {
       return _.map(d, g => {
         return floatFormat(g);
@@ -609,7 +617,7 @@ class MultiHitContents extends React.Component {
     let { chordLayout, chordData, maxCount } = this.prepareForCircos(
       substitutionMatrix,
       data["Evidence Ratios"],
-      this.state.ERThresholds,
+      ERThresholds,
       this.state.minimumTransitions
     );
 
@@ -622,7 +630,7 @@ class MultiHitContents extends React.Component {
       circosChordData: chordData,
       maxTransitionCount: maxCount,
       erRanges: erRanges,
-      erThresholds: erRanges,
+      ERThresholds: erRanges,
       //circosLayout : example[0],
       //circosChordData : example[1],
       siteTableContent: sigContent,
@@ -1095,6 +1103,23 @@ class MultiHitContents extends React.Component {
               <div id="plot-tab">
                 <div>
                   <h6 className="mt-2">Evidence Ratio Thresholds</h6>
+
+                  <div className="alert alert-primary" role="alert">
+                    <p>
+                      Use the sliders or input to specify the evidence ratio
+                      range of each respective model. For example, if three-hit
+                      substitutions with 3H+ support are defined as those
+                      occurring at sites with ER(3H+:2H)>5, set 3H+ range to a
+                      minimum of 5 but leave all other settings to their
+                      respective maximum ranges.
+                    </p>
+                    <hr />
+                    <p className="mb-0">
+                      Use the <b>Minimum transition count</b> slider to specify
+                      the minimum number of substitutions to display.
+                    </p>
+                  </div>
+
                   <div
                     className="btn-toolbar mb-3 mt-3"
                     role="toolbar"
@@ -1140,8 +1165,8 @@ class MultiHitContents extends React.Component {
                       className="custom-range"
                       style={{ display: "block" }}
                       defaultValue="3"
-                      min="0"
-                      max={this.state.maxTransitionCount}
+                      min="1"
+                      max="3"
                       onChange={this.updateMinimumTransitions}
                       id="min-transitions"
                     />
@@ -1177,11 +1202,17 @@ class MultiHitContents extends React.Component {
                               return (
                                 "<h5>" +
                                 d.source.codon +
+                                " (" +
+                                translationTable[d.source.codon] +
+                                ") " +
                                 " ➤ " +
                                 d.target.codon +
+                                " (" +
+                                translationTable[d.target.codon] +
+                                ") " +
                                 ": " +
                                 d.count +
-                                "</h5><i>(CTRL+C to copy to clipboard)</i>"
+                                "</h5></i>"
                               );
                             },
                             events: {
@@ -1223,8 +1254,7 @@ function MultiHit(props) {
       scrollSpyInfo={[
         { label: "summary", href: "summary-tab" },
         { label: "table", href: "table-tab" },
-        { label: "plot", href: "plot-tab" },
-        { label: "tree", href: "tree-tab" }
+        { label: "plot", href: "plot-tab" }
       ]}
       methodName="Multi-Hit"
       fasta={props.fasta}
