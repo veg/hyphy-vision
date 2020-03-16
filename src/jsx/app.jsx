@@ -19,11 +19,9 @@ import { Slatkin } from "./slatkin.jsx";
 import { NavBar } from "./components/navbar.jsx";
 
 const path = require("path");
-
 const href = window.location.href;
 const is_electron = href.slice(0, 4) == "file";
 const base_url = is_electron ? path.dirname(path.dirname(href)) : "";
-
 const fasta = require("../../data/fasta.json");
 
 /**

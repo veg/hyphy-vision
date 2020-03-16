@@ -8,6 +8,7 @@ const PreloadWebpackPlugin = require("preload-webpack-plugin");
 module.exports = env => {
   config = {
     devtool: "source-map",
+    mode: "development",
     entry: {
       hyphyvision: ["./src/index.js"]
     },
@@ -19,6 +20,11 @@ module.exports = env => {
       path: path.resolve(__dirname, "public/"),
       filename: "[name].js",
       library: "hyphyVision"
+    },
+    optimization: {
+      splitChunks: {
+        chunks: "all"
+      }
     },
     module: {
       rules: [
