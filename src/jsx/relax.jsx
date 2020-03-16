@@ -106,7 +106,7 @@ class RELAXModelTable extends React.Component {
 
     return (
       <div>
-        <table className="dm-table table table-hover table-smm list-group-item-text">
+        <table className="dm-table table table-hover table-smm list-group-item-text table-striped">
           <thead id="summary-model-header1">
             <tr>
               <th>Model</th>

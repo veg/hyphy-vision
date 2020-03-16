@@ -64,7 +64,7 @@ class SlatkinResults extends React.Component {
       </tr>
     ));
     return (
-      <table className="table table-light">
+      <table className="table table-light table-striped">
         <thead>
           <tr>
             <th>Compartment</th>

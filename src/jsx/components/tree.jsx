@@ -731,7 +731,10 @@ var Tree = createReactClass({
   },
 
   exportNewick: function() {
-    download(this.tree.get_newick(function() {}), "tree.new");
+    download(
+      this.tree.get_newick(function() {}),
+      "tree.new"
+    );
   },
 
   render: function() {
@@ -755,7 +758,7 @@ var Tree = createReactClass({
     };
     return (
       <div>
-        <h4 className="dm-table-header">
+        <h4 className="dm-table-header mb-3">
           Fitted tree
           <span
             className="fas fa-info-circle"

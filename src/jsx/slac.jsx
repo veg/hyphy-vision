@@ -270,7 +270,10 @@ var SLACSites = createReactClass({
         { value: "Site", sortable: true }
       ],
       doCI = this.state.showIntervals,
-      filterable = [["Partition", -2], ["Site", -1]];
+      filterable = [
+        ["Partition", -2],
+        ["Site", -1]
+      ];
 
     if (doCI) {
       var secondRow = ["", ""];
@@ -1102,7 +1105,7 @@ var SLACGraphs = createReactClass({
                 <button
                   id="export-chart-png"
                   type="button"
-                  className="btn.btn-secondary btn-sm float-right btn-export"
+                  className="btn.btn-secondary btn-sm float-right btn-export btn-export-chart-png"
                   onClick={self.savePNG}
                 >
                   <span className="far fa-save" /> Export to PNG
@@ -1110,7 +1113,7 @@ var SLACGraphs = createReactClass({
                 <button
                   id="export-chart-png"
                   type="button"
-                  className="btn.btn-secondary btn-sm float-right btn-export"
+                  className="btn.btn-secondary btn-sm float-right btn-export btn-export-chart-svg"
                   onClick={self.saveSVG}
                 >
                   <span className="far fa-save" /> Export to SVG
@@ -1308,7 +1311,7 @@ class SLACContents extends React.Component {
 
           <div className="row hidden-print">
             <div id="datamonkey-slac-tree-summary" className="col-md-12">
-              <h4 className="dm-table-header">Partition information</h4>
+              <h4 className="dm-table-header mb-3">Partition information</h4>
 
               <DatamonkeyPartitionTable
                 pValue={self.state.pValue}
@@ -1344,7 +1347,7 @@ class SLACContents extends React.Component {
               {<DatamonkeyModelTable fits={analysis_results.fits} />}
             </div>
             <div id="datamonkey-slac-timers" className="col-md-4">
-              <h4 className="dm-table-header">Execution time</h4>
+              <h4 className="dm-table-header mb-3">Execution time</h4>
 
               <DatamonkeyTimersTable
                 timers={analysis_results.timers}

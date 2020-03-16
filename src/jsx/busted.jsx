@@ -381,7 +381,7 @@ var BUSTEDSiteChartAndTable = createReactClass({
             <button
               id="export-chart-svg"
               type="button"
-              className="btn.btn-secondary btn-sm float-right btn-export"
+              className="btn.btn-secondary btn-sm float-right btn-export btn-export-chart-png"
               onClick={() => {
                 d3_save_svg.save(d3.select("#chart").node(), {
                   filename: "busted"
@@ -393,7 +393,7 @@ var BUSTEDSiteChartAndTable = createReactClass({
             <button
               id="export-chart-png"
               type="button"
-              className="btn.btn-secondary btn-sm float-right btn-export"
+              className="btn.btn-secondary btn-sm float-right btn-export btn-export-chart-png"
               onClick={() => {
                 saveSvgAsPng(
                   document.getElementById("chart"),
@@ -648,7 +648,7 @@ class BUSTEDModelTable extends React.Component {
             "<ul><li>Hover over a column header for a description of its content.</li><li>Click a row to view the corresponding rate distribution.</li></ul>"
           }
         />
-        <table className="dm-table table table-hover table-smm list-group-item-text">
+        <table className="dm-table table table-hover table-smm list-group-item-text table-striped">
           <thead id="summary-model-header1">
             <tr>
               <th>Model</th>
@@ -755,7 +755,7 @@ class BUSTEDModelTable extends React.Component {
                 </button>
               </div>
               <div className="modal-body" id="modal-body">
-                <h4 className="dm-table-header">&omega; distribution</h4>
+                <h4 className="dm-table-header mb-3">&omega; distribution</h4>
                 <PropChart
                   name={
                     self.state.model + ", " + self.state.branch + " branches"
