@@ -225,7 +225,7 @@ var BranchTable = createReactClass({
     return (
       <div className="row table-striped">
         <div id="hyphy-branch-table" className="col-md-12">
-          <h4 className="dm-table-header">
+          <h4 className="dm-table-header mb-3">
             Detailed results
             <span
               className="glyphicon glyphicon-info-sign"
@@ -323,7 +323,7 @@ var BranchTable = createReactClass({
                 </button>
               </div>
               <div className="modal-body" id="modal-body">
-                <h4 className="dm-table-header">&omega; distribution</h4>
+                <h4 className="dm-table-header mb-3">&omega; distribution</h4>
                 <PropChart
                   name={self.state.current_model_name}
                   omegas={self.state.current_omegas}

@@ -445,9 +445,9 @@ var DatamonkeyTable = createReactClass({
             return _.isObject(d) ? d.value : d;
           }
           var headers = _.map(self.props.headerData, extract),
-            munged = _.map(self.props.bodyData, row => _.map(row, extract)).map(
-              row => _.object(headers, row)
-            );
+            munged = _.map(self.props.bodyData, row =>
+              _.map(row, extract)
+            ).map(row => _.object(headers, row));
           const exporter = CsvExport.create({
             filename: "datamonkey-table.csv"
           });
@@ -1035,7 +1035,7 @@ var DatamonkeyModelTable = createReactClass({
   render: function() {
     return (
       <div>
-        <h4 className="dm-table-header">
+        <h4 className="dm-table-header mb-3">
           Model fits
           <span
             className="fas fa-info-circle"

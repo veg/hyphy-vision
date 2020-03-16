@@ -399,7 +399,6 @@ class FADETable extends React.Component {
               title={title}
               popover="This will be more informative once this work is reviewed."
             />
-            <div style={{ height: 10 }}></div>
             <DatamonkeyTable
               headerData={this.props.MLEHeaderData}
               bodyData={this.props.MLEBodyData}

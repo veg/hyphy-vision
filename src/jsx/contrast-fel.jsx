@@ -620,7 +620,6 @@ class ContrastFELContents extends React.Component {
                 title="ContrastFEL Table"
                 popover="<p>Hover over a column header for a description of its content.</p>"
               />
-              <div style={{ height: 10 }}></div>
               <DatamonkeyTable
                 headerData={this.state.mle_headers}
                 bodyData={this.state.mle_content}
@@ -632,7 +631,7 @@ class ContrastFELContents extends React.Component {
           </div>
 
           <div id="plot-tab">
-            <h3 className="dm-table-header">Contrast-FEL Site Plot</h3>
+            <h3 className="dm-table-header mb-3">Contrast-FEL Site Plot</h3>
 
             <DatamonkeyGraphMenu
               x_options={x_options}

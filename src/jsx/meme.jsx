@@ -119,7 +119,7 @@ function MEMETable(props) {
   return (
     <div className="row">
       <div className="col-md-12" id="table-tab">
-        <h4 className="dm-table-header">
+        <h4 className="dm-table-header mb-3">
           MEME Table
           <span
             className="fas fa-info-circle"
@@ -265,7 +265,7 @@ class MEMEContents extends React.Component {
         />
         <div id="plot-tab" className="row hyphy-row">
           <div className="col-md-12">
-            <h4 className="dm-table-header">MEME Site Plot</h4>
+            <h4 className="dm-table-header mb-3">MEME Site Plot</h4>
             {site_graph}
           </div>
         </div>
