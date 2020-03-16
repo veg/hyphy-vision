@@ -3103,9 +3103,9 @@ csstype@^2.2.0, csstype@^2.6.7:
   version "2.6.9"
   resolved "https://registry.yarnpkg.com/csstype/-/csstype-2.6.9.tgz#05141d0cd557a56b8891394c1911c40c8a98d098"
 
-csvexport@1.1.0:
-  version "1.1.0"
-  resolved "https://registry.yarnpkg.com/csvexport/-/csvexport-1.1.0.tgz#56ddd414dd5bf874aa1fbd3f87935c27302ea881"
+csvexport@2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/csvexport/-/csvexport-2.0.0.tgz#0ea68f5ee0f411ad204eb960044403caff699c0e"
 
 currently-unhandled@^0.4.1:
   version "0.4.1"
