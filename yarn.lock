@@ -1686,9 +1686,9 @@ ajv@^6.1.0, ajv@^6.10.0, ajv@^6.10.2, ajv@^6.5.5:
     json-schema-traverse "^0.4.1"
     uri-js "^4.2.2"
 
-alignment.js@0.1.1:
-  version "0.1.1"
-  resolved "https://registry.yarnpkg.com/alignment.js/-/alignment.js-0.1.1.tgz#bf0a9220c2bf714177df7af7724907459d0cef17"
+alignment.js@0.2.1:
+  version "0.2.1"
+  resolved "https://registry.yarnpkg.com/alignment.js/-/alignment.js-0.2.1.tgz#e83ff9add8e220dc711f914fa5b020540735ec0a"
   dependencies:
     "@gmod/bam" "^1.0.18"
     bootstrap "^4.1.1"
@@ -1703,6 +1703,7 @@ alignment.js@0.1.1:
     react-dom "^16.2.0"
     react-phylotree "0.1.0"
     react-router-dom "^4.3.1"
+    sass "^1.26.2"
     save-svg-as-png "^1.4.14"
     text-width "^1.2.0"
     underscore "^1.8.3"
