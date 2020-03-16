@@ -817,7 +817,7 @@ var SLACBanner = createReactClass({
     return (
       <div className="row">
         <div className="col-md-12">
-          <div className="main-result">
+          <div className="main-result border border-primary border-left-0 border-right-0 mt-3">
             <p>
               SLAC <strong className="hyphy-highlight">found evidence</strong>{" "}
               of pervasive

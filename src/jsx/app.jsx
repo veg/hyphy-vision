@@ -9,6 +9,7 @@ import { RELAX } from "./relax.jsx";
 import { FEL } from "./fel.jsx";
 import { ContrastFEL } from "./contrast-fel.jsx";
 import { MEME } from "./meme.jsx";
+import { MultiHit } from "./multihit.jsx";
 import { SLAC } from "./slac.jsx";
 import { FUBAR } from "./fubar.jsx";
 import { GARD } from "./gard.jsx";
@@ -18,11 +19,9 @@ import { Slatkin } from "./slatkin.jsx";
 import { NavBar } from "./components/navbar.jsx";
 
 const path = require("path");
-
 const href = window.location.href;
 const is_electron = href.slice(0, 4) == "file";
 const base_url = is_electron ? path.dirname(path.dirname(href)) : "";
-
 const fasta = require("../../data/fasta.json");
 
 /**
@@ -238,6 +237,18 @@ class HyPhyVision extends React.Component {
                     base_url + "/data/json_files/meme/CD2.fna.MEME.json"
                   }
                   fasta={fasta.CD2}
+                />
+              )}
+            />
+            <Route
+              path="/multihit"
+              component={() => (
+                <MultiHit
+                  data={
+                    this.state.data ||
+                    base_url +
+                      "/data/json_files/multihit/yokoyama.rh1.cds.mod.1-990.nex.FITTER.json"
+                  }
                 />
               )}
             />

@@ -2,6 +2,9 @@
   "name": "hyphy-vision",
   "description": "HyPhy's visual interface",
   "homepage": "http://hyphy.org",
+  "jest": {
+    "config": "jest.config.js"
+  },
   "keywords": [
     "phylogenetics",
     "phylogeny",
@@ -26,6 +29,7 @@
     "alignment.js": "0.1.1",
     "bootstrap": "4.x",
     "chi-squared": "^1.1.0",
+    "circos": "^2.1.0",
     "create-react-class": "^15.6.3",
     "csvexport": "1.1.0",
     "d3": "3.x",
@@ -50,6 +54,7 @@
     "react-dom": "16",
     "react-json-view": "^1.14.0",
     "react-phylotree": "0.1.0",
+    "react-range": "^1.5.3",
     "react-router-dom": "^4.2.2",
     "react-router-hash-link": "^1.1.1",
     "react-scrollchor": "^4.2.1",
@@ -94,7 +99,7 @@
     "npm-version": "^1.1.0",
     "preload-webpack-plugin": "3.0.0-beta.3",
     "prettier": "1.19.1",
-    "pretty-quick": "^1.6.0",
+    "pretty-quick": "^2.0.1",
     "react-addons-test-utils": "^15.6.0",
     "react-lazy-render": "0.3.0",
     "react-test-renderer": "16",

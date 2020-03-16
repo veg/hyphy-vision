@@ -72,7 +72,6 @@ class ContrastFELContents extends React.Component {
 
     // Get keys
     let header_keys = _.keys(mle_results[0]);
-    let pval_indices = _.map(header_keys, d => d.indexOf("P-value") !== -1);
 
     let pval_keys = _.filter(header_keys, d => d.indexOf("P-value") !== -1);
 
@@ -419,7 +418,7 @@ class ContrastFELContents extends React.Component {
   getSummary() {
     return (
       <div>
-        <div className="main-result">
+        <div className="main-result border border-primary border-left-0 border-right-0 mt-3">
           <p>
             <p>
               ContrastFEL{" "}
@@ -493,8 +492,6 @@ class ContrastFELContents extends React.Component {
 
     var x_options = "Site";
     var y_options = ["alpha"];
-
-    let newick = this.props.json.input.trees[0];
 
     if (this.state.mle_results) {
       y_options = _.keys(this.state.mle_results[0]);

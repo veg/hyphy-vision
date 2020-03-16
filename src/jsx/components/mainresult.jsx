@@ -30,8 +30,8 @@ class MainResult extends Component {
 
   render() {
     return (
-      <div className="col-12">
-        <div className="main-result">
+      <div className="col-12 mt-3">
+        <div className="main-result border border-primary border-left-0 border-right-0">
           {this.props.summary_for_clipboard != null ? (
             <p>
               <CopyToClipboard

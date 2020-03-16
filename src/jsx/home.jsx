@@ -8,6 +8,7 @@ import RELAX_thumb from "../../images/RELAX-thumb.png";
 import FEL_thumb from "../../images/FEL-thumb.png";
 import Contrast_FEL_thumb from "../../images/Contrast-FEL-thumb.png";
 import MEME_thumb from "../../images/MEME-thumb.png";
+import MULTIHIT_thumb from "../../images/MEME-thumb.png";
 import SLAC_thumb from "../../images/SLAC-thumb.png";
 import FUBAR_thumb from "../../images/FUBAR-thumb.png";
 import GARD_thumb from "../../images/GARD-thumb.png";
@@ -22,6 +23,7 @@ const thumbs = {
   FEL: FEL_thumb,
   "Contrast-FEL": Contrast_FEL_thumb,
   MEME: MEME_thumb,
+  MULTIHIT: MULTIHIT_thumb,
   SLAC: SLAC_thumb,
   FUBAR: FUBAR_thumb,
   GARD: GARD_thumb,
@@ -91,6 +93,12 @@ function Home(props) {
         />
 
         <MethodBanner method="MEME" text="Mixed Effects Model of Evolution" />
+
+        <MethodBanner
+          method="MULTIHIT"
+          text="Accounting for multiple simultaneousnucleotide substitutions"
+        />
+
         <MethodBanner
           method="SLAC"
           text="Single-Likelihood Ancestor Counting"

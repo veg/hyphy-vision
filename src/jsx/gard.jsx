@@ -57,7 +57,7 @@ function GARDResults(props) {
     <div className="row">
       <div className="col-md-12" />
       <div className="col-md-12">
-        <div className="main-result">
+        <div className="main-result border border-primary border-left-0 border-right-0 mt-3">
           <p>
             GARD {evidence_statement}. GARD examined {totalModelCount} models in{" "}
             {timeString} wallclock time, at a rate of{" "}
@@ -273,9 +273,9 @@ function GARDScatterPlot(props) {
   if (props.data == null) {
     return null;
   } else {
-    const siteIndices = Object.keys(props.data["siteBreakPointSupport"]).map(
-      x => Number(x)
-    );
+    const siteIndices = Object.keys(
+      props.data["siteBreakPointSupport"]
+    ).map(x => Number(x));
     const siteBreakPointSupport = Object.values(
       props.data["siteBreakPointSupport"]
     ).map(x => (x > 10e-20 ? x : 0));

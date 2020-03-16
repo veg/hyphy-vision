@@ -343,7 +343,7 @@ class FELContents extends React.Component {
   getSummary() {
     return (
       <div>
-        <div className="main-result">
+        <div className="main-result border border-primary border-left-0 border-right-0 mt-3">
           <p>
             <p>
               FEL <strong className="hyphy-highlight"> found evidence</strong>{" "}
