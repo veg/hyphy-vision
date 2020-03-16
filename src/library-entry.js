@@ -15,11 +15,10 @@ export { default as gard } from "./jsx/gard.jsx";
 export { default as bgm } from "./jsx/bgm.jsx";
 export { default as fade } from "./jsx/fade.jsx";
 export { default as slatkin } from "./jsx/slatkin.jsx";
+export { default as MultiHit } from "./jsx/multihit.jsx";
 
 // renderHyPhyVision is for use in Galaxy
 export { default as renderHyPhyVision } from "./renderHyPhyVision.js";
 
 // Shared_component exports.
-export {
-  default as render_branch_selection
-} from "./jsx/shared_components/branch_selection.jsx";
+export { default as render_branch_selection } from "./jsx/shared_components/branch_selection.jsx";
