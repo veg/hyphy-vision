@@ -1019,7 +1019,6 @@ class MultiHitContents extends React.Component {
 
         <div id="results">
           <MainResult
-            summary_for_clipboard={this.getSummaryForClipboard()}
             summary_for_rendering={this.getSummaryForRendering()}
             method_ref="http://hyphy.org/methods/selection-methods/#multi-hit"
             citation_ref="//www.ncbi.nlm.nih.gov/pubmed/15703242"
