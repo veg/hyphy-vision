@@ -24,7 +24,7 @@ function Header(props) {
   }
   $('[data-toggle="popover"]').popover();
   return (
-    <h4 className="dm-table-header">
+    <h4 className="dm-table-header mb-3">
       {props.title}
       {popover}
     </h4>

@@ -322,7 +322,9 @@ class PRIME extends React.Component {
               </div>
 
               <div id="plot-tab" className="row hyphy-row">
-                <h3 className="dm-table-header">Property Importance Plot</h3>
+                <h3 className="dm-table-header mb-3">
+                  Property Importance Plot
+                </h3>
 
                 <DatamonkeyMultiScatterplot
                   x={this.state.codons}
@@ -336,7 +338,7 @@ class PRIME extends React.Component {
 
               <div id="table-tab" className="row hyphy-row">
                 <div id="hyphy-mle-fits" className="col-md-12">
-                  <h3 className="dm-table-header">Table Summary</h3>
+                  <h3 className="dm-table-header mb-3">Table Summary</h3>
 
                   <div className="col-md-6 alert alert-danger" role="alert">
                     Conserved properties with evidence are highlighted in red.

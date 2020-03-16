@@ -180,7 +180,7 @@ function GARDRecombinationReport(props) {
           title="Recombination report"
           popover="<p>Hover over a column for a description of its content.</p>"
         />
-        <table className="table table-smm tabled-striped">
+        <table className="table table-smm table-striped">
           <thead>
             <tr>
               <th>

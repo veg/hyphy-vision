@@ -177,7 +177,7 @@ var TreeSummary = createReactClass({
   render: function() {
     return (
       <div>
-        <h4 className="dm-table-header">
+        <h4 className="dm-table-header mb-3">
           Tree summary
           <span
             aria-hidden="true"

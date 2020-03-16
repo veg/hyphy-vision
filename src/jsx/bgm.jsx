@@ -162,7 +162,6 @@ class BGMContents extends React.Component {
               "<p>Hover over a column header for a description of its content.</p>"
             }
           />
-
           <DatamonkeyTable
             headerData={this.state.MLEHeaders}
             bodyData={this.state.MLEData}
