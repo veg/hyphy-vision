@@ -21,6 +21,7 @@ module.exports = env => {
       library: "hyphyVision",
       libraryTarget: "umd"
     },
+    externals: [/^[a-z\.\-0-9]+$/],
     module: {
       rules: [
         {
