@@ -1247,7 +1247,7 @@ class MultiHitContents extends React.Component {
   }
 }
 
-function MultiHit(props) {
+export default function MultiHit(props) {
   return (
     <ResultsPage
       data={props.data}
@@ -1266,7 +1266,13 @@ function MultiHit(props) {
   );
 }
 
-function render_multihit(data, element, fasta, originalFile, analysisLog) {
+export function render_multihit(
+  data,
+  element,
+  fasta,
+  originalFile,
+  analysisLog
+) {
   ReactDOM.render(
     <MultiHit
       data={data}
@@ -1277,5 +1283,3 @@ function render_multihit(data, element, fasta, originalFile, analysisLog) {
     document.getElementById(element)
   );
 }
-
-export { MultiHit, render_multihit };

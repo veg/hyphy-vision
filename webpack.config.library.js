@@ -16,7 +16,7 @@ module.exports = env => {
       historyApiFallback: true
     },
     output: {
-      path: path.resolve(__dirname, "public/"),
+      path: path.resolve(__dirname, "dist/"),
       filename: "[name].js",
       library: "hyphyVision",
       libraryTarget: "umd"
@@ -98,7 +98,7 @@ module.exports = env => {
       new PreloadWebpackPlugin(),
       new HtmlWebpackPlugin({
         title: "HyPhy Vision",
-        filename: path.resolve("public", "index.html")
+        filename: path.resolve("dist", "index.html")
       }),
       new MiniCssExtractPlugin({
         // Options similar to the same options in webpackOptions.output
