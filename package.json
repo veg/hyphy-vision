@@ -38,7 +38,7 @@
     "file-saver": "^2.0.2",
     "immutable": "3.8.2",
     "in-browser-download": "^1.0.0",
-    "jquery": "1.x",
+    "jquery": "3.x",
     "jquery-ui": "1.x",
     "jquery-ui-bundle": "^1.11.4",
     "jquery-ui-dist": "^1.12.1",
