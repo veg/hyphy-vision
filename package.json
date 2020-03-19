@@ -26,7 +26,7 @@
   "version": "2.8.0-alpha.1",
   "dependencies": {
     "@fortawesome/fontawesome-free": "^5.12.1",
-    "alignment.js": "0.2.1",
+    "alignment.js": "0.2.2",
     "bootstrap": "4.x",
     "chi-squared": "^1.1.0",
     "circos": "^2.1.0",

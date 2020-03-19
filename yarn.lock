@@ -1690,21 +1690,22 @@ ajv@^6.1.0, ajv@^6.10.0, ajv@^6.10.2, ajv@^6.5.5:
     json-schema-traverse "^0.4.1"
     uri-js "^4.2.2"
 
-alignment.js@0.2.1:
-  version "0.2.1"
-  resolved "https://registry.yarnpkg.com/alignment.js/-/alignment.js-0.2.1.tgz#e83ff9add8e220dc711f914fa5b020540735ec0a"
+alignment.js@0.2.2:
+  version "0.2.2"
+  resolved "https://registry.yarnpkg.com/alignment.js/-/alignment.js-0.2.2.tgz#36922e59299b94ef1b1078ce7abf547ee5e5bf56"
   dependencies:
     "@gmod/bam" "^1.0.18"
     bootstrap "^4.1.1"
     d3 "5"
+    d3-react-axis "^0.0.3"
     d3-save-svg "^0.0.2"
     express "^4.16.4"
     file-saver "^2.0.0"
     jquery "^3.3.1"
     phylotree "1.0.0-alpha.17"
     popper.js "^1.14.3"
-    react "^16.2.0"
-    react-dom "^16.2.0"
+    react "^16.13.0"
+    react-dom "^16.13.0"
     react-phylotree "0.1.0"
     react-router-dom "^4.3.1"
     sass "^1.26.2"
@@ -3140,7 +3141,7 @@ d3-array@1.2.1:
   version "1.2.1"
   resolved "https://registry.yarnpkg.com/d3-array/-/d3-array-1.2.1.tgz#d1ca33de2f6ac31efadb8e050a021d7e2396d5dc"
 
-d3-axis@1:
+d3-axis@1, d3-axis@^1.0.12:
   version "1.0.12"
   resolved "https://registry.yarnpkg.com/d3-axis/-/d3-axis-1.0.12.tgz#cdf20ba210cfbb43795af33756886fb3638daac9"
 
@@ -3355,6 +3356,13 @@ d3-random@1:
 d3-random@1.1.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/d3-random/-/d3-random-1.1.0.tgz#6642e506c6fa3a648595d2b2469788a8d12529d3"
+
+d3-react-axis@^0.0.3:
+  version "0.0.3"
+  resolved "https://registry.yarnpkg.com/d3-react-axis/-/d3-react-axis-0.0.3.tgz#416c555af7e8cab27977532c69c1f95deb82822a"
+  dependencies:
+    d3-axis "^1.0.12"
+    react "^16.12.0"
 
 d3-request@1.0.6:
   version "1.0.6"
@@ -8432,7 +8440,7 @@ react-copy-to-clipboard@^5.0.0:
     copy-to-clipboard "^3"
     prop-types "^15.5.8"
 
-react-dom@16, react-dom@^16.2.0, react-dom@^16.6.3:
+react-dom@16, react-dom@^16.13.0, react-dom@^16.6.3:
   version "16.13.0"
   resolved "https://registry.yarnpkg.com/react-dom/-/react-dom-16.13.0.tgz#cdde54b48eb9e8a0ca1b3dc9943d9bb409b81866"
   dependencies:
@@ -8556,7 +8564,7 @@ react-transition-group@^4.0.0:
     loose-envify "^1.4.0"
     prop-types "^15.6.2"
 
-react@16, react@^16.2.0, react@^16.6.3:
+react@16, react@^16.12.0, react@^16.13.0, react@^16.6.3:
   version "16.13.0"
   resolved "https://registry.yarnpkg.com/react/-/react-16.13.0.tgz#d046eabcdf64e457bbeed1e792e235e1b9934cf7"
   dependencies:
