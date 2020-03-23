@@ -301,7 +301,7 @@ function MEMESummary(props) {
   );
 }
 
-function MEMETable(props) {
+function MEMESiteTable(props) {
   var flattened = _.flatten(_.values(props.body_data), true),
     partition_column = d3.range(flattened.length).map(d => 0);
   _.each(props.partitions, (val, key) => {
@@ -372,6 +372,77 @@ function MEMETable(props) {
           headerData={headerData}
           bodyData={new_rows}
           paginate={20}
+          classes={"table table-smm table-striped"}
+          export_csv
+        />
+      </div>
+    </div>
+  );
+}
+
+function MEMEEBFTable(props) {
+  if (!props.data) return <div />;
+  const formatter = d3.format("1.2f"),
+    bodyData = _.flatten(
+    _.pairs(props.data['branch attributes']).map(full_pair => {
+      const [partition, partition_data] = full_pair;
+      return _.pairs(partition_data).map(branch_pair => {
+        const [branch_name, branch_attributes] = branch_pair;
+        return _.pairs(branch_attributes).filter(attribute_pair => {
+          const [attribute, value] = attribute_pair;
+          return attribute.slice(0, 3) == 'EBF';
+        }).map(attribute_pair => {
+          const [attribute, value] = attribute_pair,
+            site = +attribute.split(' ')[2];
+          return {
+            site: site,
+            partition: partition,
+            branch_name: branch_name,
+            ebf: +value
+          };
+        });
+      });
+    }),
+  ).map(row => {
+    return [
+      {value: row.site, classes: ""},
+      {value: row.partition, classes: ""},
+      {value: row.branch_name, classes: ""},
+      {value: +formatter(row.ebf), classes: ""}
+    ];
+  });
+  debugger;
+  return (
+    <div className="row">
+      <div className="col-md-12" id="table-tab">
+        <h4 className="dm-table-header mb-3">
+          MEME Branch EBF Table
+          <span
+            className="fas fa-info-circle"
+            style={{
+              verticalAlign: "middle",
+              float: "right",
+              minHeight: "30px",
+              minWidth: "30px"
+            }}
+            aria-hidden="true"
+            data-toggle="popover"
+            data-trigger="hover"
+            title="Actions"
+            data-html="true"
+            data-content="<ul><li>Hover over a column header for a description of its content.</li></ul>"
+            data-placement="bottom"
+          />
+        </h4>
+        <DatamonkeyTable
+          headerData={[
+            {value: "Site", sortable: true},
+            {value: "Partition", sortable: true},
+            {value: "Branch", sortable: false},
+            {value: "EBF", sortable: true},
+          ]}
+          bodyData={bodyData}
+          paginate={10}
           classes={"table table-smm table-striped"}
           export_csv
         />
@@ -481,7 +552,7 @@ class MEMEContents extends React.Component {
           updatePValue={self.updatePValue}
           pValue={self.state.pValue}
         />
-        <MEMETable
+        <MEMESiteTable
           header={self.state.header}
           body_data={self.state.bodyData}
           partitions={self.state.partitions}
@@ -500,6 +571,9 @@ class MEMEContents extends React.Component {
           </div>
         </div>
 
+        <MEMEEBFTable
+          data={self.state.data}
+        />
         <div className="row">
           <div className="col-md-12" id="fit-tab">
             <DatamonkeyModelTable fits={self.state.fits} />
