@@ -881,14 +881,15 @@ class BUSTEDAlignmentTreeERWidget extends React.Component {
       has_data = has_tree && has_evidence_ratios & has_fasta;
     if (!has_data) return <div />;
     const { site_size } = this.props,
+      tree_width = 200,
+      tree_padding = 10,
+      tree_height = site_size * this.state.tree.get_tips().length,
+      label_height = 20,
       phylotree_props = {
-        width: 200,
-        height: site_size * this.state.tree.get_tips().length,
+        width: tree_width - 2*tree_padding,
+        height: tree_height - site_size,
         tree: this.state.tree,
-        paddingTop: 5,
-        paddingBottom: 5,
-        paddingLeft: 5,
-        paddingRight: 5
+        transform: `translate(${tree_padding}, ${site_size/2})`
       },
       site_padding = 5,
       codon_label_height = 30,
@@ -900,8 +901,8 @@ class BUSTEDAlignmentTreeERWidget extends React.Component {
       ccw_nopad = 4 * site_size + site_padding,
       bar_height = 200,
       svg_props = {
-        width: phylotree_props.width + n_sites * codon_column_width,
-        height: phylotree_props.height + codon_label_height + bar_height
+        width: tree_width + 10 + n_sites * codon_column_width,
+        height: tree_height + codon_label_height + bar_height + label_height
       };
     const log_scale = x => Math.log(1 + x),
       constrained_data = sites.map(
@@ -980,7 +981,7 @@ class BUSTEDAlignmentTreeERWidget extends React.Component {
                 height={svg_props.height}
                 fill="white"
               />
-              <g transform={`translate(${phylotree_props.width - 100}, 75)`}>
+              <g transform={`translate(${tree_width - 100}, 75)`}>
                 <rect x={5} y={10} width={20} height={20} fill="#00a99d" />
                 <text x={0} y={20} textAnchor="end" alignmentBaseline="middle">
                   Constrained
@@ -995,7 +996,7 @@ class BUSTEDAlignmentTreeERWidget extends React.Component {
                 axis_label="log(1+evidence ratio)"
                 height={bar_height}
                 label_width={75}
-                translateX={phylotree_props.width - 75}
+                translateX={tree_width - 75}
                 padding={{ top: 0, right: 0, bottom: 0, left: 0 }}
               />
               {constrained_data.map((datum, i) => {
@@ -1003,7 +1004,7 @@ class BUSTEDAlignmentTreeERWidget extends React.Component {
                 return (
                   <rect
                     x={
-                      phylotree_props.width +
+                      tree_width +
                       i * codon_column_width +
                       ccw_nopad / 2 -
                       bar_width -
@@ -1022,7 +1023,7 @@ class BUSTEDAlignmentTreeERWidget extends React.Component {
                 return (
                   <rect
                     x={
-                      phylotree_props.width +
+                      tree_width +
                       i * codon_column_width +
                       ccw_nopad / 2 +
                       bar_padding
@@ -1038,21 +1039,19 @@ class BUSTEDAlignmentTreeERWidget extends React.Component {
               <g transform={`translate(0, ${bar_height + 5})`}>
                 <Phylotree
                   {...phylotree_props}
-                  paddingTop={vertical_pad}
-                  paddingBottom={vertical_pad}
                 />
                 {sites.map((site, i) => {
                   return (
                     <CodonColumn
                       site={site}
                       translateX={
-                        phylotree_props.width + i * codon_column_width
+                        tree_width + i * codon_column_width
                       }
                       site_size={site_size}
                       site_padding={site_padding}
                       codon_label_height={codon_label_height}
                       key={i}
-                      height={phylotree_props.height}
+                      height={tree_height}
                       {...this.state}
                     />
                   );
@@ -1334,6 +1333,7 @@ class BUSTEDContents extends React.Component {
 }
 
 function BUSTED(props) {
+  debugger;
   return (
     <ResultsPage
       data={props.data}

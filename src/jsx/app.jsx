@@ -129,10 +129,11 @@ class HyPhyVision extends React.Component {
               component={() => (
                 <BUSTED
                   data={
-                    this.state.data ||
                     base_url + "/data/json_files/busted/CD2.fna.BUSTED.json"
                   }
-                  fasta={fasta.CD2}
+                  fasta={
+                    base_url + "/data/fasta/CD2.fasta"
+                  }
                 />
               )}
             />

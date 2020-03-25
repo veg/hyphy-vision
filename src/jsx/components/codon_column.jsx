@@ -38,7 +38,7 @@ function CodonColumn(props) {
       />
       <text
         x={(4 * props.site_size + props.site_padding) / 2}
-        y={props.height + props.codon_label_height / 2}
+        y={props.height + props.codon_label_height}
         alignmentBaseline="middle"
         textAnchor="middle"
         fontFamily="Courier"
