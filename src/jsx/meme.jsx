@@ -411,7 +411,6 @@ function MEMEEBFTable(props) {
       {value: +formatter(row.ebf), classes: ""}
     ];
   });
-  debugger;
   return (
     <div className="row">
       <div className="col-md-12" id="table-tab">

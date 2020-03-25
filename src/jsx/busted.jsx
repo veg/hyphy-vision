@@ -1333,7 +1333,6 @@ class BUSTEDContents extends React.Component {
 }
 
 function BUSTED(props) {
-  debugger;
   return (
     <ResultsPage
       data={props.data}
