@@ -1166,17 +1166,25 @@ class SLACAlignmentTreeCountWidget extends React.Component {
     if (!newick || !fasta) return;
     const tree = new phylotreev1(newick);
     placenodes(tree, true);
+    const number_of_links = tree.links.length,
+    tree_hash = _.object(
+      tree.links.map(l => l.target.data.name),
+      Array(number_of_links).fill(true)
+    );
+    tree_hash.root = false;
     const node_to_ordered_index = _.object(
       tree.node_order,
       _.range(tree.node_order.length)
     );
-    const sequence_data = _.initial(
-      fastaParser(fasta).sort((a, b) => {
+    const sequence_data = fasta.filter(record => tree_hash[record.header])
+        .sort((a, b) => {
         const a_index = node_to_ordered_index[a.header],
           b_index = node_to_ordered_index[b.header];
         return a_index - b_index;
-      })
-    );
+      });
+    if(number_of_links != sequence_data.length) {
+      throw "Mismatch in FASTA/tree... refusing to proceed!";
+    }
     this.setState({
       tree: tree,
       sequence_data: sequence_data,
@@ -1229,7 +1237,7 @@ class SLACAlignmentTreeCountWidget extends React.Component {
       },
       site_padding = 5,
       codon_label_height = 30;
-    const { current_site, current_site_index } = this.state,
+    const { current_site_index } = this.state,
       syn_count = this.props.syn_substitutions[current_site_index],
       nonsyn_count = this.props.nonsyn_substitutions[current_site_index],
       total_count = syn_count + nonsyn_count,
