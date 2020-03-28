@@ -115,7 +115,7 @@
     "webpack-eslint-plugin": "^1.2.0"
   },
   "scripts": {
-    "build": "webpack",
+    "build": "webpack --mode production",
     "build:library": "webpack --config webpack.config.library.js",
     "lint": "eslint --ext .js,.jsx --ignore-pattern public,static,dist ./src/",
     "test": "node ./node_modules/jest-cli/bin/jest.js",
