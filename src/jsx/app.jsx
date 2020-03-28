@@ -9,7 +9,7 @@ import { RELAX } from "./relax.jsx";
 import { FEL } from "./fel.jsx";
 import { ContrastFEL } from "./contrast-fel.jsx";
 import { MEME } from "./meme.jsx";
-import { MultiHit } from "./multihit.jsx";
+import MultiHit from "./multihit.jsx";
 import { SLAC } from "./slac.jsx";
 import { FUBAR } from "./fubar.jsx";
 import { GARD } from "./gard.jsx";
@@ -129,10 +129,11 @@ class HyPhyVision extends React.Component {
               component={() => (
                 <BUSTED
                   data={
-                    this.state.data ||
                     base_url + "/data/json_files/busted/CD2.fna.BUSTED.json"
                   }
-                  fasta={fasta.CD2}
+                  fasta={
+                    base_url + "/data/fasta/CD2.fasta"
+                  }
                 />
               )}
             />

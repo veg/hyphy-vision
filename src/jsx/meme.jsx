@@ -1,12 +1,236 @@
-var React = require("react"),
-  ReactDOM = require("react-dom"),
+import React, { useState } from "react";
+var ReactDOM = require("react-dom"),
   d3 = require("d3"),
   _ = require("underscore");
 
-import { Tree } from "./components/tree.jsx";
+import ReactTree, {
+  ModelsPartitionsList,
+  SettingsItem
+} from "./components/react-tree.jsx";
 import { DatamonkeyTable, DatamonkeyModelTable } from "./components/tables.jsx";
 import { DatamonkeySiteGraph } from "./components/graphs.jsx";
 import { ResultsPage } from "./components/results_page.jsx";
+
+function MEMETree(props) {
+  const { data } = props;
+  if (!data) return null;
+  const ebf_data = _.object(
+      _.keys(data["branch attributes"]["attributes"])
+        .filter(datum => datum.slice(0, 3) == "EBF")
+        .map(datum => [+datum.split(" ")[2], +datum[datum.length - 2]])
+    ),
+    ebf_range = d3.extent(_.keys(ebf_data).map(d => +d));
+  const [partition, setPartition] = useState(0);
+  const [model, setModel] = useState("Global MG94xREV");
+  const [ebf, setEbf] = useState(null);
+  const [message, setMessage] = useState(null);
+  const [threshold, setThreshold] = useState(1);
+  const newick = data.input.trees[String(partition)];
+  function accessor(node) {
+    const name = node.data.name,
+      attributes = data["branch attributes"][String(partition)],
+      branch_length = attributes[name][model];
+    return branch_length;
+  }
+
+  var branchStyler, labelStyler;
+  if (ebf != null && ebf_data[ebf]) {
+    const current_partition = data["branch attributes"][String(partition)],
+      ebf_string = `EBF site ${ebf} (partition ${partition + 1})`;
+    labelStyler = node => {
+      const ebf_value = current_partition[node.name][ebf_string],
+        above_threshold = ebf_value > threshold,
+        fill = above_threshold ? "red" : "lightgrey",
+        opacity = above_threshold ? 1 : 0.8;
+      return {
+        fill: fill,
+        opacity: opacity
+      };
+    };
+    branchStyler = node => {
+      const ebf_value = current_partition[node.name][ebf_string],
+        above_threshold = ebf_value > threshold,
+        stroke = above_threshold ? "red" : "lightgrey",
+        opacity = above_threshold ? 1 : 0.8;
+      return {
+        stroke: stroke,
+        opacity: opacity
+      };
+    };
+  } else {
+    branchStyler = null;
+    labelStyler = null;
+  }
+  return (
+    <ReactTree
+      newick={newick}
+      accessor={accessor}
+      number_of_sequences={props.data.input["number of sequences"]}
+      paddingLeft={ebf == null ? 20 : 100}
+      popover={
+        "<li>Use the options menu to toggle the different site partitions.</li>"
+      }
+      branchStyler={branchStyler}
+      labelStyler={labelStyler}
+      includeBLAxis
+      options={
+        <ModelsPartitionsList
+          number_of_partitions={_.keys(data.input.trees).length}
+          partition={partition}
+          setPartition={setPartition}
+          model={model}
+          setModel={setModel}
+        />
+      }
+      settings={
+        <SettingsItem
+          onClick={() => {
+            setEbf(ebf == null ? ebf_range[0] : null);
+          }}
+        >
+          {ebf == null ? "Show" : "Hide"} branch-wise EBF values
+        </SettingsItem>
+      }
+      between={
+        ebf != null ? (
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              marginLeft: 20,
+              marginTop: 10,
+              marginBottom: 10,
+              height: 50
+            }}
+          >
+            <span>
+              Site to display:
+              <input
+                value={ebf}
+                size={5}
+                onInput={e => {
+                  const site = +e.target.value,
+                    partition = ebf_data[site];
+                  if (isNaN(site) && site != "") {
+                    setMessage({
+                      type: "error",
+                      content: "Please enter a valid input (positive integer)."
+                    });
+                    setEbf("");
+                  } else if (site == "") {
+                    setEbf("");
+                  } else if (site > ebf_range[1]) {
+                    setMessage({
+                      type: "warning",
+                      content: `Maximal site with EBf info is ${ebf_range[1]}.`
+                    });
+                    setEbf(ebf_range[1]);
+                  } else if (site < 1) {
+                    setMessage({
+                      type: "error",
+                      content: "Please enter a positive number."
+                    });
+                    setEbf(1);
+                  } else if (!ebf_data[site]) {
+                    setMessage({
+                      type: "warning",
+                      content: "No variation at this site, so no EBFs."
+                    });
+                    setEbf(+site);
+                  } else {
+                    setMessage(null);
+                    setEbf(+site);
+                    setPartition(partition - 1);
+                  }
+                }}
+              />
+              <i
+                className="fa fa-plus-circle"
+                aria-hidden="true"
+                onClick={e => {
+                  const new_ebf = ebf + 1;
+                  if (new_ebf < ebf_range[1] && ebf_data[new_ebf]) {
+                    setMessage(null);
+                    setEbf(new_ebf);
+                  } else if (new_ebf < ebf_range[1]) {
+                    setMessage({
+                      type: "warning",
+                      content: "No variation at this site, so no EBFs."
+                    });
+                    setEbf(new_ebf);
+                  } else {
+                    setMessage({
+                      type: "warning",
+                      content: `Maximal site with EBf info is ${ebf_range[1]}.`
+                    });
+                  }
+                }}
+              />
+              <i
+                className="fa fa-minus-circle"
+                aria-hidden="true"
+                onClick={e => {
+                  const new_ebf = ebf - 1;
+                  if (new_ebf > 0 && ebf_data[new_ebf]) {
+                    setMessage(null);
+                    setEbf(new_ebf);
+                  } else if (new_ebf > 0) {
+                    setMessage({
+                      type: "warning",
+                      content: "No variation at this site, so no EBFs."
+                    });
+                    setEbf(new_ebf);
+                  } else {
+                    setMessage({
+                      type: "warning",
+                      content: "Please enter a positive number."
+                    });
+                  }
+                }}
+              />
+            </span>
+
+            <span>
+              <span style={{ width: 300, display: "inline-block" }}>
+                <span>EBF threshold:</span>
+                <input
+                  type="range"
+                  style={{ width: 180 }}
+                  min="0"
+                  max="10"
+                  step=".1"
+                  value={threshold}
+                  onChange={e => {
+                    setThreshold(e.target.value);
+                  }}
+                />
+              </span>
+              <span
+                style={{ width: 30, marginLeft: 10, display: "inline-block" }}
+              >
+                {d3.format("1.1f")(threshold)}
+              </span>
+            </span>
+
+            <span>
+              {message ? (
+                <div
+                  className={
+                    "alert alert-" +
+                    (message.type == "error" ? "danger" : "warning")
+                  }
+                  role="alert"
+                >
+                  <b> {message.type.toUpperCase()}: </b> {message.content}
+                </div>
+              ) : null}
+            </span>
+          </div>
+        ) : null
+      }
+    />
+  );
+}
 
 function MEMESummary(props) {
   var number_of_sites = 0;
@@ -77,7 +301,7 @@ function MEMESummary(props) {
   );
 }
 
-function MEMETable(props) {
+function MEMESiteTable(props) {
   var flattened = _.flatten(_.values(props.body_data), true),
     partition_column = d3.range(flattened.length).map(d => 0);
   _.each(props.partitions, (val, key) => {
@@ -148,6 +372,76 @@ function MEMETable(props) {
           headerData={headerData}
           bodyData={new_rows}
           paginate={20}
+          classes={"table table-smm table-striped"}
+          export_csv
+        />
+      </div>
+    </div>
+  );
+}
+
+function MEMEEBFTable(props) {
+  if (!props.data) return <div />;
+  const formatter = d3.format("1.2f"),
+    bodyData = _.flatten(
+    _.pairs(props.data['branch attributes']).map(full_pair => {
+      const [partition, partition_data] = full_pair;
+      return _.pairs(partition_data).map(branch_pair => {
+        const [branch_name, branch_attributes] = branch_pair;
+        return _.pairs(branch_attributes).filter(attribute_pair => {
+          const [attribute, value] = attribute_pair;
+          return attribute.slice(0, 3) == 'EBF';
+        }).map(attribute_pair => {
+          const [attribute, value] = attribute_pair,
+            site = +attribute.split(' ')[2];
+          return {
+            site: site,
+            partition: partition,
+            branch_name: branch_name,
+            ebf: +value
+          };
+        });
+      });
+    }),
+  ).map(row => {
+    return [
+      {value: row.site, classes: ""},
+      {value: row.partition, classes: ""},
+      {value: row.branch_name, classes: ""},
+      {value: +formatter(row.ebf), classes: ""}
+    ];
+  });
+  return (
+    <div className="row">
+      <div className="col-md-12" id="table-tab">
+        <h4 className="dm-table-header mb-3">
+          MEME Branch EBF Table
+          <span
+            className="fas fa-info-circle"
+            style={{
+              verticalAlign: "middle",
+              float: "right",
+              minHeight: "30px",
+              minWidth: "30px"
+            }}
+            aria-hidden="true"
+            data-toggle="popover"
+            data-trigger="hover"
+            title="Actions"
+            data-html="true"
+            data-content="<ul><li>Hover over a column header for a description of its content.</li></ul>"
+            data-placement="bottom"
+          />
+        </h4>
+        <DatamonkeyTable
+          headerData={[
+            {value: "Site", sortable: true},
+            {value: "Partition", sortable: true},
+            {value: "Branch", sortable: false},
+            {value: "EBF", sortable: true},
+          ]}
+          bodyData={bodyData}
+          paginate={10}
           classes={"table table-smm table-striped"}
           export_csv
         />
@@ -257,7 +551,7 @@ class MEMEContents extends React.Component {
           updatePValue={self.updatePValue}
           pValue={self.state.pValue}
         />
-        <MEMETable
+        <MEMESiteTable
           header={self.state.header}
           body_data={self.state.bodyData}
           partitions={self.state.partitions}
@@ -272,16 +566,13 @@ class MEMEContents extends React.Component {
 
         <div className="row">
           <div id="tree-tab" className="col-md-12">
-            <Tree
-              models={models}
-              json={self.state.data}
-              settings={tree_settings}
-              method={"meme"}
-              multitree
-            />
+            <MEMETree data={self.state.data} />
           </div>
         </div>
 
+        <MEMEEBFTable
+          data={self.state.data}
+        />
         <div className="row">
           <div className="col-md-12" id="fit-tab">
             <DatamonkeyModelTable fits={self.state.fits} />
