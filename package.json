@@ -2,9 +2,6 @@
   "name": "hyphy-vision",
   "description": "HyPhy's visual interface",
   "homepage": "http://hyphy.org",
-  "jest": {
-    "config": "jest.config.js"
-  },
   "keywords": [
     "phylogenetics",
     "phylogeny",
