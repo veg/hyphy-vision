@@ -51,7 +51,7 @@
     "prop-types": "^15.5.10",
     "react": "16.12.0",
     "react-copy-to-clipboard": "^5.0.0",
-    "react-dom": "16.12.0",
+    "react-dom": "16.13.0",
     "react-json-view": "^1.14.0",
     "react-phylotree": "0.4.1",
     "react-range": "^1.5.3",
