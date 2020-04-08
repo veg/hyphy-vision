@@ -7780,15 +7780,17 @@ performance-now@^2.1.0:
   version "2.1.0"
   resolved "https://registry.yarnpkg.com/performance-now/-/performance-now-2.1.0.tgz#6309f4e0e5fa913ec1c69307ae364b4b377c9e7b"
 
-phylotree@0.1.6:
-  version "0.1.6"
-  resolved "https://registry.yarnpkg.com/phylotree/-/phylotree-0.1.6.tgz#0e6b1f246db5a1096f5338a67d3f17c6535a58db"
+phylotree@0.1.10:
+  version "0.1.10"
+  resolved "https://registry.yarnpkg.com/phylotree/-/phylotree-0.1.10.tgz#54e97c7abc08d0406df976e9f87a54c4478bb7a4"
+  integrity sha512-KSZof5mICZM1eyQox/Zri1sARVIVDCDODBtS9icyOTnURp/zt0BNZhKnz3PZzV1v5mX/S2w99JxGPVBfzbGo2Q==
   dependencies:
     bootstrap "3.x"
     d3 "3.x"
     font-awesome "4.x"
     jquery "1.x"
     underscore "1.x"
+    xml2js "^0.4.19"
 
 phylotree@1.0.0-alpha.17:
   version "1.0.0-alpha.17"
