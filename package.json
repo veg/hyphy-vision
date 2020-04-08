@@ -59,7 +59,6 @@
     "react-router-hash-link": "^1.1.1",
     "react-scrollchor": "^4.2.1",
     "save-svg-as-png": "^1.2.0",
-    "supervisor": "^0.12.0",
     "underscore": "^1.9.1"
   },
   "devDependencies": {

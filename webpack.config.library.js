@@ -1,6 +1,7 @@
 const path = require("path"),
   webpack = require("webpack"),
-  HtmlWebpackPlugin = require("html-webpack-plugin");
+  HtmlWebpackPlugin = require("html-webpack-plugin"),
+  CopyPlugin = require('copy-webpack-plugin');
 
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const PreloadWebpackPlugin = require("preload-webpack-plugin");
@@ -21,7 +22,16 @@ module.exports = env => {
       library: "hyphyVision",
       libraryTarget: "umd"
     },
-    externals: [/^[a-z\.\-0-9]+$/],
+    externals: [{
+        react: 'react',
+        bootstrap : 'bootstrap',
+        d3 : 'd3',
+        underscore : 'underscore',
+        popper : 'popper.js'
+      },
+      /react*/,
+      /jquery*/
+    ],
     module: {
       rules: [
         {
@@ -114,7 +124,21 @@ module.exports = env => {
         datamonkey: "datamonkey",
         _: "underscore"
       }),
-      new webpack.IgnorePlugin(/jsdom$/)
+      new webpack.IgnorePlugin(/jsdom$/),
+      new CopyPlugin(
+        [
+          // {output}/file.txt
+          { from: "src/application.scss" },
+          { from: "public/hyphyvision.css" }
+        ],
+        {
+          // By default, we only copy modified files during
+          // a watch or webpack-dev-server build. Setting this
+          // to `true` copies all files.
+          copyUnmodified: true
+        }
+      )
+
     ],
     resolve: {
       alias: {
