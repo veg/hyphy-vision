@@ -677,7 +677,7 @@ class ContrastFELContents extends React.Component {
   }
 }
 
-function ContrastFEL(props) {
+export function ContrastFEL(props) {
   return (
     <ResultsPage
       data={props.data}
@@ -698,7 +698,13 @@ function ContrastFEL(props) {
   );
 }
 
-function render_contrast_fel(data, element, fasta, originalFile, analysisLog) {
+export default function render_contrast_fel(
+  data,
+  element,
+  fasta,
+  originalFile,
+  analysisLog
+) {
   ReactDOM.render(
     <ContrastFEL
       data={data}
@@ -709,5 +715,3 @@ function render_contrast_fel(data, element, fasta, originalFile, analysisLog) {
     document.getElementById(element)
   );
 }
-
-export { ContrastFEL, render_contrast_fel };

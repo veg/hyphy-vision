@@ -1167,22 +1167,23 @@ class SLACAlignmentTreeCountWidget extends React.Component {
     const tree = new phylotreev1(newick);
     placenodes(tree, true);
     const number_of_links = tree.links.length,
-    tree_hash = _.object(
-      tree.links.map(l => l.target.data.name),
-      Array(number_of_links).fill(true)
-    );
+      tree_hash = _.object(
+        tree.links.map(l => l.target.data.name),
+        Array(number_of_links).fill(true)
+      );
     tree_hash.root = false;
     const node_to_ordered_index = _.object(
       tree.node_order,
       _.range(tree.node_order.length)
     );
-    const sequence_data = fasta.filter(record => tree_hash[record.header])
-        .sort((a, b) => {
+    const sequence_data = fasta
+      .filter(record => tree_hash[record.header])
+      .sort((a, b) => {
         const a_index = node_to_ordered_index[a.header],
           b_index = node_to_ordered_index[b.header];
         return a_index - b_index;
       });
-    if(number_of_links != sequence_data.length) {
+    if (number_of_links != sequence_data.length) {
       throw "Mismatch in FASTA/tree... refusing to proceed!";
     }
     this.setState({
@@ -1230,8 +1231,8 @@ class SLACAlignmentTreeCountWidget extends React.Component {
       horizontal_pad = 10,
       vertical_pad = site_size / 2,
       phylotree_props = {
-        width: 700 - 2*horizontal_pad,
-        height: site_size * this.state.sequence_data.length - 2*vertical_pad,
+        width: 700 - 2 * horizontal_pad,
+        height: site_size * this.state.sequence_data.length - 2 * vertical_pad,
         tree: this.state.tree,
         transform: `translate(2, ${vertical_pad})`
       },
@@ -1246,8 +1247,12 @@ class SLACAlignmentTreeCountWidget extends React.Component {
       ccw_nopad = 4 * site_size + site_padding,
       bar_height = 200,
       svg_props = {
-        width: phylotree_props.width + codon_column_width + 2*horizontal_pad,
-        height: phylotree_props.height + codon_label_height + bar_height + 2*vertical_pad
+        width: phylotree_props.width + codon_column_width + 2 * horizontal_pad,
+        height:
+          phylotree_props.height +
+          codon_label_height +
+          bar_height +
+          2 * vertical_pad
       },
       legend_colors = {
         total: "black",
@@ -1417,7 +1422,7 @@ class SLACAlignmentTreeCountWidget extends React.Component {
                 />
                 <CodonColumn
                   site={current_site_index}
-                  translateX={phylotree_props.width+horizontal_pad}
+                  translateX={phylotree_props.width + horizontal_pad}
                   site_size={site_size}
                   site_padding={site_padding}
                   codon_label_height={codon_label_height}
@@ -1732,7 +1737,7 @@ class SLACContents extends React.Component {
   }
 }
 
-function SLAC(props) {
+export function SLAC(props) {
   return (
     <ResultsPage
       data={props.data}
@@ -1756,7 +1761,13 @@ function SLAC(props) {
 
 // Will need to make a call to this
 // omega distributions
-function render_slac(data, element, fasta, originalFile, analysisLog) {
+export default function render_slac(
+  data,
+  element,
+  fasta,
+  originalFile,
+  analysisLog
+) {
   ReactDOM.render(
     <SLAC
       data={data}
@@ -1767,5 +1778,3 @@ function render_slac(data, element, fasta, originalFile, analysisLog) {
     document.getElementById(element)
   );
 }
-
-export { SLAC, render_slac };

@@ -447,7 +447,7 @@ class GARDVersionSelector extends React.Component {
   }
 }
 
-function GARD(props) {
+export function GARD(props) {
   return (
     <ResultsPage
       data={props.data}
@@ -468,7 +468,7 @@ function GARD(props) {
   );
 }
 
-function render_gard(
+export default function render_gard(
   data,
   element,
   fasta,
@@ -487,5 +487,3 @@ function render_gard(
     document.getElementById(element)
   );
 }
-
-export { GARD, render_gard };

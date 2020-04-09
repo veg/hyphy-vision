@@ -608,7 +608,7 @@ class FUBARContents extends React.Component {
   }
 }
 
-function FUBAR(props) {
+export function FUBAR(props) {
   return (
     <ResultsPage
       data={props.data}
@@ -629,7 +629,13 @@ function FUBAR(props) {
   );
 }
 
-function render_fubar(data, element, fasta, originalFile, analysisLog) {
+export default function render_fubar(
+  data,
+  element,
+  fasta,
+  originalFile,
+  analysisLog
+) {
   ReactDOM.render(
     <FUBAR
       data={data}
@@ -640,5 +646,3 @@ function render_fubar(data, element, fasta, originalFile, analysisLog) {
     document.getElementById(element)
   );
 }
-
-export { FUBAR, render_fubar };

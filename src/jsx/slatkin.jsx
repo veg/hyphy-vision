@@ -255,7 +255,7 @@ class SlatkinContents extends React.Component {
   }
 }
 
-function Slatkin(props) {
+export function Slatkin(props) {
   return (
     <ResultsPage
       data={props.data}
@@ -276,7 +276,13 @@ function Slatkin(props) {
   );
 }
 
-function render_slatkin(data, element, fasta, originalFile, analysisLog) {
+export default function render_slatkin(
+  data,
+  element,
+  fasta,
+  originalFile,
+  analysisLog
+) {
   ReactDOM.render(
     <Slatkin
       data={data}
@@ -287,5 +293,3 @@ function render_slatkin(data, element, fasta, originalFile, analysisLog) {
     document.getElementById(element)
   );
 }
-
-export { Slatkin, render_slatkin };

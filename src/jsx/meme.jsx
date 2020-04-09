@@ -384,33 +384,35 @@ function MEMEEBFTable(props) {
   if (!props.data) return <div />;
   const formatter = d3.format("1.2f"),
     bodyData = _.flatten(
-    _.pairs(props.data['branch attributes']).map(full_pair => {
-      const [partition, partition_data] = full_pair;
-      return _.pairs(partition_data).map(branch_pair => {
-        const [branch_name, branch_attributes] = branch_pair;
-        return _.pairs(branch_attributes).filter(attribute_pair => {
-          const [attribute, value] = attribute_pair;
-          return attribute.slice(0, 3) == 'EBF';
-        }).map(attribute_pair => {
-          const [attribute, value] = attribute_pair,
-            site = +attribute.split(' ')[2];
-          return {
-            site: site,
-            partition: partition,
-            branch_name: branch_name,
-            ebf: +value
-          };
+      _.pairs(props.data["branch attributes"]).map(full_pair => {
+        const [partition, partition_data] = full_pair;
+        return _.pairs(partition_data).map(branch_pair => {
+          const [branch_name, branch_attributes] = branch_pair;
+          return _.pairs(branch_attributes)
+            .filter(attribute_pair => {
+              const [attribute, value] = attribute_pair;
+              return attribute.slice(0, 3) == "EBF";
+            })
+            .map(attribute_pair => {
+              const [attribute, value] = attribute_pair,
+                site = +attribute.split(" ")[2];
+              return {
+                site: site,
+                partition: partition,
+                branch_name: branch_name,
+                ebf: +value
+              };
+            });
         });
-      });
-    }),
-  ).map(row => {
-    return [
-      {value: row.site, classes: ""},
-      {value: row.partition, classes: ""},
-      {value: row.branch_name, classes: ""},
-      {value: +formatter(row.ebf), classes: ""}
-    ];
-  });
+      })
+    ).map(row => {
+      return [
+        { value: row.site, classes: "" },
+        { value: row.partition, classes: "" },
+        { value: row.branch_name, classes: "" },
+        { value: +formatter(row.ebf), classes: "" }
+      ];
+    });
   return (
     <div className="row">
       <div className="col-md-12" id="table-tab">
@@ -435,10 +437,10 @@ function MEMEEBFTable(props) {
         </h4>
         <DatamonkeyTable
           headerData={[
-            {value: "Site", sortable: true},
-            {value: "Partition", sortable: true},
-            {value: "Branch", sortable: false},
-            {value: "EBF", sortable: true},
+            { value: "Site", sortable: true },
+            { value: "Partition", sortable: true },
+            { value: "Branch", sortable: false },
+            { value: "EBF", sortable: true }
           ]}
           bodyData={bodyData}
           paginate={10}
@@ -570,9 +572,7 @@ class MEMEContents extends React.Component {
           </div>
         </div>
 
-        <MEMEEBFTable
-          data={self.state.data}
-        />
+        <MEMEEBFTable data={self.state.data} />
         <div className="row">
           <div className="col-md-12" id="fit-tab">
             <DatamonkeyModelTable fits={self.state.fits} />
@@ -588,7 +588,7 @@ class MEMEContents extends React.Component {
   }
 }
 
-function MEME(props) {
+export function MEME(props) {
   return (
     <ResultsPage
       data={props.data}
@@ -609,7 +609,13 @@ function MEME(props) {
   );
 }
 
-function render_meme(data, element, fasta, originalFile, analysisLog) {
+export default function render_meme(
+  data,
+  element,
+  fasta,
+  originalFile,
+  analysisLog
+) {
   ReactDOM.render(
     <MEME
       data={data}
@@ -620,5 +626,3 @@ function render_meme(data, element, fasta, originalFile, analysisLog) {
     document.getElementById(element)
   );
 }
-
-export { MEME, render_meme };

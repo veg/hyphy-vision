@@ -563,7 +563,7 @@ class FELContents extends React.Component {
   }
 }
 
-function FEL(props) {
+export function FEL(props) {
   return (
     <ResultsPage
       data={props.data}
@@ -584,7 +584,13 @@ function FEL(props) {
   );
 }
 
-function render_fel(data, element, fasta, originalFile, analysisLog) {
+export default function render_fel(
+  data,
+  element,
+  fasta,
+  originalFile,
+  analysisLog
+) {
   ReactDOM.render(
     <FEL
       data={data}
@@ -595,5 +601,3 @@ function render_fel(data, element, fasta, originalFile, analysisLog) {
     document.getElementById(element)
   );
 }
-
-export { FEL, render_fel };

@@ -745,7 +745,7 @@ class FADEContents extends React.Component {
 }
 
 // ---- The stock compenents that are needed for each vision page ----
-function FADE(props) {
+export function FADE(props) {
   return (
     <ResultsPage
       data={props.data}
@@ -767,7 +767,13 @@ function FADE(props) {
   );
 }
 
-function render_fade(data, element, fasta, originalFile, analysisLog) {
+export default function render_fade(
+  data,
+  element,
+  fasta,
+  originalFile,
+  analysisLog
+) {
   ReactDOM.render(
     <FADE
       data={data}
@@ -778,5 +784,3 @@ function render_fade(data, element, fasta, originalFile, analysisLog) {
     document.getElementById(element)
   );
 }
-
-export { FADE, render_fade };

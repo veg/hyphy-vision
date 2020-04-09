@@ -585,7 +585,7 @@ RELAXContents.defaultProps = {
   alpha_level: 0.05
 };
 
-function RELAX(props) {
+export function RELAX(props) {
   return (
     <ResultsPage
       data={props.data}
@@ -604,7 +604,13 @@ function RELAX(props) {
   );
 }
 
-function render_relax(data, element, fasta, originalFile, analysisLog) {
+export default function render_relax(
+  data,
+  element,
+  fasta,
+  originalFile,
+  analysisLog
+) {
   ReactDOM.render(
     <RELAX
       data={data}
@@ -615,5 +621,3 @@ function render_relax(data, element, fasta, originalFile, analysisLog) {
     document.getElementById(element)
   );
 }
-
-export { RELAX, render_relax };

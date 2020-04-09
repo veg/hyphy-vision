@@ -886,10 +886,10 @@ class BUSTEDAlignmentTreeERWidget extends React.Component {
       tree_height = site_size * this.state.tree.get_tips().length,
       label_height = 20,
       phylotree_props = {
-        width: tree_width - 2*tree_padding,
+        width: tree_width - 2 * tree_padding,
         height: tree_height - site_size,
         tree: this.state.tree,
-        transform: `translate(${tree_padding}, ${site_size/2})`
+        transform: `translate(${tree_padding}, ${site_size / 2})`
       },
       site_padding = 5,
       codon_label_height = 30,
@@ -1037,16 +1037,12 @@ class BUSTEDAlignmentTreeERWidget extends React.Component {
                 );
               })}
               <g transform={`translate(0, ${bar_height + 5})`}>
-                <Phylotree
-                  {...phylotree_props}
-                />
+                <Phylotree {...phylotree_props} />
                 {sites.map((site, i) => {
                   return (
                     <CodonColumn
                       site={site}
-                      translateX={
-                        tree_width + i * codon_column_width
-                      }
+                      translateX={tree_width + i * codon_column_width}
                       site_size={site_size}
                       site_padding={site_padding}
                       codon_label_height={codon_label_height}
@@ -1332,7 +1328,7 @@ class BUSTEDContents extends React.Component {
   }
 }
 
-function BUSTED(props) {
+export function BUSTED(props) {
   return (
     <ResultsPage
       data={props.data}
@@ -1353,7 +1349,13 @@ function BUSTED(props) {
   );
 }
 
-var render_busted = function(data, element, fasta, originalFile, analysisLog) {
+export default function render_busted(
+  data,
+  element,
+  fasta,
+  originalFile,
+  analysisLog
+) {
   ReactDOM.render(
     <BUSTED
       data={data}
@@ -1363,6 +1365,4 @@ var render_busted = function(data, element, fasta, originalFile, analysisLog) {
     />,
     document.getElementById(element)
   );
-};
-
-export { render_busted, BUSTED };
+}
