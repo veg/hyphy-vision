@@ -1,5 +1,3 @@
-var $ = require("jquery");
-
 var root = this;
 var datamonkey = function() {};
 
