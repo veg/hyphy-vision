@@ -22,16 +22,7 @@ module.exports = env => {
       library: "hyphyVision",
       libraryTarget: "umd"
     },
-    externals: [{
-        react: 'react',
-        bootstrap : 'bootstrap',
-        d3 : 'd3',
-        underscore : 'underscore',
-        popper : 'popper.js'
-      },
-      /react*/,
-      /jquery*/
-    ],
+    externals: [/^[a-z\.\-0-9]+$/],
     module: {
       rules: [
         {
@@ -117,13 +108,6 @@ module.exports = env => {
         chunkFilename: "[id].css"
       }),
       new webpack.LoaderOptionsPlugin({ debug: true }),
-      new webpack.ProvidePlugin({
-        $: "jquery",
-        jQuery: "jquery",
-        d3: "d3",
-        datamonkey: "datamonkey",
-        _: "underscore"
-      }),
       new webpack.IgnorePlugin(/jsdom$/),
       new CopyPlugin(
         [
