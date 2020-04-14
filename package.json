@@ -56,7 +56,7 @@
     "react-router-hash-link": "^1.1.1",
     "react-scrollchor": "^4.2.1",
     "save-svg-as-png": "^1.2.0",
-    "underscore": "^1.9.1"
+    "underscore": "1.9"
   },
   "devDependencies": {
     "@babel/core": "^7.8.7",
