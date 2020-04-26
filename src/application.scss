@@ -1,14 +1,24 @@
+/* Hyphy Colors */
+$hyphy-green: #00a99d;
+
+$theme-colors: (
+  "primary": $hyphy-green
+);
+
 /**************************/
 /******** Imports *********/
 /**************************/
 @import "variables";
 @import "~bootstrap/scss/bootstrap";
 
-@import url("https://fonts.googleapis.com/css?family=Montserrat:400,400i,500,500i,600,600i,700,700i,800,800i,900,900i|Noto+Sans:400,400i,700,700i");
-
+$fa-font-path: "~@fortawesome/fontawesome-free/webfonts";
 @import "~@fortawesome/fontawesome-free/scss/fontawesome";
 @import "~@fortawesome/fontawesome-free/scss/v4-shims";
-@import "~alignment.js/lib/alignment.css";
+
+@import url("https://fonts.googleapis.com/css?family=Montserrat:400,400i,500,500i,600,600i,700,700i,800,800i,900,900i|Noto+Sans:400,400i,700,700i");
+
+@import "~alignment.js/styles.scss";
+@import "~react-phylotree/styles/phylotree.css";
 
 /* End Imports */
 /*----------------------------------------------------------------------------------------------------------------*/
@@ -16,9 +26,6 @@
 /***************************************/
 /******* BS Variables/Components *******/
 /***************************************/
-
-/* Hyphy Colors */
-$hyphy-green: #00a99d;
 
 /* Alerts */
 $alert-info-bg: #eaf4f2;
@@ -64,7 +71,7 @@ $btn-primary-bg: $hyphy-green;
 
 .btn {
   border-radius: 0;
-  padding: 0 24px;
+  padding: 0.375rem 0.75rem;
   font-family: "Montserrat", sans-serif;
   height: 38px;
   letter-spacing: 0.25px;
@@ -752,11 +759,8 @@ div#input-info p {
 }
 
 .main-result {
-  background-color: #fff;
-  border-style: solid;
-  border-width: 3px;
   border-color: #00a99d;
-  padding: 20px 20px 10px 20px;
+  padding: 10px 10px 10px 10px;
 }
 
 div.main-result p {
@@ -766,7 +770,6 @@ div.main-result p {
 }
 
 div.main-result hr {
-  border-top: 2px solid #a1c6b3;
   margin-top: 10px;
   margin-bottom: 10px;
 }
@@ -1609,4 +1612,42 @@ li.active > a:hover {
 
 .hyphy-vision-datamonkey-table {
   overflow-x: scroll;
+}
+
+.btn-export-csv-round {
+  background-color: #00a99d;
+  color: rgb(255, 255, 255);
+  letter-spacing: 1px;
+  text-align: center;
+  line-height: 20px;
+  font-family: "Noto Sans", sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  border: 2px solid #00a99d;
+  border-radius: 40px;
+  transition: all 0.3s ease 0s;
+}
+
+.btn-export-chart-png {
+  background-color: #00a99d;
+  color: rgb(255, 255, 255);
+  letter-spacing: 1px;
+  text-align: center;
+  line-height: 20px;
+  font-family: "Noto Sans", sans-serif;
+  font-size: 10px;
+  font-weight: 600;
+  border: 2px solid #ffffff;
+}
+
+.btn-export-chart-svg {
+  background-color: #00a99d;
+  color: rgb(255, 255, 255);
+  letter-spacing: 1px;
+  text-align: center;
+  line-height: 20px;
+  font-family: "Noto Sans", sans-serif;
+  font-size: 10px;
+  font-weight: 600;
+  border: 2px solid #ffffff;
 }

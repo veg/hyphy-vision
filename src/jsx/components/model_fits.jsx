@@ -243,7 +243,7 @@ var ModelFits = createReactClass({
   render: function() {
     return (
       <div>
-        <h4 className="dm-table-header">
+        <h4 className="dm-table-header mb-3">
           Model fits
           <span
             className="glyphicon glyphicon-info-sign"
@@ -287,6 +287,4 @@ function rerender_model_fits(json, element) {
   render_model_fits(json, element);
 }
 
-module.exports.ModelFits = ModelFits;
-module.exports.render_model_fits = render_model_fits;
-module.exports.rerender_model_fits = rerender_model_fits;
+export { ModelFits, render_model_fits, rerender_model_fits };

@@ -13,7 +13,7 @@ function BGMSummary(props) {
     <div className="row">
       <div className="col-md-12" />
       <div className="col-md-12">
-        <div className="main-result">
+        <div className="main-result border border-primary border-left-0 border-right-0 mt-3">
           <p>
             BGM found{" "}
             <strong className="hyphy-highlight">{props.numberOfPairs}</strong>{" "}
@@ -42,7 +42,8 @@ function BGMSummary(props) {
                 here
               </a>{" "}
               for more information about the BGM method.
-              <br />Please cite{" "}
+              <br />
+              Please cite{" "}
               <a
                 href="https://www.ncbi.nlm.nih.gov/pubmed/18562270"
                 id="summary-pmid"
@@ -161,7 +162,6 @@ class BGMContents extends React.Component {
               "<p>Hover over a column header for a description of its content.</p>"
             }
           />
-
           <DatamonkeyTable
             headerData={this.state.MLEHeaders}
             bodyData={this.state.MLEData}
@@ -208,7 +208,7 @@ class BGMContents extends React.Component {
   }
 }
 
-function BGM(props) {
+export function BGM(props) {
   return (
     <ResultsPage
       data={props.data}
@@ -228,7 +228,13 @@ function BGM(props) {
   );
 }
 
-function render_bgm(data, element, fasta, originalFile, analysisLog) {
+export default function render_bgm(
+  data,
+  element,
+  fasta,
+  originalFile,
+  analysisLog
+) {
   ReactDOM.render(
     <BGM
       data={data}
@@ -239,6 +245,3 @@ function render_bgm(data, element, fasta, originalFile, analysisLog) {
     document.getElementById(element)
   );
 }
-
-module.exports = render_bgm;
-module.exports.BGM = BGM;

@@ -156,4 +156,4 @@ ResultsPage.defaultProps = {
   analysisLog: false
 };
 
-module.exports.ResultsPage = ResultsPage;
+export { ResultsPage };

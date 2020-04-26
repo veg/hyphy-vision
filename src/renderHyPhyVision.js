@@ -43,4 +43,4 @@ function renderHyPhyVision(url, element, fasta, originalFile, analysisLog) {
   });
 }
 
-module.exports = renderHyPhyVision;
+export { renderHyPhyVision };

@@ -30,8 +30,8 @@ class MainResult extends Component {
 
   render() {
     return (
-      <div className="col-12">
-        <div className="main-result">
+      <div className="col-12 mt-3">
+        <div className="main-result border border-primary border-left-0 border-right-0">
           {this.props.summary_for_clipboard != null ? (
             <p>
               <CopyToClipboard
@@ -50,7 +50,8 @@ class MainResult extends Component {
             <small>
               See <a href={this.props.method_ref}>here</a> for more information
               about this method.
-              <br />Please cite{" "}
+              <br />
+              Please cite{" "}
               <a
                 href={this.props.citation_ref}
                 id="summary-pmid"
@@ -68,4 +69,4 @@ class MainResult extends Component {
   }
 }
 
-module.exports.MainResult = MainResult;
+export { MainResult };

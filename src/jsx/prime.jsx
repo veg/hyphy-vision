@@ -7,7 +7,7 @@ import { DatamonkeyTable } from "./components/tables.jsx";
 import { DatamonkeyMultiScatterplot } from "./components/graphs.jsx";
 import { ScrollSpy } from "./components/scrollspy.jsx";
 
-class PRIME extends React.Component {
+export class PRIME extends React.Component {
   constructor(props) {
     super(props);
 
@@ -213,7 +213,7 @@ class PRIME extends React.Component {
 
     return (
       <div>
-        <div className="main-result">
+        <div className="main-result border border-primary border-left-0 border-right-0 mt-3">
           <p>
             <p>
               PRIME{" "}
@@ -322,7 +322,9 @@ class PRIME extends React.Component {
               </div>
 
               <div id="plot-tab" className="row hyphy-row">
-                <h3 className="dm-table-header">Property Importance Plot</h3>
+                <h3 className="dm-table-header mb-3">
+                  Property Importance Plot
+                </h3>
 
                 <DatamonkeyMultiScatterplot
                   x={this.state.codons}
@@ -336,7 +338,7 @@ class PRIME extends React.Component {
 
               <div id="table-tab" className="row hyphy-row">
                 <div id="hyphy-mle-fits" className="col-md-12">
-                  <h3 className="dm-table-header">Table Summary</h3>
+                  <h3 className="dm-table-header mb-3">Table Summary</h3>
 
                   <div className="col-md-6 alert alert-danger" role="alert">
                     Conserved properties with evidence are highlighted in red.
@@ -376,11 +378,9 @@ PRIME.defaultProps = {
 
 // Will need to make a call to this
 // omega distributions
-function prime(prime_results, element) {
+export default function prime(prime_results, element) {
   ReactDOM.render(
     <PRIME prime_results={prime_results} />,
     document.getElementById(element)
   );
 }
-
-module.exports = prime;

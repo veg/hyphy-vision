@@ -179,10 +179,10 @@ var BranchTable = createReactClass({
     branch_rows
       .enter()
       .append("tr")
-      .attr("class", d => (d[3] < 0.05 ? "highlight" : ""));
+      .attr("class", d => (d[3] < 0.05 ? "highlight table-success" : ""));
     branch_rows.exit().remove();
     branch_rows.style("font-weight", function(d) {
-      return d[3] <= 0.05 ? "bold" : "normal";
+      return d[3] <= 0.05 ? "bold" : "normal table-success";
     });
 
     branch_rows = branch_rows.selectAll("td").data(function(d) {
@@ -223,9 +223,9 @@ var BranchTable = createReactClass({
     };
 
     return (
-      <div className="row">
+      <div className="row table-striped">
         <div id="hyphy-branch-table" className="col-md-12">
-          <h4 className="dm-table-header">
+          <h4 className="dm-table-header mb-3">
             Detailed results
             <span
               className="glyphicon glyphicon-info-sign"
@@ -323,7 +323,7 @@ var BranchTable = createReactClass({
                 </button>
               </div>
               <div className="modal-body" id="modal-body">
-                <h4 className="dm-table-header">&omega; distribution</h4>
+                <h4 className="dm-table-header mb-3">&omega; distribution</h4>
                 <PropChart
                   name={self.state.current_model_name}
                   omegas={self.state.current_omegas}
@@ -371,6 +371,4 @@ function rerender_branch_table(tree, test_results, annotations, element) {
   render_branch_table(tree, test_results, annotations, element);
 }
 
-module.exports.BranchTable = BranchTable;
-module.exports.render_branch_table = render_branch_table;
-module.exports.rerender_branch_table = rerender_branch_table;
+export { BranchTable, render_branch_table, rerender_branch_table };

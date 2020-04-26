@@ -305,7 +305,7 @@ var DatamonkeyTable = createReactClass({
    */
   getDefaultProps: function() {
     return {
-      classes: "dm-table table table-smm table-hover",
+      classes: "dm-table table table-smm table-hover table-striped",
       rowHash: null
     };
   },
@@ -445,9 +445,9 @@ var DatamonkeyTable = createReactClass({
             return _.isObject(d) ? d.value : d;
           }
           var headers = _.map(self.props.headerData, extract),
-            munged = _.map(self.props.bodyData, row => _.map(row, extract)).map(
-              row => _.object(headers, row)
-            );
+            munged = _.map(self.props.bodyData, row =>
+              _.map(row, extract)
+            ).map(row => _.object(headers, row));
           const exporter = CsvExport.create({
             filename: "datamonkey-table.csv"
           });
@@ -457,7 +457,7 @@ var DatamonkeyTable = createReactClass({
           <button
             id="export-csv"
             type="button"
-            className="btn.btn-secondary btn-sm float-right"
+            className="btn.btn-secondary btn-sm float-right btn-export-csv-round"
             onClick={exportCSV}
           >
             <span className="far fa-save" /> Export Table to CSV
@@ -1035,7 +1035,7 @@ var DatamonkeyModelTable = createReactClass({
   render: function() {
     return (
       <div>
-        <h4 className="dm-table-header">
+        <h4 className="dm-table-header mb-3">
           Model fits
           <span
             className="fas fa-info-circle"
@@ -1145,9 +1145,11 @@ var DatamonkeyTimersTable = createReactClass({
   }
 });
 
-module.exports.DatamonkeyTable = DatamonkeyTable;
-module.exports.DatamonkeyTableRow = DatamonkeyTableRow;
-module.exports.DatamonkeyRateDistributionTable = DatamonkeyRateDistributionTable;
-module.exports.DatamonkeyPartitionTable = DatamonkeyPartitionTable;
-module.exports.DatamonkeyModelTable = DatamonkeyModelTable;
-module.exports.DatamonkeyTimersTable = DatamonkeyTimersTable;
+export {
+  DatamonkeyTable,
+  DatamonkeyTableRow,
+  DatamonkeyRateDistributionTable,
+  DatamonkeyPartitionTable,
+  DatamonkeyModelTable,
+  DatamonkeyTimersTable
+};

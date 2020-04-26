@@ -100,8 +100,7 @@ class BranchSelection extends React.Component {
     var container_id = "#tree_container";
 
     // clear all svgs under container_id first
-    d3
-      .select(container_id)
+    d3.select(container_id)
       .select("svg")
       .remove();
 
@@ -296,5 +295,4 @@ function render_branch_selection(
   );
 }
 
-module.exports = render_branch_selection;
-module.exports.BranchSelection = BranchSelection;
+export { render_branch_selection, BranchSelection };

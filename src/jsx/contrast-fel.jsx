@@ -6,12 +6,8 @@ import { Tree } from "./components/tree.jsx";
 import { Header } from "./components/header.jsx";
 import { DatamonkeyTable, DatamonkeyModelTable } from "./components/tables.jsx";
 import { DatamonkeySeries, DatamonkeyGraphMenu } from "./components/graphs.jsx";
-import Phylotree, { placenodes, phylotreev1 } from "react-phylotree";
-import CodonColumn from "./components/codon_column.jsx";
 import { MainResult } from "./components/mainresult.jsx";
 import { ResultsPage } from "./components/results_page.jsx";
-
-import AlignmentTree from "./components/tree-alignment.jsx";
 
 class ContrastFELContents extends React.Component {
   constructor(props) {
@@ -76,7 +72,6 @@ class ContrastFELContents extends React.Component {
 
     // Get keys
     let header_keys = _.keys(mle_results[0]);
-    let pval_indices = _.map(header_keys, d => d.indexOf("P-value") !== -1);
 
     let pval_keys = _.filter(header_keys, d => d.indexOf("P-value") !== -1);
 
@@ -340,13 +335,13 @@ class ContrastFELContents extends React.Component {
       this.state.positively_selected.length -
       this.state.negatively_selected.length;
     var summary_text =
-      "FEL-Contrast found evidence of pervasive positive/diversifying selection at " +
+      "Contrast-FEL found evidence of pervasive positive/diversifying selection at " +
       this.state.positively_selected.length +
-      " sites in your alignment. In addition, FEL-Contrast found evidence with p-value " +
+      " sites in your alignment. In addition, Contrast-FEL found evidence with p-value " +
       this.state.pvalue_threshold +
       " of pervasive negative/purifying selection at " +
       this.state.negatively_selected.length +
-      " sites in your alignment. FEL-Contrast did not find evidence for either positive or negative selection in the remaining " +
+      " sites in your alignment. Contrast-FEL did not find evidence for either positive or negative selection in the remaining " +
       no_selected +
       " sites in your alignment.";
     return summary_text;
@@ -423,7 +418,7 @@ class ContrastFELContents extends React.Component {
   getSummary() {
     return (
       <div>
-        <div className="main-result">
+        <div className="main-result border border-primary border-left-0 border-right-0 mt-3">
           <p>
             <p>
               ContrastFEL{" "}
@@ -497,8 +492,6 @@ class ContrastFELContents extends React.Component {
 
     var x_options = "Site";
     var y_options = ["alpha"];
-
-    let newick = this.props.json.input.trees[0];
 
     if (this.state.mle_results) {
       y_options = _.keys(this.state.mle_results[0]);
@@ -635,7 +628,7 @@ class ContrastFELContents extends React.Component {
           </div>
 
           <div id="plot-tab">
-            <h3 className="dm-table-header">FEL-Contrast Site Plot</h3>
+            <h3 className="dm-table-header mb-3">Contrast-FEL Site Plot</h3>
 
             <DatamonkeyGraphMenu
               x_options={x_options}
@@ -684,7 +677,7 @@ class ContrastFELContents extends React.Component {
   }
 }
 
-function ContrastFEL(props) {
+export function ContrastFEL(props) {
   return (
     <ResultsPage
       data={props.data}
@@ -705,7 +698,13 @@ function ContrastFEL(props) {
   );
 }
 
-function render_contrast_fel(data, element, fasta, originalFile, analysisLog) {
+export default function render_contrast_fel(
+  data,
+  element,
+  fasta,
+  originalFile,
+  analysisLog
+) {
   ReactDOM.render(
     <ContrastFEL
       data={data}
@@ -716,6 +715,3 @@ function render_contrast_fel(data, element, fasta, originalFile, analysisLog) {
     document.getElementById(element)
   );
 }
-
-module.exports = render_contrast_fel;
-module.exports.ContrastFEL = ContrastFEL;

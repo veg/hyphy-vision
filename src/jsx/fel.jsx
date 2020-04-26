@@ -333,7 +333,8 @@ class FELContents extends React.Component {
             min="0"
             max="1"
             onChange={this.updatePvalThreshold}
-          />.
+          />
+          .
         </p>
       </p>
     );
@@ -342,7 +343,7 @@ class FELContents extends React.Component {
   getSummary() {
     return (
       <div>
-        <div className="main-result">
+        <div className="main-result border border-primary border-left-0 border-right-0 mt-3">
           <p>
             <p>
               FEL <strong className="hyphy-highlight"> found evidence</strong>{" "}
@@ -385,7 +386,8 @@ class FELContents extends React.Component {
                 min="0"
                 max="1"
                 onChange={this.updatePvalThreshold}
-              />.
+              />
+              .
             </p>
           </p>
           <hr />
@@ -512,7 +514,7 @@ class FELContents extends React.Component {
           </div>
 
           <div id="plot-tab">
-            <h3 className="dm-table-header">FEL Site Plot</h3>
+            <h3 className="dm-table-header mb-3">FEL Site Plot</h3>
 
             <DatamonkeyGraphMenu
               x_options={x_options}
@@ -561,7 +563,7 @@ class FELContents extends React.Component {
   }
 }
 
-function FEL(props) {
+export function FEL(props) {
   return (
     <ResultsPage
       data={props.data}
@@ -582,7 +584,13 @@ function FEL(props) {
   );
 }
 
-function render_fel(data, element, fasta, originalFile, analysisLog) {
+export default function render_fel(
+  data,
+  element,
+  fasta,
+  originalFile,
+  analysisLog
+) {
   ReactDOM.render(
     <FEL
       data={data}
@@ -593,6 +601,3 @@ function render_fel(data, element, fasta, originalFile, analysisLog) {
     document.getElementById(element)
   );
 }
-
-module.exports = render_fel;
-module.exports.FEL = FEL;

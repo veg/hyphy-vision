@@ -64,7 +64,7 @@ class SlatkinResults extends React.Component {
       </tr>
     ));
     return (
-      <table className="table table-light">
+      <table className="table table-light table-striped">
         <thead>
           <tr>
             <th>Compartment</th>
@@ -115,7 +115,7 @@ class SlatkinResults extends React.Component {
           <br />
         </div>
         <div className="col-md-12">
-          <div className="main-result">
+          <div className="main-result border border-primary border-left-0 border-right-0 mt-3">
             <h4 className="border-bottom mb-2">
               Full Panmixia Test (Standard)
             </h4>
@@ -255,7 +255,7 @@ class SlatkinContents extends React.Component {
   }
 }
 
-function Slatkin(props) {
+export function Slatkin(props) {
   return (
     <ResultsPage
       data={props.data}
@@ -276,7 +276,13 @@ function Slatkin(props) {
   );
 }
 
-function render_slatkin(data, element, fasta, originalFile, analysisLog) {
+export default function render_slatkin(
+  data,
+  element,
+  fasta,
+  originalFile,
+  analysisLog
+) {
   ReactDOM.render(
     <Slatkin
       data={data}
@@ -287,6 +293,3 @@ function render_slatkin(data, element, fasta, originalFile, analysisLog) {
     document.getElementById(element)
   );
 }
-
-module.exports = render_slatkin;
-module.exports.Slatkin = Slatkin;

@@ -9,7 +9,7 @@ function MethodHeader(props) {
         <h3 className="list-group-item-heading">
           <span id="summary-method-name">{props.methodName}</span>
           <br />
-          <span className="results-summary">results sumary</span>
+          <span className="results-summary">results summary</span>
         </h3>
       </div>
       <div className="col-md-12">
@@ -26,4 +26,4 @@ function MethodHeader(props) {
   );
 }
 
-module.exports.MethodHeader = MethodHeader;
+export { MethodHeader };

@@ -6,8 +6,8 @@ var React = require("react"),
 
 import { saveSvgAsPng } from "save-svg-as-png";
 
-/* 
- * Creates a dropdown menu to be used with any 
+/*
+ * Creates a dropdown menu to be used with any
  * component that extends BaseGraph
  */
 class GraphMenu extends React.Component {
@@ -47,9 +47,14 @@ class GraphMenu extends React.Component {
     );
   }
 
+  static getDerivedStateFromProps(nextProps, prevState) {
+    if (!_.contains(nextProps.y_options, prevState.yaxis)) {
+      return { yaxis: nextProps.y_options[0] };
+    } else return null;
+  }
+
   AxisButton(options, selected, axis, label) {
     var self = this;
-
     var DimensionOptions = [];
 
     DimensionOptions = _.map(
@@ -107,7 +112,7 @@ class GraphMenu extends React.Component {
             <button
               id="export-chart-png"
               type="button"
-              className="btn.btn-secondary btn-sm btn-export"
+              className="btn.btn-secondary btn-sm btn-export btn-export-chart-png"
               onClick={() =>
                 saveSvgAsPng(
                   document.getElementById("dm-chart"),
@@ -120,7 +125,7 @@ class GraphMenu extends React.Component {
             <button
               id="export-chart-png"
               type="button"
-              className="btn.btn-secondary btn-sm btn-export"
+              className="btn.btn-secondary btn-sm btn-export btn-export-chart-svg"
               onClick={() =>
                 d3_save_svg.save(d3.select("#dm-chart").node(), {
                   filename: "datamonkey-chart"
@@ -136,7 +141,7 @@ class GraphMenu extends React.Component {
 
     return (
       <nav className="navbar" style={navStyle}>
-        <form className="navbar-form">
+        <form className="navbar-form col-8">
           {XAxisButton}
           {YAxisButton}
         </form>
@@ -424,8 +429,7 @@ class LineChart extends BaseGraph {
         "translate(" + this.props.marginLeft + "," + this.props.marginTop + ")"
       );
 
-    g
-      .append("path")
+    g.append("path")
       .datum(_.zip(this.props.x, y))
       .attr("fill", "none")
       .attr("stroke", "steelblue")
@@ -612,8 +616,7 @@ class MultiScatterPlot extends React.Component {
         .ticks(20);
     }
 
-    d3
-      .select(dom_element)
+    d3.select(dom_element)
       .selectAll("*")
       .remove();
 
@@ -677,8 +680,7 @@ class MultiScatterPlot extends React.Component {
       .attr("transform", "translate(" + width + ",0)")
       .call(yAxis2.tickFormat(""));
 
-    y2
-      .append("text")
+    y2.append("text")
       .attr("class", "label")
       .attr("transform", "rotate(-90)")
       .attr("y", 10)
@@ -686,8 +688,7 @@ class MultiScatterPlot extends React.Component {
       .style("text-anchor", "end")
       .text("Property conserved");
 
-    y2
-      .append("text")
+    y2.append("text")
       .attr("class", "label")
       .attr("transform", "rotate(-90)")
       .attr("y", 10)
@@ -885,7 +886,7 @@ class SiteGraph extends React.Component {
           <button
             id="export-chart-svg"
             type="button"
-            className="btn.btn-secondary btn-sm float-right btn-export"
+            className="btn.btn-secondary btn-sm float-right btn-export btn-export-chart-svg"
             onClick={self.saveSVG}
           >
             <span className="far fa-save" /> Export Chart to SVG
@@ -893,7 +894,7 @@ class SiteGraph extends React.Component {
           <button
             id="export-chart-png"
             type="button"
-            className="btn.btn-secondary btn-sm float-right btn-export"
+            className="btn.btn-secondary btn-sm float-right btn-export btn-export-chart-png"
             onClick={self.savePNG}
           >
             <span className="far fa-save" /> Export Chart to PNG
@@ -916,9 +917,18 @@ class SiteGraph extends React.Component {
   }
 }
 
-module.exports.DatamonkeyGraphMenu = GraphMenu;
-module.exports.DatamonkeyLine = LineChart;
-module.exports.DatamonkeyMultiScatterplot = MultiScatterPlot;
-module.exports.DatamonkeyScatterplot = ScatterPlot;
-module.exports.DatamonkeySeries = Series;
-module.exports.DatamonkeySiteGraph = SiteGraph;
+let DatamonkeyGraphMenu = GraphMenu,
+  DatamonkeyLine = LineChart,
+  DatamonkeyMultiScatterplot = MultiScatterPlot,
+  DatamonkeyScatterplot = ScatterPlot,
+  DatamonkeySeries = Series,
+  DatamonkeySiteGraph = SiteGraph;
+
+export {
+  DatamonkeyGraphMenu,
+  DatamonkeyLine,
+  DatamonkeyMultiScatterplot,
+  DatamonkeyScatterplot,
+  DatamonkeySeries,
+  DatamonkeySiteGraph
+};

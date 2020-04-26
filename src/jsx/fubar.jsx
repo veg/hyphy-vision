@@ -23,7 +23,7 @@ function FUBARSummary(props) {
     <div className="row">
       <div className="col-md-12" />
       <div className="col-md-12">
-        <div className="main-result">
+        <div className="main-result border border-primary border-left-0 border-right-0 mt-3">
           <p>
             FUBAR <strong className="hyphy-highlight">found evidence</strong> of
           </p>
@@ -58,7 +58,8 @@ function FUBARSummary(props) {
               min="0"
               max="1"
               onChange={props.updatePosteriorProbability}
-            />.
+            />
+            .
           </p>
           <hr />
           <p>
@@ -68,7 +69,8 @@ function FUBARSummary(props) {
                 here
               </a>{" "}
               for more information about the FUBAR method.
-              <br />Please cite{" "}
+              <br />
+              Please cite{" "}
               <a
                 href="http://www.ncbi.nlm.nih.gov/pubmed/23420840"
                 id="summary-pmid"
@@ -180,9 +182,10 @@ class FUBARViz extends React.Component {
       .attr("class", "axis axis")
       .call(yAxis);
 
-    d3
-      .selectAll(".x-axis > .tick > text")
-      .attr("transform", "rotate(-90) translate(-20, -15)");
+    d3.selectAll(".x-axis > .tick > text").attr(
+      "transform",
+      "rotate(-90) translate(-20, -15)"
+    );
 
     main
       .append("text")
@@ -290,8 +293,7 @@ class FUBARViz extends React.Component {
         .domain([0, d3.max(data.map(row => +row[2]))])
         .range([0, this.width / this.n_gridpoints]);
 
-      d3
-        .selectAll("circle")
+      d3.selectAll("circle")
         .data(data)
         .attr("cx", d => this.x(+d[0].toFixed(2)))
         .attr("cy", d => this.y(+d[1].toFixed(2)))
@@ -330,8 +332,9 @@ class FUBARViz extends React.Component {
           />
           {self.state.input_error ? (
             <div className="alert alert-danger">
-              <span className="fas fa-exclamation" aria-hidden="true" />Enter a
-              valid site (a number from 1 to {this.props.number_of_sites}).
+              <span className="fas fa-exclamation" aria-hidden="true" />
+              Enter a valid site (a number from 1 to{" "}
+              {this.props.number_of_sites}).
             </div>
           ) : (
             ""
@@ -361,7 +364,7 @@ class FUBARViz extends React.Component {
           <button
             id="export-chart-svg"
             type="button"
-            className="btn.btn-secondary btn-sm float-right btn-export"
+            className="btn.btn-secondary btn-sm float-right btn-export btn-export-chart-svg"
             onClick={() =>
               d3_save_svg.save(d3.select("#fubar-viz").node(), {
                 filename: "datamonkey-chart"
@@ -373,7 +376,7 @@ class FUBARViz extends React.Component {
           <button
             id="export-chart-png"
             type="button"
-            className="btn.btn-secondary btn-sm float-right btn-export"
+            className="btn.btn-secondary btn-sm float-right btn-export btn-export-chart-png"
             onClick={() =>
               saveSvgAsPng(
                 document.getElementById("fubar-viz"),
@@ -605,7 +608,7 @@ class FUBARContents extends React.Component {
   }
 }
 
-function FUBAR(props) {
+export function FUBAR(props) {
   return (
     <ResultsPage
       data={props.data}
@@ -626,7 +629,13 @@ function FUBAR(props) {
   );
 }
 
-function render_fubar(data, element, fasta, originalFile, analysisLog) {
+export default function render_fubar(
+  data,
+  element,
+  fasta,
+  originalFile,
+  analysisLog
+) {
   ReactDOM.render(
     <FUBAR
       data={data}
@@ -637,6 +646,3 @@ function render_fubar(data, element, fasta, originalFile, analysisLog) {
     document.getElementById(element)
   );
 }
-
-module.exports = render_fubar;
-module.exports.FUBAR = FUBAR;

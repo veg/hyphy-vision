@@ -38,17 +38,14 @@ function GARDResults(props) {
     .reduce((a, b) => a + b, 0);
   var totalModelCount = props.data.models.length;
   var percentageExplored = (
-    100 *
-    totalModelCount /
+    (100 * totalModelCount) /
     totalPossibleModels
   ).toFixed(2);
   var evidence_statement = props.data.improvements ? (
     <span>
       <strong className="hyphy-highlight">found evidence</strong> of{" "}
-      {props.data.lastImprovedBPC} recombination breakpoint{props.data
-        .lastImprovedBPC == 1
-        ? ""
-        : "s"}
+      {props.data.lastImprovedBPC} recombination breakpoint
+      {props.data.lastImprovedBPC == 1 ? "" : "s"}
     </span>
   ) : (
     <span>
@@ -59,7 +56,7 @@ function GARDResults(props) {
     <div className="row">
       <div className="col-md-12" />
       <div className="col-md-12">
-        <div className="main-result">
+        <div className="main-result border border-primary border-left-0 border-right-0 mt-3">
           <p>
             GARD {evidence_statement}. GARD examined {totalModelCount} models in{" "}
             {timeString} wallclock time, at a rate of{" "}
@@ -78,7 +75,8 @@ function GARDResults(props) {
                 here
               </a>{" "}
               for more information about this method.
-              <br />Please cite{" "}
+              <br />
+              Please cite{" "}
               <a
                 href="http://www.ncbi.nlm.nih.gov/pubmed/16818476"
                 id="summary-pmid"
@@ -138,7 +136,7 @@ function GARDRecombinationReport(props) {
             />
             <text
               x={scale(bp_delta / 2)}
-              y={2 * height / 3}
+              y={(2 * height) / 3}
               fill={"white"}
               textAnchor={"middle"}
             >
@@ -267,9 +265,11 @@ function GARDTopologyReport(props) {
   var readPCount = props.data.pairwiseP.length,
     totalComparisons = (readPCount - 1) * 2,
     threshP = 0.01 / totalComparisons,
-    bypvalue = [[0.01, 0], [0.05, 0], [0.1, 0]].map(row =>
-      row.map(entry => entry / totalComparisons)
-    ),
+    bypvalue = [
+      [0.01, 0],
+      [0.05, 0],
+      [0.1, 0]
+    ].map(row => row.map(entry => entry / totalComparisons)),
     rows = [];
   for (var pcounter = 1; pcounter < readPCount; pcounter++) {
     var lhs = props.data.pairwiseP[pcounter][pcounter - 1],
@@ -368,14 +368,14 @@ function GARDTopologyReport(props) {
         </table>
         <p className="description">
           Comparing the AIC<sub>c</sub> score of the best fitting GARD model,
-          that allows for different topologies between segments ({currentAIC.toFixed(
-            1
-          )}), and that of the model that assumes the same tree for all the
-          partitions inferred by GARD the same tree, but allows different branch
-          lengths between partitions ({props.data.singleTreeAICc.toFixed(1)})
-          suggests that because the multiple tree model{" "}
-          {w > 0.01 ? "cannot" : "can"} be preferred over the single tree model
-          by an evidence ratio of 100 or greater, {conclusion}.
+          that allows for different topologies between segments (
+          {currentAIC.toFixed(1)}), and that of the model that assumes the same
+          tree for all the partitions inferred by GARD the same tree, but allows
+          different branch lengths between partitions (
+          {props.data.singleTreeAICc.toFixed(1)}) suggests that because the
+          multiple tree model {w > 0.01 ? "cannot" : "can"} be preferred over
+          the single tree model by an evidence ratio of 100 or greater,{" "}
+          {conclusion}.
         </p>
         <p className="description">
           Please consult the above Kishino Hasegawa topological incongruence
@@ -457,4 +457,4 @@ class GARD_HyPhy_2_3 extends React.Component {
   }
 }
 
-module.exports.GARD_HyPhy_2_3 = GARD_HyPhy_2_3;
+export { GARD_HyPhy_2_3 };

@@ -480,7 +480,7 @@ class BSRELContents extends React.Component {
   }
 }
 
-function BSREL(props) {
+export function BSREL(props) {
   return (
     <ResultsPage
       data={props.data}
@@ -500,7 +500,13 @@ function BSREL(props) {
   );
 }
 
-function render_absrel(data, element, fasta, originalFile, analysisLog) {
+export default function render_absrel(
+  data,
+  element,
+  fasta,
+  originalFile,
+  analysisLog
+) {
   ReactDOM.render(
     <BSREL
       data={data}
@@ -511,6 +517,3 @@ function render_absrel(data, element, fasta, originalFile, analysisLog) {
     document.getElementById(element)
   );
 }
-
-module.exports = render_absrel;
-module.exports.BSREL = BSREL;

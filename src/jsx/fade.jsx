@@ -57,7 +57,7 @@ function FADESummary(props) {
     <div className="row">
       <div className="col-md-12" />
       <div className="col-md-12">
-        <div className="main-result">
+        <div className="main-result border border-primary border-left-0 border-right-0 mt-3">
           {evidenceStatment}
           <p>
             with Bayes Factor >=
@@ -85,7 +85,8 @@ function FADESummary(props) {
                 here
               </a>{" "}
               for more information about the FADE method.
-              <br />Please cite{" "}
+              <br />
+              Please cite{" "}
               <a
                 href="https://academic.oup.com/bioinformatics/article/21/5/676/220389"
                 id="summary-pmid"
@@ -390,7 +391,6 @@ class FADETable extends React.Component {
     this.props.selectedAminoAcid != "Any"
       ? (title = title + " (Amino Acid " + this.props.selectedAminoAcid + " )")
       : null;
-
     return (
       <div className="row">
         <div className="col-md-12">
@@ -399,7 +399,6 @@ class FADETable extends React.Component {
               title={title}
               popover="This will be more informative once this work is reviewed."
             />
-
             <DatamonkeyTable
               headerData={this.props.MLEHeaderData}
               bodyData={this.props.MLEBodyData}
@@ -746,7 +745,7 @@ class FADEContents extends React.Component {
 }
 
 // ---- The stock compenents that are needed for each vision page ----
-function FADE(props) {
+export function FADE(props) {
   return (
     <ResultsPage
       data={props.data}
@@ -768,7 +767,13 @@ function FADE(props) {
   );
 }
 
-function render_fade(data, element, fasta, originalFile, analysisLog) {
+export default function render_fade(
+  data,
+  element,
+  fasta,
+  originalFile,
+  analysisLog
+) {
   ReactDOM.render(
     <FADE
       data={data}
@@ -779,6 +784,3 @@ function render_fade(data, element, fasta, originalFile, analysisLog) {
     document.getElementById(element)
   );
 }
-
-module.exports = render_fade;
-module.exports.FADE = FADE;

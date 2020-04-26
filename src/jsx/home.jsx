@@ -2,19 +2,34 @@ import React from "react";
 import { NavBar } from "./components/navbar.jsx";
 import { Link } from "react-router-dom";
 
+import aBSREL_thumb from "../../images/aBSREL-thumb.png";
+import BUSTED_thumb from "../../images/BUSTED-thumb.png";
+import RELAX_thumb from "../../images/RELAX-thumb.png";
+import FEL_thumb from "../../images/FEL-thumb.png";
+import Contrast_FEL_thumb from "../../images/Contrast-FEL-thumb.png";
+import MEME_thumb from "../../images/MEME-thumb.png";
+import MULTIHIT_thumb from "../../images/MEME-thumb.png";
+import SLAC_thumb from "../../images/SLAC-thumb.png";
+import FUBAR_thumb from "../../images/FUBAR-thumb.png";
+import GARD_thumb from "../../images/GARD-thumb.png";
+import BGM_thumb from "../../images/BGM-thumb.png";
+import FADE_thumb from "../../images/FADE-thumb.png";
+import Slatkin_thumb from "../../images/SM-thumb.png";
+
 const thumbs = {
-  aBSREL: require("../../images/aBSREL-thumb.png"),
-  BUSTED: require("../../images/BUSTED-thumb.png"),
-  RELAX: require("../../images/RELAX-thumb.png"),
-  FEL: require("../../images/FEL-thumb.png"),
-  "Contrast-FEL": require("../../images/Contrast-FEL-thumb.png"),
-  MEME: require("../../images/MEME-thumb.png"),
-  SLAC: require("../../images/SLAC-thumb.png"),
-  FUBAR: require("../../images/FUBAR-thumb.png"),
-  GARD: require("../../images/GARD-thumb.png"),
-  BGM: require("../../images/BGM-thumb.png"),
-  FADE: require("../../images/FADE-thumb.png"),
-  Slatkin: require("../../images/SM-thumb.png")
+  aBSREL: aBSREL_thumb,
+  BUSTED: BUSTED_thumb,
+  RELAX: RELAX_thumb,
+  FEL: FEL_thumb,
+  "Contrast-FEL": Contrast_FEL_thumb,
+  MEME: MEME_thumb,
+  MULTIHIT: MULTIHIT_thumb,
+  SLAC: SLAC_thumb,
+  FUBAR: FUBAR_thumb,
+  GARD: GARD_thumb,
+  BGM: BGM_thumb,
+  FADE: FADE_thumb,
+  Slatkin: Slatkin_thumb
 };
 
 function MethodBanner(props) {
@@ -78,6 +93,12 @@ function Home(props) {
         />
 
         <MethodBanner method="MEME" text="Mixed Effects Model of Evolution" />
+
+        <MethodBanner
+          method="MULTIHIT"
+          text="Accounting for multiple simultaneousnucleotide substitutions"
+        />
+
         <MethodBanner
           method="SLAC"
           text="Single-Likelihood Ancestor Counting"
@@ -104,4 +125,4 @@ function Home(props) {
   );
 }
 
-module.exports.Home = Home;
+export { Home };

@@ -1,0 +1,483 @@
+[
+  [
+    {
+      "len": 756,
+      "color": "rgb(150, 61, 179)",
+      "label": "GCA",
+      "id": "codon-GCA",
+      "aa": "A"
+    },
+    {
+      "len": 1109,
+      "color": "rgb(191, 60, 175)",
+      "label": "GAG",
+      "id": "codon-GAG",
+      "aa": "E"
+    },
+    {
+      "len": 604,
+      "color": "rgb(191, 60, 175)",
+      "label": "GAA",
+      "id": "codon-GAA",
+      "aa": "E"
+    },
+    {
+      "len": 633,
+      "color": "rgb(255, 120, 71)",
+      "label": "AAA",
+      "id": "codon-AAA",
+      "aa": "K"
+    },
+    {
+      "len": 806,
+      "color": "rgb(255, 120, 71)",
+      "label": "AAG",
+      "id": "codon-AAG",
+      "aa": "K"
+    },
+    {
+      "len": 946,
+      "color": "rgb(254, 75, 131)",
+      "label": "ATG",
+      "id": "codon-ATG",
+      "aa": "M"
+    },
+    {
+      "len": 1256,
+      "color": "rgb(175, 240, 91)",
+      "label": "CAG",
+      "id": "codon-CAG",
+      "aa": "Q"
+    },
+    {
+      "len": 5011,
+      "color": "rgb(96, 84, 200)",
+      "label": "TCA",
+      "id": "codon-TCA",
+      "aa": "S"
+    },
+    {
+      "len": 3513,
+      "color": "rgb(96, 84, 200)",
+      "label": "TCC",
+      "id": "codon-TCC",
+      "aa": "S"
+    },
+    {
+      "len": 4863,
+      "color": "rgb(96, 84, 200)",
+      "label": "TCT",
+      "id": "codon-TCT",
+      "aa": "S"
+    },
+    {
+      "len": 2672,
+      "color": "rgb(96, 84, 200)",
+      "label": "TCG",
+      "id": "codon-TCG",
+      "aa": "S"
+    },
+    {
+      "len": 6414,
+      "color": "rgb(96, 84, 200)",
+      "label": "AGT",
+      "id": "codon-AGT",
+      "aa": "S"
+    },
+    {
+      "len": 9439,
+      "color": "rgb(96, 84, 200)",
+      "label": "AGC",
+      "id": "codon-AGC",
+      "aa": "S"
+    },
+    {
+      "len": 566,
+      "color": "rgb(255, 94, 99)",
+      "label": "ACA",
+      "id": "codon-ACA",
+      "aa": "T"
+    },
+    {
+      "len": 649,
+      "color": "rgb(110, 64, 170)",
+      "label": "GTG",
+      "id": "codon-GTG",
+      "aa": "V"
+    }
+  ],
+  [
+    {
+      "count": 48,
+      "source": { "id": "codon-AAA", "start": 0, "end": 48, "codon": "AAA" },
+      "target": { "id": "codon-TCT", "start": 0, "end": 48, "codon": "TCT" }
+    },
+    {
+      "count": 11,
+      "source": { "id": "codon-AAA", "start": 48, "end": 59, "codon": "AAA" },
+      "target": { "id": "codon-TCG", "start": 0, "end": 11, "codon": "TCG" }
+    },
+    {
+      "count": 42,
+      "source": { "id": "codon-AAA", "start": 59, "end": 101, "codon": "AAA" },
+      "target": { "id": "codon-TCC", "start": 0, "end": 42, "codon": "TCC" }
+    },
+    {
+      "count": 26,
+      "source": { "id": "codon-AAA", "start": 101, "end": 127, "codon": "AAA" },
+      "target": { "id": "codon-GTG", "start": 0, "end": 26, "codon": "GTG" }
+    },
+    {
+      "count": 191,
+      "source": { "id": "codon-ATG", "start": 0, "end": 191, "codon": "ATG" },
+      "target": { "id": "codon-GCA", "start": 0, "end": 191, "codon": "GCA" }
+    },
+    {
+      "count": 20,
+      "source": { "id": "codon-ATG", "start": 191, "end": 211, "codon": "ATG" },
+      "target": { "id": "codon-GAA", "start": 0, "end": 20, "codon": "GAA" }
+    },
+    {
+      "count": 30,
+      "source": { "id": "codon-ATG", "start": 211, "end": 241, "codon": "ATG" },
+      "target": { "id": "codon-TCC", "start": 42, "end": 72, "codon": "TCC" }
+    },
+    {
+      "count": 61,
+      "source": { "id": "codon-ATG", "start": 241, "end": 302, "codon": "ATG" },
+      "target": { "id": "codon-TCA", "start": 0, "end": 61, "codon": "TCA" }
+    },
+    {
+      "count": 21,
+      "source": { "id": "codon-ATG", "start": 302, "end": 323, "codon": "ATG" },
+      "target": { "id": "codon-TCT", "start": 48, "end": 69, "codon": "TCT" }
+    },
+    {
+      "count": 39,
+      "source": { "id": "codon-AAG", "start": 0, "end": 39, "codon": "AAG" },
+      "target": { "id": "codon-TCA", "start": 61, "end": 100, "codon": "TCA" }
+    },
+    {
+      "count": 48,
+      "source": { "id": "codon-AAG", "start": 39, "end": 87, "codon": "AAG" },
+      "target": { "id": "codon-GCA", "start": 191, "end": 239, "codon": "GCA" }
+    },
+    {
+      "count": 50,
+      "source": { "id": "codon-AAG", "start": 87, "end": 137, "codon": "AAG" },
+      "target": { "id": "codon-TCC", "start": 72, "end": 122, "codon": "TCC" }
+    },
+    {
+      "count": 58,
+      "source": { "id": "codon-AAG", "start": 137, "end": 195, "codon": "AAG" },
+      "target": { "id": "codon-TCT", "start": 69, "end": 127, "codon": "TCT" }
+    },
+    {
+      "count": 1858,
+      "source": { "id": "codon-AGT", "start": 0, "end": 1858, "codon": "AGT" },
+      "target": { "id": "codon-TCA", "start": 100, "end": 1958, "codon": "TCA" }
+    },
+    {
+      "count": 2856,
+      "source": {
+        "id": "codon-AGT",
+        "start": 1858,
+        "end": 4714,
+        "codon": "AGT"
+      },
+      "target": { "id": "codon-TCC", "start": 122, "end": 2978, "codon": "TCC" }
+    },
+    {
+      "count": 152,
+      "source": {
+        "id": "codon-AGT",
+        "start": 4714,
+        "end": 4866,
+        "codon": "AGT"
+      },
+      "target": { "id": "codon-GAG", "start": 0, "end": 152, "codon": "GAG" }
+    },
+    {
+      "count": 24,
+      "source": {
+        "id": "codon-AGT",
+        "start": 4866,
+        "end": 4890,
+        "codon": "AGT"
+      },
+      "target": { "id": "codon-GTG", "start": 26, "end": 50, "codon": "GTG" }
+    },
+    {
+      "count": 114,
+      "source": {
+        "id": "codon-AGT",
+        "start": 4890,
+        "end": 5004,
+        "codon": "AGT"
+      },
+      "target": { "id": "codon-CAG", "start": 0, "end": 114, "codon": "CAG" }
+    },
+    {
+      "count": 833,
+      "source": {
+        "id": "codon-AGT",
+        "start": 5004,
+        "end": 5837,
+        "codon": "AGT"
+      },
+      "target": { "id": "codon-TCG", "start": 11, "end": 844, "codon": "TCG" }
+    },
+    {
+      "count": 98,
+      "source": {
+        "id": "codon-AGT",
+        "start": 5837,
+        "end": 5935,
+        "codon": "AGT"
+      },
+      "target": { "id": "codon-GAA", "start": 20, "end": 118, "codon": "GAA" }
+    },
+    {
+      "count": 56,
+      "source": {
+        "id": "codon-AGT",
+        "start": 5935,
+        "end": 5991,
+        "codon": "AGT"
+      },
+      "target": { "id": "codon-GCA", "start": 239, "end": 295, "codon": "GCA" }
+    },
+    {
+      "count": 98,
+      "source": { "id": "codon-AGC", "start": 0, "end": 98, "codon": "AGC" },
+      "target": { "id": "codon-GCA", "start": 295, "end": 393, "codon": "GCA" }
+    },
+    {
+      "count": 4088,
+      "source": { "id": "codon-AGC", "start": 98, "end": 4186, "codon": "AGC" },
+      "target": { "id": "codon-TCT", "start": 127, "end": 4215, "codon": "TCT" }
+    },
+    {
+      "count": 1626,
+      "source": {
+        "id": "codon-AGC",
+        "start": 4186,
+        "end": 5812,
+        "codon": "AGC"
+      },
+      "target": { "id": "codon-TCG", "start": 844, "end": 2470, "codon": "TCG" }
+    },
+    {
+      "count": 258,
+      "source": {
+        "id": "codon-AGC",
+        "start": 5812,
+        "end": 6070,
+        "codon": "AGC"
+      },
+      "target": { "id": "codon-GAG", "start": 152, "end": 410, "codon": "GAG" }
+    },
+    {
+      "count": 2399,
+      "source": {
+        "id": "codon-AGC",
+        "start": 6070,
+        "end": 8469,
+        "codon": "AGC"
+      },
+      "target": {
+        "id": "codon-TCA",
+        "start": 1958,
+        "end": 4357,
+        "codon": "TCA"
+      }
+    },
+    {
+      "count": 232,
+      "source": {
+        "id": "codon-AGC",
+        "start": 8469,
+        "end": 8701,
+        "codon": "AGC"
+      },
+      "target": { "id": "codon-CAG", "start": 114, "end": 346, "codon": "CAG" }
+    },
+    {
+      "count": 107,
+      "source": {
+        "id": "codon-AGC",
+        "start": 8701,
+        "end": 8808,
+        "codon": "AGC"
+      },
+      "target": { "id": "codon-GAA", "start": 118, "end": 225, "codon": "GAA" }
+    },
+    {
+      "count": 29,
+      "source": {
+        "id": "codon-AGC",
+        "start": 8808,
+        "end": 8837,
+        "codon": "AGC"
+      },
+      "target": { "id": "codon-GTG", "start": 50, "end": 79, "codon": "GTG" }
+    },
+    {
+      "count": 54,
+      "source": { "id": "codon-ACA", "start": 0, "end": 54, "codon": "ACA" },
+      "target": { "id": "codon-CAG", "start": 346, "end": 400, "codon": "CAG" }
+    },
+    {
+      "count": 48,
+      "source": { "id": "codon-ACA", "start": 54, "end": 102, "codon": "ACA" },
+      "target": { "id": "codon-GAG", "start": 410, "end": 458, "codon": "GAG" }
+    },
+    {
+      "count": 147,
+      "source": { "id": "codon-ACA", "start": 102, "end": 249, "codon": "ACA" },
+      "target": { "id": "codon-GTG", "start": 79, "end": 226, "codon": "GTG" }
+    },
+    {
+      "count": 46,
+      "source": { "id": "codon-CAG", "start": 400, "end": 446, "codon": "CAG" },
+      "target": { "id": "codon-GCA", "start": 393, "end": 439, "codon": "GCA" }
+    },
+    {
+      "count": 81,
+      "source": { "id": "codon-CAG", "start": 446, "end": 527, "codon": "CAG" },
+      "target": {
+        "id": "codon-TCT",
+        "start": 4215,
+        "end": 4296,
+        "codon": "TCT"
+      }
+    },
+    {
+      "count": 85,
+      "source": { "id": "codon-CAG", "start": 527, "end": 612, "codon": "CAG" },
+      "target": {
+        "id": "codon-TCA",
+        "start": 4357,
+        "end": 4442,
+        "codon": "TCA"
+      }
+    },
+    {
+      "count": 80,
+      "source": { "id": "codon-CAG", "start": 612, "end": 692, "codon": "CAG" },
+      "target": {
+        "id": "codon-TCC",
+        "start": 2978,
+        "end": 3058,
+        "codon": "TCC"
+      }
+    },
+    {
+      "count": 66,
+      "source": { "id": "codon-GAG", "start": 458, "end": 524, "codon": "GAG" },
+      "target": {
+        "id": "codon-TCC",
+        "start": 3058,
+        "end": 3124,
+        "codon": "TCC"
+      }
+    },
+    {
+      "count": 59,
+      "source": { "id": "codon-GAG", "start": 524, "end": 583, "codon": "GAG" },
+      "target": {
+        "id": "codon-TCA",
+        "start": 4442,
+        "end": 4501,
+        "codon": "TCA"
+      }
+    },
+    {
+      "count": 69,
+      "source": { "id": "codon-GAG", "start": 583, "end": 652, "codon": "GAG" },
+      "target": {
+        "id": "codon-TCT",
+        "start": 4296,
+        "end": 4365,
+        "codon": "TCT"
+      }
+    },
+    {
+      "count": 33,
+      "source": { "id": "codon-GTG", "start": 226, "end": 259, "codon": "GTG" },
+      "target": {
+        "id": "codon-TCC",
+        "start": 3124,
+        "end": 3157,
+        "codon": "TCC"
+      }
+    },
+    {
+      "count": 47,
+      "source": { "id": "codon-GTG", "start": 259, "end": 306, "codon": "GTG" },
+      "target": {
+        "id": "codon-TCA",
+        "start": 4501,
+        "end": 4548,
+        "codon": "TCA"
+      }
+    },
+    {
+      "count": 19,
+      "source": { "id": "codon-GTG", "start": 306, "end": 325, "codon": "GTG" },
+      "target": {
+        "id": "codon-TCT",
+        "start": 4365,
+        "end": 4384,
+        "codon": "TCT"
+      }
+    },
+    {
+      "count": 50,
+      "source": { "id": "codon-GAA", "start": 225, "end": 275, "codon": "GAA" },
+      "target": {
+        "id": "codon-TCT",
+        "start": 4384,
+        "end": 4434,
+        "codon": "TCT"
+      }
+    },
+    {
+      "count": 35,
+      "source": { "id": "codon-GAA", "start": 275, "end": 310, "codon": "GAA" },
+      "target": {
+        "id": "codon-TCC",
+        "start": 3157,
+        "end": 3192,
+        "codon": "TCC"
+      }
+    },
+    {
+      "count": 8,
+      "source": { "id": "codon-GAA", "start": 310, "end": 318, "codon": "GAA" },
+      "target": {
+        "id": "codon-TCG",
+        "start": 2470,
+        "end": 2478,
+        "codon": "TCG"
+      }
+    }
+  ],
+  [
+    { "block_id": "codon-GCA", "value": "A", "position": 0 },
+    { "block_id": "codon-GAG", "value": "E", "position": 0 },
+    { "block_id": "codon-GAA", "value": "E", "position": 0 },
+    { "block_id": "codon-AAA", "value": "K", "position": 0 },
+    { "block_id": "codon-AAG", "value": "K", "position": 0 },
+    { "block_id": "codon-ATG", "value": "M", "position": 0 },
+    { "block_id": "codon-CAG", "value": "Q", "position": 0 },
+    { "block_id": "codon-TCA", "value": "S", "position": 0 },
+    { "block_id": "codon-TCC", "value": "S", "position": 0 },
+    { "block_id": "codon-TCT", "value": "S", "position": 0 },
+    { "block_id": "codon-TCG", "value": "S", "position": 0 },
+    { "block_id": "codon-AGT", "value": "S", "position": 0 },
+    { "block_id": "codon-AGC", "value": "S", "position": 0 },
+    { "block_id": "codon-ACA", "value": "T", "position": 0 },
+    { "block_id": "codon-GTG", "value": "V", "position": 0 }
+  ]
+]
