@@ -3,9 +3,23 @@ var React = require("react"),
   _ = require("underscore"),
   d3 = require("d3"),
   datamonkey = require("../../datamonkey/datamonkey.js");
-import CsvExport from "csvexport";
 
+import { ExportToCsv } from 'export-to-csv';
 import PropTypes from "prop-types";
+
+const tableOptions = { 
+  fieldSeparator: ',',
+  quoteStrings: '"',
+  decimalSeparator: '.',
+  showLabels: true, 
+  title: 'Datamonkey Report',
+  showTitle: false,
+  filename:'datamonkey-table',
+  useTextFile: false,
+  useBom: true,
+  useKeysAsHeaders: true,
+  // headers: ['Column 1', 'Column 2', etc...] <-- Won't work with useKeysAsHeaders present!
+};
 
 const DatamonkeyTableRow = createReactClass({
   /**
@@ -448,10 +462,11 @@ var DatamonkeyTable = createReactClass({
             munged = _.map(self.props.bodyData, row =>
               _.map(row, extract)
             ).map(row => _.object(headers, row));
-          const exporter = CsvExport.create({
-            filename: "datamonkey-table.csv"
-          });
-          exporter.downloadCsv(munged);
+          const exporter = new ExportToCsv(tableOptions);
+          //const exporter = CsvExport.create({
+          //  filename: "datamonkey-table.csv"
+          //});
+          exporter.generateCsv(munged);
         };
         button = (
           <button
