@@ -1027,7 +1027,7 @@ class MultiHitContents extends React.Component {
             citation_number="biorxv"
           />
 
-          <div id="table-tab" className="row hyphy-row">
+          <div id="site-plot-tab" className="row hyphy-row">
             <div id="hyphy-mle-fits" className="col-md-12">
               <Header
                 title="Model Test Statistics Per Site Plot"
@@ -1087,7 +1087,11 @@ class MultiHitContents extends React.Component {
                   </label>
                 </div>
               </div>
-              
+            </div>
+           </div>
+           <div id="table-tab" className="row hyphy-row">
+            <div id="hyphy-mle-fits" className="col-md-12">
+             
               <Header
                 title="Model Test Statistics Per Site Table"
                 popover="<p>Hover over a column header for a description of its content.</p>"
@@ -1259,8 +1263,9 @@ export function MultiHit(props) {
       data={props.data}
       scrollSpyInfo={[
         { label: "summary", href: "summary-tab" },
+        { label: "site plot", href: "site-plot-tab" },
         { label: "table", href: "table-tab" },
-        { label: "plot", href: "plot-tab" }
+        { label: "substitution plot", href: "plot-tab" }
       ]}
       methodName="Multi-Hit"
       fasta={props.fasta}
