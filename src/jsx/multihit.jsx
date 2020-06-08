@@ -958,8 +958,8 @@ class MultiHitContents extends React.Component {
               See <a href="//hyphy.org/methods/selection-methods/#fel">here</a>{" "}
               for more information about the MultiHit method.
               <br />
-              Please cite PMID{" "}
-              <a href="//www.ncbi.nlm.nih.gov/pubmed/15703242">15703242</a> if
+              Please cite biorxv{" "}
+              <a href="//https://www.biorxiv.org/content/10.1101/2020.05.13.091652v1"> </a> if
               you use this result in a publication, presentation, or other
               scientific work.
             </small>
@@ -1021,16 +1021,16 @@ class MultiHitContents extends React.Component {
           <MainResult
             summary_for_clipboard={this.getSummaryForClipboard()}
             summary_for_rendering={this.getSummaryForRendering()}
-            method_ref="http://hyphy.org/methods/selection-methods/#multi-hit"
-            citation_ref="//www.ncbi.nlm.nih.gov/pubmed/15703242"
-            citation_number="PMID 15703242"
+            method_ref="http://hyphy.org/methods/other/FitMultiModel/"
+            citation_ref="https://www.biorxiv.org/content/10.1101/2020.05.13.091652v1"
+            citation_number="biorxv"
           />
 
           <div id="table-tab" className="row hyphy-row">
             <div id="hyphy-mle-fits" className="col-md-12">
               <Header
-                title="Model Test Statistics Per Site"
-                popover="<p>Hover over a column header for a description of its content.</p>"
+                title="Model Test Statistics Per Site Plot"
+                popover="<p>Hover over a point to see its values</p>"
               />
 
               <DatamonkeyGraphMenu
@@ -1086,7 +1086,12 @@ class MultiHitContents extends React.Component {
                   </label>
                 </div>
               </div>
-
+              
+              <Header
+                title="Model Test Statistics Per Site Table"
+                popover="<p>Hover over a column header for a description of its content.</p>"
+              />
+              
               <DatamonkeyTable
                 headerData={this.state.siteTableHeaders[this.state.whichTable]}
                 bodyData={this.state.siteTableContent[this.state.whichTable]}
