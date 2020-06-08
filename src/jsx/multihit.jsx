@@ -142,16 +142,17 @@ class MultiHitContents extends React.Component {
     // These variables are to be used for DatamonkeyTable
     const erHeaders = [
       ["Site", "Site Index"],
-      ['<i class="fas fa-dice-three fa-3x"></i>', "Three-hit"],
+      ['<i class="fas fa-dice-three fa-2x"></i> vs. <i class="fas fa-dice-two fa-2x"></i>',
+       "3H vs 2H"],
       [
-        '<i class="fas fa-dice-three fa-2x"></i> vs. <i class="fas fa-dice-two fa-2x"></i>',
-        "Three-hit islands vs 2-hit"
+        '<i class="fas fa-compass fa-2x"></i> vs. <i class="fas fa-dice-two fa-2x"></i>',
+        "3HSI vs 2H"
       ],
       [
-        '<i class="fas fa-compass fa-3x"></i>',
-        "Three-hit vs three-hit islands"
+        '<i class="fas fa-compass fa-2x"></i> vs. <i class="fas fa-dice-three fa-2x"></i>',
+        "3H vs 3HSI"
       ],
-      ['<i class="fas fa-dice-two fa-3x"></i>', "Two-hit"]
+      ['<i class="fas fa-dice-two fa-2x"></i> vs. <i class="fas fa-dice-one fa-2x"></i>', "2H vs 1H"]
     ];
 
     const siteLogLHeaders = [
@@ -230,7 +231,7 @@ class MultiHitContents extends React.Component {
       whichTable: whichTable,
       testResults: [],
       xaxis: "Site",
-      yaxis: "Three-hit",
+      yaxis: "3H",
       xOptions: ["Site"],
       yOptions: [],
       copy_transition: false,
@@ -249,28 +250,28 @@ class MultiHitContents extends React.Component {
       maxTransitionCount: 0,
       showLegend: true,
       erRanges: {
-        "Three-hit": [0, 10],
-        "Three-hit islands vs 2-hit": [0, 10],
-        "Three-hit vs three-hit islands": [0, 10],
-        "Two-hit": [0, 10]
+        "3H vs 2H": [0, 10],
+        "3HSI vs 2H": [0, 10],
+        "3H vs 3HSI": [0, 10],
+        "2H vs 1H": [0, 10]
       },
       ERThresholds: {
-        "Three-hit": [0, 5],
-        "Three-hit islands vs 2-hit": [0, 5],
-        "Three-hit vs three-hit islands": [0, 5],
-        "Two-hit": [0, 5]
+        "3H vs 2H": [0, 5],
+        "3HSI vs 2H": [0, 5],
+        "3H vs 3HSI": [0, 5],
+        "2H vs 1H": [0, 5]
       },
       minERs: {
-        "Three-hit": 0,
-        "Three-hit islands vs 2-hit": 0,
-        "Three-hit vs three-hit islands": 0,
-        "Two-hit": 0
+        "3H vs 2H": 0,
+        "3HSI vs 2H": 0,
+        "3H vs 3HSI": 0,
+        "T2H vs 1H": 0
       },
       maxERs: {
-        "Three-hit": 5,
-        "Three-hit islands vs 2-hit": 5,
-        "Three-hit vs three-hit islands": 5,
-        "Two-hit": 5
+        "T3H vs 2H": 5,
+        "3HSI vs 2H": 5,
+        "3H vs 3HSI": 5,
+        "2H vs 1H": 5
       },
       fits: {}
     };
@@ -876,25 +877,25 @@ class MultiHitContents extends React.Component {
         <h3>Likelihood Test Results</h3>
         <div className="row">
           {this.getTestResultCard(
-            '<i class="fas fa-dice-three"></i> Triple-hit vs single-hit',
+            '<i class="fas fa-dice-three"></i> 3H vs <i class="fas fa-dice-one"></i> 1H',
             this.state.testResults["Triple-hit vs single-hit"]
           )}
           {this.getTestResultCard(
-            '<i class="fas fa-dice-three"></i> vs. <i class="fas fa-dice-two"></i> Triple-hit vs double-hit',
+            '<i class="fas fa-dice-three"></i> 3H vs. <i class="fas fa-dice-two"></i> 2H',
             this.state.testResults["Triple-hit vs double-hit"]
           )}
           {this.getTestResultCard(
-            '<i class="fas fa-compass"></i> Triple-hit vs. Triple-hit-island',
+            '<i class="fas fa-dice-three"></i> 3H vs <i class="fas fa-compass"></i> 3HSI',
             this.state.testResults["Triple-hit vs Triple-hit-island"]
           )}
         </div>
         <div className="row">
           {this.getTestResultCard(
-            '<i class="fas fa-dice-two"></i> Double-hit vs Single-hit Test',
+            '<i class="fas fa-dice-two"></i> 2H vs <i class="fas fa-dice-one"></i> 1H',
             this.state.testResults["Double-hit vs single-hit"]
           )}
           {this.getTestResultCard(
-            "Triple-hit-island vs double-hit",
+            '<i class="fas fa-compass"></i> 3HSI vs <i class="fas fa-dice-two"></i> 2H',
             this.state.testResults["Triple-hit-island vs double-hit"]
           )}
         </div>
