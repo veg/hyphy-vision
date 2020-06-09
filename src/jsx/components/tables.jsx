@@ -727,7 +727,7 @@ var DatamonkeyPartitionTable = createReactClass({
       var testedLength = extractBranchLength
         ? datamonkey.helpers.sum(attributes[key], function(v, k) {
             if (tested[k.toUpperCase()]) {
-              return v[extractBranchLength];
+              return v[extractBranchLength] || 0;
             }
             return 0;
           })
