@@ -261,10 +261,6 @@ class HyPhyVision extends React.Component {
                     this.state.data ||
                     base_url + "/data/json_files/slac/Flu-recombination.nex.SLAC.json"
                   }
-                  fasta={
-                    this.state.data ||
-                    base_url + "/data/input_data/N10_subtree.fna"
-                  }
                 />
               )}
             />
