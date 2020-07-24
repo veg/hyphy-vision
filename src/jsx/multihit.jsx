@@ -1028,7 +1028,7 @@ class MultiHitContents extends React.Component {
           />
 
           <div id="site-plot-tab" className="row hyphy-row">
-            <div id="hyphy-mle-fits" className="col-md-12">
+            <div className="col-md-12">
               <Header
                 title="Model Test Statistics Per Site Plot"
                 popover="<p>Hover over a point to see its values</p>"
