@@ -259,8 +259,8 @@ toolbar-dropdown::before {
   white-space: nowrap;
 }
 
-.dropdown-menu > li > a:hover,
-.dropdown-menu > li > a:focus {
+.dropdown-menu > li:hover,
+.dropdown-menu > li:hover {
   text-decoration: none;
   color: #fff;
   background-color: #00a99d;
