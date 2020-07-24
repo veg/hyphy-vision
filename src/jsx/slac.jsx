@@ -1152,19 +1152,40 @@ var SLACGraphs = createReactClass({
   }
 });
 
-class SLACAlignmentTreeCountWidget extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      tree: null,
-      max_site: null,
-      current_site: 1,
-      select_value: "amino-acid"
-    };
-  }
-  initialize(newick, fasta) {
-    if (!newick || !fasta) return;
-    const tree = new phylotreev1(newick);
+
+function SLACAlignmentTreeCountWrapper(props) {
+  if (!props.json) return null;
+  const { trees } = props.json,
+    branchAttributes = props.json['branch attributes'],
+    partitions = props.json['data partitions'],
+    number_of_partitions = _.keys(partitions).length,
+    all_partition_data = [],
+    partition_map = [];
+  for(let partition=0; partition < number_of_partitions; partition++) {
+    let partition_data = {},
+      sites_in_partition = partitions[partition].coverage[0].length,
+      zeros = Array(sites_in_partition).fill(0),
+      fasta = _.keys(branchAttributes[partition]).map(key => {
+        return {
+          header: key,
+          seq: branchAttributes[partition][key].codon[0].join("")
+        };
+      });
+    if(partition == 0) {
+      partition_data.offset = 0;
+    } else {
+      let previous_data = all_partition_data[partition-1];
+      partition_data.offset = previous_data.sites + previous_data.offset;
+    }
+    partition_data.sites = sites_in_partition;
+    partition_data.syn_substitutions = _.values(branchAttributes[partition])
+      .map(ba => ba["synonymous substitution count"][0])
+      .reduce((a, b) => a.map((d, i) => d + b[i]), zeros),
+    partition_data.nonsyn_substitutions = _.values(branchAttributes[partition])
+      .map(ba => ba["nonsynonymous substitution count"][0])
+      .reduce((a, b) => a.map((d, i) => d + b[i]), zeros);
+    const newick = trees[partition].newickString,
+      tree = new phylotreev1(newick);
     placenodes(tree, true);
     const number_of_links = tree.links.length,
       tree_hash = _.object(
@@ -1176,33 +1197,35 @@ class SLACAlignmentTreeCountWidget extends React.Component {
       tree.node_order,
       _.range(tree.node_order.length)
     );
-    const sequence_data = fasta
+    partition_data.tree = tree;
+    partition_data.sequence_data = fasta
       .filter(record => tree_hash[record.header])
       .sort((a, b) => {
         const a_index = node_to_ordered_index[a.header],
           b_index = node_to_ordered_index[b.header];
         return a_index - b_index;
       });
-    if (number_of_links != sequence_data.length) {
+    if (number_of_links != partition_data.sequence_data.length) {
       throw "Mismatch in FASTA/tree... refusing to proceed!";
     }
-    this.setState({
-      tree: tree,
-      sequence_data: sequence_data,
+    all_partition_data.push(partition_data);
+    partition_map.push(...Array(sites_in_partition).fill(partition));
+  }
+  return (<SLACAlignmentTreeCountWidget
+    partitionData={all_partition_data}
+    partitionMap={partition_map}
+    branchAttributes={branchAttributes}
+  />)
+}
+
+class SLACAlignmentTreeCountWidget extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
       current_site: 1,
-      current_site_index: 0
-    });
-  }
-  componentDidMount() {
-    this.initialize(this.props.newick, this.props.fasta);
-  }
-  componentDidUpdate(prevProps) {
-    const new_fasta = prevProps.fasta != this.props.fasta,
-      new_newick = prevProps.newick != this.props.newick,
-      new_data = new_fasta || new_newick;
-    if (new_data) {
-      this.initialize(this.props.newick, this.props.fasta);
-    }
+      current_site_index: 0,
+      select_value: "amino-acid"
+    };
   }
   savePNG() {
     saveSvgAsPng(
@@ -1212,7 +1235,7 @@ class SLACAlignmentTreeCountWidget extends React.Component {
   }
   handleInputChange(e) {
     const new_current_site = e.target.value ? +e.target.value : "",
-      max_sites = this.state.sequence_data[0].seq.length / 3;
+      max_sites = this.props.partitionMap.length;
     if (new_current_site == "") {
       this.setState({
         current_site: "",
@@ -1226,21 +1249,25 @@ class SLACAlignmentTreeCountWidget extends React.Component {
     }
   }
   render() {
-    if (!this.state.tree) return <div />;
     const { site_size, branchAttributes } = this.props,
+      { current_site, current_site_index } = this.state,
+      partition = this.props.partitionMap[current_site_index],
       horizontal_pad = 10,
       vertical_pad = site_size / 2,
+      {
+        sequence_data, tree, syn_substitutions, nonsyn_substitutions, offset
+      } = this.props.partitionData[partition],
+      offset_site_index = current_site_index - offset,
       phylotree_props = {
         width: 700 - 2 * horizontal_pad,
-        height: site_size * this.state.sequence_data.length - 2 * vertical_pad,
-        tree: this.state.tree,
+        height: site_size * sequence_data.length - 2 * vertical_pad,
+        tree: tree,
         transform: `translate(2, ${vertical_pad})`
       },
       site_padding = 5,
-      codon_label_height = 30;
-    const { current_site_index } = this.state,
-      syn_count = this.props.syn_substitutions[current_site_index],
-      nonsyn_count = this.props.nonsyn_substitutions[current_site_index],
+      codon_label_height = 30,
+      syn_count = syn_substitutions[offset_site_index],
+      nonsyn_count = nonsyn_substitutions[offset_site_index],
       total_count = syn_count + nonsyn_count,
       column_padding = 40,
       codon_column_width = 4 * site_size + site_padding + column_padding,
@@ -1270,12 +1297,12 @@ class SLACAlignmentTreeCountWidget extends React.Component {
     const codons = {},
       codon_colors = d3.scale.category10().range();
     var codon_color_index = 0;
-    this.state.tree.traverse_and_compute(node => {
+    tree.traverse_and_compute(node => {
       if (node.data.name != "root") {
         if (select_value != "none") {
           const character =
-            branchAttributes[node.data.name][select_value][0][
-              current_site_index
+            branchAttributes[partition][node.data.name][select_value][0][
+              offset_site_index
             ];
           node.data.annotation = character;
           if (select_value == "codon") {
@@ -1305,7 +1332,7 @@ class SLACAlignmentTreeCountWidget extends React.Component {
             Current site:
             <input
               type="number"
-              value={this.state.current_site}
+              value={current_site}
               onChange={e => this.handleInputChange(e)}
               ref={input => {
                 this.numberInput = input;
@@ -1421,12 +1448,14 @@ class SLACAlignmentTreeCountWidget extends React.Component {
                   highlightBranches={color_scale}
                 />
                 <CodonColumn
-                  site={current_site_index}
+                  site={offset_site_index}
                   translateX={phylotree_props.width + horizontal_pad}
                   site_size={site_size}
                   site_padding={site_padding}
                   codon_label_height={codon_label_height}
                   height={phylotree_props.height}
+                  sequence_data={sequence_data}
+                  tree={tree}
                   {...this.state}
                 />
               </g>
@@ -1536,22 +1565,6 @@ class SLACContents extends React.Component {
 
     const { analysis_results, tree } = self.state;
     if (analysis_results) {
-      const branch_attributes = analysis_results["branch attributes"]["0"],
-        fasta = _.keys(branch_attributes).map(key => {
-          return {
-            header: key,
-            seq: branch_attributes[key].codon[0].join("")
-          };
-        }),
-        zeros = d3.range(analysis_results.input["number of sites"]).map(n => 0),
-        syn_substitutions = _.values(branch_attributes)
-          .map(ba => ba["synonymous substitution count"][0])
-          .reduce((a, b) => a.map((d, i) => d + b[i]), zeros),
-        nonsyn_substitutions = _.values(branch_attributes)
-          .map(ba => ba["nonsynonymous substitution count"][0])
-          .reduce((a, b) => a.map((d, i) => d + b[i]), zeros),
-        newick = analysis_results.trees[0].newickString;
-
       var trees = analysis_results
         ? {
             newick: analysis_results.input.trees,
@@ -1721,12 +1734,8 @@ class SLACContents extends React.Component {
                 title="SLAC Phylogenetic Alignment"
                 popover="<ul><li>View individual codons and amino acids with corresponding phylogenetic information.</li><li>Select individual sites and view substitution counts across the phylogeny.</li></ul>"
               />
-              <SLACAlignmentTreeCountWidget
-                fasta={fasta}
-                newick={newick}
-                syn_substitutions={syn_substitutions}
-                nonsyn_substitutions={nonsyn_substitutions}
-                branchAttributes={branch_attributes}
+              <SLACAlignmentTreeCountWrapper
+                json={analysis_results}
               />
             </div>
           </div>
