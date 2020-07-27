@@ -87,7 +87,7 @@
     "font-awesome-webpack-4": "^1.0.0",
     "html-webpack-plugin": "^4.0.0-alpha.2",
     "husky": "^4.2.3",
-    "imports-loader": "^0.8.0",
+    "imports-loader": "^1.1.0",
     "interpolate-html-plugin": "^3.0.0",
     "jest": "^26.0.1",
     "mini-css-extract-plugin": "^0.9.0",
