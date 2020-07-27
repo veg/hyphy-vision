@@ -73,7 +73,7 @@
     "base-href-webpack-plugin": "^2.0.0",
     "bootstrap-webpack": "0.0.x",
     "copy-webpack-plugin": "^5.1.1",
-    "css-loader": "^3.4.2",
+    "css-loader": "^4.0.0",
     "electron": "^1.7.9",
     "enzyme": "3",
     "enzyme-adapter-react-16": "^1.14.0",
