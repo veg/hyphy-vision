@@ -81,7 +81,7 @@
     "eslint-loader": "^4.0.0",
     "eslint-plugin-react": "^7.1.0",
     "exports-loader": "^0.7.0",
-    "expose-loader": "^0.7.1",
+    "expose-loader": "^1.0.0",
     "file-loader": "^5.1.0",
     "font-awesome-webpack": "^0.0.5-beta.2",
     "font-awesome-webpack-4": "^1.0.0",
