@@ -31,13 +31,27 @@ var BUSTEDSiteChartAndTable = createReactClass({
     };
   },
   componentWillReceiveProps: function(nextProps) {
-    this.setState({
-      upper_site_range: nextProps.data.length + 1,
-      brushend_event: false
-    });
+    if (
+      nextProps.data.length <= 0 ||
+      nextProps.data.length == null ||
+      nextProps.data.length == "undefined"
+    ) {
+      this.setState({
+        upper_site_range: 0,
+        brushend_event: false
+      });
+    } else {
+      this.setState({
+        upper_site_range: nextProps.data.length + 1,
+        brushend_event: false
+      });
+    }
   },
   componentDidUpdate: function() {
-    if (!this.state.brushend_event && !_.isEmpty(this.props.data)) {
+    if (
+      (!this.state.brushend_event && !_.isEmpty(this.props.data)) ||
+      (!this.state.brushend_event && !this.props.data == "undefined")
+    ) {
       d3.select("#chart-id").html("");
       this.drawChart();
     }
@@ -1256,6 +1270,11 @@ class BUSTEDContents extends React.Component {
         "Constrained model"
       ]);
     }
+    if (_.isEmpty(self.state.evidence_ratio_data)) {
+      var phylo_alignment = false;
+    } else {
+      var phylo_alignment = true;
+    }
     const newick = this.state.json
       ? this.state.json.trees[0].newickString
       : null;
@@ -1304,7 +1323,7 @@ class BUSTEDContents extends React.Component {
           </div>
         </div>
 
-        {self.props.fasta ? (
+        {phylo_alignment ? (
           <div className="row">
             <div className="col-md-12" id="phylo-alignment">
               <Header
@@ -1336,9 +1355,7 @@ export function BUSTED(props) {
         { label: "summary", href: "summary-div" },
         { label: "model statistics", href: "hyphy-model-fits" },
         { label: "tree", href: "phylogenetic-tree" }
-      ].concat(
-        props.fasta ? { label: "phylo alignment", href: "phylo-alignment" } : []
-      )}
+      ]}
       methodName="Branch-site Unrestricted Statistical Test for Episodic Diversification"
       fasta={props.fasta}
       originalFile={props.originalFile}
