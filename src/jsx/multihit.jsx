@@ -1020,7 +1020,6 @@ class MultiHitContents extends React.Component {
 
         <div id="results">
           <MainResult
-            summary_for_clipboard={this.getSummaryForClipboard()}
             summary_for_rendering={this.getSummaryForRendering()}
             method_ref="http://hyphy.org/methods/other/FitMultiModel/"
             citation_ref="https://www.biorxiv.org/content/10.1101/2020.05.13.091652v1"
@@ -1028,7 +1027,7 @@ class MultiHitContents extends React.Component {
           />
 
           <div id="site-plot-tab" className="row hyphy-row">
-            <div id="hyphy-mle-fits" className="col-md-12">
+            <div className="col-md-12">
               <Header
                 title="Model Test Statistics Per Site Plot"
                 popover="<p>Hover over a point to see its values</p>"

@@ -16,8 +16,6 @@ function InputErrorPage(props) {
   );
 }
 
-function render_inputErrorPage(element) {
+export default function render_inputErrorPage(element) {
   ReactDOM.render(<InputErrorPage />, document.getElementById(element));
 }
-
-export { render_inputErrorPage };
