@@ -40,13 +40,17 @@ class ResultsPage extends React.Component {
 
     // Decide if data is a URL or the results JSON
     if (typeof this.props.fasta == "string") {
-      self.setState({ fastaPath: this.props.fasta }); // Set the fasta path for comparing on updates to see if it's new data.
-      d3.text(this.props.fasta, function(data) {
-        let fasta_json = fastaParser(data);
-        let values = _.values(fasta_json);
-        values = _.filter(values, v => _.isObject(v) && _.values(v).length);
-        self.setState({ fasta: values });
-      });
+        try {
+          let fasta_json = fastaParser(JSON.parse(data).fasta);
+          let values = _.values(fasta_json);
+          values = _.filter(values, v => _.isObject(v) && _.values(v).length);
+          self.setState({ fasta: values });
+        } catch (err) {
+          let fasta_json = fastaParser(data);
+          let values = _.values(fasta_json);
+          values = _.filter(values, v => _.isObject(v) && _.values(v).length);
+          self.setState({ fasta: values });
+        }
     } else if (typeof this.props.fasta == "object") {
       self.setState({ fasta: self.props.fasta });
     }
@@ -118,6 +122,15 @@ class ResultsPage extends React.Component {
   render() {
     var self = this;
     if (!this.state.json) return self.renderSpinner();
+    if (!_.isEmpty(self.state.json["Evidence Ratios"])) {
+      if (self.props.scrollSpyInfo.length < 4) {
+        var phylo_alignment_obj = {
+          label: "phylo alignment",
+          href: "phylo-alignment"
+        };
+        self.props.scrollSpyInfo.push(phylo_alignment_obj);
+      }
+    }
     return (
       <div className="container">
         <div className="row">
