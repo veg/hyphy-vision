@@ -38,19 +38,18 @@ class ResultsPage extends React.Component {
       self.setState({ json: self.props.data });
     }
 
-    // Decide if data is a URL or the results JSON
     if (typeof this.props.fasta == "string") {
-        try {
+      self.setState({ fastaPath: this.props.fasta }); // Set the fasta path for comparing on updates to see if it's new data.  
+      try{
+        d3.text(this.props.fasta, function(data) {
           let fasta_json = fastaParser(JSON.parse(data).fasta);
           let values = _.values(fasta_json);
           values = _.filter(values, v => _.isObject(v) && _.values(v).length);
           self.setState({ fasta: values });
-        } catch (err) {
-          let fasta_json = fastaParser(data);
-          let values = _.values(fasta_json);
-          values = _.filter(values, v => _.isObject(v) && _.values(v).length);
-          self.setState({ fasta: values });
-        }
+        });
+      }catch(err){
+        alert("There was an error parsing the FASTA file.");
+      }
     } else if (typeof this.props.fasta == "object") {
       self.setState({ fasta: self.props.fasta });
     }
