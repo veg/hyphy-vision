@@ -78,7 +78,6 @@ class ResultsPage extends React.Component {
     }
 
     //TODO: Handle new FASTA as well
-
     this.enableBootstrapJavascript();
   }
 
@@ -120,8 +119,13 @@ class ResultsPage extends React.Component {
 
   render() {
     var self = this;
-    if (!this.state.json) return self.renderSpinner();
-    if (!_.isEmpty(self.state.json["Evidence Ratios"])) {
+    if (!this.state.json){
+      return self.renderSpinner();
+    } 
+    if (!_.isEmpty(self.state.json["Evidence Ratios"]) && this.props.fasta == true) {
+      //Add phylo alignment to side caddy if this condition is met.
+      console.log("WE ADDED IT IN BECAUSE");
+      console.log("fasta = " + this.props.fasta);
       if (self.props.scrollSpyInfo.length < 4) {
         var phylo_alignment_obj = {
           label: "phylo alignment",

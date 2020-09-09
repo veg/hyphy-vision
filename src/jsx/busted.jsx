@@ -802,11 +802,15 @@ class BUSTEDAlignmentTreeERWidget extends React.Component {
       tree: null,
       sites: null,
       max_site: null,
-      current_site: 1
+      current_site: 1,
+      fasta: false,
+      newick: false
     };
-  }
+  } 
   initialize(newick, fasta) {
-    if (!newick || !fasta) return;
+    if (!newick || !fasta){
+      return;
+    }
     const tree = new phylotreev1(newick);
     placenodes(tree);
     tree.node_order = tree
@@ -892,7 +896,7 @@ class BUSTEDAlignmentTreeERWidget extends React.Component {
     const has_tree = Boolean(this.state.tree),
       has_evidence_ratios = !_.isEmpty(this.props.evidence_ratios),
       has_fasta = Boolean(this.props.fasta),
-      has_data = has_tree && has_evidence_ratios & has_fasta;
+      has_data = has_tree && has_evidence_ratios && has_fasta;
     if (!has_data) return <div />;
     const { site_size } = this.props,
       tree_width = 200,
@@ -1270,7 +1274,8 @@ class BUSTEDContents extends React.Component {
         "Constrained model"
       ]);
     }
-    if (_.isEmpty(self.state.evidence_ratio_data)) {
+    console.log(this);
+    if (_.isEmpty(self.state.evidence_ratio_data) || (this.props.fasta == "undefined") || (this.props.fasta == null) ) {
       var phylo_alignment = false;
     } else {
       var phylo_alignment = true;
@@ -1341,7 +1346,15 @@ class BUSTEDContents extends React.Component {
               />
             </div>
           </div>
-        ) : null}
+        ) : <div className="row">
+          <div className="col-md-12" id="phylo-alignment">
+              <Header
+                title="Phylogenetic alignment evidence ratio plot"
+              />
+              <p>Phylogentic Alignment can not be rendered on Hyphy-Vision. Datamonkey.org is required to render this plot.</p>
+            </div>
+        </div>
+        }
       </div>
     );
   }
