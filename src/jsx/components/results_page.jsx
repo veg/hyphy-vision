@@ -122,10 +122,8 @@ class ResultsPage extends React.Component {
     if (!this.state.json){
       return self.renderSpinner();
     } 
-    if (!_.isEmpty(self.state.json["Evidence Ratios"]) && this.props.fasta == true) {
+    //if (!_.isEmpty(self.state.json["Evidence Ratios"])) {
       //Add phylo alignment to side caddy if this condition is met.
-      console.log("WE ADDED IT IN BECAUSE");
-      console.log("fasta = " + this.props.fasta);
       if (self.props.scrollSpyInfo.length < 4) {
         var phylo_alignment_obj = {
           label: "phylo alignment",
@@ -133,7 +131,7 @@ class ResultsPage extends React.Component {
         };
         self.props.scrollSpyInfo.push(phylo_alignment_obj);
       }
-    }
+    //}
     return (
       <div className="container">
         <div className="row">

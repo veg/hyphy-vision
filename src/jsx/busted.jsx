@@ -1351,7 +1351,10 @@ class BUSTEDContents extends React.Component {
               <Header
                 title="Phylogenetic alignment evidence ratio plot"
               />
-              <p>Phylogentic Alignment can not be rendered on Hyphy-Vision. Datamonkey.org is required to render this plot.</p>
+              <p>Phylogenetic Alignment cannot be rendered for this job.</p>
+              <p>In order to view the phylogenetic alignment plot, this job must be completed and rendered on datamonkey.org. Hyphy-Vision will not render this plot.</p>
+              <p>If this job was completed on datamonkey.org, and this message is being displayed, then this job did not present the required data for a successful plot. </p>
+              <p>This is generally caused by failing to reject the null hypothesis under the unconstrained model, rendering future tests moot to conduct (e.g. constrained model).</p>
             </div>
         </div>
         }
