@@ -19,9 +19,7 @@ function binomial(n, k) {
 }
 
 function GARDResults(props) {
-  if (!props.data){
-    return <div></div>;
-  } 
+  if (!props.data) return <div />;
 
   var days = Math.floor(props.data.timeElapsed / (24 * 60 * 60));
   var delta = props.data.timeElapsed - days * 24 * 60 * 60;
@@ -60,8 +58,7 @@ function GARDResults(props) {
       <div className="col-md-12" />
       <div className="col-md-12">
         <div className="main-result border border-primary border-left-0 border-right-0 mt-3">
-          <p>            
-            GARD {evidence_statement}. GARD examined {totalModelCount} models in{" "}
+          <p> GARD {evidence_statement}. GARD examined {totalModelCount} models in{" "}
             {timeString} wallclock time, at a rate of{" "}
             {(totalModelCount / props.data.timeElapsed).toFixed(2)} models per
             second. The alignment contained {props.data.potentialBreakpoints}{" "}
@@ -450,18 +447,6 @@ class GARDVersionSelector extends React.Component {
 }
 
 export function GARD(props) {
-
-  //This kind of works but only if the JSON given has {}
-  //If JSON is completely blank it gets stuck in loop.
-  $.getJSON(props.data, function(json) {
-    //console.log(json.input["number of sequences"]); // this will show the info it in firebug console
-    if(!json.input || !(Object.keys(json))){
-      alert("There was an error retrieving results data");
-    }
-    console.log(json);
-  });
-  // alert(JSON.stringify(.fasta));
-  // console.log(props.fasta);
   return (
     <ResultsPage
       data={props.data}
