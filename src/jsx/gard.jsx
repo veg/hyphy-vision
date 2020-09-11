@@ -58,7 +58,8 @@ function GARDResults(props) {
       <div className="col-md-12" />
       <div className="col-md-12">
         <div className="main-result border border-primary border-left-0 border-right-0 mt-3">
-          <p> GARD {evidence_statement}. GARD examined {totalModelCount} models in{" "}
+          <p>
+            GARD {evidence_statement}. GARD examined {totalModelCount} models in{" "}
             {timeString} wallclock time, at a rate of{" "}
             {(totalModelCount / props.data.timeElapsed).toFixed(2)} models per
             second. The alignment contained {props.data.potentialBreakpoints}{" "}
