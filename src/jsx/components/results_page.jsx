@@ -78,7 +78,6 @@ class ResultsPage extends React.Component {
     }
 
     //TODO: Handle new FASTA as well
-
     this.enableBootstrapJavascript();
   }
 
@@ -120,15 +119,15 @@ class ResultsPage extends React.Component {
 
   render() {
     var self = this;
-    if (!this.state.json) return self.renderSpinner();
-    if (!_.isEmpty(self.state.json["Evidence Ratios"])) {
-      if (self.props.scrollSpyInfo.length < 4) {
-        var phylo_alignment_obj = {
-          label: "phylo alignment",
-          href: "phylo-alignment"
-        };
-        self.props.scrollSpyInfo.push(phylo_alignment_obj);
-      }
+    if (!this.state.json){
+      return self.renderSpinner();
+    } 
+    if (self.props.scrollSpyInfo.length < 4) {
+      var phylo_alignment_obj = {
+        label: "phylo alignment",
+        href: "phylo-alignment"
+      };
+      self.props.scrollSpyInfo.push(phylo_alignment_obj);
     }
     return (
       <div className="container">
