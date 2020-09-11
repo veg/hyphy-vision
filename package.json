@@ -72,7 +72,7 @@
     "babel-loader": "^8.0.6",
     "base-href-webpack-plugin": "^2.0.0",
     "bootstrap-webpack": "0.0.x",
-    "copy-webpack-plugin": "^5.1.1",
+    "copy-webpack-plugin": "^6.1.0",
     "css-loader": "^3.4.2",
     "electron": "^1.7.9",
     "enzyme": "3",
