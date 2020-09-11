@@ -1274,7 +1274,6 @@ class BUSTEDContents extends React.Component {
         "Constrained model"
       ]);
     }
-    console.log(this);
     if (_.isEmpty(self.state.evidence_ratio_data) || (this.props.fasta == "undefined") || (this.props.fasta == null) ) {
       var phylo_alignment = false;
     } else {
