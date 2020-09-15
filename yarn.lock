@@ -10133,9 +10133,9 @@ react-phylotree@0.4.3:
     underscore "^1.9.1"
 
 react-range@^1.5.3:
-  version "1.6.9"
-  resolved "https://registry.yarnpkg.com/react-range/-/react-range-1.6.9.tgz#c0af0f4ce367b500c585cbf6b921ed92aa9b401e"
-  integrity sha512-Gp0PMUVKBBSl/3YA+fRf+sMqIN8HlLdi3ypHe7QUluNrTMIix+VpKnCgrn7xoqVxbdJSmg254/G4Z8ZPx5YeqQ==
+  version "1.7.0"
+  resolved "https://registry.yarnpkg.com/react-range/-/react-range-1.7.0.tgz#94ac3851661dabbb9bcc37001ba5ddd7cd0cca5d"
+  integrity sha512-OFF+bcD5o1TJ8M6YcQI4A3b6OYh4bDG0gUkyXETPJHXeut39XL8RZZZPUgfeoEOP1PmtMtluGMbFleP59S9OXg==
 
 react-router-dom@^4.3.1:
   version "4.3.1"
