@@ -1372,7 +1372,7 @@ export function BUSTED(props) {
         { label: "summary", href: "summary-div" },
         { label: "model statistics", href: "hyphy-model-fits" },
         { label: "tree", href: "phylogenetic-tree" },
-        {label: "phylo alignment", href: "phylo-alignment"}
+        { label: "phylo alignment", href: "phylo-alignment" }
       ]}
       methodName="Branch-site Unrestricted Statistical Test for Episodic Diversification"
       fasta={props.fasta}
