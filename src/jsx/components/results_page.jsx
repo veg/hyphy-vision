@@ -122,13 +122,13 @@ class ResultsPage extends React.Component {
     if (!this.state.json){
       return self.renderSpinner();
     } 
-    if (self.props.scrollSpyInfo.length < 4) {
-      var phylo_alignment_obj = {
-        label: "phylo alignment",
-        href: "phylo-alignment"
-      };
-      self.props.scrollSpyInfo.push(phylo_alignment_obj);
-    }
+    // if (self.props.scrollSpyInfo.length < 4) {
+    //   var phylo_alignment_obj = {
+    //     label: "phylo alignment",
+    //     href: "phylo-alignment"
+    //   };
+    //   self.props.scrollSpyInfo.push(phylo_alignment_obj);
+    // }
     return (
       <div className="container">
         <div className="row">
