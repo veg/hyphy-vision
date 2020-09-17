@@ -115,7 +115,6 @@
     "lint": "eslint --ext .js,.jsx --ignore-pattern public,static,dist ./src/",
     "test": "node ./node_modules/jest-cli/bin/jest.js",
     "start": "node_modules/.bin/webpack-dev-server --open",
-    "electron": "webpack && node_modules/.bin/electron electron.js",
     "format": "prettier 'src/**/*.{js,jsx}' --write",
     "precommit": "pretty-quick --staged"
   },
