@@ -98,7 +98,7 @@
     "pretty-quick": "^2.0.1",
     "react-addons-test-utils": "^15.6.0",
     "react-lazy-render": "0.3.0",
-    "react-test-renderer": "16",
+    "react-test-renderer": "17",
     "sass": "^1.26.2",
     "sass-loader": "^8.0.2",
     "scss-loader": "^0.0.1",
