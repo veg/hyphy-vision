@@ -390,7 +390,7 @@ function MEMEEBFTable(props) {
           const [branch_name, branch_attributes] = branch_pair;
           return _.pairs(branch_attributes)
             .filter(attribute_pair => {
-              const [attribute, value] = attribute_pair;
+              const attribute = attribute_pair[0];
               return attribute.slice(0, 3) == "EBF";
             })
             .map(attribute_pair => {
@@ -510,7 +510,6 @@ class MEMEContents extends React.Component {
   render() {
     var self = this;
     var site_graph;
-    var models = {};
     if (this.state.data) {
       var columns = _.pluck(self.state.header, 0);
       columns[0] = "&alpha;";
@@ -521,30 +520,6 @@ class MEMEContents extends React.Component {
         />
       );
     }
-    if (!_.isNull(self.state.data)) {
-      models = self.state.data.fits;
-    }
-
-    var tree_settings = {
-      omegaPlot: {},
-      "tree-options": {
-        /* value arrays have the following meaning
-                [0] - the value of the attribute
-                [1] - does the change in attribute value trigger tree re-layout?
-            */
-        "hyphy-tree-model": ["Unconstrained model", true],
-        "hyphy-tree-highlight": ["RELAX.test", false],
-        "hyphy-tree-branch-lengths": [false, true],
-        "hyphy-tree-hide-legend": [true, false],
-        "hyphy-tree-fill-color": [true, false]
-      },
-      "hyphy-tree-legend-type": "discrete",
-      "suppress-tree-render": false,
-      "chart-append-html": true,
-      edgeColorizer: function(e, d) {
-        return 0;
-      }
-    };
 
     return (
       <div>

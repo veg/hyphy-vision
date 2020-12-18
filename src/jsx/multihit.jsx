@@ -464,7 +464,8 @@ class MultiHitContents extends React.Component {
     this.setState({
       ERThresholds: ERThresholds,
       circosLayout: chordLayout,
-      circosChordData: chordData
+      circosChordData: chordData,
+      maxCount: maxCount
     });
   }
 
@@ -562,7 +563,8 @@ class MultiHitContents extends React.Component {
     this.setState({
       minimumTransitions: event.target.value,
       circosLayout: chordLayout,
-      circosChordData: chordData
+      circosChordData: chordData,
+      maxCount: maxCount
     });
   }
 

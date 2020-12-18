@@ -21,7 +21,7 @@ import { ResultsPage } from "./components/results_page.jsx";
 import PropTypes from "prop-types";
 import { saveSvgAsPng } from "save-svg-as-png";
 import Phylotree, { placenodes, phylotreev1 } from "react-phylotree";
-import { SitePlotAxis, fastaParser, colors } from "alignment.js";
+import { SitePlotAxis, colors } from "alignment.js";
 import CodonColumn from "./components/codon_column.jsx";
 
 require("../datamonkey/helpers.js");
@@ -1564,6 +1564,10 @@ class SLACContents extends React.Component {
     }
 
     const { analysis_results, tree } = self.state;
+
+    if(!tree) {
+    }
+
     if (analysis_results) {
       var trees = analysis_results
         ? {

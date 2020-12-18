@@ -910,8 +910,7 @@ class BUSTEDAlignmentTreeERWidget extends React.Component {
         transform: `translate(${tree_padding}, ${site_size / 2})`
       },
       site_padding = 5,
-      codon_label_height = 30,
-      vertical_pad = site_size / 2;
+      codon_label_height = 30;
     const { sites } = this.state,
       n_sites = sites.length,
       column_padding = 40,
