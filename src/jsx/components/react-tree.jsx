@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import Phylotree, { phylotreev1, placenodes } from "react-phylotree";
+import Phylotree from "react-phylotree";
 var download = require("in-browser-download");
 var d3_save_svg = require("d3-save-svg");
 
