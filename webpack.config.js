@@ -13,7 +13,7 @@ module.exports = env => {
       hyphyvision: ["./src/index.js"]
     },
     devServer: {
-      contentBase: ".",
+      contentBase: "dist",
       historyApiFallback: true
     },
     output: {

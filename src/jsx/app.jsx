@@ -22,7 +22,7 @@ const path = require("path");
 const href = window.location.href;
 const is_electron = href.slice(0, 4) == "file";
 const base_url = is_electron ? path.dirname(path.dirname(href)) : "";
-const fasta = require("../../data/fasta.json");
+const fasta = require("../../dist/data/fasta.json");
 
 /**
  * HyPhyVision is the main component of the stand-alone HyPhy-Vision application (both web and electron).

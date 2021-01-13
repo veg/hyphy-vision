@@ -1,4 +1,4 @@
-const translation_table = require("../../data/translation-table.json");
+const translation_table = require("./translation-table.json");
 
 const ambiguous_nucleotides = {
   "U" : ["T"],
