@@ -4,7 +4,6 @@ const express = require("express"),
 const port = process.env.PORT || 8000;
 const app = express();
 
-app.use(express.static("."));
 app.use(express.static("dist"));
 
 app.get("*", (req, res) => { // lgtm [js/missing-rate-limiting]
