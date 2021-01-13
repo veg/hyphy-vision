@@ -48,6 +48,10 @@ module.exports = env => {
           }
         },
         {
+           test: /\.js$/,
+           loader: require.resolve("@open-wc/webpack-import-meta-loader")
+        },
+        {
           test: require.resolve("jquery"),
           use: [
             {
