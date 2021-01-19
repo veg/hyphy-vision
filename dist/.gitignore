@@ -5,6 +5,7 @@
 *.map
 *.ttf
 *.scss
+*.css
 *.html
 *.woff
 *.woff2
