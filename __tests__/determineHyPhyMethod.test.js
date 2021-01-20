@@ -1,16 +1,16 @@
 import { default as determineHyPhyMethod } from "../src/helpers/determineHyPhyMethod.js";
-const exampleAbsrel = require("./../dist/data/json_files/absrel/CD2.fna.ABSREL.json");
-const exampleBgm = require("./../dist/data/json_files/bgm/BGM.json");
-const exampleBusted = require("./../dist/data/json_files/busted/CD2.fna.BUSTED.json");
-const exampleFade = require("./../dist/data/json_files/fade/CD2_AA.fasta.FADE.json");
-const exampleFel = require("./../dist/data/json_files/fel/CD2.fna.FEL.json");
-const exampleFubar = require("./../dist/data/json_files/fubar/CD2.fna.FUBAR.json");
-const exampleGardOld = require("./../dist/data/json_files/gard/CD2.fasta.GARD_old.json");
-const exampleGardNew = require("./../dist/data/json_files/gard/Flu.fna.GARD.json");
-const exampleMeme = require("./../dist/data/json_files/meme/CD2.fna.MEME.json");
-const exampleRelax = require("./../dist/data/json_files/relax/CD2.fna.RELAX.json");
-const exampleSlac = require("./../dist/data/json_files/slac/CD2.fna.SLAC.json");
-const exampleSlatkin = require("./../dist/data/json_files/slatkin/C012_Time1_collapse.tre.json");
+const exampleAbsrel = require("./../data/json_files/absrel/CD2.fna.ABSREL.json");
+const exampleBgm = require("./../data/json_files/bgm/BGM.json");
+const exampleBusted = require("./../data/json_files/busted/CD2.fna.BUSTED.json");
+const exampleFade = require("./../data/json_files/fade/CD2_AA.fasta.FADE.json");
+const exampleFel = require("./../data/json_files/fel/CD2.fna.FEL.json");
+const exampleFubar = require("./../data/json_files/fubar/CD2.fna.FUBAR.json");
+const exampleGardOld = require("./../data/json_files/gard/CD2.fasta.GARD_old.json");
+const exampleGardNew = require("./../data/json_files/gard/Flu.fna.GARD.json");
+const exampleMeme = require("./../data/json_files/meme/CD2.fna.MEME.json");
+const exampleRelax = require("./../data/json_files/relax/CD2.fna.RELAX.json");
+const exampleSlac = require("./../data/json_files/slac/CD2.fna.SLAC.json");
+const exampleSlatkin = require("./../data/json_files/slatkin/C012_Time1_collapse.tre.json");
 
 describe("determineHyPhyMethod", () => {
   it("should work on the example json files", () => {
