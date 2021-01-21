@@ -4,6 +4,7 @@ const path = require("path"),
 
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const PreloadWebpackPlugin = require("preload-webpack-plugin");
+const CopyWebpackPlugin = require("copy-webpack-plugin");
 
 module.exports = env => {
   config = {
@@ -118,7 +119,10 @@ module.exports = env => {
         datamonkey: "datamonkey",
         _: "underscore"
       }),
-      new webpack.IgnorePlugin(/jsdom$/)
+      new webpack.IgnorePlugin(/jsdom$/),
+      new CopyWebpackPlugin([
+        { from: "data", to: "data" }
+      ])
     ],
     resolve: {
       alias: {
