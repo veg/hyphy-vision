@@ -10,6 +10,10 @@ import { DatamonkeyScatterplot } from "./components/graphs.jsx";
 import { ResultsPage } from "./components/results_page.jsx";
 import { GARD_HyPhy_2_3 } from "./gard_HyPhy_2_3.jsx";
 
+import {Runtime, Library, Inspector} from "@observablehq/runtime";
+import notebook from "@spond/plotting-gard-breakpoint-support";
+
+
 function binomial(n, k) {
   if (typeof n !== "number" || typeof k !== "number") return false;
   var coeff = 1;
@@ -303,6 +307,9 @@ function GARDScatterPlot(props) {
 }
 
 class GARDContents extends React.Component {
+
+  bodyRef = React.createRef();
+
   constructor(props) {
     super(props);
     this.state = { data: null };
@@ -310,6 +317,16 @@ class GARDContents extends React.Component {
 
   componentDidMount() {
     this.processData(this.props.json);
+
+    const runtime = new Runtime(
+      Object.assign(new Library(), { gard_results_json : this.props.json})
+    )
+
+    let main = runtime.module(notebook, Inspector.into(this.bodyRef.current));
+
+    main.redefine("gard_results_json", this.props.json);
+
+
   }
 
   componentWillReceiveProps(nextProps) {
@@ -375,6 +392,9 @@ class GARDContents extends React.Component {
     return (
       <div>
         <ErrorMessage />
+        <div id="body-tab">
+            <div ref={this.bodyRef}></div>
+        </div>
         <GARDResults data={this.state.data} />
         <GARDRecombinationReport data={this.state.data} />
         <GARDSimpleTopologyReport data={this.state.data} />
