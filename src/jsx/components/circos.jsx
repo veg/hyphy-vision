@@ -8,6 +8,10 @@ class Circos extends React.Component {
     $(this.ref).empty();
 
     const { id, size, layout, config, tracks } = this.props;
+
+    if(!id) {
+    }
+
     const circos = new CircosJS({
       container: this.ref,
       width: size,
