@@ -7,7 +7,7 @@ import { DatamonkeyTable } from "./components/tables.jsx";
 import { DatamonkeyMultiScatterplot } from "./components/graphs.jsx";
 import { ScrollSpy } from "./components/scrollspy.jsx";
 
-class PRIME extends React.Component {
+export class PRIME extends React.Component {
   constructor(props) {
     super(props);
 
@@ -378,11 +378,9 @@ PRIME.defaultProps = {
 
 // Will need to make a call to this
 // omega distributions
-function prime(prime_results, element) {
+export default function prime(prime_results, element) {
   ReactDOM.render(
     <PRIME prime_results={prime_results} />,
     document.getElementById(element)
   );
 }
-
-export { prime };

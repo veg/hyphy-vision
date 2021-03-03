@@ -208,7 +208,7 @@ class BGMContents extends React.Component {
   }
 }
 
-function BGM(props) {
+export function BGM(props) {
   return (
     <ResultsPage
       data={props.data}
@@ -228,7 +228,13 @@ function BGM(props) {
   );
 }
 
-function render_bgm(data, element, fasta, originalFile, analysisLog) {
+export default function render_bgm(
+  data,
+  element,
+  fasta,
+  originalFile,
+  analysisLog
+) {
   ReactDOM.render(
     <BGM
       data={data}
@@ -239,5 +245,3 @@ function render_bgm(data, element, fasta, originalFile, analysisLog) {
     document.getElementById(element)
   );
 }
-
-export { BGM, render_bgm };

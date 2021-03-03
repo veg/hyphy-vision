@@ -31,13 +31,27 @@ var BUSTEDSiteChartAndTable = createReactClass({
     };
   },
   componentWillReceiveProps: function(nextProps) {
-    this.setState({
-      upper_site_range: nextProps.data.length + 1,
-      brushend_event: false
-    });
+    if (
+      nextProps.data.length <= 0 ||
+      nextProps.data.length == null ||
+      nextProps.data.length == "undefined"
+    ) {
+      this.setState({
+        upper_site_range: 0,
+        brushend_event: false
+      });
+    } else {
+      this.setState({
+        upper_site_range: nextProps.data.length + 1,
+        brushend_event: false
+      });
+    }
   },
   componentDidUpdate: function() {
-    if (!this.state.brushend_event && !_.isEmpty(this.props.data)) {
+    if (
+      (!this.state.brushend_event && !_.isEmpty(this.props.data)) ||
+      (!this.state.brushend_event && !this.props.data == "undefined")
+    ) {
       d3.select("#chart-id").html("");
       this.drawChart();
     }
@@ -788,11 +802,15 @@ class BUSTEDAlignmentTreeERWidget extends React.Component {
       tree: null,
       sites: null,
       max_site: null,
-      current_site: 1
+      current_site: 1,
+      fasta: false,
+      newick: false
     };
-  }
+  } 
   initialize(newick, fasta) {
-    if (!newick || !fasta) return;
+    if (!newick || !fasta){
+      return;
+    }
     const tree = new phylotreev1(newick);
     placenodes(tree);
     tree.node_order = tree
@@ -878,17 +896,18 @@ class BUSTEDAlignmentTreeERWidget extends React.Component {
     const has_tree = Boolean(this.state.tree),
       has_evidence_ratios = !_.isEmpty(this.props.evidence_ratios),
       has_fasta = Boolean(this.props.fasta),
-      has_data = has_tree && has_evidence_ratios & has_fasta;
+      has_data = has_tree && has_evidence_ratios && has_fasta;
     if (!has_data) return <div />;
     const { site_size } = this.props,
+      tree_width = 200,
+      tree_padding = 10,
+      tree_height = site_size * this.state.tree.get_tips().length,
+      label_height = 20,
       phylotree_props = {
-        width: 200,
-        height: site_size * this.state.tree.get_tips().length,
+        width: tree_width - 2 * tree_padding,
+        height: tree_height - site_size,
         tree: this.state.tree,
-        paddingTop: 5,
-        paddingBottom: 5,
-        paddingLeft: 5,
-        paddingRight: 5
+        transform: `translate(${tree_padding}, ${site_size / 2})`
       },
       site_padding = 5,
       codon_label_height = 30,
@@ -900,8 +919,8 @@ class BUSTEDAlignmentTreeERWidget extends React.Component {
       ccw_nopad = 4 * site_size + site_padding,
       bar_height = 200,
       svg_props = {
-        width: phylotree_props.width + n_sites * codon_column_width,
-        height: phylotree_props.height + codon_label_height + bar_height
+        width: tree_width + 10 + n_sites * codon_column_width,
+        height: tree_height + codon_label_height + bar_height + label_height
       };
     const log_scale = x => Math.log(1 + x),
       constrained_data = sites.map(
@@ -980,7 +999,7 @@ class BUSTEDAlignmentTreeERWidget extends React.Component {
                 height={svg_props.height}
                 fill="white"
               />
-              <g transform={`translate(${phylotree_props.width - 100}, 75)`}>
+              <g transform={`translate(${tree_width - 100}, 75)`}>
                 <rect x={5} y={10} width={20} height={20} fill="#00a99d" />
                 <text x={0} y={20} textAnchor="end" alignmentBaseline="middle">
                   Constrained
@@ -995,7 +1014,7 @@ class BUSTEDAlignmentTreeERWidget extends React.Component {
                 axis_label="log(1+evidence ratio)"
                 height={bar_height}
                 label_width={75}
-                translateX={phylotree_props.width - 75}
+                translateX={tree_width - 75}
                 padding={{ top: 0, right: 0, bottom: 0, left: 0 }}
               />
               {constrained_data.map((datum, i) => {
@@ -1003,7 +1022,7 @@ class BUSTEDAlignmentTreeERWidget extends React.Component {
                 return (
                   <rect
                     x={
-                      phylotree_props.width +
+                      tree_width +
                       i * codon_column_width +
                       ccw_nopad / 2 -
                       bar_width -
@@ -1022,7 +1041,7 @@ class BUSTEDAlignmentTreeERWidget extends React.Component {
                 return (
                   <rect
                     x={
-                      phylotree_props.width +
+                      tree_width +
                       i * codon_column_width +
                       ccw_nopad / 2 +
                       bar_padding
@@ -1036,23 +1055,17 @@ class BUSTEDAlignmentTreeERWidget extends React.Component {
                 );
               })}
               <g transform={`translate(0, ${bar_height + 5})`}>
-                <Phylotree
-                  {...phylotree_props}
-                  paddingTop={vertical_pad}
-                  paddingBottom={vertical_pad}
-                />
+                <Phylotree {...phylotree_props} />
                 {sites.map((site, i) => {
                   return (
                     <CodonColumn
                       site={site}
-                      translateX={
-                        phylotree_props.width + i * codon_column_width
-                      }
+                      translateX={tree_width + i * codon_column_width}
                       site_size={site_size}
                       site_padding={site_padding}
                       codon_label_height={codon_label_height}
                       key={i}
-                      height={phylotree_props.height}
+                      height={tree_height}
                       {...this.state}
                     />
                   );
@@ -1261,6 +1274,11 @@ class BUSTEDContents extends React.Component {
         "Constrained model"
       ]);
     }
+    if (_.isEmpty(self.state.evidence_ratio_data) || (this.props.fasta == "undefined") || (this.props.fasta == null) ) {
+      var phylo_alignment = false;
+    } else {
+      var phylo_alignment = true;
+    }
     const newick = this.state.json
       ? this.state.json.trees[0].newickString
       : null;
@@ -1309,7 +1327,7 @@ class BUSTEDContents extends React.Component {
           </div>
         </div>
 
-        {self.props.fasta ? (
+        {phylo_alignment ? (
           <div className="row">
             <div className="col-md-12" id="phylo-alignment">
               <Header
@@ -1327,23 +1345,35 @@ class BUSTEDContents extends React.Component {
               />
             </div>
           </div>
-        ) : null}
+        ) : <div className="row">
+          <div className="col-md-12" id="phylo-alignment">
+              <Header
+                title="Phylogenetic alignment evidence ratio plot"
+              />
+              <div className="alert alert-danger">
+              <p>Phylogenetic Alignment cannot be rendered for this job.</p>
+              <p>In order to view the phylogenetic alignment plot, this job must be completed and rendered on datamonkey.org. Hyphy-Vision will not render this plot.</p>
+              <p>If this job was completed on datamonkey.org, and this message is being displayed, then this job did not present the required data for a successful plot. </p>
+              <p>This is generally caused by failing to reject the null hypothesis under the unconstrained model, rendering future tests moot to conduct (e.g. constrained model).</p>
+              </div>
+            </div>
+        </div>
+        }
       </div>
     );
   }
 }
 
-function BUSTED(props) {
+export function BUSTED(props) {
   return (
     <ResultsPage
       data={props.data}
       scrollSpyInfo={[
         { label: "summary", href: "summary-div" },
         { label: "model statistics", href: "hyphy-model-fits" },
-        { label: "tree", href: "phylogenetic-tree" }
-      ].concat(
-        props.fasta ? { label: "phylo alignment", href: "phylo-alignment" } : []
-      )}
+        { label: "tree", href: "phylogenetic-tree" },
+        { label: "phylo alignment", href: "phylo-alignment" }
+      ]}
       methodName="Branch-site Unrestricted Statistical Test for Episodic Diversification"
       fasta={props.fasta}
       originalFile={props.originalFile}
@@ -1354,7 +1384,13 @@ function BUSTED(props) {
   );
 }
 
-var render_busted = function(data, element, fasta, originalFile, analysisLog) {
+export default function render_busted(
+  data,
+  element,
+  fasta,
+  originalFile,
+  analysisLog
+) {
   ReactDOM.render(
     <BUSTED
       data={data}
@@ -1364,6 +1400,4 @@ var render_busted = function(data, element, fasta, originalFile, analysisLog) {
     />,
     document.getElementById(element)
   );
-};
-
-export { render_busted, BUSTED };
+}

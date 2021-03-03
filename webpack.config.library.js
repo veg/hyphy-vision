@@ -1,6 +1,7 @@
 const path = require("path"),
   webpack = require("webpack"),
-  HtmlWebpackPlugin = require("html-webpack-plugin");
+  HtmlWebpackPlugin = require("html-webpack-plugin"),
+  CopyPlugin = require('copy-webpack-plugin');
 
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const PreloadWebpackPlugin = require("preload-webpack-plugin");
@@ -16,7 +17,7 @@ module.exports = env => {
       historyApiFallback: true
     },
     output: {
-      path: path.resolve(__dirname, "public/"),
+      path: path.resolve(__dirname, "dist/"),
       filename: "[name].js",
       library: "hyphyVision",
       libraryTarget: "umd"
@@ -98,7 +99,7 @@ module.exports = env => {
       new PreloadWebpackPlugin(),
       new HtmlWebpackPlugin({
         title: "HyPhy Vision",
-        filename: path.resolve("public", "index.html")
+        filename: path.resolve("dist", "index.html")
       }),
       new MiniCssExtractPlugin({
         // Options similar to the same options in webpackOptions.output
@@ -107,14 +108,21 @@ module.exports = env => {
         chunkFilename: "[id].css"
       }),
       new webpack.LoaderOptionsPlugin({ debug: true }),
-      new webpack.ProvidePlugin({
-        $: "jquery",
-        jQuery: "jquery",
-        d3: "d3",
-        datamonkey: "datamonkey",
-        _: "underscore"
-      }),
-      new webpack.IgnorePlugin(/jsdom$/)
+      new webpack.IgnorePlugin(/jsdom$/),
+      new CopyPlugin(
+        [
+          // {output}/file.txt
+          { from: "src/application.scss" },
+          { from: "public/hyphyvision.css" }
+        ],
+        {
+          // By default, we only copy modified files during
+          // a watch or webpack-dev-server build. Setting this
+          // to `true` copies all files.
+          copyUnmodified: true
+        }
+      )
+
     ],
     resolve: {
       alias: {

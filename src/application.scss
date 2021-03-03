@@ -17,7 +17,8 @@ $fa-font-path: "~@fortawesome/fontawesome-free/webfonts";
 
 @import url("https://fonts.googleapis.com/css?family=Montserrat:400,400i,500,500i,600,600i,700,700i,800,800i,900,900i|Noto+Sans:400,400i,700,700i");
 
-@import "~alignment.js/lib/alignment.css";
+@import "~alignment.js/styles.scss";
+@import "~react-phylotree/styles/phylotree.css";
 
 /* End Imports */
 /*----------------------------------------------------------------------------------------------------------------*/
@@ -258,8 +259,8 @@ toolbar-dropdown::before {
   white-space: nowrap;
 }
 
-.dropdown-menu > li > a:hover,
-.dropdown-menu > li > a:focus {
+.dropdown-menu > li:hover,
+.dropdown-menu > li:hover {
   text-decoration: none;
   color: #fff;
   background-color: #00a99d;
@@ -800,7 +801,7 @@ p.description {
 
 // main sidebar styling
 .bs-docs-sidebar .nav {
-  min-width: 175px;
+  min-width: 185px;
 }
 
 .nav-tabs {

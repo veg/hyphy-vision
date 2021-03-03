@@ -129,10 +129,11 @@ class HyPhyVision extends React.Component {
               component={() => (
                 <BUSTED
                   data={
-                    this.state.data ||
                     base_url + "/data/json_files/busted/CD2.fna.BUSTED.json"
                   }
-                  fasta={fasta.CD2}
+                  fasta={
+                    base_url + "/data/fasta/CD2.fasta"
+                  }
                 />
               )}
             />
@@ -258,11 +259,7 @@ class HyPhyVision extends React.Component {
                 <SLAC
                   data={
                     this.state.data ||
-                    base_url + "/data/json_files/slac/N10_subtree.fna.SLAC.json"
-                  }
-                  fasta={
-                    this.state.data ||
-                    base_url + "/data/input_data/N10_subtree.fna"
+                    base_url + "/data/json_files/slac/Flu-recombination.nex.SLAC.json"
                   }
                 />
               )}
