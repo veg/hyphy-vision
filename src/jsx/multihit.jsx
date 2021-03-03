@@ -521,7 +521,22 @@ class MultiHitContents extends React.Component {
       icon: '<i class="fas fa-compass fa-3x"></i>',
       abbrev: "3H+"
     },
-    "Two-hit": { icon: '<i class="fas fa-dice-two fa-3x"></i>', abbrev: "2H" }
+    "Two-hit": { icon: '<i class="fas fa-dice-two fa-3x"></i>', abbrev: "2H" },
+    "Triple-hit vs Double-hit": {
+      icon: '<i class="fas fa-dice-three fa-3x"></i>',
+      abbrev: "3H"
+    },
+    "Triple-hit islands vs Double-hit": {
+      icon:
+        '<i class="fas fa-dice-three fa-2x"></i> vs. <i class="fas fa-dice-two fa-2x"></i>',
+      abbrev: "3HSI"
+    },
+    "Triple-hit vs Triple-hit islands": {
+      icon: '<i class="fas fa-compass fa-3x"></i>',
+      abbrev: "3H+"
+    },
+    "Double-hit vs Single-hit": { icon: '<i class="fas fa-dice-two fa-3x"></i>', abbrev: "2H" }
+
   };
 
   componentDidMount() {
