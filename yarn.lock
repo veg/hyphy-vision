@@ -6799,10 +6799,10 @@ internal-slot@^1.0.3:
     has "^1.0.3"
     side-channel "^1.0.4"
 
-interpolate-html-plugin@^3.0.0:
-  version "3.0.0"
-  resolved "https://registry.yarnpkg.com/interpolate-html-plugin/-/interpolate-html-plugin-3.0.0.tgz#5cef4352f1fe7af40eae5389644b30e6bd58f6dd"
-  integrity sha1-XO9DUvH+evQOrlOJZEsw5r1Y9t0=
+interpolate-html-plugin@^4.0.0:
+  version "4.0.0"
+  resolved "https://registry.yarnpkg.com/interpolate-html-plugin/-/interpolate-html-plugin-4.0.0.tgz#9de59529b557d1a7984f958eee35ca3a62006a85"
+  integrity sha512-wYEOLd/Ts0C5bo4p7pkX5XicCSYn/5dsGGWnlg2rnW0IzZfJmrdt8UEVcsNmX9t5j3kweLcHrh9J6SVH43q7/Q==
   dependencies:
     escape-string-regexp "^1.0.5"
 
