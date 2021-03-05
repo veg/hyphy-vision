@@ -4,6 +4,7 @@ var React = require("react"),
 
 import { ErrorMessage } from "./components/error_message.jsx";
 import { Header } from "./components/header.jsx";
+import { ExportButton } from "./components/export-button.jsx";
 import { ResultsPage } from "./components/results_page.jsx";
 import {Runtime, Inspector} from "@observablehq/runtime";
 import notebook from "@hyphy_software/gard-analysis-result-visualization";
@@ -50,7 +51,7 @@ function GARDResults(props) {
   var evidence_statement =
     number_of_fragments > 1 ? (
       <span>
-        <strong className="hyphy-highlight">found evidence</strong> of{" "}
+        <strong>found evidence</strong> of{" "}
         {props.data.lastImprovedBPC} recombination breakpoint
         {props.data.lastImprovedBPC == 1 ? "" : "s"}
       </span>
@@ -66,13 +67,12 @@ function GARDResults(props) {
       <div className="col-md-12">
         <div className="main-result border border-primary border-left-0 border-right-0 mt-3">
           <p>
-            GARD {evidence_statement}. GARD examined {totalModelCount} models in{" "}
-            {timeString} wallclock time, at a rate of{" "}
-            {(totalModelCount / props.data.timeElapsed).toFixed(2)} models per
-            second. The alignment contained {props.data.potentialBreakpoints}{" "}
+            GARD {evidence_statement}. GARD examined <b>{totalModelCount}</b> models at a rate of{" "}
+            <b>{(totalModelCount / props.data.timeElapsed).toFixed(2)}</b> models per
+              second. The alignment contained <b>{props.data.potentialBreakpoints}</b>{" "}
             potential breakpoints, translating into a search space of{" "}
-            {totalPossibleModels} models with up to {number_of_fragments}{" "}
-            breakpoints, of which {percentageExplored}% was explored by the
+                <b>{totalPossibleModels}</b> models with up to <b>{number_of_fragments}</b>{" "}
+                  breakpoints, of which <b>{percentageExplored}%</b> was explored by the
             genetic algorithm.
           </p>
           <hr />
@@ -174,8 +174,14 @@ class GARDContents extends React.Component {
       data.improvements = improvements;
     }
 
+    // Future correct way.
 		this.bodyRef.current.replaceChildren();
 		this.figureRef.current.replaceChildren();
+
+    // For browsers that do not support replaceChildren
+		$(this.bodyRef.current).empty();
+		$(this.figureRef.current).empty();
+
 
     const runtime = new Runtime()
 
@@ -234,6 +240,14 @@ class GARDContents extends React.Component {
       </div>
 
       <div>
+        <ExportButton
+          json={this.props.json}
+          fasta={this.props.fasta}
+          originalFile={this.props.originalFile}
+          analysisLog={this.props.analysisLog}
+          partitionedData={this.props.partitionedData}
+        />
+
         <ErrorMessage />
         <div id="body-tab">
             <div ref={this.bodyRef}></div>

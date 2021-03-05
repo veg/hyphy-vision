@@ -36,15 +36,13 @@ class ExportButton extends React.Component {
   render() {
 
     return (
-      <div className="row" id="input-info">
-        <div className="col-md-4" style={{ height: 0 }}>
+      <div>
           <div className="dropdown ml-auto">
             <button
               id="dropdown-menu-button"
               className="btn btn-secondary dropdown-toggle"
               data-toggle="dropdown"
               type="button"
-              style={{ height: 30 }}
             >
               <i className="fa fa-download" aria-hidden="true" /> Export
             </button>
@@ -88,7 +86,6 @@ class ExportButton extends React.Component {
               </li>
             </ul>
           </div>
-        </div>
 
         <div
           className="modal fade"
