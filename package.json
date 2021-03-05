@@ -23,10 +23,10 @@
   "version": "2.8.12",
   "dependencies": {
     "@fortawesome/fontawesome-free": "^5.12.1",
+    "@hyphy_software/gard-analysis-result-visualization": "https://api.observablehq.com/@hyphy_software/gard-analysis-result-visualization@916.tgz?v=3",
     "@observablehq/how-to-embed-a-notebook-in-a-react-app": "https://api.observablehq.com/@observablehq/how-to-embed-a-notebook-in-a-react-app.tgz?v=3",
     "@observablehq/runtime": "4",
     "@spond/displaying-absrel-results-using-branch-censoring": "https://api.observablehq.com/@spond/displaying-absrel-results-using-branch-censoring.tgz?v=3",
-    "@spond/plotting-gard-breakpoint-support": "https://api.observablehq.com/@spond/plotting-gard-breakpoint-support.tgz?v=3",
     "@stevenweaver/displaying-absrel-results-using-branch-censoring": "https://api.observablehq.com/@stevenweaver/displaying-absrel-results-using-branch-censoring.tgz?v=3",
     "alignment.js": "0.3.0",
     "bootstrap": "4.x",

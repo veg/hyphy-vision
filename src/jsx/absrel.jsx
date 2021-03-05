@@ -311,6 +311,7 @@ class BSRELContents extends React.Component {
         return new Inspector(this.treeRef.current);
       }
     });
+
     main.redefine("absrel_json", this.props.json);
   }
 

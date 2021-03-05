@@ -1622,7 +1622,7 @@ class SLACContents extends React.Component {
 
           <div className="row hidden-print">
             <div id="datamonkey-slac-tree-summary" className="col-md-12">
-              <h4 className="dm-table-header mb-3">Partition information</h4>
+              <h4 className="dm-table-header border-primary mb-3">Partition information</h4>
 
               <DatamonkeyPartitionTable
                 pValue={self.state.pValue}
@@ -1658,7 +1658,7 @@ class SLACContents extends React.Component {
               {<DatamonkeyModelTable fits={analysis_results.fits} />}
             </div>
             <div id="datamonkey-slac-timers" className="col-md-4">
-              <h4 className="dm-table-header mb-3">Execution time</h4>
+              <h4 className="dm-table-header border-primary mb-3">Execution time</h4>
 
               <DatamonkeyTimersTable
                 timers={analysis_results.timers}

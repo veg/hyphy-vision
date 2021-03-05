@@ -1474,6 +1474,14 @@
     long "^4.0.0"
     pako "^1.0.10"
 
+"@hyphy_software/gard-analysis-result-visualization@https://api.observablehq.com/@hyphy_software/gard-analysis-result-visualization@914.tgz?v=3":
+  version "914.0.0"
+  resolved "https://api.observablehq.com/@hyphy_software/gard-analysis-result-visualization@914.tgz?v=3#7689eb03920a7b7213508dd1a9a48c283e4e6a10"
+
+"@hyphy_software/gard-analysis-result-visualization@https://api.observablehq.com/@hyphy_software/gard-analysis-result-visualization@916.tgz?v=3":
+  version "916.0.0"
+  resolved "https://api.observablehq.com/@hyphy_software/gard-analysis-result-visualization@916.tgz?v=3#c3733c4cb571e92795f8967f909a176f6398c783"
+
 "@istanbuljs/load-nyc-config@^1.0.0":
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/@istanbuljs/load-nyc-config/-/load-nyc-config-1.1.0.tgz#fd3db1d59ecf7cf121e80650bb86712f9b55eced"
@@ -1727,10 +1735,6 @@
 "@spond/displaying-absrel-results-using-branch-censoring@https://api.observablehq.com/@spond/displaying-absrel-results-using-branch-censoring.tgz?v=3":
   version "3364.0.0"
   resolved "https://api.observablehq.com/@spond/displaying-absrel-results-using-branch-censoring.tgz?v=3#7166fbf04055afb8b243dfb629feff4b16544f4b"
-
-"@spond/plotting-gard-breakpoint-support@https://api.observablehq.com/@spond/plotting-gard-breakpoint-support.tgz?v=3":
-  version "866.0.0"
-  resolved "https://api.observablehq.com/@spond/plotting-gard-breakpoint-support.tgz?v=3#ec3cbc42b65eb9bf52cff50b171963fd1f32c67f"
 
 "@stevenweaver/displaying-absrel-results-using-branch-censoring@https://api.observablehq.com/@stevenweaver/displaying-absrel-results-using-branch-censoring.tgz?v=3":
   version "3365.0.0"
