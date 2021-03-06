@@ -12,10 +12,6 @@ import { BranchTable } from "./components/branch_table.jsx";
 import { MainResult } from "./components/mainresult.jsx";
 import { ResultsPage } from "./components/results_page.jsx";
 
-import {Runtime, Library, Inspector} from "@observablehq/runtime";
-import notebook from "@stevenweaver/displaying-absrel-results-using-branch-censoring";
-
-
 class BSRELSummary extends React.Component {
   constructor(props) {
     super(props);
@@ -147,9 +143,6 @@ class BSRELSummary extends React.Component {
 }
 
 class BSRELContents extends React.Component {
-
-  treeRef = React.createRef();
-
   constructor(props) {
     super(props);
     // The below code (here through the end of the constructor) was extracted from the "getInitialState" function from when the BSREL component was in the old createClass format
@@ -301,18 +294,6 @@ class BSRELContents extends React.Component {
   componentDidMount() {
     this.processData(this.props.json);
     this.setEvents();
-
-    const runtime = new Runtime(
-      Object.assign(new Library(), { absrel_json : this.props.json})
-    );
-
-    let main = runtime.module(notebook, name => {
-      if (name === "tree") {
-        return new Inspector(this.treeRef.current);
-      }
-    });
-
-    main.redefine("absrel_json", this.props.json);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -452,7 +433,26 @@ class BSRELContents extends React.Component {
         </div>
 
         <div id="tree-tab">
-            <div ref={this.treeRef}></div>
+          <Tree
+            json={self.state.json}
+            settings={self.state.settings}
+            models={models}
+            color_gradient={[
+              "#000000",
+              "#888888",
+              "#DFDFDF",
+              "#77CCC6",
+              "#00a99d"
+            ]}
+            grayscale_gradient={[
+              "#DDDDDD",
+              "#AAAAAA",
+              "#888888",
+              "#444444",
+              "#000000"
+            ]}
+            method="absrel"
+          />
         </div>
 
         <div id="table-tab">
