@@ -15,7 +15,8 @@ module.exports = env => {
     },
     devServer: {
       contentBase: ".",
-      historyApiFallback: true
+      historyApiFallback: true,
+      disableHostCheck: true
     },
     output: {
       path: path.resolve(__dirname, "dist/"),
@@ -49,8 +50,8 @@ module.exports = env => {
           }
         },
         {
-           test: /\.js$/,
-           loader: require.resolve("@open-wc/webpack-import-meta-loader")
+          test: /\.js$/,
+          loader: require.resolve("@open-wc/webpack-import-meta-loader")
         },
         {
           test: require.resolve("jquery"),
@@ -124,9 +125,7 @@ module.exports = env => {
         _: "underscore"
       }),
       new webpack.IgnorePlugin(/jsdom$/),
-      new CopyWebpackPlugin([
-        { from: "data", to: "data" }
-      ])
+      new CopyWebpackPlugin([{ from: "data", to: "data" }])
     ],
     resolve: {
       alias: {
