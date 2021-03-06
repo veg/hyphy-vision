@@ -1,5 +1,4 @@
-const React = require("react"),
-  _ = require("underscore");
+const React = require("react");
 
 const pd = require("pretty-data").pd;
 
@@ -8,7 +7,6 @@ import ReactJson from "react-json-view";
 import Alignment from "alignment.js";
 
 class ExportButton extends React.Component {
-
   constructor(props) {
     super(props);
     this.state = {
@@ -34,58 +32,52 @@ class ExportButton extends React.Component {
   }
 
   render() {
-
     return (
       <div>
-          <div className="dropdown ml-auto">
-            <button
-              id="dropdown-menu-button"
-              className="btn btn-secondary dropdown-toggle"
-              data-toggle="dropdown"
-              type="button"
-            >
-              <i className="fa fa-download" aria-hidden="true" /> Export
-            </button>
-            <ul
-              className="dropdown-menu"
-              aria-labelledby="dropdown-menu-button"
-            >
-              {this.props.originalFile ? (
-                <li className="dropdown-item">
-                  <a
-                    href={
-                      window.location.href + "/original_file/original.fasta"
-                    }
-                  >
-                    Original file
-                  </a>
-                </li>
-              ) : null}
-              {this.props.analysisLog ? (
-                <li className="dropdown-item">
-                  <a href={window.location.href + "/log.txt/"}>Analysis log</a>
-                </li>
-              ) : null}
-              {this.props.fasta ? (
-                <li className="dropdown-item">
-                  <a onClick={() => this.open("msa")}>View MSA</a>
-                </li>
-              ) : null}
-              {this.props.partitionedData ? (
-                <li className="dropdown-item">
-                  <a href={window.location.href + "/screened_data/"}>
-                    Partitioned data
-                  </a>
-                </li>
-              ) : null}
+        <div className="dropdown ml-auto">
+          <button
+            id="dropdown-menu-button"
+            className="btn btn-secondary dropdown-toggle"
+            data-toggle="dropdown"
+            type="button"
+          >
+            <i className="fa fa-download" aria-hidden="true" /> Export
+          </button>
+          <ul className="dropdown-menu" aria-labelledby="dropdown-menu-button">
+            {this.props.originalFile ? (
               <li className="dropdown-item">
-                <a onClick={() => this.saveTheJSON()}>Save JSON</a>
+                <a
+                  href={window.location.href + "/original_file/original.fasta"}
+                >
+                  Original file
+                </a>
               </li>
+            ) : null}
+            {this.props.analysisLog ? (
               <li className="dropdown-item">
-                <a onClick={() => this.open("json")}>View JSON</a>
+                <a href={window.location.href + "/log.txt/"}>Analysis log</a>
               </li>
-            </ul>
-          </div>
+            ) : null}
+            {this.props.fasta ? (
+              <li className="dropdown-item">
+                <a onClick={() => this.open("msa")}>View MSA</a>
+              </li>
+            ) : null}
+            {this.props.partitionedData ? (
+              <li className="dropdown-item">
+                <a href={window.location.href + "/screened_data/"}>
+                  Partitioned data
+                </a>
+              </li>
+            ) : null}
+            <li className="dropdown-item">
+              <a onClick={() => this.saveTheJSON()}>Save JSON</a>
+            </li>
+            <li className="dropdown-item">
+              <a onClick={() => this.open("json")}>View JSON</a>
+            </li>
+          </ul>
+        </div>
 
         <div
           className="modal fade"

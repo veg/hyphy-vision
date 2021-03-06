@@ -6,9 +6,8 @@ import { ErrorMessage } from "./components/error_message.jsx";
 import { Header } from "./components/header.jsx";
 import { ExportButton } from "./components/export-button.jsx";
 import { ResultsPage } from "./components/results_page.jsx";
-import {Runtime, Inspector} from "@observablehq/runtime";
+import { Runtime, Inspector } from "@observablehq/runtime";
 import notebook from "@hyphy_software/gard-analysis-result-visualization";
-
 
 function binomial(n, k) {
   if (typeof n !== "number" || typeof k !== "number") return false;
@@ -19,22 +18,7 @@ function binomial(n, k) {
 }
 
 function GARDResults(props) {
-
   if (!props.data) return <div />;
-
-  var days = Math.floor(props.data.timeElapsed / (24 * 60 * 60));
-  var delta = props.data.timeElapsed - days * 24 * 60 * 60;
-  var hours = Math.floor(delta / (60 * 60));
-
-  delta -= 60 * 60 * hours;
-
-  var minutes = Math.floor(delta / 60),
-    seconds = delta - 60 * minutes,
-    timeString = "";
-
-  timeString += days > 0 ? days + ":" : "";
-  timeString += hours > 0 ? hours + ":" : "";
-  timeString += minutes + ":" + String(seconds).padStart(2, "0");
 
   var number_of_fragments = Object.keys(props.data.trees).length;
   var totalPossibleModels = _.range(number_of_fragments)
@@ -51,8 +35,8 @@ function GARDResults(props) {
   var evidence_statement =
     number_of_fragments > 1 ? (
       <span>
-        <strong>found evidence</strong> of{" "}
-        {props.data.lastImprovedBPC} recombination breakpoint
+        <strong>found evidence</strong> of {props.data.lastImprovedBPC}{" "}
+        recombination breakpoint
         {props.data.lastImprovedBPC == 1 ? "" : "s"}
       </span>
     ) : (
@@ -67,13 +51,14 @@ function GARDResults(props) {
       <div className="col-md-12">
         <div className="main-result border border-primary border-left-0 border-right-0 mt-3">
           <p>
-            GARD {evidence_statement}. GARD examined <b>{totalModelCount}</b> models at a rate of{" "}
-            <b>{(totalModelCount / props.data.timeElapsed).toFixed(2)}</b> models per
-              second. The alignment contained <b>{props.data.potentialBreakpoints}</b>{" "}
-            potential breakpoints, translating into a search space of{" "}
-                <b>{totalPossibleModels}</b> models with up to <b>{number_of_fragments}</b>{" "}
-                  breakpoints, of which <b>{percentageExplored}%</b> was explored by the
-            genetic algorithm.
+            GARD {evidence_statement}. GARD examined <b>{totalModelCount}</b>{" "}
+            models at a rate of{" "}
+            <b>{(totalModelCount / props.data.timeElapsed).toFixed(2)}</b>{" "}
+            models per second. The alignment contained{" "}
+            <b>{props.data.potentialBreakpoints}</b> potential breakpoints,
+            translating into a search space of <b>{totalPossibleModels}</b>{" "}
+            models with up to <b>{number_of_fragments}</b> breakpoints, of which{" "}
+            <b>{percentageExplored}%</b> was explored by the genetic algorithm.
           </p>
           <hr />
           <p>
@@ -103,7 +88,6 @@ function GARDResults(props) {
 }
 
 function GARDSimpleTopologyReport(props) {
-
   if (!props.data) return <div />;
   if (!props.data.improvements) return <div />;
 
@@ -145,7 +129,6 @@ function GARDSimpleTopologyReport(props) {
 }
 
 class GARDContents extends React.Component {
-
   bodyRef = React.createRef();
   figureRef = React.createRef();
 
@@ -163,7 +146,6 @@ class GARDContents extends React.Component {
   }
 
   processData(data) {
-
     if (data.improvements != null) {
       const improvements = Object.values(data.improvements).map(
         improvementObject => ({
@@ -175,93 +157,91 @@ class GARDContents extends React.Component {
     }
 
     // Future correct way.
-		this.bodyRef.current.replaceChildren();
-		this.figureRef.current.replaceChildren();
+    this.bodyRef.current.replaceChildren();
+    this.figureRef.current.replaceChildren();
 
     // For browsers that do not support replaceChildren
-		$(this.bodyRef.current).empty();
-		$(this.figureRef.current).empty();
+    $(this.bodyRef.current).empty();
+    $(this.figureRef.current).empty();
 
-
-    const runtime = new Runtime()
+    const runtime = new Runtime();
 
     let main = runtime.module(notebook, name => {
-
       let toInclude = [
-				"viewof gard_results_file",
-				"gard_results_file",
-				"tabulatedView",
-				"fig1label",
-				"fig1",
-				"fig2_label",
-				"fig2",
-				"fig3_label",
-				"fig3",
-				"fig4_label",
-				"viewof variants",
-				"variants",
-				"fig4",
-				"cssStyles",
-				"simpleIcons",
-				"displayed_trees"
-			];
-
+        "viewof gard_results_file",
+        "gard_results_file",
+        "tabulatedView",
+        "fig1label",
+        "fig1",
+        "fig2_label",
+        "fig2",
+        "fig3_label",
+        "fig3",
+        "fig4_label",
+        "viewof variants",
+        "variants",
+        "fig4",
+        "cssStyles",
+        "simpleIcons",
+        "displayed_trees"
+      ];
 
       if (_.includes(toInclude, name)) {
-				if(name == "tabulatedView") {
-        	return Inspector.into(this.bodyRef.current)(name);
-				} {
-        	return Inspector.into(this.figureRef.current)(name);
-				}
+        if (name == "tabulatedView") {
+          return Inspector.into(this.bodyRef.current)(name);
+        }
+        {
+          return Inspector.into(this.figureRef.current)(name);
+        }
       }
-
     });
 
     this.setState({ data: data, main: main });
-
   }
 
   render() {
-
-		if(this.state.main) {
-			this.state.main.redefine("gard_results_json", this.state.data);
-			this.state.main.redefine("breakpointData", this.state.data.breakpointData);
-		}
+    if (this.state.main) {
+      this.state.main.redefine("gard_results_json", this.state.data);
+      this.state.main.redefine(
+        "breakpointData",
+        this.state.data.breakpointData
+      );
+    }
 
     return (
-    <div className="gard">
-      <div className="clearance" id="summary-div" />
+      <div className="gard">
+        <div className="clearance" id="summary-div" />
 
-      <div className="border-bottom border-primary mb-3">
-        <h1 className="list-group-item-heading">
-          GARD
-					<h3>Genetic Algorithm for Recombination Detection</h3>
-        </h1>
-      </div>
+        <div className="border-bottom border-primary mb-3">
+          <h1 className="list-group-item-heading">
+            GARD
+            <h3>Genetic Algorithm for Recombination Detection</h3>
+          </h1>
+        </div>
 
-      <div>
-        <ExportButton
-          json={this.props.json}
-          fasta={this.props.fasta}
-          originalFile={this.props.originalFile}
-          analysisLog={this.props.analysisLog}
-          partitionedData={this.props.partitionedData}
-        />
+        <div>
+          <ExportButton
+            json={this.props.json}
+            fasta={this.props.fasta}
+            originalFile={this.props.originalFile}
+            analysisLog={this.props.analysisLog}
+            partitionedData={this.props.partitionedData}
+          />
 
-        <ErrorMessage />
-        <div id="body-tab">
+          <ErrorMessage />
+          <div id="body-tab">
             <div ref={this.bodyRef}></div>
+          </div>
+          <GARDResults data={this.state.data} />
+          <div id="figures-tab" className="row">
+            <div className="col-md-12">
+              <Header title="Figures" />
+              <div ref={this.figureRef}></div>
+            </div>
+          </div>
+          <GARDSimpleTopologyReport data={this.state.data} />
         </div>
-        <GARDResults data={this.state.data} />
-        <div id="figures-tab" className="row">
-					<div className="col-md-12">
-						<Header title="Figures" />
-            <div ref={this.figureRef}></div>
-					</div>
-        </div>
-        <GARDSimpleTopologyReport data={this.state.data} />
       </div>
-		</div>
     );
   }
 }
@@ -270,8 +250,7 @@ export function GARD(props) {
   return (
     <ResultsPage
       data={props.data}
-      scrollSpyInfo={[
-      ]}
+      scrollSpyInfo={[]}
       methodName="Genetic Algorithm for Recombination Detection"
       fasta={props.fasta}
       originalFile={props.originalFile}
@@ -279,8 +258,8 @@ export function GARD(props) {
       partitionedData={props.partitionedData}
       displaySummary={false}
     >
-			{GARDContents}    
-		</ResultsPage>
+      {GARDContents}
+    </ResultsPage>
   );
 }
 
