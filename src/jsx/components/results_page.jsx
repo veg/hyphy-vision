@@ -129,6 +129,7 @@ class ResultsPage extends React.Component {
           <div className="col-lg-12 col-xl-10">
             <div className="results">
               <ErrorMessage />
+              {this.props.displaySummary &&
               <div id="summary-tab">
                 <MethodHeader
                   methodName={this.props.methodName}
@@ -140,6 +141,7 @@ class ResultsPage extends React.Component {
                   partitionedData={this.props.partitionedData}
                 />
               </div>
+              }
             </div>
             <ErrorBoundary>
               {React.createElement(this.props.children, {
@@ -157,7 +159,8 @@ class ResultsPage extends React.Component {
 ResultsPage.defaultProps = {
   fasta: false,
   originalFile: false,
-  analysisLog: false
+  analysisLog: false,
+  displaySummary: true
 };
 
 export { ResultsPage };

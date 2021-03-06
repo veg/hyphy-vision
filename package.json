@@ -23,6 +23,9 @@
   "version": "2.8.12",
   "dependencies": {
     "@fortawesome/fontawesome-free": "^5.12.1",
+    "@hyphy_software/gard-analysis-result-visualization": "https://api.observablehq.com/@hyphy_software/gard-analysis-result-visualization@916.tgz?v=3",
+    "@observablehq/runtime": "4",
+    "@stevenweaver/displaying-absrel-results-using-branch-censoring": "https://api.observablehq.com/@stevenweaver/displaying-absrel-results-using-branch-censoring.tgz?v=3",
     "alignment.js": "0.3.0",
     "bootstrap": "4.x",
     "chi-squared": "^1.1.0",
@@ -68,6 +71,7 @@
     "@fortawesome/free-brands-svg-icons": "^5.12.1",
     "@fortawesome/free-regular-svg-icons": "^5.12.1",
     "@fortawesome/free-solid-svg-icons": "^5.12.1",
+    "@open-wc/webpack-import-meta-loader": "^0.4.7",
     "babel-eslint": "^10.1.0",
     "babel-loader": "^8.0.6",
     "base-href-webpack-plugin": "^2.0.0",

@@ -769,7 +769,7 @@ class BUSTEDModelTable extends React.Component {
                 </button>
               </div>
               <div className="modal-body" id="modal-body">
-                <h4 className="dm-table-header mb-3">&omega; distribution</h4>
+                <h4 className="dm-table-header border-primary mb-3">&omega; distribution</h4>
                 <PropChart
                   name={
                     self.state.model + ", " + self.state.branch + " branches"
