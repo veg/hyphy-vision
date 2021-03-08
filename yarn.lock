@@ -1724,10 +1724,6 @@
   dependencies:
     "@sinonjs/commons" "^1.7.0"
 
-"@stevenweaver/displaying-absrel-results-using-branch-censoring@https://api.observablehq.com/@stevenweaver/displaying-absrel-results-using-branch-censoring.tgz?v=3":
-  version "3366.0.0"
-  resolved "https://api.observablehq.com/@stevenweaver/displaying-absrel-results-using-branch-censoring.tgz?v=3#d8c8c9cb6d9194800de26e11100cfaefa851975c"
-
 "@types/anymatch@*":
   version "1.3.1"
   resolved "https://registry.yarnpkg.com/@types/anymatch/-/anymatch-1.3.1.tgz#336badc1beecb9dacc38bea2cf32adf627a8421a"
