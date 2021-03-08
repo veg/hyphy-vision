@@ -1665,25 +1665,23 @@
     "@types/yargs" "^15.0.0"
     chalk "^4.0.0"
 
-"@observablehq/inspector@^3.2.0":
-  version "3.2.1"
-  resolved "https://registry.yarnpkg.com/@observablehq/inspector/-/inspector-3.2.1.tgz#c953fd95f1b90fac6f39e41965a72cc079d3e465"
-  integrity sha512-U8EASUAUYCQmCprOF9HafRMnU4yyD0IXjRuDwAjBMjVpm36KXPzXWxHcdzlt/3CbIEu8GOhKQqHBAX9pv6OyUQ==
-  dependencies:
-    esm "^3.2.25"
+"@observablehq/inspector@^3.2.2":
+  version "3.2.2"
+  resolved "https://registry.yarnpkg.com/@observablehq/inspector/-/inspector-3.2.2.tgz#df4e9774e2461836a6e09ff22d79a18a9e77ee11"
+  integrity sha512-HBHtruB7hcNqyapyNF77fPVpiCyqEZsmLD6rhCy7nHPaciAEPML4NtQG2QBuTkYlEu64Zulky6g3ABrD0PhX2Q==
 
 "@observablehq/runtime@4":
-  version "4.8.0"
-  resolved "https://registry.yarnpkg.com/@observablehq/runtime/-/runtime-4.8.0.tgz#b09ecaa34dce4c6ef58f2822bc8c0a1e648ddea5"
-  integrity sha512-MCWgmzCl1qfLaenod96Vsv2gGm3VJNJsnKn+0dsqBHeLTZR/yF/uofQqHITqlhE94hkQ6RumZyjIuKT9wD9WgA==
+  version "4.8.2"
+  resolved "https://registry.yarnpkg.com/@observablehq/runtime/-/runtime-4.8.2.tgz#0fe8c692f207051761dec870fa43046d99c98dca"
+  integrity sha512-wik8Uu92a7w3/cS8r69oHLyHTuZgVGNc+eIz0UwOi10dfpquMC0BzG8AbZzMQQEr1EryxSqNvALFY+vf199dww==
   dependencies:
-    "@observablehq/inspector" "^3.2.0"
-    "@observablehq/stdlib" "^3.4.0"
+    "@observablehq/inspector" "^3.2.2"
+    "@observablehq/stdlib" "^3.4.1"
 
-"@observablehq/stdlib@^3.4.0":
-  version "3.4.0"
-  resolved "https://registry.yarnpkg.com/@observablehq/stdlib/-/stdlib-3.4.0.tgz#9da9894b91271fc41c0a92c494f62bdbec47135f"
-  integrity sha512-kqc/ls4BeNQ6rUAqn2HmESpnWJewQkbSGXYqfpTUe/39/gKaRmiur7ktw8Mqtp930Yr5B1iovwPeADUlVqAOFg==
+"@observablehq/stdlib@^3.4.1":
+  version "3.4.1"
+  resolved "https://registry.yarnpkg.com/@observablehq/stdlib/-/stdlib-3.4.1.tgz#39d88fb9d3b79f3c987e9a0099ac4b6ff9ea8c5d"
+  integrity sha512-v0aoQV3e2NphWvkJC/jDI60bV4Nvwy8XD7PFZdzBZYmcQt/cO1ly7TVRZTHGljXdK5e7W6blFY6lNgevUwfrNw==
   dependencies:
     d3-require "^1.2.4"
 
@@ -1723,10 +1721,6 @@
   integrity sha512-MZPUxrmFubI36XS1DI3qmI0YdN1gks62JtFZvxR67ljjSNCeK6U08Zx4msEWOXuofgqUt6zPHSi1H9fbjR/NRA==
   dependencies:
     "@sinonjs/commons" "^1.7.0"
-
-"@stevenweaver/displaying-absrel-results-using-branch-censoring@https://api.observablehq.com/@stevenweaver/displaying-absrel-results-using-branch-censoring.tgz?v=3":
-  version "3366.0.0"
-  resolved "https://api.observablehq.com/@stevenweaver/displaying-absrel-results-using-branch-censoring.tgz?v=3#d8c8c9cb6d9194800de26e11100cfaefa851975c"
 
 "@types/anymatch@*":
   version "1.3.1"
@@ -5334,11 +5328,6 @@ eslint@^7.5.0:
     table "^6.0.4"
     text-table "^0.2.0"
     v8-compile-cache "^2.0.3"
-
-esm@^3.2.25:
-  version "3.2.25"
-  resolved "https://registry.yarnpkg.com/esm/-/esm-3.2.25.tgz#342c18c29d56157688ba5ce31f8431fbb795cc10"
-  integrity sha512-U1suiZ2oDVWv4zPO56S0NcR5QriEahGtdN2OR6FiOG4WJvcjBVFB0qI4+eKoWFH483PKGuLuu6V8Z4T5g63UVA==
 
 espree@^3.4.0:
   version "3.5.4"
