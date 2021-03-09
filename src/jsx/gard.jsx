@@ -168,7 +168,6 @@ class GARDContents extends React.Component {
 
     let main = runtime.module(notebook, name => {
       let toInclude = [
-        "viewof gard_results_file",
         "gard_results_file",
         "tabulatedView",
         "fig1label",
