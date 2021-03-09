@@ -119,7 +119,7 @@ class ReactTree extends Component {
       height = pixelsPerNode * total_number_of_sequences;
     return (
       <div>
-        <h4 className="dm-table-header">
+        <h4 className="dm-table-header border-primary">
           Fitted tree
           <span
             className="fas fa-info-circle"

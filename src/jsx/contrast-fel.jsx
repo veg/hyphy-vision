@@ -628,7 +628,7 @@ class ContrastFELContents extends React.Component {
           </div>
 
           <div id="plot-tab">
-            <h3 className="dm-table-header mb-3">Contrast-FEL Site Plot</h3>
+            <h3 className="dm-table-header border-primary mb-3">Contrast-FEL Site Plot</h3>
 
             <DatamonkeyGraphMenu
               x_options={x_options}

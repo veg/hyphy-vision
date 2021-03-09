@@ -1,7 +1,7 @@
 const path = require("path"),
   webpack = require("webpack"),
   HtmlWebpackPlugin = require("html-webpack-plugin"),
-  CopyPlugin = require('copy-webpack-plugin');
+  CopyPlugin = require("copy-webpack-plugin");
 
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const PreloadWebpackPlugin = require("preload-webpack-plugin");
@@ -43,6 +43,10 @@ module.exports = env => {
           query: {
             presets: ["@babel/preset-env"]
           }
+        },
+        {
+          test: /\.js$/,
+          loader: require.resolve("@open-wc/webpack-import-meta-loader")
         },
         {
           test: require.resolve("jquery"),
@@ -122,7 +126,6 @@ module.exports = env => {
           copyUnmodified: true
         }
       )
-
     ],
     resolve: {
       alias: {

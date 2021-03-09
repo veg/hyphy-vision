@@ -758,7 +758,7 @@ var Tree = createReactClass({
     };
     return (
       <div>
-        <h4 className="dm-table-header mb-3">
+        <h4 className="dm-table-header border-primary mb-3">
           Fitted tree
           <span
             className="fas fa-info-circle"

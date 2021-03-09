@@ -319,10 +319,6 @@ table {
   text-align: center;
 }
 
-.dm-table-header {
-  margin: 0;
-}
-
 .table > caption + thead > tr:first-child > th,
 .table > colgroup + thead > tr:first-child > th,
 .table > thead:first-child > tr:first-child > th,
@@ -534,6 +530,7 @@ w distribution graph in BUSTED*/
   margin-top: 30px;
   margin-bottom: 0;
   padding: 12px 10px 13px 5px;
+  border-bottom: 2px solid;
 }
 
 /* SLAC SLIDER */
@@ -704,19 +701,6 @@ tr.highlight {
 #summary-method-name {
   color: #00a99d;
   font-family: "Montserrat";
-}
-
-.dm-table-header {
-  background-color: #00a99d;
-  font-family: "Noto Sans";
-  background: linear-gradient(to right, #03aa9d, #7ec6b3);
-  font-family: "Noto Sans";
-  color: #fff;
-  text-align: center;
-  padding: 12px 5px 13px 5px;
-  font-family: "Noto Sans", sans-serif;
-  font-size: 15px;
-  font-weight: 600;
 }
 
 .popover {
@@ -1650,4 +1634,14 @@ li.active > a:hover {
   font-size: 10px;
   font-weight: 600;
   border: 2px solid #ffffff;
+}
+
+/* GARD */
+.gard {
+  font-family:"Source Serif Pro",Iowan Old Style,Apple Garamond,Palatino Linotype,Times New Roman,"Droid Serif",Times,serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol;
+}
+
+.gard td {
+  background: white;
+  background-color: white !important;
 }

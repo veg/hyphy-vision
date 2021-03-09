@@ -243,7 +243,7 @@ var ModelFits = createReactClass({
   render: function() {
     return (
       <div>
-        <h4 className="dm-table-header mb-3">
+        <h4 className="dm-table-header border-primary mb-3">
           Model fits
           <span
             className="glyphicon glyphicon-info-sign"
