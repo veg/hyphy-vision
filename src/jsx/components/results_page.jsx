@@ -39,15 +39,15 @@ class ResultsPage extends React.Component {
     }
 
     if (typeof this.props.fasta == "string") {
-      self.setState({ fastaPath: this.props.fasta }); // Set the fasta path for comparing on updates to see if it's new data.  
-      try{
+      self.setState({ fastaPath: this.props.fasta }); // Set the fasta path for comparing on updates to see if it's new data.
+      try {
         d3.text(this.props.fasta, function(data) {
           let fasta_json = fastaParser(JSON.parse(data).fasta);
           let values = _.values(fasta_json);
           values = _.filter(values, v => _.isObject(v) && _.values(v).length);
           self.setState({ fasta: values });
         });
-      }catch(err){
+      } catch (err) {
         alert("There was an error parsing the FASTA file.");
       }
     } else if (typeof this.props.fasta == "object") {
@@ -119,9 +119,9 @@ class ResultsPage extends React.Component {
 
   render() {
     var self = this;
-    if (!this.state.json){
+    if (!this.state.json) {
       return self.renderSpinner();
-    } 
+    }
     return (
       <div className="container">
         <div className="row">
@@ -129,24 +129,27 @@ class ResultsPage extends React.Component {
           <div className="col-lg-12 col-xl-10">
             <div className="results">
               <ErrorMessage />
-              {this.props.displaySummary &&
-              <div id="summary-tab">
-                <MethodHeader
-                  methodName={this.props.methodName}
-                  input_data={this.state.json.input}
-                  json={this.state.json}
-                  fasta={this.state.fasta}
-                  originalFile={this.props.originalFile}
-                  analysisLog={this.props.analysisLog}
-                  partitionedData={this.props.partitionedData}
-                />
-              </div>
-              }
+              {this.props.displaySummary && (
+                <div id="summary-tab">
+                  <MethodHeader
+                    methodName={this.props.methodName}
+                    input_data={this.state.json.input}
+                    json={this.state.json}
+                    fasta={this.state.fasta}
+                    originalFile={this.props.originalFile}
+                    analysisLog={this.props.analysisLog}
+                    partitionedData={this.props.partitionedData}
+                  />
+                </div>
+              )}
             </div>
             <ErrorBoundary>
               {React.createElement(this.props.children, {
                 json: this.state.json,
-                fasta: this.state.fasta
+                fasta: this.state.fasta,
+                originalFile: this.props.originalFile,
+                analysisLog: this.props.analysisLog,
+                partitionedData: this.props.partitionedData
               })}
             </ErrorBoundary>
           </div>
