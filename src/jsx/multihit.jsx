@@ -5,7 +5,6 @@ var React = require("react"),
 
 import { Header } from "./components/header.jsx";
 import { DatamonkeyTable } from "./components/tables.jsx";
-import { DatamonkeySeries, DatamonkeyGraphMenu } from "./components/graphs.jsx";
 import { MainResult } from "./components/mainresult.jsx";
 import { ResultsPage } from "./components/results_page.jsx";
 import { Circos } from "./components/circos.jsx";
@@ -13,6 +12,9 @@ import { CHORDS } from "./components/tracks.js";
 import { Range } from "react-range";
 import translationTable from "./fixtures/translation_table.json";
 import { ImageToolbar } from "./components/exportImage.jsx";
+import { Runtime, Inspector } from "@observablehq/runtime";
+import notebook from "@hyphy_software/multi-hit-analysis-result-visualization";
+
 
 var translationTableIndex = {};
 let c = 0;
@@ -123,6 +125,9 @@ ERSliders.defaultProps = {
 };
 
 class MultiHitContents extends React.Component {
+
+  figureRef = React.createRef();
+
   constructor(props) {
     super(props);
 
@@ -643,6 +648,28 @@ class MultiHitContents extends React.Component {
       yaxis = yOptions[0];
     }
 
+    // Observable
+    this.figureRef.current.replaceChildren();
+    $(this.figureRef.current).empty();
+
+    const runtime = new Runtime();
+
+    let main = runtime.module(notebook, name => {
+      let toInclude = [
+        "fig1label",
+        "fig1",
+        "fig2_label",
+        "fig2",
+        "fig3_label",
+        "fig3",
+        "fig4_label",
+      ];
+
+      if (_.includes(toInclude, name)) {
+        return Inspector.into(this.figureRef.current)(name);
+      }
+    });
+
     this.setState({
       circosLayout: chordLayout,
       circosChordData: chordData,
@@ -657,6 +684,7 @@ class MultiHitContents extends React.Component {
       fits: data.fits,
       yOptions: yOptions,
       yaxis: yaxis,
+      main: main,
       data: data
     });
   }
@@ -988,6 +1016,11 @@ class MultiHitContents extends React.Component {
   }
 
   render() {
+
+    if (this.state.main) {
+      this.state.main.redefine("results_json", this.state.data);
+    }
+
     var { x: x, y: y } = this.definePlotData(
       this.state.xaxis,
       this.state.yaxis
@@ -1046,30 +1079,19 @@ class MultiHitContents extends React.Component {
           <div id="site-plot-tab" className="row hyphy-row">
             <div className="col-md-12">
               <Header
-                title="Model Test Statistics Per Site Plot"
+                title="Figures"
                 popover="<p>Hover over a point to see its values</p>"
               />
-
-              <DatamonkeyGraphMenu
-                x_options={this.state.xOptions}
-                y_options={this.state.yOptions}
-                axisSelectionEvent={this.updateAxisSelection}
-                export_images
+              <div ref={this.figureRef}></div>
+            </div>
+           </div>
+           <div id="table-tab" className="row hyphy-row">
+            <div id="hyphy-mle-fits" className="col-md-12">
+             
+              <Header
+                title="Model Test Statistics Per Site Table"
+                popover="<p>Hover over a column header for a description of its content.</p>"
               />
-
-              <DatamonkeySeries
-                x={x}
-                y={y}
-                x_label={this.state.xaxis}
-                y_label={this.state.yaxis}
-                marginLeft={50}
-                width={
-                  $("#results").width() == null ? 935 : $("#results").width()
-                }
-                transitions={true}
-                doDots={true}
-              />
-
               <div className="row">
                 <div
                   className="col-md-12 mt-3 mb-3 btn-group btn-group-toggle"
@@ -1103,15 +1125,7 @@ class MultiHitContents extends React.Component {
                   </label>
                 </div>
               </div>
-            </div>
-           </div>
-           <div id="table-tab" className="row hyphy-row">
-            <div id="hyphy-mle-fits" className="col-md-12">
-             
-              <Header
-                title="Model Test Statistics Per Site Table"
-                popover="<p>Hover over a column header for a description of its content.</p>"
-              />
+
               
               <DatamonkeyTable
                 headerData={this.state.siteTableHeaders[this.state.whichTable]}
