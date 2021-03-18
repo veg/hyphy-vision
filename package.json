@@ -20,7 +20,7 @@
     "url": "git://github.com/veg/hyphy-vision.git"
   },
   "main": "dist/hyphyvision.js",
-  "version": "2.9.1",
+  "version": "2.9.2",
   "dependencies": {
     "@fortawesome/fontawesome-free": "^5.12.1",
     "@hyphy_software/gard-analysis-result-visualization": "https://api.observablehq.com/@hyphy_software/gard-analysis-result-visualization@916.tgz?v=3",
