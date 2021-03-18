@@ -1456,6 +1456,10 @@
   version "916.0.0"
   resolved "https://api.observablehq.com/@hyphy_software/gard-analysis-result-visualization@916.tgz?v=3#c3733c4cb571e92795f8967f909a176f6398c783"
 
+"@hyphy_software/multi-hit-analysis-result-visualization@https://api.observablehq.com/@hyphy_software/multi-hit-analysis-result-visualization.tgz?v=3":
+  version "991.0.0"
+  resolved "https://api.observablehq.com/@hyphy_software/multi-hit-analysis-result-visualization.tgz?v=3#2820864121de428e2dced549380dc2b41aeae76a"
+
 "@istanbuljs/load-nyc-config@^1.0.0":
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/@istanbuljs/load-nyc-config/-/load-nyc-config-1.1.0.tgz#fd3db1d59ecf7cf121e80650bb86712f9b55eced"
