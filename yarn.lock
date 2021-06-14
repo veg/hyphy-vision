@@ -1933,9 +1933,9 @@
   integrity sha512-HBHtruB7hcNqyapyNF77fPVpiCyqEZsmLD6rhCy7nHPaciAEPML4NtQG2QBuTkYlEu64Zulky6g3ABrD0PhX2Q==
 
 "@observablehq/runtime@4":
-  version "4.8.2"
-  resolved "https://registry.yarnpkg.com/@observablehq/runtime/-/runtime-4.8.2.tgz#0fe8c692f207051761dec870fa43046d99c98dca"
-  integrity sha512-wik8Uu92a7w3/cS8r69oHLyHTuZgVGNc+eIz0UwOi10dfpquMC0BzG8AbZzMQQEr1EryxSqNvALFY+vf199dww==
+  version "4.12.0"
+  resolved "https://registry.yarnpkg.com/@observablehq/runtime/-/runtime-4.12.0.tgz#1e179fc43509fa3fae0b951c6a066faf4588c5e7"
+  integrity sha512-aru9EPpXswVhEo2Vo5d2mhu+Px0LuIidCx+4w6RjhGWZE+wrssJEcheQjndu/RBP/awmTh0ayNWfKUjCq62RIQ==
   dependencies:
     "@observablehq/inspector" "^3.2.2"
     "@observablehq/stdlib" "^3.4.1"
