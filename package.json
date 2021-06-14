@@ -109,7 +109,7 @@
     "uglify-js": "^3.13.9",
     "url-loader": "^3.0.0",
     "webpack": "^4.42.0",
-    "webpack-cli": "^3.3.11",
+    "webpack-cli": "^4.7.2",
     "webpack-dev-server": "^3.10.3",
     "webpack-eslint-plugin": "^1.2.0"
   },
