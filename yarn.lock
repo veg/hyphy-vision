@@ -2980,10 +2980,10 @@ balanced-match@^1.0.0:
   resolved "https://registry.yarnpkg.com/balanced-match/-/balanced-match-1.0.0.tgz#89b4d199ab2bee49de164ea02b89ce462d71b767"
   integrity sha1-ibTRmasr7kneFk6gK4nORi1xt2c=
 
-base-href-webpack-plugin@^2.0.0:
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/base-href-webpack-plugin/-/base-href-webpack-plugin-2.0.0.tgz#4ef8e916756437daed61d55e3aeddf6c5766a577"
-  integrity sha512-e/EJg7MZrKvc5MzaGN+kvGOvq0xOetGvvMYcplAkz2VQZcSQmo4IpRiuhcHpH0AQsxMyNYyNtOixQvuqr+2sFA==
+base-href-webpack-plugin@^3.0.1:
+  version "3.0.1"
+  resolved "https://registry.yarnpkg.com/base-href-webpack-plugin/-/base-href-webpack-plugin-3.0.1.tgz#9fb5d775835cc56fdadb2c1060f6200804977de8"
+  integrity sha512-1Z3mFTiK5mqm24cdcRDdP0/dQFOsAapoO/fh/d6WJNjJYJPHJ9Alr9tmSEZgc1KhyWxvMl5zY/eIqXZdE9PFMA==
 
 base16@^1.0.0:
   version "1.0.0"
