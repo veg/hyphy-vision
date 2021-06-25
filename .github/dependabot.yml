@@ -1,0 +1,122 @@
+version: 2
+updates:
+- package-ecosystem: npm
+  directory: "/"
+  schedule:
+    interval: daily
+    time: "10:00"
+  open-pull-requests-limit: 10
+  target-branch: develop
+  ignore:
+  - dependency-name: copy-webpack-plugin
+    versions:
+    - "> 5.1.2"
+  - dependency-name: css-loader
+    versions:
+    - "> 3.6.0"
+  - dependency-name: d3
+    versions:
+    - "> 3.5.17"
+  - dependency-name: d3
+    versions:
+    - ">= 5.a, < 6"
+  - dependency-name: electron
+    versions:
+    - "> 1.8.8"
+  - dependency-name: exports-loader
+    versions:
+    - "> 0.7.0"
+  - dependency-name: expose-loader
+    versions:
+    - "> 0.7.5"
+  - dependency-name: file-loader
+    versions:
+    - "> 5.1.0"
+  - dependency-name: imports-loader
+    versions:
+    - "> 0.8.0"
+  - dependency-name: in-browser-download
+    versions:
+    - "> 1.0.0"
+  - dependency-name: interpolate-html-plugin
+    versions:
+    - "> 3.0.0"
+  - dependency-name: mini-css-extract-plugin
+    versions:
+    - "> 0.11.3"
+  - dependency-name: node-sass
+    versions:
+    - "> 4.14.1"
+  - dependency-name: preload-webpack-plugin
+    versions:
+    - "> 3.0.0-beta.3"
+  - dependency-name: prettier
+    versions:
+    - "> 1.19.1"
+  - dependency-name: react
+    versions:
+    - ">= 16.14.a, < 16.15"
+  - dependency-name: sass-loader
+    versions:
+    - "> 8.0.2"
+  - dependency-name: style-loader
+    versions:
+    - "> 1.3.0"
+  - dependency-name: underscore
+    versions:
+    - ">= 1.10.a, < 1.11"
+  - dependency-name: underscore
+    versions:
+    - "> 1.9.2"
+  - dependency-name: url-loader
+    versions:
+    - "> 3.0.0"
+  - dependency-name: webpack-cli
+    versions:
+    - ">= 4.5.a, < 4.6"
+  - dependency-name: eslint
+    versions:
+    - 7.18.0
+    - 7.19.0
+    - 7.20.0
+    - 7.21.0
+    - 7.22.0
+    - 7.23.0
+    - 7.24.0
+  - dependency-name: uglify-js
+    versions:
+    - 3.12.5
+    - 3.12.6
+    - 3.12.7
+    - 3.12.8
+    - 3.13.0
+    - 3.13.1
+    - 3.13.2
+    - 3.13.3
+  - dependency-name: eslint-plugin-react
+    versions:
+    - 7.23.0
+    - 7.23.1
+  - dependency-name: "@babel/preset-env"
+    versions:
+    - 7.13.12
+  - dependency-name: husky
+    versions:
+    - 5.2.0
+  - dependency-name: react-json-view
+    versions:
+    - 1.21.2
+  - dependency-name: sass
+    versions:
+    - 1.32.5
+    - 1.32.6
+    - 1.32.7
+  - dependency-name: enzyme-adapter-react-16
+    versions:
+    - 1.15.6
+  - dependency-name: webpack-cli
+    versions:
+    - 4.4.0
+  - dependency-name: html-webpack-plugin
+    versions:
+    - 4.5.1
