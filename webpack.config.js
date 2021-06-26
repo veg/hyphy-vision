@@ -44,10 +44,9 @@ module.exports = env => {
         {
           test: /\.(js|jsx)?$/,
           include: [path.resolve(__dirname, "src")],
-          loaders: "babel-loader",
-          query: {
-            presets: ["@babel/preset-env"]
-          }
+          use: {
+            loader: "babel-loader"          
+          },
         },
         {
           test: /\.js$/,
@@ -55,38 +54,46 @@ module.exports = env => {
         },
         {
           test: require.resolve("jquery"),
-          use: [
-            {
-              loader: "expose-loader",
-              query: "jQuery"
-            },
-            {
-              loader: "expose-loader",
-              query: "$"
+          loader: "expose-loader",
+          options: {
+            exposes : { 
+              globalName: ["jQuery", "$"],
+              override: false
             }
-          ]
+          },
         },
         {
           test: require.resolve("d3"),
-          use: [
-            {
-              loader: "expose-loader",
-              query: "d3"
-            }
-          ]
+          loader: "expose-loader",
+          options: {
+            exposes : {
+              globalName: "d3",
+              override: true
+            },
+          },
+
         },
         {
           test: require.resolve("underscore"),
-          use: [
-            {
-              loader: "expose-loader",
-              query: "_"
-            }
-          ]
+          loader: "expose-loader",
+          options: {
+            exposes : {
+              globalName: "_",
+              override: true
+            },
+          },
         },
         {
           test: /\.woff(2)?(\?v=[0-9]\.[0-9]\.[0-9])?$/,
-          loader: "url-loader?limit=10000&mimetype=application/font-woff"
+          use: [
+            {
+              loader: 'url-loader',
+              options: {
+                limit: 10000,
+                mimetype: "application/font-woff"
+              },
+            },
+          ],
         },
         {
           test: /\.(eot|woff|woff2|ttf|svg|png|jpg|gif)(\?\S*)?$/,
@@ -105,6 +112,9 @@ module.exports = env => {
       ]
     },
     plugins: [
+      new webpack.ProvidePlugin({
+        process: 'process/browser',
+      }),
       new PreloadWebpackPlugin(),
       new HtmlWebpackPlugin({
         title: "HyPhy Vision",
@@ -125,9 +135,16 @@ module.exports = env => {
         _: "underscore"
       }),
       new webpack.IgnorePlugin(/jsdom$/),
-      new CopyWebpackPlugin([{ from: "data", to: "data" }])
+      new CopyWebpackPlugin({patterns:[{ from: "data", to: "data"}]})
     ],
     resolve: {
+      fallback: { 
+        "path": require.resolve("path-browserify"),
+        "zlib": require.resolve("browserify-zlib"),
+        "util": require.resolve("util/"),
+        "process": require.resolve("process/"),
+        "stream": require.resolve("stream-browserify")
+      },
       alias: {
         "phylotree.css": __dirname + "/node_modules/phylotree/phylotree.css"
       },
