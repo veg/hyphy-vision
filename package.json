@@ -27,7 +27,7 @@
     "@hyphy_software/multi-hit-analysis-result-visualization": "https://api.observablehq.com/@hyphy_software/multi-hit-analysis-result-visualization.tgz?v=3",
     "@observablehq/runtime": "4",
     "alignment.js": "^0.3.0",
-    "bootstrap": "4.x",
+    "bootstrap": "5.x",
     "chi-squared": "^1.1.0",
     "circos": "^2.1.0",
     "create-react-class": "^15.6.3",
