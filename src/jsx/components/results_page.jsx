@@ -15,6 +15,7 @@ var React = require("react");
  *    2. Handle getting the data from a file/url and setting the data to state
  */
 class ResultsPage extends React.Component {
+
   constructor(props) {
     super(props);
     this.state = {
@@ -26,20 +27,39 @@ class ResultsPage extends React.Component {
   }
 
   componentDidMount() {
+
     var self = this;
 
+    // Check query parameter
+    let queryParams = new URLSearchParams(location.search);
+
+    if ( typeof queryParams.get('resultsUrl') == "string" ) {
+
+      self.setState({ jsonPath: queryParams.get('resultsUrl') }); // Set the json path for comparing on updates to see if it's new data.
+
+      d3.json(queryParams.get('resultsUrl'), function(data) {
+        self.setState({ json: data });
+      });
+
+    } else if (typeof this.props.data == "string") {
     // Decide if data is a URL or the results JSON
-    if (typeof this.props.data == "string") {
+
       self.setState({ jsonPath: this.props.data }); // Set the json path for comparing on updates to see if it's new data.
+
       d3.json(this.props.data, function(data) {
         self.setState({ json: data });
       });
+
     } else if (typeof this.props.data == "object") {
+
       self.setState({ json: self.props.data });
+
     }
 
     if (typeof this.props.fasta == "string") {
+
       self.setState({ fastaPath: this.props.fasta }); // Set the fasta path for comparing on updates to see if it's new data.
+
       try {
         d3.text(this.props.fasta, function(data) {
           let fasta_json = fastaParser(JSON.parse(data).fasta);
@@ -50,14 +70,19 @@ class ResultsPage extends React.Component {
       } catch (err) {
         alert("There was an error parsing the FASTA file.");
       }
+
     } else if (typeof this.props.fasta == "object") {
+
       self.setState({ fasta: self.props.fasta });
+
     }
 
     this.enableBootstrapJavascript();
+
   }
 
   componentDidUpdate(prevProps, prevState) {
+
     var self = this;
     // Decide if data is a URL or the results JSON
     var newData = this.state.json;
@@ -79,6 +104,7 @@ class ResultsPage extends React.Component {
 
     //TODO: Handle new FASTA as well
     this.enableBootstrapJavascript();
+
   }
 
   setDataToState = data => {
@@ -118,7 +144,9 @@ class ResultsPage extends React.Component {
   }
 
   render() {
+
     var self = this;
+
     if (!this.state.json) {
       return self.renderSpinner();
     }

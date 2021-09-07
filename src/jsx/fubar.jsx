@@ -31,7 +31,7 @@ function FUBARSummary(props) {
             <i className="fa fa-plus-circle" aria-hidden="true">
               {" "}
             </i>{" "}
-            episodic positive/diversifying selection at
+            pervasive positive/diversifying selection at
             <span className="hyphy-highlight"> {positive_sites} </span>
             sites
           </p>
@@ -39,7 +39,7 @@ function FUBARSummary(props) {
             <i className="fa fa-minus-circle" aria-hidden="true">
               {" "}
             </i>{" "}
-            episodic negative/purifying selection at
+            pervasive negative/purifying selection at
             <span className="hyphy-highlight"> {negative_sites} </span>
             sites
           </p>
