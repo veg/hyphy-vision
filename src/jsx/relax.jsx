@@ -6,36 +6,52 @@ import { Header } from "./components/header.jsx";
 import { DatamonkeyTable } from "./components/tables.jsx";
 import { MainResult } from "./components/mainresult.jsx";
 import { ResultsPage } from "./components/results_page.jsx";
+
 var _ = require("underscore");
 
 class RELAXModelTable extends React.Component {
+
   constructor(props) {
+
     super(props);
 
     this.state = {
       model: "MG94xREV with separate rates for branch sets"
     };
+
   }
+
   render() {
+
     if (!this.props.fits) return <div />;
+
     var self = this;
+
     function omegaFormatter(omegaDict) {
-      if (!omegaDict) return "";
+
+      if (!omegaDict) return "N/A";
+      if (!omegaDict.omega) return "N/A";
+      if (!omegaDict.proportion) return "N/A";
+
       return (
         omegaDict.omega.toFixed(2) +
         " (" +
         (100 * omegaDict.proportion).toFixed(2) +
         "%)"
       );
+
     }
+
     function makeActive(model) {
       return function() {
         this.setState({ active: model });
       };
     }
+
     function makeInactive() {
       this.setState({ active: null });
     }
+
     var rows = _.map(
       _.omit(this.props.fits, [
         "Nucleotide GTR",
