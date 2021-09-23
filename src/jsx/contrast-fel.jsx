@@ -10,6 +10,7 @@ import { MainResult } from "./components/mainresult.jsx";
 import { ResultsPage } from "./components/results_page.jsx";
 
 class ContrastFELContents extends React.Component {
+
   constructor(props) {
     super(props);
 
@@ -32,6 +33,7 @@ class ContrastFELContents extends React.Component {
       yaxis: "alpha",
       copy_transition: false,
       pvalue_threshold: 0.1,
+      qvalue_threshold: 0.2,
       positively_selected: [],
       negatively_selected: [],
       pvals: {},
@@ -56,17 +58,17 @@ class ContrastFELContents extends React.Component {
   getPvals(mle_results) {
     //["alpha", "Synonymous substitution rate at a site"],
     //["beta (SOURCE)", "Non-synonymous substitution rate at a site for SOURCE branches"],
-    //["beta (POOP)", "Non-synonymous substitution rate at a site for POOP branches"],
-    //["beta (PEE)", "Non-synonymous substitution rate at a site for PEE branches"],
+    //["beta (TEST)", "Non-synonymous substitution rate at a site for TEST branches"],
+    //["beta (TEST2)", "Non-synonymous substitution rate at a site for TEST2 branches"],
     //["beta (background)", "Non-synonymous substitution rate at a site for background branches"],
     //["subs (SOURCE)", "Substitutions mapped to SOURCE branches"],
-    //["subs (POOP)", "Substitutions mapped to POOP branches"],
-    //["subs (PEE)", "Substitutions mapped to PEE branches"],
-    //["P-value (overall)", "P-value for the test that non-synonymous rates differ between any of the selected groups: SOURCE,POOP,PEE"],
-    //["Q-value (overall)", "Q-value for the test that non-synonymous rates differ between any of the selected groups: SOURCE,POOP,PEE"],
-    //["P-value for SOURCE vs POOP", "P-value for  the test that non-synonymous rates differ between SOURCE and POOP branches"],
-    //["P-value for SOURCE vs PEE", "P-value for  the test that non-synonymous rates differ between SOURCE and PEE branches"],
-    //["P-value for POOP vs PEE", "P-value for  the test that non-synonymous rates differ between POOP and PEE branches"],
+    //["subs (TEST)", "Substitutions mapped to TEST branches"],
+    //["subs (TEST2)", "Substitutions mapped to TEST2 branches"],
+    //["P-value (overall)", "P-value for the test that non-synonymous rates differ between any of the selected groups: SOURCE,TEST,TEST2"],
+    //["Q-value (overall)", "Q-value for the test that non-synonymous rates differ between any of the selected groups: SOURCE,TEST,TEST2"],
+    //["P-value for SOURCE vs TEST", "P-value for  the test that non-synonymous rates differ between SOURCE and TEST branches"],
+    //["P-value for SOURCE vs TEST2", "P-value for  the test that non-synonymous rates differ between SOURCE and TEST2 branches"],
+    //["P-value for TEST vs TEST2", "P-value for  the test that non-synonymous rates differ between TEST and TEST2 branches"],
     //["Permutation p-value", "Label permutation test for significant sites"],
     //["Total branch length", "The total length of branches contributing to inference at this site, and used to scale beta-alpha"]
 
@@ -100,6 +102,44 @@ class ContrastFELContents extends React.Component {
     });
 
     return pvals;
+  }
+
+  getQvals(mle_results) {
+
+    //["alpha", "Synonymous substitution rate at a site"],
+    //["beta (SOURCE)", "Non-synonymous substitution rate at a site for SOURCE branches"],
+    //["beta (TEST)", "Non-synonymous substitution rate at a site for TEST branches"],
+    //["beta (TEST2)", "Non-synonymous substitution rate at a site for TEST2 branches"],
+    //["beta (background)", "Non-synonymous substitution rate at a site for background branches"],
+    //["subs (SOURCE)", "Substitutions mapped to SOURCE branches"],
+    //["subs (TEST)", "Substitutions mapped to TEST branches"],
+    //["subs (TEST2)", "Substitutions mapped to TEST2 branches"],
+    //["P-value (overall)", "P-value for the test that non-synonymous rates differ between any of the selected groups: SOURCE,TEST,TEST2"],
+    //["Q-value (overall)", "Q-value for the test that non-synonymous rates differ between any of the selected groups: SOURCE,TEST,TEST2"],
+    //["P-value for SOURCE vs TEST", "P-value for  the test that non-synonymous rates differ between SOURCE and TEST branches"],
+    //["P-value for SOURCE vs TEST2", "P-value for  the test that non-synonymous rates differ between SOURCE and TEST2 branches"],
+    //["P-value for TEST vs TEST2", "P-value for  the test that non-synonymous rates differ between TEST and TEST2 branches"],
+    //["Permutation p-value", "Label permutation test for significant sites"],
+    //["Total branch length", "The total length of branches contributing to inference at this site, and used to scale beta-alpha"]
+
+    // Get keys
+    let header_keys = _.keys(mle_results[0]);
+
+    let qval_keys = _.filter(header_keys, d => d.indexOf("Q-value") !== -1);
+
+    // Get significant counts for each test
+    let qval_counts = _.map(qval_keys, key => {
+      return {
+        count: _.filter(
+          mle_results,
+          mr => parseFloat(mr[key]) <= this.state.qvalue_threshold
+        ).length
+      };
+    });
+
+    let qvals = _.object(qval_keys, qval_counts);
+    return qvals;
+
   }
 
   processData(data) {
@@ -198,8 +238,12 @@ class ContrastFELContents extends React.Component {
       d.is_positive = _.some(d["betas"], e => e["is_positive"]);
       d.is_negative = _.some(d["betas"], e => e["is_negative"]);
 
+      let qval_key = "Q-value (overall)";
+      d.is_signficant = d[qval_key] < this.state.qvalue_threshold;
       return d;
+
     });
+
 
     var positively_selected = _.filter(mle_results, function(d) {
       return _.some(d["betas"], e => e["is_positive"]);
@@ -211,15 +255,21 @@ class ContrastFELContents extends React.Component {
 
     // highlight mle_content with whether they are significant or not
     mle_content = _.map(mle_results, function(d, key) {
+
       var classes = "";
+
       if (mle_results[key].is_positive) {
         classes = "positive-selection-row";
       } else if (mle_results[key].is_negative) {
         classes = "negative-selection-row";
+      } else if(mle_results[key].is_signficant) {
+        classes = "positive-selection-row";
       }
+
       return _.map(_.values(d), function(g) {
         return { value: g, classes: classes };
       }).slice(0, mle_content[0].length);
+
     });
 
     data["trees"] = _.map(data["input"]["trees"], (val, key) => {
@@ -251,6 +301,7 @@ class ContrastFELContents extends React.Component {
     }
 
     let pvals = this.getPvals(mle_results);
+    let qvals = this.getQvals(mle_results);
 
     this.setState({
       beta_obj: beta_obj,
@@ -263,6 +314,7 @@ class ContrastFELContents extends React.Component {
       input: data.input,
       fits: data.fits,
       pvals: pvals,
+      qvals: qvals,
       data: data
     });
   }
@@ -319,6 +371,21 @@ class ContrastFELContents extends React.Component {
     );
   };
 
+  updateQvalThreshold = e => {
+    // Get number of positively and negatively selected sites by p-value threshold
+    let qvalue_threshold = parseFloat(e.target.value);
+
+    this.setState(
+      {
+        qvalue_threshold: qvalue_threshold
+      },
+      () => {
+        this.processData(this.props.json);
+      }
+    );
+  };
+
+
   formatBranchAnnotations(json) {
     // attach is_foreground to branch annotations
     var branch_annotations = d3.range(json.trees.length).map(i => {
@@ -348,9 +415,9 @@ class ContrastFELContents extends React.Component {
   }
 
   // ** Found _6_ sites with different _overall_ dN/dS at p <= 0.35**
-  // ** Found _11_ sites with different _SOURCE vs POOP_ dN/dS at p <= 0.35**
-  // ** Found _6_ sites with different _SOURCE vs PEE_ dN/dS at p <= 0.35**
-  // ** Found _1_ site with different _POOP vs PEE_ dN/dS at p <= 0.35**
+  // ** Found _11_ sites with different _SOURCE vs TEST_ dN/dS at p <= 0.35**
+  // ** Found _6_ sites with different _SOURCE vs TEST2_ dN/dS at p <= 0.35**
+  // ** Found _1_ site with different _TEST vs TEST2_ dN/dS at p <= 0.35**
 
   getPvalSummary(pval_item) {
     let ref_str = pval_item.test;
@@ -371,18 +438,39 @@ class ContrastFELContents extends React.Component {
     );
   }
 
+  getQvalSummary(qval_item) {
+
+    let ref_str = qval_item.test;
+
+    if (qval_item.reference) {
+      ref_str += " vs " + pval_item.qeference;
+    }
+
+    return (
+      <p>
+        <i className="fa fa-search" aria-hidden="true">
+          {" "}
+        </i>{" "}
+        Found
+        <span className="hyphy-highlight"> {qval_item.count} </span>
+        sites with different <strong>{ref_str}</strong> dN/dS {}
+      </p>
+    );
+  }
+
+
   getSummaryForSource() {
     var items = " ";
 
-    if (_.keys(this.state.pvals).length) {
-      items = _.map(_.values(this.state.pvals), this.getPvalSummary, this);
+    if (_.keys(this.state.qvals).length) {
+      items = _.map(_.values(this.state.qvals), this.getQvalSummary, this);
     }
 
     return (
       <div>
         {items}
         <p>
-          with p-value threshold of
+          with q-value threshold of
           <input
             style={{
               display: "inline-block",
@@ -391,11 +479,11 @@ class ContrastFELContents extends React.Component {
             }}
             className="form-control"
             type="number"
-            defaultValue={this.state.pvalue_threshold}
+            defaultValue={this.state.qvalue_threshold}
             step="0.01"
             min="0"
             max="1.0"
-            onChange={this.updatePvalThreshold}
+            onChange={this.updateQvalThreshold}
           />
           .
         </p>
@@ -407,7 +495,7 @@ class ContrastFELContents extends React.Component {
     return (
       <p>
         <p>
-          ContrastFEL{" "}
+          Contrast-FEL{" "}
           <strong className="hyphy-highlight"> found evidence</strong> of
         </p>
         {this.getSummaryForSource()}
@@ -447,7 +535,7 @@ class ContrastFELContents extends React.Component {
               sites
             </p>
             <p>
-              with p-value threshold of
+              with q-value threshold of
               <input
                 style={{
                   display: "inline-block",
@@ -456,11 +544,11 @@ class ContrastFELContents extends React.Component {
                 }}
                 className="form-control"
                 type="number"
-                defaultValue="0.1"
+                defaultValue="0.2"
                 step="0.01"
                 min="0"
                 max="1"
-                onChange={this.updatePvalThreshold}
+                onChange={this.updateQvalThreshold}
               />
               .
             </p>
