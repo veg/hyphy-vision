@@ -1744,9 +1744,9 @@
   integrity sha512-HBHtruB7hcNqyapyNF77fPVpiCyqEZsmLD6rhCy7nHPaciAEPML4NtQG2QBuTkYlEu64Zulky6g3ABrD0PhX2Q==
 
 "@observablehq/runtime@4":
-  version "4.12.0"
-  resolved "https://registry.yarnpkg.com/@observablehq/runtime/-/runtime-4.12.0.tgz#1e179fc43509fa3fae0b951c6a066faf4588c5e7"
-  integrity sha512-aru9EPpXswVhEo2Vo5d2mhu+Px0LuIidCx+4w6RjhGWZE+wrssJEcheQjndu/RBP/awmTh0ayNWfKUjCq62RIQ==
+  version "4.17.3"
+  resolved "https://registry.yarnpkg.com/@observablehq/runtime/-/runtime-4.17.3.tgz#678aaf7d59a25935cc59a11882b45f47860005c7"
+  integrity sha512-0QhFbGgQv62KAs2YKQ6LP/EJOqCqtyUJnbTpfi8jR5CEhuRMXfAx2tXEh+VEFmIqAdiLRcqRozKStOmW1rv/xw==
   dependencies:
     "@observablehq/inspector" "^3.2.2"
     "@observablehq/stdlib" "^3.4.1"
