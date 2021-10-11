@@ -649,7 +649,6 @@ class MultiHitContents extends React.Component {
     }
 
     // Observable
-    console.log(this.figureRef);
     this.figureRef.current.replaceChildren();
     $(this.figureRef.current).empty();
 
@@ -1021,11 +1020,6 @@ class MultiHitContents extends React.Component {
     if (this.state.main) {
       this.state.main.redefine("results_json", this.state.data);
     }
-
-    var { x: x, y: y } = this.definePlotData(
-      this.state.xaxis,
-      this.state.yaxis
-    );
 
     let chordData = this.state.circosChordData;
     let chordDataTableHeaders = [

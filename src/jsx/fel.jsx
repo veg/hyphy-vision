@@ -1,10 +1,8 @@
 var React = require("react"),
   ReactDOM = require("react-dom"),
-  _ = require("underscore"),
-  d3 = require("d3");
+  _ = require("underscore");
 
 import { ErrorMessage } from "./components/error_message.jsx";
-import { Header } from "./components/header.jsx";
 import { ExportButton } from "./components/export-button.jsx";
 import { ResultsPage } from "./components/results_page.jsx";
 import { Runtime, Inspector } from "@observablehq/runtime";
@@ -31,8 +29,6 @@ class FELContents extends React.Component {
   }
 
   processData(data) {
-
-    const float_format = d3.format(".3f");
 
     // Observable
     this.figureRef.current.replaceChildren();
