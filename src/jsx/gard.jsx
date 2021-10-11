@@ -18,6 +18,7 @@ function binomial(n, k) {
 }
 
 function GARDResults(props) {
+
   if (!props.data) return <div />;
 
   var number_of_fragments = Object.keys(props.data.trees).length;
@@ -228,6 +229,7 @@ class GARDContents extends React.Component {
           />
 
           <ErrorMessage />
+
           <div id="body-tab">
             <div ref={this.bodyRef}></div>
           </div>

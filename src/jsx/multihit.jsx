@@ -649,6 +649,7 @@ class MultiHitContents extends React.Component {
     }
 
     // Observable
+    console.log(this.figureRef);
     this.figureRef.current.replaceChildren();
     $(this.figureRef.current).empty();
 

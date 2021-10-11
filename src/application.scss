@@ -345,21 +345,6 @@ table.dm-table > thead > th {
   vertical-align: middle;
 }
 
-.table > thead > tr > td.info,
-.table > tbody > tr > td.info,
-.table > tfoot > tr > td.info,
-.table > thead > tr > th.info,
-.table > tbody > tr > th.info,
-.table > tfoot > tr > th.info,
-.table > thead > tr.info > td,
-.table > tbody > tr.info > td,
-.table > tfoot > tr.info > td,
-.table > thead > tr.info > th,
-.table > tbody > tr.info > th,
-.table > tfoot > tr.info > th {
-  background-color: #eaf4f2;
-}
-
 .table-condensed > tbody > tr > th {
   padding: 15px 9px;
   border-top: none;
@@ -756,10 +741,6 @@ div.main-result p {
 div.main-result hr {
   margin-top: 10px;
   margin-bottom: 10px;
-}
-
-tbody > tr {
-  background-color: #dddedf;
 }
 
 p.description {
