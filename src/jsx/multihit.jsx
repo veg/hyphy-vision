@@ -1021,11 +1021,6 @@ class MultiHitContents extends React.Component {
       this.state.main.redefine("results_json", this.state.data);
     }
 
-    var { x: x, y: y } = this.definePlotData(
-      this.state.xaxis,
-      this.state.yaxis
-    );
-
     let chordData = this.state.circosChordData;
     let chordDataTableHeaders = [
       { value: "Source", abbr: "Source", sortable: true },
