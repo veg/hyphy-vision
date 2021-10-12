@@ -123,7 +123,9 @@ module.exports = env => {
         chunkFilename: "[id].css"
       }),
       new webpack.LoaderOptionsPlugin({ debug: true }),
-      new webpack.IgnorePlugin(/jsdom$/),
+      new webpack.IgnorePlugin({
+         resourceRegExp: /jsdom$/
+      }),
       new CopyPlugin(
         { patterns: [
             // {output}/file.txt

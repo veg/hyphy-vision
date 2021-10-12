@@ -23,6 +23,7 @@
   "version": "2.11.0",
   "dependencies": {
     "@fortawesome/fontawesome-free": "^5.15.3",
+    "@hyphy_software/fel-analysis-result-visualization": "https://api.observablehq.com/@hyphy_software/fel-analysis-result-visualization@2297.tgz?v=3",
     "@hyphy_software/gard-analysis-result-visualization": "https://api.observablehq.com/@hyphy_software/gard-analysis-result-visualization@916.tgz?v=3",
     "@hyphy_software/multi-hit-analysis-result-visualization": "https://api.observablehq.com/@hyphy_software/multi-hit-analysis-result-visualization.tgz?v=3",
     "@observablehq/runtime": "4",

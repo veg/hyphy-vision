@@ -134,7 +134,9 @@ module.exports = env => {
         datamonkey: "datamonkey",
         _: "underscore"
       }),
-      new webpack.IgnorePlugin(/jsdom$/),
+      new webpack.IgnorePlugin({
+         resourceRegExp: /jsdom$/
+      }),
       new CopyWebpackPlugin({patterns:[{ from: "data", to: "data"}]})
     ],
     resolve: {

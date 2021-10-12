@@ -13,6 +13,7 @@ import { MainResult } from "./components/mainresult.jsx";
 import { ResultsPage } from "./components/results_page.jsx";
 
 class BSRELSummary extends React.Component {
+
   constructor(props) {
     super(props);
 
@@ -45,9 +46,11 @@ class BSRELSummary extends React.Component {
   };
 
   getBranchesWithEvidence = test_results => {
+
     return _.filter(test_results, function(d) {
       return d.p <= 0.05;
     }).length;
+
   };
 
   getTestBranches = test_results => {
@@ -301,6 +304,7 @@ class BSRELContents extends React.Component {
   }
 
   processData = data => {
+
     var test_results = _.mapObject(
       data["branch attributes"]["0"],
       (val, key) => {
@@ -339,9 +343,11 @@ class BSRELContents extends React.Component {
         )
       }
     };
+
     _.each(_.keys(data.fits), model => {
       delete data.fits[model]["Rate Distributions"];
     });
+
     this.setState({
       annotations: data["fits"]["Full adaptive model"]["branch-annotations"],
       json: data,
@@ -353,6 +359,7 @@ class BSRELContents extends React.Component {
       tree: d3.layout.phylotree()(data.input["trees"][0]),
       branch_attributes: data["branch attributes"][0]
     });
+
   };
 
   setEvents() {
