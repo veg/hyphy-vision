@@ -85,8 +85,6 @@ class FELContents extends React.Component {
     return (
 
       <div className="fel">
-        <div className="clearance" id="summary-div" />
-
         <div className="border-bottom border-primary mb-3">
           <h1 className="list-group-item-heading">
 						FEL
