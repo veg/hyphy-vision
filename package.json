@@ -50,7 +50,7 @@
     "popper.js": "^1.14.1",
     "pretty-data": "^0.40.0",
     "prop-types": "^15.5.10",
-    "react": "16.14.0",
+    "react": "16.13",
     "react-copy-to-clipboard": "^5.0.0",
     "react-dom": "16.14",
     "react-json-view": "^1.14.0",
