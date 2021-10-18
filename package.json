@@ -20,7 +20,7 @@
     "url": "git://github.com/veg/hyphy-vision.git"
   },
   "main": "dist/hyphyvision.js",
-  "version": "2.11.3",
+  "version": "2.11.4",
   "dependencies": {
     "@fortawesome/fontawesome-free": "^5.15.3",
     "@hyphy_software/fel-analysis-result-visualization": "https://api.observablehq.com/@hyphy_software/fel-analysis-result-visualization@2297.tgz?v=3",
@@ -50,9 +50,9 @@
     "popper.js": "^1.14.1",
     "pretty-data": "^0.40.0",
     "prop-types": "^15.5.10",
-    "react": "16.13",
+    "react": "^16.13.0",
     "react-copy-to-clipboard": "^5.0.0",
-    "react-dom": "16.13",
+    "react-dom": "^16.13.0",
     "react-json-view": "^1.14.0",
     "react-phylotree": "0.4.3",
     "react-range": "^1.8.9",
