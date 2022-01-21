@@ -1779,9 +1779,9 @@
     isoformat "^0.2.0"
 
 "@observablehq/runtime@4":
-  version "4.17.5"
-  resolved "https://registry.yarnpkg.com/@observablehq/runtime/-/runtime-4.17.5.tgz#6b670688808c4e9cdb6d1c7a40391862b347deca"
-  integrity sha512-/XR8zs5gm11hjtRE3721I+5uiUeOP1TPVLI8e3S6VwrtaQkGVzyy9Dilv2UatGhaaXbLksgt2o2yARV7hC0raA==
+  version "4.18.4"
+  resolved "https://registry.yarnpkg.com/@observablehq/runtime/-/runtime-4.18.4.tgz#16b3b43ab93f4619423f5551f814f12d5f1da563"
+  integrity sha512-BOzYh9dD/zwfgKtoHU6/oXaUHdHtF2Zpv7HyadqrTzFozyeDIMX7c2Nf/1JXwsAtl/SoVFjAuThvTGSMZ1g5qg==
   dependencies:
     "@observablehq/inspector" "^3.2.2"
     "@observablehq/stdlib" "^3.4.1"
