@@ -4,7 +4,7 @@ import { ScrollSpy } from "./scrollspy.jsx";
 import { MethodHeader } from "./methodheader.jsx";
 import { fastaParser } from "alignment.js";
 
-var React = require("react");
+const React = require("react");
 
 /**
  * ResultsPage is a reusable component to do the following in a standrdized way across methods/pages:

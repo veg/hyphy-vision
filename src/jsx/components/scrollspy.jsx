@@ -1,4 +1,4 @@
-var React = require("react");
+const React = require("react");
 import Scrollchor from "react-scrollchor";
 import { HashLink as Link } from "react-router-hash-link";
 
@@ -33,13 +33,20 @@ function ScrollSpy(props) {
       </li>
     );
   });
-  return (
-    <nav className="col-sm-2 bs-docs-sidebar list-group d-none d-xs-none d-sm-none d-md-none d-lg-none d-xl-block">
-      <ul className="nav nav-tabs nav-pills nav-stacked fixed flex-column">
-        {list_items}
-      </ul>
-    </nav>
-  );
+
+  if(list_items.length) {
+
+    return (
+      <nav className="col-sm-2 bs-docs-sidebar list-group d-none d-xs-none d-sm-none d-md-none d-lg-none d-xl-block">
+        <ul className="nav nav-tabs nav-pills nav-stacked fixed flex-column">
+          {list_items}
+        </ul>
+      </nav>
+    );
+
+  } else {
+    return (<nav className="d-none"></nav>);
+  }
 }
 
 export { ScrollSpy };

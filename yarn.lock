@@ -1558,6 +1558,10 @@
   resolved "https://registry.yarnpkg.com/@humanwhocodes/object-schema/-/object-schema-1.2.0.tgz#87de7af9c231826fdd68ac7258f77c429e0e5fcf"
   integrity sha512-wdppn25U8z/2yiaT6YGquE6X8sSv7hNMWSXYSSU1jGv/yd6XqjXgTDJ8KP4NgjTXfJ3GbRjeeb8RTV7a/VpM+w==
 
+"@hyphy_software/busted@https://api.observablehq.com/@hyphy_software/busted@3457.tgz?v=3":
+  version "3457.0.0"
+  resolved "https://api.observablehq.com/@hyphy_software/busted@3457.tgz?v=3#ac397520fa4e55583241ec752c41540c3fd122ea"
+
 "@hyphy_software/fel-analysis-result-visualization@https://api.observablehq.com/@hyphy_software/fel-analysis-result-visualization@2297.tgz?v=3":
   version "2297.0.0"
   resolved "https://api.observablehq.com/@hyphy_software/fel-analysis-result-visualization@2297.tgz?v=3#b3aa9c4f3b8b4677faeff27e63baa99a134dcd21"
