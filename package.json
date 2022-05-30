@@ -59,7 +59,7 @@
     "react-range": "^1.8.9",
     "react-router-dom": "5.1.2",
     "react-router-hash-link": "^2.4.3",
-    "react-scrollchor": "^6.0.0",
+    "react-scrollchor": "^7.0.2",
     "save-svg-as-png": "^1.2.0",
     "text-width": "^1.2.0",
     "underscore": "1.9"
@@ -86,7 +86,7 @@
     "css-loader": "^5.2.6",
     "enzyme": "3",
     "enzyme-adapter-react-16": "^1.14.0",
-    "eslint": "^7.29.0",
+    "eslint": "^8.16.0",
     "eslint-loader": "^4.0.0",
     "eslint-plugin-react": "^7.24.0",
     "exports-loader": "^3.0.0",
