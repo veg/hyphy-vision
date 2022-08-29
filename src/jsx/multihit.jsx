@@ -1001,11 +1001,8 @@ class MultiHitContents extends React.Component {
           <hr />
           <p>
             <small>
-              See <a href="//hyphy.org/methods/selection-methods/#fel">here</a>{" "}
-              for more information about the MultiHit method.
-              <br />
-              Please cite biorxv{" "}
-              <a href="//https://www.biorxiv.org/content/10.1101/2020.05.13.091652v1"> </a> if
+              Please cite Extra base hits: Widespread empirical support for instantaneous multiple-nucleotide changes{" "}
+              <a href="//journals.plos.org/plosone/article?id=10.1371/journal.pone.0248337"> </a> if
               you use this result in a publication, presentation, or other
               scientific work.
             </small>
@@ -1067,8 +1064,8 @@ class MultiHitContents extends React.Component {
           <MainResult
             summary_for_rendering={this.getSummaryForRendering()}
             method_ref="http://hyphy.org/methods/other/FitMultiModel/"
-            citation_ref="https://www.biorxiv.org/content/10.1101/2020.05.13.091652v1"
-            citation_number="biorxv"
+            citation_ref="https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0248337"
+            citation_number="33711070"
           />
 
           <div id="site-plot-tab" className="row hyphy-row">
