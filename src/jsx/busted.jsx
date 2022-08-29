@@ -72,11 +72,9 @@ class BUSTEDContents extends React.Component {
 				return node;
       }
 
-      console.log(name);
-
       if (name == undefined) {
 
-        const node = Inspector.into(this.figureRef.current)(name);
+        //const node = Inspector.into(this.figureRef.current)(name);
 
         //if(node._node.innerHTML.match(/style/) || node._node.innerHTML.match(/link/)) {
         // return node;
