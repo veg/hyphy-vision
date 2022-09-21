@@ -47,6 +47,8 @@ class BUSTEDContents extends React.Component {
         "cssStyles",
         "bustedStyle",
         "simpleIcons",
+        "viewof rate_table",
+        "viewof plot_type",
         "distComparisonPlot",
 				//"viewof table_filter",
 				//"viewof plot_type",
@@ -56,9 +58,13 @@ class BUSTEDContents extends React.Component {
         "viewof table1",
         "table1legend",
         "viewof tree_id",
+        "viewof branch_length",
+        "viewof treeLabels",
+        "viewof color_branches",
         "viewof treeDim",
         "treeLegend",
-        "figure2",
+        "fig2legend",
+        "fig2render"
         //undefined
       ];
 
