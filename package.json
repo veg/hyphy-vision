@@ -20,14 +20,14 @@
     "url": "git://github.com/veg/hyphy-vision.git"
   },
   "main": "dist/hyphyvision.js",
-  "version": "2.12.2",
+  "version": "2.12.3",
   "dependencies": {
     "@fortawesome/fontawesome-free": "^5.15.3",
-    "@hyphy_software/busted": "https://api.observablehq.com/@hyphy_software/busted@3457.tgz?v=3",
+    "@hyphy_software/busted": "https://api.observablehq.com/@hyphy_software/busted@3484.tgz?v=3",
     "@hyphy_software/fel-analysis-result-visualization": "https://api.observablehq.com/@hyphy_software/fel-analysis-result-visualization@2297.tgz?v=3",
     "@hyphy_software/gard-analysis-result-visualization": "https://api.observablehq.com/@hyphy_software/gard-analysis-result-visualization@916.tgz?v=3",
     "@hyphy_software/multi-hit-analysis-result-visualization": "https://api.observablehq.com/@hyphy_software/multi-hit-analysis-result-visualization.tgz?v=3",
-    "@observablehq/runtime": "4",
+    "@observablehq/runtime": "4.25",
     "alignment.js": "0.3.0",
     "bootstrap": "4.x",
     "chi-squared": "^1.1.0",
@@ -123,8 +123,8 @@
     "webpack-eslint-plugin": "^1.2.0"
   },
   "scripts": {
-    "build": "export NODE_OPTIONS=--openssl-legacy-provider; webpack --mode production",
-    "build:library": "export NODE_OPTIONS=--openssl-legacy-provider; webpack --config webpack.config.library.js",
+    "build": "webpack --mode production",
+    "build:library": "webpack --config webpack.config.library.js",
     "lint": "eslint --ext .js,.jsx --ignore-pattern public,static,dist ./src/",
     "test": "node ./node_modules/jest-cli/bin/jest.js",
     "start": "node_modules/.bin/webpack serve --open",
