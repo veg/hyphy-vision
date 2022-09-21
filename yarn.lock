@@ -1606,9 +1606,9 @@
   resolved "https://registry.yarnpkg.com/@humanwhocodes/object-schema/-/object-schema-1.2.0.tgz#87de7af9c231826fdd68ac7258f77c429e0e5fcf"
   integrity sha512-wdppn25U8z/2yiaT6YGquE6X8sSv7hNMWSXYSSU1jGv/yd6XqjXgTDJ8KP4NgjTXfJ3GbRjeeb8RTV7a/VpM+w==
 
-"@hyphy_software/busted@https://api.observablehq.com/@hyphy_software/busted@3457.tgz?v=3":
-  version "3457.0.0"
-  resolved "https://api.observablehq.com/@hyphy_software/busted@3457.tgz?v=3#ac397520fa4e55583241ec752c41540c3fd122ea"
+"@hyphy_software/busted@https://api.observablehq.com/@hyphy_software/busted@3484.tgz?v=3":
+  version "3484.0.0"
+  resolved "https://api.observablehq.com/@hyphy_software/busted@3484.tgz?v=3#8442541f8764b7fa66afb09b25d247c5cf2e1709"
 
 "@hyphy_software/fel-analysis-result-visualization@https://api.observablehq.com/@hyphy_software/fel-analysis-result-visualization@2297.tgz?v=3":
   version "2297.0.0"
@@ -1899,10 +1899,10 @@
   dependencies:
     isoformat "^0.2.0"
 
-"@observablehq/runtime@4":
-  version "4.21.1"
-  resolved "https://registry.yarnpkg.com/@observablehq/runtime/-/runtime-4.21.1.tgz#181d0088f02706be4055ec48595793bd2db9f001"
-  integrity sha512-bCJ++R7bFpBBwEZKlSHiw6+OJFfFqDOal0anoZAydg8JwD3GnujQCmIsvUl//NvliAkncMeMACmCUM8sdup+yg==
+"@observablehq/runtime@4.25":
+  version "4.25.0"
+  resolved "https://registry.yarnpkg.com/@observablehq/runtime/-/runtime-4.25.0.tgz#b1bf4165fdb88c15e3b57e7fc02fcc76496c6147"
+  integrity sha512-QnJOhbsal4jkTj33xI1kv+k5XXHODVsrR6bTGgqAe2C3Zd2DCRlm6MVezaGf565aPdY52bnaNt9L6t3ZQbf4yQ==
   dependencies:
     "@observablehq/inspector" "^3.2.2"
     "@observablehq/stdlib" "^3.4.1"

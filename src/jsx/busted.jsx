@@ -58,7 +58,7 @@ class BUSTEDContents extends React.Component {
         "viewof tree_id",
         "viewof treeDim",
         "treeLegend",
-        "figure2"
+        "figure2",
         //undefined
       ];
 
