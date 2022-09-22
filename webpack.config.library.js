@@ -139,7 +139,11 @@ module.exports = (env) => {
           // to `true` copies all files.
           copyUnmodified: true
         }
-      )
+      ),
+      new webpack.optimize.LimitChunkCountPlugin({
+       maxChunks: 1
+      })
+
     ],
     resolve: {
       fallback: {
