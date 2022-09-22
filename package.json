@@ -20,7 +20,7 @@
     "url": "git://github.com/veg/hyphy-vision.git"
   },
   "main": "dist/hyphyvision.js",
-  "version": "2.12.4",
+  "version": "2.12.5",
   "dependencies": {
     "@fortawesome/fontawesome-free": "^5.15.3",
     "@hyphy_software/busted": "https://api.observablehq.com/@hyphy_software/busted@3486.tgz?v=3",
