@@ -126,20 +126,20 @@ module.exports = (env) => {
         resourceRegExp: /jsdom$/,
       }),
       new CopyWebpackPlugin({ patterns: [{ from: "data", to: "data" }] }),
-      //new CopyPlugin(
-      //  { patterns: [
-      //      // {output}/file.txt
-      //      { from: "src/application.scss" },
-      //      { from: "public/hyphyvision.css" }
-      //    ]
-      //  },
-      //  {
-      //    // By default, we only copy modified files during
-      //    // a watch or webpack-dev-server build. Setting this
-      //    // to `true` copies all files.
-      //    copyUnmodified: true
-      //  }
-      //)
+      new CopyWebpackPlugin(
+        { patterns: [
+            // {output}/file.txt
+            { from: "src/application.scss" },
+            //{ from: "public/hyphyvision.css" }
+          ]
+        },
+        {
+          // By default, we only copy modified files during
+          // a watch or webpack-dev-server build. Setting this
+          // to `true` copies all files.
+          copyUnmodified: true
+        }
+      )
     ],
     resolve: {
       fallback: {
