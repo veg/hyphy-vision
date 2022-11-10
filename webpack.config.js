@@ -6,6 +6,8 @@ const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const PreloadWebpackPlugin = require("preload-webpack-plugin");
 const CopyWebpackPlugin = require("copy-webpack-plugin");
 
+const ESLintPlugin = require('eslint-webpack-plugin');
+
 module.exports = env => {
   config = {
     devtool: "source-map",
@@ -102,16 +104,14 @@ module.exports = env => {
               loader: "file-loader"
             }
           ]
-        },
-        {
-          test: /\.(js|jsx)?$/,
-          exclude: /node_modules/,
-          loader: "eslint-loader",
-          options: {}
         }
       ]
     },
     plugins: [
+      new ESLintPlugin({
+        files: 'src/**/*.js',
+        exclude: ['/node_modules/'],
+      }),
       new webpack.ProvidePlugin({
         process: 'process/browser',
       }),
