@@ -27,7 +27,7 @@
     "@hyphy_software/fel-analysis-result-visualization": "https://api.observablehq.com/@hyphy_software/fel-analysis-result-visualization@2297.tgz?v=3",
     "@hyphy_software/gard-analysis-result-visualization": "https://api.observablehq.com/@hyphy_software/gard-analysis-result-visualization@916.tgz?v=3",
     "@hyphy_software/multi-hit-analysis-result-visualization": "https://api.observablehq.com/@hyphy_software/multi-hit-analysis-result-visualization.tgz?v=3",
-    "@observablehq/runtime": "4",
+    "@observablehq/runtime": "5",
     "alignment.js": "0.3.0",
     "bootstrap": "4.x",
     "chi-squared": "^1.1.0",
