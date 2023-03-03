@@ -95,7 +95,7 @@ class NRMContents extends React.Component {
         <div className="border-bottom border-primary mb-3">
           <h1 className="list-group-item-heading">
 						NRM
-            <h3>Test for non-reversibility of the evolutionary process.</h3>
+            <h3>Test for non-reversibility of the evolutionary process</h3>
           </h1>
         </div>
 
