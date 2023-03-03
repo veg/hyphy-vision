@@ -11,7 +11,7 @@
     "browser": true,
     "node": true
   },
-  "parser": "babel-eslint",
+  "parser": "@babel/eslint-parser",
   "rules": {
     "strict": [1, "never"],
     "react/jsx-uses-react": 2,

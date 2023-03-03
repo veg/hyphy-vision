@@ -9,6 +9,7 @@ import FEL_thumb from "../../images/FEL-thumb.png";
 import Contrast_FEL_thumb from "../../images/Contrast-FEL-thumb.png";
 import MEME_thumb from "../../images/MEME-thumb.png";
 import MULTIHIT_thumb from "../../images/MEME-thumb.png";
+import NRM_thumb from "../../images/MEME-thumb.png";
 import SLAC_thumb from "../../images/SLAC-thumb.png";
 import FUBAR_thumb from "../../images/FUBAR-thumb.png";
 import GARD_thumb from "../../images/GARD-thumb.png";
@@ -24,6 +25,7 @@ const thumbs = {
   "Contrast-FEL": Contrast_FEL_thumb,
   MEME: MEME_thumb,
   MULTIHIT: MULTIHIT_thumb,
+  NRM : NRM_thumb,
   SLAC: SLAC_thumb,
   FUBAR: FUBAR_thumb,
   GARD: GARD_thumb,
@@ -97,6 +99,11 @@ function Home(props) {
         <MethodBanner
           method="MULTIHIT"
           text="Accounting for multiple simultaneousnucleotide substitutions"
+        />
+
+        <MethodBanner
+          method="NRM"
+          text="Test for non-reversibility of the evolutionary process"
         />
 
         <MethodBanner
