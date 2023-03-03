@@ -10,6 +10,7 @@ import { FEL } from "./fel.jsx";
 import { ContrastFEL } from "./contrast-fel.jsx";
 import { MEME } from "./meme.jsx";
 import { MultiHit } from "./multihit.jsx";
+import { NRM } from "./nrm.jsx";
 import { SLAC } from "./slac.jsx";
 import { FUBAR } from "./fubar.jsx";
 import { GARD } from "./gard.jsx";
@@ -249,6 +250,18 @@ class HyPhyVision extends React.Component {
                     this.state.data ||
                     base_url +
                       "/data/json_files/multihit/yokoyama.rh1.cds.mod.1-990.nex.FITTER.json"
+                  }
+                />
+              )}
+            />
+            <Route
+              path="/nrm"
+              component={() => (
+                <NRM
+                  data={
+                    this.state.data ||
+                    base_url +
+                      "/data/json_files/nrm/test.fas.NRM.json"
                   }
                 />
               )}
