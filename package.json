@@ -126,7 +126,7 @@
   },
   "scripts": {
     "build": "webpack --mode production",
-    "build:library": "webpack --config webpack.config.library.js",
+    "build:library": "webpack --mode production --config webpack.config.library.js",
     "which-webpack": "which webpack",
     "lint": "eslint --ext .js,.jsx --ignore-pattern public,static,dist ./src/",
     "test": "node ./node_modules/jest-cli/bin/jest.js",
