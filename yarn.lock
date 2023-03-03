@@ -1739,9 +1739,9 @@
   resolved "https://registry.yarnpkg.com/@humanwhocodes/object-schema/-/object-schema-1.2.1.tgz#b520529ec21d8e5945a1851dfd1c32e94e39ff45"
   integrity sha512-ZnQMnLV4e7hDlUvw8H+U8ASL02SS2Gn6+9Ac3wGGLIe7+je2AeAOxPY+izIPJDfFDb7eDjev0Us8MO1iFRN8hA==
 
-"@hyphy_software/busted@https://api.observablehq.com/@hyphy_software/busted@3457.tgz?v=3":
-  version "3457.0.0"
-  resolved "https://api.observablehq.com/@hyphy_software/busted@3457.tgz?v=3#ac397520fa4e55583241ec752c41540c3fd122ea"
+"@hyphy_software/busted@https://api.observablehq.com/@hyphy_software/busted@3486.tgz?v=3":
+  version "3486.0.0"
+  resolved "https://api.observablehq.com/@hyphy_software/busted@3486.tgz?v=3#3c4f51df579e4307a117ca12a8d5ab8f715798b4"
 
 "@hyphy_software/fel-analysis-result-visualization@https://api.observablehq.com/@hyphy_software/fel-analysis-result-visualization@2297.tgz?v=3":
   version "2297.0.0"
