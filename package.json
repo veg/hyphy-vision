@@ -20,7 +20,7 @@
     "url": "git://github.com/veg/hyphy-vision.git"
   },
   "main": "dist/hyphyvision.js",
-  "version": "2.13.1",
+  "version": "2.13.2",
   "dependencies": {
     "@fortawesome/fontawesome-free": "^5.15.3",
     "@hyphy_software/busted": "https://api.observablehq.com/@hyphy_software/busted@3486.tgz?v=3",
@@ -66,8 +66,13 @@
     "underscore": "1.9"
   },
   "devDependencies": {
-    "@babel/core": "^7.14.6",
+    "@babel/compat-data": "7.19.4",
+    "@babel/core": "7.19.6",
     "@babel/eslint-parser": "^7.19.1",
+    "@babel/generator": "7.19.6",
+    "@babel/helper-compilation-targets": "7.19.3",
+    "@babel/helper-create-class-features-plugin": "7.19.0",
+    "@babel/helper-module-transforms": "7.19.6",
     "@babel/plugin-proposal-class-properties": "^7.14.5",
     "@babel/preset-env": "^7.14.7",
     "@babel/preset-es2015": "^7.0.0-beta.53",
