@@ -20,7 +20,7 @@
     "url": "git://github.com/veg/hyphy-vision.git"
   },
   "main": "dist/hyphyvision.js",
-  "version": "2.13.3",
+  "version": "2.13.4",
   "dependencies": {
     "@fortawesome/fontawesome-free": "^5.15.3",
     "@hyphy_software/busted": "https://api.observablehq.com/@hyphy_software/busted@3486.tgz?v=3",
@@ -28,7 +28,7 @@
     "@hyphy_software/gard-analysis-result-visualization": "https://api.observablehq.com/@hyphy_software/gard-analysis-result-visualization@916.tgz?v=3",
     "@hyphy_software/multi-hit-analysis-result-visualization": "https://api.observablehq.com/@hyphy_software/multi-hit-analysis-result-visualization.tgz?v=3",
     "@hyphy_software/nrm": "https://api.observablehq.com/@hyphy_software/nrm@1568.tgz?v=3",
-    "@observablehq/runtime": "5",
+    "@observablehq/runtime": "4.25",
     "alignment.js": "0.3.0",
     "bootstrap": "4.x",
     "chi-squared": "^1.1.0",
