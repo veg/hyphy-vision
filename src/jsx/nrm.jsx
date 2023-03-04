@@ -38,8 +38,6 @@ class NRMContents extends React.Component {
 
     let main = runtime.module(notebook, name => {
 
-      console.log(name);
-
       let toInclude = [
         "summaryBox",
         "summary",

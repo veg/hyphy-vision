@@ -17,6 +17,7 @@ export { default as bgm } from "./jsx/bgm.jsx";
 export { default as fade } from "./jsx/fade.jsx";
 export { default as slatkin } from "./jsx/slatkin.jsx";
 export { default as MultiHit } from "./jsx/multihit.jsx";
+export { default as NRM } from "./jsx/nrm.jsx";
 
 // renderHyPhyVision is for use in Galaxy
 export { default as renderHyPhyVision } from "./renderHyPhyVision.js";
