@@ -20,7 +20,7 @@
     "url": "git://github.com/veg/hyphy-vision.git"
   },
   "main": "dist/hyphyvision.js",
-  "version": "2.13.0",
+  "version": "2.13.1",
   "dependencies": {
     "@fortawesome/fontawesome-free": "^5.15.3",
     "@hyphy_software/busted": "https://api.observablehq.com/@hyphy_software/busted@3486.tgz?v=3",
@@ -126,7 +126,7 @@
   },
   "scripts": {
     "build": "webpack --mode production",
-    "build:library": "webpack --mode production --config webpack.config.library.js",
+    "build:library": "webpack --config webpack.config.library.js",
     "which-webpack": "which webpack",
     "lint": "eslint --ext .js,.jsx --ignore-pattern public,static,dist ./src/",
     "test": "node ./node_modules/jest-cli/bin/jest.js",
