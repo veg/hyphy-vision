@@ -1944,9 +1944,9 @@
   version "3486.0.0"
   resolved "https://api.observablehq.com/@hyphy_software/busted@3486.tgz?v=3#1f904394320baad5f976e5434be7be88ccf95a3d"
 
-"@hyphy_software/fel-analysis-result-visualization@https://api.observablehq.com/@hyphy_software/fel-analysis-result-visualization@2297.tgz?v=3":
-  version "2297.0.0"
-  resolved "https://api.observablehq.com/@hyphy_software/fel-analysis-result-visualization@2297.tgz?v=3#11361c79b6ff690e0b8f2e9683b5fa503fadbaf7"
+"@hyphy_software/fel-analysis-result-visualization@https://api.observablehq.com/@hyphy_software/fel-analysis-result-visualization@2311.tgz?v=3":
+  version "2311.0.0"
+  resolved "https://api.observablehq.com/@hyphy_software/fel-analysis-result-visualization@2311.tgz?v=3#04c56ee58e9275a64c9cbd1b8df924dd89cab1d8"
 
 "@hyphy_software/gard-analysis-result-visualization@https://api.observablehq.com/@hyphy_software/gard-analysis-result-visualization@916.tgz?v=3":
   version "916.0.0"
@@ -1955,10 +1955,6 @@
 "@hyphy_software/multi-hit-analysis-result-visualization@https://api.observablehq.com/@hyphy_software/multi-hit-analysis-result-visualization.tgz?v=3":
   version "991.0.0"
   resolved "https://api.observablehq.com/@hyphy_software/multi-hit-analysis-result-visualization.tgz?v=3#2ebd1d1ab0d3bb24cbb94fcfa6f41d8b0be4c108"
-
-"@hyphy_software/nrm@https://api.observablehq.com/@hyphy_software/nrm@1568.tgz?v=3":
-  version "1568.0.0"
-  resolved "https://api.observablehq.com/@hyphy_software/nrm@1568.tgz?v=3#b4cec5fd0e0c4dd633716c92d9740bc04308436c"
 
 "@hyphy_software/nrm@https://api.observablehq.com/@hyphy_software/nrm@1578.tgz?v=3":
   version "1578.0.0"
