@@ -5793,9 +5793,9 @@ expect@^29.4.3:
     jest-util "^29.4.3"
 
 export-to-csv@^1.2.0:
-  version "1.2.0"
-  resolved "https://registry.yarnpkg.com/export-to-csv/-/export-to-csv-1.2.0.tgz#2ccb7fb81a5ff98651a9e1ed687504dcd321401a"
-  integrity sha512-BKmwBHvE3rP4uA/wqwPMhWqzoX0CwrR67XJ9vBAcTpBd5SQN9/3IZY5z7ZzG8T8bHnJAGfFYWwJ7AHCOGUcKOA==
+  version "1.2.1"
+  resolved "https://registry.yarnpkg.com/export-to-csv/-/export-to-csv-1.2.1.tgz#42c3cb74040ce960a2a0bff6e4c54427c808ebc6"
+  integrity sha512-Q16f4RAu99VcBy3ZVXWAdJ4N+6GIijLI/7Uw5rQ4Mi1WeiAK+s6i11AN/wdYTS+hK14wM6xlSrVhnLyEVEvMFQ==
 
 exports-loader@^3.0.0:
   version "3.1.0"
