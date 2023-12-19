@@ -565,6 +565,11 @@ tr.highlight {
 }
 
 /* aBSREL */
+
+#code-data-and-libraries {
+  display:none;
+}
+
 .hyphy-omega-bar line,
 .hyphy-omega-bar path {
   fill: none;
@@ -1631,4 +1636,5 @@ li.active > a:hover {
 .fel {
   font-family:"Source Serif Pro",Iowan Old Style,Apple Garamond,Palatino Linotype,Times New Roman,"Droid Serif",Times,serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol;
 }
+
 
