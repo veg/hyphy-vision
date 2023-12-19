@@ -45,7 +45,7 @@ class BSRELContents extends React.Component {
 
     let main = runtime.module(notebook, name => {
 
-      let displayBlacklist = ['rate_table', 'tree_id', 'treeLabels', 'branch_length', 'color_branches', 'treeDim', 'which_branch', 'table3', 'table1', 'fig1_controls', 'plot_type'];
+      let displayBlacklist = ['pv','rate_table', 'tree_id', 'treeLabels', 'branch_length', 'color_branches', 'treeDim', 'which_branch', 'table3', 'table1', 'fig1_controls', 'plot_type'];
 
       const node = Inspector.into(this.figureRef.current)(name);
 
