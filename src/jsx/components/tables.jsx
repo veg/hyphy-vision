@@ -4,10 +4,10 @@ var React = require("react"),
   d3 = require("d3"),
   datamonkey = require("../../datamonkey/datamonkey.js");
 
-import { ExportToCsv } from 'export-to-csv';
+import { generateCsv, mkConfig } from 'export-to-csv';
 import PropTypes from "prop-types";
 
-const tableOptions = { 
+const tableOptions = mkConfig({ 
   fieldSeparator: ',',
   quoteStrings: '"',
   decimalSeparator: '.',
@@ -19,7 +19,7 @@ const tableOptions = {
   useBom: true,
   useKeysAsHeaders: true,
   // headers: ['Column 1', 'Column 2', etc...] <-- Won't work with useKeysAsHeaders present!
-};
+});
 
 const DatamonkeyTableRow = createReactClass({
   /**
@@ -462,11 +462,25 @@ var DatamonkeyTable = createReactClass({
             munged = _.map(self.props.bodyData, row =>
               _.map(row, extract)
             ).map(row => _.object(headers, row));
-          const exporter = new ExportToCsv(tableOptions);
-          //const exporter = CsvExport.create({
+          const exporter = generateCsv(tableOptions);
+          //const exporter = csvexport.create({
           //  filename: "datamonkey-table.csv"
           //});
-          exporter.generateCsv(munged);
+          let csvOutput = exporter(munged);
+          console.log(csvOutput)
+          const fileURL = window.URL.createObjectURL(new Blob([csvOutput], {type: 'text/plain'}));
+          let alink = document.createElement("a");
+          alink.href = fileURL;
+          alink.download = "datamonkey-table.csv";
+          alink.click();
+
+          // Add a click handler that will run the `download` function.
+          // `download` takes `csvConfig` and the generated `CsvOutput`
+          // from `generateCsv`.
+          //const csvBtn = document.querySelector("#hidden-csv");
+          //csvBtn.addEventListener("click", () => download(csvConfig)(csv));
+
+
         };
         button = (
           <button
