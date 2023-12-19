@@ -12,6 +12,10 @@
     "absrel",
     "bsrel",
     "busted",
+    "multihit",
+    "nrm",
+    "contrast-fel",
+    "fel",
     "random effects branch-site modeling"
   ],
   "author": "Sergei Pond <spond@temple.edu>",
