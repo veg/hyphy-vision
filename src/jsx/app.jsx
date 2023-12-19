@@ -97,7 +97,7 @@ class HyPhyVision extends React.Component {
                   data={
                     this.state.data ||
                     base_url +
-                      "/data/json_files/absrel/hiv1_transmission.fna.ABSREL.json"
+                      "/data/json_files/absrel/ENST00000319286.ZNF572.aBSREL.json"
                   }
                 />
               )}

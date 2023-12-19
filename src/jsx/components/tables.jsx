@@ -467,7 +467,6 @@ var DatamonkeyTable = createReactClass({
           //  filename: "datamonkey-table.csv"
           //});
           let csvOutput = exporter(munged);
-          console.log(csvOutput)
           const fileURL = window.URL.createObjectURL(new Blob([csvOutput], {type: 'text/plain'}));
           let alink = document.createElement("a");
           alink.href = fileURL;
