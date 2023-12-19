@@ -70,7 +70,7 @@
     "@babel/core": "7.19.6",
     "@babel/eslint-parser": "^7.19.1",
     "@babel/generator": "7.19.6",
-    "@babel/helper-compilation-targets": "7.19.3",
+    "@babel/helper-compilation-targets": "7.23.6",
     "@babel/helper-create-class-features-plugin": "7.19.0",
     "@babel/helper-module-transforms": "7.19.6",
     "@babel/plugin-proposal-class-properties": "^7.14.5",
