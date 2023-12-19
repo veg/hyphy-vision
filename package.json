@@ -138,8 +138,8 @@
     "webpack-eslint-plugin": "^1.2.0"
   },
   "scripts": {
-    "build": "webpack --mode production",
-    "build:library": "webpack --config webpack.config.library.js",
+    "build": "export NODE_OPTIONS=--openssl-legacy-provider;webpack --mode production",
+    "build:library": "export NODE_OPTIONS=--openssl-legacy-provider;webpack --config webpack.config.library.js",
     "which-webpack": "which webpack",
     "lint": "eslint --ext .js,.jsx --ignore-pattern public,static,dist ./src/",
     "test": "node ./node_modules/jest-cli/bin/jest.js",
