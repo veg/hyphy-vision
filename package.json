@@ -32,7 +32,7 @@
     "@hyphy_software/gard-analysis-result-visualization": "https://api.observablehq.com/@hyphy_software/gard-analysis-result-visualization@916.tgz?v=3",
     "@hyphy_software/multi-hit-analysis-result-visualization": "https://api.observablehq.com/@hyphy_software/multi-hit-analysis-result-visualization.tgz?v=3",
     "@hyphy_software/nrm": "https://api.observablehq.com/@hyphy_software/nrm@1578.tgz?v=3",
-    "@observablehq/runtime": "4.25",
+    "@observablehq/runtime": "5.0",
     "@spond/absrel": "https://api.observablehq.com/@spond/absrel@5186.tgz?v=3",
     "alignment.js": "0.3.0",
     "bootstrap": "4.x",
