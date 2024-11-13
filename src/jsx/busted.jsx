@@ -5,18 +5,17 @@ const React = require("react"),
 import { ErrorMessage } from "./components/error_message.jsx";
 import { ExportButton } from "./components/export-button.jsx";
 import { ResultsPage } from "./components/results_page.jsx";
-import { Runtime, Inspector } from "@observablehq/runtime";
-import notebook from "@hyphy_software/busted";
+import { Inspector, Runtime } from "@observablehq/runtime";
+import notebook from "@spond/busted";
 
 class BUSTEDContents extends React.Component {
-
   figureRef = React.createRef();
 
   constructor(props) {
     super(props);
     this.state = {
       input: null,
-      fits: {}
+      fits: {},
     };
   }
 
@@ -29,15 +28,13 @@ class BUSTEDContents extends React.Component {
   }
 
   processData(data) {
-
     // Observable
     this.figureRef.current.replaceChildren();
     $(this.figureRef.current).empty();
 
     const runtime = new Runtime();
 
-    let main = runtime.module(notebook, name => {
-
+    let main = runtime.module(notebook, (name) => {
       let toInclude = [
         "intro",
         "citation",
@@ -50,8 +47,8 @@ class BUSTEDContents extends React.Component {
         "viewof rate_table",
         "viewof plot_type",
         "distComparisonPlot",
-				//"viewof table_filter",
-				//"viewof plot_type",
+        //"viewof table_filter",
+        //"viewof plot_type",
         "fig1caption",
         "figure1",
         "table1caption",
@@ -64,59 +61,53 @@ class BUSTEDContents extends React.Component {
         "viewof treeDim",
         "treeLegend",
         "fig2legend",
-        "fig2render"
+        "fig2render",
         //undefined
       ];
 
-
       if (_.includes(toInclude, name)) {
         const node = Inspector.into(this.figureRef.current)(name);
-				if(name == "viewof table1") {
-					node._node.classList.add('table')
-					node._node.classList.add('table-striped')
-				}
-				return node;
+        if (name == "viewof table1") {
+          node._node.classList.add("table");
+          node._node.classList.add("table-striped");
+        }
+        return node;
       }
 
       if (name == undefined) {
-
         //const node = Inspector.into(this.figureRef.current)(name);
-
         //if(node._node.innerHTML.match(/style/) || node._node.innerHTML.match(/link/)) {
         // return node;
         //}
-
       }
-
-
     });
 
     this.setState({
       input: data.input,
       fits: data.fits,
       main: main,
-      data: data
+      data: data,
     });
   }
 
   render() {
-
     if (this.state.main) {
       this.state.main.redefine("results_json", this.state.data);
     }
 
-
     return (
-
       <div className="busted">
         <div className="border-bottom border-primary mb-3">
           <h1 className="list-group-item-heading">
-						BUSTED
-            <h3>Branch-site Unrestricted Statistical Test for Episodic Diversification</h3>
+            BUSTED
+            <h3>
+              Branch-site Unrestricted Statistical Test for Episodic
+              Diversification
+            </h3>
           </h1>
         </div>
 
-				<div>
+        <div>
           <ExportButton
             json={this.props.json}
             fasta={this.props.fasta}
@@ -125,8 +116,8 @@ class BUSTEDContents extends React.Component {
             partitionedData={this.props.partitionedData}
           />
 
-					<ErrorMessage />
-				</div>
+          <ErrorMessage />
+        </div>
 
         <div id="results">
           <div id="notebook">

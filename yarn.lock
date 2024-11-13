@@ -1999,6 +1999,22 @@
   resolved "https://registry.yarnpkg.com/@humanwhocodes/object-schema/-/object-schema-1.2.1.tgz#b520529ec21d8e5945a1851dfd1c32e94e39ff45"
   integrity sha512-ZnQMnLV4e7hDlUvw8H+U8ASL02SS2Gn6+9Ac3wGGLIe7+je2AeAOxPY+izIPJDfFDb7eDjev0Us8MO1iFRN8hA==
 
+"@hyphy_software/fel-analysis-result-visualization@https://api.observablehq.com/@hyphy_software/fel-analysis-result-visualization@2311.tgz?v=3":
+  version "2311.0.0"
+  resolved "https://api.observablehq.com/@hyphy_software/fel-analysis-result-visualization@2311.tgz?v=3#04c56ee58e9275a64c9cbd1b8df924dd89cab1d8"
+
+"@hyphy_software/gard-analysis-result-visualization@https://api.observablehq.com/@hyphy_software/gard-analysis-result-visualization@916.tgz?v=3":
+  version "916.0.0"
+  resolved "https://api.observablehq.com/@hyphy_software/gard-analysis-result-visualization@916.tgz?v=3#3460a7950dd35fc3d8e2c69a8721cf554dbd4b12"
+
+"@hyphy_software/multi-hit-analysis-result-visualization@https://api.observablehq.com/@hyphy_software/multi-hit-analysis-result-visualization.tgz?v=3":
+  version "991.0.0"
+  resolved "https://api.observablehq.com/@hyphy_software/multi-hit-analysis-result-visualization.tgz?v=3#2ebd1d1ab0d3bb24cbb94fcfa6f41d8b0be4c108"
+
+"@hyphy_software/nrm@https://api.observablehq.com/@hyphy_software/nrm@1578.tgz?v=3":
+  version "1578.0.0"
+  resolved "https://api.observablehq.com/@hyphy_software/nrm@1578.tgz?v=3#5d2cb59f7771ec1ede48f62d9e25e41f526bdd4f"
+
 "@istanbuljs/load-nyc-config@^1.0.0":
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/@istanbuljs/load-nyc-config/-/load-nyc-config-1.1.0.tgz#fd3db1d59ecf7cf121e80650bb86712f9b55eced"
@@ -2412,6 +2428,14 @@
   integrity sha512-SwUDyjWnah1AaNl7kxsa7cfLhlTYoiyhDAIgyh+El30YvXs/o7OLXpYH88Zdhyx9JExKrmHDJ+10bwIcY80Jmw==
   dependencies:
     "@sinonjs/commons" "^2.0.0"
+
+"@spond/absrel@https://api.observablehq.com/@spond/absrel@5186.tgz?v=3":
+  version "5186.0.0"
+  resolved "https://api.observablehq.com/@spond/absrel@5186.tgz?v=3#1d5b72ad9727162712e96c99801ae10a342cb51a"
+
+"@spond/busted@https://api.observablehq.com/@spond/busted@4691.tgz?v=3":
+  version "4691.0.0"
+  resolved "https://api.observablehq.com/@spond/busted@4691.tgz?v=3#2d339e407c3285255fd3190f6da652b0f1d5ca24"
 
 "@tootallnate/once@1":
   version "1.1.2"
