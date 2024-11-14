@@ -24,7 +24,7 @@
     "url": "git://github.com/veg/hyphy-vision.git"
   },
   "main": "dist/hyphyvision.js",
-  "version": "2.15.2",
+  "version": "2.15.3",
   "dependencies": {
     "@fortawesome/fontawesome-free": "^5.15.3",
     "@hyphy_software/fel-analysis-result-visualization": "https://api.observablehq.com/@hyphy_software/fel-analysis-result-visualization@2311.tgz?v=3",
@@ -53,6 +53,7 @@
     "json-loader": "^0.5.7",
     "lodash": "4.x",
     "lodash.clonedeep": "^4.5.0",
+    "parse-svg-path": "^0.1.2",
     "phylotree": "0.1.6",
     "popper.js": "^1.14.1",
     "pretty-data": "^0.40.0",
