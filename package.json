@@ -34,7 +34,6 @@
     "@observablehq/runtime": "4.25",
     "@spond/absrel": "https://api.observablehq.com/@spond/absrel@5186.tgz?v=3",
     "@spond/busted": "https://api.observablehq.com/@spond/busted@4691.tgz?v=3",
-    "alignment.js": "0.3.0",
     "bootstrap": "4.x",
     "chi-squared": "^1.1.0",
     "circos": "^2.1.0",
@@ -116,7 +115,6 @@
     "interpolate-html-plugin": "^4.0.0",
     "jest": "^29.3.1",
     "mini-css-extract-plugin": "^1.6.1",
-    "node-sass": "^7.0.1",
     "npm-version": "^1.1.0",
     "patch-package": "^8.0.0",
     "path-browserify": "^1.0.1",
@@ -128,7 +126,7 @@
     "react-addons-test-utils": "^15.6.0",
     "react-lazy-render": "0.3.0",
     "react-test-renderer": "17.0.2",
-    "sass": "^1.26.2",
+    "sass": "^1.81.0",
     "sass-loader": "^12.1.0",
     "scss-loader": "^0.0.1",
     "stream-browserify": "^3.0.0",
@@ -156,6 +154,7 @@
     "dist/hyphyvision.css",
     "dist/hyphyvision.min.js",
     "dist/hyphyvision-min.map",
-    "dist/application.scss"
+    "dist/application.scss",
+    "dist/variables.scss"
   ]
 }

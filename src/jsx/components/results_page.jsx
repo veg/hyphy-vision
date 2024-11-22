@@ -2,7 +2,6 @@ import { ErrorBoundary } from "./error_boundary.jsx";
 import { ErrorMessage } from "./error_message.jsx";
 import { ScrollSpy } from "./scrollspy.jsx";
 import { MethodHeader } from "./methodheader.jsx";
-import { fastaParser } from "alignment.js";
 
 const React = require("react");
 
@@ -15,80 +14,56 @@ const React = require("react");
  *    2. Handle getting the data from a file/url and setting the data to state
  */
 class ResultsPage extends React.Component {
-
   constructor(props) {
     super(props);
     this.state = {
       json: null,
       jsonPath: null,
       fastaPath: null,
-      fasta: null
+      fasta: null,
     };
   }
 
   componentDidMount() {
-
     var self = this;
 
     // Check query parameter
     let queryParams = new URLSearchParams(location.search);
 
-    if ( typeof queryParams.get('resultsUrl') == "string" ) {
+    if (typeof queryParams.get("resultsUrl") == "string") {
+      self.setState({ jsonPath: queryParams.get("resultsUrl") }); // Set the json path for comparing on updates to see if it's new data.
 
-      self.setState({ jsonPath: queryParams.get('resultsUrl') }); // Set the json path for comparing on updates to see if it's new data.
-
-      d3.json(queryParams.get('resultsUrl'), function(data) {
+      d3.json(queryParams.get("resultsUrl"), function (data) {
         self.setState({ json: data });
       });
-
     } else if (typeof this.props.data == "string") {
-    // Decide if data is a URL or the results JSON
+      // Decide if data is a URL or the results JSON
 
       self.setState({ jsonPath: this.props.data }); // Set the json path for comparing on updates to see if it's new data.
 
-      d3.json(this.props.data, function(data) {
+      d3.json(this.props.data, function (data) {
         self.setState({ json: data });
       });
-
     } else if (typeof this.props.data == "object") {
-
       self.setState({ json: self.props.data });
-
     }
 
     if (typeof this.props.fasta == "string") {
-
-      self.setState({ fastaPath: this.props.fasta }); // Set the fasta path for comparing on updates to see if it's new data.
-
-      try {
-        d3.text(this.props.fasta, function(data) {
-          let fasta_json = fastaParser(JSON.parse(data).fasta);
-          let values = _.values(fasta_json);
-          values = _.filter(values, v => _.isObject(v) && _.values(v).length);
-          self.setState({ fasta: values });
-        });
-      } catch (err) {
-        alert("There was an error parsing the FASTA file.");
-      }
-
-    } else if (typeof this.props.fasta == "object") {
-
       self.setState({ fasta: self.props.fasta });
-
+    } else if (typeof this.props.fasta == "object") {
+      self.setState({ fasta: self.props.fasta });
     }
 
     this.enableBootstrapJavascript();
-
   }
 
   componentDidUpdate(prevProps, prevState) {
-
     var self = this;
     // Decide if data is a URL or the results JSON
     var newData = this.state.json;
     if (typeof this.props.data == "string") {
       if (this.props.data != self.state.jsonPath) {
-        d3.json(this.props.data, function(data) {
+        d3.json(this.props.data, function (data) {
           //self.setState({ json: data });
           newData = data;
         });
@@ -104,23 +79,22 @@ class ResultsPage extends React.Component {
 
     //TODO: Handle new FASTA as well
     this.enableBootstrapJavascript();
-
   }
 
-  setDataToState = data => {
+  setDataToState = (data) => {
     var self = this;
     self.setState({
-      json: data
+      json: data,
     });
   };
 
   enableBootstrapJavascript() {
     $("body").scrollspy({
       target: ".bs-docs-sidebar",
-      offset: 50
+      offset: 50,
     });
     $('[data-toggle="popover"]').popover();
-    $(function() {
+    $(function () {
       $('[data-toggle="tooltip"]').tooltip();
     });
     $(".dropdown-toggle").dropdown();
@@ -136,7 +110,7 @@ class ResultsPage extends React.Component {
             fontSize: "200px",
             color: "#00a99d",
             right: "45%",
-            top: "50%"
+            top: "50%",
           }}
         />
       </div>
@@ -144,7 +118,6 @@ class ResultsPage extends React.Component {
   }
 
   render() {
-
     var self = this;
 
     if (!this.state.json) {
@@ -177,7 +150,7 @@ class ResultsPage extends React.Component {
                 fasta: this.state.fasta,
                 originalFile: this.props.originalFile,
                 analysisLog: this.props.analysisLog,
-                partitionedData: this.props.partitionedData
+                partitionedData: this.props.partitionedData,
               })}
             </ErrorBoundary>
           </div>
@@ -191,7 +164,7 @@ ResultsPage.defaultProps = {
   fasta: false,
   originalFile: false,
   analysisLog: false,
-  displaySummary: true
+  displaySummary: true,
 };
 
 export { ResultsPage };

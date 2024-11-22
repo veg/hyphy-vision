@@ -6,29 +6,29 @@ const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const PreloadWebpackPlugin = require("preload-webpack-plugin");
 const CopyWebpackPlugin = require("copy-webpack-plugin");
 
-const ESLintPlugin = require('eslint-webpack-plugin');
+const ESLintPlugin = require("eslint-webpack-plugin");
 
-module.exports = env => {
+module.exports = (env) => {
   config = {
     devtool: "source-map",
     mode: "development",
     entry: {
-      hyphyvision: ["./src/index.js"]
+      hyphyvision: ["./src/index.js"],
     },
     devServer: {
       contentBase: ".",
       historyApiFallback: true,
-      disableHostCheck: true
+      disableHostCheck: true,
     },
     output: {
       path: path.resolve(__dirname, "dist/"),
       filename: "[name].js",
-      library: "hyphyVision"
+      library: "hyphyVision",
     },
     optimization: {
       splitChunks: {
-        chunks: "all"
-      }
+        chunks: "all",
+      },
     },
     module: {
       rules: [
@@ -39,49 +39,48 @@ module.exports = env => {
             "css-loader",
             {
               loader: "sass-loader",
-              options: { implementation: require("sass") }
-            }
-          ]
+              options: { implementation: require("sass") },
+            },
+          ],
         },
         {
           test: /\.(js|jsx)?$/,
           include: [path.resolve(__dirname, "src")],
           use: {
-            loader: "babel-loader"          
+            loader: "babel-loader",
           },
         },
         {
           test: /\.js$/,
-          loader: require.resolve("@open-wc/webpack-import-meta-loader")
+          loader: require.resolve("@open-wc/webpack-import-meta-loader"),
         },
         {
           test: require.resolve("jquery"),
           loader: "expose-loader",
           options: {
-            exposes : { 
+            exposes: {
               globalName: ["jQuery", "$"],
-              override: false
-            }
+              override: false,
+            },
           },
         },
         {
           test: require.resolve("d3"),
           loader: "expose-loader",
           options: {
-            exposes : {
+            exposes: {
               globalName: "d3",
-              override: true
+              override: true,
             },
           },
-
         },
         {
           test: require.resolve("underscore"),
           loader: "expose-loader",
           options: {
-            exposes : {
+            exposes: {
               globalName: "_",
-              override: true
+              override: true,
             },
           },
         },
@@ -89,10 +88,10 @@ module.exports = env => {
           test: /\.woff(2)?(\?v=[0-9]\.[0-9]\.[0-9])?$/,
           use: [
             {
-              loader: 'url-loader',
+              loader: "url-loader",
               options: {
                 limit: 10000,
-                mimetype: "application/font-woff"
+                mimetype: "application/font-woff",
               },
             },
           ],
@@ -101,30 +100,30 @@ module.exports = env => {
           test: /\.(eot|woff|woff2|ttf|svg|png|jpg|gif)(\?\S*)?$/,
           use: [
             {
-              loader: "file-loader"
-            }
-          ]
-        }
-      ]
+              loader: "file-loader",
+            },
+          ],
+        },
+      ],
     },
     plugins: [
       new ESLintPlugin({
-        files: 'src/**/*.js',
-        exclude: ['/node_modules/'],
+        files: "src/**/*.js",
+        exclude: ["/node_modules/"],
       }),
       new webpack.ProvidePlugin({
-        process: 'process/browser',
+        process: "process/browser",
       }),
       new PreloadWebpackPlugin(),
       new HtmlWebpackPlugin({
         title: "HyPhy Vision",
-        filename: path.resolve("dist", "index.html")
+        filename: path.resolve("dist", "index.html"),
       }),
       new MiniCssExtractPlugin({
         // Options similar to the same options in webpackOptions.output
         // both options are optional
         filename: "[name].css",
-        chunkFilename: "[id].css"
+        chunkFilename: "[id].css",
       }),
       new webpack.LoaderOptionsPlugin({ debug: true }),
       new webpack.ProvidePlugin({
@@ -132,27 +131,27 @@ module.exports = env => {
         jQuery: "jquery",
         d3: "d3",
         datamonkey: "datamonkey",
-        _: "underscore"
+        _: "underscore",
       }),
       new webpack.IgnorePlugin({
-         resourceRegExp: /jsdom$/
+        resourceRegExp: /jsdom$/,
       }),
-      new CopyWebpackPlugin({patterns:[{ from: "data", to: "data"}]})
+      new CopyWebpackPlugin({ patterns: [{ from: "data", to: "data" }] }),
     ],
     resolve: {
-      fallback: { 
-        "path": require.resolve("path-browserify"),
-        "zlib": require.resolve("browserify-zlib"),
-        "util": require.resolve("util/"),
-        "process": require.resolve("process/"),
-        "stream": require.resolve("stream-browserify")
+      fallback: {
+        path: require.resolve("path-browserify"),
+        zlib: require.resolve("browserify-zlib"),
+        util: require.resolve("util/"),
+        process: require.resolve("process/"),
+        stream: require.resolve("stream-browserify"),
       },
       alias: {
-        "phylotree.css": __dirname + "/node_modules/phylotree/phylotree.css"
+        "phylotree.css": __dirname + "/node_modules/phylotree/phylotree.css",
       },
       modules: ["src", "node_modules"],
-      extensions: [".json", ".js", ".jsx", ".scss"]
-    }
+      extensions: [".json", ".js", ".jsx", ".scss"],
+    },
   };
 
   return config;

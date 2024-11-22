@@ -8,20 +8,19 @@ var React = require("react"),
 import { Tree } from "./components/tree.jsx";
 import { Header } from "./components/header.jsx";
 import {
-  DatamonkeyTable,
-  DatamonkeyPartitionTable,
   DatamonkeyModelTable,
-  DatamonkeyTimersTable
+  DatamonkeyPartitionTable,
+  DatamonkeyTable,
+  DatamonkeyTimersTable,
 } from "./components/tables.jsx";
 import {
   DatamonkeyScatterplot,
-  DatamonkeySeries
+  DatamonkeySeries,
 } from "./components/graphs.jsx";
 import { ResultsPage } from "./components/results_page.jsx";
 import PropTypes from "prop-types";
 import { saveSvgAsPng } from "save-svg-as-png";
-import Phylotree, { placenodes, phylotreev1 } from "react-phylotree";
-import { SitePlotAxis, colors } from "alignment.js";
+import Phylotree, { phylotreev1, placenodes } from "react-phylotree";
 import CodonColumn from "./components/codon_column.jsx";
 
 require("../datamonkey/helpers.js");
@@ -36,10 +35,10 @@ var SLACSites = createReactClass({
     sampleMedian: PropTypes.object,
     sample975: PropTypes.object,
     initialAmbigHandling: PropTypes.string.isRequired,
-    partitionSites: PropTypes.object.isRequired
+    partitionSites: PropTypes.object.isRequired,
   },
 
-  getInitialState: function() {
+  getInitialState: function () {
     var canDoCI =
       this.props.sample25 && this.props.sampleMedian && this.props.sample975;
 
@@ -54,23 +53,23 @@ var SLACSites = createReactClass({
       filterOp: "AND",
       canAddFilter: false,
       lowerFilterBound: -Infinity,
-      upperFilterBound: Infinity
+      upperFilterBound: Infinity,
     };
   },
 
-  getDefaultProps: function() {
+  getDefaultProps: function () {
     return {
       sample25: null,
       sampleMedian: null,
       sample975: null,
-      initialAmbigHandling: DEFAULT_AMBIGUITY_HANDLING
+      initialAmbigHandling: DEFAULT_AMBIGUITY_HANDLING,
     };
   },
 
-  componentWillReceiveProps: function(nextProps) {
+  componentWillReceiveProps: function (nextProps) {
     this.setState({
       ambigOptions: this.dm_AmbigOptions(nextProps),
-      ambigHandling: nextProps.initialAmbigHandling
+      ambigHandling: nextProps.initialAmbigHandling,
     });
   },
 
@@ -87,11 +86,11 @@ var SLACSites = createReactClass({
     .clamp(true)
     .domain([-1, -0.25, 1]),
 
-  dm_log10times: _.before(10, function(v) {
+  dm_log10times: _.before(10, function (v) {
     return 0;
   }),
 
-  dm_formatInterval: function(values) {
+  dm_formatInterval: function (values) {
     //this.dm_log10times (values);
 
     return (
@@ -106,32 +105,32 @@ var SLACSites = createReactClass({
     );
   },
 
-  dm_AmbigOptions: function(theseProps) {
+  dm_AmbigOptions: function (theseProps) {
     return _.keys(theseProps.mle[0]);
   },
 
-  dm_setAmbigOption: function(value) {
+  dm_setAmbigOption: function (value) {
     this.setState({
-      ambigHandling: value
+      ambigHandling: value,
     });
   },
 
-  dm_toggleIntervals: function(event) {
+  dm_toggleIntervals: function (event) {
     this.setState({
       showIntervals: !this.state.showIntervals,
       showCellColoring: this.state.showIntervals
         ? this.state.showCellColoring
-        : false
+        : false,
     });
   },
 
-  dm_toggleCellColoring: function(event) {
+  dm_toggleCellColoring: function (event) {
     this.setState({
-      showCellColoring: !this.state.showCellColoring
+      showCellColoring: !this.state.showCellColoring,
     });
   },
 
-  dm_toggleVariableFilter: function(event) {
+  dm_toggleVariableFilter: function (event) {
     var filterState = new Object(null);
     _.extend(filterState, this.state.filters);
     if (!("variable" in this.state.filters)) {
@@ -142,16 +141,16 @@ var SLACSites = createReactClass({
     this.setState({ filters: filterState });
   },
 
-  dm_makeFilterFunction: function() {
+  dm_makeFilterFunction: function () {
     var filterFunction = null;
 
-    _.each(this.state.filters, function(value, key) {
+    _.each(this.state.filters, function (value, key) {
       var composeFunction = null;
 
       switch (key) {
         case "variable": {
           if (filterFunction) {
-            composeFunction = function(
+            composeFunction = function (
               f,
               partitionIndex,
               index,
@@ -164,7 +163,7 @@ var SLACSites = createReactClass({
               );
             };
           } else {
-            filterFunction = function(partitionIndex, index, site, siteData) {
+            filterFunction = function (partitionIndex, index, site, siteData) {
               return siteData[2] + siteData[3] > 0;
             };
           }
@@ -176,7 +175,7 @@ var SLACSites = createReactClass({
               filter_index = value[0][1];
             switch (filter_index) {
               case -2:
-                new_condition = function(
+                new_condition = function (
                   partitionIndex,
                   index,
                   site,
@@ -188,7 +187,7 @@ var SLACSites = createReactClass({
                 };
                 break;
               case -1:
-                new_condition = function(
+                new_condition = function (
                   partitionIndex,
                   index,
                   site,
@@ -198,7 +197,7 @@ var SLACSites = createReactClass({
                 };
                 break;
               default:
-                new_condition = function(
+                new_condition = function (
                   partitionIndex,
                   index,
                   site,
@@ -213,7 +212,7 @@ var SLACSites = createReactClass({
 
             if (new_condition) {
               if (value[3] == "AND") {
-                composeFunction = function(
+                composeFunction = function (
                   f,
                   partitionIndex,
                   index,
@@ -227,7 +226,7 @@ var SLACSites = createReactClass({
                 };
               } else {
                 if (filterFunction) {
-                  composeFunction = function(
+                  composeFunction = function (
                     f,
                     partitionIndex,
                     index,
@@ -240,7 +239,7 @@ var SLACSites = createReactClass({
                     );
                   };
                 } else {
-                  filterFunction = function(
+                  filterFunction = function (
                     partitionIndex,
                     index,
                     site,
@@ -263,35 +262,35 @@ var SLACSites = createReactClass({
     return filterFunction;
   },
 
-  dm_makeHeaderRow: function() {
+  dm_makeHeaderRow: function () {
     var headers = [
         { value: "Partition", sortable: true },
-        { value: "Site", sortable: true }
+        { value: "Site", sortable: true },
       ],
       doCI = this.state.showIntervals,
       filterable = [
         ["Partition", -2],
-        ["Site", -1]
+        ["Site", -1],
       ];
 
     if (doCI) {
       var secondRow = ["", ""];
 
-      _.each(this.props.headers, function(value, index) {
+      _.each(this.props.headers, function (value, index) {
         headers.push({
           value: value[0],
           abbr: value[1],
           span: 4,
-          style: { textAlign: "center" }
+          style: { textAlign: "center" },
         });
         filterable.push([value[0], index]);
-        _.each(["MLE", "Med", "2.5%", "97.5%"], function(v) {
+        _.each(["MLE", "Med", "2.5%", "97.5%"], function (v) {
           secondRow.push({ value: v, sortable: true });
         });
       });
       return { headers: [headers, secondRow], filterable: filterable };
     } else {
-      _.each(this.props.headers, function(value, index) {
+      _.each(this.props.headers, function (value, index) {
         headers.push({ value: value[0], abbr: value[1], sortable: true });
         filterable.push([value[0], index]);
       });
@@ -299,7 +298,7 @@ var SLACSites = createReactClass({
     return { headers: headers, filterable: filterable };
   },
 
-  dm_makeDataRows: function(filter) {
+  dm_makeDataRows: function (filter) {
     var rows = [],
       partitionCount = datamonkey.helpers.countPartitionsJSON(
         this.props.partitionSites
@@ -310,85 +309,88 @@ var SLACSites = createReactClass({
       siteCount = 0;
 
     while (partitionIndex < partitionCount) {
-      _.each(self.props.partitionSites[partitionIndex].coverage[0], function(
-        site,
-        index
-      ) {
-        var siteData =
-          self.props.mle[partitionIndex][self.state.ambigHandling][index];
-        if (
-          !filter ||
-          filter(partitionIndex + 1, index + 1, site + 1, siteData)
-        ) {
-          var thisRow = [partitionIndex + 1, site + 1];
-          //secondRow = doCI ? ['',''] : null;
-          siteCount++;
+      _.each(
+        self.props.partitionSites[partitionIndex].coverage[0],
+        function (site, index) {
+          var siteData =
+            self.props.mle[partitionIndex][self.state.ambigHandling][index];
+          if (
+            !filter ||
+            filter(partitionIndex + 1, index + 1, site + 1, siteData)
+          ) {
+            var thisRow = [partitionIndex + 1, site + 1];
+            //secondRow = doCI ? ['',''] : null;
+            siteCount++;
 
-          _.each(siteData, function(estimate, colIndex) {
-            var sampled_range = null,
-              scaled_median_mle_dev = 0;
+            _.each(siteData, function (estimate, colIndex) {
+              var sampled_range = null,
+                scaled_median_mle_dev = 0;
 
-            if (self.state.hasCI) {
-              sampled_range = [
-                self.props.sampleMedian[partitionIndex][
-                  self.state.ambigHandling
-                ][index][colIndex],
-                self.props.sample25[partitionIndex][self.state.ambigHandling][
-                  index
-                ][colIndex],
-                self.props.sample975[partitionIndex][self.state.ambigHandling][
-                  index
-                ][colIndex]
-              ];
-
-              var range = sampled_range[2] - sampled_range[1];
-              if (range > 0) {
-                scaled_median_mle_dev = (estimate - sampled_range[0]) / range;
-              }
-            }
-
-            if (doCI) {
-              thisRow.push({ value: estimate, format: self.dm_formatNumber });
-              thisRow.push({
-                value: sampled_range[0],
-                format: self.dm_formatNumberShort
-              });
-              thisRow.push({
-                value: sampled_range[1],
-                format: self.dm_formatNumberShort
-              });
-              thisRow.push({
-                value: sampled_range[2],
-                format: self.dm_formatNumberShort
-              });
-            } else {
-              var this_cell = { value: estimate, format: self.dm_formatNumber };
               if (self.state.hasCI) {
-                if (self.state.showCellColoring) {
-                  this_cell.style = {
-                    backgroundColor: self.dm_rangeColorizer(
-                      scaled_median_mle_dev
-                    ),
-                    color: self.dm_rangeTextColorizer(scaled_median_mle_dev)
-                  };
+                sampled_range = [
+                  self.props.sampleMedian[partitionIndex][
+                    self.state.ambigHandling
+                  ][index][colIndex],
+                  self.props.sample25[partitionIndex][self.state.ambigHandling][
+                    index
+                  ][colIndex],
+                  self.props.sample975[partitionIndex][
+                    self.state.ambigHandling
+                  ][index][colIndex],
+                ];
+
+                var range = sampled_range[2] - sampled_range[1];
+                if (range > 0) {
+                  scaled_median_mle_dev = (estimate - sampled_range[0]) / range;
                 }
-                this_cell.tooltip =
-                  self.dm_formatNumberShort(sampled_range[0]) +
-                  " [" +
-                  self.dm_formatNumberShort(sampled_range[1]) +
-                  " - " +
-                  self.dm_formatNumberShort(sampled_range[2]) +
-                  "]";
               }
-              thisRow.push(this_cell);
-            }
-          });
-          rows.push(thisRow);
-          //if (secondRow) {
-          //    rows.push (secondRow);
-          //}
+
+              if (doCI) {
+                thisRow.push({ value: estimate, format: self.dm_formatNumber });
+                thisRow.push({
+                  value: sampled_range[0],
+                  format: self.dm_formatNumberShort,
+                });
+                thisRow.push({
+                  value: sampled_range[1],
+                  format: self.dm_formatNumberShort,
+                });
+                thisRow.push({
+                  value: sampled_range[2],
+                  format: self.dm_formatNumberShort,
+                });
+              } else {
+                var this_cell = {
+                  value: estimate,
+                  format: self.dm_formatNumber,
+                };
+                if (self.state.hasCI) {
+                  if (self.state.showCellColoring) {
+                    this_cell.style = {
+                      backgroundColor: self.dm_rangeColorizer(
+                        scaled_median_mle_dev
+                      ),
+                      color: self.dm_rangeTextColorizer(scaled_median_mle_dev),
+                    };
+                  }
+                  this_cell.tooltip =
+                    self.dm_formatNumberShort(sampled_range[0]) +
+                    " [" +
+                    self.dm_formatNumberShort(sampled_range[1]) +
+                    " - " +
+                    self.dm_formatNumberShort(sampled_range[2]) +
+                    "]";
+                }
+                thisRow.push(this_cell);
+              }
+            });
+            rows.push(thisRow);
+            //if (secondRow) {
+            //    rows.push (secondRow);
+            //}
+          }
         }
-      });
+      );
 
       partitionIndex++;
     }
@@ -396,25 +398,25 @@ var SLACSites = createReactClass({
     return { rows: rows, count: siteCount };
   },
 
-  dm_handleLB: function(e) {
+  dm_handleLB: function (e) {
     var new_value = parseFloat(e.target.value);
     this.setState({
-      lowerFilterBound: _.isFinite(new_value) ? new_value : -Infinity
+      lowerFilterBound: _.isFinite(new_value) ? new_value : -Infinity,
     });
   },
 
-  dm_handleUB: function(e) {
+  dm_handleUB: function (e) {
     var new_value = parseFloat(e.target.value);
     this.setState({
-      upperFilterBound: _.isFinite(new_value) ? new_value : Infinity
+      upperFilterBound: _.isFinite(new_value) ? new_value : Infinity,
     });
   },
 
-  dm_handleFilterField: function(value) {
+  dm_handleFilterField: function (value) {
     this.setState({ filterField: value });
   },
 
-  dm_checkFilterValidity: function() {
+  dm_checkFilterValidity: function () {
     if (_.isFinite(this.state.lowerFilterBound)) {
       if (_.isFinite(this.state.upperFilterBound)) {
         return this.state.lowerFilterBound <= this.state.upperFilterBound;
@@ -426,7 +428,7 @@ var SLACSites = createReactClass({
 
   dm_unique_filter_ID: 0,
 
-  dm_handleAddCondition: function(e) {
+  dm_handleAddCondition: function (e) {
     e.preventDefault();
     var filterState = new Object(null);
     _.extend(filterState, this.state.filters);
@@ -434,13 +436,13 @@ var SLACSites = createReactClass({
       this.state.filterField,
       this.state.lowerFilterBound,
       this.state.upperFilterBound,
-      this.state.filterOp
+      this.state.filterOp,
     ];
 
     this.setState({ filters: filterState });
   },
 
-  dm_handleRemoveCondition: function(key, e) {
+  dm_handleRemoveCondition: function (key, e) {
     e.preventDefault();
     var filterState = new Object(null);
     _.extend(filterState, this.state.filters);
@@ -449,12 +451,12 @@ var SLACSites = createReactClass({
     this.setState({ filters: filterState });
   },
 
-  render: function() {
+  render: function () {
     var self = this;
     var { rows } = this.dm_makeDataRows(this.dm_makeFilterFunction());
     var { headers, filterable } = this.dm_makeHeaderRow();
 
-    var show_ci_menu = function() {
+    var show_ci_menu = function () {
       if (self.state.hasCI) {
         var ci_menu = [<li key="ci_divider" className="divider" />];
         if (!self.state.showIntervals) {
@@ -521,7 +523,7 @@ var SLACSites = createReactClass({
 
               <div className="input-group">
                 <ul className="dropdown-menu">
-                  {_.map(this.state.ambigOptions, function(value, index) {
+                  {_.map(this.state.ambigOptions, function (value, index) {
                     return (
                       <li key={index}>
                         <a
@@ -549,7 +551,7 @@ var SLACSites = createReactClass({
             <div className="form-group">
               <div className="input-group">
                 <ul className="dropdown-menu">
-                  {_.map(filterable, function(d, index) {
+                  {_.map(filterable, function (d, index) {
                     return (
                       <li key={index}>
                         <a
@@ -574,7 +576,7 @@ var SLACSites = createReactClass({
                 </button>
               </div>
               <div className="input-group">
-                <span className="input-group-addon"> {"is in ["} </span>
+                <span className="input-group-addon">{"is in ["}</span>
                 <input
                   type="text"
                   className="form-control"
@@ -599,13 +601,13 @@ var SLACSites = createReactClass({
 
               <div className="input-group">
                 <ul className="dropdown-menu">
-                  {_.map(["AND", "OR"], function(d, index) {
+                  {_.map(["AND", "OR"], function (d, index) {
                     return (
                       <li key={index}>
                         <a
                           href="#"
                           tabIndex="-1"
-                          onClick={function() {
+                          onClick={function () {
                             self.setState({ filterOp: d });
                           }}
                         >
@@ -677,7 +679,7 @@ var SLACSites = createReactClass({
 
         {_.keys(self.state.filters).length > 0 ? (
           <div className="well well-sm">
-            {_.map(self.state.filters, function(value, key) {
+            {_.map(self.state.filters, function (value, key) {
               if (key == "variable") {
                 return (
                   <div
@@ -750,59 +752,61 @@ var SLACSites = createReactClass({
     );
 
     return result;
-  }
+  },
 });
 
 var SLACBanner = createReactClass({
-  dm_countSites: function(json, cutoff) {
+  dm_countSites: function (json, cutoff) {
     var result = {
       all: 0,
       positive: 0,
-      negative: 0
+      negative: 0,
     };
 
     result.all = datamonkey.helpers.countSitesFromPartitionsJSON(json);
 
-    result.positive = datamonkey.helpers.sum(json["MLE"]["content"], function(
-      partition
-    ) {
-      return _.reduce(
-        partition["by-site"][DEFAULT_AMBIGUITY_HANDLING],
-        function(sum, row) {
-          return sum + (row[8] <= cutoff ? 1 : 0);
-        },
-        0
-      );
-    });
+    result.positive = datamonkey.helpers.sum(
+      json["MLE"]["content"],
+      function (partition) {
+        return _.reduce(
+          partition["by-site"][DEFAULT_AMBIGUITY_HANDLING],
+          function (sum, row) {
+            return sum + (row[8] <= cutoff ? 1 : 0);
+          },
+          0
+        );
+      }
+    );
 
-    result.negative = datamonkey.helpers.sum(json["MLE"]["content"], function(
-      partition
-    ) {
-      return _.reduce(
-        partition["by-site"][DEFAULT_AMBIGUITY_HANDLING],
-        function(sum, row) {
-          return sum + (row[9] <= cutoff ? 1 : 0);
-        },
-        0
-      );
-    });
+    result.negative = datamonkey.helpers.sum(
+      json["MLE"]["content"],
+      function (partition) {
+        return _.reduce(
+          partition["by-site"][DEFAULT_AMBIGUITY_HANDLING],
+          function (sum, row) {
+            return sum + (row[9] <= cutoff ? 1 : 0);
+          },
+          0
+        );
+      }
+    );
 
     return result;
   },
 
-  dm_computeState: function(state, pvalue) {
+  dm_computeState: function (state, pvalue) {
     return {
-      sites: this.dm_countSites(state, pvalue)
+      sites: this.dm_countSites(state, pvalue),
     };
   },
 
   dm_formatP: d3.format(".3f"),
 
-  getInitialState: function() {
+  getInitialState: function () {
     return this.dm_computeState(this.props.analysis_results, this.props.pValue);
   },
 
-  componentWillReceiveProps: function(nextProps) {
+  componentWillReceiveProps: function (nextProps) {
     this.setState(
       this.dm_computeState(nextProps.analysis_results, nextProps.pValue)
     );
@@ -812,7 +816,7 @@ var SLACBanner = createReactClass({
     $('[data-toggle="popover"]').popover();
   },
 
-  render: function() {
+  render: function () {
     return (
       <div className="row">
         <div className="col-md-12">
@@ -849,7 +853,7 @@ var SLACBanner = createReactClass({
                 style={{
                   display: "inline-block",
                   marginLeft: "5px",
-                  width: "100px"
+                  width: "100px",
                 }}
                 className="form-control"
                 type="number"
@@ -885,39 +889,39 @@ var SLACBanner = createReactClass({
         </div>
       </div>
     );
-  }
+  },
 });
 
 var SLACGraphs = createReactClass({
-  getInitialState: function() {
+  getInitialState: function () {
     return {
       ambigHandling: this.props.initialAmbigHandling,
       ambigOptions: this.dm_AmbigOptions(this.props),
       xLabel: "Site",
-      yLabel: "dN-dS"
+      yLabel: "dN-dS",
     };
   },
 
-  getDefaultProps: function() {
+  getDefaultProps: function () {
     return {
       mle: null,
       partitionSites: null,
-      initialAmbigHandling: DEFAULT_AMBIGUITY_HANDLING
+      initialAmbigHandling: DEFAULT_AMBIGUITY_HANDLING,
     };
   },
 
-  dm_AmbigOptions: function(theseProps) {
+  dm_AmbigOptions: function (theseProps) {
     return _.keys(theseProps.mle[0]);
   },
 
-  componentWillReceiveProps: function(nextProps) {
+  componentWillReceiveProps: function (nextProps) {
     this.setState({
       ambigOptions: this.dm_AmbigOptions(nextProps),
-      ambigHandling: nextProps.initialAmbigHandling
+      ambigHandling: nextProps.initialAmbigHandling,
     });
   },
 
-  dm_makePlotData: function(xlabel, ylabels) {
+  dm_makePlotData: function (xlabel, ylabels) {
     var self = this;
 
     var x = [];
@@ -931,9 +935,9 @@ var SLACGraphs = createReactClass({
       col_index = [],
       x_index = -1;
 
-    _.each(self.props.headers, function(d, i) {
+    _.each(self.props.headers, function (d, i) {
       if (
-        _.find(ylabels, function(l) {
+        _.find(ylabels, function (l) {
           return l == d[0];
         })
       ) {
@@ -943,27 +947,27 @@ var SLACGraphs = createReactClass({
 
     x_index = _.pluck(self.props.headers, 0).indexOf(xlabel);
 
-    y = _.map(col_index, function() {
+    y = _.map(col_index, function () {
       return [];
     });
 
     while (partitionIndex < partitionCount) {
-      _.each(self.props.partitionSites[partitionIndex].coverage[0], function(
-        site,
-        index
-      ) {
-        var siteData =
-          self.props.mle[partitionIndex][self.state.ambigHandling][index];
-        siteCount++;
-        if (x_index < 0) {
-          x.push(siteCount);
-        } else {
-          x.push(siteData[x_index]);
+      _.each(
+        self.props.partitionSites[partitionIndex].coverage[0],
+        function (site, index) {
+          var siteData =
+            self.props.mle[partitionIndex][self.state.ambigHandling][index];
+          siteCount++;
+          if (x_index < 0) {
+            x.push(siteCount);
+          } else {
+            x.push(siteData[x_index]);
+          }
+          _.each(col_index, function (ci, i) {
+            y[i].push(siteData[ci]);
+          });
         }
-        _.each(col_index, function(ci, i) {
-          y[i].push(siteData[ci]);
-        });
-      });
+      );
 
       partitionIndex++;
     }
@@ -971,21 +975,21 @@ var SLACGraphs = createReactClass({
     return { x: x, y: y };
   },
 
-  dm_xAxis: function(column) {
+  dm_xAxis: function (column) {
     this.setState({ xLabel: column });
   },
 
-  dm_yAxis: function(column) {
+  dm_yAxis: function (column) {
     this.setState({ yLabel: column });
   },
 
-  dm_setAmbigOption: function(value) {
+  dm_setAmbigOption: function (value) {
     this.setState({
-      ambigHandling: value
+      ambigHandling: value,
     });
   },
 
-  dm_doScatter: function() {
+  dm_doScatter: function () {
     return this.state.xLabel != "Site";
   },
 
@@ -995,14 +999,14 @@ var SLACGraphs = createReactClass({
 
   saveSVG() {
     d3_save_svg.save(d3.select("#dm-chart").node(), {
-      filename: "datamonkey-chart"
+      filename: "datamonkey-chart",
     });
   },
 
-  render: function() {
+  render: function () {
     var self = this;
     var { x: x, y: y } = this.dm_makePlotData(this.state.xLabel, [
-      this.state.yLabel
+      this.state.yLabel,
     ]);
 
     return (
@@ -1016,7 +1020,7 @@ var SLACGraphs = createReactClass({
                 <ul className="dropdown-menu">
                   {_.map(
                     ["Site"].concat(_.pluck(self.props.headers, 0)),
-                    function(value) {
+                    function (value) {
                       return (
                         <li key={value}>
                           <a
@@ -1046,7 +1050,7 @@ var SLACGraphs = createReactClass({
                 <span className="input-group-addon">Y-axis:</span>
 
                 <ul className="dropdown-menu">
-                  {_.map(_.pluck(self.props.headers, 0), function(value) {
+                  {_.map(_.pluck(self.props.headers, 0), function (value) {
                     return (
                       <li key={value}>
                         <a
@@ -1072,9 +1076,9 @@ var SLACGraphs = createReactClass({
                 </button>
               </div>
               <div className="input-group">
-                <span className="input-group-addon">Ambiguities </span>
+                <span className="input-group-addon">Ambiguities</span>
                 <ul className="dropdown-menu">
-                  {_.map(this.state.ambigOptions, function(value, index) {
+                  {_.map(this.state.ambigOptions, function (value, index) {
                     return (
                       <li key={index}>
                         <a
@@ -1149,327 +1153,8 @@ var SLACGraphs = createReactClass({
         </center>
       </div>
     );
-  }
+  },
 });
-
-
-function SLACAlignmentTreeCountWrapper(props) {
-  if (!props.json) return null;
-  const { trees } = props.json,
-    branchAttributes = props.json['branch attributes'],
-    partitions = props.json['data partitions'],
-    number_of_partitions = _.keys(partitions).length,
-    all_partition_data = [],
-    partition_map = [];
-  for(let partition=0; partition < number_of_partitions; partition++) {
-    let partition_data = {},
-      sites_in_partition = partitions[partition].coverage[0].length,
-      zeros = Array(sites_in_partition).fill(0),
-      fasta = _.keys(branchAttributes[partition]).map(key => {
-        return {
-          header: key,
-          seq: branchAttributes[partition][key].codon[0].join("")
-        };
-      });
-    if(partition == 0) {
-      partition_data.offset = 0;
-    } else {
-      let previous_data = all_partition_data[partition-1];
-      partition_data.offset = previous_data.sites + previous_data.offset;
-    }
-    partition_data.sites = sites_in_partition;
-    partition_data.syn_substitutions = _.values(branchAttributes[partition])
-      .map(ba => ba["synonymous substitution count"][0])
-      .reduce((a, b) => a.map((d, i) => d + b[i]), zeros),
-    partition_data.nonsyn_substitutions = _.values(branchAttributes[partition])
-      .map(ba => ba["nonsynonymous substitution count"][0])
-      .reduce((a, b) => a.map((d, i) => d + b[i]), zeros);
-    const newick = trees[partition].newickString,
-      tree = new phylotreev1(newick);
-    placenodes(tree, true);
-    const number_of_links = tree.links.length,
-      tree_hash = _.object(
-        tree.links.map(l => l.target.data.name),
-        Array(number_of_links).fill(true)
-      );
-    tree_hash.root = false;
-    const node_to_ordered_index = _.object(
-      tree.node_order,
-      _.range(tree.node_order.length)
-    );
-    partition_data.tree = tree;
-    partition_data.sequence_data = fasta
-      .filter(record => tree_hash[record.header])
-      .sort((a, b) => {
-        const a_index = node_to_ordered_index[a.header],
-          b_index = node_to_ordered_index[b.header];
-        return a_index - b_index;
-      });
-    if (number_of_links != partition_data.sequence_data.length) {
-      throw "Mismatch in FASTA/tree... refusing to proceed!";
-    }
-    all_partition_data.push(partition_data);
-    partition_map.push(...Array(sites_in_partition).fill(partition));
-  }
-  return (<SLACAlignmentTreeCountWidget
-    partitionData={all_partition_data}
-    partitionMap={partition_map}
-    branchAttributes={branchAttributes}
-  />)
-}
-
-class SLACAlignmentTreeCountWidget extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      current_site: 1,
-      current_site_index: 0,
-      select_value: "amino-acid"
-    };
-  }
-  savePNG() {
-    saveSvgAsPng(
-      document.getElementById("slac-widget"),
-      "slac-ancestral-phylo.png"
-    );
-  }
-  handleInputChange(e) {
-    const new_current_site = e.target.value ? +e.target.value : "",
-      max_sites = this.props.partitionMap.length;
-    if (new_current_site == "") {
-      this.setState({
-        current_site: "",
-        current_site_index: 0
-      });
-    } else if (new_current_site > 0 && new_current_site <= max_sites) {
-      this.setState({
-        current_site: new_current_site,
-        current_site_index: new_current_site - 1
-      });
-    }
-  }
-  render() {
-    const { site_size, branchAttributes } = this.props,
-      { current_site, current_site_index } = this.state,
-      partition = this.props.partitionMap[current_site_index],
-      horizontal_pad = 10,
-      vertical_pad = site_size / 2,
-      {
-        sequence_data, tree, syn_substitutions, nonsyn_substitutions, offset
-      } = this.props.partitionData[partition],
-      offset_site_index = current_site_index - offset,
-      phylotree_props = {
-        width: 700 - 2 * horizontal_pad,
-        height: site_size * sequence_data.length - 2 * vertical_pad,
-        tree: tree,
-        transform: `translate(2, ${vertical_pad})`
-      },
-      site_padding = 5,
-      codon_label_height = 30,
-      syn_count = syn_substitutions[offset_site_index],
-      nonsyn_count = nonsyn_substitutions[offset_site_index],
-      total_count = syn_count + nonsyn_count,
-      column_padding = 40,
-      codon_column_width = 4 * site_size + site_padding + column_padding,
-      ccw_nopad = 4 * site_size + site_padding,
-      bar_height = 200,
-      svg_props = {
-        width: phylotree_props.width + codon_column_width + 2 * horizontal_pad,
-        height:
-          phylotree_props.height +
-          codon_label_height +
-          bar_height +
-          2 * vertical_pad
-      },
-      legend_colors = {
-        total: "black",
-        nonsyn: "#00a99d",
-        syn: "grey"
-      };
-    const bar_scale = d3.scale
-        .linear()
-        .domain([0, total_count])
-        .range([0, bar_height]),
-      bar_padding = 5,
-      bar_width = (ccw_nopad - 4 * bar_padding) / 3;
-
-    const { select_value } = this.state;
-    const codons = {},
-      codon_colors = d3.scale.category10().range();
-    var codon_color_index = 0;
-    tree.traverse_and_compute(node => {
-      if (node.data.name != "root") {
-        if (select_value != "none") {
-          const character =
-            branchAttributes[partition][node.data.name][select_value][0][
-              offset_site_index
-            ];
-          node.data.annotation = character;
-          if (select_value == "codon") {
-            if (!codons[character]) {
-              codons[character] = codon_colors[codon_color_index++];
-            }
-          }
-        } else {
-          node.data.annotation = null;
-        }
-      }
-    });
-
-    const color_scale =
-      select_value != "codon" ? colors.amino_acid_colors : codons;
-    return (
-      <div>
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "space-around",
-            alignItems: "center",
-            paddingBottom: 20
-          }}
-        >
-          <span>
-            Current site:
-            <input
-              type="number"
-              value={current_site}
-              onChange={e => this.handleInputChange(e)}
-              ref={input => {
-                this.numberInput = input;
-              }}
-              style={{ width: 50 }}
-            />
-          </span>
-
-          <span>
-            Show{" "}
-            <select
-              value={this.state.select_value}
-              onChange={e => this.setState({ select_value: e.target.value })}
-            >
-              <option value="amino-acid">amino acid</option>
-              <option value="codon">codon</option>
-              <option value="none">none</option>
-            </select>{" "}
-            on tree
-          </span>
-
-          <button
-            onClick={() => this.savePNG()}
-            type="button"
-            className="btn btn-secondary"
-            data-dismiss="modal"
-          >
-            <span className="far fa-save" />
-            PNG
-          </button>
-        </div>
-
-        <div style={{ textAlign: "center" }}>
-          <svg
-            {...svg_props}
-            id="slac-widget"
-            style={{ fontFamily: "sans-serif" }}
-          >
-            <g transform="translate(0, 5)">
-              <rect
-                x={0}
-                y={0}
-                width={svg_props.width}
-                height={svg_props.height}
-                fill="white"
-              />
-              <g transform={`translate(${phylotree_props.width - 100}, 50)`}>
-                <rect
-                  x={5}
-                  y={10}
-                  width={20}
-                  height={20}
-                  fill={legend_colors.total}
-                />
-                <text x={0} y={20} textAnchor="end" alignmentBaseline="middle">
-                  Total
-                </text>
-                <rect
-                  x={5}
-                  y={40}
-                  width={20}
-                  height={20}
-                  fill={legend_colors.nonsyn}
-                />
-                <text x={0} y={50} textAnchor="end" alignmentBaseline="middle">
-                  Nonsynonymous
-                </text>
-                <rect
-                  x={5}
-                  y={70}
-                  width={20}
-                  height={20}
-                  fill={legend_colors.syn}
-                />
-                <text x={0} y={80} textAnchor="end" alignmentBaseline="middle">
-                  Synonymous
-                </text>
-              </g>
-              <SitePlotAxis
-                data={[syn_count, nonsyn_count, total_count]}
-                axis_label="Substitution counts"
-                height={bar_height}
-                label_width={75}
-                translateX={phylotree_props.width - 75}
-                padding={{ top: 0, right: 0, bottom: 0, left: 0 }}
-              />
-              <rect
-                x={phylotree_props.width + bar_padding}
-                y={bar_height - bar_scale(total_count)}
-                width={bar_width}
-                height={bar_scale(total_count)}
-                fill={legend_colors.total}
-              />
-              <rect
-                x={phylotree_props.width + 2 * bar_padding + bar_width}
-                y={bar_height - bar_scale(nonsyn_count)}
-                width={bar_width}
-                height={bar_scale(nonsyn_count)}
-                fill={legend_colors.nonsyn}
-              />
-              <rect
-                x={phylotree_props.width + 3 * bar_padding + 2 * bar_width}
-                y={bar_height - bar_scale(syn_count)}
-                width={bar_width}
-                height={bar_scale(syn_count)}
-                fill={legend_colors.syn}
-              />
-              <g transform={`translate(0, ${bar_height + 5})`}>
-                <Phylotree
-                  {...phylotree_props}
-                  internalNodeLabels
-                  skipPlacement
-                  highlightBranches={color_scale}
-                />
-                <CodonColumn
-                  site={offset_site_index}
-                  translateX={phylotree_props.width + horizontal_pad}
-                  site_size={site_size}
-                  site_padding={site_padding}
-                  codon_label_height={codon_label_height}
-                  height={phylotree_props.height}
-                  sequence_data={sequence_data}
-                  tree={tree}
-                  {...this.state}
-                />
-              </g>
-            </g>
-          </svg>
-        </div>
-      </div>
-    );
-  }
-}
-
-SLACAlignmentTreeCountWidget.defaultProps = {
-  site_size: 20
-};
 
 class SLACContents extends React.Component {
   constructor(props) {
@@ -1478,7 +1163,7 @@ class SLACContents extends React.Component {
       analysis_results: null,
       error_message: null,
       pValue: 0.1,
-      input_data: null
+      input_data: null,
     };
   }
 
@@ -1490,7 +1175,7 @@ class SLACContents extends React.Component {
     this.dm_initializeFromJSON(nextProps.json);
   }
 
-  dm_initializeFromJSON = data => {
+  dm_initializeFromJSON = (data) => {
     if (data["fits"]["Nucleotide GTR"]) {
       data["fits"]["Nucleotide GTR"]["Rate Distributions"] = {};
     }
@@ -1499,35 +1184,33 @@ class SLACContents extends React.Component {
       var branchLengths = {
         "Global MG94xREV": _.mapObject(
           data["branch attributes"][key],
-          val1 => val1["Global MG94xREV"]
+          (val1) => val1["Global MG94xREV"]
         ),
         "Nucleotide GTR": _.mapObject(
           data["branch attributes"][key],
-          val1 => val1["Nucleotide GTR"]
-        )
+          (val1) => val1["Nucleotide GTR"]
+        ),
       };
 
       return { newickString: val, branchLengths: branchLengths };
     });
 
-    data["fits"]["Global MG94xREV"][
-      "branch-annotations"
-    ] = this.formatBranchAnnotations(data);
+    data["fits"]["Global MG94xREV"]["branch-annotations"] =
+      this.formatBranchAnnotations(data);
     if (data["fits"]["Nucleotide GTR"]) {
-      data["fits"]["Nucleotide GTR"][
-        "branch-annotations"
-      ] = this.formatBranchAnnotations(data);
+      data["fits"]["Nucleotide GTR"]["branch-annotations"] =
+        this.formatBranchAnnotations(data);
     }
 
     this.setState({
       analysis_results: data,
-      input_data: data.input
+      input_data: data.input,
     });
   };
 
-  formatBranchAnnotations = json => {
+  formatBranchAnnotations = (json) => {
     // attach is_foreground to branch annotations
-    var branch_annotations = d3.range(json.trees.length).map(i => {
+    var branch_annotations = d3.range(json.trees.length).map((i) => {
       return _.mapObject(json["tested"][i], (val, key) => {
         return { is_foreground: val == "test" };
       });
@@ -1535,7 +1218,7 @@ class SLACContents extends React.Component {
     return branch_annotations;
   };
 
-  dm_adjustPvalue = event => {
+  dm_adjustPvalue = (event) => {
     this.setState({ pValue: parseFloat(event.target.value) });
   };
 
@@ -1565,18 +1248,18 @@ class SLACContents extends React.Component {
 
     const { analysis_results, tree } = self.state;
 
-    if(!tree) {
+    if (!tree) {
     }
 
     if (analysis_results) {
       var trees = analysis_results
         ? {
             newick: analysis_results.input.trees,
-            tested: analysis_results.tested
+            tested: analysis_results.tested,
           }
         : null;
 
-      var edgeColorizer = function(element, data, foreground_color) {
+      var edgeColorizer = function (element, data, foreground_color) {
         var is_foreground = data.target.annotations.is_foreground,
           color_fill = foreground_color(0);
 
@@ -1598,12 +1281,12 @@ class SLACContents extends React.Component {
           "hyphy-tree-highlight": ["RELAX.test", false],
           "hyphy-tree-branch-lengths": [false, true],
           "hyphy-tree-hide-legend": [true, false],
-          "hyphy-tree-fill-color": [true, false]
+          "hyphy-tree-fill-color": [true, false],
         },
         "hyphy-tree-legend-type": "discrete",
         "suppress-tree-render": false,
         "chart-append-html": true,
-        edgeColorizer: edgeColorizer
+        edgeColorizer: edgeColorizer,
       };
 
       var models = {};
@@ -1622,7 +1305,9 @@ class SLACContents extends React.Component {
 
           <div className="row hidden-print">
             <div id="datamonkey-slac-tree-summary" className="col-md-12">
-              <h4 className="dm-table-header border-primary mb-3">Partition information</h4>
+              <h4 className="dm-table-header border-primary mb-3">
+                Partition information
+              </h4>
 
               <DatamonkeyPartitionTable
                 pValue={self.state.pValue}
@@ -1630,24 +1315,24 @@ class SLACContents extends React.Component {
                 partitions={analysis_results["data partitions"]}
                 branchAttributes={analysis_results["branch attributes"]}
                 siteResults={analysis_results.MLE}
-                accessorPositive={function(json, partition) {
+                accessorPositive={function (json, partition) {
                   if (!json["content"][partition]) return null;
                   return _.map(
                     json["content"][partition]["by-site"][
                       DEFAULT_AMBIGUITY_HANDLING
                     ],
-                    function(v) {
+                    function (v) {
                       return v[8];
                     }
                   );
                 }}
-                accessorNegative={function(json, partition) {
+                accessorNegative={function (json, partition) {
                   if (!json["content"][partition]) return null;
                   return _.map(
                     json["content"][partition]["by-site"][
                       DEFAULT_AMBIGUITY_HANDLING
                     ],
-                    function(v) {
+                    function (v) {
                       return v[9];
                     }
                   );
@@ -1658,7 +1343,9 @@ class SLACContents extends React.Component {
               {<DatamonkeyModelTable fits={analysis_results.fits} />}
             </div>
             <div id="datamonkey-slac-timers" className="col-md-4">
-              <h4 className="dm-table-header border-primary mb-3">Execution time</h4>
+              <h4 className="dm-table-header border-primary mb-3">
+                Execution time
+              </h4>
 
               <DatamonkeyTimersTable
                 timers={analysis_results.timers}
@@ -1678,11 +1365,11 @@ class SLACContents extends React.Component {
                 mle={datamonkey.helpers.map(
                   datamonkey.helpers.filter(
                     analysis_results.MLE.content,
-                    function(value, key) {
+                    function (value, key) {
                       return _.has(value, "by-site");
                     }
                   ),
-                  function(value, key) {
+                  function (value, key) {
                     return value["by-site"];
                   }
                 )}
@@ -1704,11 +1391,11 @@ class SLACContents extends React.Component {
                 mle={datamonkey.helpers.map(
                   datamonkey.helpers.filter(
                     analysis_results.MLE.content,
-                    function(value, key) {
+                    function (value, key) {
                       return _.has(value, "by-site");
                     }
                   ),
-                  function(value, key) {
+                  function (value, key) {
                     return value["by-site"];
                   }
                 )}
@@ -1731,18 +1418,6 @@ class SLACContents extends React.Component {
               />
             </div>
           </div>
-
-          <div className="row">
-            <div id="phylo-alignment" className="col-md-12">
-              <Header
-                title="SLAC Phylogenetic Alignment"
-                popover="<ul><li>View individual codons and amino acids with corresponding phylogenetic information.</li><li>Select individual sites and view substitution counts across the phylogeny.</li></ul>"
-              />
-              <SLACAlignmentTreeCountWrapper
-                json={analysis_results}
-              />
-            </div>
-          </div>
         </div>
       );
     }
@@ -1760,7 +1435,7 @@ export function SLAC(props) {
         { label: "table", href: "slac-table" },
         { label: "graph", href: "slac-graph" },
         { label: "tree", href: "tree-tab" },
-        { label: "phylo alignment", href: "phylo-alignment" }
+        { label: "phylo alignment", href: "phylo-alignment" },
       ]}
       methodName="Single-Likelihood Ancestor Counting"
       fasta={props.fasta}

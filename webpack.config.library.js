@@ -6,7 +6,7 @@ const path = require("path"),
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const PreloadWebpackPlugin = require("preload-webpack-plugin");
 
-const ESLintPlugin = require('eslint-webpack-plugin');
+const ESLintPlugin = require("eslint-webpack-plugin");
 
 module.exports = (env) => {
   config = {
@@ -25,7 +25,7 @@ module.exports = (env) => {
       library: "hyphyVision",
       libraryTarget: "umd",
     },
-    externals: [/^[a-z\.\-0-9]+$/],
+    externals: [/^@spond\/[a-zA-Z0-9.\-]+$/, /^@?[a-z\.\-0-9]+$/],
     module: {
       rules: [
         {
@@ -104,8 +104,8 @@ module.exports = (env) => {
     },
     plugins: [
       new ESLintPlugin({
-        files: 'src/**/*.js',
-        exclude: ['/node_modules/'],
+        files: "src/**/*.js",
+        exclude: ["/node_modules/"],
       }),
       new webpack.ProvidePlugin({
         process: "process/browser",
@@ -127,23 +127,23 @@ module.exports = (env) => {
       }),
       new CopyWebpackPlugin({ patterns: [{ from: "data", to: "data" }] }),
       new CopyWebpackPlugin(
-        { patterns: [
+        {
+          patterns: [
             // {output}/file.txt
             { from: "src/application.scss" },
             //{ from: "public/hyphyvision.css" }
-          ]
+          ],
         },
         {
           // By default, we only copy modified files during
           // a watch or webpack-dev-server build. Setting this
           // to `true` copies all files.
-          copyUnmodified: true
+          copyUnmodified: true,
         }
       ),
       new webpack.optimize.LimitChunkCountPlugin({
-       maxChunks: 1
-      })
-
+        maxChunks: 1,
+      }),
     ],
     resolve: {
       fallback: {
