@@ -3,14 +3,13 @@ var React = require("react"),
 var pd = require("pretty-data").pd;
 import { saveAs } from "file-saver";
 import ReactJson from "react-json-view";
-import Alignment from "alignment.js";
 
 class InputInfo extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       showModal: false,
-      fasta: false
+      fasta: false,
     };
   }
 
@@ -25,7 +24,7 @@ class InputInfo extends React.Component {
 
   saveTheJSON() {
     var blob = new Blob([pd.json(this.props.json)], {
-      type: "text/json:charset=utf-8;"
+      type: "text/json:charset=utf-8;",
     });
     saveAs(blob, "result.json");
   }
@@ -144,13 +143,7 @@ class InputInfo extends React.Component {
                     />
                   </div>
                 ) : null}
-                {this.state.showModal == "msa" ? (
-                  <Alignment
-                    fasta={this.props.fasta}
-                    width={800}
-                    height={500}
-                  />
-                ) : null}
+                {null}
               </div>
               <div className="modal-footer">
                 <button

@@ -9,14 +9,13 @@ import { Runtime, Inspector } from "@observablehq/runtime";
 import notebook from "@hyphy_software/fel-analysis-result-visualization";
 
 class FELContents extends React.Component {
-
   figureRef = React.createRef();
 
   constructor(props) {
     super(props);
     this.state = {
       input: null,
-      fits: {}
+      fits: {},
     };
   }
 
@@ -29,70 +28,65 @@ class FELContents extends React.Component {
   }
 
   processData(data) {
-
     // Observable
     this.figureRef.current.replaceChildren();
     $(this.figureRef.current).empty();
 
     const runtime = new Runtime();
 
-    let main = runtime.module(notebook, name => {
-
+    let main = runtime.module(notebook, (name) => {
       let toInclude = [
         "intro",
         "citation",
         "summary_table",
         "cssStyles",
-				"viewof pv",
-				"viewof table_filter",
-				"viewof plot_type",
-				"fig1caption",
-				"figure1",
-				"table1caption",
-				"viewof table1",
-				"table1legend",
-				"viewof tree_id",
-				"viewof treeDim",
-				"treeLegend",
-				"figure2"
+        "viewof pv",
+        "viewof table_filter",
+        "viewof plot_type",
+        "fig1caption",
+        "figure1",
+        "table1caption",
+        "viewof table1",
+        "table1legend",
+        "viewof tree_id",
+        "viewof treeDim",
+        "treeLegend",
+        "figure2",
       ];
 
       if (_.includes(toInclude, name)) {
         const node = Inspector.into(this.figureRef.current)(name);
-				if(name == "viewof table1") {
-					node._node.classList.add('table')
-					node._node.classList.add('table-striped')
-				}
-				return node;
+        if (name == "viewof table1") {
+          node._node.classList.add("table");
+          node._node.classList.add("table-striped");
+        }
+        return node;
       }
-
     });
 
     this.setState({
       input: data.input,
       fits: data.fits,
       main: main,
-      data: data
+      data: data,
     });
   }
 
   render() {
-
     if (this.state.main) {
       this.state.main.redefine("results_json", this.state.data);
     }
 
     return (
-
       <div className="fel">
         <div className="border-bottom border-primary mb-3">
           <h1 className="list-group-item-heading">
-						FEL
+            FEL
             <h3>Fixed Effects Likelihood</h3>
           </h1>
         </div>
 
-				<div>
+        <div>
           <ExportButton
             json={this.props.json}
             fasta={this.props.fasta}
@@ -101,8 +95,8 @@ class FELContents extends React.Component {
             partitionedData={this.props.partitionedData}
           />
 
-					<ErrorMessage />
-				</div>
+          <ErrorMessage />
+        </div>
 
         <div id="results">
           <div id="notebook">
