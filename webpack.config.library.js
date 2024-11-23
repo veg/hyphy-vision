@@ -131,6 +131,7 @@ module.exports = (env) => {
           patterns: [
             // {output}/file.txt
             { from: "src/application.scss" },
+            { from: "src/variables.scss" },
             //{ from: "public/hyphyvision.css" }
           ],
         },
@@ -139,7 +140,7 @@ module.exports = (env) => {
           // a watch or webpack-dev-server build. Setting this
           // to `true` copies all files.
           copyUnmodified: true,
-        }
+        },
       ),
       new webpack.optimize.LimitChunkCountPlugin({
         maxChunks: 1,
