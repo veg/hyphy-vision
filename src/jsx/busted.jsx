@@ -68,7 +68,7 @@ class BUSTEDContents extends React.Component {
         //undefined
       ];
 
-      if (_.includes(toInclude, name) || name == undefined) {
+      if (_.includes(toInclude, name) || name == undefined || true) {
         const node = Inspector.into(this.figureRef.current)(name);
         if (name == "viewof table1") {
           node._node.classList.add("table");
