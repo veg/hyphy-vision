@@ -2,6 +2,9 @@ const React = require("react"),
   ReactDOM = require("react-dom"),
   _ = require("underscore");
 
+require("phylotree");
+require("phylotree.css");
+
 import { ErrorMessage } from "./components/error_message.jsx";
 import { ExportButton } from "./components/export-button.jsx";
 import { ResultsPage } from "./components/results_page.jsx";
@@ -65,7 +68,7 @@ class BUSTEDContents extends React.Component {
         //undefined
       ];
 
-      if (_.includes(toInclude, name)) {
+      if (_.includes(toInclude, name) || name == undefined) {
         const node = Inspector.into(this.figureRef.current)(name);
         if (name == "viewof table1") {
           node._node.classList.add("table");
@@ -98,13 +101,7 @@ class BUSTEDContents extends React.Component {
     return (
       <div className="busted">
         <div className="border-bottom border-primary mb-3">
-          <h1 className="list-group-item-heading">
-            BUSTED
-            <h3>
-              Branch-site Unrestricted Statistical Test for Episodic
-              Diversification
-            </h3>
-          </h1>
+          <span></span>
         </div>
 
         <div>
@@ -150,7 +147,7 @@ export default function render_busted(
   element,
   fasta,
   originalFile,
-  analysisLog
+  analysisLog,
 ) {
   ReactDOM.render(
     <BUSTED
@@ -159,6 +156,6 @@ export default function render_busted(
       originalFile={originalFile}
       analysisLog={analysisLog}
     />,
-    document.getElementById(element)
+    document.getElementById(element),
   );
 }
