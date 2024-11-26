@@ -34,6 +34,7 @@
     "@observablehq/runtime": "4.25",
     "@spond/absrel": "https://api.observablehq.com/@spond/absrel@5186.tgz?v=3",
     "@spond/busted": "https://api.observablehq.com/@spond/busted@4691.tgz?v=3",
+    "@spond/meme": "https://api.observablehq.com/@spond/meme@4335.tgz?v=3",
     "bootstrap": "4.x",
     "chi-squared": "^1.1.0",
     "circos": "^2.1.0",

@@ -2571,6 +2571,10 @@
   version "4691.0.0"
   resolved "https://api.observablehq.com/@spond/busted@4691.tgz?v=3#2d339e407c3285255fd3190f6da652b0f1d5ca24"
 
+"@spond/meme@https://api.observablehq.com/@spond/meme@4335.tgz?v=3":
+  version "4335.0.0"
+  resolved "https://api.observablehq.com/@spond/meme@4335.tgz?v=3#1ab18c47fa1e9963a69cc9161d6da989fddeeb57"
+
 "@types/babel__core@^7.1.14":
   version "7.1.19"
   resolved "https://registry.yarnpkg.com/@types/babel__core/-/babel__core-7.1.19.tgz#7b497495b7d1b4812bdb9d02804d0576f43ee460"
