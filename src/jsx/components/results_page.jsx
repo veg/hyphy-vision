@@ -5,6 +5,30 @@ import { MethodHeader } from "./methodheader.jsx";
 
 const React = require("react");
 
+async function fetchJson(url) {
+  const response = await fetch(url);
+  if (!response.ok) {
+    throw new Error(`HTTP ${response.status} fetching ${url}`);
+  }
+
+  if (/\.gz($|\?)/.test(url)) {
+    // The browser transparently decodes Content-Encoding: gzip responses, so
+    // a .gz URL only needs manual decompression when the body still has the
+    // gzip magic bytes (i.e. the server served it as an opaque application/gzip).
+    const buffer = await response.arrayBuffer();
+    const bytes = new Uint8Array(buffer);
+    if (bytes.length >= 2 && bytes[0] === 0x1f && bytes[1] === 0x8b) {
+      const stream = new Blob([buffer])
+        .stream()
+        .pipeThrough(new DecompressionStream("gzip"));
+      return JSON.parse(await new Response(stream).text());
+    }
+    return JSON.parse(new TextDecoder().decode(buffer));
+  }
+
+  return response.json();
+}
+
 /**
  * ResultsPage is a reusable component to do the following in a standrdized way across methods/pages:
  *    1. Render the elements that will appear on every vision page:
@@ -27,23 +51,26 @@ class ResultsPage extends React.Component {
   componentDidMount() {
     var self = this;
 
-    // Check query parameter
+    // Deep-link query parameter. `json` is the preferred name; `resultsUrl` is
+    // accepted for backward compatibility with existing share links.
     let queryParams = new URLSearchParams(location.search);
+    let queryUrl =
+      queryParams.get("json") || queryParams.get("resultsUrl");
 
-    if (typeof queryParams.get("resultsUrl") == "string") {
-      self.setState({ jsonPath: queryParams.get("resultsUrl") }); // Set the json path for comparing on updates to see if it's new data.
+    if (typeof queryUrl == "string") {
+      self.setState({ jsonPath: queryUrl });
 
-      d3.json(queryParams.get("resultsUrl"), function (data) {
-        self.setState({ json: data });
-      });
+      fetchJson(queryUrl)
+        .then((data) => self.setState({ json: data }))
+        .catch((err) => console.error(err));
     } else if (typeof this.props.data == "string") {
       // Decide if data is a URL or the results JSON
 
-      self.setState({ jsonPath: this.props.data }); // Set the json path for comparing on updates to see if it's new data.
+      self.setState({ jsonPath: this.props.data });
 
-      d3.json(this.props.data, function (data) {
-        self.setState({ json: data });
-      });
+      fetchJson(this.props.data)
+        .then((data) => self.setState({ json: data }))
+        .catch((err) => console.error(err));
     } else if (typeof this.props.data == "object") {
       self.setState({ json: self.props.data });
     }
@@ -63,10 +90,11 @@ class ResultsPage extends React.Component {
     var newData = this.state.json;
     if (typeof this.props.data == "string") {
       if (this.props.data != self.state.jsonPath) {
-        d3.json(this.props.data, function (data) {
-          //self.setState({ json: data });
-          newData = data;
-        });
+        fetchJson(this.props.data)
+          .then((data) => {
+            newData = data;
+          })
+          .catch((err) => console.error(err));
       }
     } else if (typeof this.props.data == "object") {
       //self.setState({ json: self.props.data })
