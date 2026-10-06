@@ -11,6 +11,10 @@ import { ResultsPage } from "./components/results_page.jsx";
 
 import { Runtime, Inspector } from "@observablehq/runtime";
 import notebook from "@spond/absrel";
+import {
+  hasSiteLevelResults,
+  patchAbsrelNotebook
+} from "../helpers/absrelNotebook.js";
 
 class BSRELContents extends React.Component {
 
@@ -77,6 +81,9 @@ class BSRELContents extends React.Component {
 
     });
 
+    // Keep the notebook from erroring on result files without site-level data (#888).
+    patchAbsrelNotebook(main);
+
     this.setState({
       input: data.input,
       fits: data.fits,
@@ -116,6 +123,18 @@ class BSRELContents extends React.Component {
 
 					<ErrorMessage />
 				</div>
+
+        {this.state.data && !hasSiteLevelResults(this.state.data) && (
+          <div className="alert alert-info" role="alert">
+            This results file does not include the branch-site likelihoods
+            that aBSREL writes starting with HyPhy 2.5.58. Branch-level
+            results, the tree and the &omega; distributions below are
+            unaffected, but the branch-site plots in Figure 1 and the
+            substitution / evidence-ratio columns of Table 2 are not
+            available. Re-running the analysis with a current version of
+            HyPhy will enable them.
+          </div>
+        )}
 
         <div id="results">
           <div id="notebook">
