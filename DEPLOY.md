@@ -12,31 +12,50 @@ or from the last deploy and should be filled in by someone with host access.
 
 | Piece | Where | Notes |
 | --- | --- | --- |
-| TLS + reverse proxy | nginx on `junglegym` | Proxies `vision.hyphy.org` to `datamonkey-main:8000` and adds `Access-Control-Allow-Origin: *`. The TLS certificate includes `vision.hyphy.org`. |
+| TLS + reverse proxy | nginx on `junglegym`, site config `/etc/nginx/conf.d/hyphy.conf` | Proxies `vision.hyphy.org` to `datamonkey-main:8000` and adds `Access-Control-Allow-Origin: *`. TLS certificate: `/etc/letsencrypt/live/hyphy.org/` (includes `vision.hyphy.org`; renewal config `/etc/letsencrypt/renewal/hyphy.org.conf`). |
 | App server | datamonkey host (`datamonkey-main`) | `node server.js` (Express, serves the static `dist/` folder, falls back to `dist/index.html` for every other path). Listens on `PORT`, default `8000`. |
 | Process manager | pm2 app **`hyphy-vision`**, run as the **`node`** user | |
 | Live checkout | `/home/node/hyphy-vision` | `dist/` is git-ignored, so it is a build artifact that lives only on the host. |
 | Staging clone | `/home/node/hyphy-vision-next` | Separate clone used to build and smoke-test before swapping. |
 
-**TODO (maintainer):** path of the nginx site config on `junglegym`, and the
-exact pm2 start definition (ecosystem file or `pm2 start` command line) for
-`hyphy-vision`.
+**TODO (maintainer):** the exact pm2 start definition (ecosystem file or
+`pm2 start` command line) for `hyphy-vision`.
 
 ## Node versions
 
 | Purpose | Node | How it is selected |
 | --- | --- | --- |
-| Building (`webpack`) | 22 | `.nvmrc`; run `nvm use` in the checkout. |
-| Serving (`pm2` → `server.js`) | 22 | Pinned via nvm for the pm2 app. |
+| Building (`webpack`) | 22 | `.nvmrc`; run `nvm use` in the checkout (v22.11.0 is installed under nvm). |
+| Serving (`pm2` → `server.js`) | 22 (target); currently 17.9.1 | pm2 `interpreter`, see below. |
 
-Use the `.nvmrc` version for both. `package.json` `engines` allows
-`>=16.20.2`, and CI builds on 18, 22 and 24. Use **Yarn 1 (classic)**;
-`yarn.lock` is a v1 lockfile and Yarn 2+ refuses it.
+`package.json` `engines` allows `>=16.20.2`, and CI builds on 18, 22 and 24.
+Use **Yarn 1 (classic)**; `yarn.lock` is a v1 lockfile and Yarn 2+ refuses
+it.
 
-**TODO (maintainer):** the pm2 app previously ran on v17.9.1 (EOL) and the
-build shell defaulted to v23.3.0. Once both are on Node 22, record how the pm2
-app is pinned to it (pm2 `interpreter` setting, or pm2 itself installed under
-that nvm version).
+### How pm2 picks the Node for `hyphy-vision`
+
+The `hyphy-vision` pm2 app has `interpreter: node` (a bare name, not a path),
+so it runs whatever Node the `node` user's **nvm default alias** points to:
+v17.9.1 (EOL) as of 2026-10-06.
+
+**Do not change the nvm default alias.** Several other pm2 apps under the
+`node` user also use a bare `interpreter: node` (among them hivtrace-viz,
+webhooks, phylotree, blog and mutation-dashboard). Changing the default would
+silently move all of them to a new Node on their next restart. To move
+`hyphy-vision` to Node 22, set an absolute interpreter path for that app only:
+
+```sh
+pm2 delete hyphy-vision
+cd /home/node/hyphy-vision
+pm2 start server.js --name hyphy-vision \
+  --interpreter "$HOME/.nvm/versions/node/v22.11.0/bin/node"
+pm2 save
+pm2 describe hyphy-vision | grep -iE 'interpreter|node.js version'
+```
+
+Before doing this, compare the pm2 app's environment and options with the
+TODO above, so the re-created app matches the old one. To roll back, repeat
+with the v17.9.1 path. After the switch, update the table above.
 
 ## Build command
 
@@ -66,8 +85,9 @@ NEXT=/home/node/hyphy-vision-next
 BACKUP=/home/node/hyphy-vision-backups/$(date +%Y%m%d-%H%M%S)
 ```
 
-**TODO (maintainer):** confirm or replace the backup location above; the last
-deploy took backups but their path was not recorded.
+The 2026-10-06 deploy predates this layout. Its backups are in the `node`
+user's home: `~/hv-prev-sha` (previous HEAD `585f6a9`),
+`~/hv-local-drift.patch` and `~/hv-dist-backup`.
 
 ### 1. Back up the live state
 
