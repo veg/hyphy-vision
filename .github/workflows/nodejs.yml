@@ -5,7 +5,7 @@ name: Node.js CI
 
 on:
   push:
-    branches: [master, develop]
+    branches: [master]
   pull_request:
     branches: [master]
 
@@ -16,19 +16,15 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        # 17.x (the serve Node) is not in this matrix: jest@29 declares
-        # engines that exclude Node 17, so `yarn install` fails there. The
-        # serve-node job below covers it.
-        # 18.x: previous CI baseline.
-        # 23.x: Node that builds vision.hyphy.org (v23.3.0). EOL, kept only
-        #       while the build host uses it; see DEPLOY.md.
-        # 24.x: current LTS; flags breakage before the build host leaves 23.x.
-        node-version: [18.x, 23.x, 24.x]
+        # 18.x: oldest Node in CI (engines allows >=16.20.2).
+        # 22.x: matches .nvmrc; builds and serves vision.hyphy.org (DEPLOY.md).
+        # 24.x: current LTS; flags breakage before production moves to it.
+        node-version: [18.x, 22.x, 24.x]
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
       - run: yarn install
@@ -44,30 +40,3 @@ jobs:
       - run: yarn test
         env:
           CI: true
-
-  serve-node:
-    # Build on the production build Node, then run server.js under the Node
-    # that serves vision.hyphy.org (pm2, v17.9.1). See DEPLOY.md.
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v2
-      - name: Use Node.js 23.x (build)
-        uses: actions/setup-node@v1
-        with:
-          node-version: 23.x
-      - run: yarn install
-      - run: yarn build
-      - name: Use Node.js 17.9.1 (serve)
-        uses: actions/setup-node@v1
-        with:
-          node-version: 17.9.1
-      - name: Smoke-test server.js on the serve Node
-        run: |
-          node --version
-          test -s dist/index.html
-          test -s dist/hyphyvision.js
-          PORT=8000 node server.js &
-          for i in $(seq 1 20); do curl -fsS -o /dev/null http://localhost:8000/ && break; sleep 1; done
-          curl -fsS -o /dev/null http://localhost:8000/
-          curl -fsS -o /dev/null 'http://localhost:8000/fel?json=https://example.org/results.FEL.json'

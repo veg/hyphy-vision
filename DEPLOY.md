@@ -26,15 +26,17 @@ exact pm2 start definition (ecosystem file or `pm2 start` command line) for
 
 | Purpose | Node | How it is selected |
 | --- | --- | --- |
-| Serving (`pm2` → `server.js`) | v17.9.1 | Pinned via nvm for the pm2 app. |
-| Building (`webpack`) | v23.3.0 | nvm default in the `node` user's login shell. |
+| Building (`webpack`) | 22 | `.nvmrc`; run `nvm use` in the checkout. |
+| Serving (`pm2` → `server.js`) | 22 | Pinned via nvm for the pm2 app. |
 
-`server.js` only needs Express, so the serve Node and the build Node do not
-have to match. Use **Yarn 1 (classic)**; `yarn.lock` is a v1 lockfile and Yarn
-2+ refuses it.
+Use the `.nvmrc` version for both. `package.json` `engines` allows
+`>=16.20.2`, and CI builds on 18, 22 and 24. Use **Yarn 1 (classic)**;
+`yarn.lock` is a v1 lockfile and Yarn 2+ refuses it.
 
-**TODO (maintainer):** how the pm2 app is pinned to v17.9.1 (pm2
-`interpreter` setting, or pm2 itself installed under that nvm version).
+**TODO (maintainer):** the pm2 app previously ran on v17.9.1 (EOL) and the
+build shell defaulted to v23.3.0. Once both are on Node 22, record how the pm2
+app is pinned to it (pm2 `interpreter` setting, or pm2 itself installed under
+that nvm version).
 
 ## Build command
 
@@ -43,19 +45,15 @@ yarn install --frozen-lockfile
 yarn build
 ```
 
-> **Note (until #896 is resolved):** the `build` script sets
-> `NODE_OPTIONS=--openssl-legacy-provider` unconditionally. That flag is
-> required on Node built against OpenSSL 3 (the build host's Node 23.3.0);
-> without it webpack fails with about 29 `loader-utils` `getHashDigest` (MD4)
-> errors on the FontAwesome font assets. On Node built against OpenSSL 1.1
-> (for example Node 16.20.2) the flag is rejected with
-> `--openssl-legacy-provider is not allowed in NODE_OPTIONS`. So build on the
-> host's Node 23.3.0, where `yarn build` works as committed. Do not edit the
-> `build` script on the host to work around this; the live checkout once
-> carried such an uncommitted edit (#896).
+The build needs no `NODE_OPTIONS` flags on any supported Node (#896). Do not
+edit the `build` script on the host; the live checkout once carried such an
+uncommitted edit, and it broke the build.
 
-`webpack.config.js` does not set `output.clean`, so old hashed assets
-accumulate in `dist/`. Delete `dist/` before building.
+On a successful build, webpack removes files in `dist/` that the build did
+not emit, so stale hashed assets do not pile up (#898). A failed build leaves
+`dist/` untouched. Files are still replaced in place while the build emits,
+so never build inside the live checkout; build in the staging clone and swap
+(below).
 
 ## Deploy procedure
 
@@ -90,15 +88,14 @@ edits on the host are how the build script drift in #896 went unnoticed.
 cd "$NEXT"
 git fetch origin
 git reset --hard origin/master
-nvm use 23.3.0
-rm -rf dist
+nvm use
 yarn install --frozen-lockfile
 yarn build
 ```
 
 ### 3. Check that the build produced output
 
-An OpenSSL failure can leave `dist/` empty, so do not swap unless these pass:
+Do not swap unless these pass; `rsync --delete` from an empty `dist/` would wipe the live site:
 
 ```sh
 test -s "$NEXT/dist/index.html" && test -s "$NEXT/dist/hyphyvision.js" \
@@ -109,7 +106,7 @@ test -s "$NEXT/dist/index.html" && test -s "$NEXT/dist/hyphyvision.js" \
 
 ```sh
 cd "$NEXT"
-PORT=8001 nvm exec 17.9.1 node server.js &
+PORT=8001 node server.js &
 SMOKE_PID=$!
 sleep 2
 curl -fsS -o /dev/null -w '%{http_code} /\n' http://localhost:8001/
@@ -117,12 +114,6 @@ curl -fsS -o /dev/null -w '%{http_code} deep link\n' \
   'http://localhost:8001/fel?json=https://example.org/results.FEL.json'
 kill "$SMOKE_PID"
 ```
-
-Run the smoke server on the serve Node (v17.9.1), not the build Node that
-step 2 selected, so that it exercises the same runtime as pm2. `nvm exec`
-runs as a child of the backgrounded job; if `kill` leaves the server running,
-stop it with `pkill -f 'node server.js'` from the `$NEXT` directory or by its
-port (`fuser -k 8001/tcp`).
 
 Both should print `200`. The `?json=` page is rendered client-side, so curl
 only proves the route serves `index.html`. Open a real deep link in a browser
@@ -133,19 +124,15 @@ too (see step 6).
 ```sh
 git -C "$LIVE" fetch origin
 git -C "$LIVE" reset --hard origin/master
-(cd "$LIVE" && nvm exec 17.9.1 yarn install --frozen-lockfile --production --ignore-engines)
+(cd "$LIVE" && nvm use && yarn install --frozen-lockfile --production)
 rsync -a --delete "$NEXT/dist/" "$LIVE/dist/"
 pm2 restart hyphy-vision
 ```
 
 The `yarn install` keeps the live `node_modules` in step with the new
 commit, so `server.js` does not run against a stale Express if a release
-changes the server's dependencies. It runs under the serve Node because
-native modules, if any are ever added, must match the Node that pm2 uses.
-`--production` skips the build toolchain, which the live checkout does not
-need. `--ignore-engines` is needed because some packages in `yarn.lock`
-(for example `jest@29`) declare engines that exclude Node 17, and Yarn 1
-checks engines for dev dependencies even with `--production`.
+changes the server's dependencies. `--production` skips the build toolchain,
+which the live checkout does not need.
 
 Reset the live checkout to the same commit you built in `$NEXT`. If `master`
 moved between steps 2 and 5, reset to `git -C "$NEXT" rev-parse HEAD` instead.
