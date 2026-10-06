@@ -8,6 +8,11 @@ import ReactDOM from "react-dom";
 import { ErrorMessage } from "./components/error_message.jsx";
 import { ExportButton } from "./components/export-button.jsx";
 import { ResultsPage } from "./components/results_page.jsx";
+import {
+  applyNotebookTreeSelection,
+  readDeepLinkParams,
+  tagNotebookCell,
+} from "../helpers/deepLink.js";
 
 import { Runtime, Inspector } from "@observablehq/runtime";
 import notebook from "@spond/absrel";
@@ -72,11 +77,12 @@ class BSRELContents extends React.Component {
           return;
         }
 
-        return node;
+        return tagNotebookCell(node, name);
       }
 
     });
 
+    this.pendingDeepLink = true;
     this.setState({
       input: data.input,
       fits: data.fits,
@@ -93,6 +99,11 @@ class BSRELContents extends React.Component {
 
     if (this.state.main) {
       this.state.main.redefine("results_json", this.state.data);
+      if (this.pendingDeepLink) {
+        // ?tree= / ?partition= / ?site= / ?branch= (see helpers/deepLink.js)
+        this.pendingDeepLink = false;
+        applyNotebookTreeSelection(this.state.main, readDeepLinkParams());
+      }
     }
 
 

@@ -5,6 +5,7 @@ const React = require("react"),
 import { ErrorMessage } from "./components/error_message.jsx";
 import { ExportButton } from "./components/export-button.jsx";
 import { ResultsPage } from "./components/results_page.jsx";
+import { tagNotebookCell } from "../helpers/deepLink.js";
 import { Runtime, Inspector } from "@observablehq/runtime";
 import notebook from "@hyphy_software/nrm";
 
@@ -63,7 +64,10 @@ class NRMContents extends React.Component {
       ];
 
       if (_.includes(toInclude, name)) {
-        const node = Inspector.into(this.figureRef.current)(name);
+        const node = tagNotebookCell(
+          Inspector.into(this.figureRef.current)(name),
+          name
+        );
 				if(name == "viewof table1") {
 					node._node.classList.add('table')
 					node._node.classList.add('table-striped')
