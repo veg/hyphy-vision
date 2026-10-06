@@ -24,6 +24,10 @@ module.exports = (env) => {
       path: path.resolve(__dirname, "dist/"),
       filename: "[name].js",
       library: "hyphyVision",
+      hashFunction: "xxhash64",
+      // Asset and chunk names are content hashes, so remove the previous
+      // build's files instead of leaving stale ones in dist/.
+      clean: true,
     },
     optimization: {
       splitChunks: {
@@ -84,25 +88,23 @@ module.exports = (env) => {
             },
           },
         },
+        // Fonts and images use webpack 5 asset modules instead of
+        // url-loader/file-loader. Those loaders hash file names with MD4 via
+        // node's crypto, which OpenSSL 3 rejects unless node runs with
+        // --openssl-legacy-provider (a flag older nodes refuse). Asset modules
+        // hash with output.hashFunction, so the build needs no flag.
         {
-          test: /\.woff(2)?(\?v=[0-9]\.[0-9]\.[0-9])?$/,
-          use: [
-            {
-              loader: "url-loader",
-              options: {
-                limit: 10000,
-                mimetype: "application/font-woff",
-              },
+          test: /\.woff(2)?(\?\S*)?$/,
+          type: "asset",
+          parser: {
+            dataUrlCondition: {
+              maxSize: 10000,
             },
-          ],
+          },
         },
         {
-          test: /\.(eot|woff|woff2|ttf|svg|png|jpg|gif)(\?\S*)?$/,
-          use: [
-            {
-              loader: "file-loader",
-            },
-          ],
+          test: /\.(eot|ttf|svg|png|jpg|gif)(\?\S*)?$/,
+          type: "asset/resource",
         },
       ],
     },
