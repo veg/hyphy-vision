@@ -13,6 +13,7 @@ import { Runtime, Inspector } from "@observablehq/runtime";
 import notebook from "@spond/absrel";
 import {
   hasSiteLevelResults,
+  hasSynonymousRatePosteriors,
   patchAbsrelNotebook
 } from "../helpers/absrelNotebook.js";
 
@@ -129,10 +130,13 @@ class BSRELContents extends React.Component {
             This results file does not include the branch-site likelihoods
             that aBSREL writes starting with HyPhy 2.5.58. Branch-level
             results, the tree and the &omega; distributions below are
-            unaffected, but the branch-site plots in Figure 1 and the
-            substitution / evidence-ratio columns of Table 2 are not
-            available. Re-running the analysis with a current version of
-            HyPhy will enable them.
+            unaffected, but the substitution / evidence-ratio columns of
+            Table 2 and the branch-site plots in Figure 1 are not available.{" "}
+            {hasSynonymousRatePosteriors(this.state.data)
+              ? "Figure 1 only offers the synonymous-rate plot."
+              : "Because this file also has no synonymous rate variation posteriors, Figure 1 is empty (\"No plotting options available\")."}{" "}
+            Re-running the analysis with a current version of HyPhy will
+            enable them.
           </div>
         )}
 

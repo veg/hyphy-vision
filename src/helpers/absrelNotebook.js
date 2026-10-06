@@ -1,5 +1,6 @@
 /**
- * Compatibility shims for the @spond/absrel Observable notebook (v5186).
+ * Compatibility shims for the @spond/absrel Observable notebook (v5186; the
+ * `siteTableData` cell is identical in the v5199 file also shipped in the package).
  *
  * aBSREL only writes "Site Log Likelihood" (and per-branch "posterior") from
  * aBSREL v2.5 / HyPhy 2.5.58 onward. For older result files the notebook's
@@ -9,8 +10,16 @@
  * propagates to `viewof table1` and `figure1` (via fig1data), see veg/hyphy-vision#888.
  */
 
+const _ = require("underscore");
+
 export function hasSiteLevelResults(json) {
   return !!(json && json["Site Log Likelihood"]);
+}
+
+// Without site-level results the only Figure 1 plot the notebook can offer is
+// the synonymous-rate one, which needs SRV posteriors.
+export function hasSynonymousRatePosteriors(json) {
+  return !!(json && json["Synonymous site-posteriors"]);
 }
 
 // Same as the notebook's `siteTableData` cell, except that codons with no
@@ -81,20 +90,44 @@ export function siteTableData(
   ];
 }
 
+// Inputs of the `siteTableData` cell in the notebook version this shim was
+// written against. If a later @spond/absrel changes them, the replacement
+// above no longer matches the cell, so it is skipped rather than applied.
+export const SITE_TABLE_DATA_INPUTS = [
+  "_",
+  "profileBranchSites",
+  "results_json",
+  "siteIndexPartitionCodon",
+  "srv_distribution",
+  "distMean",
+  "d3",
+  "pv",
+  "html"
+];
+
+function cellInputs(main, name) {
+  const variable = main._scope && main._scope.get(name);
+  if (!variable) return null;
+  return _.map(variable._inputs, v => v._name);
+}
+
+// Returns true when the shim was applied. Never throws: a mismatch with the
+// installed notebook only logs a warning and leaves the notebook untouched.
 export function patchAbsrelNotebook(main) {
-  main.redefine(
-    "siteTableData",
-    [
-      "_",
-      "profileBranchSites",
-      "results_json",
-      "siteIndexPartitionCodon",
-      "srv_distribution",
-      "distMean",
-      "d3",
-      "pv",
-      "html"
-    ],
-    siteTableData
-  );
+  try {
+    const inputs = cellInputs(main, "siteTableData");
+    if (!_.isEqual(inputs, SITE_TABLE_DATA_INPUTS)) {
+      console.warn(
+        "aBSREL notebook shim (#888) not applied: `siteTableData` cell " +
+          (inputs ? "inputs changed to " + JSON.stringify(inputs) : "not found") +
+          "; review src/helpers/absrelNotebook.js against @spond/absrel."
+      );
+      return false;
+    }
+    main.redefine("siteTableData", SITE_TABLE_DATA_INPUTS, siteTableData);
+    return true;
+  } catch (e) {
+    console.warn("aBSREL notebook shim (#888) not applied:", e);
+    return false;
+  }
 }
