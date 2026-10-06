@@ -90,7 +90,13 @@ function GARDResults(props) {
 
 function GARDSimpleTopologyReport(props) {
   if (!props.data) return <div />;
-  if (!props.data.improvements) return <div />;
+  const hasBreakpoints =
+    props.data.improvements &&
+    _.some(
+      props.data.improvements,
+      d => d && d.breakpoints && d.breakpoints.length > 0
+    );
+  if (!hasBreakpoints) return null;
 
   var currentAIC =
     props.data.baselineScore -

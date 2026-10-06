@@ -96,7 +96,14 @@ function GARDResults(props) {
 
 function GARDRecombinationReport(props) {
   if (!props.data) return <div />;
-  if (!props.data.improvements) {
+  const hasBreakpoints =
+    props.data.improvements &&
+    _.some(
+      props.data.improvements,
+      d => d && d.breakpoints && d.breakpoints.length > 0
+    );
+
+  if (!hasBreakpoints) {
     return (
       <div className="row" id="report-tab">
         <div className="col-md-12">
@@ -261,7 +268,13 @@ function GARDSiteGraph(props) {
 
 function GARDTopologyReport(props) {
   if (!props.data) return <div />;
-  if (!props.data.improvements) return <div />;
+  const hasBreakpoints =
+    props.data.improvements &&
+    _.some(
+      props.data.improvements,
+      d => d && d.breakpoints && d.breakpoints.length > 0
+    );
+  if (!hasBreakpoints || !props.data.pairwiseP) return null;
   var readPCount = props.data.pairwiseP.length,
     totalComparisons = (readPCount - 1) * 2,
     threshP = 0.01 / totalComparisons,
