@@ -109,7 +109,7 @@ test -s "$NEXT/dist/index.html" && test -s "$NEXT/dist/hyphyvision.js" \
 
 ```sh
 cd "$NEXT"
-PORT=8001 node server.js &
+PORT=8001 nvm exec 17.9.1 node server.js &
 SMOKE_PID=$!
 sleep 2
 curl -fsS -o /dev/null -w '%{http_code} /\n' http://localhost:8001/
@@ -117,6 +117,12 @@ curl -fsS -o /dev/null -w '%{http_code} deep link\n' \
   'http://localhost:8001/fel?json=https://example.org/results.FEL.json'
 kill "$SMOKE_PID"
 ```
+
+Run the smoke server on the serve Node (v17.9.1), not the build Node that
+step 2 selected, so that it exercises the same runtime as pm2. `nvm exec`
+runs as a child of the backgrounded job; if `kill` leaves the server running,
+stop it with `pkill -f 'node server.js'` from the `$NEXT` directory or by its
+port (`fuser -k 8001/tcp`).
 
 Both should print `200`. The `?json=` page is rendered client-side, so curl
 only proves the route serves `index.html`. Open a real deep link in a browser
@@ -127,9 +133,19 @@ too (see step 6).
 ```sh
 git -C "$LIVE" fetch origin
 git -C "$LIVE" reset --hard origin/master
+(cd "$LIVE" && nvm exec 17.9.1 yarn install --frozen-lockfile --production --ignore-engines)
 rsync -a --delete "$NEXT/dist/" "$LIVE/dist/"
 pm2 restart hyphy-vision
 ```
+
+The `yarn install` keeps the live `node_modules` in step with the new
+commit, so `server.js` does not run against a stale Express if a release
+changes the server's dependencies. It runs under the serve Node because
+native modules, if any are ever added, must match the Node that pm2 uses.
+`--production` skips the build toolchain, which the live checkout does not
+need. `--ignore-engines` is needed because some packages in `yarn.lock`
+(for example `jest@29`) declare engines that exclude Node 17, and Yarn 1
+checks engines for dev dependencies even with `--production`.
 
 Reset the live checkout to the same commit you built in `$NEXT`. If `master`
 moved between steps 2 and 5, reset to `git -C "$NEXT" rev-parse HEAD` instead.
