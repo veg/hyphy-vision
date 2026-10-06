@@ -8,6 +8,11 @@ require("phylotree.css");
 import { ErrorMessage } from "./components/error_message.jsx";
 import { ExportButton } from "./components/export-button.jsx";
 import { ResultsPage } from "./components/results_page.jsx";
+import {
+  applyNotebookTreeSelection,
+  readDeepLinkParams,
+  tagNotebookCell,
+} from "../helpers/deepLink.js";
 import { Inspector, Runtime } from "@observablehq/runtime";
 import notebook from "@spond/busted";
 
@@ -69,7 +74,10 @@ class BUSTEDContents extends React.Component {
       ];
 
       if (_.includes(toInclude, name) || name == undefined || true) {
-        const node = Inspector.into(this.figureRef.current)(name);
+        const node = tagNotebookCell(
+          Inspector.into(this.figureRef.current)(name),
+          name
+        );
         if (name == "viewof table1") {
           node._node.classList.add("table");
           node._node.classList.add("table-striped");
@@ -85,6 +93,7 @@ class BUSTEDContents extends React.Component {
       }
     });
 
+    this.pendingDeepLink = true;
     this.setState({
       input: data.input,
       fits: data.fits,
@@ -96,6 +105,11 @@ class BUSTEDContents extends React.Component {
   render() {
     if (this.state.main) {
       this.state.main.redefine("results_json", this.state.data);
+      if (this.pendingDeepLink) {
+        // ?tree= / ?partition= / ?site= / ?branch= (see helpers/deepLink.js)
+        this.pendingDeepLink = false;
+        applyNotebookTreeSelection(this.state.main, readDeepLinkParams());
+      }
     }
 
     return (

@@ -25,6 +25,9 @@
   },
   "main": "dist/hyphyvision.js",
   "version": "2.15.10",
+  "engines": {
+    "node": ">=16.20.2"
+  },
   "dependencies": {
     "@fortawesome/fontawesome-free": "^5.15.3",
     "@hyphy_software/fel-analysis-result-visualization": "https://api.observablehq.com/@hyphy_software/fel-analysis-result-visualization@2311.tgz?v=3",
@@ -140,8 +143,8 @@
     "webpack-eslint-plugin": "^1.2.0"
   },
   "scripts": {
-    "build": "export NODE_OPTIONS=--openssl-legacy-provider;webpack --mode production",
-    "build:library": "export NODE_OPTIONS=--openssl-legacy-provider;webpack --config webpack.config.library.js",
+    "build": "webpack --mode production",
+    "build:library": "webpack --config webpack.config.library.js",
     "which-webpack": "which webpack",
     "lint": "eslint --ext .js,.jsx --ignore-pattern public,static,dist ./src/",
     "test": "node ./node_modules/jest-cli/bin/jest.js",

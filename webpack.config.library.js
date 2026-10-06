@@ -24,6 +24,7 @@ module.exports = (env) => {
       filename: "[name].js",
       library: "hyphyVision",
       libraryTarget: "umd",
+      hashFunction: "xxhash64",
     },
     externals: [/^@spond\/[a-zA-Z0-9.\-]+$/, /^@?[a-z\.\-0-9]+$/],
     module: {
@@ -80,25 +81,23 @@ module.exports = (env) => {
             },
           },
         },
+        // Fonts and images use webpack 5 asset modules instead of
+        // url-loader/file-loader. Those loaders hash file names with MD4 via
+        // node's crypto, which OpenSSL 3 rejects unless node runs with
+        // --openssl-legacy-provider (a flag older nodes refuse). Asset modules
+        // hash with output.hashFunction, so the build needs no flag.
         {
-          test: /\.woff(2)?(\?v=[0-9]\.[0-9]\.[0-9])?$/,
-          use: [
-            {
-              loader: "url-loader",
-              options: {
-                limit: 10000,
-                mimetype: "application/font-woff",
-              },
+          test: /\.woff(2)?(\?\S*)?$/,
+          type: "asset",
+          parser: {
+            dataUrlCondition: {
+              maxSize: 10000,
             },
-          ],
+          },
         },
         {
-          test: /\.(eot|woff|woff2|ttf|svg|png|jpg|gif)(\?\S*)?$/,
-          use: [
-            {
-              loader: "file-loader",
-            },
-          ],
+          test: /\.(eot|ttf|svg|png|jpg|gif)(\?\S*)?$/,
+          type: "asset/resource",
         },
       ],
     },

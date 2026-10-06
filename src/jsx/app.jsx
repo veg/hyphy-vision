@@ -18,6 +18,7 @@ import { BGM } from "./bgm.jsx";
 import { FADE } from "./fade.jsx";
 import { Slatkin } from "./slatkin.jsx";
 import { NavBar } from "./components/navbar.jsx";
+import { enableDeepLinks } from "../helpers/deepLink.js";
 
 const path = require("path");
 const href = window.location.href;
@@ -402,6 +403,9 @@ class HyPhyVision extends React.Component {
 }
 
 export default function render_app() {
+  // Honour ?section= / ?tree= / ?branch= (helpers/deepLink.js) only in the
+  // standalone app, not when Vision is embedded in another site.
+  enableDeepLinks();
   ReactDOM.render(
     <HyPhyVision />,
     document.body.appendChild(document.createElement("div"))
