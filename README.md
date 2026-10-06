@@ -33,10 +33,18 @@ as it always has.
 | `branch=<name>` | Highlight the branch (and its tip label) called `<name>` in the tree and scroll to it. On BUSTED and MEME, whose tree is hidden until a tree is chosen, the first partition is selected automatically. | pages that draw a tree |
 
 `tree`, `partition`, `site` and `branch` also scroll to the tree, unless a
-`section` is given. `section` understands `summary`, `plot`, `table`, `tree` and `fits` on every
-page. It also accepts any element id on the page (e.g. `tree-tab`) or, on the
+`section` is given. `section` understands the names `summary`, `plot`,
+`table`, `tree` and `fits`, but only where the page actually has that kind of
+section: not every page has all five. For example, Multi-Hit draws no tree,
+GARD and Slatkin-Maddison have no table, and FEL, NRM, GARD, Multi-Hit and
+SLAC have no separate model-fits section.
+`section` also accepts any element id on the page (e.g. `tree-tab`) or, on the
 Observable-based pages (BUSTED, aBSREL, MEME, FEL, NRM, GARD, Multi-Hit), any
 notebook cell name, e.g. `figure1` or `table1`.
+
+These parameters apply to vision.hyphy.org (the standalone app) only. When
+Vision is embedded in another site through the library exports, only `json`
+is read from the host page's URL.
 
 Remember to URL-encode the `json` value when it has its own query string:
 
@@ -46,8 +54,9 @@ https://vision.hyphy.org/meme?json=https%3A%2F%2Fexample.org%2Fgene.MEME.json&si
 https://vision.hyphy.org/fel?json=https%3A%2F%2Fexample.org%2Fgene.FEL.json&tab=table
 ```
 
-An unknown section, tree option or branch name is ignored, and a warning is
-logged to the browser console. Rows inside a table, and plot zoom, cannot be
+An unknown section, tree option or branch name (including a section name the
+page has nothing for) is ignored: the page stays where it is and, after about
+20 seconds, a warning is logged to the browser console. Rows inside a table, and plot zoom, cannot be
 linked to yet.
 
 # Contributing

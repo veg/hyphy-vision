@@ -7,7 +7,7 @@ import { ExportButton } from "./components/export-button.jsx";
 import { ResultsPage } from "./components/results_page.jsx";
 import {
   applyNotebookTreeSelection,
-  parseDeepLinkParams,
+  readDeepLinkParams,
   tagNotebookCell,
 } from "../helpers/deepLink.js";
 import { Runtime, Inspector } from "@observablehq/runtime";
@@ -87,10 +87,7 @@ class FELContents extends React.Component {
       if (this.pendingDeepLink) {
         // ?tree= / ?partition= / ?site= / ?branch= (see helpers/deepLink.js)
         this.pendingDeepLink = false;
-        applyNotebookTreeSelection(
-          this.state.main,
-          parseDeepLinkParams(location.search, location.hash)
-        );
+        applyNotebookTreeSelection(this.state.main, readDeepLinkParams());
       }
     }
 

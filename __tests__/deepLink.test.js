@@ -5,6 +5,8 @@ import {
   notebookCellId,
   matchOption,
   phylotreeNodeName,
+  readDeepLinkParams,
+  enableDeepLinks,
 } from "../src/helpers/deepLink.js";
 
 describe("parseDeepLinkParams", () => {
@@ -103,6 +105,15 @@ describe("sectionCandidates", () => {
     );
   });
 
+  it("maps GARD and SLAC cells to the right friendly names", () => {
+    // GARD's tabulatedView is a summary box, not a table.
+    expect(sectionCandidates("table")).not.toContain("nb-tabulatedView");
+    expect(sectionCandidates("summary")).toContain("nb-tabulatedView");
+    expect(sectionCandidates("tree")).toContain("nb-displayed_trees");
+    expect(sectionCandidates("table")).toContain("slac-table");
+    expect(sectionCandidates("plot")).toContain("slac-graph");
+  });
+
   it("supports synonyms", () => {
     expect(sectionCandidates("figure")).toContain("nb-figure1");
     expect(sectionCandidates("model fits")).toContain("fits-tab");
@@ -146,5 +157,30 @@ describe("phylotreeNodeName", () => {
     expect(phylotreeNodeName({ data: { name: "Node6" } })).toBe("Node6");
     expect(phylotreeNodeName({})).toBeNull();
     expect(phylotreeNodeName(undefined)).toBeNull();
+  });
+});
+
+describe("readDeepLinkParams", () => {
+  const search = "?json=r.json&section=tree&tree=Partition%202&branch=Node1";
+
+  afterEach(() => enableDeepLinks(false));
+
+  it("keeps only json when deep links are not enabled (embedded use)", () => {
+    expect(readDeepLinkParams(search, "#/busted")).toEqual({
+      json: "r.json",
+      section: null,
+      tree: null,
+      branch: null,
+    });
+  });
+
+  it("returns every parameter in the standalone app", () => {
+    enableDeepLinks();
+    expect(readDeepLinkParams(search, "")).toEqual({
+      json: "r.json",
+      section: "tree",
+      tree: "Partition 2",
+      branch: "Node1",
+    });
   });
 });

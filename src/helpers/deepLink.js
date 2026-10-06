@@ -6,8 +6,10 @@
  *
  *   ?section=<name>   (alias `?tab=`, or a `#<name>` hash)
  *       Scroll to a named part of the results page once it has rendered.
- *       Friendly names (summary, plot, table, tree, fits) work on every page;
- *       any element id (e.g. `tree-tab`) or Observable notebook cell name
+ *       Friendly names (summary, plot, table, tree, fits) resolve on pages
+ *       that have that kind of section (not every page has all five; e.g.
+ *       Multi-Hit draws no tree and FEL has no model-fits section). Any
+ *       element id (e.g. `tree-tab`) or Observable notebook cell name
  *       (e.g. `figure1`, `table1`) is accepted as well.
  *   ?tree=<option>    Select a tree in the notebook's "Tree to view" menu
  *       (BUSTED, aBSREL, MEME, FEL), e.g. `tree=Partition 1` or `tree=Codon 12`.
@@ -20,6 +22,10 @@
  * `tree`, `partition`, `site` and `branch` also scroll to the tree unless a
  * `section` is given. Every parameter is optional; with none of them the page behaves exactly as
  * before.
+ *
+ * Only the standalone app (render_app) honours these view parameters. When
+ * Vision is embedded in another page through the library exports, the host
+ * page's URL is not ours, so readDeepLinkParams() ignores section/tree/branch.
  */
 
 // Ordered element-id candidates for the friendly section names. Classic
@@ -32,11 +38,14 @@ export const SECTION_ALIASES = {
     "nb-summary_table",
     "nb-summaryBox",
     "nb-intro",
+    // GARD's summary box ("N sequences in the alignment, ...").
+    "nb-tabulatedView",
   ],
   plot: [
     "plot-tab",
     "site-plot-tab",
     "site-graph-tab",
+    "slac-graph",
     "nb-plot_type",
     "nb-fig1caption",
     "nb-figure1",
@@ -47,11 +56,11 @@ export const SECTION_ALIASES = {
   table: [
     "table-tab",
     "site-pairs-tab",
+    "slac-table",
     "nb-table1caption",
     "nb-table1",
-    "nb-tabulatedView",
   ],
-  tree: ["tree-tab", "nb-tree_id", "nb-figure2"],
+  tree: ["tree-tab", "nb-tree_id", "nb-figure2", "nb-displayed_trees"],
   fits: ["fits-tab", "fit-tab", "nb-rate_table"],
 };
 
@@ -132,6 +141,34 @@ export function parseDeepLinkParams(search, hash) {
     tree: tree,
     branch: nonEmpty(query.get("branch")),
   };
+}
+
+let deepLinksEnabled = false;
+
+/**
+ * Called by the standalone app so that ?section= / ?tree= / ?branch= (and a
+ * #hash) are honoured. Library/embedded use leaves this off.
+ */
+export function enableDeepLinks(enabled) {
+  deepLinksEnabled = enabled !== false;
+}
+
+/**
+ * parseDeepLinkParams() for the current page. Outside the standalone app only
+ * `json` is kept (as before #897); the view parameters are dropped.
+ */
+export function readDeepLinkParams(search, hash) {
+  const loc = typeof location != "undefined" ? location : {};
+  const params = parseDeepLinkParams(
+    search === undefined ? loc.search : search,
+    hash === undefined ? loc.hash : hash
+  );
+  if (!deepLinksEnabled) {
+    params.section = null;
+    params.tree = null;
+    params.branch = null;
+  }
+  return params;
 }
 
 /**
@@ -334,6 +371,10 @@ export function startDeepLinkNavigation(params, options) {
         window.scrollTo(0, Math.max(0, top));
         lastTop = top;
         stableSince = now;
+      } else if (Math.abs(window.pageYOffset - Math.max(0, top)) > 2) {
+        // The earlier scrollTo was clamped because the content below had not
+        // rendered yet; try again now that the page may be taller.
+        window.scrollTo(0, Math.max(0, top));
       }
     }
 

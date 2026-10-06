@@ -3,7 +3,7 @@ import { ErrorMessage } from "./error_message.jsx";
 import { ScrollSpy } from "./scrollspy.jsx";
 import { MethodHeader } from "./methodheader.jsx";
 import {
-  parseDeepLinkParams,
+  readDeepLinkParams,
   startDeepLinkNavigation,
 } from "../../helpers/deepLink.js";
 
@@ -58,7 +58,7 @@ class ResultsPage extends React.Component {
     // Deep-link query parameters. `json` is the preferred name; `resultsUrl` is
     // accepted for backward compatibility with existing share links. The
     // section/branch parameters are applied once the results have rendered.
-    this.deepLink = parseDeepLinkParams(location.search, location.hash);
+    this.deepLink = readDeepLinkParams();
     let queryUrl = this.deepLink.json;
 
     if (typeof queryUrl == "string") {
