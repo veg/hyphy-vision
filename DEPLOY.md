@@ -13,13 +13,17 @@ or from the last deploy and should be filled in by someone with host access.
 | Piece | Where | Notes |
 | --- | --- | --- |
 | TLS + reverse proxy | nginx on `junglegym`, site config `/etc/nginx/conf.d/hyphy.conf` | Proxies `vision.hyphy.org` to `datamonkey-main:8000` and adds `Access-Control-Allow-Origin: *`. TLS certificate: `/etc/letsencrypt/live/hyphy.org/` (includes `vision.hyphy.org`; renewal config `/etc/letsencrypt/renewal/hyphy.org.conf`). |
-| App server | datamonkey host (`datamonkey-main`) | `node server.js` (Express, serves the static `dist/` folder, falls back to `dist/index.html` for every other path). Listens on `PORT`, default `8000`. |
-| Process manager | pm2 app **`hyphy-vision`**, run as the **`node`** user | |
+| App server | datamonkey host (`datamonkey-main`) | `node server.js` (Express, serves the static `dist/` folder, falls back to `dist/index.html` for every other path). Listens on `PORT`, default `8000`. Production does not set `PORT`, so it uses the code default. |
+| Process manager | pm2 app **`hyphy-vision`**, run as the **`node`** user | Fork mode, one instance, autorestart on, no watch. Logs: `~/.pm2/logs/hyphy-vision-{out,error}.log`. |
 | Live checkout | `/home/node/hyphy-vision` | `dist/` is git-ignored, so it is a build artifact that lives only on the host. |
 | Staging clone | `/home/node/hyphy-vision-next` | Separate clone used to build and smoke-test before swapping. |
 
-**TODO (maintainer):** the exact pm2 start definition (ecosystem file or
-`pm2 start` command line) for `hyphy-vision`.
+The app was originally started with a bare `pm2 start server.js` from
+`/home/node/hyphy-vision`: no arguments, no app-specific environment
+variables, and no ecosystem file. `pm2 describe hyphy-vision` was the only
+record of its definition. The repository now has `ecosystem.config.cjs`,
+which reproduces that definition with the Node interpreter pinned (see
+below).
 
 ## Node versions
 
@@ -42,20 +46,23 @@ v17.9.1 (EOL) as of 2026-10-06.
 `node` user also use a bare `interpreter: node` (among them hivtrace-viz,
 webhooks, phylotree, blog and mutation-dashboard). Changing the default would
 silently move all of them to a new Node on their next restart. To move
-`hyphy-vision` to Node 22, set an absolute interpreter path for that app only:
+`hyphy-vision` to Node 22, re-create that app only from `ecosystem.config.cjs`,
+which sets an absolute interpreter path (`~/.nvm/versions/node/v22.11.0/bin/node`,
+overridable with `HYPHY_VISION_NODE`):
 
 ```sh
-pm2 delete hyphy-vision
 cd /home/node/hyphy-vision
-pm2 start server.js --name hyphy-vision \
-  --interpreter "$HOME/.nvm/versions/node/v22.11.0/bin/node"
+pm2 delete hyphy-vision
+pm2 start ecosystem.config.cjs
 pm2 save
-pm2 describe hyphy-vision | grep -iE 'interpreter|node.js version'
+pm2 describe hyphy-vision | grep -iE 'interpreter|node.js version|exec cwd'
 ```
 
-Before doing this, compare the pm2 app's environment and options with the
-TODO above, so the re-created app matches the old one. To roll back, repeat
-with the v17.9.1 path. After the switch, update the table above.
+The site is down between `pm2 delete` and `pm2 start` (a few seconds). To roll
+back, run the same commands with `HYPHY_VISION_NODE=$HOME/.nvm/versions/node/v17.9.1/bin/node`
+set. Once the app runs from the ecosystem file, the `pm2 restart hyphy-vision`
+in the deploy procedure keeps the pinned interpreter. After the switch, update
+the table above.
 
 ## Build command
 
