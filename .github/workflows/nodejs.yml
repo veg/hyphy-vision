@@ -5,7 +5,7 @@ name: Node.js CI
 
 on:
   push:
-    branches: [master, develop]
+    branches: [master]
   pull_request:
     branches: [master]
 
@@ -14,17 +14,29 @@ jobs:
     runs-on: ubuntu-latest
 
     strategy:
+      fail-fast: false
       matrix:
-        node-version: [18.x, 22.x]
+        # 18.x: oldest Node in CI (engines allows >=16.20.2).
+        # 22.x: matches .nvmrc; builds and serves vision.hyphy.org (DEPLOY.md).
+        # 24.x: current LTS; flags breakage before production moves to it.
+        node-version: [18.x, 22.x, 24.x]
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
       - run: yarn install
       - run: yarn build
+      - name: Smoke-test server.js
+        run: |
+          test -s dist/index.html
+          test -s dist/hyphyvision.js
+          PORT=8000 node server.js &
+          for i in $(seq 1 20); do curl -fsS -o /dev/null http://localhost:8000/ && break; sleep 1; done
+          curl -fsS -o /dev/null http://localhost:8000/
+          curl -fsS -o /dev/null 'http://localhost:8000/fel?json=https://example.org/results.FEL.json'
       - run: yarn test
         env:
           CI: true

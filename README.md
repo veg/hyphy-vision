@@ -43,12 +43,9 @@ yarn start
 
 ## Deployment
 
-Deploy in a production environment:
-
-```
-webpack
-supervisor server.js
-```
+Merging to `master` does not update the hosted site. See [DEPLOY.md](DEPLOY.md)
+for how vision.hyphy.org is built, deployed, smoke-tested and rolled back, and
+for the release checklist.
 
 ## Electron
 
