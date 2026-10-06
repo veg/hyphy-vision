@@ -25,6 +25,9 @@ module.exports = (env) => {
       filename: "[name].js",
       library: "hyphyVision",
       hashFunction: "xxhash64",
+      // Asset and chunk names are content hashes, so remove the previous
+      // build's files instead of leaving stale ones in dist/.
+      clean: true,
     },
     optimization: {
       splitChunks: {
