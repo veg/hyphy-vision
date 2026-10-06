@@ -5,6 +5,11 @@ const React = require("react"),
 import { ErrorMessage } from "./components/error_message.jsx";
 import { ExportButton } from "./components/export-button.jsx";
 import { ResultsPage } from "./components/results_page.jsx";
+import {
+  applyNotebookTreeSelection,
+  parseDeepLinkParams,
+  tagNotebookCell,
+} from "../helpers/deepLink.js";
 import { Runtime, Inspector } from "@observablehq/runtime";
 import notebook from "@hyphy_software/fel-analysis-result-visualization";
 
@@ -55,7 +60,10 @@ class FELContents extends React.Component {
       ];
 
       if (_.includes(toInclude, name)) {
-        const node = Inspector.into(this.figureRef.current)(name);
+        const node = tagNotebookCell(
+          Inspector.into(this.figureRef.current)(name),
+          name
+        );
         if (name == "viewof table1") {
           node._node.classList.add("table");
           node._node.classList.add("table-striped");
@@ -64,6 +72,7 @@ class FELContents extends React.Component {
       }
     });
 
+    this.pendingDeepLink = true;
     this.setState({
       input: data.input,
       fits: data.fits,
@@ -75,6 +84,14 @@ class FELContents extends React.Component {
   render() {
     if (this.state.main) {
       this.state.main.redefine("results_json", this.state.data);
+      if (this.pendingDeepLink) {
+        // ?tree= / ?partition= / ?site= / ?branch= (see helpers/deepLink.js)
+        this.pendingDeepLink = false;
+        applyNotebookTreeSelection(
+          this.state.main,
+          parseDeepLinkParams(location.search, location.hash)
+        );
+      }
     }
 
     return (

@@ -7,6 +7,7 @@ import { Header } from "./components/header.jsx";
 import { DatamonkeyTable } from "./components/tables.jsx";
 import { MainResult } from "./components/mainresult.jsx";
 import { ResultsPage } from "./components/results_page.jsx";
+import { tagNotebookCell } from "../helpers/deepLink.js";
 import { Circos } from "./components/circos.jsx";
 import { CHORDS } from "./components/tracks.js";
 import { Range } from "react-range";
@@ -666,7 +667,10 @@ class MultiHitContents extends React.Component {
       ];
 
       if (_.includes(toInclude, name)) {
-        return Inspector.into(this.figureRef.current)(name);
+        return tagNotebookCell(
+          Inspector.into(this.figureRef.current)(name),
+          name
+        );
       }
     });
 

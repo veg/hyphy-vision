@@ -6,6 +6,7 @@ import { ErrorMessage } from "./components/error_message.jsx";
 import { Header } from "./components/header.jsx";
 import { ExportButton } from "./components/export-button.jsx";
 import { ResultsPage } from "./components/results_page.jsx";
+import { tagNotebookCell } from "../helpers/deepLink.js";
 import { Runtime, Inspector } from "@observablehq/runtime";
 import notebook from "@hyphy_software/gard-analysis-result-visualization";
 
@@ -194,10 +195,16 @@ class GARDContents extends React.Component {
 
       if (_.includes(toInclude, name)) {
         if (name == "tabulatedView") {
-          return Inspector.into(this.bodyRef.current)(name);
+          return tagNotebookCell(
+            Inspector.into(this.bodyRef.current)(name),
+            name
+          );
         }
         {
-          return Inspector.into(this.figureRef.current)(name);
+          return tagNotebookCell(
+            Inspector.into(this.figureRef.current)(name),
+            name
+          );
         }
       }
     });

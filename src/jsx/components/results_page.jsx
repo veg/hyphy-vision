@@ -2,6 +2,10 @@ import { ErrorBoundary } from "./error_boundary.jsx";
 import { ErrorMessage } from "./error_message.jsx";
 import { ScrollSpy } from "./scrollspy.jsx";
 import { MethodHeader } from "./methodheader.jsx";
+import {
+  parseDeepLinkParams,
+  startDeepLinkNavigation,
+} from "../../helpers/deepLink.js";
 
 const React = require("react");
 
@@ -51,11 +55,11 @@ class ResultsPage extends React.Component {
   componentDidMount() {
     var self = this;
 
-    // Deep-link query parameter. `json` is the preferred name; `resultsUrl` is
-    // accepted for backward compatibility with existing share links.
-    let queryParams = new URLSearchParams(location.search);
-    let queryUrl =
-      queryParams.get("json") || queryParams.get("resultsUrl");
+    // Deep-link query parameters. `json` is the preferred name; `resultsUrl` is
+    // accepted for backward compatibility with existing share links. The
+    // section/branch parameters are applied once the results have rendered.
+    this.deepLink = parseDeepLinkParams(location.search, location.hash);
+    let queryUrl = this.deepLink.json;
 
     if (typeof queryUrl == "string") {
       self.setState({ jsonPath: queryUrl });
@@ -107,6 +111,17 @@ class ResultsPage extends React.Component {
 
     //TODO: Handle new FASTA as well
     this.enableBootstrapJavascript();
+
+    // Scroll to ?section= / highlight ?branch= once, after the first results
+    // have been rendered.
+    if (this.state.json && !this.deepLinkStarted) {
+      this.deepLinkStarted = true;
+      this.cancelDeepLink = startDeepLinkNavigation(this.deepLink);
+    }
+  }
+
+  componentWillUnmount() {
+    if (this.cancelDeepLink) this.cancelDeepLink();
   }
 
   setDataToState = (data) => {

@@ -18,6 +18,38 @@ Test](test.datamonkey.org) with your multiple sequence alignment ready (in FASTA
 or NEXUS format). You can also run our methods locally by installing
 [HyPhy](hyphy.org).
 
+## Linking to results (URL parameters)
+Any results page (`/busted`, `/absrel`, `/meme`, `/fel`, `/relax`, ...) accepts
+these query parameters. All are optional; a page with none of them behaves
+as it always has.
+
+| Parameter | Effect | Pages |
+| --- | --- | --- |
+| `json=<url>` (alias `resultsUrl=`) | Load the results JSON from `<url>` (`.json` or `.json.gz`). The host must allow cross-origin requests. | all |
+| `section=<name>` (alias `tab=`, or `#<name>`) | Scroll to that part of the page once the results have rendered. | all |
+| `tree=<option>` | Choose an entry of the "Tree to view" menu, e.g. `tree=Partition 2` or `tree=Codon 12`. | BUSTED, aBSREL, MEME, FEL |
+| `partition=<n>` | Shorthand for `tree=Partition <n>`. | BUSTED, MEME, FEL |
+| `site=<n>` (alias `codon=`) | Shorthand for `tree=Codon <n>`; shows the tree for that codon. Only results that include substitution maps offer codon trees. | BUSTED, aBSREL, MEME |
+| `branch=<name>` | Highlight the branch (and its tip label) called `<name>` in the tree and scroll to it. On BUSTED and MEME, whose tree is hidden until a tree is chosen, the first partition is selected automatically. | pages that draw a tree |
+
+`tree`, `partition`, `site` and `branch` also scroll to the tree, unless a
+`section` is given. `section` understands `summary`, `plot`, `table`, `tree` and `fits` on every
+page. It also accepts any element id on the page (e.g. `tree-tab`) or, on the
+Observable-based pages (BUSTED, aBSREL, MEME, FEL, NRM, GARD, Multi-Hit), any
+notebook cell name, e.g. `figure1` or `table1`.
+
+Remember to URL-encode the `json` value when it has its own query string:
+
+```
+https://vision.hyphy.org/busted?json=https%3A%2F%2Fexample.org%2Fgene.BUSTED.json&branch=Node12
+https://vision.hyphy.org/meme?json=https%3A%2F%2Fexample.org%2Fgene.MEME.json&site=42&section=tree
+https://vision.hyphy.org/fel?json=https%3A%2F%2Fexample.org%2Fgene.FEL.json&tab=table
+```
+
+An unknown section, tree option or branch name is ignored, and a warning is
+logged to the browser console. Rows inside a table, and plot zoom, cannot be
+linked to yet.
+
 # Contributing
 Read our [contributing guide](CONTRIBUTING.md) to learn about our development process, how to
 propose bugfixes and improvements, and how to build and test your changes.
