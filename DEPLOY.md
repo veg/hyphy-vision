@@ -21,7 +21,7 @@ or from the last deploy and should be filled in by someone with host access.
 The app was originally started with a bare `pm2 start server.js` from
 `/home/node/hyphy-vision`: no arguments, no app-specific environment
 variables, and no ecosystem file. `pm2 describe hyphy-vision` was the only
-record of its definition. The repository now has `ecosystem.config.cjs`,
+record of its definition. The repository now has `ecosystem.config.js`,
 which reproduces that definition with the Node interpreter pinned (see
 below).
 
@@ -46,19 +46,23 @@ v17.9.1 (EOL) as of 2026-10-06.
 `node` user also use a bare `interpreter: node` (among them hivtrace-viz,
 webhooks, phylotree, blog and mutation-dashboard). Changing the default would
 silently move all of them to a new Node on their next restart. To move
-`hyphy-vision` to Node 22, re-create that app only from `ecosystem.config.cjs`,
+`hyphy-vision` to Node 22, re-create that app only from `ecosystem.config.js`,
 which sets an absolute interpreter path (`~/.nvm/versions/node/v22.11.0/bin/node`,
 overridable with `HYPHY_VISION_NODE`):
 
 ```sh
 cd /home/node/hyphy-vision
 pm2 delete hyphy-vision
-pm2 start ecosystem.config.cjs
+pm2 start ecosystem.config.js
 pm2 save
 pm2 describe hyphy-vision | grep -iE 'interpreter|node.js version|exec cwd'
 ```
 
-The site is down between `pm2 delete` and `pm2 start` (a few seconds). To roll
+The host runs pm2 3.5.2. That version loads a `.js` ecosystem file but not a
+`.cjs` one; `package.json` has no `"type": "module"`, so the `.js` file is
+CommonJS. These steps were tested with pm2 3.5.2 on Node 17.9.1 running the
+app on Node 22. The site is down between `pm2 delete` and `pm2 start` (a few
+seconds). To roll
 back, run the same commands with `HYPHY_VISION_NODE=$HOME/.nvm/versions/node/v17.9.1/bin/node`
 set. Once the app runs from the ecosystem file, the `pm2 restart hyphy-vision`
 in the deploy procedure keeps the pinned interpreter. After the switch, update

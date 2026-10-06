@@ -1,4 +1,5 @@
-// pm2 definition for vision.hyphy.org (see DEPLOY.md).
+// pm2 definition for vision.hyphy.org (see DEPLOY.md). Kept as CommonJS .js,
+// not .cjs, because the host runs pm2 3.5.2, which does not load .cjs files.
 //
 // The interpreter is an absolute path so that the app does not follow the
 // node user's nvm default alias, which other pm2 apps on the host share.
