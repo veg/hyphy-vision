@@ -40,6 +40,7 @@ web/docs/public
 *.map
 jsx-compiled
 dist
+lib
 public
 
 tags*

@@ -1,10 +1,8 @@
 const path = require("path"),
   webpack = require("webpack"),
-  HtmlWebpackPlugin = require("html-webpack-plugin"),
   CopyWebpackPlugin = require("copy-webpack-plugin");
 
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
-const PreloadWebpackPlugin = require("preload-webpack-plugin");
 
 const ESLintPlugin = require("eslint-webpack-plugin");
 
@@ -20,7 +18,8 @@ module.exports = (env) => {
       disableHostCheck: true,
     },
     output: {
-      path: path.resolve(__dirname, "dist/"),
+      // Not dist/: the app build (webpack.config.js) owns dist/ and cleans it.
+      path: path.resolve(__dirname, "lib/"),
       filename: "[name].js",
       library: "hyphyVision",
       libraryTarget: "umd",
@@ -109,11 +108,6 @@ module.exports = (env) => {
       new webpack.ProvidePlugin({
         process: "process/browser",
       }),
-      new PreloadWebpackPlugin(),
-      new HtmlWebpackPlugin({
-        title: "HyPhy Vision",
-        filename: path.resolve("dist", "index.html"),
-      }),
       new MiniCssExtractPlugin({
         // Options similar to the same options in webpackOptions.output
         // both options are optional
@@ -124,7 +118,6 @@ module.exports = (env) => {
       new webpack.IgnorePlugin({
         resourceRegExp: /jsdom$/,
       }),
-      new CopyWebpackPlugin({ patterns: [{ from: "data", to: "data" }] }),
       new CopyWebpackPlugin(
         {
           patterns: [
