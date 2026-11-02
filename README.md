@@ -59,6 +59,48 @@ page has nothing for) is ignored: the page stays where it is and, after about
 20 seconds, a warning is logged to the browser console. Rows inside a table, and plot zoom, cannot be
 linked to yet.
 
+# Using Vision as a library
+`npm install hyphy-vision` installs the library bundle (`lib/hyphyvision.js`,
+the package `main`), plus `lib/application.scss` and `lib/variables.scss`. It
+is a UMD bundle (global `hyphyVision`) that exports one component per method
+(`busted`, `fel`, `absrel`, ...) and `renderHyPhyVision`. Build it from a
+checkout with `yarn build:library`; this writes to `lib/` and never touches the
+`dist/` folder that `yarn build` produces for the standalone app.
+
+Everything that is a package dependency is left external (`webpack.config.library.js`),
+so the embedding site's bundler must resolve them, and one extra setting is
+needed:
+
+- **A webpack alias for `phylotree.css`**: the bundle contains
+  `require("phylotree.css")`, which must resolve to the stylesheet shipped by
+  the `phylotree` package.
+- The dependencies in Vision's `package.json` (`react`, `react-dom`, `jquery`,
+  `d3` 3.x, `underscore`, `phylotree`, `@spond/*`, ...) must be installable by
+  the host; `npm install hyphy-vision` does this. Free references to `$`,
+  `jQuery`, `d3` and `_` inside the bundle are bound to those packages at build
+  time, so the host does not have to define these globals itself.
+
+A minimal webpack host configuration:
+
+```js
+const path = require("path");
+
+module.exports = {
+  entry: "./host.js", // import { fel } from "hyphy-vision"; fel(json, "root");
+  resolve: {
+    alias: {
+      "phylotree.css": path.resolve(__dirname, "node_modules/phylotree/phylotree.css"),
+    },
+  },
+  module: {
+    rules: [{ test: /\.css$/, use: ["style-loader", "css-loader"] }],
+  },
+};
+```
+
+The render functions take the results JSON and the id of the element to
+render into, e.g. `fel(json, "root", fasta, originalFile, analysisLog)`.
+
 # Contributing
 Read our [contributing guide](CONTRIBUTING.md) to learn about our development process, how to
 propose bugfixes and improvements, and how to build and test your changes.

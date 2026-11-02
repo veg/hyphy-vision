@@ -117,6 +117,7 @@ export function patchAbsrelNotebook(main) {
   try {
     const inputs = cellInputs(main, "siteTableData");
     if (!_.isEqual(inputs, SITE_TABLE_DATA_INPUTS)) {
+      // eslint-disable-next-line no-console
       console.warn(
         "aBSREL notebook shim (#888) not applied: `siteTableData` cell " +
           (inputs ? "inputs changed to " + JSON.stringify(inputs) : "not found") +
@@ -127,6 +128,7 @@ export function patchAbsrelNotebook(main) {
     main.redefine("siteTableData", SITE_TABLE_DATA_INPUTS, siteTableData);
     return true;
   } catch (e) {
+    // eslint-disable-next-line no-console
     console.warn("aBSREL notebook shim (#888) not applied:", e);
     return false;
   }
