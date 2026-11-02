@@ -107,6 +107,12 @@ module.exports = (env) => {
       }),
       new webpack.ProvidePlugin({
         process: "process/browser",
+        // Free `$` / `d3` references resolve through the (external) packages,
+        // as in the app build, so the host need not define these globals.
+        $: "jquery",
+        jQuery: "jquery",
+        d3: "d3",
+        _: "underscore",
       }),
       new MiniCssExtractPlugin({
         // Options similar to the same options in webpackOptions.output
