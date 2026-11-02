@@ -9,6 +9,11 @@ import { ResultsPage } from "./components/results_page.jsx";
 import { tagNotebookCell } from "../helpers/deepLink.js";
 import { Runtime, Inspector } from "@observablehq/runtime";
 import notebook from "@hyphy_software/gard-analysis-result-visualization";
+import {
+  checkGardNotebook,
+  normalizeGardResult,
+  patchGardNotebook
+} from "../helpers/gardNotebook.js";
 
 function binomial(n, k) {
   if (typeof n !== "number" || typeof k !== "number") return false;
@@ -153,7 +158,10 @@ class GARDContents extends React.Component {
     this.processData(nextProps.json);
   }
 
-  processData(data) {
+  processData(json) {
+    // Older HyPhy results lack bestModelAICc and zero-breakpoint results have a
+    // placeholder improvement entry; see helpers/gardNotebook.js.
+    const data = normalizeGardResult(json);
     if (data.improvements != null) {
       const improvements = Object.values(data.improvements).map(
         improvementObject => ({
@@ -208,6 +216,9 @@ class GARDContents extends React.Component {
         }
       }
     });
+
+    checkGardNotebook(main);
+    patchGardNotebook(main);
 
     this.setState({ data: data, main: main });
   }
