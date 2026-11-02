@@ -156,6 +156,8 @@
   "license": "MIT",
   "files": [
     "lib/hyphyvision.js",
+    "lib/hyphyvision.js.LICENSE.txt",
+    "lib/*.svg",
     "lib/application.scss",
     "lib/variables.scss"
   ]
