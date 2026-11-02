@@ -19,6 +19,7 @@ import { FADE } from "./fade.jsx";
 import { Slatkin } from "./slatkin.jsx";
 import { NavBar } from "./components/navbar.jsx";
 import { enableDeepLinks } from "../helpers/deepLink.js";
+import uploadRoute from "../helpers/uploadRoute.js";
 
 const path = require("path");
 const href = window.location.href;
@@ -36,7 +37,8 @@ class HyPhyVision extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      data: false
+      data: false,
+      redirectTo: null
     };
   }
 
@@ -49,6 +51,11 @@ class HyPhyVision extends React.Component {
     window.addEventListener("hashchange", shiftWindow);
   }
 
+  componentDidUpdate() {
+    // The redirect has been rendered; clear it so a later upload can redirect again.
+    if (this.state.redirectTo) this.setState({ redirectTo: null });
+  }
+
   onFileChange = e => {
     var self = this;
     var files = e.target.files; // FileList object
@@ -59,7 +66,14 @@ class HyPhyVision extends React.Component {
       reader.onload = (function(theFile) {
         return function(e) {
           var data = JSON.parse(this.result);
-          self.setDataToState(data);
+          // Show the result on the page for the method that produced it,
+          // whichever page the file was loaded from.
+          var route = uploadRoute(data);
+          if (route && !window.location.pathname.startsWith(route)) {
+            self.setState({ data: data, redirectTo: route });
+          } else {
+            self.setDataToState(data);
+          }
         };
       })(f);
       reader.readAsText(f);
@@ -89,6 +103,9 @@ class HyPhyVision extends React.Component {
             changeMethod={this.changeMethod}
           />
           {is_electron ? <Redirect to="/" /> : null}
+          {this.state.redirectTo ? (
+            <Redirect push to={this.state.redirectTo} />
+          ) : null}
           <div style={{ paddingTop: "70px" }}>
             <Route exact path="/" component={() => <Home />} />
             <Route
