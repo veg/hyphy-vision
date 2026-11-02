@@ -8,7 +8,7 @@ function determineHyPhyMethod(json) {
   var method;
 
   if (json["analysis"] != undefined) {
-    const analysisString = json["analysis"]["info"];
+    const analysisString = json["analysis"]["info"] || "";
 
     if (analysisString.includes("aBSREL")) {
       method = "absrel";
