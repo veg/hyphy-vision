@@ -140,6 +140,7 @@
   },
   "resolutions": {
     "**/svgo/js-yaml": "^3.15.2",
+    "**/cheerio": "1.0.0",
     "**/phylotree/xml2js": "^0.6.2"
   },
   "scripts": {
