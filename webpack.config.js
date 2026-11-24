@@ -16,9 +16,9 @@ module.exports = (env) => {
       hyphyvision: ["./src/index.js"],
     },
     devServer: {
-      contentBase: ".",
+      static: ".",
       historyApiFallback: true,
-      disableHostCheck: true,
+      allowedHosts: "all",
     },
     output: {
       path: path.resolve(__dirname, "dist/"),
@@ -149,6 +149,10 @@ module.exports = (env) => {
         stream: require.resolve("stream-browserify"),
       },
       alias: {
+        // Underscore 1.13+ ships separate ESM and UMD builds. Pin every import to
+        // the UMD build that expose-loader publishes as the global _, so that
+        // _.partial placeholders compare equal across modules.
+        underscore$: require.resolve("underscore"),
         "phylotree.css": __dirname + "/node_modules/phylotree/phylotree.css",
       },
       modules: ["src", "node_modules"],
